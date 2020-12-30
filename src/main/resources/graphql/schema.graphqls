@@ -1,0 +1,17 @@
+type Transport {
+    id: ID!
+    title: String!
+    departureAddress: Address
+    arrivalAddress: Address
+}
+
+type Address {
+    id: ID!
+    street: String
+    postalcode: String
+    city: String
+}
+
+type Query {
+    getTransports : [Transport]!
+}
