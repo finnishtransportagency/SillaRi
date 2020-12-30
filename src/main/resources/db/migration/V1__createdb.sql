@@ -21,6 +21,6 @@ CREATE TABLE sillari.transport
     CONSTRAINT transport_pkey PRIMARY KEY (id)
 );
 
-ALTER TABLE sillari.transport
-    OWNER to sillari;
+--ALTER TABLE sillari.transport
+--    OWNER to sillari;
 

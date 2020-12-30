@@ -17,7 +17,38 @@
     <properties>
         <java.version>8</java.version>
     </properties>
-
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>env</name>
+                    <value>local</value>
+                </property>
+            </activation>
+            <properties>
+                <db.url>jdbc:postgresql://127.0.0.1:5432/sillari</db.url>
+                <db.username>sillari</db.username>
+                <db.password>sillari1234</db.password>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>env</name>
+                    <value>dev</value>
+                </property>
+            </activation>
+            <properties>
+                <db.url>jdbc:postgresql://sillari-dev.cpakz3z86ezw.eu-west-1.rds.amazonaws.com:5432/sillari</db.url>
+                <db.username>sillari</db.username>
+                <db.password>silLari1234B7</db.password>
+            </properties>
+        </profile>
+    </profiles>
     <dependencies>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -108,9 +139,9 @@
             </executions>
             <configuration>
                 <driver>org.postgresql.Driver</driver>
-                <url>jdbc:postgresql://sillari-dev.cpakz3z86ezw.eu-west-1.rds.amazonaws.com:5432/sillari</url>
-                <user>sillari</user>
-                <password>silLari1234B7</password>
+                <url>${db.url}</url>
+                <user>${db.username}</user>
+                <password>${db.password}</password>
                 <baselineOnMigrate>true</baselineOnMigrate>
                 <schemas>public</schemas>
                 <locations>
@@ -135,9 +166,9 @@
                             <!--Insert your DB configuration-->
                             <jdbc>
                                 <driver>org.postgresql.Driver</driver>
-                                <url>jdbc:postgresql://sillari-dev.cpakz3z86ezw.eu-west-1.rds.amazonaws.com:5432/sillari</url>
-                                <user>sillari</user>
-                                <password>silLari1234B7</password>
+                                <url>${db.url}</url>
+                                <user>${db.username}</user>
+                                <password>${db.password}</password>
                             </jdbc>
                             <generator>
                                 <database>
