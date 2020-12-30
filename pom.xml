@@ -135,9 +135,9 @@
                             <!--Insert your DB configuration-->
                             <jdbc>
                                 <driver>org.postgresql.Driver</driver>
-                                <url>jdbc:postgresql://127.0.0.1:5432/sillari</url>
+                                <url>jdbc:postgresql://sillari-dev.cpakz3z86ezw.eu-west-1.rds.amazonaws.com:5432/sillari</url>
                                 <user>sillari</user>
-                                <password>sillari1234</password>
+                                <password>silLari1234B7</password>
                             </jdbc>
                             <generator>
                                 <database>
