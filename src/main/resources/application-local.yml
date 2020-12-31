@@ -26,3 +26,41 @@ graphql:
     enabled: true
     mapping: "/graphql"
     corsEnabled: true
+
+server:
+  port: 8080
+
+management:
+  contextPath: /actuator
+  security:
+    enabled: false
+  endpoints:
+    prometheus:
+      enabled: true
+    web:
+      exposure:
+        include: '*'
+      base-path: /actuator
+  health:
+    jms:
+      enabled: false
+  info:
+    git:
+      mode: full
+endpoints:
+  prometheus:
+    enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    groups-order: DESC
+  show-actuator: true
+  version: 3.0
+  api-docs:
+    groups:
+      enabled: true
+  group-configs:
+    - group: api
+      packagesToScan: fi.vaylavirasto.sillari.api

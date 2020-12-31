@@ -44,7 +44,7 @@ Resources:
               ReadOnly: false
           PortMappings:
             - ContainerPort: 8080
-              HostPort: 8008
+              HostPort: 8081
               Protocol: "tcp"
           Privileged: "false"
           ReadonlyRootFilesystem: "false"

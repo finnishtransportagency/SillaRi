@@ -26,3 +26,27 @@ graphql:
     enabled: true
     mapping: "/graphql"
     corsEnabled: true
+server:
+  port: 8080
+
+management:
+  contextPath: /actuator
+  security:
+    enabled: false
+  endpoints:
+    prometheus:
+      enabled: true
+    web:
+      exposure:
+        include: '*'
+      base-path: /actuator
+  health:
+    jms:
+      enabled: false
+  info:
+    git:
+      mode: full
+endpoints:
+  prometheus:
+    enabled: true
+
