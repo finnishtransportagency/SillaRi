@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  (1.0) AWS CloudFormation Template to launch SillaRi geoserver service and task
+Resources:
+ SILLARIGEOSERVERDEVSERVICE:
+  Type: AWS::ECS::Service
+  Properties:
+      ServiceName: sillari-geoserver-dev
+      Cluster: sillari-dev
+      LaunchType: EC2
+      DesiredCount: 1
+      TaskDefinition: !Ref SILLARIGEOSERVERDEVTASK
+ SILLARIGEOSERVERDEVTASK:
+  Type: AWS::ECS::TaskDefinition
+  Properties: 
+    RequiresCompatibilities: 
+      - EC2
+    Family: sillari-geoserver-dev
+    Cpu: 1024
+    Memory: 8192
+    Volumes: 
+     - Host: 
+        SourcePath: "/data"
+       Name: "volume-0"
+     - Host: 
+        SourcePath: "/var/sillari"
+       Name: "volume-1"
+     - Host: 
+        SourcePath: "/data/geoserver"
+       Name: "volume-2"
+    ContainerDefinitions:
+     - Name: sillari-geoserver-dev
+       Hostname: sillari.geoserver
+       Image: 384409174079.dkr.ecr.eu-west-1.amazonaws.com/sillari-geoserver:latest
+       LogConfiguration: 
+        LogDriver: "awslogs"
+        Options: 
+         awslogs-group: "sillari-dev"
+         awslogs-region: "eu-west-1"
+         awslogs-stream-prefix: "sillari-geoserver"
+       MountPoints: 
+        - SourceVolume: "volume-0"
+          ContainerPath: "/data"
+          ReadOnly: false
+        - SourceVolume: "volume-1"
+          ContainerPath: "/var/sillari"
+          ReadOnly: false
+        - SourceVolume: "volume-2"
+          ContainerPath: "/opt/geoserver"
+          ReadOnly: false
+       PortMappings: 
+        - ContainerPort: 8080
+          HostPort: 8008
+          Protocol: "tcp"
+       Privileged: "false"
+       ReadonlyRootFilesystem: "false"
+       Environment: 
+        - Name: "environment"
+          Value: "dev"
