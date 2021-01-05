@@ -29,6 +29,7 @@ graphql:
 
 server:
   port: 8080
+  contextPath: /api
   servlet: # 2.0
     context-path: /api
 
