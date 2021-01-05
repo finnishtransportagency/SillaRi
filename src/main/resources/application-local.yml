@@ -29,6 +29,8 @@ graphql:
 
 server:
   port: 8080
+  servlet: # 2.0
+    context-path: /api
 
 management:
   contextPath: /actuator
