@@ -8,16 +8,24 @@ Resources:
       ServiceName: sillari-monitoring-dev
       Cluster: sillari-dev
       LaunchType: EC2
-      DesiredCount: 1
+      DesiredCount: 2
       TaskDefinition: !Ref SILLARIMONITORINGDEVTASK
+  SILLARIMONITORINGFRONTDEVSERVICE:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: sillari-monitoring-front-dev
+      Cluster: sillari-dev
+      LaunchType: EC2
+      DesiredCount: 2
+      TaskDefinition: !Ref SILLARIMONITORINGFRONTDEVTASK
   SILLARIMONITORINGDEVTASK:
     Type: AWS::ECS::TaskDefinition
     Properties:
       RequiresCompatibilities:
         - EC2
       Family: sillari-monitoring-dev
-      Cpu: 256
-      Memory: 2560
+      Cpu: 128
+      Memory: 256
       Volumes:
         - Host:
             SourcePath: "/proc"
@@ -40,9 +48,6 @@ Resources:
         - Host:
             SourcePath: "/var/sillari"
           Name: "volume-6"
-        - Host:
-            SourcePath: "/data/prometheus"
-          Name: "volume-7"
       ContainerDefinitions:
         - Name: sillari-cadvisor-dev
           Hostname: sillari.cadvisor
@@ -74,7 +79,7 @@ Resources:
               HostPort: 9080
               Protocol: "tcp"
           Cpu: 64
-          Memory: 256
+          Memory: 128
           Privileged: "true"
           ReadonlyRootFilesystem: "false"
           Environment:
@@ -110,6 +115,28 @@ Resources:
           Environment:
             - Name: "environment"
               Value: "dev"
+  SILLARIMONITORINGFRONTDEVTASK:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      RequiresCompatibilities:
+        - EC2
+      Family: sillari-monitoring-front-dev
+      Cpu: 512
+      Memory: 2560
+      Volumes:
+        - Host:
+            SourcePath: "/data/logs/grafana"
+          Name: "volume-0"
+        - Host:
+            SourcePath: "/data/grafana_data"
+          Name: "volume-1"
+        - Host:
+            SourcePath: "/var/sillari"
+          Name: "volume-6"
+        - Host:
+            SourcePath: "/data/prometheus"
+          Name: "volume-7"
+      ContainerDefinitions:
         - Name: sillari-prometheus-dev
           Hostname: sillari.prometheus
           Image: 384409174079.dkr.ecr.eu-west-1.amazonaws.com/sillari-prometheus:latest
@@ -137,3 +164,48 @@ Resources:
           Environment:
             - Name: "environment"
               Value: "dev"
+        - Name: sillari-grafana-dev
+          Hostname: sillari.grafana
+          Image: 384409174079.dkr.ecr.eu-west-1.amazonaws.com/sillari-grafana:latest
+          LogConfiguration:
+            LogDriver: "awslogs"
+            Options:
+              awslogs-group: "sillari-dev"
+              awslogs-region: "eu-west-1"
+              awslogs-stream-prefix: "sillari-grafana"
+          MountPoints:
+            - SourceVolume: "volume-6"
+              ContainerPath: "/var/sillari"
+              ReadOnly: false
+            - SourceVolume: "volume-0"
+              ContainerPath: "/var/log/grafana"
+              ReadOnly: false
+            - SourceVolume: "volume-1"
+              ContainerPath: "/var/lib/grafana"
+              ReadOnly: false
+          PortMappings:
+            - ContainerPort: 3000
+              HostPort: 3000
+              Protocol: "tcp"
+          Cpu: 128
+          Memory: 512
+          Privileged: "false"
+          ReadonlyRootFilesystem: "false"
+          Environment:
+            - Name: "environment"
+              Value: "dev"
+            - Name: "grafana_database_name"
+              Value: "grafana"
+            - Name: "grafana_user"
+              Value: "grafana"
+            - Name: "grafana_password"
+              Value: "S1ll5r1G5fNam!)"
+            - Name: "grafana_database_name"
+              Value: "grafana"
+            - Name: "grafana_domain"
+              Value: "sillaridev.testivaylapilvi.fi"
+            - Name: "grafana_root_uri"
+              Value: "sillaridev.testivaylapilvi.fi/grafana/"
+            - Name: "environment"
+              Value: "dev"
+
