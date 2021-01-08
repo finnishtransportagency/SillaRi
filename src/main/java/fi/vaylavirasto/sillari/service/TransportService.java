@@ -25,7 +25,7 @@ public class TransportService {
 
     public List<TransportModel> getTransports() {
         ArrayList<TransportModel> retval = new ArrayList<>();
-        List<Transport> list = transportRepository.getTranportById(new BigDecimal(1));
+        List<Transport> list = transportRepository.getAllTransports();
         for(Transport transport : list) {
             TransportModel model = new TransportModel();
             model.setId(transport.getId());
@@ -39,6 +39,19 @@ public class TransportService {
             retval.add(model);
         }
         return retval;
+    }
+    public TransportModel getTransport(int id) {
+        Transport transport = transportRepository.getTransportById(id);
+        TransportModel model = new TransportModel();
+        model.setId(transport.getId());
+        model.setTitle(transport.getTitle());
+        model.setDepartureAddress(new AddressModel());
+        model.setArrivalAddress(new AddressModel());
+        Address arrivalAddress = addressRepository.getAddressById(transport.getArrivalAddressId());
+        Address departureAddress = addressRepository.getAddressById(transport.getDepartureAddressId());
+        model.setArrivalAddress(getAddressModel(arrivalAddress));
+        model.setDepartureAddress(getAddressModel(departureAddress));
+        return model;
     }
     private AddressModel getAddressModel(Address address) {
         AddressModel addressModel = new AddressModel();

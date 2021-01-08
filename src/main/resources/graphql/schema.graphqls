@@ -14,4 +14,5 @@ type Address {
 
 type Query {
     getTransports : [Transport]!
+    getTransport(id : Int!) : Transport!
 }

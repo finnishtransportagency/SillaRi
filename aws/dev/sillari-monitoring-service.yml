@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  (1.0) AWS CloudFormation Template to launch SillaRi geoserver service and task
+Resources:
+  SILLARIMONITORINGDEVSERVICE:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: sillari-monitoring-dev
+      Cluster: sillari-dev
+      LaunchType: EC2
+      DesiredCount: 1
+      TaskDefinition: !Ref SILLARIMONITORINGDEVTASK
+  SILLARIMONITORINGDEVTASK:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      RequiresCompatibilities:
+        - EC2
+      Family: sillari-monitoring-dev
+      Cpu: 256
+      Memory: 2560
+      Volumes:
+        - Host:
+            SourcePath: "/proc"
+          Name: "volume-0"
+        - Host:
+            SourcePath: "/sys"
+          Name: "volume-1"
+        - Host:
+            SourcePath: "/"
+          Name: "volume-2"
+        - Host:
+            SourcePath: "/var/run"
+          Name: "volume-3"
+        - Host:
+            SourcePath: "/var/lib/docker"
+          Name: "volume-4"
+        - Host:
+            SourcePath: "/dev/disk"
+          Name: "volume-5"
+        - Host:
+            SourcePath: "/var/sillari"
+          Name: "volume-6"
+        - Host:
+            SourcePath: "/data/prometheus"
+          Name: "volume-7"
+      ContainerDefinitions:
+        - Name: sillari-cadvisor-dev
+          Hostname: sillari.cadvisor
+          Image: 384409174079.dkr.ecr.eu-west-1.amazonaws.com/sillari-cadvisor:latest
+          LogConfiguration:
+            LogDriver: "awslogs"
+            Options:
+              awslogs-group: "sillari-dev"
+              awslogs-region: "eu-west-1"
+              awslogs-stream-prefix: "sillari-cadvisor"
+          MountPoints:
+            - SourceVolume: "volume-3"
+              ContainerPath: "/var/run"
+              ReadOnly: false
+            - SourceVolume: "volume-1"
+              ContainerPath: "/host/sys"
+              ReadOnly: true
+            - SourceVolume: "volume-2"
+              ContainerPath: "/rootfs"
+              ReadOnly: true
+            - SourceVolume: "volume-4"
+              ContainerPath: "/var/lib/docker"
+              ReadOnly: true
+            - SourceVolume: "volume-5"
+              ContainerPath: "/dev/disk"
+              ReadOnly: true
+          PortMappings:
+            - ContainerPort: 8080
+              HostPort: 9080
+              Protocol: "tcp"
+          Cpu: 64
+          Memory: 256
+          Privileged: "true"
+          ReadonlyRootFilesystem: "false"
+          Environment:
+            - Name: "environment"
+              Value: "dev"
+        - Name: sillari-nodeexporter-dev
+          Hostname: sillari.nodeexporter
+          Image: 384409174079.dkr.ecr.eu-west-1.amazonaws.com/sillari-nodeexporter:latest
+          LogConfiguration:
+            LogDriver: "awslogs"
+            Options:
+              awslogs-group: "sillari-dev"
+              awslogs-region: "eu-west-1"
+              awslogs-stream-prefix: "sillari-nodeexporter"
+          MountPoints:
+            - SourceVolume: "volume-0"
+              ContainerPath: "/host/proc"
+              ReadOnly: true
+            - SourceVolume: "volume-1"
+              ContainerPath: "/host/sys"
+              ReadOnly: true
+            - SourceVolume: "volume-2"
+              ContainerPath: "/rootfs"
+              ReadOnly: true
+          PortMappings:
+            - ContainerPort: 9100
+              HostPort: 9100
+              Protocol: "tcp"
+          Cpu: 64
+          Memory: 128
+          Privileged: "true"
+          ReadonlyRootFilesystem: "false"
+          Environment:
+            - Name: "environment"
+              Value: "dev"
+        - Name: sillari-prometheus-dev
+          Hostname: sillari.prometheus
+          Image: 384409174079.dkr.ecr.eu-west-1.amazonaws.com/sillari-prometheus:latest
+          LogConfiguration:
+            LogDriver: "awslogs"
+            Options:
+              awslogs-group: "sillari-dev"
+              awslogs-region: "eu-west-1"
+              awslogs-stream-prefix: "sillari-prometheus"
+          MountPoints:
+            - SourceVolume: "volume-6"
+              ContainerPath: "/var/sillari"
+              ReadOnly: false
+            - SourceVolume: "volume-7"
+              ContainerPath: "/prometheus_data"
+              ReadOnly: false
+          PortMappings:
+            - ContainerPort: 9090
+              HostPort: 9090
+              Protocol: "tcp"
+          Cpu: 128
+          Memory: 2048
+          Privileged: "false"
+          ReadonlyRootFilesystem: "false"
+          Environment:
+            - Name: "environment"
+              Value: "dev"

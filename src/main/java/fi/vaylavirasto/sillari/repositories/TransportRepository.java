@@ -17,7 +17,11 @@ public class TransportRepository {
     @Autowired
     private DSLContext dsl;
 
-    public List<Transport> getTranportById(BigDecimal id) {
+    public List<Transport> getAllTransports() {
         return dsl.selectFrom(Tables.TRANSPORT).fetchInto(Transport.class);
+    }
+    public Transport getTransportById(int id) {
+        List<Transport> result = dsl.selectFrom(Tables.TRANSPORT).where(Tables.TRANSPORT.ID.eq(id)).fetchInto(Transport.class);
+        return result.get(0);
     }
 }

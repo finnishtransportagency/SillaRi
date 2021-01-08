@@ -19,4 +19,7 @@ public class TransportQueryResolver implements GraphQLQueryResolver {
     public List<TransportModel> getTransports() {
         return transportService.getTransports();
     }
+    public TransportModel getTransport(int id) {
+        return transportService.getTransport(id);
+    }
 }

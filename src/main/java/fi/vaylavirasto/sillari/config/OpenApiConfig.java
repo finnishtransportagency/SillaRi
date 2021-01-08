@@ -14,7 +14,12 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 @Server(
                         url="https://sillaridev.testivaylapilvi.fi/",
                         description="Dev Server"
+                ),
+                @Server(
+                        url="https://127.0.0.1:8080/",
+                        description="Local Server"
                 )
+
         }
 )
 public class OpenApiConfig {
