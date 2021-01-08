@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: >-
-  (1.0) AWS CloudFormation Template to launch SillaRi geoserver service and task
+  (1.0) AWS CloudFormation Template to launch SillaRi monitoring services and tasks
 Resources:
   SILLARIMONITORINGDEVSERVICE:
     Type: AWS::ECS::Service
@@ -16,7 +16,7 @@ Resources:
       ServiceName: sillari-monitoring-front-dev
       Cluster: sillari-dev
       LaunchType: EC2
-      DesiredCount: 2
+      DesiredCount: 1
       TaskDefinition: !Ref SILLARIMONITORINGFRONTDEVTASK
   SILLARIMONITORINGDEVTASK:
     Type: AWS::ECS::TaskDefinition
@@ -200,12 +200,10 @@ Resources:
               Value: "grafana"
             - Name: "grafana_password"
               Value: "S1ll5r1G5fNam!)"
-            - Name: "grafana_database_name"
-              Value: "grafana"
+            - Name: "database_host"
+              Value: "sillari-dev.cpakz3z86ezw.eu-west-1.rds.amazonaws.com"
             - Name: "grafana_domain"
               Value: "sillaridev.testivaylapilvi.fi"
             - Name: "grafana_root_uri"
               Value: "sillaridev.testivaylapilvi.fi/grafana/"
-            - Name: "environment"
-              Value: "dev"
 
