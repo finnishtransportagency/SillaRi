@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  (1.0) AWS CloudFormation Template to launch SillaRi ui service and task
+Resources:
+  SILLARIUIDEVSERVICE:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: sillari-ui-dev
+      Cluster: sillari-dev
+      LaunchType: EC2
+      DesiredCount: 1
+      TaskDefinition: !Ref SILLARIUIDEVTASK
+  SILLARIUIDEVTASK:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      RequiresCompatibilities:
+        - EC2
+      Family: sillari-ui-dev
+      Cpu: 128
+      Memory: 512
+      Volumes:
+        - Host:
+            SourcePath: "/data"
+          Name: "volume-0"
+        - Host:
+            SourcePath: "/var/sillari"
+          Name: "volume-1"
+      ContainerDefinitions:
+        - Name: sillari-ui-dev
+          Hostname: sillari.ui
+          Image: 384409174079.dkr.ecr.eu-west-1.amazonaws.com/sillari-ui:latest
+          LogConfiguration:
+            LogDriver: "awslogs"
+            Options:
+              awslogs-group: "sillari-dev"
+              awslogs-region: "eu-west-1"
+              awslogs-stream-prefix: "sillari-ui"
+          MountPoints:
+            - SourceVolume: "volume-0"
+              ContainerPath: "/data"
+              ReadOnly: false
+            - SourceVolume: "volume-1"
+              ContainerPath: "/var/sillari"
+              ReadOnly: false
+          PortMappings:
+            - ContainerPort: 8095
+              HostPort: 8095
+              Protocol: "tcp"
+          Privileged: "false"
+          ReadonlyRootFilesystem: "false"
+          Environment:
+            - Name: "environment"
+              Value: "dev"

@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: Sillari UI
+server:
+  port: 8095
+  servlet:
+    contextPath: /
