@@ -32,7 +32,7 @@ scrape_configs:
       username: valvonta
       password: S1llar1V5!2
     static_configs:
-      - targets: ['sillari1:8081','sillari1:8081']
+      - targets: ['sillari1:8081','sillari2:8081']
   # aws ci kuvatieto
   - job_name: 'sillari-actuator'
     scrape_interval: 30s
@@ -43,7 +43,7 @@ scrape_configs:
       username: valvonta
       password: S1llar1V5!2
     static_configs:
-      - targets: ['sillari1:8081','sillari1:8081']
+      - targets: ['sillari1:8081','sillari2:8081']
   # aws ci kuvatieto nodes
   - job_name: 'sillari-nodeexporter'
     scrape_interval: 5s

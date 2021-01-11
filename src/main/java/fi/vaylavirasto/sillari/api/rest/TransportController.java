@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.api.rest;
 
+import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.model.TransportModel;
 import fi.vaylavirasto.sillari.model.tables.pojos.Transport;
 import fi.vaylavirasto.sillari.service.TransportService;
@@ -24,13 +25,23 @@ public class TransportController {
     @GetMapping
     @RequestMapping(value = "getall", method = RequestMethod.GET)
     public List<TransportModel> getTransports(){
-        return this.transportService.getTransports();
+        ServiceMetric serviceMetric = new ServiceMetric("TransportController", "getTransports");
+        try {
+            return this.transportService.getTransports();
+        } finally {
+            serviceMetric.end();
+        }
     }
 
     @Operation(summary = "Get all transports")
     @GetMapping
     @RequestMapping(value = "get/{id}", method = RequestMethod.GET)
     public TransportModel getTransport(@PathVariable String id) {
-        return this.transportService.getTransport(Integer.valueOf(id));
+        ServiceMetric serviceMetric = new ServiceMetric("TransportController", "getTransport");
+        try {
+            return this.transportService.getTransport(Integer.valueOf(id));
+        } finally {
+            serviceMetric.end();
+        }
     }
 }

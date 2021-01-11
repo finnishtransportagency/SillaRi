@@ -8,7 +8,7 @@ Resources:
       ServiceName: sillari-ui-dev
       Cluster: sillari-dev
       LaunchType: EC2
-      DesiredCount: 1
+      DesiredCount: 2
       TaskDefinition: !Ref SILLARIUIDEVTASK
   SILLARIUIDEVTASK:
     Type: AWS::ECS::TaskDefinition

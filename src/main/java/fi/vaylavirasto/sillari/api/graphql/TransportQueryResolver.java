@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.api.graphql;
 
+import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.model.TransportModel;
 import fi.vaylavirasto.sillari.service.TransportService;
 import org.apache.logging.log4j.LogManager;
@@ -17,9 +18,19 @@ public class TransportQueryResolver implements GraphQLQueryResolver {
     TransportService transportService;
 
     public List<TransportModel> getTransports() {
-        return transportService.getTransports();
+        ServiceMetric serviceMetric = new ServiceMetric("TransportQueryResolver", "getTransports");
+        try {
+            return transportService.getTransports();
+        } finally {
+            serviceMetric.end();
+        }
     }
     public TransportModel getTransport(int id) {
-        return transportService.getTransport(id);
+        ServiceMetric serviceMetric = new ServiceMetric("TransportQueryResolver", "getTransport");
+        try {
+            return transportService.getTransport(id);
+        } finally {
+            serviceMetric.end();
+        }
     }
 }

@@ -8,7 +8,7 @@ Resources:
       ServiceName: sillari-backend-dev
       Cluster: sillari-dev
       LaunchType: EC2
-      DesiredCount: 1
+      DesiredCount: 2
       TaskDefinition: !Ref SILLARIBACKENDDEVTASK
   SILLARIBACKENDDEVTASK:
     Type: AWS::ECS::TaskDefinition
@@ -17,7 +17,7 @@ Resources:
         - EC2
       Family: sillari-backend-dev
       Cpu: 1024
-      Memory: 8192
+      Memory: 4092
       Volumes:
         - Host:
             SourcePath: "/data"
