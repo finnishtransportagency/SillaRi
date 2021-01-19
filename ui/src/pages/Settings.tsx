@@ -1,9 +1,8 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonMenuButton } from '@ionic/react';
 import React from 'react';
-import MainPageContainer from '../components/MainPageContainer';
-import './Home.css';
+import './Settings.css';
 
-const Home: React.FC = () => {
+const Settings: React.FC = () => {
 
   return (
     <IonPage>
@@ -16,15 +15,13 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Blank</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <MainPageContainer />
+        <div className="container">
+          <strong>Asetukset</strong>
+          <p>Asetukset sivun sisältö tähän.</p>
+        </div>
       </IonContent>
     </IonPage>
   );
 };
 
-export default Home;
+export default Settings;
