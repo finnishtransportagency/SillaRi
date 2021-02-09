@@ -115,6 +115,7 @@
                                     <directory>${basedir}/build</directory>
                                     <includes>
                                         <include>static/**/**.*</include>
+                                        <include>public/**/**.*</include>
                                         <include>index.html</include>
                                         <include>service-worker.js</include>
                                         <include>facicon.ico</include>
@@ -137,6 +138,7 @@
                                     <directory>${basedir}/build</directory>
                                     <includes>
                                         <include>static/**/**.*</include>
+                                        <include>public/**/**.*</include>
                                         <include>index.html</include>
                                         <include>service-worker.js</include>
                                         <include>facicon.ico</include>

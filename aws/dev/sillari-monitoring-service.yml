@@ -7,6 +7,9 @@ Resources:
     Properties:
       ServiceName: sillari-monitoring-dev
       Cluster: sillari-dev
+      DeploymentConfiguration:
+        MaximumPercent: 100
+        MinimumHealthyPercent: 0
       LaunchType: EC2
       DesiredCount: 2
       TaskDefinition: !Ref SILLARIMONITORINGDEVTASK
@@ -15,6 +18,9 @@ Resources:
     Properties:
       ServiceName: sillari-monitoring-front-dev
       Cluster: sillari-dev
+      DeploymentConfiguration:
+        MaximumPercent: 100
+        MinimumHealthyPercent: 0
       LaunchType: EC2
       DesiredCount: 1
       TaskDefinition: !Ref SILLARIMONITORINGFRONTDEVTASK

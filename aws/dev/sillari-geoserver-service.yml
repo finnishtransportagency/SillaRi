@@ -7,6 +7,9 @@ Resources:
   Properties:
       ServiceName: sillari-geoserver-dev
       Cluster: sillari-dev
+      DeploymentConfiguration:
+        MaximumPercent: 100
+        MinimumHealthyPercent: 0
       LaunchType: EC2
       DesiredCount: 1
       TaskDefinition: !Ref SILLARIGEOSERVERDEVTASK
