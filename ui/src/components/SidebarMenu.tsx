@@ -2,29 +2,33 @@ import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, Io
 import React from 'react';
 import './SidebarMenu.css';
 import { home, settings } from 'ionicons/icons';
+import { useTranslation } from 'react-i18next';
 
 interface ContainerProps { }
 
 const SidebarMenu: React.FC<ContainerProps> = () => {
+
+  const { t } = useTranslation();
+
   return (
     <IonMenu disabled={false} hidden={false} side="start" content-id="MainContent">
-      <IonHeader>
-        <IonToolbar color="primary">
-          <IonTitle>SillaRi</IonTitle>
-        </IonToolbar>
-      </IonHeader>
       <IonContent>
+        <IonHeader>
+          <IonToolbar color="primary">
+            <IonTitle>{t('SidebarMenu.title')}</IonTitle>
+          </IonToolbar>
+        </IonHeader>
         <IonList>
           <IonMenuToggle>
             <IonItem routerLink="/home">
               <IonIcon icon={home} slot="start"></IonIcon>
-              <IonLabel>Pääsivu</IonLabel>
+              <IonLabel>{t('SidebarMenu.mainPage')}</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>
             <IonItem routerLink="/settings">
               <IonIcon icon={settings} slot="start"></IonIcon>
-              <IonLabel>Asetukset</IonLabel>
+              <IonLabel>{t('SidebarMenu.settings')}</IonLabel>
             </IonItem>
           </IonMenuToggle>
         </IonList>

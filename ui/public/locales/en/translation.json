@@ -1,0 +1,30 @@
+{
+  "main": {
+    "header" :
+    {
+      "title" : "SillaRi"
+    },
+    "title" : "SillaRi",
+    "content": "Welcome!"
+  },
+  "settings" :
+  {
+    "header" :
+    {
+      "title" : "Settings"
+    },
+    "language" :
+    {
+      "label" : "Language",
+      "fi" : "Suomi",
+      "sv" : "Svenska",
+      "en" : "English"
+    }
+  },
+  "SidebarMenu" :
+  {
+    "title" : "SillaRi",
+    "mainPage" : "Mainpage",
+    "settings" : "Settings"
+  }
+}

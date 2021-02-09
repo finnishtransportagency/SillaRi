@@ -2,6 +2,7 @@ import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
+import { withTranslation } from 'react-i18next';
 import Home from './pages/Home';
 import Settings from './pages/Settings';
 import SidebarMenu from './components/SidebarMenu';
@@ -27,7 +28,6 @@ import './theme/variables.css';
 
 
 const App: React.FC = () => (
-
   <IonApp>
     <IonReactRouter>
       <SidebarMenu />
@@ -40,4 +40,4 @@ const App: React.FC = () => (
   </IonApp>
 );
 
-export default App;
+export default withTranslation()(App);
