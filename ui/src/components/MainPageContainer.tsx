@@ -2,9 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './MainPageContainer.css';
 
-interface ContainerProps { }
-
-const MainPageContainer: React.FC<ContainerProps> = () => {
+const MainPageContainer: React.FC = () => {
 
   const { t } = useTranslation();
 

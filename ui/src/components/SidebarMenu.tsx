@@ -4,9 +4,7 @@ import './SidebarMenu.css';
 import { home, settings } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 
-interface ContainerProps { }
-
-const SidebarMenu: React.FC<ContainerProps> = () => {
+const SidebarMenu: React.FC = () => {
 
   const { t } = useTranslation();
 

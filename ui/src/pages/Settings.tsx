@@ -1,14 +1,12 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonMenuButton, IonItem, IonLabel, IonList, IonListHeader, IonRadio, IonRadioGroup } from '@ionic/react';
+import { IonContent, IonPage, IonItem, IonLabel, IonList, IonListHeader, IonRadio, IonRadioGroup } from '@ionic/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import i18n from '../i18n';
+import Header from '../components/Header';
 import './Settings.css';
-
-
 
 const Settings: React.FC = () => {
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang);
@@ -16,14 +14,7 @@ const Settings: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar color="primary">
-          <IonButtons slot="start">
-            <IonMenuButton></IonMenuButton>
-          </IonButtons>
-          <IonTitle>{t('settings.header.title')}</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <Header title={t('settings.header.title')} />
       <IonContent fullscreen>
         <IonList>
           <IonRadioGroup value={i18n.language} onIonChange={e => changeLanguage(e.detail.value)}>
