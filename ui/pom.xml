@@ -115,7 +115,6 @@
                                     <directory>${basedir}/build</directory>
                                     <includes>
                                         <include>static/**/**.*</include>
-                                        <include>public/**/**.*</include>
                                         <include>index.html</include>
                                         <include>service-worker.js</include>
                                         <include>facicon.ico</include>
@@ -138,11 +137,16 @@
                                     <directory>${basedir}/build</directory>
                                     <includes>
                                         <include>static/**/**.*</include>
-                                        <include>public/**/**.*</include>
                                         <include>index.html</include>
                                         <include>service-worker.js</include>
                                         <include>facicon.ico</include>
                                         <include>asset-manifest.json</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${basedir}/public</directory>
+                                    <includes>
+                                        <include>**/**.*</include>
                                     </includes>
                                 </resource>
                             </resources>
