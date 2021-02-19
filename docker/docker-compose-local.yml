@@ -1,0 +1,24 @@
+version: "3"
+services:
+  sillari-backend:
+    hostname: sillari-backend
+    build:
+      context: ./sillari-backend
+    environment:
+      - environment=local
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://sillari-local-db:5432/sillari
+    ports:
+      - 8080:8080
+    depends_on:
+      - sillari-local-db
+  sillari-local-db:
+    hostname: sillari-local-db
+    build:
+      context: ./sillari-local-db
+    environment:
+      - POSTGRES_PASSWORD=docker
+      - PGDATA=/pgdata
+    ports:
+      - 5432:5432
+    volumes:
+      - ./sillari-local-db/pgdata:/pgdata
