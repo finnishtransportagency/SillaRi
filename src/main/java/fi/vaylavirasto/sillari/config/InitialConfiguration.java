@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
+import org.jooq.conf.RenderQuotedNames;
+import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
@@ -41,11 +43,16 @@ public class InitialConfiguration {
 
         jooqConfiguration.set(connectionProvider());
         jooqConfiguration.set(new DefaultExecuteListenerProvider(new ExceptionTranslator()));
+        jooqConfiguration.set(new DefaultExecuteListenerProvider(new SQLDebugLogging()));
 
         // Get the jooq dialect from the application-<env>.yml file, should be POSTGRES (case sensitive)
         String sqlDialectName = environment.getRequiredProperty("spring.jooq.sql-dialect");
         SQLDialect dialect = SQLDialect.valueOf(sqlDialectName);
         jooqConfiguration.set(dialect);
+
+        Settings settings = new Settings();
+        settings.setRenderQuotedNames(RenderQuotedNames.NEVER);
+        jooqConfiguration.setSettings(settings);
 
         return jooqConfiguration;
     }

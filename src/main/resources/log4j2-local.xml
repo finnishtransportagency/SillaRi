@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <!-- Use the default LoggerListener to get the full jooq execution debug logging -->
+        <!--
+        <Logger name="org.jooq.tools.LoggerListener" level="debug">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+        -->
+        <!-- Use the custom SQLDebugLogging to get the SQL statements only -->
+        <Logger name="fi.vaylavirasto.sillari.config.SQLDebugLogging" level="debug" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+
+        <!-- Use this for all other SillaRi debug logging -->
+        <Logger name="fi.vaylavirasto.sillari" level="debug" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+
+        <Root level="all">
+            <AppenderRef ref="ConsoleAppender" level="info"/>
+        </Root>
+    </Loggers>
+</Configuration>

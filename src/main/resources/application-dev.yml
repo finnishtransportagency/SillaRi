@@ -12,6 +12,8 @@ spring:
   flyway:
     enabled: true
     baselineOnMigrate: true
+logging:
+  config: classpath:log4j2-dev.xml
 graphql:
   servlet:
     enabled: true
