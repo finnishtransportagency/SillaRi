@@ -28,7 +28,8 @@
                 </property>
             </activation>
             <properties>
-                <db.url>jdbc:postgresql://127.0.0.1:5432/sillari</db.url>
+                <db.driver>org.postgresql.Driver</db.driver>
+                <db.url>jdbc:postgresql://localhost:5432/sillari</db.url>
                 <db.username>sillari</db.username>
                 <db.password>sillari1234</db.password>
             </properties>
@@ -43,6 +44,7 @@
                 </property>
             </activation>
             <properties>
+                <db.driver>org.postgresql.Driver</db.driver>
                 <db.url>jdbc:postgresql://sillari-dev.cpakz3z86ezw.eu-west-1.rds.amazonaws.com:5432/sillari</db.url>
                 <db.username>sillari</db.username>
                 <db.password>silLari1234B7</db.password>
@@ -169,31 +171,31 @@
                 </configuration>
             </plugin>
 
-        <plugin>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-maven-plugin</artifactId>
-            <executions>
-                <execution>
-                    <phase>generate-sources</phase>
-                    <goals>
-                        <goal>migrate</goal>
-                    </goals>
-                </execution>
-            </executions>
-            <configuration>
-                <driver>org.postgresql.Driver</driver>
-                <url>${db.url}</url>
-                <user>${db.username}</user>
-                <password>${db.password}</password>
-                <baselineOnMigrate>true</baselineOnMigrate>
-                <schemas>public</schemas>
-                <locations>
-                    <location>
-                        filesystem:src/main/resources/db/migration
-                    </location>
-                </locations>
-            </configuration>
-        </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <driver>${db.driver}</driver>
+                    <url>${db.url}</url>
+                    <user>${db.username}</user>
+                    <password>${db.password}</password>
+                    <baselineOnMigrate>true</baselineOnMigrate>
+                    <schemas>sillari</schemas>
+                    <locations>
+                        <location>
+                            filesystem:src/main/resources/db/migration
+                        </location>
+                    </locations>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.jooq</groupId>
@@ -206,9 +208,8 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <!--Insert your DB configuration-->
                             <jdbc>
-                                <driver>org.postgresql.Driver</driver>
+                                <driver>${db.driver}</driver>
                                 <url>${db.url}</url>
                                 <user>${db.username}</user>
                                 <password>${db.password}</password>

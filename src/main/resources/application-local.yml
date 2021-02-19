@@ -2,37 +2,25 @@ spring:
   application:
     name: SillaRi
   datasource:
-    url: "jdbc:postgresql://localhost:5432/sillari"
-    username: sillari
-    password: sillari1234
-    driver-class-name: org.postgresql.Driver
+    # Values from pom.xml profile properties
+    url: @db.url@
+    username: @db.username@
+    password: @db.password@
+    driver-class-name: @db.driver@
   jooq:
-    sql-dialect:postgres
-  h2:
-    console:
-      enabled: true
-      path: "/h2"
-  jpa:
-    hibernate:
-      ddl-auto: update
+    sql-dialect: POSTGRES
   flyway:
     enabled: true
     baselineOnMigrate: true
-    url: "jdbc:postgresql://localhost:5432/sillari"
-    username: sillari
-    password: sillari1234
 graphql:
   servlet:
     enabled: true
     mapping: "/graphql"
     corsEnabled: true
-
 server:
   port: 8080
-  contextPath: /api
   servlet: # 2.0
     context-path: /api
-
 management:
   contextPath: /actuator
   security:
@@ -53,7 +41,6 @@ management:
 endpoints:
   prometheus:
     enabled: true
-
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

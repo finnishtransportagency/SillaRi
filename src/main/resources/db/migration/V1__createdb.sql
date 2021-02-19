@@ -1,4 +1,4 @@
-CREATE SCHEMA sillari;
+CREATE SCHEMA IF NOT EXISTS sillari;
 CREATE SEQUENCE transport_id_seq;
 CREATE SEQUENCE address_id_seq;
 
