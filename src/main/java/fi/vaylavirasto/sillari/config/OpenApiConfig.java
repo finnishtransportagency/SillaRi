@@ -9,18 +9,19 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 title = "SillaRi API",
                 version = "v3",
                 description = "This app provides REST APIs for SillaRi Application"
-        ),
+        )
+        /*
         servers = {
                 @Server(
-                        url="https://sillaridev.testivaylapilvi.fi/",
+                        url="https://sillaridev.testivaylapilvi.fi/api/",
                         description="Dev Server"
                 ),
                 @Server(
-                        url="https://127.0.0.1:8080/",
+                        url="http://localhost:8080/api/",
                         description="Local Server"
                 )
-
         }
+        */
 )
 public class OpenApiConfig {
 }
