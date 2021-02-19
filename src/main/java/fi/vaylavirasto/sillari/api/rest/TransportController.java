@@ -2,14 +2,18 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.model.TransportModel;
-import fi.vaylavirasto.sillari.model.tables.pojos.Transport;
 import fi.vaylavirasto.sillari.service.TransportService;
 import io.micrometer.core.annotation.Timed;
+import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -18,16 +22,17 @@ import java.util.List;
 @RequestMapping("/transports")
 public class TransportController {
     private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     TransportService transportService;
 
     @Operation(summary = "Get all transports")
     @GetMapping
     @RequestMapping(value = "getall", method = RequestMethod.GET)
-    public List<TransportModel> getTransports(){
+    public List<TransportModel> getTransports(@RequestParam(value = "limit", defaultValue = "10") Integer limit){
         ServiceMetric serviceMetric = new ServiceMetric("TransportController", "getTransports");
         try {
-            return this.transportService.getTransports();
+            return this.transportService.getTransports(limit);
         } finally {
             serviceMetric.end();
         }

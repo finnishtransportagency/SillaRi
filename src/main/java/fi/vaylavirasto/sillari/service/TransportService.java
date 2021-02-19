@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.service;
-import fi.vaylavirasto.sillari.model.AddressModel;
 
+import fi.vaylavirasto.sillari.model.AddressModel;
 import fi.vaylavirasto.sillari.model.TransportModel;
 import fi.vaylavirasto.sillari.model.tables.pojos.Address;
 import fi.vaylavirasto.sillari.model.tables.pojos.Transport;
@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +22,10 @@ public class TransportService {
     @Autowired
     private AddressRepository addressRepository;
 
-    public List<TransportModel> getTransports() {
+    public List<TransportModel> getTransports(Integer limit) {
+        logger.debug(String.format("getTransports(%s)", limit));
+
+        /*
         ArrayList<TransportModel> retval = new ArrayList<>();
         List<Transport> list = transportRepository.getAllTransports();
         for(Transport transport : list) {
@@ -39,8 +41,18 @@ public class TransportService {
             retval.add(model);
         }
         return retval;
+        */
+
+        if (limit >= 0) {
+            return transportRepository.getAllTransports(limit);
+        } else {
+            return new ArrayList<>();
+        }
     }
+
     public TransportModel getTransport(int id) {
+        logger.debug(String.format("getTransport(%s)", id));
+
         Transport transport = transportRepository.getTransportById(id);
         TransportModel model = new TransportModel();
         model.setId(transport.getId());

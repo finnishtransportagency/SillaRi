@@ -17,14 +17,15 @@ public class TransportQueryResolver implements GraphQLQueryResolver {
     @Autowired
     TransportService transportService;
 
-    public List<TransportModel> getTransports() {
+    public List<TransportModel> getTransports(Integer limit) {
         ServiceMetric serviceMetric = new ServiceMetric("TransportQueryResolver", "getTransports");
         try {
-            return transportService.getTransports();
+            return transportService.getTransports(limit);
         } finally {
             serviceMetric.end();
         }
     }
+
     public TransportModel getTransport(int id) {
         ServiceMetric serviceMetric = new ServiceMetric("TransportQueryResolver", "getTransport");
         try {

@@ -13,6 +13,6 @@ type Address {
 }
 
 type Query {
-    getTransports : [Transport]!
+    getTransports(limit: Int = 10) : [Transport]!
     getTransport(id : Int!) : Transport!
 }
