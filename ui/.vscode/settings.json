@@ -1,0 +1,12 @@
+{
+    "eslint.options": {
+        "configFile": ".eslintrc.json"
+    },
+    "stylelint.options": {
+        "configFile": ".stylelintrc.json"
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "source.fixAll.stylelint": true
+    }
+}
