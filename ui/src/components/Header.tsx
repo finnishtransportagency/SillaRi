@@ -1,16 +1,15 @@
-import React from 'react';
-import { IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle } from '@ionic/react';
-import './Header.css';
+import React from "react";
+import { IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle } from "@ionic/react";
+import "./Header.css";
 
-const Header: React.FC<{title: string}> = (props) => {
-
+const Header: React.FC<{ title: string }> = ({ title }: { title: string }) => {
   return (
     <IonHeader>
       <IonToolbar color="primary">
         <IonButtons slot="start">
-          <IonMenuButton></IonMenuButton>
+          <IonMenuButton />
         </IonButtons>
-        <IonTitle>{props.title}</IonTitle>
+        <IonTitle>{title}</IonTitle>
       </IonToolbar>
     </IonHeader>
   );
