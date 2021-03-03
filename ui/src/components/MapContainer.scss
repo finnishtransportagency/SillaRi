@@ -1,0 +1,9 @@
+@import "~ol/ol.css";
+
+.map {
+  position: fixed;
+  top: var(--offset-top);
+  bottom: var(--offset-bottom);
+  left: 0px;
+  right: 0px;
+}

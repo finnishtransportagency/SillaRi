@@ -7,6 +7,9 @@
     "title" : "SillaRi",
     "content": "Welcome!"
   },
+  "map": {
+    "attribution": "Material"
+  },
   "settings" :
   {
     "header" :
@@ -25,6 +28,7 @@
   {
     "title" : "SillaRi",
     "mainPage" : "Mainpage",
-    "settings" : "Settings"
+    "settings" : "Settings",
+    "map" : "Map"
   }
 }

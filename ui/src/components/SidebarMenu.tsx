@@ -28,6 +28,12 @@ const SidebarMenu: React.FC = () => {
               <IonLabel>{t("SidebarMenu.settings")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
+          <IonMenuToggle>
+            <IonItem routerLink="/map">
+              <IonIcon icon={mapOutline} slot="start" />
+              <IonLabel>{t("SidebarMenu.map")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
         </IonList>
       </IonContent>
     </IonMenu>

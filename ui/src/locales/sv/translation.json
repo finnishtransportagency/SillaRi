@@ -7,6 +7,9 @@
     "title" : "SillaRi",
     "content": "Välkommen!"
   },
+  "map": {
+    "attribution": "Material"
+  },
   "settings" :
   {
     "header" :
@@ -25,6 +28,7 @@
   {
     "title" : "SillaRi",
     "mainPage" : "Huvudsida",
-    "settings" : "Inställningar"
+    "settings" : "Inställningar",
+    "map" : "Karta"
   }
 }

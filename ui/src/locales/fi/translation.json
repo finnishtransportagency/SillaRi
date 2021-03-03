@@ -7,6 +7,9 @@
     "title" : "SillaRi",
     "content": "Tervetuloa!"
   },
+  "map": {
+    "attribution": "Aineisto"
+  },
   "settings" :
   {
     "header" :
@@ -25,6 +28,7 @@
   {
     "title" : "SillaRi",
     "mainPage" : "Pääsivu",
-    "settings" : "Asetukset"
+    "settings" : "Asetukset",
+    "map" : "Kartta"
   }
 }
