@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { IonApp, IonRouterOutlet } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
@@ -31,8 +31,7 @@ const App: React.FC = () => (
     <IonReactRouter>
       <SidebarMenu />
       <IonRouterOutlet id="MainContent">
-        <Route path="/home" component={Home} exact />
-        <Route exact path="/" render={() => <Redirect to="/home" />} />
+        <Route path="/" component={Home} exact />
         <Route path="/settings" component={Settings} exact />
       </IonRouterOutlet>
     </IonReactRouter>

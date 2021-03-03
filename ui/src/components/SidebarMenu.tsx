@@ -17,7 +17,7 @@ const SidebarMenu: React.FC = () => {
         </IonHeader>
         <IonList>
           <IonMenuToggle>
-            <IonItem routerLink="/home">
+            <IonItem routerLink="/">
               <IonIcon icon={home} slot="start" />
               <IonLabel>{t("SidebarMenu.mainPage")}</IonLabel>
             </IonItem>
