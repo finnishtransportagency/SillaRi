@@ -1,3 +1,6 @@
+sillari:
+  wmts:
+    url: https://oag.vayla.fi/rasteripalvelu-mml/wmts/maasto/1.0.0/
 spring:
   application:
     name: SillaRi
