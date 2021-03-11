@@ -39,6 +39,7 @@ const MapContainer = (): JSX.Element => {
       // Try to use the Väylä map service if possible, so fetch the WMTS capabilities via the backend to avoid a CORS error
       // Note: in development mode, this will use the proxy defined in package.json
       const capabilitiesResponse = await fetch("/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities", { credentials: "include" });
+      let backgroundMapLayer;
 
       if (capabilitiesResponse.ok) {
         try {
@@ -58,16 +59,17 @@ const MapContainer = (): JSX.Element => {
             console.log("wmtsOptions", wmtsOptions);
 
             const wmtsSource = new WMTS(wmtsOptions);
-
             setBackgroundTileGrid(wmtsSource.getTileGrid());
-            setBackgroundLayer(new Tile({ source: wmtsSource }));
+
+            backgroundMapLayer = new Tile({ source: wmtsSource });
+            setBackgroundLayer(backgroundMapLayer);
           }
         } catch (err) {
           console.log("ERROR", err);
         }
       }
 
-      if (!backgroundLayer) {
+      if (!backgroundMapLayer) {
         // Using the Väylä map service was not possible, so use the public Kapsi service as an alternative
         console.log("using XYZ");
 
