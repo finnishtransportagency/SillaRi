@@ -1,15 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Plugins } from "@capacitor/core";
 import MapOL from "ol/Map";
 import View from "ol/View";
 import { defaults, MousePosition } from "ol/control";
 import { createStringXY } from "ol/coordinate";
+import Feature from "ol/Feature";
 import { WMTSCapabilities } from "ol/format";
-import { Tile } from "ol/layer";
-import { get } from "ol/proj";
+import { Point } from "ol/geom";
+import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import { get as getProj, fromLonLat } from "ol/proj";
 import { register } from "ol/proj/proj4";
-import { TileDebug, WMTS, XYZ } from "ol/source";
+import { TileDebug, Vector as VectorSource, WMTS, XYZ } from "ol/source";
 import { optionsFromCapabilities } from "ol/source/WMTS";
+import { Icon, Style } from "ol/style";
 import TileGrid from "ol/tilegrid/TileGrid";
 import proj4 from "proj4";
 import "./MapContainer.scss";
@@ -19,7 +23,8 @@ const MapContainer = (): JSX.Element => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   const [backgroundTileGrid, setBackgroundTileGrid] = useState<TileGrid>();
-  const [backgroundLayer, setBackgroundLayer] = useState<Tile>();
+  const [backgroundLayer, setBackgroundLayer] = useState<TileLayer>();
+  const [userPoint, setUserPoint] = useState<Point>();
   const [mapInitialised, setMapInitialised] = useState<boolean>(false);
 
   const projection = "EPSG:3067";
@@ -54,14 +59,14 @@ const MapContainer = (): JSX.Element => {
 
             const wmtsOptions = optionsFromCapabilities(capabilities, {
               layer: "taustakartta",
-              projection: get(projection),
+              projection: getProj(projection),
             });
             console.log("wmtsOptions", wmtsOptions);
 
             const wmtsSource = new WMTS(wmtsOptions);
             setBackgroundTileGrid(wmtsSource.getTileGrid());
 
-            backgroundMapLayer = new Tile({ source: wmtsSource });
+            backgroundMapLayer = new TileLayer({ source: wmtsSource });
             setBackgroundLayer(backgroundMapLayer);
           }
         } catch (err) {
@@ -80,17 +85,31 @@ const MapContainer = (): JSX.Element => {
 
         const xyzSource = new XYZ({
           url: "https://tiles.kartat.kapsi.fi/taustakartta_3067/{z}/{x}/{y}.jpg",
-          projection: get(projection),
+          projection: getProj(projection),
           tileGrid: xyzTileGrid,
           cacheSize: 2048,
           attributions: `${t("map.attribution")}: Maanmittauslaitos | Taustakartta`,
         });
-        setBackgroundLayer(new Tile({ source: xyzSource }));
+        setBackgroundLayer(new TileLayer({ source: xyzSource }));
       }
     };
 
-    // Call the asynchronous function here since initBackgroundMap is called from useEffect which is synchronous
+    const getUserPosition = async () => {
+      const { Geolocation } = Plugins;
+      const userPosition = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+      console.log("user position", userPosition);
+
+      if (userPosition.coords && userPosition.coords.longitude > 0 && userPosition.coords.latitude > 0) {
+        const point = new Point(fromLonLat([userPosition.coords.longitude, userPosition.coords.latitude], projection));
+        setUserPoint(point);
+      } else {
+        setUserPoint(new Point([0, 0]));
+      }
+    };
+
+    // Call the asynchronous functions here since initBackgroundMap is called from useEffect which is synchronous
     getBackgroundMapLayer();
+    getUserPosition();
   };
 
   const initMap = () => {
@@ -98,11 +117,14 @@ const MapContainer = (): JSX.Element => {
 
     // This function is called several times from useEffect when the dependencies change
     // However, the map should only be initialised once, otherwise duplicate OpenLayers viewports are rendered
-    if (!mapInitialised && backgroundTileGrid && backgroundLayer) {
+    if (!mapInitialised && backgroundTileGrid && backgroundLayer && userPoint) {
+      // Check if a valid user position was obtained
+      const userPointValid = userPoint.getCoordinates().length === 2 && userPoint.getCoordinates()[0] > 0 && userPoint.getCoordinates()[1] > 0;
+
       // The tile grid and layer for the background map are defined, so create the OpenLayers view and map, and any other related components
       const view = new View({
-        zoom: 3,
-        center: [400000, 7000000],
+        zoom: userPointValid ? 12 : 3,
+        center: userPointValid ? userPoint.getCoordinates() : [400000, 7000000],
         projection,
         resolutions: backgroundTileGrid.getResolutions(),
         minZoom: 0,
@@ -116,6 +138,24 @@ const MapContainer = (): JSX.Element => {
         controls: defaults(),
       });
 
+      if (userPointValid) {
+        // Show the user position marker if valid
+        const userFeature = new Feature({ geometry: userPoint });
+        const userSource = new VectorSource({ features: [userFeature] });
+
+        // Note: to get this to work, the following has been added to location.svg: width='32px' height='32px' fill='#fff'
+        const userStyle = new Style({
+          image: new Icon({
+            src: "assets/location.svg",
+            color: "rgba(0, 102, 204, 1.0)",
+            anchor: [0.5, 1],
+          }),
+        });
+
+        const userLayer = new VectorLayer({ source: userSource, style: userStyle });
+        map.addLayer(userLayer);
+      }
+
       if (debug) {
         // For debug purposes, show the mouse coordinates and tile grid overlay
         const mousePositionControl = new MousePosition({
@@ -124,9 +164,9 @@ const MapContainer = (): JSX.Element => {
         });
         map.addControl(mousePositionControl);
 
-        const debugLayer = new Tile({
+        const debugLayer = new TileLayer({
           source: new TileDebug({
-            projection: get(projection),
+            projection: getProj(projection),
             tileGrid: backgroundTileGrid,
           }),
         });
@@ -147,7 +187,7 @@ const MapContainer = (): JSX.Element => {
 
   // Initialise the OpenLayers map with the background tile grid and layer as dependencies
   // This means initMap is called several times but only when the dependencies change
-  useEffect(initMap, [backgroundTileGrid, backgroundLayer, mapInitialised, debug]);
+  useEffect(initMap, [backgroundTileGrid, backgroundLayer, userPoint, mapInitialised, debug]);
 
   return <div className="map" ref={mapRef} />;
 };
