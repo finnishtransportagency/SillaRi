@@ -32,6 +32,7 @@
     "lint": "eslint --config .eslintrc.json --ext .js,.jsx,.ts,.tsx .; exit 0",
     "lintcss": "stylelint --config .stylelintrc.json \"**/*.{css,scss}\"; exit 0"
   },
+  "proxy": "http://localhost:8080",
   "eslintConfig": {
     "extends": "react-app"
   },
