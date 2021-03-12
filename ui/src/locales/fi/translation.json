@@ -24,11 +24,21 @@
       "en" : "English"
     }
   },
+  "camera" :
+  {
+    "takePhotoButtonLabel": "Ota kuva",
+    "listLabel": "Kuvat",
+    "listLabelPcs": "kpl",
+    "item": {
+      "deleteButtonLabel": "Poista"
+    }
+  },
   "SidebarMenu" :
   {
     "title" : "SillaRi",
     "mainPage" : "Pääsivu",
     "settings" : "Asetukset",
-    "map" : "Kartta"
+    "map" : "Kartta",
+    "camera" : "Kamera"
   }
 }

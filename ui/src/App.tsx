@@ -6,6 +6,7 @@ import { withTranslation } from "react-i18next";
 import Home from "./pages/Home";
 import Settings from "./pages/Settings";
 import Map from "./pages/Map";
+import Camera from "./pages/Camera";
 import SidebarMenu from "./components/SidebarMenu";
 
 /* Core CSS required for Ionic components to work properly */
@@ -35,6 +36,7 @@ const App: React.FC = () => (
         <Route path="/" component={Home} exact />
         <Route path="/settings" component={Settings} exact />
         <Route path="/map" component={Map} exact />
+        <Route path="/camera" component={Camera} exact />
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>

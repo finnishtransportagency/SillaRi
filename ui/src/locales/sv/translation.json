@@ -24,11 +24,21 @@
       "en" : "English"
     }
   },
+  "camera" :
+  {
+    "takePhotoButtonLabel": "Ta bild",
+    "listLabel": "Bilderna",
+    "listLabelPcs": "st",
+    "item": {
+      "deleteButtonLabel": "Ta bort"
+    }
+  },
   "SidebarMenu" :
   {
     "title" : "SillaRi",
     "mainPage" : "Huvudsida",
     "settings" : "Inställningar",
-    "map" : "Karta"
+    "map" : "Karta",
+    "camera" : "Kamera"
   }
 }
