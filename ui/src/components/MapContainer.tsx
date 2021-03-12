@@ -24,7 +24,6 @@ const MapContainer = (): JSX.Element => {
 
   const [backgroundTileGrid, setBackgroundTileGrid] = useState<TileGrid>();
   const [backgroundLayer, setBackgroundLayer] = useState<TileLayer>();
-  const [userPoint, setUserPoint] = useState<Point>();
   const [mapInitialised, setMapInitialised] = useState<boolean>(false);
 
   const projection = "EPSG:3067";
@@ -41,13 +40,14 @@ const MapContainer = (): JSX.Element => {
 
     // Use an asynchronous function for getting the map layer since fetch returns a Promise
     const getBackgroundMapLayer = async () => {
-      // Try to use the Väylä map service if possible, so fetch the WMTS capabilities via the backend to avoid a CORS error
-      // Note: in development mode, this will use the proxy defined in package.json
-      const capabilitiesResponse = await fetch("/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities", { credentials: "include" });
       let backgroundMapLayer;
 
-      if (capabilitiesResponse.ok) {
-        try {
+      try {
+        // Try to use the Väylä map service if possible, so fetch the WMTS capabilities via the backend to avoid a CORS error
+        // Note: in development mode, this will use the proxy defined in package.json
+        const capabilitiesResponse = await fetch("/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities", { credentials: "include" });
+
+        if (capabilitiesResponse.ok) {
           // Try to parse the capabilities XML using OpenLayers
           const capabilitiesXML = await (capabilitiesResponse.text() as Promise<string>);
           const parser = new WMTSCapabilities();
@@ -69,9 +69,9 @@ const MapContainer = (): JSX.Element => {
             backgroundMapLayer = new TileLayer({ source: wmtsSource });
             setBackgroundLayer(backgroundMapLayer);
           }
-        } catch (err) {
-          console.log("ERROR", err);
         }
+      } catch (err) {
+        console.log("ERROR", err);
       }
 
       if (!backgroundMapLayer) {
@@ -94,22 +94,8 @@ const MapContainer = (): JSX.Element => {
       }
     };
 
-    const getUserPosition = async () => {
-      const { Geolocation } = Plugins;
-      const userPosition = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
-      console.log("user position", userPosition);
-
-      if (userPosition.coords && userPosition.coords.longitude > 0 && userPosition.coords.latitude > 0) {
-        const point = new Point(fromLonLat([userPosition.coords.longitude, userPosition.coords.latitude], projection));
-        setUserPoint(point);
-      } else {
-        setUserPoint(new Point([0, 0]));
-      }
-    };
-
     // Call the asynchronous functions here since initBackgroundMap is called from useEffect which is synchronous
     getBackgroundMapLayer();
-    getUserPosition();
   };
 
   const initMap = () => {
@@ -117,14 +103,11 @@ const MapContainer = (): JSX.Element => {
 
     // This function is called several times from useEffect when the dependencies change
     // However, the map should only be initialised once, otherwise duplicate OpenLayers viewports are rendered
-    if (!mapInitialised && backgroundTileGrid && backgroundLayer && userPoint) {
-      // Check if a valid user position was obtained
-      const userPointValid = userPoint.getCoordinates().length === 2 && userPoint.getCoordinates()[0] > 0 && userPoint.getCoordinates()[1] > 0;
-
+    if (!mapInitialised && backgroundTileGrid && backgroundLayer) {
       // The tile grid and layer for the background map are defined, so create the OpenLayers view and map, and any other related components
       const view = new View({
-        zoom: userPointValid ? 12 : 3,
-        center: userPointValid ? userPoint.getCoordinates() : [400000, 7000000],
+        zoom: 3,
+        center: [400000, 7000000],
         projection,
         resolutions: backgroundTileGrid.getResolutions(),
         minZoom: 0,
@@ -138,23 +121,37 @@ const MapContainer = (): JSX.Element => {
         controls: defaults(),
       });
 
-      if (userPointValid) {
-        // Show the user position marker if valid
-        const userFeature = new Feature({ geometry: userPoint });
-        const userSource = new VectorSource({ features: [userFeature] });
+      const getUserPosition = async () => {
+        try {
+          const { Geolocation } = Plugins;
+          const userPosition = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+          console.log("user position", userPosition);
 
-        // Note: to get this to work, the following has been added to location.svg: width='32px' height='32px' fill='#fff'
-        const userStyle = new Style({
-          image: new Icon({
-            src: "assets/location.svg",
-            color: "rgba(0, 102, 204, 1.0)",
-            anchor: [0.5, 1],
-          }),
-        });
+          // Show a marker for the user position if valid coordinates were obtained
+          if (userPosition.coords && userPosition.coords.longitude > 0 && userPosition.coords.latitude > 0) {
+            const userPoint = new Point(fromLonLat([userPosition.coords.longitude, userPosition.coords.latitude], projection));
+            const userFeature = new Feature({ geometry: userPoint });
+            const userSource = new VectorSource({ features: [userFeature] });
 
-        const userLayer = new VectorLayer({ source: userSource, style: userStyle });
-        map.addLayer(userLayer);
-      }
+            // Note: to get this to work, the following has been added to location.svg: width='32px' height='32px' fill='#fff'
+            const userStyle = new Style({
+              image: new Icon({
+                src: "assets/location.svg",
+                color: "rgba(0, 102, 204, 1.0)",
+                anchor: [0.5, 1],
+              }),
+            });
+
+            const userLayer = new VectorLayer({ source: userSource, style: userStyle });
+            map.addLayer(userLayer);
+
+            // Zoom to the user position
+            map.getView().animate({ zoom: 12, center: userPoint.getCoordinates() });
+          }
+        } catch (err) {
+          console.log("ERROR", err);
+        }
+      };
 
       if (debug) {
         // For debug purposes, show the mouse coordinates and tile grid overlay
@@ -175,8 +172,12 @@ const MapContainer = (): JSX.Element => {
 
       // Note: A timeout is needed to get the layers to render properly in Ionic
       setTimeout(() => {
+        // Resize the map to fill Ionic's container
         map.updateSize();
         setMapInitialised(true);
+
+        // Perform any other map operations
+        getUserPosition();
       }, 500);
     }
   };
@@ -187,7 +188,7 @@ const MapContainer = (): JSX.Element => {
 
   // Initialise the OpenLayers map with the background tile grid and layer as dependencies
   // This means initMap is called several times but only when the dependencies change
-  useEffect(initMap, [backgroundTileGrid, backgroundLayer, userPoint, mapInitialised, debug]);
+  useEffect(initMap, [backgroundTileGrid, backgroundLayer, mapInitialised, debug]);
 
   return <div className="map" ref={mapRef} />;
 };
