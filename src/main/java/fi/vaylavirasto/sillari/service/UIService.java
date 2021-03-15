@@ -5,7 +5,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
@@ -31,7 +33,7 @@ public class UIService {
         }
     }
 
-    public ResponseEntity<?> getExternalData(String baseUrl, Map<String,String> params, String proxyHost, Integer proxyPort) throws Exception {
+    public ResponseEntity<?> getExternalData(String baseUrl, Map<String, String> params, String proxyHost, Integer proxyPort, boolean isBinaryData) throws Exception {
         if (baseUrl != null && baseUrl.length() > 0 && params != null && params.size() > 0) {
             String paramString = params.entrySet().stream()
                     .map(UIService::getEncodedKeyValue)
@@ -40,7 +42,7 @@ public class UIService {
             logger.debug(String.format("Sending request %s?%s", baseUrl, paramString));
 
             URL url = new URL(baseUrl + "?" + paramString);
-            HttpURLConnection con = null;
+            HttpURLConnection con;
 
             if (proxyHost != null && proxyPort != null) {
                 Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
@@ -56,26 +58,48 @@ public class UIService {
 
             int status = con.getResponseCode();
 
-            Reader streamReader;
-            if (status > 299) {
-                streamReader = new InputStreamReader(con.getErrorStream());
+            if (isBinaryData) {
+                BufferedInputStream in;
+                if (status > 299) {
+                    in = new BufferedInputStream(con.getErrorStream());
+                } else {
+                    in = new BufferedInputStream(con.getInputStream());
+                }
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+                byte[] bytes = new byte[1024];
+                int read = 0;
+                while ((read = in.read(bytes)) != -1) {
+                    baos.write(bytes, 0, read);
+                }
+
+                con.disconnect();
+
+                logger.debug(String.format("Response status %s for %s?%s", status, baseUrl, paramString));
+
+                return ResponseEntity.status(status).body(baos.toByteArray());
             } else {
-                streamReader = new InputStreamReader(con.getInputStream());
+                Reader streamReader;
+                if (status > 299) {
+                    streamReader = new InputStreamReader(con.getErrorStream());
+                } else {
+                    streamReader = new InputStreamReader(con.getInputStream());
+                }
+
+                BufferedReader in = new BufferedReader(streamReader);
+                String inputLine;
+                StringBuffer content = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    content.append(inputLine);
+                }
+                in.close();
+
+                con.disconnect();
+
+                logger.debug(String.format("Response status %s for %s?%s", status, baseUrl, paramString));
+
+                return ResponseEntity.status(status).body(content);
             }
-
-            BufferedReader in = new BufferedReader(streamReader);
-            String inputLine;
-            StringBuffer content = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                content.append(inputLine);
-            }
-            in.close();
-
-            con.disconnect();
-
-            logger.debug(String.format("Response status %s for %s?%s", status, baseUrl, paramString));
-
-            return ResponseEntity.status(status).body(content);
         }
         else {
             logger.debug(String.format("Bad request: %s, %s", baseUrl, params));

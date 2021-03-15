@@ -45,7 +45,8 @@ const MapContainer = (): JSX.Element => {
       try {
         // Try to use the Väylä map service if possible, so fetch the WMTS capabilities via the backend to avoid a CORS error
         // Note: in development mode, this will use the proxy defined in package.json
-        const capabilitiesResponse = await fetch("/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities", { credentials: "include" });
+        const capabilitiesUrl = "/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities";
+        const capabilitiesResponse = await fetch(capabilitiesUrl, { credentials: "include" });
 
         if (capabilitiesResponse.ok) {
           // Try to parse the capabilities XML using OpenLayers
@@ -63,12 +64,9 @@ const MapContainer = (): JSX.Element => {
             });
             console.log("wmtsOptions", wmtsOptions);
 
-            // Make sure the map tile URL uses https to avoid mixed content warnings in the AWS environment
-            if (wmtsOptions && wmtsOptions.urls) {
-              wmtsOptions.urls = wmtsOptions.urls.map((url) => {
-                return url.replace("http:", "https:");
-              });
-            }
+            // Modify the URL to fetch tiles via the backend to avoid authentication issues on mobile
+            // Use the same URL as for the WMTS capabilities but make sure to receive binary images rather than XML
+            wmtsOptions.urls = [capabilitiesUrl.substr(0, capabilitiesUrl.indexOf("?")).replace("xml", "img")];
 
             const wmtsSource = new WMTS(wmtsOptions);
             setBackgroundTileGrid(wmtsSource.getTileGrid());
