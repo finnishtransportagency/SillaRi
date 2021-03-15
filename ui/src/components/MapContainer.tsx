@@ -63,6 +63,13 @@ const MapContainer = (): JSX.Element => {
             });
             console.log("wmtsOptions", wmtsOptions);
 
+            // Make sure the map tile URL uses https to avoid mixed content warnings in the AWS environment
+            if (wmtsOptions && wmtsOptions.urls) {
+              wmtsOptions.urls = wmtsOptions.urls.map((url) => {
+                return url.replace("http:", "https:");
+              });
+            }
+
             const wmtsSource = new WMTS(wmtsOptions);
             setBackgroundTileGrid(wmtsSource.getTileGrid());
 
