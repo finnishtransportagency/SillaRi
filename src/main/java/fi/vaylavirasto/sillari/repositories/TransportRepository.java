@@ -26,6 +26,7 @@ public class TransportRepository {
         return dsl.select().from(TransportMapper.transport)
                 .leftJoin(TransportMapper.arrivalAddress).on(TransportMapper.transport.ARRIVAL_ADDRESS_ID.eq(TransportMapper.arrivalAddress.ID))
                 .leftJoin(TransportMapper.departureAddress).on(TransportMapper.transport.DEPARTURE_ADDRESS_ID.eq(TransportMapper.departureAddress.ID))
+                .leftJoin(TransportMapper.company).on(TransportMapper.transport.COMPANY_ID.eq(TransportMapper.company.ID))
                 .limit(limit)
                 .fetch(new TransportMapper());
     }

@@ -1,8 +1,31 @@
 type Transport {
     id: ID!
+    company: Company
     title: String!
     departureAddress: Address
     arrivalAddress: Address
+    beginDate: String
+    endDate: String
+    crossings: [Crossing]
+}
+
+type CrossingList {
+    id: ID!
+    authorizationId: Int
+    departureAddress: Address
+    arrivalAddress: Address
+    departureTime: String
+    arrivalTime: String
+    crossings: [Crossing]
+}
+
+type AuthorizationList {
+    id: ID!
+    companyId: Int
+    permissionId: String
+    validStartDate: String
+    validEndDate: String
+    routes: [CrossingList]
 }
 
 type Address {
@@ -12,7 +35,32 @@ type Address {
     city: String
 }
 
+type Bridge {
+    id: ID!
+    name: String
+}
+
+type Crossing {
+    id: ID!
+    bridge: Bridge
+    drivingLineInfo: Boolean
+    speedInfo: Boolean
+    exceptionsInfo: Boolean
+    describe: Boolean
+    drivingLineInfoDesc: String
+    speedInfoDesc: String
+    exceptionsInfoDesc: String
+    extraInfoDesc: String
+}
+
+type Company {
+    id: ID!
+    name: String
+    authorizations: [AuthorizationList]
+}
+
 type Query {
-    getTransports(limit: Int = 10) : [Transport]!
-    getTransport(id : Int!) : Transport!
+    Transports(limit: Int = 10) : [Transport]!
+    Transport(id : Int!) : Transport!
+    Companies(limit: Int = 10) : [Company]
 }

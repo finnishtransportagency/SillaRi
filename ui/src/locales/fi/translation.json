@@ -29,6 +29,44 @@
     "title" : "SillaRi",
     "mainPage" : "Pääsivu",
     "settings" : "Asetukset",
-    "map" : "Kartta"
+    "map" : "Kartta",
+    "crossing" : "Sillan ylitys"
+  },
+  "crossing" :
+  {
+    "title" : "Sillan ylitys",
+    "permitNumber" : "LUPANUMERO:",
+    "crossingStarted" : "Valvonta aloitettu:",
+    "crossingInstructions" : "Ylitysohje",
+    "bridgeName": "Silta",
+    "question" :
+    {
+      "drivingLine" : "Voitiinko ajolinjaa noudattaa?",
+      "speed" : "Onko ajonopeus hyväksytty?",
+      "exceptions" : "Teitkö poikkeavia havaintoja?",
+      "drivingLineInfo" : "Miksi ajolinjaa ei voitu noudattaa?",
+      "speedInfo" : "Miksi ajonopeus ei ole hyväksytty?",
+      "exceptionsInfo" : "Tarkenna poikkeavia havaintoja"
+    },
+    "exceptions" : {
+      "permantBendings": "Pysyviä taipumia",
+      "twist": "Kannen kiertymä",
+      "damage": "Päällystevaurioita",
+      "somethingElse": "Jotain muuta, mitä?",
+      "describe": "Kuvaile havaintoja"
+    },
+    "answer" :
+    {
+      "yes" : "Kyllä",
+      "no" : "Ei"
+    },
+    "extraInfo" : "Lisätiedot",
+    "buttons" :
+    {
+      "takePhotos" : "Ota valokuvia",
+      "drivingLine" : "Tuo ajolinja",
+      "exit" : "Poistu",
+      "summary" : "Yhteenveto"
+    }
   }
 }

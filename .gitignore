@@ -39,3 +39,6 @@ node_modules
 # ui
 ui/.eslintcache
 ui/android/
+/ui/node/*.exe
+dist
+/ui/package-lock.json

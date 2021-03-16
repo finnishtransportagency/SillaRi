@@ -14,12 +14,20 @@
     },
     "project": "./tsconfig.json"
   },
-  "plugins": ["react", "react-hooks", "@typescript-eslint", "prettier"],
+  "plugins": [
+    "react",
+    "react-redux",
+    "react-hooks",
+    "@typescript-eslint",
+    "prettier"
+  ],
   "extends": [
     "react-app",
+    "eslint:recommended",
     "airbnb-typescript",
     "airbnb/hooks",
     "plugin:react/recommended",
+    "plugin:react-redux/recommended",
     "plugin:react-hooks/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/errors",
@@ -29,11 +37,23 @@
     "prettier"
   ],
   "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    },
     "react": {
       "version": "detect"
     }
   },
   "rules": {
+    "linebreak-style": ["off"],
+    "prettier/prettier": ["error", { "endOfLine": "auto"}],
+    "quotes": ["error", "double"],
+    "max-len": ["error", { "code": 256, "ignoreUrls": true, "ignoreComments": true }],
+    "react/prop-types": ["error", { "skipUndeclared": true }],
+    "react/forbid-prop-types": ["off"],
+    "react/require-default-props": ["off"],
     "@typescript-eslint/ban-ts-comment": ["error", {"ts-ignore": "allow-with-description"}],
     "no-console": 0
   }

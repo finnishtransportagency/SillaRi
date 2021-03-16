@@ -2,17 +2,15 @@ package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
-public class TransportModel {
+public class RouteModel {
     private long id;
-    private String title;
-    private String beginDate;
-    private String endDate;
+    private long authorizationId;
     private AddressModel departureAddress;
     private AddressModel arrivalAddress;
-    private CompanyModel company;
+    private String departureTime;
+    private String arrivalTime;
     private List<CrossingModel> crossings;
 }
