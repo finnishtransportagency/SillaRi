@@ -24,11 +24,21 @@
       "en" : "English"
     }
   },
+  "camera" :
+  {
+    "takePhotoButtonLabel": "Take photo",
+    "listLabel": "Images",
+    "listLabelPcs": "pcs",
+    "item": {
+      "deleteButtonLabel": "Delete"
+    }
+  },
   "SidebarMenu" :
   {
     "title" : "SillaRi",
     "mainPage" : "Mainpage",
     "settings" : "Settings",
-    "map" : "Map"
+    "map" : "Map",
+    "camera" : "Camera"
   }
 }

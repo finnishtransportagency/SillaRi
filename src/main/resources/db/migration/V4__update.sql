@@ -64,10 +64,10 @@ alter table sillari.transport add column enddate timestamp;
 update sillari.transport set begindate = now();
 update sillari.transport set enddate = now();
 insert into company(id,name) (select id,'company' || id from sillari.transport);
-update sillari.transport set companyid = transport.id;
+update sillari.transport set company_id = transport.id;
 
 insert into sillari.bridge (id,name) (select id, 'bridge'||id from sillari.transport);
-insert into sillari.transportsbridge (transprortid,bridgeid) (select id, id from sillari.transport);
+insert into sillari.transportsbridge (transprort_id,bridgeid) (select id, id from sillari.transport);
 
 insert into sillari.authorization(id, company_id, permissionId, validStartDate, validEndDate)
  (select id, id, 'lupa-'||id, now(),now() from sillari.company );
