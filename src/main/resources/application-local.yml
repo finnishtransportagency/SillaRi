@@ -1,12 +1,15 @@
+sillari:
+  wmts:
+    url: https://oag.vayla.fi/rasteripalvelu-mml/wmts/maasto/1.0.0/
 spring:
   application:
     name: SillaRi
   datasource:
     # Values from pom.xml profile properties
-    url: "jdbc:postgresql://localhost:5432/sillari"
-    username: sillari
-    password: sillari1234
-    driver-class-name: org.postgresql.Driver
+    url: @db.url@
+    username: @db.username@
+    password: @db.password@
+    driver-class-name: @db.driver@
   jooq:
     sql-dialect: POSTGRES
   flyway:
