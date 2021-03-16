@@ -8,6 +8,7 @@ import ISelectRoute from "../interfaces/ISelectRoute";
 import ISelectCrossing from "../interfaces/ISelectCrossing";
 import IStartCrossing from "../interfaces/IStartCrossing";
 import IRadioValue from "../interfaces/IRadioValue";
+import ISelectCompany from "../interfaces/ISelectCompany";
 
 interface IStateProps {
   Companies: ICompany[];
@@ -79,9 +80,9 @@ const crossingsSlice = createSlice({
       // eslint-disable-next-line no-param-reassign
       state.tabName = "route";
     },
-    SELECT_COMPANY: (state, action: PayloadAction<ICompany>) => {
+    SELECT_COMPANY: (state, action: PayloadAction<ISelectCompany>) => {
       // eslint-disable-next-line no-param-reassign
-      state.selectedCompany = action.payload.id;
+      state.selectedCompany = action.payload.selectedCompany;
       // eslint-disable-next-line no-param-reassign
       state.tabName = "authorizations";
     },

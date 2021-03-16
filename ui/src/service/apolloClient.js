@@ -1,7 +1,14 @@
 import { ApolloClient, createHttpLink, InMemoryCache, ApolloProvider } from "@apollo/client";
 
+let url;
+if (window.location.hostname === "localhost") {
+  url = "http://localhost:8080/api/graphql";
+} else {
+  url = "https://sillaridev.testivaylapilvi.fi/api/graphql";
+}
+
 export const link = createHttpLink({
-  uri: "http://127.0.0.1:8080/api/graphql",
+  uri: url,
 });
 
 export const client = new ApolloClient({

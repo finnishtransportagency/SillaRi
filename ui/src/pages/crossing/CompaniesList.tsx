@@ -20,12 +20,16 @@ import { useDispatch } from "react-redux";
 import ITransports from "../../interfaces/ITransports";
 import ICompanies from "../../interfaces/ICompanies";
 import { actions as crossingActions } from "../../store/crossingsSlice";
+import ISelectCompany from "../../interfaces/ISelectCompany";
 
 export const CompaniesList: React.FunctionComponent<ICompanies> = ({ Companies }) => {
   const dispatch = useDispatch();
   const { t, i18n } = useTranslation();
-  function companySelected(companyid: number) {
-    dispatch({ type: crossingActions.SELECT_COMPANY, payload: Companies[companyid] });
+  function companySelected(companyIndex: number) {
+    const selectCompany = {
+      selectedCompany: companyIndex,
+    } as ISelectCompany;
+    dispatch({ type: crossingActions.SELECT_COMPANY, payload: selectCompany });
   }
   return (
     <IonList>
