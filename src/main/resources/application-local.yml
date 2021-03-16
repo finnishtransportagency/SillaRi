@@ -3,10 +3,10 @@ spring:
     name: SillaRi
   datasource:
     # Values from pom.xml profile properties
-    url: @db.url@
-    username: @db.username@
-    password: @db.password@
-    driver-class-name: @db.driver@
+    url: "jdbc:postgresql://localhost:5432/sillari"
+    username: sillari
+    password: sillari1234
+    driver-class-name: org.postgresql.Driver
   jooq:
     sql-dialect: POSTGRES
   flyway:

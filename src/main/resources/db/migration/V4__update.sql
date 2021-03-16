@@ -34,7 +34,7 @@ create table sillari.company
     primary key (id)
 );
 
-create table bridge
+create table sillari.bridge
 (
     id    integer not NULL DEFAULT nextval('bridge_id_seq'),
     name text,
@@ -50,7 +50,7 @@ create table sillari.crossing
     primary key(id)
 );
 
-create table transportsbridge(
+create table sillari.transportsbridge(
     id integer not null DEFAULT nextval('transportsbridge_id_seq'),
     transprort_id integer not null,
     bridgeid integer not null,
@@ -63,7 +63,7 @@ alter table sillari.transport add column enddate timestamp;
 
 update sillari.transport set begindate = now();
 update sillari.transport set enddate = now();
-insert into company(id,name) (select id,'company' || id from sillari.transport);
+insert into sillari.company(id,name) (select id,'company' || id from sillari.transport);
 update sillari.transport set company_id = transport.id;
 
 insert into sillari.bridge (id,name) (select id, 'bridge'||id from sillari.transport);
