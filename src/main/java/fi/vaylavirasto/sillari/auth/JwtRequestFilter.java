@@ -78,18 +78,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         try {
             logger.debug(String.format("Path %s", request.getServletPath()));
 
-            Enumeration<String> headerNames = request.getHeaderNames();
-            while (headerNames.hasMoreElements()) {
-                String key = headerNames.nextElement();
-                String value = request.getHeader(key);
-                logger.debug(String.format("Header %s=%s", key, value));
-            }
-
             String jwt = request.getHeader("x-amzn-oidc-data");
             if (jwt == null || jwt.length() == 0) {
                 jwt = request.getHeader("x-iam-data");
             }
             if (jwt != null) {
+                Enumeration<String> headerNames = request.getHeaderNames();
+                while (headerNames.hasMoreElements()) {
+                    String key = headerNames.nextElement();
+                    String value = request.getHeader(key);
+                    logger.debug(String.format("Header %s=%s", key, value));
+                }
+
                 String jwt_headers = jwt.split("\\.")[0];
                 String decoded_jwt_headers = new String(Base64.getDecoder().decode(jwt_headers));
                 JSONParser parser = new JSONParser();
@@ -111,11 +111,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     // NOTE: this is just a test, the values will be handled properly later
                     String username = (String) claims.get("username");
                     String uid = (String) claims.get("custom:uid");
-
-                    logger.debug(String.format("Username %s or uid %s", username, uid));
-
                     String roles = (String) claims.get("custom:rooli");
 
+                    logger.debug(String.format("Username %s", username));
+                    logger.debug(String.format("Uid %s", uid));
                     logger.debug(String.format("Roles %s", roles));
                 }
             } else {
