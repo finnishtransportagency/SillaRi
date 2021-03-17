@@ -83,19 +83,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 jwt = request.getHeader("x-iam-data");
             }
             if (jwt != null) {
+                /*
                 Enumeration<String> headerNames = request.getHeaderNames();
                 while (headerNames.hasMoreElements()) {
                     String key = headerNames.nextElement();
                     String value = request.getHeader(key);
                     logger.debug(String.format("Header %s=%s", key, value));
                 }
+                */
 
                 String jwt_headers = jwt.split("\\.")[0];
                 String decoded_jwt_headers = new String(Base64.getDecoder().decode(jwt_headers));
                 JSONParser parser = new JSONParser();
                 JSONObject json = (JSONObject) parser.parse(decoded_jwt_headers);
 
-                logger.debug(String.format("JWT headers json %s", json.toJSONString()));
+                // logger.debug(String.format("JWT headers json %s", json.toJSONString()));
 
                 String key = getPublicKey((String) json.get("kid"),false);
                 Claims claims;
