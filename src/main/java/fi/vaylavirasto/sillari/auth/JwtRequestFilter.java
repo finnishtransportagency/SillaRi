@@ -7,6 +7,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,7 +20,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,8 +27,9 @@ import java.net.URL;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Enumeration;
+import java.util.List;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -32,6 +37,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private static String publicKey = null;
     private static PublicKey ecPublicKey = null;
+
+    @Value("${spring.profiles.active:Unknown}")
+    private String activeProfile;
 
     private String getPublicKey(String kid, boolean isForce) throws Exception {
         if (isForce || publicKey == null) {
@@ -74,7 +82,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             logger.debug(String.format("Path %s", request.getServletPath()));
 
@@ -109,18 +117,45 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     claims = decodeJWT(jwt, key);
                 }
 
+                PreAuthenticatedAuthenticationToken authenticationToken = null;
                 if (claims != null) {
-                    // NOTE: this is just a test, the values will be handled properly later
                     String username = (String) claims.get("username");
                     String uid = (String) claims.get("custom:uid");
-                    String roles = (String) claims.get("custom:rooli");
+                    String userNameDetail = (uid != null) ? uid : username;
+                    logger.debug(String.format("Username %s", userNameDetail));
 
-                    logger.debug(String.format("Username %s", username));
-                    logger.debug(String.format("Uid %s", uid));
-                    logger.debug(String.format("Roles %s", roles));
+                    String[] roles = ((String) claims.get("custom:rooli")).split("\\,");
+                    logger.debug(String.format("Roles %s", String.join(",", roles)));
+
+                    claims.forEach((k, v) -> logger.debug(String.format("Claim %s=%s", k, v)));
+
+                    // NOTE: this is just a test, the real user roles will be added later
+                    List<GrantedAuthority> authorityList = new ArrayList<>();
+                    authorityList.add(SillariRole.fromString("SILLARI_TEST"));
+                    SillariUser userDetails = new SillariUser(userNameDetail, authorityList);
+
+                    authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 }
+
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             } else {
                 logger.debug("No JWT header found");
+
+                // NOTE: For development use only using maven profile 'local'
+                PreAuthenticatedAuthenticationToken authenticationToken = null;
+                if (activeProfile.equals("local")) {
+                    logger.debug("Using local development authentication");
+
+                    List<GrantedAuthority> authorityList = new ArrayList<>();
+                    authorityList.add(SillariRole.fromString("SILLARI_TEST"));
+                    SillariUser userDetails = new SillariUser("DEV_USER", authorityList);
+
+                    authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                }
+
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         } catch (Exception ex) {
             logger.error(ex);
