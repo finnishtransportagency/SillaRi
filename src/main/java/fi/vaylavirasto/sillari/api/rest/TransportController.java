@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +31,8 @@ public class TransportController {
     @Operation(summary = "Get all transports")
     @GetMapping
     @RequestMapping(value = "getall", method = RequestMethod.GET)
-    public List<TransportModel> getTransports(@RequestParam(value = "limit", defaultValue = "10") Integer limit){
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public List<TransportModel> getTransports(@RequestParam(value = "limit", defaultValue = "10") Integer limit, Authentication authentication) {
         ServiceMetric serviceMetric = new ServiceMetric("TransportController", "getTransports");
         try {
             return this.transportService.getTransports(limit);
@@ -41,7 +44,8 @@ public class TransportController {
     @Operation(summary = "Get all transports")
     @GetMapping
     @RequestMapping(value = "get/{id}", method = RequestMethod.GET)
-    public TransportModel getTransport(@PathVariable String id) {
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public TransportModel getTransport(@PathVariable String id, Authentication authentication) {
         ServiceMetric serviceMetric = new ServiceMetric("TransportController", "getTransport");
         try {
             return this.transportService.getTransport(Integer.valueOf(id));

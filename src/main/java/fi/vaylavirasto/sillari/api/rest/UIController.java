@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,7 +36,8 @@ public class UIController {
     @Operation(summary = "Get background map xml")
     @GetMapping
     @RequestMapping(value = "getbackgroundmapxml", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<?> getBackgroundMapXml(@RequestParam Map<String, String> params, @RequestHeader(name = "oam_groups", required = false) String oamGroups){
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getBackgroundMapXml(@RequestParam Map<String, String> params) {
         ServiceMetric serviceMetric = new ServiceMetric("UIController", "getBackgroundMapXml");
 
         try {
@@ -61,7 +62,8 @@ public class UIController {
     @Operation(summary = "Get background map image")
     @GetMapping
     @RequestMapping(value = "getbackgroundmapimg", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<?> getBackgroundMapImage(@RequestParam Map<String, String> params, @RequestHeader(name = "oam_groups", required = false) String oamGroups){
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getBackgroundMapImage(@RequestParam Map<String, String> params){
         ServiceMetric serviceMetric = new ServiceMetric("UIController", "getBackgroundMapImage");
 
         try {
