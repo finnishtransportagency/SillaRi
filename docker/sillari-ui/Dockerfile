@@ -1,4 +1,4 @@
-FROM java:8
+FROM openjdk:11
 MAINTAINER Jari Piitulainen <jari.piitulainen@cgi.com>
 VOLUME /tmp
 ADD app/sillari-ui.jar sillari-ui.jar
