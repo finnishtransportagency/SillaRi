@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Plugins, CameraSource, CameraResultType } from "@capacitor/core";
 import Moment from "react-moment";
 import { camera, trash } from "ionicons/icons";
+import { dateTimeFormat } from "../utils/constants";
 
 export interface ImageItem {
   dataUrl: string | undefined;
@@ -48,7 +49,7 @@ const CameraContainer: React.FC = () => {
               <IonImg src={imageItem.dataUrl} />
             </IonThumbnail>
             <IonLabel>
-              <Moment format="DD.MM.YYYY HH:mm:ss">{imageItem.date.toString()}</Moment>
+              <Moment format={dateTimeFormat}>{imageItem.date.toString()}</Moment>
             </IonLabel>
             <IonButton slot="end" onClick={() => RemoveImageItem(i)}>
               <IonIcon icon={trash} slot="start" />

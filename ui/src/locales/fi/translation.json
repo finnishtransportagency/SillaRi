@@ -5,7 +5,11 @@
       "title" : "SillaRi"
     },
     "title" : "SillaRi",
-    "content": "Tervetuloa!"
+    "content": "Tervetuloa!",
+    "tab": {
+      "transportCompanies": "Kuljetusyritykset",
+      "upcomingBridges": "Tulevat sillat"
+    }
   },
   "map": {
     "attribution": "Aineisto"
