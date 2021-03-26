@@ -1,31 +1,34 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import ICompany from "../interfaces/ICompany";
 import ICompanies from "../interfaces/ICompanies";
-import IAuthorization from "../interfaces/IAuthorization";
 import ITab from "../interfaces/ITab";
-import IRoute from "../interfaces/IRoute";
 import ISelectRoute from "../interfaces/ISelectRoute";
 import ISelectCrossing from "../interfaces/ISelectCrossing";
 import IStartCrossing from "../interfaces/IStartCrossing";
 import IRadioValue from "../interfaces/IRadioValue";
 import ISelectCompany from "../interfaces/ISelectCompany";
+import ICrossing from "../interfaces/ICrossing";
 
 interface IStateProps {
   Companies: ICompany[];
+  companyList: ICompany[];
   selectedCompany: number;
   selectedAuthorization: number;
   selectedRoute: number;
   selectedCrossing: number;
+  crossing?: ICrossing;
   loaded: boolean;
   tabName: string;
 }
 
 const initialState: IStateProps = {
   Companies: [],
+  companyList: [],
   selectedCompany: 0,
   selectedAuthorization: 0,
   selectedRoute: 0,
   selectedCrossing: 0,
+  crossing: undefined,
   loaded: false,
   tabName: "companies",
 };
@@ -54,49 +57,41 @@ const crossingsSlice = createSlice({
       } else if (action.payload.name === "damage") {
         crossing.damage = action.payload.value;
       }
+      return { ...state, crossing };
     },
     START_CROSSING: (state, action: PayloadAction<IStartCrossing>) => {
-      const crossing =
-        state.Companies[state.selectedCompany].authorizations[state.selectedAuthorization].routes[state.selectedRoute].crossings[
+      // TODO - use action.payload.crossing?
+      const crossing = {
+        ...state.Companies[state.selectedCompany].authorizations[state.selectedAuthorization].routes[state.selectedRoute].crossings[
           state.selectedCrossing
-        ];
-      // eslint-disable-next-line no-param-reassign
-      state.tabName = "crossing";
-      crossing.started = new Date().toLocaleString();
+        ],
+        started: new Date().toLocaleString(),
+      };
+      return { ...state, crossing, tabName: "crossing" };
     },
     SELECT_CROSSING: (state, action: PayloadAction<ISelectCrossing>) => {
-      // eslint-disable-next-line no-param-reassign
-      state.selectedCrossing = action.payload.selectedCrossings;
-      // eslint-disable-next-line no-param-reassign
-      state.tabName = "viewcrossing";
+      return { ...state, selectedCrossing: action.payload.selectedCrossings, tabName: "viewcrossing" };
     },
     SELECT_ROUTE: (state, action: PayloadAction<ISelectRoute>) => {
-      // eslint-disable-next-line no-param-reassign
-      state.selectedAuthorization = action.payload.authorization;
-      // eslint-disable-next-line no-param-reassign
-      state.selectedRoute = action.payload.route;
-      // eslint-disable-next-line no-param-reassign
-      state.selectedCompany = action.payload.company;
-      // eslint-disable-next-line no-param-reassign
-      state.tabName = "route";
+      return {
+        ...state,
+        selectedAuthorization: action.payload.authorization,
+        selectedRoute: action.payload.route,
+        selectedCompany: action.payload.company,
+        tabName: "route",
+      };
     },
     SELECT_COMPANY: (state, action: PayloadAction<ISelectCompany>) => {
-      // eslint-disable-next-line no-param-reassign
-      state.selectedCompany = action.payload.selectedCompany;
-      // eslint-disable-next-line no-param-reassign
-      state.tabName = "authorizations";
+      return { ...state, selectedCompany: action.payload.selectedCompany, tabName: "authorizations" };
     },
     GET_COMPANIES: (state, action: PayloadAction<ICompanies>) => {
-      // eslint-disable-next-line no-param-reassign
-      state.Companies = action.payload.Companies;
-      // eslint-disable-next-line no-param-reassign
-      state.loaded = true;
-      // eslint-disable-next-line no-param-reassign
-      state.tabName = "companies";
+      return { ...state, Companies: action.payload.Companies, loaded: true, tabName: "companies" };
+    },
+    GET_COMPANY_LIST: (state, action: PayloadAction<ICompanies>) => {
+      return { ...state, companyList: action.payload.Companies };
     },
     SELECT_TAB: (state, action: PayloadAction<ITab>) => {
-      // eslint-disable-next-line no-param-reassign
-      state.tabName = action.payload.tabName;
+      return { ...state, tabName: action.payload.tabName };
     },
   },
 });

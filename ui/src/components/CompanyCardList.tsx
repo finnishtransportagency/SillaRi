@@ -10,17 +10,17 @@ import "./CompanyCardList.css";
 
 const CompanyCardList = (): JSX.Element => {
   const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const { Companies } = crossings;
+  const { companyList } = crossings;
   const dispatch = useDispatch();
 
   useQuery<ICompanies>(query, {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_COMPANIES, payload: response }),
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_COMPANY_LIST, payload: response }),
     onError: (err) => console.error(err),
   });
 
   return (
     <div className="cardListContainer">
-      {Companies.map((company, index) => {
+      {companyList.map((company, index) => {
         const key = `company_${index}`;
         return <CompanyCard key={key} company={company} />;
       })}
