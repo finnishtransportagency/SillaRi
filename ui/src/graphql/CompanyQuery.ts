@@ -1,53 +1,95 @@
-import { gql } from "@apollo/client";
+import { DocumentNode, gql } from "@apollo/client";
 
-class CompanyQuery {
-  static getCompaniesQuery = gql`
-    {
-      Companies {
+export const companiesQuery = (): DocumentNode => gql`
+  {
+    Companies {
+      id
+      name
+      authorizations {
         id
-        name
-        authorizations {
+        companyId
+        permissionId
+        validStartDate
+        validEndDate
+        routes {
           id
-          companyId
-          permissionId
-          validStartDate
-          validEndDate
-          routes {
+          departureTime
+          arrivalTime
+          arrivalAddress {
             id
-            departureTime
-            arrivalTime
-            arrivalAddress {
+            city
+            postalcode
+            street
+          }
+          departureAddress {
+            id
+            city
+            postalcode
+            street
+          }
+          crossings {
+            id
+            drivingLineInfo
+            speedInfo
+            exceptionsInfo
+            describe
+            drivingLineInfoDesc
+            speedInfoDesc
+            exceptionsInfoDesc
+            extraInfoDesc
+            bridge {
               id
-              city
-              postalcode
-              street
-            }
-            departureAddress {
-              id
-              city
-              postalcode
-              street
-            }
-            crossings {
-              id
-              drivingLineInfo
-              speedInfo
-              exceptionsInfo
-              describe
-              drivingLineInfoDesc
-              speedInfoDesc
-              exceptionsInfoDesc
-              extraInfoDesc
-              bridge {
-                id
-                name
-              }
+              name
             }
           }
         }
       }
     }
-  `;
-}
+  }
+`;
 
-export default CompanyQuery;
+export const companyListQuery = (limit?: number): DocumentNode => gql`
+  {
+    CompanyList${limit ? `(limit: ${limit})` : ""} {
+      id
+      name
+      authorizations {
+        id
+        validStartDate
+      }
+    }
+  }
+`;
+
+export const companyQuery = (id: number): DocumentNode => gql`
+  {
+    Company(id: ${id}) {
+      id
+      name
+      authorizations {
+        id
+        companyId
+        permissionId
+        validStartDate
+        validEndDate
+        routes {
+          id
+          departureTime
+          arrivalTime
+          arrivalAddress {
+            id
+            city
+            postalcode
+            street
+          }
+          departureAddress {
+            id
+            city
+            postalcode
+            street
+          }
+        }
+      }
+    }
+  }
+`;

@@ -1,8 +1,8 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useQuery } from "@apollo/client";
-import query from "../graphql/CompanyListQuery";
-import ICompanies from "../interfaces/ICompanies";
+import { companyListQuery } from "../graphql/CompanyQuery";
+import ICompanyList from "../interfaces/ICompanyList";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import { useTypedSelector } from "../store/store";
 import CompanyCard from "./CompanyCard";
@@ -13,7 +13,7 @@ const CompanyCardList = (): JSX.Element => {
   const { companyList } = crossings;
   const dispatch = useDispatch();
 
-  useQuery<ICompanies>(query, {
+  useQuery<ICompanyList>(companyListQuery(10), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_COMPANY_LIST, payload: response }),
     onError: (err) => console.error(err),
   });

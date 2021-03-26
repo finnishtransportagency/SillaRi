@@ -27,7 +27,7 @@ import store, { RootState, useTypedSelector } from "../store/store";
 import CompaniesList from "./crossing/CompaniesList";
 import client from "../service/apolloClient";
 import ICompanies from "../interfaces/ICompanies";
-import queries from "../graphql/CompanyQuery";
+import { companiesQuery } from "../graphql/CompanyQuery";
 import AuthorizationList from "./crossing/AuthorizationList";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import CrossingList from "./crossing/CrossingList";
@@ -61,7 +61,7 @@ export const CrossingSupervision: React.FC = () => {
   function getCompanies() {
     client
       .query({
-        query: queries.getCompaniesQuery,
+        query: companiesQuery(),
         variables: { limit: 5 },
       })
       .then((response) => onGetCompanies(parseCompanies(response.data)))

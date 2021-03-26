@@ -27,4 +27,24 @@ public class CompanyQueryResolver implements GraphQLQueryResolver {
             serviceMetric.end();
         }
     }
+
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public List<CompanyModel> getCompanyList(Integer limit) {
+        ServiceMetric serviceMetric = new ServiceMetric("CompanyQueryResolver", "getCompanyList");
+        try {
+            return companyService.getCompanyList(limit);
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public CompanyModel getCompany(Integer id) {
+        ServiceMetric serviceMetric = new ServiceMetric("CompanyQueryResolver", "getCompany");
+        try {
+            return companyService.getCompany(id);
+        } finally {
+            serviceMetric.end();
+        }
+    }
 }

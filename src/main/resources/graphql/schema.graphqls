@@ -63,4 +63,6 @@ type Query {
     Transports(limit: Int = 10) : [Transport]!
     Transport(id : Int!) : Transport!
     Companies(limit: Int = 10) : [Company]
+    CompanyList(limit: Int = 10) : [Company]
+    Company(id : Int!) : Company
 }
