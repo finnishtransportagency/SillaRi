@@ -11,7 +11,7 @@ interface CompanyCardProps {
 }
 
 const CompanyCard = ({ company }: CompanyCardProps): JSX.Element => {
-  const { name, authorizations } = company;
+  const { id, name, authorizations } = company;
 
   // TODO - check if min validStartDate is the correct date to show
   const minStartDate = authorizations.reduce((minDate, auth) => {
@@ -20,7 +20,7 @@ const CompanyCard = ({ company }: CompanyCardProps): JSX.Element => {
   }, moment());
 
   return (
-    <IonCard button>
+    <IonCard button routerLink={`/companydetail/${id}`}>
       <IonGrid>
         <IonRow>
           <IonCol size="auto">

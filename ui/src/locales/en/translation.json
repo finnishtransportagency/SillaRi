@@ -44,5 +44,10 @@
     "settings" : "Settings",
     "map" : "Map",
     "camera" : "Camera"
+  },
+  "company": {
+    "transportPermit": "Transport permit",
+    "validityPeriod": "Validity period",
+    "route": "Route"
   }
 }

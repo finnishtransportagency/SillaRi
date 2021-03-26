@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import ICompany from "../interfaces/ICompany";
 import ICompanies from "../interfaces/ICompanies";
 import ICompanyList from "../interfaces/ICompanyList";
+import ICompanyDetail from "../interfaces/ICompanyDetail";
 import ITab from "../interfaces/ITab";
 import ISelectRoute from "../interfaces/ISelectRoute";
 import ISelectCrossing from "../interfaces/ISelectCrossing";
@@ -14,6 +15,7 @@ interface IStateProps {
   Companies: ICompany[];
   companyList: ICompany[];
   selectedCompany: number;
+  selectedCompanyDetail?: ICompany;
   selectedAuthorization: number;
   selectedRoute: number;
   selectedCrossing: number;
@@ -26,6 +28,7 @@ const initialState: IStateProps = {
   Companies: [],
   companyList: [],
   selectedCompany: 0,
+  selectedCompanyDetail: undefined,
   selectedAuthorization: 0,
   selectedRoute: 0,
   selectedCrossing: 0,
@@ -91,6 +94,8 @@ const crossingsSlice = createSlice({
     GET_COMPANY_LIST: (state, action: PayloadAction<ICompanyList>) => {
       return { ...state, companyList: action.payload.CompanyList };
     },
+    GET_COMPANY: (state, action: PayloadAction<ICompanyDetail>) => {
+      return { ...state, selectedCompanyDetail: action.payload.Company };
     },
     SELECT_TAB: (state, action: PayloadAction<ITab>) => {
       return { ...state, tabName: action.payload.tabName };

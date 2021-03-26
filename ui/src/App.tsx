@@ -11,6 +11,7 @@ import Crossing from "./pages/crossing/Crossing";
 import CrossingSupervision from "./pages/CrossingSupervision";
 import CompaniesList from "./pages/crossing/CompaniesList";
 import Camera from "./pages/Camera";
+import CompanyDetail from "./pages/CompanyDetail";
 import SidebarMenu from "./components/SidebarMenu";
 import client from "./service/apolloClient";
 
@@ -44,6 +45,7 @@ const App: React.FC = () => (
           <Route path="/map" component={Map} exact />
           <Route path="/camera" component={Camera} exact />
           <Route path="/crossingSupervision" component={CrossingSupervision} exact />
+          <Route path="/companydetail/:id" component={CompanyDetail} exact />
         </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>

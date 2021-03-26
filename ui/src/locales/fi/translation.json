@@ -46,6 +46,11 @@
     "camera" : "Kamera",
     "crossing" : "Sillan ylitys"
   },
+  "company": {
+    "transportPermit": "Kuljetuslupa",
+    "validityPeriod": "Voimassaoloaika",
+    "route": "Reitti"
+  },
   "crossing" :
   {
     "title" : "Sillan ylitys",
