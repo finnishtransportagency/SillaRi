@@ -1,9 +1,6 @@
 import React from "react";
 import { IonLabel, IonList, IonCol, IonGrid, IonItem, IonButton, IonRow } from "@ionic/react";
 import { useDispatch } from "react-redux";
-import ICompany from "../../interfaces/ICompany";
-import IRoute from "../../interfaces/IRoute";
-import ICompanies from "../../interfaces/ICompanies";
 import { actions as crossingActions } from "../../store/crossingsSlice";
 import ITab from "../../interfaces/ITab";
 import ISelectRoute from "../../interfaces/ISelectRoute";

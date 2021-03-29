@@ -1,6 +1,5 @@
 import React from "react";
-import { IonGrid, IonList, IonRow, IonCol, IonItem, IonLabel } from "@ionic/react";
-import { grid } from "ionicons/icons";
+import { IonList, IonItem, IonLabel } from "@ionic/react";
 import { useDispatch } from "react-redux";
 import IAuthorization from "../../interfaces/IAuthorization";
 import TransportRoute from "./TransportRoute";

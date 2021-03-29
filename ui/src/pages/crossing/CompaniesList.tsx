@@ -1,23 +1,11 @@
 import {
-  IonTextarea,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonContent,
-  IonPage,
   IonItem,
-  IonLabel,
   IonList,
   IonListHeader,
-  IonRadio,
-  IonRadioGroup,
-  IonCheckbox,
-  IonButton,
 } from "@ionic/react";
 import React, { useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import ITransports from "../../interfaces/ITransports";
 import ICompanies from "../../interfaces/ICompanies";
 import { actions as crossingActions } from "../../store/crossingsSlice";
 import ISelectCompany from "../../interfaces/ISelectCompany";

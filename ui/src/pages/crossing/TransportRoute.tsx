@@ -1,6 +1,5 @@
-import { IonCol, IonList, IonContent, IonGrid, IonItem, IonLabel, IonRow } from "@ionic/react";
+import { IonList, IonItem, IonLabel } from "@ionic/react";
 import React from "react";
-import IAuthorization from "../../interfaces/IAuthorization";
 import IRoute from "../../interfaces/IRoute";
 
 export const TransportRoute: React.FC<IRoute> = (route: IRoute) => {

@@ -77,6 +77,23 @@
       "drivingLine" : "Tuo ajolinja",
       "exit" : "Poistu",
       "summary" : "Yhteenveto"
+    },
+    "summary":
+    {
+      "title": "Yhteenveto",
+      "speed": "Ajonopeus",
+      "bridgeName": "",
+      "drivingLine": "Ajolinja",
+      "images": "Kuvat",
+      "kpl": "kpl",
+      "crossingStarted": "VALVONTA ALOITETTU:",
+      "exceptions": "Poikkeavat havainnot",
+      "exceptionsDesc": "Poikkeavien havaintojen tarkennus",
+      "extraInfo": "Lisätiedot",
+      "buttons": {
+        "edit": "Muokkaa",
+        "save": "Tallenna"
+      }
     }
   }
 }

@@ -1,9 +1,6 @@
-import IBridge from "./IBridge";
-import IImageItem from "./IImageItem";
-
-export default interface ICrossing {
+export default interface ICrossingInput {
   id: number;
-  bridge: IBridge;
+  bridgeId: number;
   started: string;
   drivingLineInfo: boolean;
   drivingLineInfoDesc: string;
@@ -17,5 +14,4 @@ export default interface ICrossing {
   permantBendings: boolean;
   twist: boolean;
   damage: boolean;
-  images: IImageItem[];
 }

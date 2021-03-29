@@ -42,7 +42,6 @@ const App: React.FC = () => (
           <Route path="/" component={Home} exact />
           <Route path="/settings" component={Settings} exact />
           <Route path="/map" component={Map} exact />
-          <Route path="/camera" component={Camera} exact />
           <Route path="/crossingSupervision" component={CrossingSupervision} exact />
         </IonRouterOutlet>
       </IonReactRouter>

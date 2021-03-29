@@ -1,4 +1,4 @@
-import { ApolloClient, createHttpLink, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 
 let url;
 if (window.location.hostname === "localhost") {

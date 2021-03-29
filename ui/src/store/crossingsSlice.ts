@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import ICompany from "../interfaces/ICompany";
 import ICompanies from "../interfaces/ICompanies";
-import IAuthorization from "../interfaces/IAuthorization";
 import ITab from "../interfaces/ITab";
-import IRoute from "../interfaces/IRoute";
 import ISelectRoute from "../interfaces/ISelectRoute";
 import ISelectCrossing from "../interfaces/ISelectCrossing";
 import IStartCrossing from "../interfaces/IStartCrossing";
 import IRadioValue from "../interfaces/IRadioValue";
 import ISelectCompany from "../interfaces/ISelectCompany";
+import IImageItem from "../interfaces/IImageItem";
+import ITextAreaValue from "../interfaces/ITextAreaValue";
 
 interface IStateProps {
   Companies: ICompany[];
@@ -34,6 +34,32 @@ const crossingsSlice = createSlice({
   name: "selectedCrossing",
   initialState,
   reducers: {
+    SAVE_IMAGES: (state, action: PayloadAction<IImageItem[]>) => {
+      const crossing =
+        state.Companies[state.selectedCompany].authorizations[state.selectedAuthorization].routes[state.selectedRoute].crossings[
+          state.selectedCrossing
+        ];
+      console.log("crossingsSlice");
+      console.log(action.payload);
+      crossing.images = action.payload;
+    },
+    CROSSING_TEXTAREA_CHANGED: (state, action: PayloadAction<ITextAreaValue>) => {
+      const crossing =
+        state.Companies[state.selectedCompany].authorizations[state.selectedAuthorization].routes[state.selectedRoute].crossings[
+          state.selectedCrossing
+        ];
+      if (action.payload.name === "extrainfo") {
+        crossing.extraInfoDesc = action.payload.value;
+      } else if (action.payload.name === "speedinfo") {
+        crossing.speedInfoDesc = action.payload.value;
+      } else if (action.payload.name === "drivingline") {
+        crossing.drivingLineInfoDesc = action.payload.value;
+      } else if (action.payload.name === "description") {
+        crossing.descriptionDesc = action.payload.value;
+      } else if (action.payload.name === "exception") {
+        crossing.exceptionsInfoDesc = action.payload.value;
+      }
+    },
     CROSSING_RADIO_CHANGED: (state, action: PayloadAction<IRadioValue>) => {
       const crossing =
         state.Companies[state.selectedCompany].authorizations[state.selectedAuthorization].routes[state.selectedRoute].crossings[
@@ -97,6 +123,15 @@ const crossingsSlice = createSlice({
     SELECT_TAB: (state, action: PayloadAction<ITab>) => {
       // eslint-disable-next-line no-param-reassign
       state.tabName = action.payload.tabName;
+      if (action.payload.tabName === "takephotos" || action.payload.tabName === "summary") {
+        const crossing =
+          state.Companies[state.selectedCompany].authorizations[state.selectedAuthorization].routes[state.selectedRoute].crossings[
+            state.selectedCrossing
+          ];
+        if (crossing.images === undefined) {
+          crossing.images = [];
+        }
+      }
     },
   },
 });

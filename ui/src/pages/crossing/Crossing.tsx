@@ -15,12 +15,13 @@ import {
 } from "@ionic/react";
 import React, { useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import { Dispatch } from "redux";
 import { useDispatch } from "react-redux";
 import Header from "../../components/Header";
 import { RootState, useTypedSelector } from "../../store/store";
 import IRadioValue from "../../interfaces/IRadioValue";
 import { actions as crossingActions } from "../../store/crossingsSlice";
+import ITab from "../../interfaces/ITab";
+import ITextAreaValue from "../../interfaces/ITextAreaValue";
 
 export const Crossing: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -30,7 +31,18 @@ export const Crossing: React.FC = () => {
   const transportRoute = authorization.routes[crossingProps.selectedRoute];
   const crossing = transportRoute.crossings[crossingProps.selectedCrossing];
   const dispatch = useDispatch();
-
+  function changeTextAreaValue(pname: string, pvalue: string) {
+    const change = { name: pname, value: pvalue } as ITextAreaValue;
+    dispatch({ type: crossingActions.CROSSING_TEXTAREA_CHANGED, payload: change });
+  }
+  function takePhotos() {
+    const iTab = { tabName: "takephotos", tabNumber: 1 } as ITab;
+    dispatch({ type: crossingActions.SELECT_TAB, payload: iTab });
+  }
+  function summary() {
+    const iTab = { tabName: "summary", tabNumber: 1 } as ITab;
+    dispatch({ type: crossingActions.SELECT_TAB, payload: iTab });
+  }
   function radioClicked(radioName: string, radioValue: string) {
     const radioPayload = {
       name: radioName,
@@ -79,7 +91,13 @@ export const Crossing: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonButton>{t("crossing.buttons.takePhotos")}</IonButton>
+              <IonButton
+                onClick={() => {
+                  takePhotos();
+                }}
+              >
+                {t("crossing.buttons.takePhotos")}
+              </IonButton>
             </IonCol>
             <IonCol>
               <IonButton>{t("crossing.buttons.drivingLine")}</IonButton>
@@ -115,7 +133,13 @@ export const Crossing: React.FC = () => {
                   </IonListHeader>
                 </IonItem>
                 <IonItem class="whyItem">
-                  <IonTextarea class="whyTextArea" value={crossing.drivingLineInfoDesc} />
+                  <IonTextarea
+                    class="whyTextArea"
+                    value={crossing.drivingLineInfoDesc}
+                    onIonChange={(e) => {
+                      return changeTextAreaValue("drivingline", e.detail.value!);
+                    }}
+                  />
                 </IonItem>
               </IonCol>
             </IonRow>
@@ -151,7 +175,13 @@ export const Crossing: React.FC = () => {
                   </IonListHeader>
                 </IonItem>
                 <IonItem class="whyItem">
-                  <IonTextarea class="whyTextArea" value={crossing.speedInfoDesc} />
+                  <IonTextarea
+                    class="whyTextArea"
+                    value={crossing.speedInfoDesc}
+                    onIonChange={(e) => {
+                      return changeTextAreaValue("speedinfo", e.detail.value!);
+                    }}
+                  />
                 </IonItem>
               </IonCol>
             </IonRow>
@@ -223,7 +253,13 @@ export const Crossing: React.FC = () => {
                 </IonListHeader>
               </IonItem>
               <IonItem class="whyItem">
-                <IonTextarea class="whyTextArea" value={crossing.descriptionDesc} />
+                <IonTextarea
+                  class="whyTextArea"
+                  value={crossing.descriptionDesc}
+                  onIonChange={(e) => {
+                    return changeTextAreaValue("description", e.detail.value!);
+                  }}
+                />
               </IonItem>
             </IonCol>
           </IonRow>
@@ -235,7 +271,13 @@ export const Crossing: React.FC = () => {
                 </IonListHeader>
               </IonItem>
               <IonItem class="whyItem">
-                <IonTextarea class="whyTextArea" value={crossing.extraInfoDesc} />
+                <IonTextarea
+                  class="whyTextArea"
+                  value={crossing.extraInfoDesc}
+                  onIonChange={(e) => {
+                    return changeTextAreaValue("extrainfo", e.detail.value!);
+                  }}
+                />
               </IonItem>
             </IonCol>
           </IonRow>
@@ -244,7 +286,13 @@ export const Crossing: React.FC = () => {
               <IonButton>{t("crossing.buttons.exit")}</IonButton>
             </IonCol>
             <IonCol>
-              <IonButton>{t("crossing.buttons.summary")}</IonButton>
+              <IonButton
+                onClick={() => {
+                  summary();
+                }}
+              >
+                {t("crossing.buttons.summary")}
+              </IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>

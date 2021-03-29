@@ -1,29 +1,8 @@
-import {
-  IonTextarea,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonContent,
-  IonPage,
-  IonItem,
-  IonLabel,
-  IonListHeader,
-  IonRadio,
-  IonRadioGroup,
-  IonCheckbox,
-  IonButton,
-  IonToolbar,
-  IonTitle,
-  IonHeader,
-  IonButtons,
-  IonMenuButton,
-} from "@ionic/react";
+import { IonContent, IonPage, IonItem, IonToolbar, IonTitle, IonHeader, IonButtons, IonMenuButton } from "@ionic/react";
 import React, { useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import { gql } from "@apollo/client";
 import { useDispatch } from "react-redux";
-import Header from "../components/Header";
-import store, { RootState, useTypedSelector } from "../store/store";
+import { RootState, useTypedSelector } from "../store/store";
 import CompaniesList from "./crossing/CompaniesList";
 import client from "../service/apolloClient";
 import ICompanies from "../interfaces/ICompanies";
@@ -34,12 +13,13 @@ import CrossingList from "./crossing/CrossingList";
 import ViewCrossing from "./crossing/ViewCrossing";
 import Crossing from "./crossing/Crossing";
 import ITab from "../interfaces/ITab";
+import CrossingSummary from "./crossing/CrossingSummary";
+import Camera from "./Camera";
 
 export const CrossingSupervision: React.FC = () => {
   const { t, i18n } = useTranslation();
   const companiesProps = useTypedSelector((state: RootState) => state.crossingsReducer);
   const dispatch = useDispatch();
-
   const onGetCompanies = (companies: ICompanies) => {
     dispatch({ type: crossingActions.GET_COMPANIES, payload: companies });
   };
@@ -54,6 +34,10 @@ export const CrossingSupervision: React.FC = () => {
       tabNameParam = "route";
     } else if (companiesProps.tabName === "crossing") {
       tabNameParam = "viewcrossing";
+    } else if (companiesProps.tabName === "takephotos") {
+      tabNameParam = "crossing";
+    } else if (companiesProps.tabName === "summary") {
+      tabNameParam = "crossing";
     }
     const iTab = { tabName: tabNameParam, tabNumber: 1 } as ITab;
     dispatch({ type: crossingActions.SELECT_TAB, payload: iTab });
@@ -100,6 +84,8 @@ export const CrossingSupervision: React.FC = () => {
         {companiesProps.tabName === "route" ? <CrossingList /> : null}
         {companiesProps.tabName === "viewcrossing" ? <ViewCrossing /> : null}
         {companiesProps.tabName === "crossing" ? <Crossing /> : null}
+        {companiesProps.tabName === "summary" ? <CrossingSummary /> : null}
+        {companiesProps.tabName === "takephotos" ? <Camera /> : null}
       </IonContent>
     </IonPage>
   );

@@ -2,7 +2,6 @@ import React from "react";
 import { IonList, IonItem, IonButton } from "@ionic/react";
 import { useDispatch } from "react-redux";
 import { RootState, useTypedSelector } from "../../store/store";
-import ISelectRoute from "../../interfaces/ISelectRoute";
 import { actions as crossingActions } from "../../store/crossingsSlice";
 import IStartCrossing from "../../interfaces/IStartCrossing";
 
