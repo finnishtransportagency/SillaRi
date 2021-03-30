@@ -1,17 +1,14 @@
 package fi.vaylavirasto.sillari.aws;
 
-import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.BasicSessionCredentials;
-import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
 import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
@@ -19,7 +16,6 @@ import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
 import com.amazonaws.services.securitytoken.model.Credentials;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -31,27 +27,46 @@ public class AWSS3Client {
     private AmazonS3 s3Client=null;
     private static final String bucketName = "sillari-photos";
     private final String roleArn;
-    private final String accessKey;
-    private final String secretKey;
+    private String accessKey;
+    private String secretKey;
+    private final String environment;
+    private AssumeRoleResult roleResponse = null;
     public AWSS3Client() {
-        accessKey = System.getenv("accessKey");
-        secretKey = System.getenv("secretKey");
+        environment = System.getenv("environment");
+        if("localhost".equals(environment)) {
+            accessKey = System.getenv("accessKey");
+            secretKey = System.getenv("secretKey");
+        }
         roleArn = System.getenv("roleArn");
     }
     private void init() {
+        if(roleResponse != null) {
+            long now = new Date().getTime();
+            if(roleResponse.getCredentials().getExpiration().getTime() < now + 60*1000L) {
+                logger.debug("renew credentials " + roleResponse.getCredentials().getExpiration());
+                s3Client=null;
+            }
+        }
         if(s3Client == null) {
+            AWSSecurityTokenService stsClient;
+            if("localhost".equals(environment)) {
+                BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKey, secretKey);
+                AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(basicAWSCredentials);
+                stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+                        .withRegion(Regions.EU_WEST_1)
+                        .withCredentials(credentialsProvider)
+                        .build();
+            } else {
+                stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+                        .withRegion(Regions.EU_WEST_1)
+                        .build();
+            }
 
-            BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKey, secretKey);
-            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(basicAWSCredentials);
-            AWSSecurityTokenService stsClient = AWSSecurityTokenServiceClientBuilder.standard()
-                    .withRegion(Regions.EU_WEST_1)
-                    .withCredentials(credentialsProvider)
-                    .build();
             AssumeRoleRequest roleRequest = new AssumeRoleRequest()
                     .withRoleArn(roleArn)
                     .withRoleSessionName("SILLARI-PHOTOS");
 
-            AssumeRoleResult roleResponse = stsClient.assumeRole(roleRequest);
+            roleResponse = stsClient.assumeRole(roleRequest);
             Credentials myCreds = roleResponse.getCredentials();
 
             Date exTime = myCreds.getExpiration();

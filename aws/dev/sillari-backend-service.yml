@@ -54,3 +54,5 @@ Resources:
           Environment:
             - Name: "environment"
               Value: "dev"
+            - Name: "roleArn"
+              Value: "arn:aws:iam::384409174079:role/SillariPhotosRole"
