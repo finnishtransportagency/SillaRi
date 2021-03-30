@@ -22,4 +22,13 @@ public class RouteRepository {
                 .where(RouteMapper.route.AUTHORIZATION_ID.eq(authorizationId))
                 .fetch(new RouteMapper());
     }
+    public RouteModel getRoute(Integer id) {
+        RouteModel model = dsl.select().from(RouteMapper.route)
+                .leftJoin(RouteMapper.arrivalAddress).on(RouteMapper.route.ARRIVAL_ADDRESS_ID.eq(TransportMapper.arrivalAddress.ID))
+                .leftJoin(RouteMapper.departureAddress).on(RouteMapper.route.DEPARTURE_ADDRESS_ID.eq(TransportMapper.departureAddress.ID))
+                .where(RouteMapper.route.ID.eq(id))
+                .fetchOne(new RouteMapper());
+
+        return model;
+    }
 }

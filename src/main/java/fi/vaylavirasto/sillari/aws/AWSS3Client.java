@@ -19,6 +19,7 @@ import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
 import com.amazonaws.services.securitytoken.model.Credentials;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -29,9 +30,14 @@ public class AWSS3Client {
     private static final Logger logger = LogManager.getLogger();
     private AmazonS3 s3Client=null;
     private static final String bucketName = "sillari-photos";
-    private static final String roleArn = "arn:aws:iam::384409174079:role/SillariPhotosRole";
-    private static final String accessKey = "AKIAVTAESQA7VDJE3OK4";
-    private static final String secretKey = "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 ";
+    private final String roleArn;
+    private final String accessKey;
+    private final String secretKey;
+    public AWSS3Client() {
+        accessKey = System.getenv("accessKey");
+        secretKey = System.getenv("secretKey");
+        roleArn = System.getenv("roleArn");
+    }
     private void init() {
         if(s3Client == null) {
 

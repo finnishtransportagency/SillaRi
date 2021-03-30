@@ -21,4 +21,9 @@ public class AuthorizationRepository {
                 .where(AuthorizationMapper.authorization.COMPANY_ID.eq(companyId))
                 .fetch(new AuthorizationMapper());
     }
+    public AuthorizationModel getAuthorization(Integer id) {
+        return dsl.selectFrom(AuthorizationMapper.authorization)
+                .where(AuthorizationMapper.authorization.ID.eq(id))
+                .fetchOne(new AuthorizationMapper());
+    }
 }

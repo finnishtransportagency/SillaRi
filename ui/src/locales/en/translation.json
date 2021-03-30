@@ -5,7 +5,11 @@
       "title" : "SillaRi"
     },
     "title" : "SillaRi",
-    "content": "Welcome!"
+    "content": "Welcome!",
+    "tab": {
+      "transportCompanies": "Transport companies",
+      "upcomingBridges": "Upcoming bridges"
+    }
   },
   "map": {
     "attribution": "Material"
@@ -36,9 +40,14 @@
   "SidebarMenu" :
   {
     "title" : "SillaRi",
-    "mainPage" : "Mainpage",
+    "mainPage" : "Main page",
     "settings" : "Settings",
     "map" : "Map",
     "camera" : "Camera"
+  },
+  "company": {
+    "transportPermit": "Transport permit",
+    "validityPeriod": "Validity period",
+    "route": "Route"
   }
 }

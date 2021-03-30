@@ -17,5 +17,4 @@ export default interface ICrossing {
   permantBendings: boolean;
   twist: boolean;
   damage: boolean;
-  images: IImageItem[];
 }

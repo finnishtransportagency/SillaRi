@@ -2,7 +2,6 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.CompanyMapper;
 import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.TransportMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -22,5 +21,11 @@ public class CompanyRepository {
         return dsl.select().from(CompanyMapper.company)
                 .limit(limit)
                 .fetch(new CompanyMapper());
+    }
+
+    public CompanyModel getCompanyById(Integer id) {
+        return dsl.select().from(CompanyMapper.company)
+                .where(CompanyMapper.company.ID.eq(id))
+                .fetchOne(new CompanyMapper());
     }
 }

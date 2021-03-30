@@ -1,6 +1,4 @@
-export interface IRadioValue {
+export default interface IRadioValue {
   name: string;
   value: boolean;
 }
-
-export default IRadioValue;

@@ -127,7 +127,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     String[] roles = ((String) claims.get("custom:rooli")).split("\\,");
                     logger.debug(String.format("Roles %s", String.join(",", roles)));
 
-                    claims.forEach((k, v) -> logger.debug(String.format("Claim %s=%s", k, v)));
+                    // claims.forEach((k, v) -> logger.debug(String.format("Claim %s=%s", k, v)));
 
                     // NOTE: this is just a test, the real user roles will be added later
                     List<GrantedAuthority> authorityList = new ArrayList<>();

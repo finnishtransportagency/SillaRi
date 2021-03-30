@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,7 +33,7 @@ public class CompanyService {
         for(CompanyModel companyModel : companies) {
             companyModel.setAuthorizations(authorizationRepository.getCompanysAuthorizations(Long.valueOf(companyModel.getId()).intValue()));
             for(AuthorizationModel authorizationModel: companyModel.getAuthorizations()) {
-                authorizationModel.setRoutes(routeRepository.getRoutes(new Long(authorizationModel.getId()).intValue()));
+                authorizationModel.setRoutes(routeRepository.getRoutes(Long.valueOf(authorizationModel.getId()).intValue()));
                 for(RouteModel routeModel : authorizationModel.getRoutes()) {
                     List<CrossingModel> crossingModels = crossingRepository.getRoutesCrossings(Long.valueOf(routeModel.getId()).intValue());
                     routeModel.setCrossings(crossingModels);
@@ -40,5 +41,26 @@ public class CompanyService {
             }
         }
         return companies;
+    }
+
+    public List<CompanyModel> getCompanyList(Integer limit) {
+        if (limit >= 0) {
+            List<CompanyModel> companyList = companyRepository.getAllCompanies(limit);
+            for (CompanyModel companyModel : companyList) {
+                companyModel.setAuthorizations(authorizationRepository.getCompanysAuthorizations(Long.valueOf(companyModel.getId()).intValue()));
+            }
+            return companyList;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    public CompanyModel getCompany(Integer id) {
+        CompanyModel company = companyRepository.getCompanyById(id);
+        company.setAuthorizations(authorizationRepository.getCompanysAuthorizations(id));
+        for (AuthorizationModel authorizationModel : company.getAuthorizations()) {
+            authorizationModel.setRoutes(routeRepository.getRoutes(Long.valueOf(authorizationModel.getId()).intValue()));
+        }
+        return company;
     }
 }

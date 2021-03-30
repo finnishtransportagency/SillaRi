@@ -11,4 +11,24 @@ class CrossingMutation {
   `;
 }
 
+export const startCrossingMutation = gql`
+  mutation startCrossing($companyId: Int!, $authorizationId: Int!, $bridgeId: Int!) {
+    startCrossing(companyId: $companyId, authorizationId: $authorizationId, bridgeId: $bridgeId) {
+      describe
+      drivingLineInfo
+      drivingLineInfoDesc
+      exceptionsInfo
+      exceptionsInfoDesc
+      id
+      speedInfo
+      speedInfoDesc
+      started
+      bridge {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export default CrossingMutation;

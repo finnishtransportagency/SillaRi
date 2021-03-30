@@ -7,10 +7,9 @@ import { ApolloProvider } from "@apollo/client";
 import Home from "./pages/Home";
 import Settings from "./pages/Settings";
 import Map from "./pages/Map";
-import Crossing from "./pages/crossing/Crossing";
-import CrossingSupervision from "./pages/CrossingSupervision";
-import CompaniesList from "./pages/crossing/CompaniesList";
+import Crossing from "./pages/Crossing";
 import Camera from "./pages/Camera";
+import CompanyDetail from "./pages/CompanyDetail";
 import SidebarMenu from "./components/SidebarMenu";
 import client from "./service/apolloClient";
 
@@ -32,6 +31,9 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import RouteDetail from "./pages/RouteDetail";
+import BridgeDetail from "./pages/BridgeDetail";
+import CrossingSummary from "./pages/CrossingSummary";
 
 const App: React.FC = () => (
   <ApolloProvider client={client}>
@@ -42,7 +44,12 @@ const App: React.FC = () => (
           <Route path="/" component={Home} exact />
           <Route path="/settings" component={Settings} exact />
           <Route path="/map" component={Map} exact />
-          <Route path="/crossingSupervision" component={CrossingSupervision} exact />
+          <Route path="/companydetail/:id" component={CompanyDetail} exact />
+          <Route path="/routeDetail/:authorizationId/:routeId" component={RouteDetail} exact />
+          <Route path="/bridgeDetail/:id" component={BridgeDetail} exact />
+          <Route path="/supervision/:id" component={Crossing} exact />
+          <Route path="/takePhotos" component={Camera} exact />
+          <Route path="/summary/:id" component={CrossingSummary} exact />
         </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>
