@@ -34,6 +34,7 @@ import "./theme/variables.css";
 import RouteDetail from "./pages/RouteDetail";
 import BridgeDetail from "./pages/BridgeDetail";
 import CrossingSummary from "./pages/CrossingSummary";
+import DenyCrossing from "./pages/DenyCrossing";
 
 const App: React.FC = () => (
   <ApolloProvider client={client}>
@@ -47,6 +48,7 @@ const App: React.FC = () => (
           <Route path="/companydetail/:id" component={CompanyDetail} exact />
           <Route path="/routeDetail/:authorizationId/:routeId" component={RouteDetail} exact />
           <Route path="/bridgeDetail/:id" component={BridgeDetail} exact />
+          <Route path="/denyCrossing/:id" component={DenyCrossing} exact />
           <Route path="/supervision/:id" component={Crossing} exact />
           <Route path="/takePhotos" component={Camera} exact />
           <Route path="/summary/:id" component={CrossingSummary} exact />

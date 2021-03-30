@@ -103,6 +103,7 @@
         "edit": "Muokkaa",
         "save": "Tallenna"
       }
-    }
+    },
+    "denyCrossing": "Kuljetus ei voi ylittää siltaa"
   }
 }
