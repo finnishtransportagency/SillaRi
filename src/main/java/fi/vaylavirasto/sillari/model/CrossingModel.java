@@ -16,4 +16,5 @@ public class CrossingModel {
     private String speedInfoDesc;
     private String exceptionsInfoDesc;
     private String extraInfoDesc;
+    private String started;
 }

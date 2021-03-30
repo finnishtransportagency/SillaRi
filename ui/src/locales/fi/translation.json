@@ -5,7 +5,11 @@
       "title" : "SillaRi"
     },
     "title" : "SillaRi",
-    "content": "Tervetuloa!"
+    "content": "Tervetuloa!",
+    "tab": {
+      "transportCompanies": "Kuljetusyritykset",
+      "upcomingBridges": "Tulevat sillat"
+    }
   },
   "map": {
     "attribution": "Aineisto"
@@ -42,6 +46,11 @@
     "camera" : "Kamera",
     "crossing" : "Sillan ylitys"
   },
+  "company": {
+    "transportPermit": "Kuljetuslupa",
+    "validityPeriod": "Voimassaoloaika",
+    "route": "Reitti"
+  },
   "crossing" :
   {
     "title" : "Sillan ylitys",
@@ -77,6 +86,23 @@
       "drivingLine" : "Tuo ajolinja",
       "exit" : "Poistu",
       "summary" : "Yhteenveto"
+    },
+    "summary":
+    {
+      "title": "Yhteenveto",
+      "speed": "Ajonopeus",
+      "bridgeName": "",
+      "drivingLine": "Ajolinja",
+      "images": "Kuvat",
+      "kpl": "kpl",
+      "crossingStarted": "VALVONTA ALOITETTU:",
+      "exceptions": "Poikkeavat havainnot",
+      "exceptionsDesc": "Poikkeavien havaintojen tarkennus",
+      "extraInfo": "Lisätiedot",
+      "buttons": {
+        "edit": "Muokkaa",
+        "save": "Tallenna"
+      }
     }
   }
 }

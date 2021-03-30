@@ -1,5 +1,5 @@
 import ICompany from "./ICompany";
 
-export default interface IICompanies {
+export default interface ICompanies {
   Companies: ICompany[];
 }

@@ -8,7 +8,7 @@ type Transport {
     endDate: String
     crossings: [Crossing]
 }
-
+"""
 type CrossingList {
     id: ID!
     authorizationId: Int
@@ -18,14 +18,14 @@ type CrossingList {
     arrivalTime: String
     crossings: [Crossing]
 }
-
-type AuthorizationList {
+"""
+type Authorization {
     id: ID!
     companyId: Int
     permissionId: String
     validStartDate: String
     validEndDate: String
-    routes: [CrossingList]
+    routes: [Route]
 }
 
 type Address {
@@ -51,16 +51,64 @@ type Crossing {
     speedInfoDesc: String
     exceptionsInfoDesc: String
     extraInfoDesc: String
+    started: String
 }
 
 type Company {
     id: ID!
     name: String
-    authorizations: [AuthorizationList]
+    authorizations: [Authorization]
+}
+
+type Route {
+    id: ID!
+    authorizationId: Int
+    name: String
+    departureAddress: Address
+    arrivalAddress: Address
+    departureTime: String
+    arrivalTime: String
+    crossings: [Crossing]
+}
+
+type File {
+    id: Int!
+    filename: String!
+    mimetype: String!
+    encoding: String!
+}
+input CrossingInput {
+    id: ID!
+    bridgeId: Int!
+    started: String
+    drivingLineInfo: Boolean
+    speedInfo: Boolean
+    exceptionsInfo: Boolean
+    describe: Boolean
+    drivingLineInfoDesc: String
+    speedInfoDesc: String
+    exceptionsInfoDesc: String
+    extraInfoDesc: String
+    descriptionDesc: String
+    permantBendings: Boolean
+    twist: Boolean
+    damage: Boolean
+}
+
+type Mutation {
+    singleUpload(crossingId: String!, filename: String!, file: String!): File!,
+    saveCrossing(crossing: CrossingInput!): Crossing,
+    startCrossing(companyId: Int!, authorizationId: Int!, bridgeId: Int!) : Crossing,
 }
 
 type Query {
     Transports(limit: Int = 10) : [Transport]!
     Transport(id : Int!) : Transport!
     Companies(limit: Int = 10) : [Company]
+    CompanyList(limit: Int = 10) : [Company]
+    Company(id : Int!) : Company
+    Route(id :Int!) : Route
+    Bridge(id :Int!) : Bridge
+    Authorization(id :Int!) : Authorization
 }
+

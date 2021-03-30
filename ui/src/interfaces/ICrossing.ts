@@ -1,4 +1,5 @@
 import IBridge from "./IBridge";
+import IImageItem from "./IImageItem";
 
 export default interface ICrossing {
   id: number;

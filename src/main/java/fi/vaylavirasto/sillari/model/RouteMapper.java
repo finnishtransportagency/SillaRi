@@ -17,6 +17,7 @@ public class RouteMapper  implements RecordMapper<Record, RouteModel> {
     public RouteModel map(Record record) {
         RouteModel routeModel = new RouteModel();
         routeModel.setId(record.get(route.ID));
+        routeModel.setName(record.get(route.NAME));
         routeModel.setDepartureTime(record.get(route.DEPARTURE_TIME));
         routeModel.setArrivalTime(record.get(route.ARRIVAL_TIME));
 

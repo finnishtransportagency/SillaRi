@@ -35,12 +35,6 @@ const SidebarMenu: React.FC = () => {
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>
-            <IonItem routerLink="/camera">
-              <IonIcon icon={cameraOutline} slot="start" />
-              <IonLabel>{t("SidebarMenu.camera")}</IonLabel>
-            </IonItem>
-          </IonMenuToggle>
-          <IonMenuToggle>
             <IonItem routerLink="/crossingSupervision">
               <IonIcon icon={mapOutline} slot="start" />
               <IonLabel>{t("SidebarMenu.crossing")}</IonLabel>

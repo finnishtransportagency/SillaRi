@@ -4,17 +4,20 @@ import { useTranslation } from "react-i18next";
 import { Plugins, CameraSource, CameraResultType } from "@capacitor/core";
 import Moment from "react-moment";
 import { camera, trash } from "ionicons/icons";
-
-export interface ImageItem {
-  dataUrl: string | undefined;
-  date: Date;
-}
+import { useDispatch } from "react-redux";
+import { RootState, useTypedSelector } from "../store/store";
+import IImageItem from "../interfaces/IImageItem";
+import { actions as crossingActions } from "../store/crossingsSlice";
+import { dateTimeFormat } from "../utils/constants";
 
 const CameraContainer: React.FC = () => {
   const { t } = useTranslation();
   const { Camera } = Plugins;
+  const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
+  const dispatch = useDispatch();
+  const { images } = crossingProps;
 
-  const [imageItems, setImageItems] = useState<ImageItem[]>([]);
+  // const [imageItems, setImageItems] = useState<IImageItem[]>([]);
 
   const TakePicture = async () => {
     try {
@@ -22,7 +25,12 @@ const CameraContainer: React.FC = () => {
         source: CameraSource.Camera,
         resultType: CameraResultType.DataUrl,
       });
-      setImageItems([...imageItems, { dataUrl: image.dataUrl, date: new Date() }]);
+      const now = new Date();
+      const fname = images.length;
+      dispatch({
+        type: crossingActions.SAVE_IMAGES,
+        payload: [...images, { id: images.length, filename: fname, dataUrl: image.dataUrl, date: now }],
+      });
     } catch (err) {
       console.log("TakePicture REJECTED:");
       console.log(err);
@@ -30,25 +38,25 @@ const CameraContainer: React.FC = () => {
   };
 
   const RemoveImageItem = (index: number) => {
-    imageItems.splice(index, 1);
-    setImageItems([...imageItems]);
+    images.splice(index, 1);
+    dispatch({ type: crossingActions.SAVE_IMAGES, payload: images });
   };
 
   return (
     <IonContent>
       <IonListHeader>
         <IonLabel>
-          {t("camera.listLabel")} ({imageItems.length} {t("camera.listLabelPcs")})
+          {t("camera.listLabel")} ({images.length} {t("camera.listLabelPcs")})
         </IonLabel>
       </IonListHeader>
       <IonList>
-        {imageItems.map((imageItem, i) => (
+        {images.map((imageItem, i) => (
           <IonItem key={imageItem.dataUrl}>
             <IonThumbnail slot="start">
               <IonImg src={imageItem.dataUrl} />
             </IonThumbnail>
             <IonLabel>
-              <Moment format="DD.MM.YYYY HH:mm:ss">{imageItem.date.toString()}</Moment>
+              <Moment format={dateTimeFormat}>{imageItem.date.toString()}</Moment>
             </IonLabel>
             <IonButton slot="end" onClick={() => RemoveImageItem(i)}>
               <IonIcon icon={trash} slot="start" />

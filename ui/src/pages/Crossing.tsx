@@ -15,21 +15,63 @@ import {
 } from "@ionic/react";
 import React, { useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import { Dispatch } from "redux";
 import { useDispatch } from "react-redux";
-import Header from "../../components/Header";
-import { RootState, useTypedSelector } from "../../store/store";
-import IRadioValue from "../../interfaces/IRadioValue";
-import { actions as crossingActions } from "../../store/crossingsSlice";
+import { useMutation, useQuery } from "@apollo/client";
+import Header from "../components/Header";
+import { RootState, useTypedSelector } from "../store/store";
+import IRadioValue from "../interfaces/IRadioValue";
+import { actions as crossingActions } from "../store/crossingsSlice";
+import ITextAreaValue from "../interfaces/ITextAreaValue";
+import crossingmutation, { startCrossingMutation } from "../graphql/CrossingMutation";
+import ICrossingDetail from "../interfaces/ICrossingDetails";
 
 export const Crossing: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
-  const company = crossingProps.Companies[crossingProps.selectedCompany];
-  const authorization = company.authorizations[crossingProps.selectedAuthorization];
-  const transportRoute = authorization.routes[crossingProps.selectedRoute];
-  const crossing = transportRoute.crossings[crossingProps.selectedCrossing];
+
   const dispatch = useDispatch();
+  const crossings = useTypedSelector((state) => state.crossingsReducer);
+  const { selectedCompanyDetail, selectedBridgeDetail, selectedCrossingDetail, selectedAuthorizationDetail, selectedRouteDetail } = crossings;
+  const { id: companyId = -1 } = selectedCompanyDetail || {};
+  const { id: authorizationId = -1 } = selectedAuthorizationDetail || {};
+  const { id: bridgeId = -1 } = selectedBridgeDetail || {};
+  const [startCrossing, { data }] = useMutation<ICrossingDetail>(startCrossingMutation, {
+    onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),
+    onError: (err) => console.error(err),
+  });
+
+  console.log(`companyId ${companyId}`);
+  console.log(`authorizationId ${authorizationId}`);
+  console.log(`bridge ${bridgeId}`);
+  // const id = client.mutate({ mutation: crossingmutation.saveCrossingMutation, variables: { crossing: cross } });
+
+  if (selectedCrossingDetail === undefined) {
+    startCrossing({
+      variables: { companyId, authorizationId, bridgeId },
+    });
+  }
+
+  const { name: bridgeName = "" } = selectedBridgeDetail || {};
+  const {
+    speedInfoDesc = "",
+    speedInfo = true,
+    drivingLineInfoDesc = "",
+    exceptionsInfoDesc = "",
+    descriptionDesc = "",
+    damage = false,
+    twist = false,
+    permantBendings = false,
+    extraInfoDesc = "",
+    describe = false,
+    exceptionsInfo = "",
+    drivingLineInfo = false,
+    started = "",
+    id = -1,
+  } = selectedCrossingDetail || {};
+  const { permissionId = "" } = selectedAuthorizationDetail || {};
+  function changeTextAreaValue(pname: string, pvalue: string) {
+    const change = { name: pname, value: pvalue } as ITextAreaValue;
+    dispatch({ type: crossingActions.CROSSING_TEXTAREA_CHANGED, payload: change });
+  }
 
   function radioClicked(radioName: string, radioValue: string) {
     const radioPayload = {
@@ -53,14 +95,14 @@ export const Crossing: React.FC = () => {
           <IonRow>
             <IonCol>
               <IonLabel>
-                {t("crossing.permitNumber")} {authorization.permissionId}
+                {t("crossing.permitNumber")} {permissionId}
               </IonLabel>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
               <IonLabel>
-                {t("crossing.crossingStarted")} {crossing.started}
+                {t("crossing.crossingStarted")} {started}
               </IonLabel>
             </IonCol>
           </IonRow>
@@ -68,7 +110,7 @@ export const Crossing: React.FC = () => {
           <IonRow>
             <IonCol>
               <IonLabel>
-                {t("crossing.bridgeName")} {crossing.bridge.name}
+                {t("crossing.bridgeName")} {bridgeName}
               </IonLabel>
             </IonCol>
           </IonRow>
@@ -79,7 +121,7 @@ export const Crossing: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonButton>{t("crossing.buttons.takePhotos")}</IonButton>
+              <IonButton routerLink="/takephotos">{t("crossing.buttons.takePhotos")}</IonButton>
             </IonCol>
             <IonCol>
               <IonButton>{t("crossing.buttons.drivingLine")}</IonButton>
@@ -92,7 +134,7 @@ export const Crossing: React.FC = () => {
               </IonListHeader>
             </IonCol>
           </IonRow>
-          <IonRadioGroup value={crossing.drivingLineInfo ? "yes" : "no"} onIonChange={(e) => radioClicked("drivingLineInfo", e.detail.value)}>
+          <IonRadioGroup value={drivingLineInfo ? "yes" : "no"} onIonChange={(e) => radioClicked("drivingLineInfo", e.detail.value)}>
             <IonRow>
               <IonCol class="crossingRadioCol">
                 <IonItem>
@@ -107,7 +149,7 @@ export const Crossing: React.FC = () => {
                 </IonItem>
               </IonCol>
             </IonRow>
-            <IonRow style={!crossing.drivingLineInfo ? {} : { display: "none" }} id="drivigingLineInfoRow" class="whyRow">
+            <IonRow style={!drivingLineInfo ? {} : { display: "none" }} id="drivigingLineInfoRow" class="whyRow">
               <IonCol class="whyCol">
                 <IonItem class="whyItem">
                   <IonListHeader>
@@ -115,7 +157,13 @@ export const Crossing: React.FC = () => {
                   </IonListHeader>
                 </IonItem>
                 <IonItem class="whyItem">
-                  <IonTextarea class="whyTextArea" value={crossing.drivingLineInfoDesc} />
+                  <IonTextarea
+                    class="whyTextArea"
+                    value={drivingLineInfoDesc}
+                    onIonChange={(e) => {
+                      return changeTextAreaValue("drivingline", e.detail.value!);
+                    }}
+                  />
                 </IonItem>
               </IonCol>
             </IonRow>
@@ -128,7 +176,7 @@ export const Crossing: React.FC = () => {
               </IonListHeader>
             </IonCol>
           </IonRow>
-          <IonRadioGroup value={crossing.speedInfo ? "yes" : "no"} onIonChange={(e) => radioClicked("speedInfo", e.detail.value)}>
+          <IonRadioGroup value={speedInfo ? "yes" : "no"} onIonChange={(e) => radioClicked("speedInfo", e.detail.value)}>
             <IonRow>
               <IonCol class="crossingRadioCol">
                 <IonItem>
@@ -143,7 +191,7 @@ export const Crossing: React.FC = () => {
                 </IonItem>
               </IonCol>
             </IonRow>
-            <IonRow style={!crossing.speedInfo ? {} : { display: "none" }} class="whyRow">
+            <IonRow style={!speedInfo ? {} : { display: "none" }} class="whyRow">
               <IonCol class="whyCol">
                 <IonItem class="whyItem">
                   <IonListHeader>
@@ -151,7 +199,13 @@ export const Crossing: React.FC = () => {
                   </IonListHeader>
                 </IonItem>
                 <IonItem class="whyItem">
-                  <IonTextarea class="whyTextArea" value={crossing.speedInfoDesc} />
+                  <IonTextarea
+                    class="whyTextArea"
+                    value={speedInfoDesc}
+                    onIonChange={(e) => {
+                      return changeTextAreaValue("speedinfo", e.detail.value!);
+                    }}
+                  />
                 </IonItem>
               </IonCol>
             </IonRow>
@@ -164,7 +218,7 @@ export const Crossing: React.FC = () => {
               </IonListHeader>
             </IonCol>
           </IonRow>
-          <IonRadioGroup value={crossing.exceptionsInfo ? "yes" : "no"} onIonChange={(e) => radioClicked("exceptionsInfo", e.detail.value)}>
+          <IonRadioGroup value={exceptionsInfo ? "yes" : "no"} onIonChange={(e) => radioClicked("exceptionsInfo", e.detail.value)}>
             <IonRow>
               <IonCol class="crossingRadioCol">
                 <IonItem>
@@ -180,7 +234,7 @@ export const Crossing: React.FC = () => {
               </IonCol>
             </IonRow>
           </IonRadioGroup>
-          <IonRow style={crossing.exceptionsInfo ? {} : { display: "none" }} class="whyRow">
+          <IonRow style={exceptionsInfo ? {} : { display: "none" }} class="whyRow">
             <IonCol class="whyCol">
               <IonItem class="whyItem">
                 <IonListHeader>
@@ -191,31 +245,26 @@ export const Crossing: React.FC = () => {
                 <IonCheckbox
                   slot="start"
                   value="bending"
-                  checked={crossing.permantBendings}
-                  onClick={() => checkBoxClicked("permantBendings", !crossing.permantBendings)}
+                  checked={permantBendings}
+                  onClick={() => checkBoxClicked("permantBendings", !permantBendings)}
                 />
                 <IonLabel>{t("crossing.exceptions.permantBendings")}</IonLabel>
               </IonItem>
               <IonItem key="twist">
-                <IonCheckbox slot="start" value="twist" checked={crossing.twist} onClick={() => checkBoxClicked("twist", !crossing.twist)} />
+                <IonCheckbox slot="start" value="twist" checked={twist} onClick={() => checkBoxClicked("twist", !twist)} />
                 <IonLabel>{t("crossing.exceptions.twist")}</IonLabel>
               </IonItem>
               <IonItem key="damage">
-                <IonCheckbox slot="start" value="damage" checked={crossing.damage} onClick={() => checkBoxClicked("damage", !crossing.damage)} />
+                <IonCheckbox slot="start" value="damage" checked={damage} onClick={() => checkBoxClicked("damage", !damage)} />
                 <IonLabel>{t("crossing.exceptions.damage")}</IonLabel>
               </IonItem>
               <IonItem key="somethingElse">
-                <IonCheckbox
-                  slot="start"
-                  value="somethingElse"
-                  checked={crossing.describe}
-                  onClick={() => checkBoxClicked("someThingElse", !crossing.describe)}
-                />
+                <IonCheckbox slot="start" value="somethingElse" checked={describe} onClick={() => checkBoxClicked("someThingElse", !describe)} />
                 <IonLabel>{t("crossing.exceptions.somethingElse")}</IonLabel>
               </IonItem>
             </IonCol>
           </IonRow>
-          <IonRow style={crossing.describe ? {} : { display: "none" }}>
+          <IonRow style={describe ? {} : { display: "none" }}>
             <IonCol>
               <IonItem class="whyItem">
                 <IonListHeader>
@@ -223,7 +272,13 @@ export const Crossing: React.FC = () => {
                 </IonListHeader>
               </IonItem>
               <IonItem class="whyItem">
-                <IonTextarea class="whyTextArea" value={crossing.descriptionDesc} />
+                <IonTextarea
+                  class="whyTextArea"
+                  value={descriptionDesc}
+                  onIonChange={(e) => {
+                    return changeTextAreaValue("description", e.detail.value!);
+                  }}
+                />
               </IonItem>
             </IonCol>
           </IonRow>
@@ -235,7 +290,13 @@ export const Crossing: React.FC = () => {
                 </IonListHeader>
               </IonItem>
               <IonItem class="whyItem">
-                <IonTextarea class="whyTextArea" value={crossing.extraInfoDesc} />
+                <IonTextarea
+                  class="whyTextArea"
+                  value={extraInfoDesc}
+                  onIonChange={(e) => {
+                    return changeTextAreaValue("extrainfo", e.detail.value!);
+                  }}
+                />
               </IonItem>
             </IonCol>
           </IonRow>
@@ -244,7 +305,7 @@ export const Crossing: React.FC = () => {
               <IonButton>{t("crossing.buttons.exit")}</IonButton>
             </IonCol>
             <IonCol>
-              <IonButton>{t("crossing.buttons.summary")}</IonButton>
+              <IonButton routerLink={`/summary/${id}`}>{t("crossing.buttons.summary")}</IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>
