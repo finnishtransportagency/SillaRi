@@ -16,6 +16,7 @@
 
     <properties>
         <java.version>11</java.version>
+        <aws.sdk.version>1.11.963</aws.sdk.version>
     </properties>
     <profiles>
         <profile>
@@ -198,29 +199,29 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-core</artifactId>
-            <version>1.11.963</version>
+            <version>${aws.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-core</artifactId>
-            <version>1.11.980</version>
+            <version>${aws.sdk.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.11.980</version>
+            <version>${aws.sdk.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
         <dependency>
             <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-auth</artifactId>
-            <version>1.11.980</version>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>${aws.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-sts</artifactId>
-            <version>1.11.963</version>
+            <version>${aws.sdk.version}</version>
         </dependency>
 
     </dependencies>
@@ -316,5 +317,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
