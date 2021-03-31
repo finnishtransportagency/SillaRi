@@ -3,15 +3,14 @@ export default interface ICrossingInput {
   bridgeId: number;
   started: string;
   drivingLineInfo: boolean;
-  drivingLineInfoDesc: string;
+  drivingLineInfoDescription: string;
   speedInfo: boolean;
-  speedInfoDesc: string;
+  speedInfoDescription: string;
   exceptionsInfo: boolean;
-  exceptionsInfoDesc: string;
+  exceptionsInfoDescription: string;
   describe: boolean;
-  descriptionDesc: string;
-  extraInfoDesc: string;
-  permantBendings: boolean;
+  extraInfoDescription: string;
+  permanentBendings: boolean;
   twist: boolean;
   damage: boolean;
 }
