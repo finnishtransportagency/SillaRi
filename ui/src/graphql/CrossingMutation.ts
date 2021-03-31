@@ -1,28 +1,20 @@
 import { gql } from "@apollo/client";
 
-class CrossingMutation {
-  static saveCrossingMutation = gql`
-    mutation saveCrossing($crossing: CrossingInput!) {
-      saveCrossing(crossing: $crossing) {
-        id
-        exceptionsInfo
-      }
-    }
-  `;
-}
-
-export const startCrossingMutation = gql`
-  mutation startCrossing($companyId: Int!, $authorizationId: Int!, $bridgeId: Int!) {
-    startCrossing(companyId: $companyId, authorizationId: $authorizationId, bridgeId: $bridgeId) {
+export const updateCrossingMutation = gql`
+  mutation updateCrossing($crossing: CrossingInput!) {
+    updateCrossing(crossing: $crossing) {
       describe
       drivingLineInfo
-      drivingLineInfoDesc
+      drivingLineInfoDescription
       exceptionsInfo
-      exceptionsInfoDesc
+      exceptionsInfoDescription
       id
       speedInfo
-      speedInfoDesc
+      speedInfoDescription
       started
+      permanentBendings
+      twist
+      damage
       bridge {
         id
         name
@@ -31,4 +23,27 @@ export const startCrossingMutation = gql`
   }
 `;
 
-export default CrossingMutation;
+export const startCrossingMutation = gql`
+  mutation startCrossing($routeId: Int!, $bridgeId: Int!) {
+    startCrossing(routeId: $routeId, bridgeId: $bridgeId) {
+      describe
+      drivingLineInfo
+      drivingLineInfoDescription
+      exceptionsInfo
+      exceptionsInfoDescription
+      id
+      speedInfo
+      speedInfoDescription
+      started
+      permanentBendings
+      twist
+      damage
+      bridge {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export default startCrossingMutation;

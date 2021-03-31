@@ -15,6 +15,7 @@ import IBridgeDetail from "../interfaces/IBridgeDetail";
 import IAuthorization from "../interfaces/IAuthorization";
 import IAuthorizationDetail from "../interfaces/IAuthorizationDetail";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
+import ICrossingUpdate from "../interfaces/ICrossingUpdate";
 
 interface IStateProps {
   Companies: ICompany[];
@@ -30,6 +31,7 @@ interface IStateProps {
   selectedRoute: number;
   selectedCrossing: number;
   crossing?: ICrossing;
+  loading: boolean;
 }
 
 const initialState: IStateProps = {
@@ -46,6 +48,7 @@ const initialState: IStateProps = {
   selectedRoute: 0,
   selectedCrossing: 0,
   crossing: undefined,
+  loading: false,
 };
 
 const crossingsSlice = createSlice({
@@ -67,16 +70,14 @@ const crossingsSlice = createSlice({
     CROSSING_TEXTAREA_CHANGED: (state, action: PayloadAction<ITextAreaValue>) => {
       const { selectedCrossingDetail } = state;
       if (selectedCrossingDetail !== undefined) {
-        if (action.payload.name === "extrainfo") {
-          selectedCrossingDetail.extraInfoDesc = action.payload.value;
-        } else if (action.payload.name === "speedinfo") {
-          selectedCrossingDetail.speedInfoDesc = action.payload.value;
-        } else if (action.payload.name === "drivingline") {
-          selectedCrossingDetail.drivingLineInfoDesc = action.payload.value;
-        } else if (action.payload.name === "description") {
-          selectedCrossingDetail.descriptionDesc = action.payload.value;
-        } else if (action.payload.name === "exception") {
-          selectedCrossingDetail.exceptionsInfoDesc = action.payload.value;
+        if (action.payload.name === "extraInfoDescription") {
+          selectedCrossingDetail.extraInfoDescription = action.payload.value;
+        } else if (action.payload.name === "speedInfoDescription") {
+          selectedCrossingDetail.speedInfoDescription = action.payload.value;
+        } else if (action.payload.name === "drivingLineInfoDescription") {
+          selectedCrossingDetail.drivingLineInfoDescription = action.payload.value;
+        } else if (action.payload.name === "exceptionsInfoDescription") {
+          selectedCrossingDetail.exceptionsInfoDescription = action.payload.value;
         }
       }
     },
@@ -94,7 +95,7 @@ const crossingsSlice = createSlice({
         } else if (action.payload.name === "twist") {
           selectedCrossingDetail.twist = action.payload.value;
         } else if (action.payload.name === "permantBendings") {
-          selectedCrossingDetail.permantBendings = action.payload.value;
+          selectedCrossingDetail.permanentBendings = action.payload.value;
         } else if (action.payload.name === "damage") {
           selectedCrossingDetail.damage = action.payload.value;
         }
@@ -103,13 +104,19 @@ const crossingsSlice = createSlice({
     START_CROSSING: (state, action: PayloadAction<ICrossingDetail>) => {
       // TODO - use action.payload.crossing?
       console.log("START_CROSSING");
-      return { ...state, selectedCrossingDetail: action.payload.startCrossing };
+      return { ...state, loading: false, selectedCrossingDetail: action.payload.startCrossing };
     },
     GET_COMPANY_LIST: (state, action: PayloadAction<ICompanyList>) => {
       return { ...state, companyList: action.payload.CompanyList };
     },
     GET_COMPANY: (state, action: PayloadAction<ICompanyDetail>) => {
       return { ...state, selectedCompanyDetail: action.payload.Company };
+    },
+    SET_LOADING: (state, action: PayloadAction<boolean>) => {
+      return { ...state, loading: action.payload };
+    },
+    CROSSING_SAVED: (state, action: PayloadAction<ICrossingUpdate>) => {
+      alert(action.payload.updateCrossing);
     },
   },
 });

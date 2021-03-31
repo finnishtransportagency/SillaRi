@@ -1,5 +1,5 @@
 import IAddress from "./IAddress";
-import ICrossing from "./ICrossing";
+import IBridge from "./IBridge";
 
 export default interface IRoute {
   id: number;
@@ -8,5 +8,5 @@ export default interface IRoute {
   arrivalAddress: IAddress;
   departureTime: string;
   arrivalTime: string;
-  crossings: ICrossing[];
+  bridges: IBridge[];
 }
