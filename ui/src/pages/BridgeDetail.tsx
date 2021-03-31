@@ -56,9 +56,18 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
             </IonCol>
           </IonRow>
         </IonGrid>
-        <IonButton color="primary" routerLink={`/supervision/${id}`}>
-          Aloita valvonta
-        </IonButton>
+        <IonGrid>
+          <IonRow>
+            <IonButton color="primary" routerLink={`/denyCrossing/${id}`}>
+              Kiellä ylitys
+            </IonButton>
+          </IonRow>
+          <IonRow>
+            <IonButton color="primary" routerLink={`/supervision/${id}`}>
+              Aloita valvonta
+            </IonButton>
+          </IonRow>
+        </IonGrid>
       </IonContent>
     </IonPage>
   );
