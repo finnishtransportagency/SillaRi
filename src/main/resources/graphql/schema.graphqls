@@ -47,11 +47,14 @@ type Crossing {
     speedInfo: Boolean
     exceptionsInfo: Boolean
     describe: Boolean
-    drivingLineInfoDesc: String
-    speedInfoDesc: String
-    exceptionsInfoDesc: String
-    extraInfoDesc: String
+    drivingLineInfoDescription: String
+    speedInfoDescription: String
+    exceptionsInfoDescription: String
+    extraInfoDescription: String
     started: String
+    permanentBendings: Boolean
+    twist: Boolean
+    damage: Boolean
 }
 
 type Company {
@@ -68,7 +71,7 @@ type Route {
     arrivalAddress: Address
     departureTime: String
     arrivalTime: String
-    crossings: [Crossing]
+    bridges: [Bridge]
 }
 
 type File {
@@ -85,20 +88,19 @@ input CrossingInput {
     speedInfo: Boolean
     exceptionsInfo: Boolean
     describe: Boolean
-    drivingLineInfoDesc: String
-    speedInfoDesc: String
-    exceptionsInfoDesc: String
-    extraInfoDesc: String
-    descriptionDesc: String
-    permantBendings: Boolean
+    drivingLineInfoDescription: String
+    speedInfoDescription: String
+    exceptionsInfoDescription: String
+    extraInfoDescription: String
+    permanentBendings: Boolean
     twist: Boolean
     damage: Boolean
 }
 
 type Mutation {
     singleUpload(crossingId: String!, filename: String!, file: String!): File!,
-    saveCrossing(crossing: CrossingInput!): Crossing,
-    startCrossing(companyId: Int!, authorizationId: Int!, bridgeId: Int!) : Crossing,
+    updateCrossing(crossing: CrossingInput!): Crossing,
+    startCrossing(routeId: Int!, bridgeId: Int!) : Crossing,
 }
 
 type Query {

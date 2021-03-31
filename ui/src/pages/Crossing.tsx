@@ -30,40 +30,43 @@ export const Crossing: React.FC = () => {
 
   const dispatch = useDispatch();
   const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedCompanyDetail, selectedBridgeDetail, selectedCrossingDetail, selectedAuthorizationDetail, selectedRouteDetail } = crossings;
+  const {
+    loading,
+    selectedCompanyDetail,
+    selectedBridgeDetail,
+    selectedCrossingDetail,
+    selectedAuthorizationDetail,
+    selectedRouteDetail,
+  } = crossings;
   const { id: companyId = -1 } = selectedCompanyDetail || {};
   const { id: authorizationId = -1 } = selectedAuthorizationDetail || {};
   const { id: bridgeId = -1 } = selectedBridgeDetail || {};
+  const { id: routeId = -1 } = selectedRouteDetail || {};
   const [startCrossing, { data }] = useMutation<ICrossingDetail>(startCrossingMutation, {
     onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),
     onError: (err) => console.error(err),
   });
 
-  console.log(`companyId ${companyId}`);
-  console.log(`authorizationId ${authorizationId}`);
-  console.log(`bridge ${bridgeId}`);
-  // const id = client.mutate({ mutation: crossingmutation.saveCrossingMutation, variables: { crossing: cross } });
-
-  if (selectedCrossingDetail === undefined) {
+  if (selectedCrossingDetail === undefined && !loading) {
+    dispatch({ type: crossingActions.SET_LOADING, payload: true });
     startCrossing({
-      variables: { companyId, authorizationId, bridgeId },
+      variables: { routeId, bridgeId },
     });
   }
 
   const { name: bridgeName = "" } = selectedBridgeDetail || {};
   const {
-    speedInfoDesc = "",
     speedInfo = true,
-    drivingLineInfoDesc = "",
-    exceptionsInfoDesc = "",
-    descriptionDesc = "",
-    damage = false,
-    twist = false,
-    permantBendings = false,
-    extraInfoDesc = "",
     describe = false,
     exceptionsInfo = "",
     drivingLineInfo = false,
+    speedInfoDescription = "",
+    drivingLineInfoDescription = "",
+    exceptionsInfoDescription = "",
+    extraInfoDescription = "",
+    damage = false,
+    twist = false,
+    permanentBendings = false,
     started = "",
     id = -1,
   } = selectedCrossingDetail || {};
@@ -159,9 +162,9 @@ export const Crossing: React.FC = () => {
                 <IonItem class="whyItem">
                   <IonTextarea
                     class="whyTextArea"
-                    value={drivingLineInfoDesc}
+                    value={drivingLineInfoDescription}
                     onIonChange={(e) => {
-                      return changeTextAreaValue("drivingline", e.detail.value!);
+                      return changeTextAreaValue("drivingLineInfoDescription", e.detail.value!);
                     }}
                   />
                 </IonItem>
@@ -201,9 +204,9 @@ export const Crossing: React.FC = () => {
                 <IonItem class="whyItem">
                   <IonTextarea
                     class="whyTextArea"
-                    value={speedInfoDesc}
+                    value={speedInfoDescription}
                     onIonChange={(e) => {
-                      return changeTextAreaValue("speedinfo", e.detail.value!);
+                      return changeTextAreaValue("speedInfoDescription", e.detail.value!);
                     }}
                   />
                 </IonItem>
@@ -245,8 +248,8 @@ export const Crossing: React.FC = () => {
                 <IonCheckbox
                   slot="start"
                   value="bending"
-                  checked={permantBendings}
-                  onClick={() => checkBoxClicked("permantBendings", !permantBendings)}
+                  checked={permanentBendings}
+                  onClick={() => checkBoxClicked("permantBendings", !permanentBendings)}
                 />
                 <IonLabel>{t("crossing.exceptions.permantBendings")}</IonLabel>
               </IonItem>
@@ -274,9 +277,9 @@ export const Crossing: React.FC = () => {
               <IonItem class="whyItem">
                 <IonTextarea
                   class="whyTextArea"
-                  value={descriptionDesc}
+                  value={exceptionsInfoDescription}
                   onIonChange={(e) => {
-                    return changeTextAreaValue("description", e.detail.value!);
+                    return changeTextAreaValue("exceptionsInfoDescription", e.detail.value!);
                   }}
                 />
               </IonItem>
@@ -292,9 +295,9 @@ export const Crossing: React.FC = () => {
               <IonItem class="whyItem">
                 <IonTextarea
                   class="whyTextArea"
-                  value={extraInfoDesc}
+                  value={extraInfoDescription}
                   onIonChange={(e) => {
-                    return changeTextAreaValue("extrainfo", e.detail.value!);
+                    return changeTextAreaValue("extraInfoDescription", e.detail.value!);
                   }}
                 />
               </IonItem>

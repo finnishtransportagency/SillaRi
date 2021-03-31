@@ -7,41 +7,44 @@ import { RootState, useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import client from "../service/apolloClient";
 import uploadmutation from "../graphql/UploadMutation";
-import crossingmutation from "../graphql/CrossingMutation";
+import { updateCrossingMutation } from "../graphql/CrossingMutation";
 import ICrossingInput from "../interfaces/ICrossingInput";
+import ICrossingDetail from "../interfaces/ICrossingDetails";
+import { actions as crossingActions } from "../store/crossingsSlice";
 
 export const CrossingSummary: React.FC = () => {
   const { t, i18n } = useTranslation();
   const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
-
-  console.log("CrossingSummary");
   const { images = [] } = crossingProps;
   const { selectedAuthorizationDetail, selectedCrossingDetail, selectedRouteDetail, selectedBridgeDetail, selectedCompanyDetail } = crossingProps;
   const dispatch = useDispatch();
-  const [upload, { data }] = useMutation(uploadmutation.uploadMutation);
-  console.log(selectedCrossingDetail);
+  const [updateCrossing, { data }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
+    onCompleted: (response) => dispatch({ type: crossingActions.CROSSING_SAVED, payload: response }),
+    onError: (err) => console.error(err),
+  });
   function save() {
     console.log("save");
     if (selectedCrossingDetail !== undefined) {
       const cross = {
-        id: -1,
-        bridgeId: 1,
+        id: selectedCrossingDetail.id,
+        bridgeId: selectedCrossingDetail.bridge.id,
         started: selectedCrossingDetail.started,
         drivingLineInfo: selectedCrossingDetail.drivingLineInfo,
-        drivingLineInfoDesc: selectedCrossingDetail.drivingLineInfoDesc === null ? "" : selectedCrossingDetail.drivingLineInfoDesc,
+        drivingLineInfoDescription:
+          selectedCrossingDetail.drivingLineInfoDescription === null ? "" : selectedCrossingDetail.drivingLineInfoDescription,
         speedInfo: selectedCrossingDetail.speedInfo,
-        speedInfoDesc: selectedCrossingDetail.speedInfoDesc === null ? "" : selectedCrossingDetail.speedInfoDesc,
+        speedInfoDescription: selectedCrossingDetail.speedInfoDescription === null ? "" : selectedCrossingDetail.speedInfoDescription,
         exceptionsInfo: selectedCrossingDetail.exceptionsInfo,
-        exceptionsInfoDesc: selectedCrossingDetail.exceptionsInfoDesc === null ? "" : selectedCrossingDetail.exceptionsInfoDesc,
+        exceptionsInfoDescription: selectedCrossingDetail.exceptionsInfoDescription === null ? "" : selectedCrossingDetail.exceptionsInfoDescription,
         describe: selectedCrossingDetail.describe,
-        descriptionDesc: selectedCrossingDetail.descriptionDesc === null ? "" : selectedCrossingDetail.descriptionDesc,
-        extraInfoDesc: selectedCrossingDetail.extraInfoDesc === null ? "" : selectedCrossingDetail.extraInfoDesc,
-        permantBendings: selectedCrossingDetail.permantBendings,
+        extraInfoDescription: selectedCrossingDetail.extraInfoDescription === null ? "" : selectedCrossingDetail.extraInfoDescription,
+        permanentBendings: selectedCrossingDetail.permanentBendings,
         twist: selectedCrossingDetail.twist,
         damage: selectedCrossingDetail.damage,
       } as ICrossingInput;
-      console.log(cross);
-      const id = client.mutate({ mutation: crossingmutation.saveCrossingMutation, variables: { crossing: cross } });
+      updateCrossing({
+        variables: { crossing: cross },
+      });
       let i;
       // eslint-disable-next-line no-plusplus
       for (i = 0; i < images.length; i++) {

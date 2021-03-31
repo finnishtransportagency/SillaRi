@@ -13,5 +13,5 @@ public class RouteModel {
     private AddressModel arrivalAddress;
     private String departureTime;
     private String arrivalTime;
-    private List<CrossingModel> crossings;
+    private List<BridgeModel> bridges;
 }

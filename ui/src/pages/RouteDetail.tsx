@@ -25,7 +25,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
   const dispatch = useDispatch();
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
   const { selectedRouteDetail } = crossingsState;
-  const { crossings = [], name = "", id } = selectedRouteDetail || {};
+  const { bridges = [], name = "", id } = selectedRouteDetail || {};
   const {
     params: { routeId, authorizationId },
   } = match;
@@ -43,7 +43,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
       <Header title={name} />
       <IonContent>
         <div className="cardListContainer" />
-        <BridgeCardList crossings={crossings} />
+        <BridgeCardList bridges={bridges} />
       </IonContent>
     </IonPage>
   );
