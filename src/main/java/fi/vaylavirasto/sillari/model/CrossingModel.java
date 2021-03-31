@@ -12,9 +12,12 @@ public class CrossingModel {
     private boolean speedInfo;
     private boolean exceptionsInfo;
     private boolean describe;
-    private String drivingLineInfoDesc;
-    private String speedInfoDesc;
-    private String exceptionsInfoDesc;
-    private String extraInfoDesc;
+    private String drivingLineInfoDescription;
+    private String speedInfoDescription;
+    private String exceptionsInfoDescription;
+    private String extraInfoDescription;
     private String started;
+    private boolean permanentBendings;
+    private boolean twist;
+    private boolean damage;
 }

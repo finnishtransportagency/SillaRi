@@ -1,7 +1,9 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.model.CrossingModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
+import fi.vaylavirasto.sillari.repositories.BridgeRepository;
 import fi.vaylavirasto.sillari.repositories.CrossingRepository;
 import fi.vaylavirasto.sillari.repositories.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +16,13 @@ public class RouteService {
     @Autowired
     RouteRepository routeRepository;
     @Autowired
-    CrossingRepository crossingRepository;
+    BridgeRepository bridgeRepository;
 
-    public RouteModel getRoute(Integer id) {
+    public RouteModel getRoute(Integer routeId) {
         RouteModel routeModel;
-        routeModel = routeRepository.getRoute(id);
-        List<CrossingModel> crossingModels = crossingRepository.getRoutesCrossings(Long.valueOf(routeModel.getId()).intValue());
-        routeModel.setCrossings(crossingModels);
+        routeModel = routeRepository.getRoute(routeId);
+        List<BridgeModel> bridgeModels = bridgeRepository.getRoutesBridges(routeId);
+        routeModel.setBridges(bridgeModels);
         return routeModel;
     }
 }

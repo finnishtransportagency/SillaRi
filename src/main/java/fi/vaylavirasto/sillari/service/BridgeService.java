@@ -17,4 +17,7 @@ public class BridgeService {
         bridgeModel = bridgeRepository.getBridge(id);
         return bridgeModel;
     }
+    public List<BridgeModel> getRoutesBridges(Integer routeId) {
+        return bridgeRepository.getRoutesBridges(routeId);
+    }
 }

@@ -19,20 +19,9 @@ export const routeQuery = (id: number): DocumentNode => gql`
                 postalcode
                 street
             }
-            crossings {
+            bridges {
                 id
-                drivingLineInfo
-                speedInfo
-                exceptionsInfo
-                describe
-                drivingLineInfoDesc
-                speedInfoDesc
-                exceptionsInfoDesc
-                extraInfoDesc
-                bridge {
-                    id
-                    name
-                }
+                name
             }
         }
     }
