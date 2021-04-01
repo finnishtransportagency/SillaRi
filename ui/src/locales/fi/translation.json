@@ -56,6 +56,7 @@
     "crossingInstructions" : "Ylitysohje",
     "documenting" : "Dokumentointi",
     "trafficDirectors" : "Liikenteenohjaajat",
+    "conformsToPermit" : "Kuljetus on luvanmukainen",
     "startSupervision" : "Aloita valvonta",
     "denyCrossing" : "Kuljetus ei voi ylittää siltaa"
   },
