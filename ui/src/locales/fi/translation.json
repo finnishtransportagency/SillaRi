@@ -63,7 +63,7 @@
   "denyCrossing" :
   {
     "cantCross" : "Kuljetus ei voi ylittää siltaa",
-    "whyCantCross" : "Dokumentointi",
+    "whyCantCross" : "Miksi kuljetus ei voi ylittää siltaa",
     "back" : "Takaisin",
     "send" : "Lähetä"
   },
