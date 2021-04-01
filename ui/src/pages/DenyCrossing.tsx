@@ -1,4 +1,4 @@
-import { IonCol, IonContent, IonGrid, IonPage, IonRow, IonText, IonTextarea } from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText, IonTextarea } from "@ionic/react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
@@ -46,6 +46,16 @@ const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.El
           <IonRow>
             <IonCol>
               <IonTextarea />
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              <IonButton color="primary" routerLink={`/bridgeDetail/${id}`}>
+                {t("denyCrossing.back")}
+              </IonButton>
+            </IonCol>
+            <IonCol>
+              <IonButton color="primary">{t("denyCrossing.send")}</IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>
