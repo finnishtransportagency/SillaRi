@@ -56,6 +56,22 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
                     </IonText>
                   </IonCol>
                 </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonText>
+                      <h5>{t("bridgeDetail.documentingHeader")}</h5>
+                      <p>{t("bridgeDetail.documentingParagraph")}</p>
+                    </IonText>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonText>
+                      <h5>{t("bridgeDetail.trafficSupervisors")}</h5>
+                      <p>TODO</p>
+                    </IonText>
+                  </IonCol>
+                </IonRow>
               </IonGrid>
             </IonCol>
           </IonRow>
