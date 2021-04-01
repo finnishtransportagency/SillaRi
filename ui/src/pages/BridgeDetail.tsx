@@ -45,6 +45,11 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
                 </IonRow>
                 <IonRow>
                   <IonCol>
+                    <img src="assets/bridge.jpg" alt="" />
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
                     <IonText>
                       <h5>{t("bridgeDetail.crossingInstructions")}</h5>
                       <p>TODO</p>
