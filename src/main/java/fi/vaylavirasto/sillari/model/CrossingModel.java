@@ -8,6 +8,7 @@ import java.util.List;
 public class CrossingModel {
     private int id;
     private BridgeModel bridge;
+    private RouteModel route;
     private boolean drivingLineInfo;
     private boolean speedInfo;
     private boolean exceptionsInfo;

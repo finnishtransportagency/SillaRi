@@ -38,8 +38,12 @@ public class CrossingMapper implements RecordMapper<Record,CrossingModel> {
         BridgeModel bridgeModel = new BridgeModel();
         bridgeModel.setId(record.get(bridge.ID));
         bridgeModel.setName(record.get(bridge.NAME));
+        bridgeModel.setShortName(record.get(bridge.SHORTNAME));
 
         crossingModel.setBridge(bridgeModel);
+        RouteModel routeModel = new RouteModel();
+        routeModel.setId(record.get(crossing.ROUTE_ID));
+        crossingModel.setRoute(routeModel);
 
         return crossingModel;
     }
