@@ -46,7 +46,7 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
                 <IonRow>
                   <IonCol>
                     <IonText>
-                      <h5>{t("crossing.crossingInstructions")}</h5>
+                      <h5>{t("bridgeDetail.crossingInstructions")}</h5>
                       <p>TODO</p>
                     </IonText>
                   </IonCol>
@@ -58,12 +58,12 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
         <IonGrid>
           <IonRow>
             <IonButton color="primary" routerLink={`/denyCrossing/${id}`}>
-              Kiellä ylitys
+              {t("bridgeDetail.denyCrossing")}
             </IonButton>
           </IonRow>
           <IonRow>
             <IonButton color="primary" routerLink={`/supervision/${id}`}>
-              Aloita valvonta
+              {t("bridgeDetail.startSupervision")}
             </IonButton>
           </IonRow>
         </IonGrid>

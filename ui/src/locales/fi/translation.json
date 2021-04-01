@@ -51,6 +51,21 @@
     "validityPeriod": "Voimassaoloaika",
     "route": "Reitti"
   },
+  "bridgeDetail" :
+  {
+    "crossingInstructions" : "Ylitysohje",
+    "documenting" : "Dokumentointi",
+    "trafficDirectors" : "Liikenteenohjaajat",
+    "startSupervision" : "Aloita valvonta",
+    "denyCrossing" : "Kuljetus ei voi ylittää siltaa"
+  },
+  "denyCrossing" :
+  {
+    "cantCross" : "Kuljetus ei voi ylittää siltaa",
+    "whyCantCross" : "Dokumentointi",
+    "back" : "Takaisin",
+    "send" : "Lähetä"
+  },
   "crossing" :
   {
     "title" : "Sillan ylitys",
@@ -103,7 +118,6 @@
         "edit": "Muokkaa",
         "save": "Tallenna"
       }
-    },
-    "denyCrossing": "Kuljetus ei voi ylittää siltaa"
+    }
   }
 }

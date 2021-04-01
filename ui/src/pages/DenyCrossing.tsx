@@ -10,7 +10,7 @@ const DenyCrossing = (): JSX.Element => {
     <IonPage>
       <Header title={t("main.header.title")} />
       <IonContent fullscreen>
-        <IonText>{t("crossing.denyCrossing")}</IonText>
+        <IonText>{t("denyCrossing.cantCross")}</IonText>
       </IonContent>
     </IonPage>
   );
