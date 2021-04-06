@@ -6,6 +6,7 @@ import lombok.Data;
 public class CrossingInputModel {
     private int id;
     private int bridgeId;
+    private int routeId;
     private String started;
     private boolean drivingLineInfo;
     private boolean speedInfo;

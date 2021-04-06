@@ -116,7 +116,7 @@ const crossingsSlice = createSlice({
       return { ...state, loading: action.payload };
     },
     CROSSING_SAVED: (state, action: PayloadAction<ICrossingUpdate>) => {
-      alert(action.payload.updateCrossing);
+      alert("Talletettu");
     },
   },
 });

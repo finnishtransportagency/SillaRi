@@ -1,6 +1,4 @@
 package fi.vaylavirasto.sillari.model;
-import fi.vaylavirasto.sillari.model.AddressModel;
-import com.google.common.collect.Lists;
 
 import fi.vaylavirasto.sillari.model.tables.Bridge;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +14,7 @@ public class BridgeMapper implements RecordMapper<Record, BridgeModel> {
         BridgeModel model = new BridgeModel();
         model.setId(record.get(bridge.ID));
         model.setName(record.get(bridge.NAME));
+        model.setShortName(record.get(bridge.SHORTNAME));
         return model;
     }
 }
