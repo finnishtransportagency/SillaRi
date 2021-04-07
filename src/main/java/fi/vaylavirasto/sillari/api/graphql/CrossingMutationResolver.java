@@ -1,4 +1,5 @@
 package fi.vaylavirasto.sillari.api.graphql;
+import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
@@ -18,10 +19,20 @@ public class CrossingMutationResolver implements GraphQLMutationResolver  {
     CrossingService crossingService;
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public CrossingModel updateCrossing(CrossingInputModel crossingInputModel) {
-        return crossingService.updateCrossing(crossingInputModel);
+        ServiceMetric serviceMetric = new ServiceMetric("CrossingMutationResolver", "updateCrossing");
+        try {
+            return crossingService.updateCrossing(crossingInputModel);
+        } finally {
+            serviceMetric.end();
+        }
     }
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public CrossingModel startCrossing(Integer routeId, Integer bridgeId) {
-        return crossingService.createCrossing(routeId,bridgeId);
+        ServiceMetric serviceMetric = new ServiceMetric("CrossingMutationResolver", "startCrossing");
+        try {
+            return crossingService.createCrossing(routeId, bridgeId);
+        } finally {
+            serviceMetric.end();
+        }
     }
 }

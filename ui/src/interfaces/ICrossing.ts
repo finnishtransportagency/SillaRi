@@ -1,11 +1,13 @@
 import IBridge from "./IBridge";
-import IImageItem from "./IImageItem";
 import IRoute from "./IRoute";
+import IAuthorization from "./IAuthorization";
+import IFile from "./IFile";
 
 export default interface ICrossing {
   id: number;
   bridge: IBridge;
   route: IRoute;
+  authorization: IAuthorization;
   started: string;
   drivingLineInfo: boolean;
   drivingLineInfoDescription: string;
@@ -18,4 +20,5 @@ export default interface ICrossing {
   permanentBendings: boolean;
   twist: boolean;
   damage: boolean;
+  images: [IFile];
 }

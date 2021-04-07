@@ -7,18 +7,22 @@ import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
 import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
 import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
 import com.amazonaws.services.securitytoken.model.Credentials;
+import com.amazonaws.util.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -82,16 +86,29 @@ public class AWSS3Client {
                     .build();
         }
     }
-    public boolean upload(String key, byte photo[]) {
+    public boolean upload(String key, byte photo[], long lenght, String contenttype) {
         try {
             init();
             ByteArrayInputStream byteInputStream = new ByteArrayInputStream(photo);
             ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(contenttype);
+            metadata.setContentLength(lenght);
             PutObjectRequest request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
             s3Client.putObject(request);
         } catch(Exception e) {
             logger.error(e);
         }
         return false;
+    }
+    public byte[] download(String objectKey) {
+        try {
+            init();
+            GetObjectRequest request = new GetObjectRequest(bucketName, objectKey);
+            S3Object object = s3Client.getObject(request);
+            return IOUtils.toByteArray(object.getObjectContent());
+        } catch(Exception e) {
+            logger.error(e);
+        }
+        return null;
     }
 }
