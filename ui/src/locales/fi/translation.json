@@ -70,7 +70,7 @@
   },
   "crossing" :
   {
-    "title" : "Sillan ylitys",
+    "title" : "Sillan valvonta",
     "permitNumber" : "LUPANUMERO:",
     "crossingStarted" : "Valvonta aloitettu:",
     "crossingInstructions" : "Ylitysohje",
@@ -85,7 +85,7 @@
       "exceptionsInfo" : "Tarkenna poikkeavia havaintoja"
     },
     "exceptions" : {
-      "permantBendings": "Pysyviä taipumia",
+      "permanentBendings": "Pysyviä taipumia",
       "twist": "Kannen kiertymä",
       "damage": "Päällystevaurioita",
       "somethingElse": "Jotain muuta, mitä?",

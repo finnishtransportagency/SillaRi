@@ -36,6 +36,9 @@ import BridgeDetail from "./pages/BridgeDetail";
 import CrossingSummary from "./pages/CrossingSummary";
 import DenyCrossing from "./pages/DenyCrossing";
 
+/* Sillari.css */
+import "./assets/sillari.css";
+
 const App: React.FC = () => (
   <ApolloProvider client={client}>
     <IonApp>
@@ -49,9 +52,9 @@ const App: React.FC = () => (
           <Route path="/routeDetail/:authorizationId/:routeId" component={RouteDetail} exact />
           <Route path="/bridgeDetail/:id" component={BridgeDetail} exact />
           <Route path="/denyCrossing/:id" component={DenyCrossing} exact />
-          <Route path="/supervision/:id" component={Crossing} exact />
+          <Route path="/supervision/:routeId/:bridgeId" component={Crossing} exact />
           <Route path="/takePhotos" component={Camera} exact />
-          <Route path="/summary/:id" component={CrossingSummary} exact />
+          <Route path="/summary/:crossingId" component={CrossingSummary} exact />
         </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>

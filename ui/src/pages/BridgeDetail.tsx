@@ -18,8 +18,9 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedBridgeDetail } = crossingsState;
+  const { selectedBridgeDetail, selectedRouteDetail } = crossingsState;
   const { name = "", id } = selectedBridgeDetail || {};
+  const { id: routeId } = selectedRouteDetail || {};
   const {
     params: { id: bridgeId },
   } = match;
@@ -83,7 +84,7 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
             </IonButton>
           </IonRow>
           <IonRow>
-            <IonButton color="primary" routerLink={`/supervision/${id}`}>
+            <IonButton color="primary" routerLink={`/supervision/${routeId}/${id}`}>
               {t("bridgeDetail.startSupervision")}
             </IonButton>
           </IonRow>

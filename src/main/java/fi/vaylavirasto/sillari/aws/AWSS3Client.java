@@ -87,7 +87,7 @@ public class AWSS3Client {
             init();
             ByteArrayInputStream byteInputStream = new ByteArrayInputStream(photo);
             ObjectMetadata metadata = new ObjectMetadata();
-            PutObjectRequest request = new PutObjectRequest(bucketName, key+".jpg", byteInputStream, metadata);
+            PutObjectRequest request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
             s3Client.putObject(request);
         } catch(Exception e) {
             logger.error(e);

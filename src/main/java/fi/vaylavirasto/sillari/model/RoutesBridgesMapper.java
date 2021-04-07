@@ -16,6 +16,7 @@ public class RoutesBridgesMapper implements RecordMapper<Record,BridgeModel> {
         BridgeModel model = new BridgeModel();
         model.setId(record.get(bridge.ID));
         model.setName(record.get(bridge.NAME));
+        model.setShortName(record.get(bridge.SHORTNAME));
         return model;
     }
 }
