@@ -10,6 +10,9 @@ import Map from "./pages/Map";
 import Crossing from "./pages/Crossing";
 import Camera from "./pages/Camera";
 import CompanyDetail from "./pages/CompanyDetail";
+import RouteDetail from "./pages/RouteDetail";
+import BridgeDetail from "./pages/BridgeDetail";
+import CrossingSummary from "./pages/CrossingSummary";
 import SidebarMenu from "./components/SidebarMenu";
 import client from "./service/apolloClient";
 
@@ -31,12 +34,7 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-import RouteDetail from "./pages/RouteDetail";
-import BridgeDetail from "./pages/BridgeDetail";
-import CrossingSummary from "./pages/CrossingSummary";
-
-/* Sillari.css */
-import "./assets/sillari.css";
+import "./theme/sillari.css";
 
 const App: React.FC = () => (
   <ApolloProvider client={client}>

@@ -48,10 +48,10 @@ const CompanyDetail = ({ match }: RouteComponentProps<CompanyDetailProps>): JSX.
                 <IonGrid>
                   <IonRow>
                     <IonCol>
-                      <IonGrid>
+                      <IonGrid className="ion-no-padding">
                         <IonRow>
                           <IonCol>
-                            <IonText>{`${t("company.transportPermit")} ${permissionId}`}</IonText>
+                            <IonText className="headingText">{`${t("company.transportPermit")} ${permissionId}`}</IonText>
                           </IonCol>
                         </IonRow>
                         <IonRow>

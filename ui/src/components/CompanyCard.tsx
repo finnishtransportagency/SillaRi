@@ -29,10 +29,10 @@ const CompanyCard = ({ company }: CompanyCardProps): JSX.Element => {
             </IonItem>
           </IonCol>
           <IonCol>
-            <IonCardHeader class="ion-text-left">
+            <IonCardHeader className="ion-text-left">
               <IonCardTitle>{name}</IonCardTitle>
             </IonCardHeader>
-            <IonCardContent class="ion-text-left">
+            <IonCardContent className="ion-text-left">
               <Moment format={dateTimeFormat}>{minStartDate}</Moment>
             </IonCardContent>
           </IonCol>

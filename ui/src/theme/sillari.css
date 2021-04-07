@@ -1,0 +1,31 @@
+.crossingLabelBold {
+  font-weight: bold;
+}
+
+.crossingLabel {
+}
+
+.crossingTextArea {
+}
+
+.crossingHiddenRow {
+  visibility: hidden;
+  display: none;
+}
+
+.crossingVisibleRow {
+  visibility: visible;
+  display: block;
+}
+
+.checkMarkRed {
+  color: #ec213b;
+}
+
+.checkMarkGreen {
+  color: #20c933;
+}
+
+.headingText {
+  font-weight: bold;
+}

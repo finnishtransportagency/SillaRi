@@ -22,17 +22,17 @@ const RouteCard = ({ route, authorizationId }: RouteCardProps): JSX.Element => {
   } = route;
 
   return (
-      <IonCardHeader class="ion-text-left">
     <IonCard button routerLink={`/routeDetail/${authorizationId}/${routeId}`}>
+      <IonCardHeader className="ion-text-left">
         <IonCardTitle>
-          <IonText class="ion-float-right">
           <IonText>{`${t("company.route")} ${name}`} </IonText>
+          <IonText className="ion-float-right">
             <IonIcon icon={analyticsOutline} />
             <IonText>{` ${t("company.route")}`}</IonText>
           </IonText>
         </IonCardTitle>
       </IonCardHeader>
-      <IonCardContent class="ion-text-left">
+      <IonCardContent className="ion-text-left">
         <IonGrid>
           <IonRow>
             <IonCol>
