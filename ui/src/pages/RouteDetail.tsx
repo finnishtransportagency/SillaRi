@@ -105,7 +105,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
         <IonGrid>
           <IonRow>
             <IonCol>
-              <IonText>{t("route.transportInfo.registryIds")}</IonText>
+              <IonText>{t("route.transportInfo.registrationNumbers")}</IonText>
             </IonCol>
             <IonCol>
               <IonText>TODO</IonText>

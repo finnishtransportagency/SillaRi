@@ -59,7 +59,7 @@
     },
     "transportInfo": {
       "title": "Transport information",
-      "registryIds": "Registry identifiers",
+      "registrationNumbers": "Registry identifiers",
       "dimensions": "Transport dimensions",
       "height": "Height from the ground",
       "width": "Width",

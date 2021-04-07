@@ -60,7 +60,7 @@
     },
     "transportInfo": {
       "title": "Kuljetuksen tiedot",
-      "registryIds": "Rekisteritunnukset",
+      "registrationNumbers": "Rekisteritunnukset",
       "dimensions": "Kuljetuksen mitat",
       "height": "Korkeus maasta",
       "width": "Leveys",
