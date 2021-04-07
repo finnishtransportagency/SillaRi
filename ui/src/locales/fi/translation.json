@@ -51,6 +51,26 @@
     "validityPeriod": "Voimassaoloaika",
     "route": "Reitti"
   },
+  "route": {
+    "permitInfo": {
+      "title": "Luvan tiedot",
+      "permitNumber": "Luvan numero",
+      "routeDeparturePoint": "Reitin lähtöpiste",
+      "routeArrivalPoint": "Reitin päätepiste"
+    },
+    "transportInfo": {
+      "title": "Kuljetuksen tiedot",
+      "registryIds": "Rekisteritunnukset",
+      "dimensions": "Kuljetuksen mitat",
+      "height": "Korkeus maasta",
+      "width": "Leveys",
+      "length": "Pituus",
+      "totalMass": "Kokonaismassa",
+      "axleWeightsDistances": "Akselipainot ja -välit"
+    },
+    "transportValid": "Kuljetus on luvanmukainen lähtiessä",
+    "bridgesToSupervise": "Valvottavat sillat"
+  },
   "crossing" :
   {
     "title" : "Sillan valvonta",
