@@ -18,6 +18,11 @@ export const updateCrossingMutation = gql`
       bridge {
         id
         name
+        shortName
+      }
+      route {
+        id
+        name
       }
     }
   }
@@ -39,6 +44,11 @@ export const startCrossingMutation = gql`
       twist
       damage
       bridge {
+        id
+        name
+        shortName
+      }
+      route {
         id
         name
       }

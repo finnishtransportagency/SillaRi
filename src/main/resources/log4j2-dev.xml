@@ -8,9 +8,9 @@
                      filePattern="/data/logs/${env:nodename:-nodex}/sillari-debug-%i.log.gz">
             <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="50MB" />
+                <SizeBasedTriggeringPolicy size="100MB" />
             </Policies>
-            <DefaultRolloverStrategy max="4"/>
+            <DefaultRolloverStrategy max="50"/>
         </RollingFile>
     </Appenders>
     <Loggers>
@@ -28,6 +28,11 @@
 
         <!-- Use this for all other SillaRi debug logging -->
         <Logger name="fi.vaylavirasto.sillari" additivity="false">
+            <AppenderRef ref="ConsoleAppender" level="info"/>
+            <AppenderRef ref="DebugAppender" level="debug"/>
+        </Logger>
+
+        <Logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
             <AppenderRef ref="ConsoleAppender" level="info"/>
             <AppenderRef ref="DebugAppender" level="debug"/>
         </Logger>

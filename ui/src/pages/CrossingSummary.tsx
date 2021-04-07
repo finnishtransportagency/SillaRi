@@ -1,8 +1,26 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCol, IonContent, IonGrid, IonImg, IonItem, IonLabel, IonPage, IonRow, IonThumbnail } from "@ionic/react";
+import { checkmarkCircleOutline, checkmark } from "ionicons/icons";
+import {
+  IonBackButton,
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonIcon,
+  IonImg,
+  IonItem,
+  IonLabel,
+  IonPage,
+  IonRow,
+  IonThumbnail,
+} from "@ionic/react";
 import { useMutation } from "@apollo/client";
+import { RouteComponentProps } from "react-router";
+import moment from "moment";
+
 import { RootState, useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import client from "../service/apolloClient";
@@ -12,7 +30,11 @@ import ICrossingInput from "../interfaces/ICrossingInput";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
 import { actions as crossingActions } from "../store/crossingsSlice";
 
-export const CrossingSummary: React.FC = () => {
+interface CrossingSummaryProps {
+  crossingId: string;
+}
+
+export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryProps>): JSX.Element => {
   const { t, i18n } = useTranslation();
   const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
   const { images = [] } = crossingProps;
@@ -23,11 +45,11 @@ export const CrossingSummary: React.FC = () => {
     onError: (err) => console.error(err),
   });
   function save() {
-    console.log("save");
     if (selectedCrossingDetail !== undefined) {
-      const cross = {
+      const updateRequest = {
         id: selectedCrossingDetail.id,
         bridgeId: selectedCrossingDetail.bridge.id,
+        routeId: selectedCrossingDetail.route.id,
         started: selectedCrossingDetail.started,
         drivingLineInfo: selectedCrossingDetail.drivingLineInfo,
         drivingLineInfoDescription:
@@ -43,34 +65,80 @@ export const CrossingSummary: React.FC = () => {
         damage: selectedCrossingDetail.damage,
       } as ICrossingInput;
       updateCrossing({
-        variables: { crossing: cross },
+        variables: { crossing: updateRequest },
       });
       let i;
       // eslint-disable-next-line no-plusplus
       for (i = 0; i < images.length; i++) {
+        const pataken = moment(images[i].date, "dd.MM.yyyy HH:mm:ss");
         const ret = client.mutate({
           mutation: uploadmutation.uploadMutation,
-          variables: { crossingId: selectedCrossingDetail.id.toString(), filename: images[i].filename, base64image: images[i].dataUrl },
+          variables: {
+            crossingId: selectedCrossingDetail.id.toString(),
+            filename: images[i].filename,
+            base64image: images[i].dataUrl,
+            taken: pataken,
+          },
         });
-        console.log(ret);
       }
     }
   }
-  const { started = "" } = selectedCrossingDetail || {};
-  const { name: bridgeName = "" } = selectedBridgeDetail || {};
+  const {
+    started = "",
+    drivingLineInfo,
+    speedInfo,
+    route,
+    describe,
+    bridge,
+    exceptionsInfoDescription,
+    extraInfoDescription,
+    damage,
+    twist,
+    permanentBendings,
+    exceptionsInfo,
+  } = selectedCrossingDetail || {};
+  const { id: routeId } = route || {};
+  const { id: bridgeId, name: bridgeName = "", shortName: bridgeShortName = "" } = bridge || {};
+  const { permissionId = "" } = selectedAuthorizationDetail || {};
+  let exceptionsText = "";
+  if (exceptionsInfo) {
+    if (damage) {
+      exceptionsText = t("crossing.exceptions.permanentBendings");
+    }
+    if (twist) {
+      if (exceptionsText.length > 0) {
+        exceptionsText += ", ";
+      }
+      exceptionsText += t("crossing.exceptions.twist");
+    }
+    if (damage) {
+      if (exceptionsText.length > 0) {
+        exceptionsText += ", ";
+      }
+      exceptionsText += t("crossing.exceptions.damage");
+    }
+    if (describe) {
+      if (exceptionsText.length > 0) {
+        exceptionsText += ", ";
+      }
+      exceptionsText += t("crossing.exceptions.somethingElse");
+    }
+  }
   return (
     <IonPage>
-      <Header title={t("crossing.title")} />
+      <Header title={t("crossing.summary.title")} />
       <IonContent fullscreen>
         <IonGrid>
           <IonRow>
             <IonCol>
-              <IonLabel>{t("crossing.summary.title")}</IonLabel>
+              <IonLabel class="crossingLabel">
+                {t("crossing.permitNumber")} {permissionId}
+              </IonLabel>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonLabel>
+              <IonLabel class="crossingLabel">
                 {t("crossing.summary.crossingStarted")} {started}
               </IonLabel>
             </IonCol>
@@ -78,19 +146,18 @@ export const CrossingSummary: React.FC = () => {
 
           <IonRow>
             <IonCol>
-              <IonLabel>
-                {t("crossing.summary.bridgeName")} {bridgeName}
+              <IonLabel class="crossingLabel">
+                {t("crossing.summary.bridgeName")} {bridgeName} | {bridgeShortName}
               </IonLabel>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonLabel>
+              <IonLabel class="crossingLabelBold">
                 {t("crossing.summary.images")} ({images.length} {t("crossing.summary.kpl")})
               </IonLabel>
             </IonCol>
           </IonRow>
-
           <IonRow>
             {images.map((imageItem, i) => (
               <IonItem key={imageItem.id}>
@@ -103,30 +170,34 @@ export const CrossingSummary: React.FC = () => {
             ))}
           </IonRow>
           <IonRow>
-            <IonCol>{t("crossing.summary.drivingLine")}</IonCol>
-            <IonCol>{t("crossing.summary.speed")}</IonCol>
+            <IonIcon icon={checkmarkCircleOutline} class={!drivingLineInfo ? "checkMarkRed" : "checkMarkGreen"} />
+            <IonCol class="crossingCheckedLabel">{t("crossing.summary.drivingLine")}</IonCol>
+            <IonIcon icon={checkmarkCircleOutline} class={!speedInfo ? "checkMarkRed" : "checkMarkGreen"} />
+            <IonCol class="crossingCheckedLabel">{t("crossing.summary.speed")}</IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonLabel>{t("crossing.summary.exceptions")}</IonLabel>
-              <IonItem>Pooooo</IonItem>
+              <IonLabel class="crossingLabelBold">{t("crossing.summary.exceptions")}:</IonLabel>
+              <IonItem>{exceptionsText}</IonItem>
+            </IonCol>
+          </IonRow>
+          <IonRow class={describe ? "crossingVisibleRow" : "crossingHiddenRow"}>
+            <IonCol>
+              <IonLabel class="crossingLabelBold">{t("crossing.summary.exceptionsDesc")}:</IonLabel>
+              <IonItem>{exceptionsInfoDescription}</IonItem>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonLabel>{t("crossing.summary.exceptionsDesc")}</IonLabel>
-              <IonItem>Pooooo</IonItem>
+              <IonLabel class="crossingLabelBold">{t("crossing.summary.extraInfo")}:</IonLabel>
+              <IonItem>{extraInfoDescription}</IonItem>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonLabel>{t("crossing.summary.extraInfo")}</IonLabel>
-              <IonItem>Pooooo</IonItem>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonButton>{t("crossing.summary.buttons.edit")}</IonButton>
+              <IonButton routerLink={`/supervision/${routeId}/${bridgeId}`} routerDirection="back">
+                {t("crossing.summary.buttons.edit")}
+              </IonButton>
             </IonCol>
             <IonCol>
               <IonButton

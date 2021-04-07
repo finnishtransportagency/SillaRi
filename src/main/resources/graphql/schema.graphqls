@@ -38,11 +38,13 @@ type Address {
 type Bridge {
     id: ID!
     name: String
+    shortName: String
 }
 
 type Crossing {
     id: ID!
     bridge: Bridge
+    route: Route
     drivingLineInfo: Boolean
     speedInfo: Boolean
     exceptionsInfo: Boolean
@@ -76,6 +78,9 @@ type Route {
 
 type File {
     id: Int!
+    crossingId: Int
+    objectKey: String
+    taken: String
     filename: String!
     mimetype: String!
     encoding: String!
@@ -83,6 +88,7 @@ type File {
 input CrossingInput {
     id: ID!
     bridgeId: Int!
+    routeId: Int!
     started: String
     drivingLineInfo: Boolean
     speedInfo: Boolean
@@ -98,7 +104,7 @@ input CrossingInput {
 }
 
 type Mutation {
-    singleUpload(crossingId: String!, filename: String!, file: String!): File!,
+    singleUpload(crossingId: String!, filename: String!, file: String!, taken: String!): File!,
     updateCrossing(crossing: CrossingInput!): Crossing,
     startCrossing(routeId: Int!, bridgeId: Int!) : Crossing,
 }
@@ -112,5 +118,6 @@ type Query {
     Route(id :Int!) : Route
     Bridge(id :Int!) : Bridge
     Authorization(id :Int!) : Authorization
+    Crossing(id :Int!) : Crossing
 }
 

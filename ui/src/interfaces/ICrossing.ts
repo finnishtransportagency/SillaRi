@@ -1,9 +1,11 @@
 import IBridge from "./IBridge";
 import IImageItem from "./IImageItem";
+import IRoute from "./IRoute";
 
 export default interface ICrossing {
   id: number;
   bridge: IBridge;
+  route: IRoute;
   started: string;
   drivingLineInfo: boolean;
   drivingLineInfoDescription: string;
