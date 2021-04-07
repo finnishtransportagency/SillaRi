@@ -74,6 +74,7 @@ export const companyQuery = (id: number): DocumentNode => gql`
         validEndDate
         routes {
           id
+          name
           departureTime
           arrivalTime
           arrivalAddress {

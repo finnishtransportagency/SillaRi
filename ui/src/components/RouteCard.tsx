@@ -9,11 +9,10 @@ import { dateTimeFormat } from "../utils/constants";
 interface RouteCardProps {
   route: IRoute;
   authorizationId: number;
-  index: number;
 }
 
-const RouteCard = ({ route, index, authorizationId }: RouteCardProps): JSX.Element => {
-  const { id } = route;
+const RouteCard = ({ route, authorizationId }: RouteCardProps): JSX.Element => {
+  const { id: routeId, name } = route;
   const { t } = useTranslation();
 
   const {
@@ -23,11 +22,11 @@ const RouteCard = ({ route, index, authorizationId }: RouteCardProps): JSX.Eleme
   } = route;
 
   return (
-    <IonCard button routerLink={`/routeDetail/${authorizationId}/${id}`}>
       <IonCardHeader class="ion-text-left">
+    <IonCard button routerLink={`/routeDetail/${authorizationId}/${routeId}`}>
         <IonCardTitle>
-          <IonText>{`${t("company.route")} ${index + 1}`} </IonText>
           <IonText class="ion-float-right">
+          <IonText>{`${t("company.route")} ${name}`} </IonText>
             <IonIcon icon={analyticsOutline} />
             <IonText>{` ${t("company.route")}`}</IonText>
           </IonText>
