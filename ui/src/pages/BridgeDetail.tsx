@@ -88,7 +88,7 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
             </IonButton>
           </IonRow>
           <IonRow>
-            <IonButton color="primary" routerLink={`/supervision/${id}`}>
+            <IonButton color="primary" routerLink={`/supervision/${routeId}/${id}`}>
               {t("bridgeDetail.startSupervision")}
             </IonButton>
           </IonRow>
