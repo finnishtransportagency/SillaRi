@@ -37,7 +37,7 @@ import CrossingSummary from "./pages/CrossingSummary";
 import DenyCrossing from "./pages/DenyCrossing";
 
 /* Sillari.css */
-import "./assets/sillari.css";
+import "./theme/sillari.css";
 
 const App: React.FC = () => (
   <ApolloProvider client={client}>
