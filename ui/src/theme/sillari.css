@@ -1,0 +1,65 @@
+.crossingLabelBold {
+    font-weight: bold;
+}
+
+.crossingLabel {
+}
+
+.crossingTextArea {
+
+}
+
+.crossingHiddenRow {
+    visibility: hidden;
+    display: none;
+}
+
+.crossingVisibleRow {
+    visibility: visible;
+    display: block;
+}
+
+.checkMarkRed {
+    color: #ec213b;
+}
+
+.checkMarkGreen {
+    color: #20c933;
+}
+
+/** Additional Vayla colors **/
+.ion-color-teal {
+    --ion-color-base: var(--ion-color-teal);
+    --ion-color-base-rgb: var(--ion-color-teal-rgb);
+    --ion-color-contrast: var(--ion-color-teal-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-teal-contrast-rgb);
+    --ion-color-shade: var(--ion-color-teal-shade);
+    --ion-color-tint: var(--ion-color-teal-tint);
+}
+
+.ion-color-purple {
+    --ion-color-base: var(--ion-color-purple);
+    --ion-color-base-rgb: var(--ion-color-purple-rgb);
+    --ion-color-contrast: var(--ion-color-purple-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-purple-contrast-rgb);
+    --ion-color-shade: var(--ion-color-purple-shade);
+    --ion-color-tint: var(--ion-color-purple-tint);
+}
+
+.ion-color-pink {
+    --ion-color-base: var(--ion-color-pink);
+    --ion-color-base-rgb: var(--ion-color-pink-rgb);
+    --ion-color-contrast: var(--ion-color-pink-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-pink-contrast-rgb);
+    --ion-color-shade: var(--ion-color-pink-shade);
+    --ion-color-tint: var(--ion-color-pink-tint);
+}
+
+.ion-color-orange {
+    --ion-color-base: var(--ion-color-orange);
+    --ion-color-base-rgb: var(--ion-color-orange-rgb);
+    --ion-color-contrast: var(--ion-color-orange-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-orange-contrast-rgb);
+    --ion-color-shade: var(--ion-color-orange-shade);
+    --ion-color-tint: var(--ion-color-orange-tint);
+}
