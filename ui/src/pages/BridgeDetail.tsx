@@ -1,7 +1,7 @@
 import { RouteComponentProps } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText, IonCheckbox, IonLabel } from "@ionic/react";
 import React from "react";
 import { useQuery } from "@apollo/client";
 import { useTypedSelector } from "../store/store";
@@ -22,9 +22,10 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedBridgeDetail, selectedRouteDetail } = crossingsState;
+  const { selectedBridgeDetail, selectedRouteDetail, selectedAuthorizationDetail } = crossingsState;
   const { name = "", id } = selectedBridgeDetail || {};
   const { id: routeId } = selectedRouteDetail || {};
+  const { permissionId } = selectedAuthorizationDetail || {};
   const {
     params: { id: bridgeId },
   } = match;
@@ -75,6 +76,13 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
                       <h5>{t("bridgeDetail.trafficSupervisors")}</h5>
                       <p>TODO</p>
                     </IonText>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonLabel class="crossingLabel">
+                      {t("bridgeDetail.permitNumber")} {permissionId}
+                    </IonLabel>
                   </IonCol>
                 </IonRow>
               </IonGrid>
