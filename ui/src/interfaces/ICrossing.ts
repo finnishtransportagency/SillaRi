@@ -1,13 +1,14 @@
 import IBridge from "./IBridge";
 import IRoute from "./IRoute";
-import IAuthorization from "./IAuthorization";
+import IPermit from "./IPermit";
 import IFile from "./IFile";
 
 export default interface ICrossing {
   id: number;
+  routeBridgeId: number;
   bridge: IBridge;
   route: IRoute;
-  authorization: IAuthorization;
+  permit: IPermit;
   started: string;
   drivingLineInfo: boolean;
   drivingLineInfoDescription: string;

@@ -1,10 +1,12 @@
 import IRoute from "./IRoute";
+import ITransport from "./ITransport";
 
-export default interface IAuthorization {
+export default interface IPermit {
   id: number;
   companyId: number;
-  permissionId: string;
+  permitNumber: string;
   validStartDate: string;
   validEndDate: string;
   routes: IRoute[];
+  transports: ITransport[];
 }

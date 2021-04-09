@@ -71,14 +71,14 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
     twist,
     permanentBendings,
     exceptionsInfo,
-    authorization,
+    permit,
     drivingLineInfoDescription,
     speedInfoDescription,
     images: crossingImages,
   } = selectedCrossingDetail || {};
   const { id: routeId } = route || {};
-  const { id: bridgeId, name: bridgeName = "", shortName: bridgeShortName = "" } = bridge || {};
-  const { permissionId = "" } = authorization || {};
+  const { id: bridgeId, name: bridgeName = "", identifier: bridgeShortName = "" } = bridge || {};
+  const { permitNumber = "" } = permit || {};
   function save() {
     if (selectedCrossingDetail !== undefined) {
       const updateRequest = {
@@ -150,7 +150,7 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
           <IonRow>
             <IonCol>
               <IonLabel class="crossingLabel">
-                {t("crossing.permitNumber")} {permissionId}
+                {t("crossing.permitNumber")} {permitNumber}
               </IonLabel>
             </IonCol>
           </IonRow>

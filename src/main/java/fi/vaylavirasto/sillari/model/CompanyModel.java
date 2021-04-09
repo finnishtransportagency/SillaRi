@@ -8,5 +8,5 @@ import java.util.List;
 public class CompanyModel {
     private long id;
     private String name;
-    private List<AuthorizationModel> authorizations;
+    private List<PermitModel> permits;
 }

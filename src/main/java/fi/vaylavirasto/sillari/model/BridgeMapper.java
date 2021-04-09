@@ -14,7 +14,7 @@ public class BridgeMapper implements RecordMapper<Record, BridgeModel> {
         BridgeModel model = new BridgeModel();
         model.setId(record.get(bridge.ID));
         model.setName(record.get(bridge.NAME));
-        model.setShortName(record.get(bridge.SHORTNAME));
+        model.setIdentifier(record.get(bridge.IDENTIFIER));
         return model;
     }
 }

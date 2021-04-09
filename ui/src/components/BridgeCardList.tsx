@@ -11,7 +11,7 @@ const BridgeCardList = ({ bridges }: BridgeCardListProps): JSX.Element => {
   return (
     <div className="cardListContainer">
       {bridges.map((bridge, index) => {
-        const key = `route_${index}`;
+        const key = `bridge_${index}`;
         return <BridgeCard key={key} bridge={bridge} />;
       })}
     </div>

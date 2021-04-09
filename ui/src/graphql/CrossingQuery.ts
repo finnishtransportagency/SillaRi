@@ -10,6 +10,7 @@ export const queryCrossing = (crossingId: number, draft: boolean): DocumentNode 
       exceptionsInfoDescription
       extraInfoDescription
       id
+      routeBridgeId
       speedInfo
       speedInfoDescription
       started
@@ -19,15 +20,15 @@ export const queryCrossing = (crossingId: number, draft: boolean): DocumentNode 
       bridge {
         id
         name
-        shortName
+        identifier
       }
       route {
         id
         name
       }
-      authorization {
+      permit {
         companyId
-        permissionId
+        permitNumber
         id
       }
       images {
