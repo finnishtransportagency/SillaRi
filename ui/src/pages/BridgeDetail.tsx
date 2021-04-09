@@ -1,7 +1,7 @@
 import { RouteComponentProps } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonPage, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
 import React from "react";
 import { useQuery } from "@apollo/client";
 import { useTypedSelector } from "../store/store";
@@ -48,13 +48,51 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
                     <IonText>{name}</IonText>
                   </IonCol>
                 </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <img src="assets/bridge.jpg" alt="" />
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonText>
+                      <h5>{t("bridgeDetail.crossingInstructions")}</h5>
+                      <p>TODO</p>
+                    </IonText>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonText>
+                      <h5>{t("bridgeDetail.documentingHeader")}</h5>
+                      <p>{t("bridgeDetail.documentingParagraph")}</p>
+                    </IonText>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonText>
+                      <h5>{t("bridgeDetail.trafficSupervisors")}</h5>
+                      <p>TODO</p>
+                    </IonText>
+                  </IonCol>
+                </IonRow>
               </IonGrid>
             </IonCol>
           </IonRow>
         </IonGrid>
-        <IonButton color="primary" routerLink={`/supervision/${routeId}/${id}`}>
-          Aloita valvonta
-        </IonButton>
+        <IonGrid>
+          <IonRow>
+            <IonButton color="primary" routerLink={`/supervision/${routeId}/${id}`}>
+              {t("bridgeDetail.denyCrossing")}
+            </IonButton>
+          </IonRow>
+          <IonRow>
+            <IonButton color="primary" routerLink={`/supervision/${routeId}/${id}`}>
+              {t("bridgeDetail.startSupervision")}
+            </IonButton>
+          </IonRow>
+        </IonGrid>
       </IonContent>
     </IonPage>
   );

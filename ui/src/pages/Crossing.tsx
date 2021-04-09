@@ -18,14 +18,18 @@ import React, { useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useMutation, useQuery } from "@apollo/client";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps, useHistory } from "react-router";
+import moment from "moment";
 import Header from "../components/Header";
 import { RootState, useTypedSelector } from "../store/store";
 import IRadioValue from "../interfaces/IRadioValue";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
-import crossingmutation, { startCrossingMutation } from "../graphql/CrossingMutation";
+import crossingmutation, { startCrossingMutation, updateCrossingMutation } from "../graphql/CrossingMutation";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
+import ICrossingInput from "../interfaces/ICrossingInput";
+import client from "../service/apolloClient";
+import uploadmutation from "../graphql/UploadMutation";
 
 interface CrossingProps {
   bridgeId: string;
@@ -34,34 +38,10 @@ interface CrossingProps {
 
 export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Element => {
   const { t, i18n } = useTranslation();
-
+  const hist = useHistory();
   const dispatch = useDispatch();
   const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const {
-    loading,
-    selectedCompanyDetail,
-    selectedBridgeDetail,
-    selectedCrossingDetail,
-    selectedAuthorizationDetail,
-    selectedRouteDetail,
-  } = crossings;
-  const { id: companyId = -1 } = selectedCompanyDetail || {};
-  const { id: authorizationId = -1 } = selectedAuthorizationDetail || {};
-  const {
-    params: { bridgeId, routeId },
-  } = match;
-  const [startCrossing, { data }] = useMutation<ICrossingDetail>(startCrossingMutation, {
-    onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),
-    onError: (err) => console.error(err),
-  });
-
-  if (selectedCrossingDetail === undefined && !loading) {
-    dispatch({ type: crossingActions.SET_LOADING, payload: true });
-    startCrossing({
-      variables: { routeId, bridgeId },
-    });
-  }
-
+  const { images = [], loading, selectedCrossingDetail } = crossings;
   const {
     speedInfo = true,
     describe = false,
@@ -77,12 +57,73 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     started = "",
     id = -1,
     bridge,
+    permit,
   } = selectedCrossingDetail || {};
-  const { name: bridgeName = "", shortName: bridgeShortName } = bridge || {};
-  const { permissionId = "" } = selectedAuthorizationDetail || {};
+  const {
+    params: { bridgeId, routeId },
+  } = match;
+  const [startCrossing, { data }] = useMutation<ICrossingDetail>(startCrossingMutation, {
+    onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),
+    onError: (err) => console.error(err),
+  });
+  const [updateCrossing, { data: updatedata }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
+    onCompleted: (response) => {
+      dispatch({ type: crossingActions.CROSSING_SUMMARY, payload: response });
+      console.log("history");
+      hist.push(`/summary/${id}`);
+    },
+    onError: (err) => console.error(err),
+  });
+
+  if (selectedCrossingDetail === undefined && !loading) {
+    dispatch({ type: crossingActions.SET_LOADING, payload: true });
+    startCrossing({
+      variables: { routeId, bridgeId },
+    });
+  }
+
+  const { name: bridgeName = "", identifier: bridgeShortName } = bridge || {};
+  const { permitNumber = "" } = permit || {};
   function changeTextAreaValue(pname: string, pvalue: string) {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
     dispatch({ type: crossingActions.CROSSING_TEXTAREA_CHANGED, payload: change });
+  }
+  function summaryClicked() {
+    const updateRequest = {
+      id,
+      bridgeId: Number(bridgeId),
+      routeId: Number(routeId),
+      started,
+      drivingLineInfo,
+      drivingLineInfoDescription,
+      speedInfo,
+      speedInfoDescription,
+      exceptionsInfo,
+      exceptionsInfoDescription,
+      describe,
+      extraInfoDescription,
+      permanentBendings,
+      twist,
+      damage,
+      draft: true,
+    } as ICrossingInput;
+    updateCrossing({
+      variables: { crossing: updateRequest },
+    });
+    let i;
+    // eslint-disable-next-line no-plusplus
+    for (i = 0; i < images.length; i++) {
+      const pataken = moment(images[i].date, "dd.MM.yyyy HH:mm:ss");
+      const ret = client.mutate({
+        mutation: uploadmutation.uploadMutation,
+        variables: {
+          crossingId: id.toString(),
+          filename: images[i].filename,
+          base64image: images[i].dataUrl,
+          taken: pataken,
+        },
+      });
+    }
   }
 
   function radioClicked(radioName: string, radioValue: string) {
@@ -107,7 +148,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
           <IonRow>
             <IonCol>
               <IonLabel class="crossingLabel">
-                {t("crossing.permitNumber")} {permissionId}
+                {t("crossing.permitNumber")} {permitNumber}
               </IonLabel>
             </IonCol>
           </IonRow>
@@ -303,7 +344,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
               <IonButton disabled>{t("crossing.buttons.exit")}</IonButton>
             </IonCol>
             <IonCol>
-              <IonButton routerLink={`/summary/${id}`}>{t("crossing.buttons.summary")}</IonButton>
+              <IonButton onClick={() => summaryClicked()}>{t("crossing.buttons.summary")}</IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>

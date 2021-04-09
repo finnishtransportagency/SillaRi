@@ -11,10 +11,10 @@ interface CompanyCardProps {
 }
 
 const CompanyCard = ({ company }: CompanyCardProps): JSX.Element => {
-  const { id, name, authorizations } = company;
+  const { id, name, permits } = company;
 
   // TODO - check if min validStartDate is the correct date to show
-  const minStartDate = authorizations.reduce((minDate, auth) => {
+  const minStartDate = permits.reduce((minDate, auth) => {
     const authStartDate = moment(auth.validStartDate);
     return authStartDate.isBefore(minDate) ? authStartDate : minDate;
   }, moment());

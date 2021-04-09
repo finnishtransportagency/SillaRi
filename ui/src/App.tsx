@@ -11,6 +11,7 @@ import Crossing from "./pages/Crossing";
 import Camera from "./pages/Camera";
 import CompanyDetail from "./pages/CompanyDetail";
 import RouteDetail from "./pages/RouteDetail";
+import DenyCrossing from "./pages/DenyCrossing";
 import BridgeDetail from "./pages/BridgeDetail";
 import CrossingSummary from "./pages/CrossingSummary";
 import SidebarMenu from "./components/SidebarMenu";
@@ -34,6 +35,8 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+
+/* Sillari.css */
 import "./theme/sillari.css";
 
 const App: React.FC = () => (
@@ -46,8 +49,9 @@ const App: React.FC = () => (
           <Route path="/settings" component={Settings} exact />
           <Route path="/map" component={Map} exact />
           <Route path="/companydetail/:id" component={CompanyDetail} exact />
-          <Route path="/routeDetail/:authorizationId/:routeId" component={RouteDetail} exact />
+          <Route path="/routeDetail/:permitId/:routeId" component={RouteDetail} exact />
           <Route path="/bridgeDetail/:id" component={BridgeDetail} exact />
+          <Route path="/denyCrossing/:id" component={DenyCrossing} exact />
           <Route path="/supervision/:routeId/:bridgeId" component={Crossing} exact />
           <Route path="/takePhotos" component={Camera} exact />
           <Route path="/summary/:crossingId" component={CrossingSummary} exact />

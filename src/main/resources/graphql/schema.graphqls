@@ -1,31 +1,18 @@
 type Transport {
     id: ID!
-    company: Company
-    title: String!
-    departureAddress: Address
-    arrivalAddress: Address
-    beginDate: String
-    endDate: String
-    crossings: [Crossing]
+    permitId: Int
+    routeId: Int
+    name: String!
 }
-"""
-type CrossingList {
-    id: ID!
-    authorizationId: Int
-    departureAddress: Address
-    arrivalAddress: Address
-    departureTime: String
-    arrivalTime: String
-    crossings: [Crossing]
-}
-"""
-type Authorization {
+
+type Permit {
     id: ID!
     companyId: Int
-    permissionId: String
+    permitNumber: String
     validStartDate: String
     validEndDate: String
     routes: [Route]
+    transports: [Transport]
 }
 
 type Address {
@@ -38,13 +25,15 @@ type Address {
 type Bridge {
     id: ID!
     name: String
-    shortName: String
+    identifier: String
 }
 
 type Crossing {
     id: ID!
+    routeBridgeId: Int
     bridge: Bridge
     route: Route
+    permit: Permit
     drivingLineInfo: Boolean
     speedInfo: Boolean
     exceptionsInfo: Boolean
@@ -57,23 +46,27 @@ type Crossing {
     permanentBendings: Boolean
     twist: Boolean
     damage: Boolean
+    draft: Boolean
+    images: [File]
 }
 
 type Company {
     id: ID!
     name: String
-    authorizations: [Authorization]
+    permits: [Permit]
 }
 
 type Route {
     id: ID!
-    authorizationId: Int
+    permitId: Int
     name: String
     departureAddress: Address
     arrivalAddress: Address
     departureTime: String
     arrivalTime: String
     bridges: [Bridge]
+    transports: [Transport]
+    crossings: [Crossing]
 }
 
 type File {
@@ -85,6 +78,7 @@ type File {
     mimetype: String!
     encoding: String!
 }
+
 input CrossingInput {
     id: ID!
     bridgeId: Int!
@@ -101,6 +95,7 @@ input CrossingInput {
     permanentBendings: Boolean
     twist: Boolean
     damage: Boolean
+    draft: Boolean
 }
 
 type Mutation {
@@ -110,14 +105,12 @@ type Mutation {
 }
 
 type Query {
-    Transports(limit: Int = 10) : [Transport]!
-    Transport(id : Int!) : Transport!
     Companies(limit: Int = 10) : [Company]
     CompanyList(limit: Int = 10) : [Company]
     Company(id : Int!) : Company
     Route(id :Int!) : Route
     Bridge(id :Int!) : Bridge
-    Authorization(id :Int!) : Authorization
-    Crossing(id :Int!) : Crossing
+    Permit(id :Int!) : Permit
+    Crossing(id :Int!, draft: Boolean!) : Crossing
 }
 

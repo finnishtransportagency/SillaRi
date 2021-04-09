@@ -7,16 +7,16 @@ import { analyticsOutline, documentTextOutline, flagOutline } from "ionicons/ico
 import { useQuery } from "@apollo/client";
 import Header from "../components/Header";
 import BridgeCardList from "../components/BridgeCardList";
-import { authorizationQuery } from "../graphql/AuthorizationQuery";
+import { permitQuery } from "../graphql/PermitQuery";
 import { routeQuery } from "../graphql/RouteQuery";
 import IRouteDetail from "../interfaces/IRouteDetail";
-import IAuthorizationDetail from "../interfaces/IAuthorizationDetail";
+import IPermitDetail from "../interfaces/IPermitDetail";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import { useTypedSelector } from "../store/store";
 
 interface RouteDetailProps {
   routeId: string;
-  authorizationId: string;
+  permitId: string;
 }
 
 const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Element => {
@@ -24,16 +24,16 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
   const dispatch = useDispatch();
 
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedAuthorizationDetail, selectedRouteDetail } = crossingsState;
-  const { permissionId } = selectedAuthorizationDetail || {};
+  const { selectedPermitDetail, selectedRouteDetail } = crossingsState;
+  const { permitNumber } = selectedPermitDetail || {};
   const { bridges = [], name = "" } = selectedRouteDetail || {};
 
   const {
-    params: { routeId, authorizationId },
+    params: { routeId, permitId },
   } = match;
 
-  useQuery<IAuthorizationDetail>(authorizationQuery(Number(authorizationId)), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_AUTHORIZATION, payload: response }),
+  useQuery<IPermitDetail>(permitQuery(Number(permitId)), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_PERMIT, payload: response }),
     onError: (err) => console.error(err),
   });
   useQuery<IRouteDetail>(routeQuery(Number(routeId)), {
@@ -43,7 +43,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
 
   return (
     <IonPage>
-      <Header title={`${permissionId} - ${name}`} />
+      <Header title={`${permitNumber} - ${name}`} />
       <IonContent>
         <IonGrid>
           <IonRow>

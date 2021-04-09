@@ -12,10 +12,11 @@ import IRoute from "../interfaces/IRoute";
 import IRouteDetail from "../interfaces/IRouteDetail";
 import IBridge from "../interfaces/IBridge";
 import IBridgeDetail from "../interfaces/IBridgeDetail";
-import IAuthorization from "../interfaces/IAuthorization";
-import IAuthorizationDetail from "../interfaces/IAuthorizationDetail";
+import IPermit from "../interfaces/IPermit";
+import IPermitDetail from "../interfaces/IPermitDetail";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
 import ICrossingUpdate from "../interfaces/ICrossingUpdate";
+import IGetCrossing from "../interfaces/IGetCrossing";
 
 interface IStateProps {
   Companies: ICompany[];
@@ -25,9 +26,9 @@ interface IStateProps {
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IBridge;
   selectedCrossingDetail?: ICrossing;
-  selectedAuthorizationDetail?: IAuthorization;
+  selectedPermitDetail?: IPermit;
   images: IImageItem[];
-  selectedAuthorization: number;
+  selectedPermit: number;
   selectedRoute: number;
   selectedCrossing: number;
   crossing?: ICrossing;
@@ -42,9 +43,9 @@ const initialState: IStateProps = {
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
   selectedCrossingDetail: undefined,
-  selectedAuthorizationDetail: undefined,
+  selectedPermitDetail: undefined,
   images: [],
-  selectedAuthorization: 0,
+  selectedPermit: 0,
   selectedRoute: 0,
   selectedCrossing: 0,
   crossing: undefined,
@@ -55,8 +56,8 @@ const crossingsSlice = createSlice({
   name: "selectedCrossing",
   initialState,
   reducers: {
-    GET_AUTHORIZATION: (state, action: PayloadAction<IAuthorizationDetail>) => {
-      return { ...state, selectedAuthorizationDetail: action.payload.Authorization };
+    GET_PERMIT: (state, action: PayloadAction<IPermitDetail>) => {
+      return { ...state, selectedPermitDetail: action.payload.Permit };
     },
     GET_BRIDGE: (state, action: PayloadAction<IBridgeDetail>) => {
       return { ...state, selectedBridgeDetail: action.payload.Bridge };
@@ -106,6 +107,10 @@ const crossingsSlice = createSlice({
       console.log("START_CROSSING");
       return { ...state, loading: false, selectedCrossingDetail: action.payload.startCrossing };
     },
+    GET_CROSSING: (state, action: PayloadAction<IGetCrossing>) => {
+      console.log("GET_CROSSING");
+      return { ...state, loading: false, selectedCrossingDetail: action.payload.Crossing };
+    },
     GET_COMPANY_LIST: (state, action: PayloadAction<ICompanyList>) => {
       return { ...state, companyList: action.payload.CompanyList };
     },
@@ -117,6 +122,10 @@ const crossingsSlice = createSlice({
     },
     CROSSING_SAVED: (state, action: PayloadAction<ICrossingUpdate>) => {
       alert("Talletettu");
+    },
+    CROSSING_SUMMARY: (state, action: PayloadAction<ICrossingUpdate>) => {
+      console.log("CROSSING_SUMMARY");
+      return { ...state, loading: false, selectedCrossingDetail: action.payload.updateCrossing };
     },
   },
 });

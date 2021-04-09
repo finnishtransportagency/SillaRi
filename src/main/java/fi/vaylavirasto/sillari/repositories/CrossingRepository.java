@@ -2,13 +2,12 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.*;
 import org.jooq.DSLContext;
+import org.jooq.impl.DefaultConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -18,10 +17,13 @@ public class CrossingRepository {
 
     public List<CrossingModel> getRoutesCrossings(Integer routeId) {
         return dsl.select().from(CrossingMapper.crossing)
-                .leftJoin(CrossingMapper.bridge).on(CrossingMapper.bridge.ID.eq(CrossingMapper.crossing.BRIDGE_ID))
-                .where(CrossingMapper.crossing.ROUTE_ID.eq(routeId))
+                .leftJoin(CrossingMapper.routeBridge).on(CrossingMapper.routeBridge.ID.eq(CrossingMapper.crossing.ROUTE_BRIDGE_ID))
+                .leftJoin(CrossingMapper.route).on(CrossingMapper.route.ID.eq(CrossingMapper.routeBridge.ROUTE_ID))
+                .leftJoin(CrossingMapper.bridge).on(CrossingMapper.bridge.ID.eq(CrossingMapper.routeBridge.BRIDGE_ID))
+                .where(CrossingMapper.routeBridge.ROUTE_ID.eq(routeId))
                 .fetch(new CrossingMapper());
     }
+
     public Integer updateCrossing(CrossingInputModel crossingModel) {
         dsl.update(CrossingMapper.crossing)
                 .set(CrossingMapper.crossing.DRIVINGLINEINFODESCRIPTION, crossingModel.getDrivingLineInfoDescription())
@@ -39,42 +41,68 @@ public class CrossingRepository {
                 .execute();
         return crossingModel.getId();
     }
-    public Integer createCrossing(Integer routeId, Integer bridgeId) {
-        Integer crossingId = dsl.nextval(Sequences.CROSSING_ID_SEQ).intValue();
-        LocalDateTime now = LocalDateTime.now();
-        dsl.insertInto(CrossingMapper.crossing,
-                CrossingMapper.crossing.ID,
-                CrossingMapper.crossing.ROUTE_ID,
-                CrossingMapper.crossing.BRIDGE_ID,
-                CrossingMapper.crossing.NAME,
-                CrossingMapper.crossing.DAMAGE, CrossingMapper.crossing.PERMANENTBENDINGS, CrossingMapper.crossing.TWIST,
-                CrossingMapper.crossing.SPEEDINFO, CrossingMapper.crossing.SPEEDINFODESCRIPTION,
-                CrossingMapper.crossing.DRIVINGLINEINFO, CrossingMapper.crossing.DRIVINGLINEINFODESCRIPTION,
-                CrossingMapper.crossing.EXCEPTIONSINFO, CrossingMapper.crossing.EXCEPTIONSINFODESCRIPTION,
-                CrossingMapper.crossing.DESCRIBE, CrossingMapper.crossing.EXTRAINFODESCRIPTION,
-                CrossingMapper.crossing.STARTED
-                )
-        .values(crossingId, routeId, bridgeId, "",
-                false, false, false,
-                true,"",
-                true,"",
-                false,"",
-                false,"",
-                now)
-        .execute();
 
-        return crossingId;
+    public Integer createCrossing(Integer routeId, Integer bridgeId) {
+        Integer[] crossingId = new Integer[1];
+
+        dsl.transaction(configuration -> {
+            Integer routeBridgeId = dsl.nextval(Sequences.ROUTE_BRIDGE_ID_SEQ).intValue();
+            configuration.dsl().insertInto(CrossingMapper.routeBridge,
+                    CrossingMapper.routeBridge.ID,
+                    CrossingMapper.routeBridge.ROUTE_ID,
+                    CrossingMapper.routeBridge.BRIDGE_ID
+            ).values(routeBridgeId, routeId, bridgeId).execute();
+
+            crossingId[0] = dsl.nextval(Sequences.CROSSING_ID_SEQ).intValue();
+            LocalDateTime now = LocalDateTime.now();
+            configuration.dsl().insertInto(CrossingMapper.crossing,
+                    CrossingMapper.crossing.ID,
+                    CrossingMapper.crossing.ROUTE_BRIDGE_ID,
+                    CrossingMapper.crossing.NAME,
+                    CrossingMapper.crossing.DAMAGE, CrossingMapper.crossing.PERMANENTBENDINGS, CrossingMapper.crossing.TWIST,
+                    CrossingMapper.crossing.SPEEDINFO, CrossingMapper.crossing.SPEEDINFODESCRIPTION,
+                    CrossingMapper.crossing.DRIVINGLINEINFO, CrossingMapper.crossing.DRIVINGLINEINFODESCRIPTION,
+                    CrossingMapper.crossing.EXCEPTIONSINFO, CrossingMapper.crossing.EXCEPTIONSINFODESCRIPTION,
+                    CrossingMapper.crossing.DESCRIBE, CrossingMapper.crossing.EXTRAINFODESCRIPTION,
+                    CrossingMapper.crossing.STARTED,
+                    CrossingMapper.crossing.DRAFT
+                    )
+            .values(crossingId[0], routeBridgeId, "",
+                    false, false, false,
+                    true,"",
+                    true,"",
+                    false,"",
+                    false,"",
+                    now,
+                    true)
+            .execute();
+        });
+
+        return crossingId[0];
     }
-    public CrossingModel getCrossing(Integer crossingId) {
+
+    public CrossingModel getCrossing(Integer routeId, Integer bridgeId) {
         return dsl.select().from(CrossingMapper.crossing)
-                .leftJoin(CrossingMapper.bridge).on(CrossingMapper.bridge.ID.eq(CrossingMapper.crossing.BRIDGE_ID))
-                .where(CrossingMapper.crossing.ID.eq(crossingId))
+                .leftJoin(CrossingMapper.routeBridge).on(CrossingMapper.routeBridge.ID.eq(CrossingMapper.crossing.ROUTE_BRIDGE_ID))
+                .leftJoin(CrossingMapper.route).on(CrossingMapper.route.ID.eq(CrossingMapper.routeBridge.ROUTE_ID))
+                .leftJoin(CrossingMapper.bridge).on(CrossingMapper.bridge.ID.eq(CrossingMapper.routeBridge.BRIDGE_ID))
+                .where(CrossingMapper.route.ID.eq(routeId)
+                        .and(CrossingMapper.bridge.ID.eq(bridgeId))
+                        .and(CrossingMapper.crossing.DRAFT.eq(true)))
+                .fetchOne(new CrossingMapper());
+    }
+
+    public CrossingModel getCrossing(Integer crossingId, Boolean draft) {
+        return dsl.select().from(CrossingMapper.crossing)
+                .leftJoin(CrossingMapper.routeBridge).on(CrossingMapper.routeBridge.ID.eq(CrossingMapper.crossing.ROUTE_BRIDGE_ID))
+                .leftJoin(CrossingMapper.route).on(CrossingMapper.route.ID.eq(CrossingMapper.routeBridge.ROUTE_ID))
+                .leftJoin(CrossingMapper.bridge).on(CrossingMapper.bridge.ID.eq(CrossingMapper.routeBridge.BRIDGE_ID))
+                .where(CrossingMapper.crossing.ID.eq(crossingId)
+                        .and(CrossingMapper.crossing.DRAFT.eq(draft)))
                 .fetchOne(new CrossingMapper());
     }
 
     public Integer insertFile(FileModel fileModel) {
-        //01234567890123456789
-        //2021-04-01T08:20:45.515Z
         Integer imageId = dsl.nextval(Sequences.CROSSING_IMAGE_ID_SEQ).intValue();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         LocalDateTime taken = LocalDateTime.parse(fileModel.getTaken().substring(0,19), formatter);
@@ -86,7 +114,7 @@ public class CrossingRepository {
                 FileMapper.image.TAKEN)
                 .values(imageId,
                         Long.valueOf(fileModel.getCrossingId()).intValue(),
-                        fileModel.getFilename(),
+                        fileModel.getFilename()+"_"+fileModel.getTaken()+"_"+imageId+".jpg",
                         fileModel.getObjectKey(),
                         taken)
                 .execute();
@@ -97,5 +125,9 @@ public class CrossingRepository {
                 .where(FileMapper.image.ID.eq(fileId))
                 .fetchOne(new FileMapper());
 
+    }
+    public List<FileModel> getFiles(Integer crossingId) {
+        return dsl.select().from(FileMapper.image).where(FileMapper.image.CROSSING_ID.eq(crossingId))
+                .fetch(new FileMapper(true));
     }
 }

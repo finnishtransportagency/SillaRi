@@ -9,6 +9,7 @@ export const updateCrossingMutation = gql`
       exceptionsInfo
       exceptionsInfoDescription
       id
+      routeBridgeId
       speedInfo
       speedInfoDescription
       started
@@ -18,7 +19,7 @@ export const updateCrossingMutation = gql`
       bridge {
         id
         name
-        shortName
+        identifier
       }
       route {
         id
@@ -46,11 +47,16 @@ export const startCrossingMutation = gql`
       bridge {
         id
         name
-        shortName
+        identifier
       }
       route {
         id
         name
+      }
+      permit {
+        id
+        permitNumber
+        companyId
       }
     }
   }

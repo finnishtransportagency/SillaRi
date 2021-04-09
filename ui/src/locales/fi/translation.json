@@ -71,6 +71,23 @@
     "transportValid": "Kuljetus on luvanmukainen lähtiessä",
     "bridgesToSupervise": "Valvottavat sillat"
   },
+  "bridgeDetail" :
+  {
+    "crossingInstructions" : "Ylitysohje",
+    "documentingHeader" : "Dokumentointi",
+    "documentingParagraph" : "Valvoja seuraa ... jne todo",
+    "trafficSupervisors" : "Liikenteenohjaajat",
+    "conformsToPermit" : "Kuljetus on luvanmukainen",
+    "startSupervision" : "Aloita valvonta",
+    "denyCrossing" : "Kuljetus ei voi ylittää siltaa"
+  },
+  "denyCrossing" :
+  {
+    "cantCross" : "Kuljetus ei voi ylittää siltaa",
+    "whyCantCross" : "Miksi kuljetus ei voi ylittää siltaa",
+    "back" : "Takaisin",
+    "send" : "Lähetä"
+  },
   "crossing" :
   {
     "title" : "Sillan valvonta",
