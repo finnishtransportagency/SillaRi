@@ -16,7 +16,7 @@ public class CompanyService {
     @Autowired
     CompanyRepository companyRepository;
     @Autowired
-    AuthorizationRepository authorizationRepository;
+    PermitRepository permitRepository;
     @Autowired
     RouteRepository routeRepository;
     @Autowired
@@ -25,10 +25,10 @@ public class CompanyService {
     public List<CompanyModel> getCompanies(Integer limit) {
         List<CompanyModel> companies = companyRepository.getAllCompanies(limit);
         for(CompanyModel companyModel : companies) {
-            companyModel.setAuthorizations(authorizationRepository.getCompanysAuthorizations(Long.valueOf(companyModel.getId()).intValue()));
-            for(AuthorizationModel authorizationModel: companyModel.getAuthorizations()) {
-                authorizationModel.setRoutes(routeRepository.getRoutes(Long.valueOf(authorizationModel.getId()).intValue()));
-                for(RouteModel routeModel : authorizationModel.getRoutes()) {
+            companyModel.setPermits(permitRepository.getCompanysPermits(Long.valueOf(companyModel.getId()).intValue()));
+            for(PermitModel permitModel : companyModel.getPermits()) {
+                permitModel.setRoutes(routeRepository.getRoutes(Long.valueOf(permitModel.getId()).intValue()));
+                for(RouteModel routeModel : permitModel.getRoutes()) {
                     List<BridgeModel> bridgeModels = bridgeRepository.getRoutesBridges(Long.valueOf(routeModel.getId()).intValue());
                     routeModel.setBridges(bridgeModels);
                 }
@@ -41,7 +41,7 @@ public class CompanyService {
         if (limit >= 0) {
             List<CompanyModel> companyList = companyRepository.getAllCompanies(limit);
             for (CompanyModel companyModel : companyList) {
-                companyModel.setAuthorizations(authorizationRepository.getCompanysAuthorizations(Long.valueOf(companyModel.getId()).intValue()));
+                companyModel.setPermits(permitRepository.getCompanysPermits(Long.valueOf(companyModel.getId()).intValue()));
             }
             return companyList;
         } else {
@@ -51,9 +51,9 @@ public class CompanyService {
 
     public CompanyModel getCompany(Integer id) {
         CompanyModel company = companyRepository.getCompanyById(id);
-        company.setAuthorizations(authorizationRepository.getCompanysAuthorizations(id));
-        for (AuthorizationModel authorizationModel : company.getAuthorizations()) {
-            authorizationModel.setRoutes(routeRepository.getRoutes(Long.valueOf(authorizationModel.getId()).intValue()));
+        company.setPermits(permitRepository.getCompanysPermits(id));
+        for (PermitModel permitModel : company.getPermits()) {
+            permitModel.setRoutes(routeRepository.getRoutes(Long.valueOf(permitModel.getId()).intValue()));
         }
         return company;
     }

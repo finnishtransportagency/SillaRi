@@ -57,7 +57,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     started = "",
     id = -1,
     bridge,
-    authorization,
+    permit,
   } = selectedCrossingDetail || {};
   const {
     params: { bridgeId, routeId },
@@ -82,8 +82,8 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     });
   }
 
-  const { name: bridgeName = "", shortName: bridgeShortName } = bridge || {};
-  const { permissionId = "" } = authorization || {};
+  const { name: bridgeName = "", identifier: bridgeShortName } = bridge || {};
+  const { permitNumber = "" } = permit || {};
   function changeTextAreaValue(pname: string, pvalue: string) {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
     dispatch({ type: crossingActions.CROSSING_TEXTAREA_CHANGED, payload: change });
@@ -148,7 +148,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
           <IonRow>
             <IonCol>
               <IonLabel class="crossingLabel">
-                {t("crossing.permitNumber")} {permissionId}
+                {t("crossing.permitNumber")} {permitNumber}
               </IonLabel>
             </IonCol>
           </IonRow>

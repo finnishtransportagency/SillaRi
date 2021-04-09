@@ -1,9 +1,7 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.AuthorizationMapper;
 import fi.vaylavirasto.sillari.model.RouteMapper;
 import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.model.TransportMapper;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,17 +13,17 @@ public class RouteRepository {
     @Autowired
     private DSLContext dsl;
 
-    public List<RouteModel> getRoutes(Integer authorizationId) {
+    public List<RouteModel> getRoutes(Integer permitId) {
         return dsl.select().from(RouteMapper.route)
-                .leftJoin(RouteMapper.arrivalAddress).on(RouteMapper.route.ARRIVAL_ADDRESS_ID.eq(TransportMapper.arrivalAddress.ID))
-                .leftJoin(RouteMapper.departureAddress).on(RouteMapper.route.DEPARTURE_ADDRESS_ID.eq(TransportMapper.departureAddress.ID))
-                .where(RouteMapper.route.AUTHORIZATION_ID.eq(authorizationId))
+                .leftJoin(RouteMapper.arrivalAddress).on(RouteMapper.route.ARRIVAL_ADDRESS_ID.eq(RouteMapper.arrivalAddress.ID))
+                .leftJoin(RouteMapper.departureAddress).on(RouteMapper.route.DEPARTURE_ADDRESS_ID.eq(RouteMapper.departureAddress.ID))
+                .where(RouteMapper.route.PERMIT_ID.eq(permitId))
                 .fetch(new RouteMapper());
     }
     public RouteModel getRoute(Integer id) {
         RouteModel model = dsl.select().from(RouteMapper.route)
-                .leftJoin(RouteMapper.arrivalAddress).on(RouteMapper.route.ARRIVAL_ADDRESS_ID.eq(TransportMapper.arrivalAddress.ID))
-                .leftJoin(RouteMapper.departureAddress).on(RouteMapper.route.DEPARTURE_ADDRESS_ID.eq(TransportMapper.departureAddress.ID))
+                .leftJoin(RouteMapper.arrivalAddress).on(RouteMapper.route.ARRIVAL_ADDRESS_ID.eq(RouteMapper.arrivalAddress.ID))
+                .leftJoin(RouteMapper.departureAddress).on(RouteMapper.route.DEPARTURE_ADDRESS_ID.eq(RouteMapper.departureAddress.ID))
                 .where(RouteMapper.route.ID.eq(id))
                 .fetchOne(new RouteMapper());
 

@@ -1,11 +1,11 @@
 package fi.vaylavirasto.sillari.service;
 
-import fi.vaylavirasto.sillari.model.AuthorizationModel;
 import fi.vaylavirasto.sillari.model.CrossingInputModel;
 import fi.vaylavirasto.sillari.model.CrossingModel;
+import fi.vaylavirasto.sillari.model.PermitModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.repositories.AuthorizationRepository;
 import fi.vaylavirasto.sillari.repositories.CrossingRepository;
+import fi.vaylavirasto.sillari.repositories.PermitRepository;
 import fi.vaylavirasto.sillari.repositories.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class CrossingService {
     @Autowired
     RouteRepository routeRepository;
     @Autowired
-    AuthorizationRepository authorizationRepository;
+    PermitRepository permitRepository;
 
     public CrossingModel createCrossing(Integer routeId, Integer bridgeId) {
         CrossingModel crossingModel = crossingRepository.getCrossing(routeId, bridgeId);
@@ -33,8 +33,8 @@ public class CrossingService {
         CrossingModel crossingModel = crossingRepository.getCrossing(crossingId, draft);
         RouteModel routeModel = routeRepository.getRoute(Long.valueOf(crossingModel.getRoute().getId()).intValue());
         crossingModel.setRoute(routeModel);
-        AuthorizationModel authorizationModel = authorizationRepository.getAuthorization(Long.valueOf(routeModel.getAuthorizationId()).intValue());
-        crossingModel.setAuthorization(authorizationModel);
+        PermitModel permitModel = permitRepository.getPermit(Long.valueOf(routeModel.getPermitId()).intValue());
+        crossingModel.setPermit(permitModel);
         crossingModel.setImages(crossingRepository.getFiles(crossingId));
         return crossingModel;
     }

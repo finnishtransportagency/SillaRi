@@ -7,9 +7,10 @@ import java.util.List;
 @Data
 public class CrossingModel {
     private int id;
+    private int routeBridgeId;
     private BridgeModel bridge;
     private RouteModel route;
-    private AuthorizationModel authorization;
+    private PermitModel permit;
     private boolean drivingLineInfo;
     private boolean speedInfo;
     private boolean exceptionsInfo;
