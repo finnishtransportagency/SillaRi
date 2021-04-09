@@ -108,7 +108,6 @@ const crossingsSlice = createSlice({
       return { ...state, loading: false, selectedCrossingDetail: action.payload.startCrossing };
     },
     GET_CROSSING: (state, action: PayloadAction<IGetCrossing>) => {
-      // TODO - use action.payload.crossing?
       console.log("GET_CROSSING");
       return { ...state, loading: false, selectedCrossingDetail: action.payload.Crossing };
     },
@@ -125,7 +124,8 @@ const crossingsSlice = createSlice({
       alert("Talletettu");
     },
     CROSSING_SUMMARY: (state, action: PayloadAction<ICrossingUpdate>) => {
-      alert("summary");
+      console.log("CROSSING_SUMMARY");
+      return { ...state, loading: false, selectedCrossingDetail: action.payload.updateCrossing };
     },
   },
 });

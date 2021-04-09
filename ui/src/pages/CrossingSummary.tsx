@@ -52,7 +52,7 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
   useQuery<ICrossingDetail>(queryCrossing(Number(crossingId), true), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
     onError: (err) => console.error(err),
-    fetchPolicy: "cache-first",
+    fetchPolicy: "cache-and-network",
   });
   const [updateCrossing, { data }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
     onCompleted: (response) => dispatch({ type: crossingActions.CROSSING_SAVED, payload: response }),
@@ -74,7 +74,7 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
     authorization,
     drivingLineInfoDescription,
     speedInfoDescription,
-    images: crossingImages = [],
+    images: crossingImages,
   } = selectedCrossingDetail || {};
   const { id: routeId } = route || {};
   const { id: bridgeId, name: bridgeName = "", shortName: bridgeShortName = "" } = bridge || {};
@@ -172,7 +172,8 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
           <IonRow>
             <IonCol>
               <IonLabel class="crossingLabelBold">
-                {t("crossing.summary.images")} ({images.length === 0 ? crossingImages.length : images.length} {t("crossing.summary.kpl")})
+                {t("crossing.summary.images")} ({images.length === 0 && crossingImages !== undefined ? crossingImages.length : images.length}{" "}
+                {t("crossing.summary.kpl")})
               </IonLabel>
             </IonCol>
           </IonRow>
@@ -186,15 +187,17 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
                 </IonCol>
               </IonItem>
             ))}
-            {crossingImages.map((crossingImage: IFile) => (
-              <IonItem key={crossingImage.id}>
-                <IonCol>
-                  <IonThumbnail>
-                    <IonImg src={`${apiUrl}images/get?objectKey=${crossingImage.objectKey}`} />
-                  </IonThumbnail>
-                </IonCol>
-              </IonItem>
-            ))}
+            {crossingImages !== undefined
+              ? crossingImages.map((crossingImage) => (
+                  <IonItem key={crossingImage.id}>
+                    <IonCol>
+                      <IonThumbnail>
+                        <IonImg src={`${apiUrl}images/get?objectKey=${crossingImage.objectKey}`} />
+                      </IonThumbnail>
+                    </IonCol>
+                  </IonItem>
+                ))
+              : ""}
           </IonRow>
           <IonRow>
             <IonIcon icon={checkmarkCircleOutline} class={!drivingLineInfo ? "checkMarkRed" : "checkMarkGreen"} />

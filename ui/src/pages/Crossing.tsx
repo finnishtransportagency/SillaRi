@@ -18,7 +18,7 @@ import React, { useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useMutation, useQuery } from "@apollo/client";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps, useHistory } from "react-router";
 import moment from "moment";
 import Header from "../components/Header";
 import { RootState, useTypedSelector } from "../store/store";
@@ -38,29 +38,10 @@ interface CrossingProps {
 
 export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Element => {
   const { t, i18n } = useTranslation();
-
+  const hist = useHistory();
   const dispatch = useDispatch();
   const crossings = useTypedSelector((state) => state.crossingsReducer);
   const { images = [], loading, selectedCrossingDetail } = crossings;
-  const {
-    params: { bridgeId, routeId },
-  } = match;
-  const [startCrossing, { data }] = useMutation<ICrossingDetail>(startCrossingMutation, {
-    onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),
-    onError: (err) => console.error(err),
-  });
-  const [updateCrossing, { data: updatedata }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
-    onCompleted: (response) => dispatch({ type: crossingActions.CROSSING_SUMMARY, payload: response }),
-    onError: (err) => console.error(err),
-  });
-
-  if (selectedCrossingDetail === undefined && !loading) {
-    dispatch({ type: crossingActions.SET_LOADING, payload: true });
-    startCrossing({
-      variables: { routeId, bridgeId },
-    });
-  }
-
   const {
     speedInfo = true,
     describe = false,
@@ -78,6 +59,29 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     bridge,
     authorization,
   } = selectedCrossingDetail || {};
+  const {
+    params: { bridgeId, routeId },
+  } = match;
+  const [startCrossing, { data }] = useMutation<ICrossingDetail>(startCrossingMutation, {
+    onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),
+    onError: (err) => console.error(err),
+  });
+  const [updateCrossing, { data: updatedata }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
+    onCompleted: (response) => {
+      dispatch({ type: crossingActions.CROSSING_SUMMARY, payload: response });
+      console.log("history");
+      hist.push(`/summary/${id}`);
+    },
+    onError: (err) => console.error(err),
+  });
+
+  if (selectedCrossingDetail === undefined && !loading) {
+    dispatch({ type: crossingActions.SET_LOADING, payload: true });
+    startCrossing({
+      variables: { routeId, bridgeId },
+    });
+  }
+
   const { name: bridgeName = "", shortName: bridgeShortName } = bridge || {};
   const { permissionId = "" } = authorization || {};
   function changeTextAreaValue(pname: string, pvalue: string) {
@@ -340,9 +344,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
               <IonButton disabled>{t("crossing.buttons.exit")}</IonButton>
             </IonCol>
             <IonCol>
-              <IonButton routerLink={`/summary/${id}`} onClick={() => summaryClicked()}>
-                {t("crossing.buttons.summary")}
-              </IonButton>
+              <IonButton onClick={() => summaryClicked()}>{t("crossing.buttons.summary")}</IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>
