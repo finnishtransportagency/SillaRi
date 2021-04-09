@@ -22,10 +22,10 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedBridgeDetail, selectedRouteDetail, selectedAuthorizationDetail } = crossingsState;
+  const { selectedBridgeDetail, selectedRouteDetail, selectedPermitDetail } = crossingsState;
   const { name = "", id } = selectedBridgeDetail || {};
   const { id: routeId } = selectedRouteDetail || {};
-  const { permissionId } = selectedAuthorizationDetail || {};
+  const { permitNumber } = selectedPermitDetail || {};
   const {
     params: { id: bridgeId },
   } = match;
@@ -81,7 +81,7 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
                 <IonRow>
                   <IonCol>
                     <IonLabel class="crossingLabel">
-                      {t("bridgeDetail.permitNumber")} {permissionId}
+                      {t("bridgeDetail.permitNumber")} {permitNumber}
                     </IonLabel>
                   </IonCol>
                 </IonRow>
