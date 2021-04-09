@@ -18,10 +18,10 @@ public class BridgeRepository {
         return model;
     }
     public List<BridgeModel> getRoutesBridges(Integer routeId) {
-        List<BridgeModel> bridgeModels = dsl.select().from(RoutesBridgesMapper.routesbridges)
-                .leftJoin(RoutesBridgesMapper.bridge).on(RoutesBridgesMapper.bridge.ID.eq(RoutesBridgesMapper.routesbridges.BRIDGEID))
-                .where(RoutesBridgesMapper.routesbridges.ROUTEID.eq(routeId))
-                .fetch(new RoutesBridgesMapper());
+        List<BridgeModel> bridgeModels = dsl.select().from(RouteBridgeMapper.routebridge)
+                .leftJoin(RouteBridgeMapper.bridge).on(RouteBridgeMapper.bridge.ID.eq(RouteBridgeMapper.routebridge.BRIDGE_ID))
+                .where(RouteBridgeMapper.routebridge.ROUTE_ID.eq(routeId))
+                .fetch(new RouteBridgeMapper());
         return bridgeModels;
     }
 }
