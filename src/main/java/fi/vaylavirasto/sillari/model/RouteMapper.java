@@ -20,6 +20,7 @@ public class RouteMapper  implements RecordMapper<Record, RouteModel> {
         routeModel.setName(record.get(route.NAME));
         routeModel.setDepartureTime(record.get(route.DEPARTURE_TIME));
         routeModel.setArrivalTime(record.get(route.ARRIVAL_TIME));
+        routeModel.setAuthorizationId(record.get(route.AUTHORIZATION_ID));
 
         AddressModel aa = new AddressModel();
         aa.setId(record.get(arrivalAddress.ID));

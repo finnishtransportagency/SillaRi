@@ -17,18 +17,23 @@ import {
   IonRow,
   IonThumbnail,
 } from "@ionic/react";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { RouteComponentProps } from "react-router";
 import moment from "moment";
 
 import { RootState, useTypedSelector } from "../store/store";
 import Header from "../components/Header";
-import client from "../service/apolloClient";
+import client, { apiUrl } from "../service/apolloClient";
 import uploadmutation from "../graphql/UploadMutation";
 import { updateCrossingMutation } from "../graphql/CrossingMutation";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
 import { actions as crossingActions } from "../store/crossingsSlice";
+import ICompanyDetail from "../interfaces/ICompanyDetail";
+import { companyQuery } from "../graphql/CompanyQuery";
+import queryCrossing from "../graphql/CrossingQuery";
+import IImageItem from "../interfaces/IImageItem";
+import IFile from "../interfaces/IFile";
 
 interface CrossingSummaryProps {
   crossingId: string;
@@ -38,31 +43,61 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
   const { t, i18n } = useTranslation();
   const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
   const { images = [] } = crossingProps;
-  const { selectedAuthorizationDetail, selectedCrossingDetail, selectedRouteDetail, selectedBridgeDetail, selectedCompanyDetail } = crossingProps;
+  const { selectedCrossingDetail } = crossingProps;
   const dispatch = useDispatch();
+  let url: string;
+  const {
+    params: { crossingId },
+  } = match;
+  useQuery<ICrossingDetail>(queryCrossing(Number(crossingId), true), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
+    onError: (err) => console.error(err),
+    fetchPolicy: "cache-first",
+  });
   const [updateCrossing, { data }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
     onCompleted: (response) => dispatch({ type: crossingActions.CROSSING_SAVED, payload: response }),
     onError: (err) => console.error(err),
   });
+  const {
+    started = "",
+    drivingLineInfo,
+    speedInfo,
+    route,
+    describe,
+    bridge,
+    exceptionsInfoDescription,
+    extraInfoDescription,
+    damage,
+    twist,
+    permanentBendings,
+    exceptionsInfo,
+    authorization,
+    drivingLineInfoDescription,
+    speedInfoDescription,
+    images: crossingImages = [],
+  } = selectedCrossingDetail || {};
+  const { id: routeId } = route || {};
+  const { id: bridgeId, name: bridgeName = "", shortName: bridgeShortName = "" } = bridge || {};
+  const { permissionId = "" } = authorization || {};
   function save() {
     if (selectedCrossingDetail !== undefined) {
       const updateRequest = {
-        id: selectedCrossingDetail.id,
-        bridgeId: selectedCrossingDetail.bridge.id,
-        routeId: selectedCrossingDetail.route.id,
-        started: selectedCrossingDetail.started,
-        drivingLineInfo: selectedCrossingDetail.drivingLineInfo,
-        drivingLineInfoDescription:
-          selectedCrossingDetail.drivingLineInfoDescription === null ? "" : selectedCrossingDetail.drivingLineInfoDescription,
-        speedInfo: selectedCrossingDetail.speedInfo,
-        speedInfoDescription: selectedCrossingDetail.speedInfoDescription === null ? "" : selectedCrossingDetail.speedInfoDescription,
-        exceptionsInfo: selectedCrossingDetail.exceptionsInfo,
-        exceptionsInfoDescription: selectedCrossingDetail.exceptionsInfoDescription === null ? "" : selectedCrossingDetail.exceptionsInfoDescription,
-        describe: selectedCrossingDetail.describe,
-        extraInfoDescription: selectedCrossingDetail.extraInfoDescription === null ? "" : selectedCrossingDetail.extraInfoDescription,
-        permanentBendings: selectedCrossingDetail.permanentBendings,
-        twist: selectedCrossingDetail.twist,
-        damage: selectedCrossingDetail.damage,
+        id: Number(crossingId),
+        bridgeId,
+        routeId,
+        started,
+        drivingLineInfo,
+        drivingLineInfoDescription,
+        speedInfo,
+        speedInfoDescription,
+        exceptionsInfo,
+        exceptionsInfoDescription,
+        describe,
+        extraInfoDescription,
+        permanentBendings,
+        twist,
+        damage,
+        draft: false,
       } as ICrossingInput;
       updateCrossing({
         variables: { crossing: updateRequest },
@@ -83,26 +118,9 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
       }
     }
   }
-  const {
-    started = "",
-    drivingLineInfo,
-    speedInfo,
-    route,
-    describe,
-    bridge,
-    exceptionsInfoDescription,
-    extraInfoDescription,
-    damage,
-    twist,
-    permanentBendings,
-    exceptionsInfo,
-  } = selectedCrossingDetail || {};
-  const { id: routeId } = route || {};
-  const { id: bridgeId, name: bridgeName = "", shortName: bridgeShortName = "" } = bridge || {};
-  const { permissionId = "" } = selectedAuthorizationDetail || {};
   let exceptionsText = "";
   if (exceptionsInfo) {
-    if (damage) {
+    if (permanentBendings) {
       exceptionsText = t("crossing.exceptions.permanentBendings");
     }
     if (twist) {
@@ -154,7 +172,7 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
           <IonRow>
             <IonCol>
               <IonLabel class="crossingLabelBold">
-                {t("crossing.summary.images")} ({images.length} {t("crossing.summary.kpl")})
+                {t("crossing.summary.images")} ({images.length === 0 ? crossingImages.length : images.length} {t("crossing.summary.kpl")})
               </IonLabel>
             </IonCol>
           </IonRow>
@@ -164,6 +182,15 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
                 <IonCol>
                   <IonThumbnail>
                     <IonImg src={imageItem.dataUrl} />
+                  </IonThumbnail>
+                </IonCol>
+              </IonItem>
+            ))}
+            {crossingImages.map((crossingImage: IFile) => (
+              <IonItem key={crossingImage.id}>
+                <IonCol>
+                  <IonThumbnail>
+                    <IonImg src={`${apiUrl}images/get?objectKey=${crossingImage.objectKey}`} />
                   </IonThumbnail>
                 </IonCol>
               </IonItem>

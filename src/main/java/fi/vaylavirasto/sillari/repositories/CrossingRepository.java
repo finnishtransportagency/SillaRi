@@ -52,7 +52,8 @@ public class CrossingRepository {
                 CrossingMapper.crossing.DRIVINGLINEINFO, CrossingMapper.crossing.DRIVINGLINEINFODESCRIPTION,
                 CrossingMapper.crossing.EXCEPTIONSINFO, CrossingMapper.crossing.EXCEPTIONSINFODESCRIPTION,
                 CrossingMapper.crossing.DESCRIBE, CrossingMapper.crossing.EXTRAINFODESCRIPTION,
-                CrossingMapper.crossing.STARTED
+                CrossingMapper.crossing.STARTED,
+                CrossingMapper.crossing.DRAFT
                 )
         .values(crossingId, routeId, bridgeId, "",
                 false, false, false,
@@ -60,21 +61,29 @@ public class CrossingRepository {
                 true,"",
                 false,"",
                 false,"",
-                now)
+                now,
+                true)
         .execute();
 
         return crossingId;
     }
-    public CrossingModel getCrossing(Integer crossingId) {
+    public CrossingModel getCrossing(Integer routeId, Integer bridgeId) {
         return dsl.select().from(CrossingMapper.crossing)
                 .leftJoin(CrossingMapper.bridge).on(CrossingMapper.bridge.ID.eq(CrossingMapper.crossing.BRIDGE_ID))
-                .where(CrossingMapper.crossing.ID.eq(crossingId))
+                .where(CrossingMapper.crossing.ROUTE_ID.eq(routeId)
+                        .and(CrossingMapper.crossing.BRIDGE_ID.eq(bridgeId))
+                        .and(CrossingMapper.crossing.DRAFT.eq(true)))
+                .fetchOne(new CrossingMapper());
+    }
+    public CrossingModel getCrossing(Integer crossingId, Boolean draft) {
+        return dsl.select().from(CrossingMapper.crossing)
+                .leftJoin(CrossingMapper.bridge).on(CrossingMapper.bridge.ID.eq(CrossingMapper.crossing.BRIDGE_ID))
+                .where(CrossingMapper.crossing.ID.eq(crossingId)
+                        .and(CrossingMapper.crossing.DRAFT.eq(draft)))
                 .fetchOne(new CrossingMapper());
     }
 
     public Integer insertFile(FileModel fileModel) {
-        //01234567890123456789
-        //2021-04-01T08:20:45.515Z
         Integer imageId = dsl.nextval(Sequences.CROSSING_IMAGE_ID_SEQ).intValue();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         LocalDateTime taken = LocalDateTime.parse(fileModel.getTaken().substring(0,19), formatter);
@@ -86,7 +95,7 @@ public class CrossingRepository {
                 FileMapper.image.TAKEN)
                 .values(imageId,
                         Long.valueOf(fileModel.getCrossingId()).intValue(),
-                        fileModel.getFilename(),
+                        fileModel.getFilename()+"_"+fileModel.getTaken()+"_"+imageId+".jpg",
                         fileModel.getObjectKey(),
                         taken)
                 .execute();
@@ -97,5 +106,9 @@ public class CrossingRepository {
                 .where(FileMapper.image.ID.eq(fileId))
                 .fetchOne(new FileMapper());
 
+    }
+    public List<FileModel> getFiles(Integer crossingId) {
+        return dsl.select().from(FileMapper.image).where(FileMapper.image.CROSSING_ID.eq(crossingId))
+                .fetch(new FileMapper(true));
     }
 }

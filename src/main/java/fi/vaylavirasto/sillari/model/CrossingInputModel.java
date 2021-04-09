@@ -19,4 +19,5 @@ public class CrossingInputModel {
     private boolean permanentBendings;
     private boolean twist;
     private boolean damage;
+    private boolean draft;
 }

@@ -52,6 +52,11 @@ export const startCrossingMutation = gql`
         id
         name
       }
+      authorization {
+        id
+        permissionId
+        companyId
+      }
     }
   }
 `;

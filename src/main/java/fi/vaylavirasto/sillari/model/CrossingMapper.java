@@ -34,6 +34,7 @@ public class CrossingMapper implements RecordMapper<Record,CrossingModel> {
         crossingModel.setPermanentBendings(record.get(crossing.PERMANENTBENDINGS));
         crossingModel.setTwist(record.get(crossing.TWIST));
         crossingModel.setDamage(record.get(crossing.DAMAGE));
+        crossingModel.setDraft(record.get(crossing.DRAFT));
 
         BridgeModel bridgeModel = new BridgeModel();
         bridgeModel.setId(record.get(bridge.ID));

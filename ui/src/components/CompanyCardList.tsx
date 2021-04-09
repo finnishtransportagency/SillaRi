@@ -16,6 +16,7 @@ const CompanyCardList = (): JSX.Element => {
   useQuery<ICompanyList>(companyListQuery(10), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_COMPANY_LIST, payload: response }),
     onError: (err) => console.error(err),
+    fetchPolicy: "cache-first",
   });
 
   return (
