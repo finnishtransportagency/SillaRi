@@ -83,7 +83,7 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
         </IonGrid>
         <IonGrid>
           <IonRow>
-            <IonButton color="primary" routerLink={`/supervision/${routeId}/${id}`}>
+            <IonButton color="primary" routerLink={`/denyCrossing/${routeId}/${id}`}>
               {t("bridgeDetail.denyCrossing")}
             </IonButton>
           </IonRow>
