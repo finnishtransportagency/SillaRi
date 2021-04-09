@@ -1,7 +1,7 @@
-import IAuthorization from "./IAuthorization";
+import IPermit from "./IPermit";
 
 export default interface ICompany {
   id: number;
   name: string;
-  authorizations: IAuthorization[];
+  permits: IPermit[];
 }

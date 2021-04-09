@@ -1,11 +1,11 @@
 import { DocumentNode, gql } from "@apollo/client";
 
-export const authorizationQuery = (id: number): DocumentNode => gql`
+export const permitQuery = (id: number): DocumentNode => gql`
     {
-        Authorization(id: ${id}) {
+        Permit(id: ${id}) {
                 id
                 companyId
-                permissionId
+                permitNumber
                 validStartDate
                 validEndDate
                 routes {
@@ -29,4 +29,4 @@ export const authorizationQuery = (id: number): DocumentNode => gql`
     }
 `;
 
-export default authorizationQuery;
+export default permitQuery;

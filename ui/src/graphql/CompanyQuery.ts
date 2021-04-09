@@ -5,10 +5,10 @@ export const companiesQuery = (): DocumentNode => gql`
     Companies {
       id
       name
-      authorizations {
+      permits {
         id
         companyId
-        permissionId
+        permitNumber
         validStartDate
         validEndDate
         routes {
@@ -53,7 +53,7 @@ export const companyListQuery = (limit?: number): DocumentNode => gql`
     CompanyList${limit ? `(limit: ${limit})` : ""} {
       id
       name
-      authorizations {
+      permits {
         id
         validStartDate
       }
@@ -66,10 +66,10 @@ export const companyQuery = (id: number): DocumentNode => gql`
     Company(id: ${id}) {
       id
       name
-      authorizations {
+      permits {
         id
         companyId
-        permissionId
+        permitNumber
         validStartDate
         validEndDate
         routes {

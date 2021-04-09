@@ -1,9 +1,9 @@
-import IAuthorization from "./IAuthorization";
+import IPermit from "./IPermit";
 import IRoute from "./IRoute";
 import ICompany from "./ICompany";
 
 export default interface ISelectRoute {
   company: number;
-  authorization: number;
+  permit: number;
   route: number;
 }

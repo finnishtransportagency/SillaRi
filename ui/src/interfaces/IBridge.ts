@@ -1,5 +1,5 @@
 export default interface IBridge {
   id: number;
   name: string;
-  shortName: string;
+  identifier: string;
 }

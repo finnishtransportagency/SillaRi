@@ -24,7 +24,7 @@ const CompanyDetail = ({ match }: RouteComponentProps<CompanyDetailProps>): JSX.
 
   const crossings = useTypedSelector((state) => state.crossingsReducer);
   const { selectedCompanyDetail } = crossings;
-  const { name = "", authorizations = [] } = selectedCompanyDetail || {};
+  const { name = "", permits = [] } = selectedCompanyDetail || {};
 
   const {
     params: { id: companyId },
@@ -40,9 +40,9 @@ const CompanyDetail = ({ match }: RouteComponentProps<CompanyDetailProps>): JSX.
       <Header title={name} />
       <IonContent>
         <div className="cardListContainer">
-          {authorizations.map((permit, index) => {
+          {permits.map((permit, index) => {
             const key = `permit_${index}`;
-            const { id, permissionId, validStartDate, validEndDate, routes } = permit;
+            const { id, permitNumber, validStartDate, validEndDate, routes } = permit;
             return (
               <div key={key}>
                 <IonGrid>
@@ -51,7 +51,7 @@ const CompanyDetail = ({ match }: RouteComponentProps<CompanyDetailProps>): JSX.
                       <IonGrid>
                         <IonRow>
                           <IonCol>
-                            <IonText>{`${t("company.transportPermit")} ${permissionId}`}</IonText>
+                            <IonText>{`${t("company.transportPermit")} ${permitNumber}`}</IonText>
                           </IonCol>
                         </IonRow>
                         <IonRow>
@@ -73,7 +73,7 @@ const CompanyDetail = ({ match }: RouteComponentProps<CompanyDetailProps>): JSX.
                   </IonRow>
                 </IonGrid>
 
-                <RouteCardList routes={routes} authorizationId={id} />
+                <RouteCardList routes={routes} permitId={id} />
               </div>
             );
           })}

@@ -11,13 +11,13 @@ import { actions as crossingActions } from "../store/crossingsSlice";
 import routeQuery from "../graphql/RouteQuery";
 import IRouteDetail from "../interfaces/IRouteDetail";
 import BridgeCardList from "../components/BridgeCardList";
-import IAuthorization from "../interfaces/IAuthorization";
-import authorizationQuery from "../graphql/AuthorizationQuery";
-import IAuthorizationDetail from "../interfaces/IAuthorizationDetail";
+import IPermit from "../interfaces/IPermit";
+import permitQuery from "../graphql/PermitQuery";
+import IPermitDetail from "../interfaces/IPermitDetail";
 
 interface RouteDetailProps {
   routeId: string;
-  authorizationId: string;
+  permitId: string;
 }
 
 const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Element => {
@@ -27,11 +27,11 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
   const { selectedRouteDetail } = crossingsState;
   const { bridges = [], name = "", id } = selectedRouteDetail || {};
   const {
-    params: { routeId, authorizationId },
+    params: { routeId, permitId },
   } = match;
 
-  useQuery<IAuthorizationDetail>(authorizationQuery(Number(authorizationId)), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_AUTHORIZATION, payload: response }),
+  useQuery<IPermitDetail>(permitQuery(Number(permitId)), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_PERMIT, payload: response }),
     onError: (err) => console.error(err),
   });
   useQuery<IRouteDetail>(routeQuery(Number(routeId)), {
