@@ -14,10 +14,10 @@ public class RouteBridgeQueryResolver implements GraphQLQueryResolver {
     RouteBridgeService routeBridgeService;
 
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public BridgeModel getRouteBridge(Integer routeId, Integer bridgeId) {
+    public BridgeModel getRouteBridge(Integer id) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteBridgeQueryResolver", "getRouteBridgeByRouteIdAndBridgeId");
         try {
-            return routeBridgeService.getRouteBridge(routeId, bridgeId);
+            return routeBridgeService.getRouteBridge(id);
         } finally {
             serviceMetric.end();
         }

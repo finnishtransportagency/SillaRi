@@ -10,9 +10,9 @@ public class RouteBridgeService {
     @Autowired
     RouteBridgeRepository routeBridgeRepository;
 
-    public BridgeModel getRouteBridge(Integer routeId, Integer bridgeId) {
+    public BridgeModel getRouteBridge(Integer id) {
         BridgeModel bridgeModel;
-        bridgeModel = routeBridgeRepository.getRouteBridge(routeId, bridgeId);
+        bridgeModel = routeBridgeRepository.getRouteBridge(id);
         return bridgeModel;
     }
 

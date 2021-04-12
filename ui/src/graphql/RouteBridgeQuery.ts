@@ -1,8 +1,8 @@
 import { DocumentNode, gql } from "@apollo/client";
 
-export const routeBridgeQuery = (routeId: number, bridgeId: number): DocumentNode => gql`
+export const routeBridgeQuery = (id: number): DocumentNode => gql`
     {
-        RouteBridge(routeId: ${routeId}, bridgeId: ${bridgeId}){
+        RouteBridge(id: ${id}){
             id
             name
             identifier

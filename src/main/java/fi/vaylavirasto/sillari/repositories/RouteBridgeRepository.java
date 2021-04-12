@@ -12,13 +12,11 @@ public class RouteBridgeRepository {
     @Autowired
     private DSLContext dsl;
 
-    public BridgeModel getRouteBridge(Integer routeId, Integer bridgeId) {
-        Condition routeIdEq = RouteBridgeMapper.routebridge.ROUTE_ID.eq(routeId);
-        Condition bridgeIdEq = RouteBridgeMapper.routebridge.BRIDGE_ID.eq(bridgeId);
+    public BridgeModel getRouteBridge(Integer id) {
 
         return dsl.select().from(RouteBridgeMapper.routebridge)
                 .leftJoin(RouteBridgeMapper.bridge).on(RouteBridgeMapper.bridge.ID.eq(RouteBridgeMapper.routebridge.BRIDGE_ID))
-                .where(routeIdEq.and(bridgeIdEq))
+                .where(RouteBridgeMapper.routebridge.ID.eq(id))
                 .fetchOne(new RouteBridgeMapper());
     }
 

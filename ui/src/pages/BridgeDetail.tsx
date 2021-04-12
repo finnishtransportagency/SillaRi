@@ -18,15 +18,13 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedBridgeDetail, selectedRouteDetail } = crossingsState;
-  const { name = "", id } = selectedBridgeDetail || {};
-  const { id: routeId } = selectedRouteDetail || {};
+  const { selectedBridgeDetail } = crossingsState;
+  const { name = "", crossingInstruction = "" } = selectedBridgeDetail || {};
   const {
-    params: { id: bridgeId },
+    params: { id },
   } = match;
 
-  // TODO after page refresh routeId is missing, should we get this (or both IDs) from url params instead of state?
-  useQuery<IBridgeDetail>(routeBridgeQuery(Number(routeId), Number(bridgeId)), {
+  useQuery<IBridgeDetail>(routeBridgeQuery(Number(id)), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_BRIDGE, payload: response }),
     onError: (err) => console.error(err),
   });
@@ -54,7 +52,7 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
                   <IonCol>
                     <IonText>
                       <h5>{t("bridgeDetail.crossingInstructions")}</h5>
-                      <p>TODO</p>
+                      <p>{crossingInstruction}</p>
                     </IonText>
                   </IonCol>
                 </IonRow>
@@ -80,12 +78,12 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
         </IonGrid>
         <IonGrid>
           <IonRow>
-            <IonButton color="primary" routerLink={`/supervision/${routeId}/${id}`}>
+            <IonButton color="primary" routerLink={`/supervision/${id}`}>
               {t("bridgeDetail.denyCrossing")}
             </IonButton>
           </IonRow>
           <IonRow>
-            <IonButton color="primary" routerLink={`/supervision/${routeId}/${id}`}>
+            <IonButton color="primary" routerLink={`/supervision/${id}`}>
               {t("bridgeDetail.startSupervision")}
             </IonButton>
           </IonRow>
