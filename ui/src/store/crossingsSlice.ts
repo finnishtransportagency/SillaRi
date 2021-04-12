@@ -127,6 +127,9 @@ const crossingsSlice = createSlice({
       console.log("CROSSING_SUMMARY");
       return { ...state, loading: false, selectedCrossingDetail: action.payload.updateCrossing };
     },
+    CONFORMS_TO_CHANGED: (state, action: PayloadAction<boolean>) => {
+      console.log("CONFORMS_TO_CHANGED");
+    },
   },
 });
 

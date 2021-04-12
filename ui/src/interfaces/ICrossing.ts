@@ -22,4 +22,5 @@ export default interface ICrossing {
   twist: boolean;
   damage: boolean;
   images: [IFile];
+  conformsToPermit: boolean;
 }

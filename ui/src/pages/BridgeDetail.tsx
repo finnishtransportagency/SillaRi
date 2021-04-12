@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText, IonCheckbox, IonLabel, IonItem } from "@ionic/react";
 import React from "react";
-import { useQuery } from "@apollo/client";
+import {useMutation, useQuery} from "@apollo/client";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import ICompanyDetail from "../interfaces/ICompanyDetail";
@@ -14,6 +14,8 @@ import BridgeCardList from "../components/BridgeCardList";
 import IBridgeDetail from "../interfaces/IBridgeDetail";
 import bridgeQuery from "../graphql/BridgeQuery";
 import IRadioValue from "../interfaces/IRadioValue";
+import ICrossingDetail from "../interfaces/ICrossingDetails";
+import {startCrossingMutation} from "../graphql/CrossingMutation";
 
 interface BridgeDetailProps {
   id: string;
@@ -23,11 +25,11 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedBridgeDetail, selectedRouteDetail, selectedPermitDetail } = crossingsState;
+  const { selectedBridgeDetail, selectedRouteDetail, selectedPermitDetail, selectedCrossingDetail } = crossingsState;
   const { name = "", id } = selectedBridgeDetail || {};
   const { id: routeId } = selectedRouteDetail || {};
   const { permitNumber } = selectedPermitDetail || {};
-  const conformsTo = true;
+  const { conformsToPermit } = selectedCrossingDetail || {};
   const {
     params: { id: bridgeId },
   } = match;
@@ -37,9 +39,21 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
     onError: (err) => console.error(err),
   });
 
+  const [conformsToPermit, { data }] = useMutation<ICrossingDetail>(conformsToPermitMutation, {
+    onCompleted: (response) => dispatch({ type: crossingActions.CONFORMS_TO_CHANGED, payload: true }),
+    onError: (err) => console.error(err),
+  });
+
+  const [nonconformsToPermit, { data }] = useMutation<ICrossingDetail>(nonconformsToPermitMutation, {
+    onCompleted: (response) => dispatch({ type: crossingActions.CONFORMS_TO_CHANGED, payload: false }),
+    onError: (err) => console.error(err),
+  });
+
   function checkBoxClicked(checkBoxName: string, checkBoxValue: boolean) {
     console.log(`check:${checkBoxName}${checkBoxValue}`);
+    dispatch({ type: crossingActions.CONFORMS_TO_CHANGED, payload: checkBoxValue });
   }
+
   return (
     <IonPage>
       <Header title={name} />
@@ -93,7 +107,7 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
                 <IonRow>
                   <IonCol>
                     <IonItem key="bendings">
-                      <IonCheckbox slot="start" value="conforms" checked={conformsTo} onClick={() => checkBoxClicked("conformsToX", true)} />
+                      <IonCheckbox slot="start" value="conforms" checked={conformsToPermit} onClick={() => checkBoxClicked("conformsTo", true)} />
                       <IonLabel>{t("bridgeDetail.conformsToPermit")}</IonLabel>
                     </IonItem>
                   </IonCol>
