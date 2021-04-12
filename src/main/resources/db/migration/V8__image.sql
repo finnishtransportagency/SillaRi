@@ -1,6 +1,6 @@
-create sequence crossing_image_id_seq;
+create sequence IF NOT EXISTS sillari.crossing_image_id_seq;
 
-create table crossing_image(
+create table IF NOT EXISTS sillari.crossing_image(
    id   integer NOT NULL DEFAULT nextval('crossing_image_id_seq'),
    crossing_id integer not null,
    taken timestamp without time zone,
@@ -9,9 +9,9 @@ create table crossing_image(
    primary key(id)
 );
 
-create sequence bridge_image_id_seq;
+create sequence IF NOT EXISTS sillari.bridge_image_id_seq;
 
-create table bridge_image(
+create table IF NOT EXISTS sillari.bridge_image(
    id   integer NOT NULL DEFAULT nextval('bridge_image_id_seq'),
    bridge_id integer not null,
    taken timestamp without time zone,
