@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText, IonCheckbox, IonLabel, IonItem } from "@ionic/react";
 import React from "react";
-import {useMutation, useQuery} from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import ICompanyDetail from "../interfaces/ICompanyDetail";
@@ -15,7 +15,7 @@ import IBridgeDetail from "../interfaces/IBridgeDetail";
 import bridgeQuery from "../graphql/BridgeQuery";
 import IRadioValue from "../interfaces/IRadioValue";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
-import {startCrossingMutation} from "../graphql/CrossingMutation";
+import { startCrossingMutation } from "../graphql/CrossingMutation";
 
 interface BridgeDetailProps {
   id: string;
@@ -39,6 +39,7 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
     onError: (err) => console.error(err),
   });
 
+  /*
   const [conformsToPermit, { data }] = useMutation<ICrossingDetail>(conformsToPermitMutation, {
     onCompleted: (response) => dispatch({ type: crossingActions.CONFORMS_TO_CHANGED, payload: true }),
     onError: (err) => console.error(err),
@@ -48,6 +49,7 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
     onCompleted: (response) => dispatch({ type: crossingActions.CONFORMS_TO_CHANGED, payload: false }),
     onError: (err) => console.error(err),
   });
+*/
 
   function checkBoxClicked(checkBoxName: string, checkBoxValue: boolean) {
     console.log(`check:${checkBoxName}${checkBoxValue}`);
