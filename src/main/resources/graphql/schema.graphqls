@@ -26,6 +26,7 @@ type Bridge {
     id: ID!
     name: String
     identifier: String
+    crossingInstruction: String
 }
 
 type Crossing {
@@ -110,7 +111,7 @@ type Query {
     Company(id : Int!) : Company
     Route(id :Int!) : Route
     Bridge(id :Int!) : Bridge
+    RouteBridge(routeId: Int!, bridgeId: Int!) : Bridge
     Permit(id :Int!) : Permit
     Crossing(id :Int!, draft: Boolean!) : Crossing
 }
-

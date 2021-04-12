@@ -3,23 +3,21 @@ package fi.vaylavirasto.sillari.api.graphql;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.model.BridgeModel;
-import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.service.BridgeService;
-import fi.vaylavirasto.sillari.service.RouteService;
+import fi.vaylavirasto.sillari.service.RouteBridgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BridgeQueryResolver implements GraphQLQueryResolver {
+public class RouteBridgeQueryResolver implements GraphQLQueryResolver {
     @Autowired
-    BridgeService bridgeService;
+    RouteBridgeService routeBridgeService;
 
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public BridgeModel getBridge(Integer id) {
-        ServiceMetric serviceMetric = new ServiceMetric("RouteQueryResolver", "getRouteById");
+    public BridgeModel getRouteBridge(Integer routeId, Integer bridgeId) {
+        ServiceMetric serviceMetric = new ServiceMetric("RouteBridgeQueryResolver", "getRouteBridgeByRouteIdAndBridgeId");
         try {
-            return bridgeService.getBridge(id);
+            return routeBridgeService.getRouteBridge(routeId, bridgeId);
         } finally {
             serviceMetric.end();
         }

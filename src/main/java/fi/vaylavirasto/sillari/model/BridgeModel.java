@@ -7,4 +7,5 @@ public class BridgeModel {
     private long id;
     private String name;
     private String identifier;
+    private String crossingInstruction;
 }

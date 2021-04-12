@@ -6,13 +6,9 @@ import React from "react";
 import { useQuery } from "@apollo/client";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
-import ICompanyDetail from "../interfaces/ICompanyDetail";
 import { actions as crossingActions } from "../store/crossingsSlice";
-import routeQuery from "../graphql/RouteQuery";
-import IRouteDetail from "../interfaces/IRouteDetail";
-import BridgeCardList from "../components/BridgeCardList";
 import IBridgeDetail from "../interfaces/IBridgeDetail";
-import bridgeQuery from "../graphql/BridgeQuery";
+import routeBridgeQuery from "../graphql/RouteBridgeQuery";
 
 interface BridgeDetailProps {
   id: string;
@@ -29,7 +25,8 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
     params: { id: bridgeId },
   } = match;
 
-  useQuery<IBridgeDetail>(bridgeQuery(Number(bridgeId)), {
+  // TODO after page refresh routeId is missing, should we get this (or both IDs) from url params instead of state?
+  useQuery<IBridgeDetail>(routeBridgeQuery(Number(routeId), Number(bridgeId)), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_BRIDGE, payload: response }),
     onError: (err) => console.error(err),
   });

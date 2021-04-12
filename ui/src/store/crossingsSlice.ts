@@ -60,7 +60,7 @@ const crossingsSlice = createSlice({
       return { ...state, selectedPermitDetail: action.payload.Permit };
     },
     GET_BRIDGE: (state, action: PayloadAction<IBridgeDetail>) => {
-      return { ...state, selectedBridgeDetail: action.payload.Bridge };
+      return { ...state, selectedBridgeDetail: action.payload.RouteBridge };
     },
     GET_ROUTE: (state, action: PayloadAction<IRouteDetail>) => {
       return { ...state, selectedRouteDetail: action.payload.Route };
