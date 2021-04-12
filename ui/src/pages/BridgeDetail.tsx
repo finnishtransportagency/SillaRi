@@ -1,7 +1,7 @@
 import { RouteComponentProps } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText, IonCheckbox, IonLabel } from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText, IonCheckbox, IonLabel, IonItem } from "@ionic/react";
 import React from "react";
 import { useQuery } from "@apollo/client";
 import { useTypedSelector } from "../store/store";
@@ -13,6 +13,7 @@ import IRouteDetail from "../interfaces/IRouteDetail";
 import BridgeCardList from "../components/BridgeCardList";
 import IBridgeDetail from "../interfaces/IBridgeDetail";
 import bridgeQuery from "../graphql/BridgeQuery";
+import IRadioValue from "../interfaces/IRadioValue";
 
 interface BridgeDetailProps {
   id: string;
@@ -26,6 +27,7 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
   const { name = "", id } = selectedBridgeDetail || {};
   const { id: routeId } = selectedRouteDetail || {};
   const { permitNumber } = selectedPermitDetail || {};
+  const conformsTo = true;
   const {
     params: { id: bridgeId },
   } = match;
@@ -35,6 +37,9 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
     onError: (err) => console.error(err),
   });
 
+  function checkBoxClicked(checkBoxName: string, checkBoxValue: boolean) {
+    console.log(`check:${checkBoxName}${checkBoxValue}`);
+  }
   return (
     <IonPage>
       <Header title={name} />
@@ -83,6 +88,14 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
                     <IonLabel class="crossingLabel">
                       {t("bridgeDetail.permitNumber")} {permitNumber}
                     </IonLabel>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonItem key="bendings">
+                      <IonCheckbox slot="start" value="conforms" checked={conformsTo} onClick={() => checkBoxClicked("conformsToX", true)} />
+                      <IonLabel>{t("bridgeDetail.conformsToPermit")}</IonLabel>
+                    </IonItem>
                   </IonCol>
                 </IonRow>
               </IonGrid>
