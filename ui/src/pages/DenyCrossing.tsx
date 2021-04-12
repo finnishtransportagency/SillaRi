@@ -7,11 +7,11 @@ import { useQuery } from "@apollo/client";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import IBridgeDetail from "../interfaces/IBridgeDetail";
-import bridgeQuery from "../graphql/BridgeQuery";
 import { actions as crossingActions } from "../store/crossingsSlice";
+import routeBridgeQuery from "../graphql/RouteBridgeQuery";
 
 interface DenyCrossingProps {
-  id: string;
+  routeBridgeId: string;
 }
 
 const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.Element => {
@@ -19,12 +19,12 @@ const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.El
   const dispatch = useDispatch();
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
   const { selectedBridgeDetail } = crossingsState;
-  const { name = "", id } = selectedBridgeDetail || {};
+  const { name = "" } = selectedBridgeDetail || {};
   const {
-    params: { id: bridgeId },
+    params: { routeBridgeId },
   } = match;
 
-  useQuery<IBridgeDetail>(bridgeQuery(Number(bridgeId)), {
+  useQuery<IBridgeDetail>(routeBridgeQuery(Number(routeBridgeId)), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_BRIDGE, payload: response }),
     onError: (err) => console.error(err),
   });
@@ -50,7 +50,7 @@ const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.El
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonButton color="primary" routerLink={`/bridgeDetail/${id}`}>
+              <IonButton color="primary" routerLink={`/bridgeDetail/${routeBridgeId}`}>
                 {t("denyCrossing.back")}
               </IonButton>
             </IonCol>

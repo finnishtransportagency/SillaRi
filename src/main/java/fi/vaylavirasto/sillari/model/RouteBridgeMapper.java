@@ -14,7 +14,7 @@ public class RouteBridgeMapper implements RecordMapper<Record,BridgeModel> {
     @Override
     public BridgeModel map(Record record) {
         BridgeModel model = new BridgeModel();
-        model.setId(record.get(bridge.ID));
+        model.setId(record.get(routebridge.ID));
         model.setName(record.get(bridge.NAME));
         model.setIdentifier(record.get(bridge.IDENTIFIER));
         model.setCrossingInstruction(record.get(routebridge.CROSSING_INSTRUCTION));

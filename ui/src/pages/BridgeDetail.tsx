@@ -11,7 +11,7 @@ import IBridgeDetail from "../interfaces/IBridgeDetail";
 import routeBridgeQuery from "../graphql/RouteBridgeQuery";
 
 interface BridgeDetailProps {
-  id: string;
+  routeBridgeId: string;
 }
 
 const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.Element => {
@@ -21,10 +21,10 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
   const { selectedBridgeDetail } = crossingsState;
   const { name = "", crossingInstruction = "" } = selectedBridgeDetail || {};
   const {
-    params: { id },
+    params: { routeBridgeId },
   } = match;
 
-  useQuery<IBridgeDetail>(routeBridgeQuery(Number(id)), {
+  useQuery<IBridgeDetail>(routeBridgeQuery(Number(routeBridgeId)), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_BRIDGE, payload: response }),
     onError: (err) => console.error(err),
   });
@@ -78,12 +78,12 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
         </IonGrid>
         <IonGrid>
           <IonRow>
-            <IonButton color="primary" routerLink={`/supervision/${id}`}>
+            <IonButton color="primary" routerLink={`/supervision/${routeBridgeId}`}>
               {t("bridgeDetail.denyCrossing")}
             </IonButton>
           </IonRow>
           <IonRow>
-            <IonButton color="primary" routerLink={`/supervision/${id}`}>
+            <IonButton color="primary" routerLink={`/supervision/${routeBridgeId}`}>
               {t("bridgeDetail.startSupervision")}
             </IonButton>
           </IonRow>
