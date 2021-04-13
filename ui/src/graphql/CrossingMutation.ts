@@ -21,6 +21,10 @@ export const updateCrossingMutation = gql`
         name
         identifier
       }
+      route {
+        id
+        name
+      }
     }
   }
 `;
@@ -44,6 +48,15 @@ export const startCrossingMutation = gql`
         id
         name
         identifier
+      }
+      route {
+        id
+        name
+      }
+      permit {
+        id
+        permitNumber
+        companyId
       }
     }
   }

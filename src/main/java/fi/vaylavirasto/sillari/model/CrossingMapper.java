@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.model;
 
 import fi.vaylavirasto.sillari.model.tables.Bridge;
 import fi.vaylavirasto.sillari.model.tables.Crossing;
+import fi.vaylavirasto.sillari.model.tables.Route;
 import fi.vaylavirasto.sillari.model.tables.RouteBridge;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
@@ -13,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 public class CrossingMapper implements RecordMapper<Record,CrossingModel> {
     public static final Crossing crossing = Tables.CROSSING.as("c");
     public static final RouteBridge routeBridge = Tables.ROUTE_BRIDGE.as("rb");
+    public static final Route route = Tables.ROUTE.as("r");
     public static final Bridge bridge = Tables.BRIDGE.as("b");
 
     @Nullable
@@ -42,6 +44,10 @@ public class CrossingMapper implements RecordMapper<Record,CrossingModel> {
         bridgeModel.setName(record.get(bridge.NAME));
         bridgeModel.setIdentifier(record.get(bridge.IDENTIFIER));
         crossingModel.setBridge(bridgeModel);
+
+        RouteModel routeModel = new RouteModel();
+        routeModel.setId(record.get(route.ID));
+        crossingModel.setRoute(routeModel);
 
         return crossingModel;
     }

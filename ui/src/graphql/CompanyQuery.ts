@@ -27,6 +27,21 @@ export const companiesQuery = (): DocumentNode => gql`
             postalcode
             street
           }
+          crossings {
+            id
+            drivingLineInfo
+            speedInfo
+            exceptionsInfo
+            describe
+            drivingLineInfoDesc
+            speedInfoDesc
+            exceptionsInfoDesc
+            extraInfoDesc
+            bridge {
+              id
+              name
+            }
+          }
         }
       }
     }

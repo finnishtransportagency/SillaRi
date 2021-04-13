@@ -9,7 +9,8 @@ import CompanyCard from "./CompanyCard";
 import "./CompanyCardList.css";
 
 const CompanyCardList = (): JSX.Element => {
-  const { companyList } = useTypedSelector((state) => state.crossingsReducer);
+  const crossings = useTypedSelector((state) => state.crossingsReducer);
+  const { companyList } = crossings;
   const dispatch = useDispatch();
 
   useQuery<ICompanyList>(companyListQuery(10), {
