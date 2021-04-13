@@ -2,7 +2,7 @@ package fi.vaylavirasto.sillari.api.graphql;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
-import fi.vaylavirasto.sillari.model.BridgeModel;
+import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.service.RouteBridgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,8 +14,8 @@ public class RouteBridgeQueryResolver implements GraphQLQueryResolver {
     RouteBridgeService routeBridgeService;
 
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public BridgeModel getRouteBridge(Integer id) {
-        ServiceMetric serviceMetric = new ServiceMetric("RouteBridgeQueryResolver", "getRouteBridgeByRouteIdAndBridgeId");
+    public RouteBridgeModel getRouteBridge(Integer id) {
+        ServiceMetric serviceMetric = new ServiceMetric("RouteBridgeQueryResolver", "getRouteBridgeById");
         try {
             return routeBridgeService.getRouteBridge(id);
         } finally {

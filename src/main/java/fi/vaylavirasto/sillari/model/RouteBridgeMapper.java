@@ -6,18 +6,22 @@ import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
-public class RouteBridgeMapper implements RecordMapper<Record,BridgeModel> {
+public class RouteBridgeMapper implements RecordMapper<Record,RouteBridgeModel> {
     public static final Bridge bridge = Tables.BRIDGE.as("br");
     public static final RouteBridge routebridge = Tables.ROUTE_BRIDGE.as("rbr");
 
     @Nullable
     @Override
-    public BridgeModel map(Record record) {
-        BridgeModel model = new BridgeModel();
+    public RouteBridgeModel map(Record record) {
+        BridgeModel bridgeModel = new BridgeModel();
+        bridgeModel.setName(record.get(bridge.NAME));
+        bridgeModel.setIdentifier(record.get(bridge.IDENTIFIER));
+
+        RouteBridgeModel model = new RouteBridgeModel();
         model.setId(record.get(routebridge.ID));
-        model.setName(record.get(bridge.NAME));
-        model.setIdentifier(record.get(bridge.IDENTIFIER));
+        model.setRouteId(record.get(routebridge.ROUTE_ID));
         model.setCrossingInstruction(record.get(routebridge.CROSSING_INSTRUCTION));
+        model.setBridge(bridgeModel);
         return model;
     }
 }
