@@ -51,7 +51,7 @@ const App: React.FC = () => (
           <Route path="/companydetail/:id" component={CompanyDetail} exact />
           <Route path="/routeDetail/:permitId/:routeId" component={RouteDetail} exact />
           <Route path="/bridgeDetail/:id" component={BridgeDetail} exact />
-          <Route path="/denyCrossing/:id" component={DenyCrossing} exact />
+          <Route path="/denyCrossing/:routeId/:id" component={DenyCrossing} exact />
           <Route path="/supervision/:routeId/:bridgeId" component={Crossing} exact />
           <Route path="/takePhotos" component={Camera} exact />
           <Route path="/summary/:crossingId" component={CrossingSummary} exact />

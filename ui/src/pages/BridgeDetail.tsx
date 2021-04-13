@@ -1,9 +1,9 @@
 import { RouteComponentProps } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText, IonCheckbox, IonLabel, IonItem } from "@ionic/react";
 import React from "react";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import ICompanyDetail from "../interfaces/ICompanyDetail";
@@ -13,6 +13,9 @@ import IRouteDetail from "../interfaces/IRouteDetail";
 import BridgeCardList from "../components/BridgeCardList";
 import IBridgeDetail from "../interfaces/IBridgeDetail";
 import bridgeQuery from "../graphql/BridgeQuery";
+import IRadioValue from "../interfaces/IRadioValue";
+import ICrossingDetail from "../interfaces/ICrossingDetails";
+import { startCrossingMutation } from "../graphql/CrossingMutation";
 
 interface BridgeDetailProps {
   id: string;
@@ -22,12 +25,14 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedBridgeDetail, selectedRouteDetail } = crossingsState;
+  const { selectedBridgeDetail, selectedRouteDetail, selectedPermitDetail } = crossingsState;
   const { name = "", id } = selectedBridgeDetail || {};
   const { id: routeId } = selectedRouteDetail || {};
+  const { permitNumber } = selectedPermitDetail || {};
   const {
     params: { id: bridgeId },
   } = match;
+  const [conformsToPermit, setConformsToPermit] = React.useState(false);
 
   useQuery<IBridgeDetail>(bridgeQuery(Number(bridgeId)), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_BRIDGE, payload: response }),
@@ -77,18 +82,33 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
                     </IonText>
                   </IonCol>
                 </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonLabel class="crossingLabel">
+                      {t("bridgeDetail.permitNumber")} {permitNumber}
+                    </IonLabel>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonItem key="conforms2">
+                      <IonCheckbox slot="start" value="conforms" checked={conformsToPermit} onClick={() => setConformsToPermit(!conformsToPermit)} />
+                      <IonLabel>{t("bridgeDetail.conformsToPermit")}</IonLabel>
+                    </IonItem>
+                  </IonCol>
+                </IonRow>
               </IonGrid>
             </IonCol>
           </IonRow>
         </IonGrid>
         <IonGrid>
           <IonRow>
-            <IonButton color="primary" routerLink={`/supervision/${routeId}/${id}`}>
+            <IonButton color="primary" routerLink={`/denyCrossing/${routeId}/${id}`}>
               {t("bridgeDetail.denyCrossing")}
             </IonButton>
           </IonRow>
           <IonRow>
-            <IonButton color="primary" routerLink={`/supervision/${routeId}/${id}`}>
+            <IonButton disabled={!conformsToPermit} color="primary" routerLink={`/supervision/${routeId}/${id}`}>
               {t("bridgeDetail.startSupervision")}
             </IonButton>
           </IonRow>
