@@ -22,15 +22,6 @@ export const queryCrossing = (crossingId: number, draft: boolean): DocumentNode 
         name
         identifier
       }
-      route {
-        id
-        name
-      }
-      permit {
-        companyId
-        permitNumber
-        id
-      }
       images {
         id
         objectKey
