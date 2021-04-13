@@ -1,5 +1,5 @@
-import IBridge from "./IBridge";
+import IRouteBridge from "./IRouteBridge";
 
 export default interface IBridgeDetail {
-  RouteBridge: IBridge;
+  RouteBridge: IRouteBridge;
 }

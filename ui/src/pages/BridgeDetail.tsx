@@ -17,12 +17,13 @@ interface BridgeDetailProps {
 const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedBridgeDetail } = crossingsState;
-  const { name = "", crossingInstruction = "" } = selectedBridgeDetail || {};
   const {
     params: { routeBridgeId },
   } = match;
+
+  const { selectedBridgeDetail } = useTypedSelector((state) => state.crossingsReducer);
+  const { bridge, crossingInstruction = "" } = selectedBridgeDetail || {};
+  const { name = "", identifier = "" } = bridge || {};
 
   useQuery<IBridgeDetail>(routeBridgeQuery(Number(routeBridgeId)), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_BRIDGE, payload: response }),

@@ -17,12 +17,13 @@ interface DenyCrossingProps {
 const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedBridgeDetail } = crossingsState;
-  const { name = "" } = selectedBridgeDetail || {};
   const {
     params: { routeBridgeId },
   } = match;
+
+  const { selectedBridgeDetail } = useTypedSelector((state) => state.crossingsReducer);
+  const { bridge } = selectedBridgeDetail || {};
+  const { name = "" } = bridge || {};
 
   useQuery<IBridgeDetail>(routeBridgeQuery(Number(routeBridgeId)), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_BRIDGE, payload: response }),

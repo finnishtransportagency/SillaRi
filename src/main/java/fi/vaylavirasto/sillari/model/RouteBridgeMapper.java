@@ -14,6 +14,7 @@ public class RouteBridgeMapper implements RecordMapper<Record,RouteBridgeModel> 
     @Override
     public RouteBridgeModel map(Record record) {
         BridgeModel bridgeModel = new BridgeModel();
+        bridgeModel.setId(record.get(bridge.ID));
         bridgeModel.setName(record.get(bridge.NAME));
         bridgeModel.setIdentifier(record.get(bridge.IDENTIFIER));
 

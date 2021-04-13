@@ -4,8 +4,11 @@ export const routeBridgeQuery = (id: number): DocumentNode => gql`
     {
         RouteBridge(id: ${id}){
             id
-            name
-            identifier
+            bridge {
+                id
+                name
+                identifier
+            }
             crossingInstruction
         }
     }
