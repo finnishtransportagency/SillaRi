@@ -25,36 +25,19 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedBridgeDetail, selectedRouteDetail, selectedPermitDetail, selectedCrossingDetail } = crossingsState;
+  const { selectedBridgeDetail, selectedRouteDetail, selectedPermitDetail } = crossingsState;
   const { name = "", id } = selectedBridgeDetail || {};
   const { id: routeId } = selectedRouteDetail || {};
   const { permitNumber } = selectedPermitDetail || {};
-  const { conformsToPermit } = selectedCrossingDetail || {};
   const {
     params: { id: bridgeId },
   } = match;
+  const [conformsToPermit, setConformsToPermit] = React.useState(false);
 
   useQuery<IBridgeDetail>(bridgeQuery(Number(bridgeId)), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_BRIDGE, payload: response }),
     onError: (err) => console.error(err),
   });
-
-  /*
-  const [conformsToPermit, { data }] = useMutation<ICrossingDetail>(conformsToPermitMutation, {
-    onCompleted: (response) => dispatch({ type: crossingActions.CONFORMS_TO_CHANGED, payload: true }),
-    onError: (err) => console.error(err),
-  });
-
-  const [nonconformsToPermit, { data }] = useMutation<ICrossingDetail>(nonconformsToPermitMutation, {
-    onCompleted: (response) => dispatch({ type: crossingActions.CONFORMS_TO_CHANGED, payload: false }),
-    onError: (err) => console.error(err),
-  });
-*/
-
-  function checkBoxClicked(checkBoxName: string, checkBoxValue: boolean) {
-    console.log(`check:${checkBoxName}${checkBoxValue}`);
-    dispatch({ type: crossingActions.CONFORMS_TO_CHANGED, payload: checkBoxValue });
-  }
 
   return (
     <IonPage>
@@ -108,8 +91,8 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
                 </IonRow>
                 <IonRow>
                   <IonCol>
-                    <IonItem key="bendings">
-                      <IonCheckbox slot="start" value="conforms" checked={conformsToPermit} onClick={() => checkBoxClicked("conformsTo", true)} />
+                    <IonItem key="conforms2">
+                      <IonCheckbox slot="start" value="conforms" checked={conformsToPermit} onClick={() => setConformsToPermit(!conformsToPermit)} />
                       <IonLabel>{t("bridgeDetail.conformsToPermit")}</IonLabel>
                     </IonItem>
                   </IonCol>
@@ -125,7 +108,7 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
             </IonButton>
           </IonRow>
           <IonRow>
-            <IonButton color="primary" routerLink={`/supervision/${routeId}/${id}`}>
+            <IonButton disabled={!conformsToPermit} color="primary" routerLink={`/supervision/${routeId}/${id}`}>
               {t("bridgeDetail.startSupervision")}
             </IonButton>
           </IonRow>
