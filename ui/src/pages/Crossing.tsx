@@ -1,43 +1,42 @@
 import {
-  IonTextarea,
-  IonGrid,
-  IonRow,
+  IonButton,
+  IonCard,
+  IonCheckbox,
   IonCol,
   IonContent,
-  IonPage,
+  IonGrid,
   IonItem,
   IonLabel,
   IonListHeader,
+  IonPage,
   IonRadio,
   IonRadioGroup,
-  IonCheckbox,
-  IonButton,
-  IonCard,
+  IonRow,
+  IonTextarea,
 } from "@ionic/react";
-import React, { useReducer } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { RouteComponentProps, useHistory } from "react-router";
 import moment from "moment";
 import Header from "../components/Header";
-import { RootState, useTypedSelector } from "../store/store";
+import { useTypedSelector } from "../store/store";
 import IRadioValue from "../interfaces/IRadioValue";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
-import crossingmutation, { startCrossingMutation, updateCrossingMutation } from "../graphql/CrossingMutation";
+import { startCrossingMutation, updateCrossingMutation } from "../graphql/CrossingMutation";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import client from "../service/apolloClient";
 import uploadmutation from "../graphql/UploadMutation";
 
 interface CrossingProps {
-  bridgeId: string;
-  routeId: string;
+  routeBridgeId: string;
 }
 
 export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Element => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const hist = useHistory();
   const dispatch = useDispatch();
   const crossings = useTypedSelector((state) => state.crossingsReducer);
@@ -60,12 +59,14 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     permit,
   } = selectedCrossingDetail || {};
   const {
-    params: { bridgeId, routeId },
+    params: { routeBridgeId },
   } = match;
+
   const [startCrossing, { data }] = useMutation<ICrossingDetail>(startCrossingMutation, {
     onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),
     onError: (err) => console.error(err),
   });
+
   const [updateCrossing, { data: updatedata }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
     onCompleted: (response) => {
       dispatch({ type: crossingActions.CROSSING_SUMMARY, payload: response });
@@ -78,21 +79,22 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
   if (selectedCrossingDetail === undefined && !loading) {
     dispatch({ type: crossingActions.SET_LOADING, payload: true });
     startCrossing({
-      variables: { routeId, bridgeId },
+      variables: { routeBridgeId },
     });
   }
 
   const { name: bridgeName = "", identifier: bridgeShortName } = bridge || {};
   const { permitNumber = "" } = permit || {};
+
   function changeTextAreaValue(pname: string, pvalue: string) {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
     dispatch({ type: crossingActions.CROSSING_TEXTAREA_CHANGED, payload: change });
   }
+
   function summaryClicked() {
     const updateRequest = {
       id,
-      bridgeId: Number(bridgeId),
-      routeId: Number(routeId),
+      routeBridgeId: Number(routeBridgeId),
       started,
       drivingLineInfo,
       drivingLineInfoDescription,
@@ -107,23 +109,23 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
       damage,
       draft: true,
     } as ICrossingInput;
+
     updateCrossing({
       variables: { crossing: updateRequest },
     });
-    let i;
-    // eslint-disable-next-line no-plusplus
-    for (i = 0; i < images.length; i++) {
-      const pataken = moment(images[i].date, "dd.MM.yyyy HH:mm:ss");
+
+    images.forEach((image) => {
+      const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
       const ret = client.mutate({
         mutation: uploadmutation.uploadMutation,
         variables: {
           crossingId: id.toString(),
-          filename: images[i].filename,
-          base64image: images[i].dataUrl,
+          filename: image.filename,
+          base64image: image.dataUrl,
           taken: pataken,
         },
       });
-    }
+    });
   }
 
   function radioClicked(radioName: string, radioValue: string) {
@@ -133,6 +135,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     } as IRadioValue;
     dispatch({ type: crossingActions.CROSSING_RADIO_CHANGED, payload: radioPayload });
   }
+
   function checkBoxClicked(checkBoxName: string, checkBoxValue: boolean) {
     const radioPayload = {
       name: checkBoxName,
@@ -140,6 +143,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     } as IRadioValue;
     dispatch({ type: crossingActions.CROSSING_RADIO_CHANGED, payload: radioPayload });
   }
+
   return (
     <IonPage>
       <Header title={t("crossing.title")} />

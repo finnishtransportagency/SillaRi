@@ -51,8 +51,8 @@ const App: React.FC = () => (
           <Route path="/companydetail/:id" component={CompanyDetail} exact />
           <Route path="/routeDetail/:permitId/:routeId" component={RouteDetail} exact />
           <Route path="/bridgeDetail/:routeBridgeId" component={BridgeDetail} exact />
+          <Route path="/crossing/:routeBridgeId" component={Crossing} exact />
           <Route path="/denyCrossing/:routeBridgeId" component={DenyCrossing} exact />
-          <Route path="/supervision/:routeBridgeId" component={Crossing} exact />
           <Route path="/takePhotos" component={Camera} exact />
           <Route path="/summary/:crossingId" component={CrossingSummary} exact />
         </IonRouterOutlet>

@@ -102,7 +102,7 @@ input CrossingInput {
 type Mutation {
     singleUpload(crossingId: String!, filename: String!, file: String!, taken: String!): File!,
     updateCrossing(crossing: CrossingInput!): Crossing,
-    startCrossing(routeId: Int!, bridgeId: Int!) : Crossing,
+    startCrossing(routeBridgeId: Int!) : Crossing,
 }
 
 type Query {
