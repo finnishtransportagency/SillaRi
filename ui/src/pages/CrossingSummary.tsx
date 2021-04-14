@@ -7,9 +7,9 @@ import { useMutation, useQuery } from "@apollo/client";
 import { RouteComponentProps } from "react-router";
 import moment from "moment";
 
-import { RootState, useTypedSelector } from "../store/store";
+import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
-import client, { apiUrl } from "../service/apolloClient";
+import { apiUrl, client } from "../service/apolloClient";
 import uploadmutation from "../graphql/UploadMutation";
 import { updateCrossingMutation } from "../graphql/CrossingMutation";
 import ICrossingInput from "../interfaces/ICrossingInput";
@@ -23,13 +23,14 @@ interface CrossingSummaryProps {
 
 export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryProps>): JSX.Element => {
   const { t } = useTranslation();
-  const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
-  const { images = [] } = crossingProps;
-  const { selectedCrossingDetail } = crossingProps;
   const dispatch = useDispatch();
   const {
     params: { crossingId },
   } = match;
+
+  const { selectedPermitDetail, selectedBridgeDetail, images = [], selectedCrossingDetail } = useTypedSelector((state) => state.crossingsReducer);
+  const { permitNumber = "" } = selectedPermitDetail || {};
+  const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
 
   useQuery<ICrossingDetail>(queryCrossing(Number(crossingId), true), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
@@ -44,8 +45,6 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
 
   const {
     routeBridgeId,
-    bridge,
-    permit,
     started = "",
     drivingLineInfo,
     drivingLineInfoDescription,
@@ -60,9 +59,6 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
     damage,
     images: crossingImages,
   } = selectedCrossingDetail || {};
-
-  const { name: bridgeName = "", identifier: bridgeShortName = "" } = bridge || {};
-  const { permitNumber = "" } = permit || {};
 
   function save() {
     if (selectedCrossingDetail !== undefined) {
@@ -151,7 +147,7 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
           <IonRow>
             <IonCol>
               <IonLabel class="crossingLabel">
-                {t("crossing.summary.bridgeName")} {bridgeName} | {bridgeShortName}
+                {t("crossing.summary.bridgeName")} {bridgeName} | {bridgeIdentifier}
               </IonLabel>
             </IonCol>
           </IonRow>

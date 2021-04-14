@@ -30,7 +30,6 @@ interface IStateProps {
   selectedRoute: number;
   selectedCrossing: number;
   crossing?: ICrossing;
-  loading: boolean;
 }
 
 const initialState: IStateProps = {
@@ -47,7 +46,6 @@ const initialState: IStateProps = {
   selectedRoute: 0,
   selectedCrossing: 0,
   crossing: undefined,
-  loading: false,
 };
 
 const crossingsSlice = createSlice({
@@ -103,20 +101,17 @@ const crossingsSlice = createSlice({
     START_CROSSING: (state, action: PayloadAction<ICrossingDetail>) => {
       // TODO - use action.payload.crossing?
       console.log("START_CROSSING");
-      return { ...state, loading: false, selectedCrossingDetail: action.payload.startCrossing };
+      return { ...state, selectedCrossingDetail: action.payload.startCrossing };
     },
     GET_CROSSING: (state, action: PayloadAction<IGetCrossing>) => {
       console.log("GET_CROSSING");
-      return { ...state, loading: false, selectedCrossingDetail: action.payload.Crossing };
+      return { ...state, selectedCrossingDetail: action.payload.Crossing };
     },
     GET_COMPANY_LIST: (state, action: PayloadAction<ICompanyList>) => {
       return { ...state, companyList: action.payload.CompanyList };
     },
     GET_COMPANY: (state, action: PayloadAction<ICompanyDetail>) => {
       return { ...state, selectedCompanyDetail: action.payload.Company };
-    },
-    SET_LOADING: (state, action: PayloadAction<boolean>) => {
-      return { ...state, loading: action.payload };
     },
     CROSSING_SAVED: (state, action: PayloadAction<ICrossingUpdate>) => {
       alert("Talletettu");

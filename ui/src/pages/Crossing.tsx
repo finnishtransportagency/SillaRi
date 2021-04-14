@@ -14,7 +14,7 @@ import {
   IonRow,
   IonTextarea,
 } from "@ionic/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useMutation } from "@apollo/client";
@@ -28,8 +28,8 @@ import ITextAreaValue from "../interfaces/ITextAreaValue";
 import { startCrossingMutation, updateCrossingMutation } from "../graphql/CrossingMutation";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
 import ICrossingInput from "../interfaces/ICrossingInput";
-import client from "../service/apolloClient";
-import uploadmutation from "../graphql/UploadMutation";
+import { client } from "../service/apolloClient";
+import uploadMutation from "../graphql/UploadMutation";
 
 interface CrossingProps {
   routeBridgeId: string;
@@ -39,8 +39,15 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
   const { t } = useTranslation();
   const hist = useHistory();
   const dispatch = useDispatch();
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const { images = [], loading, selectedCrossingDetail } = crossings;
+
+  const {
+    params: { routeBridgeId },
+  } = match;
+
+  const { selectedPermitDetail, selectedBridgeDetail, selectedCrossingDetail, images = [] } = useTypedSelector((state) => state.crossingsReducer);
+  const { permitNumber = "" } = selectedPermitDetail || {};
+  const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
+
   const {
     speedInfo = true,
     describe = false,
@@ -55,12 +62,9 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     permanentBendings = false,
     started = "",
     id = -1,
-    bridge,
-    permit,
   } = selectedCrossingDetail || {};
-  const {
-    params: { routeBridgeId },
-  } = match;
+
+  const [loading, setLoading] = React.useState(false);
 
   const [startCrossing, { data }] = useMutation<ICrossingDetail>(startCrossingMutation, {
     onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),
@@ -76,15 +80,17 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     onError: (err) => console.error(err),
   });
 
-  if (selectedCrossingDetail === undefined && !loading) {
-    dispatch({ type: crossingActions.SET_LOADING, payload: true });
-    startCrossing({
-      variables: { routeBridgeId },
-    });
-  }
+  useEffect(() => {
+    console.log(id);
 
-  const { name: bridgeName = "", identifier: bridgeShortName } = bridge || {};
-  const { permitNumber = "" } = permit || {};
+    if (!loading && (selectedCrossingDetail === undefined || id === -1)) {
+      setLoading(true);
+
+      startCrossing({
+        variables: { routeBridgeId },
+      }).then(() => setLoading(false));
+    }
+  }, [selectedCrossingDetail, id, loading, startCrossing, routeBridgeId]);
 
   function changeTextAreaValue(pname: string, pvalue: string) {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
@@ -112,18 +118,18 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
 
     updateCrossing({
       variables: { crossing: updateRequest },
-    });
-
-    images.forEach((image) => {
-      const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
-      const ret = client.mutate({
-        mutation: uploadmutation.uploadMutation,
-        variables: {
-          crossingId: id.toString(),
-          filename: image.filename,
-          base64image: image.dataUrl,
-          taken: pataken,
-        },
+    }).then(() => {
+      images.forEach((image) => {
+        const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
+        const ret = client.mutate({
+          mutation: uploadMutation.uploadMutation,
+          variables: {
+            crossingId: id.toString(),
+            filename: image.filename,
+            base64image: image.dataUrl,
+            taken: pataken,
+          },
+        });
       });
     });
   }
@@ -167,7 +173,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
           <IonRow>
             <IonCol>
               <IonLabel class="crossingLabel">
-                {t("crossing.bridgeName")} {bridgeName} | {bridgeShortName}
+                {t("crossing.bridgeName")} {bridgeName} | {bridgeIdentifier}
               </IonLabel>
             </IonCol>
           </IonRow>
