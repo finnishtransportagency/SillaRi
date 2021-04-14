@@ -26,6 +26,7 @@ const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.El
   const { bridge } = selectedBridgeDetail || {};
   const { name = "" } = bridge || {};
 
+  const [text, setText] = React.useState<string>("");
   useQuery<IBridgeDetail>(routeBridgeQuery(Number(routeBridgeId)), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_BRIDGE, payload: response }),
     onError: (err) => console.error(err),
@@ -33,11 +34,6 @@ const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.El
 
   function sendClicked() {
     console.log("hello");
-  }
-
-  function changeTextAreaValue(denyReasonText: string, pvalue: string) {
-    console.log(pvalue);
-    dispatch({ type: crossingActions.DENY_CROSSING_TEXTAREA_CHANGED, payload: pvalue });
   }
 
   return (
@@ -56,13 +52,7 @@ const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.El
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonTextarea
-                class="denyReasonTextArea"
-                value=""
-                onIonChange={(e) => {
-                  return changeTextAreaValue("denyReasonText", e.detail.value!);
-                }}
-              />
+              <IonTextarea value={text} onIonChange={(e) => setText(e.detail.value!)} />
             </IonCol>
           </IonRow>
           <IonRow>
