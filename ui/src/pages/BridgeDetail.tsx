@@ -1,17 +1,14 @@
 import { RouteComponentProps } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText, IonCheckbox, IonLabel, IonItem } from "@ionic/react";
+import { IonButton, IonCheckbox, IonCol, IonContent, IonGrid, IonItem, IonLabel, IonPage, IonRow, IonText } from "@ionic/react";
 import React from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import IBridgeDetail from "../interfaces/IBridgeDetail";
 import routeBridgeQuery from "../graphql/RouteBridgeQuery";
-import IRadioValue from "../interfaces/IRadioValue";
-import ICrossingDetail from "../interfaces/ICrossingDetails";
-import { startCrossingMutation } from "../graphql/CrossingMutation";
 
 interface BridgeDetailProps {
   routeBridgeId: string;
