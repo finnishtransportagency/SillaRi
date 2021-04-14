@@ -30,6 +30,14 @@ const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.El
     onError: (err) => console.error(err),
   });
 
+  function sendClicked() {
+    console.log("hello");
+  }
+
+  function changeTextAreaValue(denyReasonText: string, pvalue: string) {
+    console.log(pvalue);
+  }
+
   return (
     <IonPage>
       <Header title={name} />
@@ -46,7 +54,13 @@ const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.El
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonTextarea />
+              <IonTextarea
+                class="denyReasonTextArea"
+                value=""
+                onIonChange={(e) => {
+                  return changeTextAreaValue("denyReasonText", e.detail.value!);
+                }}
+              />
             </IonCol>
           </IonRow>
           <IonRow>
@@ -56,7 +70,9 @@ const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.El
               </IonButton>
             </IonCol>
             <IonCol>
-              <IonButton color="primary">{t("denyCrossing.send")}</IonButton>
+              <IonButton onClick={() => sendClicked()} color="primary">
+                {t("denyCrossing.send")}
+              </IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>
