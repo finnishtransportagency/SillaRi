@@ -1,18 +1,14 @@
 import React from "react";
-import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonIcon, IonItem, IonRow } from "@ionic/react";
-import { bus } from "ionicons/icons";
-import Moment from "react-moment";
-import moment from "moment";
-import ICompany from "../interfaces/IBridge";
-import { dateTimeFormat } from "../utils/constants";
-import IBridge from "../interfaces/IBridge";
+import { IonCard, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonRow } from "@ionic/react";
+import IRouteBridge from "../interfaces/IRouteBridge";
 
 interface BridgeCardProps {
-  bridge: IBridge;
+  routeBridge: IRouteBridge;
 }
 
-const BridgeCard = ({ bridge }: BridgeCardProps): JSX.Element => {
-  const { id, name } = bridge;
+const BridgeCard = ({ routeBridge }: BridgeCardProps): JSX.Element => {
+  const { id, bridge } = routeBridge;
+  const { name } = bridge;
 
   return (
     <IonCard button routerLink={`/bridgedetail/${id}`}>

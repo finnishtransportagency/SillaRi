@@ -1,5 +1,5 @@
 import IAddress from "./IAddress";
-import IBridge from "./IBridge";
+import IRouteBridge from "./IRouteBridge";
 
 export default interface IRoute {
   id: number;
@@ -9,5 +9,5 @@ export default interface IRoute {
   arrivalAddress: IAddress;
   departureTime: string;
   arrivalTime: string;
-  bridges: IBridge[];
+  routeBridges: IRouteBridge[];
 }

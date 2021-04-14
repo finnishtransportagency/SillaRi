@@ -13,7 +13,7 @@ public class RouteModel {
     private AddressModel arrivalAddress;
     private String departureTime;
     private String arrivalTime;
-    private List<BridgeModel> bridges;
+    private List<RouteBridgeModel> routeBridges;
     private List<TransportModel> transports;
     private List<CrossingModel> crossings;
 }
