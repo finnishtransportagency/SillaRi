@@ -14,15 +14,6 @@ public class CrossingRepository {
     @Autowired
     private DSLContext dsl;
 
-    public List<CrossingModel> getRoutesCrossings(Integer routeId) {
-        return dsl.select().from(CrossingMapper.crossing)
-                .leftJoin(CrossingMapper.routeBridge).on(CrossingMapper.routeBridge.ID.eq(CrossingMapper.crossing.ROUTE_BRIDGE_ID))
-                .leftJoin(CrossingMapper.route).on(CrossingMapper.route.ID.eq(CrossingMapper.routeBridge.ROUTE_ID))
-                .leftJoin(CrossingMapper.bridge).on(CrossingMapper.bridge.ID.eq(CrossingMapper.routeBridge.BRIDGE_ID))
-                .where(CrossingMapper.routeBridge.ROUTE_ID.eq(routeId))
-                .fetch(new CrossingMapper());
-    }
-
     public Integer updateCrossing(CrossingInputModel crossingModel) {
         dsl.update(CrossingMapper.crossing)
                 .set(CrossingMapper.crossing.DRIVINGLINEINFODESCRIPTION, crossingModel.getDrivingLineInfoDescription())
@@ -74,21 +65,14 @@ public class CrossingRepository {
     }
 
     public CrossingModel getCrossing(Integer routeBridgeId) {
-        // TODO do we need to do all these joins? Do we need route data?
         return dsl.select().from(CrossingMapper.crossing)
-                .leftJoin(CrossingMapper.routeBridge).on(CrossingMapper.routeBridge.ID.eq(CrossingMapper.crossing.ROUTE_BRIDGE_ID))
-                .leftJoin(CrossingMapper.route).on(CrossingMapper.route.ID.eq(CrossingMapper.routeBridge.ROUTE_ID))
-                .leftJoin(CrossingMapper.bridge).on(CrossingMapper.bridge.ID.eq(CrossingMapper.routeBridge.BRIDGE_ID))
-                .where(CrossingMapper.routeBridge.ID.eq(routeBridgeId)
+                .where(CrossingMapper.crossing.ROUTE_BRIDGE_ID.eq(routeBridgeId)
                         .and(CrossingMapper.crossing.DRAFT.eq(true)))
                 .fetchOne(new CrossingMapper());
     }
 
     public CrossingModel getCrossing(Integer crossingId, Boolean draft) {
         return dsl.select().from(CrossingMapper.crossing)
-                .leftJoin(CrossingMapper.routeBridge).on(CrossingMapper.routeBridge.ID.eq(CrossingMapper.crossing.ROUTE_BRIDGE_ID))
-                .leftJoin(CrossingMapper.route).on(CrossingMapper.route.ID.eq(CrossingMapper.routeBridge.ROUTE_ID))
-                .leftJoin(CrossingMapper.bridge).on(CrossingMapper.bridge.ID.eq(CrossingMapper.routeBridge.BRIDGE_ID))
                 .where(CrossingMapper.crossing.ID.eq(crossingId)
                         .and(CrossingMapper.crossing.DRAFT.eq(draft)))
                 .fetchOne(new CrossingMapper());
