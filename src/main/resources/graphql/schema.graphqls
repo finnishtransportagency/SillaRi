@@ -38,9 +38,6 @@ type RouteBridge {
 type Crossing {
     id: ID!
     routeBridgeId: Int
-    bridge: Bridge
-    route: Route
-    permit: Permit
     drivingLineInfo: Boolean
     speedInfo: Boolean
     exceptionsInfo: Boolean
@@ -88,8 +85,7 @@ type File {
 
 input CrossingInput {
     id: ID!
-    bridgeId: Int!
-    routeId: Int!
+    routeBridgeId: Int!
     started: String
     drivingLineInfo: Boolean
     speedInfo: Boolean

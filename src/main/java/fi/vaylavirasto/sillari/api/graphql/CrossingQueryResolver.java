@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 public class CrossingQueryResolver implements GraphQLQueryResolver {
     @Autowired
     CrossingService crossingService;
+
     public CrossingModel getCrossing(Integer crossingId, Boolean draft) {
         ServiceMetric serviceMetric = new ServiceMetric("CrossingQueryResolver", "getCrossing");
         try {

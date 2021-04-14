@@ -17,20 +17,6 @@ export const queryCrossing = (crossingId: number, draft: boolean): DocumentNode 
       permanentBendings
       twist
       damage
-      bridge {
-        id
-        name
-        identifier
-      }
-      route {
-        id
-        name
-      }
-      permit {
-        companyId
-        permitNumber
-        id
-      }
       images {
         id
         objectKey
