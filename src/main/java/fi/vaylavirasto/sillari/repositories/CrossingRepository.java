@@ -16,6 +16,7 @@ public class CrossingRepository {
 
     public Integer updateCrossing(CrossingInputModel crossingModel) {
         dsl.update(CrossingMapper.crossing)
+                .set(CrossingMapper.crossing.DRAFT, crossingModel.isDraft())
                 .set(CrossingMapper.crossing.DRIVINGLINEINFODESCRIPTION, crossingModel.getDrivingLineInfoDescription())
                 .set(CrossingMapper.crossing.DAMAGE, crossingModel.isDamage())
                 .set(CrossingMapper.crossing.TWIST, crossingModel.isDamage())

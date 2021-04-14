@@ -14,7 +14,8 @@ public class CrossingService {
     public CrossingModel createCrossing(Integer routeBridgeId) {
         CrossingModel crossingModel = crossingRepository.getCrossing(routeBridgeId);
         if (crossingModel != null) {
-            return getCrossing(crossingModel.getId(),true);
+            crossingModel.setImages(crossingRepository.getFiles(crossingModel.getId()));
+            return crossingModel;
         }
         return getCrossing(crossingRepository.createCrossing(routeBridgeId), true);
     }
@@ -25,7 +26,9 @@ public class CrossingService {
 
     public CrossingModel getCrossing(Integer crossingId, Boolean draft) {
         CrossingModel crossingModel = crossingRepository.getCrossing(crossingId, draft);
-        crossingModel.setImages(crossingRepository.getFiles(crossingId));
+        if (crossingModel != null) {
+            crossingModel.setImages(crossingRepository.getFiles(crossingId));
+        }
         return crossingModel;
     }
 }

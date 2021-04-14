@@ -82,18 +82,18 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
 
       updateCrossing({
         variables: { crossing: updateRequest },
-      });
-      // TODO should this be after updateCrossing promise has resolved? (then...)
-      images.forEach((image) => {
-        const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
-        const ret = client.mutate({
-          mutation: uploadmutation.uploadMutation,
-          variables: {
-            crossingId: selectedCrossingDetail.id.toString(),
-            filename: image.filename,
-            base64image: image.dataUrl,
-            taken: pataken,
-          },
+      }).then(() => {
+        images.forEach((image) => {
+          const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
+          const ret = client.mutate({
+            mutation: uploadmutation.uploadMutation,
+            variables: {
+              crossingId: selectedCrossingDetail.id.toString(),
+              filename: image.filename,
+              base64image: image.dataUrl,
+              taken: pataken,
+            },
+          });
         });
       });
     }
