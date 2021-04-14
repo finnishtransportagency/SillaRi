@@ -27,10 +27,10 @@ public class CrossingMutationResolver implements GraphQLMutationResolver  {
         }
     }
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public CrossingModel startCrossing(Integer routeId, Integer bridgeId) {
+    public CrossingModel startCrossing(Integer routeBridgeId) {
         ServiceMetric serviceMetric = new ServiceMetric("CrossingMutationResolver", "startCrossing");
         try {
-            return crossingService.createCrossing(routeId, bridgeId);
+            return crossingService.createCrossing(routeBridgeId);
         } finally {
             serviceMetric.end();
         }

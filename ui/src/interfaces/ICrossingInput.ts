@@ -1,7 +1,6 @@
 export default interface ICrossingInput {
   id: number;
-  bridgeId: number;
-  routeId: number;
+  routeBridgeId: number;
   started: string;
   drivingLineInfo: boolean;
   drivingLineInfoDescription: string;

@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import ICompany from "../interfaces/ICompany";
-import IStartCrossing from "../interfaces/IStartCrossing";
 import IRadioValue from "../interfaces/IRadioValue";
-import ISelectCompany from "../interfaces/ISelectCompany";
 import IImageItem from "../interfaces/IImageItem";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
 import ICompanyDetail from "../interfaces/ICompanyDetail";
@@ -10,13 +8,13 @@ import ICompanyList from "../interfaces/ICompanyList";
 import ICrossing from "../interfaces/ICrossing";
 import IRoute from "../interfaces/IRoute";
 import IRouteDetail from "../interfaces/IRouteDetail";
-import IBridge from "../interfaces/IBridge";
 import IBridgeDetail from "../interfaces/IBridgeDetail";
 import IPermit from "../interfaces/IPermit";
 import IPermitDetail from "../interfaces/IPermitDetail";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
 import ICrossingUpdate from "../interfaces/ICrossingUpdate";
 import IGetCrossing from "../interfaces/IGetCrossing";
+import IRouteBridge from "../interfaces/IRouteBridge";
 
 interface IStateProps {
   Companies: ICompany[];
@@ -24,7 +22,7 @@ interface IStateProps {
   selectedCompany: number;
   selectedCompanyDetail?: ICompany;
   selectedRouteDetail?: IRoute;
-  selectedBridgeDetail?: IBridge;
+  selectedBridgeDetail?: IRouteBridge;
   selectedCrossingDetail?: ICrossing;
   selectedPermitDetail?: IPermit;
   images: IImageItem[];
@@ -60,7 +58,7 @@ const crossingsSlice = createSlice({
       return { ...state, selectedPermitDetail: action.payload.Permit };
     },
     GET_BRIDGE: (state, action: PayloadAction<IBridgeDetail>) => {
-      return { ...state, selectedBridgeDetail: action.payload.Bridge };
+      return { ...state, selectedBridgeDetail: action.payload.RouteBridge };
     },
     GET_ROUTE: (state, action: PayloadAction<IRouteDetail>) => {
       return { ...state, selectedRouteDetail: action.payload.Route };

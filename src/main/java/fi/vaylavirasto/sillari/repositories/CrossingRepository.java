@@ -2,7 +2,6 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.*;
 import org.jooq.DSLContext;
-import org.jooq.impl.DefaultConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -42,17 +41,10 @@ public class CrossingRepository {
         return crossingModel.getId();
     }
 
-    public Integer createCrossing(Integer routeId, Integer bridgeId) {
+    public Integer createCrossing(Integer routeBridgeId) {
         Integer[] crossingId = new Integer[1];
 
         dsl.transaction(configuration -> {
-            Integer routeBridgeId = dsl.nextval(Sequences.ROUTESBRIDGES_ID_SEQ).intValue();
-            configuration.dsl().insertInto(CrossingMapper.routeBridge,
-                    CrossingMapper.routeBridge.ID,
-                    CrossingMapper.routeBridge.ROUTE_ID,
-                    CrossingMapper.routeBridge.BRIDGE_ID
-            ).values(routeBridgeId, routeId, bridgeId).execute();
-
             crossingId[0] = dsl.nextval(Sequences.CROSSING_ID_SEQ).intValue();
             LocalDateTime now = LocalDateTime.now();
             configuration.dsl().insertInto(CrossingMapper.crossing,
@@ -81,13 +73,13 @@ public class CrossingRepository {
         return crossingId[0];
     }
 
-    public CrossingModel getCrossing(Integer routeId, Integer bridgeId) {
+    public CrossingModel getCrossing(Integer routeBridgeId) {
+        // TODO do we need to do all these joins? Do we need route data?
         return dsl.select().from(CrossingMapper.crossing)
                 .leftJoin(CrossingMapper.routeBridge).on(CrossingMapper.routeBridge.ID.eq(CrossingMapper.crossing.ROUTE_BRIDGE_ID))
                 .leftJoin(CrossingMapper.route).on(CrossingMapper.route.ID.eq(CrossingMapper.routeBridge.ROUTE_ID))
                 .leftJoin(CrossingMapper.bridge).on(CrossingMapper.bridge.ID.eq(CrossingMapper.routeBridge.BRIDGE_ID))
-                .where(CrossingMapper.route.ID.eq(routeId)
-                        .and(CrossingMapper.bridge.ID.eq(bridgeId))
+                .where(CrossingMapper.routeBridge.ID.eq(routeBridgeId)
                         .and(CrossingMapper.crossing.DRAFT.eq(true)))
                 .fetchOne(new CrossingMapper());
     }

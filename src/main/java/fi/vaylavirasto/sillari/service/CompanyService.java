@@ -20,7 +20,7 @@ public class CompanyService {
     @Autowired
     RouteRepository routeRepository;
     @Autowired
-    BridgeRepository bridgeRepository;
+    RouteBridgeRepository routeBridgeRepository;
 
     public List<CompanyModel> getCompanies(Integer limit) {
         List<CompanyModel> companies = companyRepository.getAllCompanies(limit);
@@ -29,8 +29,8 @@ public class CompanyService {
             for(PermitModel permitModel : companyModel.getPermits()) {
                 permitModel.setRoutes(routeRepository.getRoutes(Long.valueOf(permitModel.getId()).intValue()));
                 for(RouteModel routeModel : permitModel.getRoutes()) {
-                    List<BridgeModel> bridgeModels = bridgeRepository.getRoutesBridges(Long.valueOf(routeModel.getId()).intValue());
-                    routeModel.setBridges(bridgeModels);
+                    List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRoutesBridges(Long.valueOf(routeModel.getId()).intValue());
+                    routeModel.setRouteBridges(routeBridgeModels);
                 }
             }
         }

@@ -1,17 +1,15 @@
 import { RouteComponentProps } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonList, IonPage, IonRow, IonText } from "@ionic/react";
+import { IonContent, IonPage } from "@ionic/react";
 import React from "react";
 import { useQuery } from "@apollo/client";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
-import ICompanyDetail from "../interfaces/ICompanyDetail";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import routeQuery from "../graphql/RouteQuery";
 import IRouteDetail from "../interfaces/IRouteDetail";
 import BridgeCardList from "../components/BridgeCardList";
-import IPermit from "../interfaces/IPermit";
 import permitQuery from "../graphql/PermitQuery";
 import IPermitDetail from "../interfaces/IPermitDetail";
 
@@ -25,7 +23,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
   const dispatch = useDispatch();
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
   const { selectedRouteDetail } = crossingsState;
-  const { bridges = [], name = "", id } = selectedRouteDetail || {};
+  const { routeBridges = [], name = "", id } = selectedRouteDetail || {};
   const {
     params: { routeId, permitId },
   } = match;
@@ -43,7 +41,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
       <Header title={name} />
       <IonContent>
         <div className="cardListContainer" />
-        <BridgeCardList bridges={bridges} />
+        <BridgeCardList routeBridges={routeBridges} />
       </IonContent>
     </IonPage>
   );

@@ -19,16 +19,18 @@ public class CrossingService {
     @Autowired
     PermitRepository permitRepository;
 
-    public CrossingModel createCrossing(Integer routeId, Integer bridgeId) {
-        CrossingModel crossingModel = crossingRepository.getCrossing(routeId, bridgeId);
+    public CrossingModel createCrossing(Integer routeBridgeId) {
+        CrossingModel crossingModel = crossingRepository.getCrossing(routeBridgeId);
         if(crossingModel != null) {
             return getCrossing(crossingModel.getId(),true);
         }
-        return getCrossing(crossingRepository.createCrossing(routeId,bridgeId), true);
+        return getCrossing(crossingRepository.createCrossing(routeBridgeId), true);
     }
+
     public CrossingModel updateCrossing(CrossingInputModel crossingInputModel) {
         return getCrossing(crossingRepository.updateCrossing(crossingInputModel), crossingInputModel.isDraft());
     }
+
     public CrossingModel getCrossing(Integer crossingId, Boolean draft) {
         CrossingModel crossingModel = crossingRepository.getCrossing(crossingId, draft);
         RouteModel routeModel = routeRepository.getRoute(Long.valueOf(crossingModel.getRoute().getId()).intValue());
