@@ -26,6 +26,7 @@ type Bridge {
     id: ID!
     name: String
     identifier: String
+    municipality: String
 }
 
 type RouteBridge {

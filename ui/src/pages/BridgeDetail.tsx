@@ -1,9 +1,10 @@
 import { RouteComponentProps } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCheckbox, IonCol, IonContent, IonGrid, IonItem, IonLabel, IonPage, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCheckbox, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonPage, IonRow, IonText } from "@ionic/react";
 import React from "react";
 import { useQuery } from "@apollo/client";
+import { location } from "ionicons/icons";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import { actions as crossingActions } from "../store/crossingsSlice";
@@ -23,7 +24,7 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
 
   const { selectedBridgeDetail, selectedPermitDetail } = useTypedSelector((state) => state.crossingsReducer);
   const { bridge, crossingInstruction = "" } = selectedBridgeDetail || {};
-  const { name = "", identifier = "" } = bridge || {};
+  const { name = "", identifier = "", municipality = "" } = bridge || {};
   const { permitNumber } = selectedPermitDetail || {};
 
   const [conformsToPermit, setConformsToPermit] = React.useState(false);
@@ -44,12 +45,18 @@ const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.El
               <IonGrid>
                 <IonRow>
                   <IonCol>
-                    <IonText>{name}</IonText>
+                    <img src="assets/bridge.jpg" alt="" />
                   </IonCol>
                 </IonRow>
                 <IonRow>
                   <IonCol>
-                    <img src="assets/bridge.jpg" alt="" />
+                    <IonText>{identifier}</IonText>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonIcon icon={location} />
+                    <IonText>{` ${name}, ${municipality}`}</IonText>
                   </IonCol>
                 </IonRow>
                 <IonRow>
