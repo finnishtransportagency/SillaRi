@@ -9,6 +9,7 @@ import Header from "../components/Header";
 import IBridgeDetail from "../interfaces/IBridgeDetail";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import routeBridgeQuery from "../graphql/RouteBridgeQuery";
+import ITextAreaValue from "../interfaces/ITextAreaValue";
 
 interface DenyCrossingProps {
   routeBridgeId: string;
@@ -36,6 +37,7 @@ const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.El
 
   function changeTextAreaValue(denyReasonText: string, pvalue: string) {
     console.log(pvalue);
+    dispatch({ type: crossingActions.DENY_CROSSING_TEXTAREA_CHANGED, payload: pvalue });
   }
 
   return (

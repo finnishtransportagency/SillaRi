@@ -125,6 +125,9 @@ const crossingsSlice = createSlice({
       console.log("CROSSING_SUMMARY");
       return { ...state, loading: false, selectedCrossingDetail: action.payload.updateCrossing };
     },
+    DENY_CROSSING_TEXTAREA_CHANGED: (state, action: PayloadAction<ITextAreaValue>) => {
+
+    },
   },
 });
 
