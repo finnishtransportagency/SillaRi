@@ -45,13 +45,6 @@ public class CrossingRepository {
         Integer[] crossingId = new Integer[1];
 
         dsl.transaction(configuration -> {
-            /*Integer routeBridgeId = dsl.nextval(Sequences.ROUTESBRIDGES_ID_SEQ).intValue();
-            configuration.dsl().insertInto(CrossingMapper.routeBridge,
-                    CrossingMapper.routeBridge.ID,
-                    CrossingMapper.routeBridge.ROUTE_ID,
-                    CrossingMapper.routeBridge.BRIDGE_ID
-            ).values(routeBridgeId, routeId, bridgeId).execute();*/
-
             crossingId[0] = dsl.nextval(Sequences.CROSSING_ID_SEQ).intValue();
             LocalDateTime now = LocalDateTime.now();
             configuration.dsl().insertInto(CrossingMapper.crossing,
