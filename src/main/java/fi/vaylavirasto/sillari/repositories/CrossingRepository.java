@@ -65,17 +65,16 @@ public class CrossingRepository {
         return crossingId[0];
     }
 
-    public CrossingModel getCrossing(Integer routeBridgeId) {
+    public CrossingModel getCrossingByRouteBridgeId(Integer routeBridgeId) {
         return dsl.select().from(CrossingMapper.crossing)
                 .where(CrossingMapper.crossing.ROUTE_BRIDGE_ID.eq(routeBridgeId)
                         .and(CrossingMapper.crossing.DRAFT.eq(true)))
                 .fetchOne(new CrossingMapper());
     }
 
-    public CrossingModel getCrossing(Integer crossingId, Boolean draft) {
+    public CrossingModel getCrossingById(Integer crossingId) {
         return dsl.select().from(CrossingMapper.crossing)
-                .where(CrossingMapper.crossing.ID.eq(crossingId)
-                        .and(CrossingMapper.crossing.DRAFT.eq(draft)))
+                .where(CrossingMapper.crossing.ID.eq(crossingId))
                 .fetchOne(new CrossingMapper());
     }
 

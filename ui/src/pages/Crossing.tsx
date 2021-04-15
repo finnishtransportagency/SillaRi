@@ -17,7 +17,7 @@ import {
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { RouteComponentProps, useHistory } from "react-router";
 import moment from "moment";
 import Header from "../components/Header";
@@ -30,6 +30,7 @@ import ICrossingDetail from "../interfaces/ICrossingDetails";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import { client } from "../service/apolloClient";
 import uploadMutation from "../graphql/UploadMutation";
+import queryRouteBridgeCrossing from "../graphql/RouteBridgeCrossingQuery";
 
 interface CrossingProps {
   routeBridgeId: string;
@@ -39,6 +40,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
   const { t } = useTranslation();
   const hist = useHistory();
   const dispatch = useDispatch();
+  const [loading, setLoading] = React.useState(false);
 
   const {
     params: { routeBridgeId },
@@ -64,7 +66,11 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     id = -1,
   } = selectedCrossingDetail || {};
 
-  const [loading, setLoading] = React.useState(false);
+  useQuery<ICrossingDetail>(queryRouteBridgeCrossing(Number(routeBridgeId)), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
+    onError: (err) => console.error(err),
+    fetchPolicy: "cache-and-network",
+  });
 
   const [startCrossing, { data }] = useMutation<ICrossingDetail>(startCrossingMutation, {
     onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),
@@ -83,14 +89,14 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
   useEffect(() => {
     console.log(id);
 
-    if (!loading && (selectedCrossingDetail === undefined || id === -1)) {
+    if (!loading && id === -1) {
       setLoading(true);
 
       startCrossing({
         variables: { routeBridgeId },
       }).then(() => setLoading(false));
     }
-  }, [selectedCrossingDetail, id, loading, startCrossing, routeBridgeId]);
+  }, [id, routeBridgeId, loading, startCrossing]);
 
   function changeTextAreaValue(pname: string, pvalue: string) {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
@@ -113,7 +119,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
       permanentBendings,
       twist,
       damage,
-      draft: true,
+      draft: true, // TODO check - if summary is already saved (draft is false), should we set it true again here?
     } as ICrossingInput;
 
     updateCrossing({

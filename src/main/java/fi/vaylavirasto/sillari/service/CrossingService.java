@@ -11,24 +11,24 @@ public class CrossingService {
     @Autowired
     CrossingRepository crossingRepository;
 
-    public CrossingModel createCrossing(Integer routeBridgeId) {
-        CrossingModel crossingModel = crossingRepository.getCrossing(routeBridgeId);
-        if (crossingModel != null) {
-            crossingModel.setImages(crossingRepository.getFiles(crossingModel.getId()));
-            return crossingModel;
-        }
-        return getCrossing(crossingRepository.createCrossing(routeBridgeId), true);
-    }
-
-    public CrossingModel updateCrossing(CrossingInputModel crossingInputModel) {
-        return getCrossing(crossingRepository.updateCrossing(crossingInputModel), crossingInputModel.isDraft());
-    }
-
-    public CrossingModel getCrossing(Integer crossingId, Boolean draft) {
-        CrossingModel crossingModel = crossingRepository.getCrossing(crossingId, draft);
+    public CrossingModel getCrossing(Integer crossingId) {
+        CrossingModel crossingModel = crossingRepository.getCrossingById(crossingId);
         if (crossingModel != null) {
             crossingModel.setImages(crossingRepository.getFiles(crossingId));
         }
         return crossingModel;
+    }
+
+    public CrossingModel createCrossing(Integer routeBridgeId) {
+        CrossingModel crossingModel = crossingRepository.getCrossingByRouteBridgeId(routeBridgeId);
+        if (crossingModel != null) {
+            crossingModel.setImages(crossingRepository.getFiles(crossingModel.getId()));
+            return crossingModel;
+        }
+        return getCrossing(crossingRepository.createCrossing(routeBridgeId));
+    }
+
+    public CrossingModel updateCrossing(CrossingInputModel crossingInputModel) {
+        return getCrossing(crossingRepository.updateCrossing(crossingInputModel));
     }
 }

@@ -37,7 +37,7 @@ type RouteBridge {
 
 type Crossing {
     id: ID!
-    routeBridgeId: Int
+    routeBridgeId: Int!
     drivingLineInfo: Boolean
     speedInfo: Boolean
     exceptionsInfo: Boolean
@@ -115,5 +115,6 @@ type Query {
     Bridge(id :Int!) : Bridge
     RouteBridge(id: Int!) : RouteBridge
     Permit(id :Int!) : Permit
-    Crossing(id :Int!, draft: Boolean!) : Crossing
+    RouteBridgeCrossing(routeBridgeId :Int!) : Crossing
+    Crossing(id :Int!) : Crossing
 }

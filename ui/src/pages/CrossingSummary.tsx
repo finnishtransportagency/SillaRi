@@ -10,7 +10,7 @@ import moment from "moment";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import { apiUrl, client } from "../service/apolloClient";
-import uploadmutation from "../graphql/UploadMutation";
+import uploadMutation from "../graphql/UploadMutation";
 import { updateCrossingMutation } from "../graphql/CrossingMutation";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
@@ -28,20 +28,9 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
     params: { crossingId },
   } = match;
 
-  const { selectedPermitDetail, selectedBridgeDetail, images = [], selectedCrossingDetail } = useTypedSelector((state) => state.crossingsReducer);
+  const { selectedPermitDetail, selectedBridgeDetail, selectedCrossingDetail, images = [] } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
-
-  useQuery<ICrossingDetail>(queryCrossing(Number(crossingId), true), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
-    onError: (err) => console.error(err),
-    fetchPolicy: "cache-and-network",
-  });
-
-  const [updateCrossing, { data }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
-    onCompleted: (response) => dispatch({ type: crossingActions.CROSSING_SAVED, payload: response }),
-    onError: (err) => console.error(err),
-  });
 
   const {
     routeBridgeId,
@@ -59,6 +48,17 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
     damage,
     images: crossingImages,
   } = selectedCrossingDetail || {};
+
+  useQuery<ICrossingDetail>(queryCrossing(Number(crossingId)), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
+    onError: (err) => console.error(err),
+    fetchPolicy: "cache-and-network",
+  });
+
+  const [updateCrossing, { data }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
+    onCompleted: (response) => dispatch({ type: crossingActions.CROSSING_SAVED, payload: response }),
+    onError: (err) => console.error(err),
+  });
 
   function save() {
     if (selectedCrossingDetail !== undefined) {
@@ -86,7 +86,7 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
         images.forEach((image) => {
           const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
           const ret = client.mutate({
-            mutation: uploadmutation.uploadMutation,
+            mutation: uploadMutation.uploadMutation,
             variables: {
               crossingId: selectedCrossingDetail.id.toString(),
               filename: image.filename,

@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.api.graphql;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
+import fi.vaylavirasto.sillari.model.CrossingModel;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.service.RouteBridgeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,4 +23,15 @@ public class RouteBridgeQueryResolver implements GraphQLQueryResolver {
             serviceMetric.end();
         }
     }
+
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public CrossingModel getRouteBridgeCrossing(Integer routeBridgeId) {
+        ServiceMetric serviceMetric = new ServiceMetric("CrossingQueryResolver", "getCrossing");
+        try {
+            return routeBridgeService.getRouteBridgeCrossing(routeBridgeId);
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
 }
