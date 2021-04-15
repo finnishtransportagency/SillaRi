@@ -8,6 +8,7 @@ export const routeBridgeQuery = (id: number): DocumentNode => gql`
                 id
                 name
                 identifier
+                municipality
             }
             crossingInstruction
         }
