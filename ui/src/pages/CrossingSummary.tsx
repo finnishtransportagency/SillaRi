@@ -1,22 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { checkmarkCircleOutline, checkmark } from "ionicons/icons";
-import {
-  IonBackButton,
-  IonButton,
-  IonButtons,
-  IonCol,
-  IonContent,
-  IonGrid,
-  IonIcon,
-  IonImg,
-  IonItem,
-  IonLabel,
-  IonPage,
-  IonRow,
-  IonThumbnail,
-} from "@ionic/react";
+import { checkmarkCircleOutline } from "ionicons/icons";
+import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonPage, IonRow, IonThumbnail } from "@ionic/react";
 import { useMutation, useQuery } from "@apollo/client";
 import { RouteComponentProps } from "react-router";
 import moment from "moment";
@@ -29,62 +15,60 @@ import { updateCrossingMutation } from "../graphql/CrossingMutation";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
 import { actions as crossingActions } from "../store/crossingsSlice";
-import ICompanyDetail from "../interfaces/ICompanyDetail";
-import { companyQuery } from "../graphql/CompanyQuery";
 import queryCrossing from "../graphql/CrossingQuery";
-import IImageItem from "../interfaces/IImageItem";
-import IFile from "../interfaces/IFile";
 
 interface CrossingSummaryProps {
   crossingId: string;
 }
 
 export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryProps>): JSX.Element => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
   const { images = [] } = crossingProps;
   const { selectedCrossingDetail } = crossingProps;
   const dispatch = useDispatch();
-  let url: string;
   const {
     params: { crossingId },
   } = match;
+
   useQuery<ICrossingDetail>(queryCrossing(Number(crossingId), true), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
     onError: (err) => console.error(err),
     fetchPolicy: "cache-and-network",
   });
+
   const [updateCrossing, { data }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
     onCompleted: (response) => dispatch({ type: crossingActions.CROSSING_SAVED, payload: response }),
     onError: (err) => console.error(err),
   });
+
   const {
+    routeBridgeId,
+    bridge,
+    permit,
     started = "",
     drivingLineInfo,
-    speedInfo,
-    route,
-    describe,
-    bridge,
-    exceptionsInfoDescription,
-    extraInfoDescription,
-    damage,
-    twist,
-    permanentBendings,
-    exceptionsInfo,
-    permit,
     drivingLineInfoDescription,
+    speedInfo,
     speedInfoDescription,
+    exceptionsInfo,
+    exceptionsInfoDescription,
+    describe,
+    extraInfoDescription,
+    permanentBendings,
+    twist,
+    damage,
     images: crossingImages,
   } = selectedCrossingDetail || {};
-  const { id: routeId } = route || {};
-  const { id: bridgeId, name: bridgeName = "", identifier: bridgeShortName = "" } = bridge || {};
+
+  const { name: bridgeName = "", identifier: bridgeShortName = "" } = bridge || {};
   const { permitNumber = "" } = permit || {};
+
   function save() {
     if (selectedCrossingDetail !== undefined) {
       const updateRequest = {
         id: Number(crossingId),
-        bridgeId,
-        routeId,
+        routeBridgeId,
         started,
         drivingLineInfo,
         drivingLineInfoDescription,
@@ -99,25 +83,26 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
         damage,
         draft: false,
       } as ICrossingInput;
+
       updateCrossing({
         variables: { crossing: updateRequest },
       });
-      let i;
-      // eslint-disable-next-line no-plusplus
-      for (i = 0; i < images.length; i++) {
-        const pataken = moment(images[i].date, "dd.MM.yyyy HH:mm:ss");
+      // TODO should this be after updateCrossing promise has resolved? (then...)
+      images.forEach((image) => {
+        const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
         const ret = client.mutate({
           mutation: uploadmutation.uploadMutation,
           variables: {
             crossingId: selectedCrossingDetail.id.toString(),
-            filename: images[i].filename,
-            base64image: images[i].dataUrl,
+            filename: image.filename,
+            base64image: image.dataUrl,
             taken: pataken,
           },
         });
-      }
+      });
     }
   }
+
   let exceptionsText = "";
   if (exceptionsInfo) {
     if (permanentBendings) {
@@ -142,6 +127,7 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
       exceptionsText += t("crossing.exceptions.somethingElse");
     }
   }
+
   return (
     <IonPage>
       <Header title={t("crossing.summary.title")} />
@@ -178,7 +164,7 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
             </IonCol>
           </IonRow>
           <IonRow>
-            {images.map((imageItem, i) => (
+            {images.map((imageItem) => (
               <IonItem key={imageItem.id}>
                 <IonCol>
                   <IonThumbnail>
@@ -225,7 +211,7 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonButton routerLink={`/supervision/${routeId}/${bridgeId}`} routerDirection="back">
+              <IonButton routerLink={`/crossing/${routeBridgeId}`} routerDirection="back">
                 {t("crossing.summary.buttons.edit")}
               </IonButton>
             </IonCol>

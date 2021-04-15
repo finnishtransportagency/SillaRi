@@ -26,6 +26,13 @@ type Bridge {
     id: ID!
     name: String
     identifier: String
+    municipality: String
+}
+
+type RouteBridge {
+    id: ID!
+    bridge: Bridge!
+    crossingInstruction: String
 }
 
 type Crossing {
@@ -64,7 +71,7 @@ type Route {
     arrivalAddress: Address
     departureTime: String
     arrivalTime: String
-    bridges: [Bridge]
+    routeBridges: [RouteBridge]
     transports: [Transport]
     crossings: [Crossing]
 }
@@ -101,7 +108,7 @@ input CrossingInput {
 type Mutation {
     singleUpload(crossingId: String!, filename: String!, file: String!, taken: String!): File!,
     updateCrossing(crossing: CrossingInput!): Crossing,
-    startCrossing(routeId: Int!, bridgeId: Int!) : Crossing,
+    startCrossing(routeBridgeId: Int!) : Crossing,
 }
 
 type Query {
@@ -110,7 +117,7 @@ type Query {
     Company(id : Int!) : Company
     Route(id :Int!) : Route
     Bridge(id :Int!) : Bridge
+    RouteBridge(id: Int!) : RouteBridge
     Permit(id :Int!) : Permit
     Crossing(id :Int!, draft: Boolean!) : Crossing
 }
-

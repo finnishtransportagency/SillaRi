@@ -30,8 +30,8 @@ export const updateCrossingMutation = gql`
 `;
 
 export const startCrossingMutation = gql`
-  mutation startCrossing($routeId: Int!, $bridgeId: Int!) {
-    startCrossing(routeId: $routeId, bridgeId: $bridgeId) {
+  mutation startCrossing($routeBridgeId: Int!) {
+    startCrossing(routeBridgeId: $routeBridgeId) {
       describe
       drivingLineInfo
       drivingLineInfoDescription
