@@ -3,6 +3,27 @@ type Transport {
     permitId: Int
     routeId: Int
     name: String!
+    height: Float
+    width: Float
+    length: Float
+    totalMass: Float
+    registrations: [TransportRegistration]
+    axles: [Axle]
+}
+
+type TransportRegistration {
+    id: ID!
+    transportId: Int
+    registrationNumber: String
+}
+
+type Axle {
+    id: ID!
+    transportId: Int
+    axleNumber: Int
+    weight: Int
+    distanceToNext: Float
+    maxDistanceToNext: Float
 }
 
 type Permit {
@@ -120,4 +141,5 @@ type Query {
     RouteBridge(id: Int!) : RouteBridge
     Permit(id :Int!) : Permit
     Crossing(id :Int!, draft: Boolean!) : Crossing
+    Transport(id :Int!): Transport
 }
