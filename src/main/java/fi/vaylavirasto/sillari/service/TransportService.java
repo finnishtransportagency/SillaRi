@@ -32,4 +32,14 @@ public class TransportService {
         }
         return transportModel;
     }
+
+    public TransportModel getTransportOfRoute(Integer permitId, Integer routeId) {
+        TransportModel transportModel = transportRepository.getTransportByPermitIdAndRouteId(permitId, routeId);
+        if (transportModel != null) {
+            Integer transportId = Long.valueOf(transportModel.getId()).intValue();
+            transportModel.setRegistrations(transportRegistrationRepository.getRegistrationsOfTransport(transportId));
+            transportModel.setAxles(axleRepository.getAxlesOfTransport(transportId));
+        }
+        return transportModel;
+    }
 }

@@ -142,4 +142,5 @@ type Query {
     Permit(id :Int!) : Permit
     Crossing(id :Int!, draft: Boolean!) : Crossing
     Transport(id :Int!): Transport
+    TransportOfRoute(permitId :Int!, routeId :Int!): Transport
 }

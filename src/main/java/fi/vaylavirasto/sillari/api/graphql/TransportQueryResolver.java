@@ -23,4 +23,15 @@ public class TransportQueryResolver implements GraphQLQueryResolver {
             serviceMetric.end();
         }
     }
+
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public TransportModel getTransportOfRoute(Integer permitId, Integer routeId) {
+        ServiceMetric serviceMetric = new ServiceMetric("TransportQueryResolver", "getTransportOfRoute");
+
+        try {
+            return transportService.getTransportOfRoute(permitId, routeId);
+        } finally {
+            serviceMetric.end();
+        }
+    }
 }
