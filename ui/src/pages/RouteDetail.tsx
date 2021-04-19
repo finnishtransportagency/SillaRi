@@ -9,8 +9,10 @@ import Header from "../components/Header";
 import BridgeCardList from "../components/BridgeCardList";
 import { permitQuery } from "../graphql/PermitQuery";
 import { routeQuery } from "../graphql/RouteQuery";
+import { transportOfRouteQuery } from "../graphql/TransportQuery";
 import IRouteDetail from "../interfaces/IRouteDetail";
 import IPermitDetail from "../interfaces/IPermitDetail";
+import ITransportDetail from "../interfaces/ITransportDetail";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import { useTypedSelector } from "../store/store";
 
@@ -24,9 +26,12 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
   const dispatch = useDispatch();
 
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedPermitDetail, selectedRouteDetail } = crossingsState;
+  const { selectedPermitDetail, selectedRouteDetail, selectedTransportDetail } = crossingsState;
   const { permitNumber } = selectedPermitDetail || {};
-  const { routeBridges = [], name = "" } = selectedRouteDetail || {};
+  const { name = "", departureAddress, arrivalAddress, routeBridges = [] } = selectedRouteDetail || {};
+  const { street: departureStreet, postalcode: departurePostalCode, city: departureCity } = departureAddress || {};
+  const { street: arrivalStreet, postalcode: arrivalPostalCode, city: arrivalCity } = arrivalAddress || {};
+  const { height, width, length, totalMass, registrations = [], axles = [] } = selectedTransportDetail || {};
 
   const {
     params: { routeId, permitId },
@@ -36,6 +41,12 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
     onCompleted: (response) => dispatch({ type: crossingActions.GET_PERMIT, payload: response }),
     onError: (err) => console.error(err),
   });
+
+  useQuery<ITransportDetail>(transportOfRouteQuery(Number(permitId), Number(routeId)), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_TRANSPORT, payload: response }),
+    onError: (err) => console.error(err),
+  });
+
   useQuery<IRouteDetail>(routeQuery(Number(routeId)), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_ROUTE, payload: response }),
     onError: (err) => console.error(err),
@@ -63,7 +74,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
               <IonText>{t("route.permitInfo.permitNumber")}</IonText>
             </IonCol>
             <IonCol>
-              <IonText>TODO</IonText>
+              <IonText>{permitNumber}</IonText>
               <IonText className="ion-float-right">
                 <IonIcon icon={documentTextOutline} />
                 <IonText>{" PDF"}</IonText>
@@ -75,7 +86,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
               <IonText>{t("route.permitInfo.routeDeparturePoint")}</IonText>
             </IonCol>
             <IonCol>
-              <IonText>TODO</IonText>
+              <IonText>{`${departureStreet}, ${departurePostalCode} ${departureCity}`}</IonText>
               <IonText className="ion-float-right">
                 <IonIcon icon={flagOutline} />
               </IonText>
@@ -86,7 +97,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
               <IonText>{t("route.permitInfo.routeArrivalPoint")}</IonText>
             </IonCol>
             <IonCol>
-              <IonText>TODO</IonText>
+              <IonText>{`${arrivalStreet}, ${arrivalPostalCode} ${arrivalCity}`}</IonText>
               <IonText className="ion-float-right">
                 <IonIcon icon={flagOutline} />
               </IonText>
@@ -108,7 +119,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
               <IonText>{t("route.transportInfo.registrationNumbers")}</IonText>
             </IonCol>
             <IonCol>
-              <IonText>TODO</IonText>
+              <IonText>{registrations.map((r) => r.registrationNumber).join(", ")}</IonText>
             </IonCol>
           </IonRow>
           <IonRow>
@@ -119,17 +130,17 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
               <IonGrid className="ion-no-padding">
                 <IonRow>
                   <IonCol>
-                    <IonText>{`${t("route.transportInfo.height")} TODO`}</IonText>
+                    <IonText>{`${t("route.transportInfo.height")} ${height} m`}</IonText>
                   </IonCol>
                 </IonRow>
                 <IonRow>
                   <IonCol>
-                    <IonText>{`${t("route.transportInfo.width")} TODO`}</IonText>
+                    <IonText>{`${t("route.transportInfo.width")} ${width} m`}</IonText>
                   </IonCol>
                 </IonRow>
                 <IonRow>
                   <IonCol>
-                    <IonText>{`${t("route.transportInfo.length")} TODO`}</IonText>
+                    <IonText>{`${t("route.transportInfo.length")} ${length} m`}</IonText>
                   </IonCol>
                 </IonRow>
               </IonGrid>
@@ -140,7 +151,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
               <IonText>{t("route.transportInfo.totalMass")}</IonText>
             </IonCol>
             <IonCol>
-              <IonText>TODO</IonText>
+              <IonText>{`${totalMass} t`}</IonText>
             </IonCol>
           </IonRow>
           <IonRow>
@@ -148,7 +159,20 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
               <IonText>{t("route.transportInfo.axleWeightsDistances")}</IonText>
             </IonCol>
             <IonCol>
-              <IonText>TODO</IonText>
+              <IonGrid className="ion-no-padding">
+                {[...axles]
+                  .sort((a, b) => a.axleNumber - b.axleNumber)
+                  .map((axle, index) => {
+                    const key = `axle_${index}`;
+                    return (
+                      <IonRow key={key}>
+                        <IonCol>
+                          <IonText>{`${axle.axleNumber}: ${axle.weight} t${axle.distanceToNext > 0 ? ` - ${axle.distanceToNext} m` : ""}`}</IonText>
+                        </IonCol>
+                      </IonRow>
+                    );
+                  })}
+              </IonGrid>
             </IonCol>
           </IonRow>
         </IonGrid>
