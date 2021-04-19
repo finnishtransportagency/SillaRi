@@ -15,10 +15,10 @@ import IPermit from "../interfaces/IPermit";
 import IPermitDetail from "../interfaces/IPermitDetail";
 import IRoute from "../interfaces/IRoute";
 import IRouteDetail from "../interfaces/IRouteDetail";
+import ITransport from "../interfaces/ITransport";
 import ITransportDetail from "../interfaces/ITransportDetail";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import { useTypedSelector } from "../store/store";
-import ITransport from "../interfaces/ITransport";
 
 interface RouteDetailProps {
   routeId: string;
@@ -43,13 +43,13 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
     onError: (err) => console.error(err),
   });
 
-  useQuery<ITransportDetail>(transportOfRouteQuery(Number(permitId), Number(routeId)), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_TRANSPORT, payload: response }),
+  useQuery<IRouteDetail>(routeQuery(Number(routeId)), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_ROUTE, payload: response }),
     onError: (err) => console.error(err),
   });
 
-  useQuery<IRouteDetail>(routeQuery(Number(routeId)), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_ROUTE, payload: response }),
+  useQuery<ITransportDetail>(transportOfRouteQuery(Number(permitId), Number(routeId)), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_TRANSPORT, payload: response }),
     onError: (err) => console.error(err),
   });
 
