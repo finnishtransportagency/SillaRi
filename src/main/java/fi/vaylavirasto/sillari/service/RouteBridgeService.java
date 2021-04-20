@@ -19,7 +19,7 @@ public class RouteBridgeService {
         return routeBridgeRepository.getRouteBridge(id);
     }
 
-    public CrossingModel getRouteBridgeCrossing(Integer routeBridgeId) {
+    public CrossingModel getCrossingOfRouteBridge(Integer routeBridgeId) {
         CrossingModel crossingModel = crossingRepository.getCrossingByRouteBridgeId(routeBridgeId);
         if (crossingModel != null) {
             crossingModel.setImages(crossingRepository.getFiles(crossingModel.getId()));

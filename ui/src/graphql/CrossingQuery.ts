@@ -1,6 +1,6 @@
 import { DocumentNode, gql } from "@apollo/client";
 
-export const queryCrossing = (crossingId: number): DocumentNode => gql`
+export const crossingQuery = (crossingId: number): DocumentNode => gql`
   {
     Crossing(id: ${crossingId}) {
       describe
@@ -26,4 +26,28 @@ export const queryCrossing = (crossingId: number): DocumentNode => gql`
   }
 `;
 
-export default queryCrossing;
+export const crossingOfRouteBridgeQuery = (routeBridgeId: number): DocumentNode => gql`
+  {
+    CrossingOfRouteBridge(routeBridgeId: ${routeBridgeId}) {
+      describe
+      draft
+      drivingLineInfo
+      drivingLineInfoDescription
+      exceptionsInfo
+      exceptionsInfoDescription
+      extraInfoDescription
+      id
+      routeBridgeId
+      speedInfo
+      speedInfoDescription
+      started
+      permanentBendings
+      twist
+      damage
+      images {
+        id
+        objectKey
+      }
+    }
+  }
+`;

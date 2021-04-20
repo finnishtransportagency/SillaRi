@@ -115,6 +115,6 @@ type Query {
     Bridge(id :Int!) : Bridge
     RouteBridge(id: Int!) : RouteBridge
     Permit(id :Int!) : Permit
-    RouteBridgeCrossing(routeBridgeId :Int!) : Crossing
     Crossing(id :Int!) : Crossing
+    CrossingOfRouteBridge(routeBridgeId :Int!) : Crossing
 }

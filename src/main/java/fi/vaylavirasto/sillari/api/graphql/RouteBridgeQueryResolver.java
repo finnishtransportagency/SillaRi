@@ -25,10 +25,10 @@ public class RouteBridgeQueryResolver implements GraphQLQueryResolver {
     }
 
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public CrossingModel getRouteBridgeCrossing(Integer routeBridgeId) {
-        ServiceMetric serviceMetric = new ServiceMetric("CrossingQueryResolver", "getCrossing");
+    public CrossingModel getCrossingOfRouteBridge(Integer routeBridgeId) {
+        ServiceMetric serviceMetric = new ServiceMetric("CrossingQueryResolver", "getCrossingOfRouteBridge");
         try {
-            return routeBridgeService.getRouteBridgeCrossing(routeBridgeId);
+            return routeBridgeService.getCrossingOfRouteBridge(routeBridgeId);
         } finally {
             serviceMetric.end();
         }
