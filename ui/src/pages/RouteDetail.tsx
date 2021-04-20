@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -28,6 +28,8 @@ interface RouteDetailProps {
 const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
+  const [transportValid, setTransportValid] = useState(false);
 
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
   const { selectedPermitDetail, selectedRouteDetail, selectedTransportDetail } = crossingsState;
@@ -63,7 +65,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
         <IonGrid>
           <IonRow>
             <IonCol size="auto">
-              <IonCheckbox />
+              <IonCheckbox checked={transportValid} onIonChange={(e) => setTransportValid(e.detail.checked)} />
             </IonCol>
             <IonCol>
               <IonText>{t("route.transportValid")} </IonText>
