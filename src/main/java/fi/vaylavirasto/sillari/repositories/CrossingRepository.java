@@ -67,8 +67,7 @@ public class CrossingRepository {
 
     public CrossingModel getCrossingByRouteBridgeId(Integer routeBridgeId) {
         return dsl.select().from(CrossingMapper.crossing)
-                .where(CrossingMapper.crossing.ROUTE_BRIDGE_ID.eq(routeBridgeId)
-                        .and(CrossingMapper.crossing.DRAFT.eq(true)))
+                .where(CrossingMapper.crossing.ROUTE_BRIDGE_ID.eq(routeBridgeId))
                 .fetchOne(new CrossingMapper());
     }
 
