@@ -8,7 +8,7 @@ ALTER TABLE sillari.transport ADD COLUMN IF NOT EXISTS total_mass decimal;
 CREATE SEQUENCE IF NOT EXISTS sillari.transport_registration_id_seq;
 
 CREATE TABLE IF NOT EXISTS sillari.transport_registration (
-    id integer not null DEFAULT nextval('transport_registration_id_seq'),
+    id integer not null DEFAULT nextval('sillari.transport_registration_id_seq'),
     transport_id integer not null,
     registration_number text,
     PRIMARY KEY (id),
@@ -21,7 +21,7 @@ CREATE INDEX IF NOT EXISTS transport_registration_transport_id ON sillari.transp
 CREATE SEQUENCE IF NOT EXISTS sillari.axle_id_seq;
 
 CREATE TABLE IF NOT EXISTS sillari.axle (
-    id integer not null DEFAULT nextval('axle_id_seq'),
+    id integer not null DEFAULT nextval('sillari.axle_id_seq'),
     transport_id integer not null,
     axle_number integer,
     weight integer,
