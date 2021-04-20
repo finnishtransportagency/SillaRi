@@ -30,6 +30,10 @@
   font-weight: bold;
 }
 
+.hidden {
+  display: none;
+}
+
 /** Additional Vayla colors **/
 .ion-color-teal {
   --ion-color-base: var(--ion-color-teal);

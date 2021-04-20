@@ -1,15 +1,25 @@
 import React from "react";
-import { IonBackButton, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle } from "@ionic/react";
-import "./Header.css";
+import { useHistory, useLocation } from "react-router-dom";
+import { IonButton, IonHeader, IonIcon, IonToolbar, IonButtons, IonMenuButton, IonTitle } from "@ionic/react";
+import { arrowBackOutline } from "ionicons/icons";
 
-const Header: React.FC<{ title: string }> = ({ title }: { title: string }) => {
-  // Note: the back button visibility is handled by Ionic, but the menu button visibility is handled in Header.css
+interface HeaderProps {
+  title: string;
+}
+
+const Header = ({ title }: HeaderProps): JSX.Element => {
+  const history = useHistory();
+  const { pathname } = useLocation();
+  const canGoBack = pathname !== "/";
+
   return (
     <IonHeader>
       <IonToolbar color="primary">
         <IonButtons slot="start">
-          <IonMenuButton />
-          <IonBackButton />
+          <IonMenuButton className={canGoBack ? "hidden" : ""} />
+          <IonButton shape="round" className={canGoBack ? "" : "hidden"} onClick={() => history.goBack()}>
+            <IonIcon slot="icon-only" icon={arrowBackOutline} />
+          </IonButton>
         </IonButtons>
         <IonTitle>{title}</IonTitle>
       </IonToolbar>
