@@ -20,4 +20,11 @@ public class TransportRepository {
                 .where(TransportMapper.transport.ID.eq(id))
                 .fetchOne(new TransportMapper());
     }
+
+    public TransportModel getTransportByPermitIdAndRouteId(int permitId, int routeId) {
+        return dsl.selectFrom(TransportMapper.transport)
+                .where(TransportMapper.transport.PERMIT_ID.eq(permitId)
+                    .and(TransportMapper.transport.ROUTE_ID.eq(routeId)))
+                .fetchOne(new TransportMapper());
+    }
 }

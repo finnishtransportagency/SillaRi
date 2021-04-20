@@ -10,4 +10,10 @@ public class TransportModel {
     private long permitId;
     private long routeId;
     private String name;
+    private Double height;
+    private Double width;
+    private Double length;
+    private Double totalMass;
+    private List<TransportRegistrationModel> registrations;
+    private List<AxleModel> axles;
 }
