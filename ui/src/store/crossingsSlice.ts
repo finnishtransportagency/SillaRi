@@ -12,9 +12,9 @@ import IBridgeDetail from "../interfaces/IBridgeDetail";
 import IPermit from "../interfaces/IPermit";
 import IPermitDetail from "../interfaces/IPermitDetail";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
-import ICrossingUpdate from "../interfaces/ICrossingUpdate";
-import IGetCrossing from "../interfaces/IGetCrossing";
 import IRouteBridge from "../interfaces/IRouteBridge";
+import ICrossingStart from "../interfaces/ICrossingStart";
+import ICrossingUpdate from "../interfaces/ICrossingUpdate";
 
 interface IStateProps {
   Companies: ICompany[];
@@ -104,23 +104,19 @@ const crossingsSlice = createSlice({
     GET_CROSSING: (state, action: PayloadAction<ICrossingDetail>) => {
       console.log("GET_CROSSING");
       const crossing = action.payload.Crossing !== undefined ? action.payload.Crossing : action.payload.CrossingOfRouteBridge;
-      console.log(crossing);
       return { ...state, selectedCrossingDetail: crossing };
     },
-    START_CROSSING: (state, action: PayloadAction<ICrossingDetail>) => {
+    START_CROSSING: (state, action: PayloadAction<ICrossingStart>) => {
       console.log("START_CROSSING");
-      console.log(action.payload.Crossing);
-      return { ...state, selectedCrossingDetail: action.payload.Crossing };
+      return { ...state, selectedCrossingDetail: action.payload.startCrossing };
     },
-    CROSSING_SAVED: (state, action: PayloadAction<ICrossingDetail>) => {
-      console.log("CROSSING_SAVED");
-      console.log(action.payload.Crossing);
-      alert("Talletettu");
-    },
-    CROSSING_SUMMARY: (state, action: PayloadAction<ICrossingDetail>) => {
+    CROSSING_SUMMARY: (state, action: PayloadAction<ICrossingUpdate>) => {
       console.log("CROSSING_SUMMARY");
-      console.log(action.payload.Crossing);
-      return { ...state, loading: false, selectedCrossingDetail: action.payload.Crossing };
+      return { ...state, loading: false, selectedCrossingDetail: action.payload.updateCrossing };
+    },
+    CROSSING_SAVED: (state, action: PayloadAction<ICrossingUpdate>) => {
+      console.log("CROSSING_SAVED");
+      alert("Talletettu");
     },
     SAVE_IMAGES: (state, action: PayloadAction<IImageItem[]>) => {
       return { ...state, images: action.payload };

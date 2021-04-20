@@ -31,6 +31,8 @@ import ICrossingInput from "../interfaces/ICrossingInput";
 import { client } from "../service/apolloClient";
 import uploadMutation from "../graphql/UploadMutation";
 import { crossingOfRouteBridgeQuery } from "../graphql/CrossingQuery";
+import ICrossingUpdate from "../interfaces/ICrossingUpdate";
+import ICrossingStart from "../interfaces/ICrossingStart";
 
 interface CrossingProps {
   routeBridgeId: string;
@@ -66,21 +68,18 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
   } = selectedCrossingDetail || {};
 
   // Added useQuery to clear previous crossing from Redux store, otherwise that one is used
-  const { loading: getCrossingLoading, data: crossing } = useQuery<ICrossingDetail>(crossingOfRouteBridgeQuery(Number(routeBridgeId)), {
-    onCompleted: (response) => {
-      console.log(crossing);
-      dispatch({ type: crossingActions.GET_CROSSING, payload: response });
-    },
+  useQuery<ICrossingDetail>(crossingOfRouteBridgeQuery(Number(routeBridgeId)), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
     onError: (err) => console.error(err),
     fetchPolicy: "cache-and-network",
   });
 
-  const [startCrossing, { data }] = useMutation<ICrossingDetail>(startCrossingMutation, {
+  const [startCrossing, { data }] = useMutation<ICrossingStart>(startCrossingMutation, {
     onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),
     onError: (err) => console.error(err),
   });
 
-  const [updateCrossing, { data: updateData }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
+  const [updateCrossing, { data: updateData }] = useMutation<ICrossingUpdate>(updateCrossingMutation, {
     onCompleted: (response) => {
       dispatch({ type: crossingActions.CROSSING_SUMMARY, payload: response });
       console.log("history");
@@ -90,18 +89,13 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
   });
 
   useEffect(() => {
-    console.log(id);
-    console.log(getCrossingLoading);
-    console.log(selectedCrossingDetail);
-
-    if (!getCrossingLoading && id === -1) {
-      console.log("Should start crossing now!");
-      // Currently this resolves before Redux is ready, and that's a problem
-      /* startCrossing({
+    // selectedCrossingDetail is undefined when query is still unresolved, but returns null if not found from DB
+    if (selectedCrossingDetail === null) {
+      startCrossing({
         variables: { routeBridgeId },
-      }); */
+      });
     }
-  }, [id, routeBridgeId, getCrossingLoading, startCrossing, selectedCrossingDetail]);
+  }, [routeBridgeId, selectedCrossingDetail, startCrossing]);
 
   function changeTextAreaValue(pname: string, pvalue: string) {
     const change = { name: pname, value: pvalue } as ITextAreaValue;

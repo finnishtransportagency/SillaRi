@@ -16,6 +16,7 @@ import ICrossingInput from "../interfaces/ICrossingInput";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import { crossingQuery } from "../graphql/CrossingQuery";
+import ICrossingUpdate from "../interfaces/ICrossingUpdate";
 
 interface CrossingSummaryProps {
   crossingId: string;
@@ -55,7 +56,7 @@ export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryPr
     fetchPolicy: "cache-and-network",
   });
 
-  const [updateCrossing, { data }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
+  const [updateCrossing, { data }] = useMutation<ICrossingUpdate>(updateCrossingMutation, {
     onCompleted: (response) => dispatch({ type: crossingActions.CROSSING_SAVED, payload: response }),
     onError: (err) => console.error(err),
   });
