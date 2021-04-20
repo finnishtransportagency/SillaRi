@@ -18,7 +18,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useMutation } from "@apollo/client";
-import { RouteComponentProps, useHistory } from "react-router";
+import { useParams, useHistory } from "react-router-dom";
 import moment from "moment";
 import Header from "../components/Header";
 import { useTypedSelector } from "../store/store";
@@ -35,7 +35,7 @@ interface CrossingProps {
   routeBridgeId: string;
 }
 
-export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Element => {
+export const Crossing = (): JSX.Element => {
   const { t } = useTranslation();
   const hist = useHistory();
   const dispatch = useDispatch();
@@ -58,9 +58,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     bridge,
     permit,
   } = selectedCrossingDetail || {};
-  const {
-    params: { routeBridgeId },
-  } = match;
+  const { routeBridgeId } = useParams<CrossingProps>();
 
   const [startCrossing, { data }] = useMutation<ICrossingDetail>(startCrossingMutation, {
     onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),

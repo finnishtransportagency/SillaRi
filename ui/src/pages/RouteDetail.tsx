@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { IonCheckbox, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
@@ -25,7 +25,7 @@ interface RouteDetailProps {
   permitId: string;
 }
 
-const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Element => {
+const RouteDetail = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -36,9 +36,7 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
   const { permitNumber } = selectedPermitDetail || {};
   const { name = "", routeBridges = [] } = selectedRouteDetail || {};
 
-  const {
-    params: { routeId, permitId },
-  } = match;
+  const { routeId, permitId } = useParams<RouteDetailProps>();
 
   useQuery<IPermitDetail>(permitQuery(Number(permitId)), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_PERMIT, payload: response }),
