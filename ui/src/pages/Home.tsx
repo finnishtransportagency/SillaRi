@@ -6,6 +6,7 @@ import { barbellOutline, bus } from "ionicons/icons";
 import Header from "../components/Header";
 import CompanyCardList from "../components/CompanyCardList";
 import "./Home.css";
+import UpcomingBridgeSupervisions from "./UpcomingBridgeSupervisions";
 
 const Home = (): JSX.Element => {
   const { t } = useTranslation();
@@ -44,7 +45,7 @@ const Home = (): JSX.Element => {
             <CompanyCardList />
           </IonSlide>
           <IonSlide>
-            <div>TODO</div>
+            <UpcomingBridgeSupervisions />
           </IonSlide>
         </IonSlides>
       </IonContent>

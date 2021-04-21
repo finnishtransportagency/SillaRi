@@ -73,6 +73,13 @@ const RouteDetail = ({ match }: RouteComponentProps<RouteDetailProps>): JSX.Elem
           </IonRow>
         </IonGrid>
 
+        <IonGrid>
+          <IonRow>
+            <IonCol>
+              <IonText className="headingText">{t("route.bridgesToSupervise")}</IonText>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
         <BridgeCardList routeBridges={routeBridges} />
       </IonContent>
     </IonPage>
