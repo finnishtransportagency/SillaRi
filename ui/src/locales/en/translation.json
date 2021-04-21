@@ -49,5 +49,25 @@
     "transportPermit": "Transport permit",
     "validityPeriod": "Validity period",
     "route": "Route"
+  },
+  "route": {
+    "permitInfo": {
+      "title": "Permit information",
+      "permitNumber": "Permit number",
+      "routeDeparturePoint": "Route departure point",
+      "routeArrivalPoint": "Route arrival point"
+    },
+    "transportInfo": {
+      "title": "Transport information",
+      "registrationNumbers": "Registry identifiers",
+      "dimensions": "Transport dimensions",
+      "height": "Height from the ground",
+      "width": "Width",
+      "length": "Length",
+      "totalMass": "Total mass",
+      "axleWeightsDistances": "Axle weights and distances"
+    },
+    "transportValid": "Transport is in accordance with the permit on departure",
+    "bridgesToSupervise": "Bridges to supervise"
   }
 }

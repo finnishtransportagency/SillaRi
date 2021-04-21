@@ -13,7 +13,7 @@ const RouteCardList = ({ routes, permitId }: RouteCardListProps): JSX.Element =>
     <div className="cardListContainer">
       {routes.map((route, index) => {
         const key = `route_${index}`;
-        return <RouteCard key={key} route={route} index={index} permitId={permitId} />;
+        return <RouteCard key={key} route={route} permitId={permitId} />;
       })}
     </div>
   );
