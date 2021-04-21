@@ -16,6 +16,7 @@ services:
     build:
       context: ./sillari-local-db
     environment:
+      - POSTGRES_DB=sillari
       - POSTGRES_PASSWORD=docker
       - PGDATA=/pgdata
     ports:
