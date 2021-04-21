@@ -102,6 +102,8 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     dispatch({ type: crossingActions.CROSSING_TEXTAREA_CHANGED, payload: change });
   }
 
+  // Note that even though summary has been saved before (not draft), it's reset here as draft until summary is saved again.
+  // Should we disable all changes to crossing when it is not draft anymore, so this does not happen?
   function summaryClicked() {
     const updateRequest = {
       id,
@@ -118,7 +120,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
       permanentBendings,
       twist,
       damage,
-      draft: true, // TODO check - if summary is already saved (draft is false), should we set it true again here?
+      draft: true,
     } as ICrossingInput;
 
     updateCrossing({
