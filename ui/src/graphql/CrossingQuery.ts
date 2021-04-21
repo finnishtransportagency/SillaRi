@@ -1,9 +1,10 @@
 import { DocumentNode, gql } from "@apollo/client";
 
-export const queryCrossing = (crossingId: number, draft: boolean): DocumentNode => gql`
+export const crossingQuery = (crossingId: number): DocumentNode => gql`
   {
-    Crossing(id: ${crossingId}, draft: ${draft}) {
+    Crossing(id: ${crossingId}) {
       describe
+      draft
       drivingLineInfo
       drivingLineInfoDescription
       exceptionsInfo
@@ -17,20 +18,6 @@ export const queryCrossing = (crossingId: number, draft: boolean): DocumentNode 
       permanentBendings
       twist
       damage
-      bridge {
-        id
-        name
-        identifier
-      }
-      route {
-        id
-        name
-      }
-      permit {
-        companyId
-        permitNumber
-        id
-      }
       images {
         id
         objectKey
@@ -39,4 +26,28 @@ export const queryCrossing = (crossingId: number, draft: boolean): DocumentNode 
   }
 `;
 
-export default queryCrossing;
+export const crossingOfRouteBridgeQuery = (routeBridgeId: number): DocumentNode => gql`
+  {
+    CrossingOfRouteBridge(routeBridgeId: ${routeBridgeId}) {
+      describe
+      draft
+      drivingLineInfo
+      drivingLineInfoDescription
+      exceptionsInfo
+      exceptionsInfoDescription
+      extraInfoDescription
+      id
+      routeBridgeId
+      speedInfo
+      speedInfoDescription
+      started
+      permanentBendings
+      twist
+      damage
+      images {
+        id
+        objectKey
+      }
+    }
+  }
+`;

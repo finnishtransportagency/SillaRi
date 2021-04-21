@@ -14,10 +14,10 @@ import {
   IonRow,
   IonTextarea,
 } from "@ionic/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { RouteComponentProps, useHistory } from "react-router";
 import moment from "moment";
 import Header from "../components/Header";
@@ -28,8 +28,11 @@ import ITextAreaValue from "../interfaces/ITextAreaValue";
 import { startCrossingMutation, updateCrossingMutation } from "../graphql/CrossingMutation";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
 import ICrossingInput from "../interfaces/ICrossingInput";
-import client from "../service/apolloClient";
-import uploadmutation from "../graphql/UploadMutation";
+import { client } from "../service/apolloClient";
+import uploadMutation from "../graphql/UploadMutation";
+import { crossingOfRouteBridgeQuery } from "../graphql/CrossingQuery";
+import ICrossingUpdate from "../interfaces/ICrossingUpdate";
+import ICrossingStart from "../interfaces/ICrossingStart";
 
 interface CrossingProps {
   routeBridgeId: string;
@@ -39,8 +42,15 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
   const { t } = useTranslation();
   const hist = useHistory();
   const dispatch = useDispatch();
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const { images = [], loading, selectedCrossingDetail } = crossings;
+
+  const {
+    params: { routeBridgeId },
+  } = match;
+
+  const { selectedPermitDetail, selectedBridgeDetail, selectedCrossingDetail, images = [] } = useTypedSelector((state) => state.crossingsReducer);
+  const { permitNumber = "" } = selectedPermitDetail || {};
+  const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
+
   const {
     speedInfo = true,
     describe = false,
@@ -55,19 +65,21 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     permanentBendings = false,
     started = "",
     id = -1,
-    bridge,
-    permit,
   } = selectedCrossingDetail || {};
-  const {
-    params: { routeBridgeId },
-  } = match;
 
-  const [startCrossing, { data }] = useMutation<ICrossingDetail>(startCrossingMutation, {
+  // Added useQuery to clear previous crossing from Redux store, otherwise that one is used
+  useQuery<ICrossingDetail>(crossingOfRouteBridgeQuery(Number(routeBridgeId)), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
+    onError: (err) => console.error(err),
+    fetchPolicy: "cache-and-network",
+  });
+
+  const [startCrossing, { data }] = useMutation<ICrossingStart>(startCrossingMutation, {
     onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),
     onError: (err) => console.error(err),
   });
 
-  const [updateCrossing, { data: updatedata }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
+  const [updateCrossing, { data: updateData }] = useMutation<ICrossingUpdate>(updateCrossingMutation, {
     onCompleted: (response) => {
       dispatch({ type: crossingActions.CROSSING_SUMMARY, payload: response });
       console.log("history");
@@ -76,21 +88,22 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
     onError: (err) => console.error(err),
   });
 
-  if (selectedCrossingDetail === undefined && !loading) {
-    dispatch({ type: crossingActions.SET_LOADING, payload: true });
-    startCrossing({
-      variables: { routeBridgeId },
-    });
-  }
-
-  const { name: bridgeName = "", identifier: bridgeShortName } = bridge || {};
-  const { permitNumber = "" } = permit || {};
+  useEffect(() => {
+    // selectedCrossingDetail is undefined when query is still unresolved, but returns null if not found from DB
+    if (selectedCrossingDetail === null) {
+      startCrossing({
+        variables: { routeBridgeId },
+      });
+    }
+  }, [routeBridgeId, selectedCrossingDetail, startCrossing]);
 
   function changeTextAreaValue(pname: string, pvalue: string) {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
     dispatch({ type: crossingActions.CROSSING_TEXTAREA_CHANGED, payload: change });
   }
 
+  // Note that even though summary has been saved before (not draft), it's reset here as draft until summary is saved again.
+  // Should we disable all changes to crossing when it is not draft anymore, so this does not happen?
   function summaryClicked() {
     const updateRequest = {
       id,
@@ -112,18 +125,18 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
 
     updateCrossing({
       variables: { crossing: updateRequest },
-    });
-
-    images.forEach((image) => {
-      const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
-      const ret = client.mutate({
-        mutation: uploadmutation.uploadMutation,
-        variables: {
-          crossingId: id.toString(),
-          filename: image.filename,
-          base64image: image.dataUrl,
-          taken: pataken,
-        },
+    }).then(() => {
+      images.forEach((image) => {
+        const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
+        const ret = client.mutate({
+          mutation: uploadMutation.uploadMutation,
+          variables: {
+            crossingId: id.toString(),
+            filename: image.filename,
+            base64image: image.dataUrl,
+            taken: pataken,
+          },
+        });
       });
     });
   }
@@ -167,7 +180,7 @@ export const Crossing = ({ match }: RouteComponentProps<CrossingProps>): JSX.Ele
           <IonRow>
             <IonCol>
               <IonLabel class="crossingLabel">
-                {t("crossing.bridgeName")} {bridgeName} | {bridgeShortName}
+                {t("crossing.bridgeName")} {bridgeName} | {bridgeIdentifier}
               </IonLabel>
             </IonCol>
           </IonRow>
