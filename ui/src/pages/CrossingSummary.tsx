@@ -7,15 +7,16 @@ import { useMutation, useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 
-import { RootState, useTypedSelector } from "../store/store";
+import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
-import client, { apiUrl } from "../service/apolloClient";
-import uploadmutation from "../graphql/UploadMutation";
+import { apiUrl, client } from "../service/apolloClient";
+import uploadMutation from "../graphql/UploadMutation";
 import { updateCrossingMutation } from "../graphql/CrossingMutation";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import ICrossingDetail from "../interfaces/ICrossingDetails";
 import { actions as crossingActions } from "../store/crossingsSlice";
-import { queryCrossing } from "../graphql/CrossingQuery";
+import { crossingQuery } from "../graphql/CrossingQuery";
+import ICrossingUpdate from "../interfaces/ICrossingUpdate";
 
 interface CrossingSummaryProps {
   crossingId: string;
@@ -23,27 +24,15 @@ interface CrossingSummaryProps {
 
 export const CrossingSummary = (): JSX.Element => {
   const { t } = useTranslation();
-  const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
-  const { images = [] } = crossingProps;
-  const { selectedCrossingDetail } = crossingProps;
   const dispatch = useDispatch();
   const { crossingId } = useParams<CrossingSummaryProps>();
 
-  useQuery<ICrossingDetail>(queryCrossing(Number(crossingId), true), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
-    onError: (err) => console.error(err),
-    fetchPolicy: "cache-and-network",
-  });
-
-  const [updateCrossing, { data }] = useMutation<ICrossingDetail>(updateCrossingMutation, {
-    onCompleted: (response) => dispatch({ type: crossingActions.CROSSING_SAVED, payload: response }),
-    onError: (err) => console.error(err),
-  });
+  const { selectedPermitDetail, selectedBridgeDetail, selectedCrossingDetail, images = [] } = useTypedSelector((state) => state.crossingsReducer);
+  const { permitNumber = "" } = selectedPermitDetail || {};
+  const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
 
   const {
     routeBridgeId,
-    bridge,
-    permit,
     started = "",
     drivingLineInfo,
     drivingLineInfoDescription,
@@ -59,8 +48,16 @@ export const CrossingSummary = (): JSX.Element => {
     images: crossingImages,
   } = selectedCrossingDetail || {};
 
-  const { name: bridgeName = "", identifier: bridgeShortName = "" } = bridge || {};
-  const { permitNumber = "" } = permit || {};
+  useQuery<ICrossingDetail>(crossingQuery(Number(crossingId)), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
+    onError: (err) => console.error(err),
+    fetchPolicy: "cache-and-network",
+  });
+
+  const [updateCrossing, { data }] = useMutation<ICrossingUpdate>(updateCrossingMutation, {
+    onCompleted: (response) => dispatch({ type: crossingActions.CROSSING_SAVED, payload: response }),
+    onError: (err) => console.error(err),
+  });
 
   function save() {
     if (selectedCrossingDetail !== undefined) {
@@ -84,18 +81,18 @@ export const CrossingSummary = (): JSX.Element => {
 
       updateCrossing({
         variables: { crossing: updateRequest },
-      });
-      // TODO should this be after updateCrossing promise has resolved? (then...)
-      images.forEach((image) => {
-        const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
-        const ret = client.mutate({
-          mutation: uploadmutation.uploadMutation,
-          variables: {
-            crossingId: selectedCrossingDetail.id.toString(),
-            filename: image.filename,
-            base64image: image.dataUrl,
-            taken: pataken,
-          },
+      }).then(() => {
+        images.forEach((image) => {
+          const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
+          const ret = client.mutate({
+            mutation: uploadMutation.uploadMutation,
+            variables: {
+              crossingId: selectedCrossingDetail.id.toString(),
+              filename: image.filename,
+              base64image: image.dataUrl,
+              taken: pataken,
+            },
+          });
         });
       });
     }
@@ -149,7 +146,7 @@ export const CrossingSummary = (): JSX.Element => {
           <IonRow>
             <IonCol>
               <IonLabel class="crossingLabel">
-                {t("crossing.summary.bridgeName")} {bridgeName} | {bridgeShortName}
+                {t("crossing.summary.bridgeName")} {bridgeName} | {bridgeIdentifier}
               </IonLabel>
             </IonCol>
           </IonRow>
