@@ -1,25 +1,23 @@
 import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText, IonTextarea } from "@ionic/react";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { RouteComponentProps } from "react-router";
+import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useQuery } from "@apollo/client";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import IBridgeDetail from "../interfaces/IBridgeDetail";
 import { actions as crossingActions } from "../store/crossingsSlice";
-import routeBridgeQuery from "../graphql/RouteBridgeQuery";
+import { routeBridgeQuery } from "../graphql/RouteBridgeQuery";
 
 interface DenyCrossingProps {
   routeBridgeId: string;
 }
 
-const DenyCrossing = ({ match }: RouteComponentProps<DenyCrossingProps>): JSX.Element => {
+const DenyCrossing = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const {
-    params: { routeBridgeId },
-  } = match;
+  const { routeBridgeId } = useParams<DenyCrossingProps>();
 
   const { selectedBridgeDetail } = useTypedSelector((state) => state.crossingsReducer);
   const { bridge } = selectedBridgeDetail || {};

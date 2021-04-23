@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { checkmarkCircleOutline } from "ionicons/icons";
 import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonPage, IonRow, IonThumbnail } from "@ionic/react";
 import { useMutation, useQuery } from "@apollo/client";
-import { RouteComponentProps } from "react-router";
+import { useParams } from "react-router-dom";
 import moment from "moment";
 
 import { useTypedSelector } from "../store/store";
@@ -22,12 +22,10 @@ interface CrossingSummaryProps {
   crossingId: string;
 }
 
-export const CrossingSummary = ({ match }: RouteComponentProps<CrossingSummaryProps>): JSX.Element => {
+export const CrossingSummary = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const {
-    params: { crossingId },
-  } = match;
+  const { crossingId } = useParams<CrossingSummaryProps>();
 
   const { selectedPermitDetail, selectedBridgeDetail, selectedCrossingDetail, images = [] } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { RouteComponentProps } from "react-router";
+import { useParams } from "react-router-dom";
 import { IonCol, IonContent, IonGrid, IonIcon, IonPage, IonRow, IonText } from "@ionic/react";
 import { documentTextOutline } from "ionicons/icons";
 import { useQuery } from "@apollo/client";
@@ -18,17 +18,14 @@ interface CompanyDetailProps {
   id: string;
 }
 
-const CompanyDetail = ({ match }: RouteComponentProps<CompanyDetailProps>): JSX.Element => {
+const CompanyDetail = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const crossings = useTypedSelector((state) => state.crossingsReducer);
   const { selectedCompanyDetail } = crossings;
   const { name = "", permits = [] } = selectedCompanyDetail || {};
-
-  const {
-    params: { id: companyId },
-  } = match;
+  const { id: companyId } = useParams<CompanyDetailProps>();
 
   useQuery<ICompanyDetail>(companyQuery(Number(companyId)), {
     onCompleted: (response) => dispatch({ type: crossingActions.GET_COMPANY, payload: response }),

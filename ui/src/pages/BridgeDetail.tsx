@@ -1,4 +1,4 @@
-import { RouteComponentProps } from "react-router";
+import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { IonButton, IonCheckbox, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonPage, IonRow, IonText } from "@ionic/react";
@@ -9,18 +9,16 @@ import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import IBridgeDetail from "../interfaces/IBridgeDetail";
-import routeBridgeQuery from "../graphql/RouteBridgeQuery";
+import { routeBridgeQuery } from "../graphql/RouteBridgeQuery";
 
 interface BridgeDetailProps {
   routeBridgeId: string;
 }
 
-const BridgeDetail = ({ match }: RouteComponentProps<BridgeDetailProps>): JSX.Element => {
+const BridgeDetail = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const {
-    params: { routeBridgeId },
-  } = match;
+  const { routeBridgeId } = useParams<BridgeDetailProps>();
 
   const { selectedBridgeDetail, selectedPermitDetail } = useTypedSelector((state) => state.crossingsReducer);
   const { bridge, crossingInstruction = "" } = selectedBridgeDetail || {};
