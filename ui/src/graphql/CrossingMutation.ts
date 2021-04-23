@@ -16,15 +16,6 @@ export const updateCrossingMutation = gql`
       permanentBendings
       twist
       damage
-      bridge {
-        id
-        name
-        identifier
-      }
-      route {
-        id
-        name
-      }
     }
   }
 `;
@@ -44,20 +35,6 @@ export const startCrossingMutation = gql`
       permanentBendings
       twist
       damage
-      bridge {
-        id
-        name
-        identifier
-      }
-      route {
-        id
-        name
-      }
-      permit {
-        id
-        permitNumber
-        companyId
-      }
     }
   }
 `;
