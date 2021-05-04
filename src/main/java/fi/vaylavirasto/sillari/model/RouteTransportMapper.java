@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
+import java.util.ArrayList;
+
 public class RouteTransportMapper implements RecordMapper<Record, RouteTransportModel> {
     public static final RouteTransport transport = Tables.ROUTE_TRANSPORT.as("t");
 
@@ -19,6 +21,7 @@ public class RouteTransportMapper implements RecordMapper<Record, RouteTransport
         routeTransportModel.setStatus(record.get(transport.STATUS, new TransportStatusConverter(String.class, TransportStatus.class)));
         routeTransportModel.setCurrentLocation(record.get(transport.CURRENT_LOCATION));
         routeTransportModel.setCurrentLocationUpdated(record.get(transport.CURRENT_LOCATION_UPDATED));
+        routeTransportModel.setSupervisions(new ArrayList<>());
         return routeTransportModel;
     }
 }
