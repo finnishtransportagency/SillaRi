@@ -24,11 +24,9 @@ public class SupervisionRepository {
     }
 
     public SupervisionModel getSupervisionByRouteBridgeId(Integer routeBridgeId) {
-        SupervisionModel model =  dsl.selectFrom(SupervisionMapper.supervision)
+        return dsl.selectFrom(SupervisionMapper.supervision)
                 .where(SupervisionMapper.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
                 .fetchOne(new SupervisionMapper());
-        logger.info("Supervision: " + model);
-        return model;
     }
 
     public List<SupervisionModel> getRouteTransportSupervisions(Integer routeTransportId) {
