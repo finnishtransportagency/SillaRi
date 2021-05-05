@@ -51,9 +51,9 @@ public class SillariApplication {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:3001");
-        //config.addAllowedOrigin("https://sillaridev.testivaylapilvi.fi");
-        //config.addAllowedOrigin("https://sillari.testivaylapilvi.fi");
-        //config.addAllowedOrigin("https://sillari.vaylapilvi.fi");
+        config.addAllowedOrigin("https://sillaridev.testivaylapilvi.fi");
+        config.addAllowedOrigin("https://sillari.testivaylapilvi.fi");
+        config.addAllowedOrigin("https://sillari.vaylapilvi.fi");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
