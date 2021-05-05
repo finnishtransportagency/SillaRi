@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.model;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Data
 public class RouteTransportModel {
@@ -13,4 +14,5 @@ public class RouteTransportModel {
     private TransportStatus status;
     private String currentLocation;
     private OffsetDateTime currentLocationUpdated;
+    private List<SupervisionModel> supervisions;
 }

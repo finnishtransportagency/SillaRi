@@ -4,5 +4,5 @@ public enum TransportStatus {
     DEPARTED,
     STOPPED,
     IN_PROGRESS,
-    ARRIVED;
+    ARRIVED
 }
