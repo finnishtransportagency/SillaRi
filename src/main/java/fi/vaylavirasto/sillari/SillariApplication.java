@@ -49,6 +49,7 @@ public class SillariApplication {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:3001");
         config.addAllowedOrigin("https://sillaridev.testivaylapilvi.fi/");
         config.addAllowedOrigin("https://sillari.testivaylapilvi.fi/");
