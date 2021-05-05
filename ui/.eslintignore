@@ -1,3 +1,5 @@
 build
 android
-serviceWorker.ts
+reportWebVitals.ts
+serviceWorkerRegistration.ts
+service-worker.ts
