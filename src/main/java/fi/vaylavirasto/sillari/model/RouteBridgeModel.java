@@ -8,4 +8,5 @@ public class RouteBridgeModel {
     private long routeId;
     private BridgeModel bridge;
     private String crossingInstruction;
+    private SupervisionModel supervision;
 }
