@@ -1,9 +1,6 @@
 package fi.vaylavirasto.sillari.model;
-import com.google.common.collect.Lists;
 
-import fi.vaylavirasto.sillari.model.tables.Address;
 import fi.vaylavirasto.sillari.model.tables.Transport;
-import fi.vaylavirasto.sillari.model.tables.Company;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;

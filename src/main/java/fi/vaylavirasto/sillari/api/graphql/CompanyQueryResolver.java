@@ -1,9 +1,9 @@
 package fi.vaylavirasto.sillari.api.graphql;
 
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.service.CompanyService;
+import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
