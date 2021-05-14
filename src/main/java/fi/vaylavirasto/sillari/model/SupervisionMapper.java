@@ -18,6 +18,7 @@ public class SupervisionMapper implements RecordMapper<Record, SupervisionModel>
         supervisionModel.setPlannedTime(record.get(supervision.PLANNED_TIME));
         supervisionModel.setStatus(record.get(supervision.STATUS, new SupervisionStatusConverter(String.class, SupervisionStatus.class)));
         supervisionModel.setConformsToPermit(record.get(supervision.CONFORMS_TO_PERMIT));
+        supervisionModel.setSupervisorId(record.get(supervision.SUPERVISOR_ID));
         return supervisionModel;
     }
 }
