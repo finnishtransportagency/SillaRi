@@ -35,4 +35,10 @@ public class SupervisionRepository {
                 .fetch(new SupervisionMapper());
     }
 
+    public SupervisionModel getSupervisionByRouteSupervisorId(Integer supervisorId) {
+        return dsl.selectFrom(SupervisionMapper.supervision)
+                .where(SupervisionMapper.supervision.SUPERVISOR_ID.eq(supervisorId))
+                .fetchOne(new SupervisionMapper());
+    }
+
 }
