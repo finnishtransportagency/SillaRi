@@ -12,4 +12,5 @@ public class SupervisionModel {
     private OffsetDateTime plannedTime;
     private SupervisionStatus status;
     private Boolean conformsToPermit;
+    private Integer supervisorId;
 }
