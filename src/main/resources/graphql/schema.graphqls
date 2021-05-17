@@ -1,3 +1,13 @@
+scalar DateTime
+scalar Date
+scalar Time
+scalar GraphQLLong
+scalar Object
+scalar GraphQLBigDecimal
+scalar GraphQLBigInteger
+scalar Url
+scalar Json
+
 type Transport {
     id: ID!
     permitId: Int
