@@ -3,6 +3,8 @@ package fi.vaylavirasto.sillari.repositories;
 import fi.vaylavirasto.sillari.model.BridgeMapper;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +17,13 @@ public class BridgeRepository {
         return dsl.select().from(BridgeMapper.bridge)
                 .where(BridgeMapper.bridge.ID.eq(id))
                 .fetchOne(new BridgeMapper());
+    }
+
+    public String getBridgeGeoJson(Integer id) {
+        // In ST_AsGeoJSON(geom, 0, 2), the '0' means decimal places, the '2' means the option to include the short CRS (EPSG:3067)
+        Field<String> geojsonField = DSL.field("ST_AsGeoJSON(geom, 0, 2)", String.class);
+        return dsl.select(geojsonField).from(BridgeMapper.bridge)
+                .where(BridgeMapper.bridge.ID.eq(id))
+                .fetchOne(geojsonField);
     }
 }

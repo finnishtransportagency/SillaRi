@@ -10,5 +10,6 @@ public class BridgeModel {
     private String name;
     private String identifier;
     private String municipality;
+    private String geojson;
     private List<RouteBridgeModel> routeBridges;
 }
