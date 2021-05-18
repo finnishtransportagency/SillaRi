@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class BridgeModel {
-    private long id;
+    private Integer id;
     private String name;
     private String identifier;
     private String municipality;
