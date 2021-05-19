@@ -30,6 +30,10 @@
   font-weight: bold;
 }
 
+.linkText {
+  text-decoration: underline;
+}
+
 .hidden {
   display: none;
 }

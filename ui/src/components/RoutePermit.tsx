@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
+import { IonCol, IonGrid, IonIcon, IonRouterLink, IonRow, IonText } from "@ionic/react";
 import { analyticsOutline, documentTextOutline, flagOutline } from "ionicons/icons";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
@@ -14,7 +14,7 @@ const RoutePermit = ({ selectedPermit, selectedRoute }: RoutePermitProps): JSX.E
   const { t } = useTranslation();
 
   const { permitNumber } = selectedPermit || {};
-  const { departureAddress, arrivalAddress } = selectedRoute || {};
+  const { id: routeId, departureAddress, arrivalAddress } = selectedRoute || {};
   const { street: departureStreet, postalcode: departurePostalCode, city: departureCity } = departureAddress || {};
   const { street: arrivalStreet, postalcode: arrivalPostalCode, city: arrivalCity } = arrivalAddress || {};
 
@@ -26,8 +26,10 @@ const RoutePermit = ({ selectedPermit, selectedRoute }: RoutePermitProps): JSX.E
             <IonText className="headingText">{t("route.permitInfo.title")}</IonText>
           </IonCol>
           <IonCol size="auto">
-            <IonIcon icon={analyticsOutline} />
-            <IonText>{` ${t("company.route")}`}</IonText>
+            <IonRouterLink routerLink={`/routemap/${routeId}`}>
+              <IonIcon icon={analyticsOutline} />
+              <IonText className="linkText">{` ${t("company.route")}`}</IonText>
+            </IonRouterLink>
           </IonCol>
         </IonRow>
       </IonGrid>
