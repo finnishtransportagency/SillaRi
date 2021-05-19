@@ -55,6 +55,7 @@
     "react/forbid-prop-types": ["off"],
     "react/require-default-props": ["off"],
     "@typescript-eslint/ban-ts-comment": ["error", {"ts-ignore": "allow-with-description"}],
-    "no-console": 0
+    "no-console": 0,
+    "import/no-extraneous-dependencies": ["warn", {"devDependencies": false, "optionalDependencies": false, "peerDependencies": false}]
   }
 }
