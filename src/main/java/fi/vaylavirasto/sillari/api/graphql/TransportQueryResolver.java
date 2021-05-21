@@ -1,7 +1,7 @@
 package fi.vaylavirasto.sillari.api.graphql;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
-import fi.vaylavirasto.sillari.model.TransportModel;
+import fi.vaylavirasto.sillari.model.TransportDimensionsModel;
 import fi.vaylavirasto.sillari.service.TransportService;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ public class TransportQueryResolver implements GraphQLQueryResolver {
     TransportService transportService;
 
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public TransportModel getTransport(Integer id) {
+    public TransportDimensionsModel getTransport(Integer id) {
         ServiceMetric serviceMetric = new ServiceMetric("TransportQueryResolver", "getTransport");
 
         try {
@@ -25,7 +25,7 @@ public class TransportQueryResolver implements GraphQLQueryResolver {
     }
 
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public TransportModel getTransportOfRoute(Integer permitId, Integer routeId) {
+    public TransportDimensionsModel getTransportOfRoute(Integer permitId, Integer routeId) {
         ServiceMetric serviceMetric = new ServiceMetric("TransportQueryResolver", "getTransportOfRoute");
 
         try {

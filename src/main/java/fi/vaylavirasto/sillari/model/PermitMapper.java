@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class PermitMapper implements RecordMapper<Record, PermitModel> {
@@ -19,8 +20,11 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         permitModel.setPermitNumber(record.get(permit.PERMIT_NUMBER));
         permitModel.setValidStartDate(record.get(permit.VALID_START_DATE));
         permitModel.setValidEndDate(record.get(permit.VALID_END_DATE));
+        BigDecimal totalMass = record.get(permit.TOTAL_MASS);
+        permitModel.setTotalMass(totalMass != null ? totalMass.doubleValue() : null);
         permitModel.setRoutes(new ArrayList<>());
-        permitModel.setTransports(new ArrayList<>());
+        permitModel.setTransportsDimensionss(new ArrayList<>());
+        permitModel.setAxleCharts(new ArrayList<>());
         return permitModel;
     }
 }

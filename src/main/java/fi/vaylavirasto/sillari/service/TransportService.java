@@ -1,45 +1,38 @@
 package fi.vaylavirasto.sillari.service;
 
-import fi.vaylavirasto.sillari.model.AxleModel;
-import fi.vaylavirasto.sillari.model.TransportModel;
-import fi.vaylavirasto.sillari.model.TransportRegistrationModel;
+import fi.vaylavirasto.sillari.model.TransportDimensionsModel;
 import fi.vaylavirasto.sillari.repositories.AxleRepository;
-import fi.vaylavirasto.sillari.repositories.TransportRegistrationRepository;
-import fi.vaylavirasto.sillari.repositories.TransportRepository;
+import fi.vaylavirasto.sillari.repositories.TransportDimensionsRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class TransportService {
     private static final Logger logger = LogManager.getLogger();
 
     @Autowired
-    TransportRepository transportRepository;
-    @Autowired
-    TransportRegistrationRepository transportRegistrationRepository;
+    TransportDimensionsRepository transportDimensionsRepository;
     @Autowired
     AxleRepository axleRepository;
 
-    public TransportModel getTransport(Integer transportId) {
-        TransportModel transportModel = transportRepository.getTransportById(transportId);
-        if (transportModel != null) {
-            transportModel.setRegistrations(transportRegistrationRepository.getRegistrationsOfTransport(transportId));
-            transportModel.setAxles(axleRepository.getAxlesOfTransport(transportId));
+    public TransportDimensionsModel getTransport(Integer transportId) {
+        TransportDimensionsModel transportDimensionsModel = transportDimensionsRepository.getTransportById(transportId);
+        if (transportDimensionsModel != null) {
+            transportDimensionsModel.setRegistrations(transportRegistrationRepository.getRegistrationsOfTransport(transportId));
+            transportDimensionsModel.setAxles(axleRepository.getAxlesOfTransport(transportId));
         }
-        return transportModel;
+        return transportDimensionsModel;
     }
 
-    public TransportModel getTransportOfRoute(Integer permitId, Integer routeId) {
-        TransportModel transportModel = transportRepository.getTransportByPermitIdAndRouteId(permitId, routeId);
-        if (transportModel != null) {
-            Integer transportId = Long.valueOf(transportModel.getId()).intValue();
-            transportModel.setRegistrations(transportRegistrationRepository.getRegistrationsOfTransport(transportId));
-            transportModel.setAxles(axleRepository.getAxlesOfTransport(transportId));
+    public TransportDimensionsModel getTransportOfRoute(Integer permitId, Integer routeId) {
+        TransportDimensionsModel transportDimensionsModel = transportDimensionsRepository.getTransportByPermitIdAndRouteId(permitId, routeId);
+        if (transportDimensionsModel != null) {
+            Integer transportId = Long.valueOf(transportDimensionsModel.getId()).intValue();
+            transportDimensionsModel.setRegistrations(transportRegistrationRepository.getRegistrationsOfTransport(transportId));
+            transportDimensionsModel.setAxles(axleRepository.getAxlesOfTransport(transportId));
         }
-        return transportModel;
+        return transportDimensionsModel;
     }
 }
