@@ -382,6 +382,14 @@ const MapContainer = (): JSX.Element => {
         maxZoom: 15,
       });
 
+      // In some cases, there are still duplicate OpenLayers viewports despite the mapInitialised check above
+      // So remove any existing viewports before creating a new OpenLayers map
+      if (mapRef.current) {
+        while (mapRef.current.firstChild) {
+          mapRef.current.removeChild(mapRef.current.firstChild);
+        }
+      }
+
       const map = new MapOL({
         target: mapRef.current || undefined,
         layers: [backgroundLayer, routeLayer, bridgeLayer],
