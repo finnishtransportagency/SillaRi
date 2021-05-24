@@ -25,14 +25,12 @@ public class SupervisionRepository {
     }
 
     public SupervisionModel getSupervisionByRouteBridgeId(Integer routeBridgeId) {
-        SupervisionModel s = dsl.select().from(SupervisionMapper.supervision)
+        return dsl.select().from(SupervisionMapper.supervision)
                 .leftJoin(SupervisionMapper.supervisionStatus)
                 .on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionStatus.SUPERVISION_ID))
                 .where(SupervisionMapper.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
                 .orderBy(SupervisionMapper.supervisionStatus.TIME.desc())
                 .limit(1).fetchOne(new SupervisionMapper());
-        logger.info(s); // TODO remove
-        return s;
     }
 
 }
