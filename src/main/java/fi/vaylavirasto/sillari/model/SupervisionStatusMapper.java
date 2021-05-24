@@ -6,7 +6,7 @@ import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 public class SupervisionStatusMapper implements RecordMapper<Record, SupervisionStatusModel> {
-    public static final SupervisionStatus supervisionStatus = Tables.SUPERVISION_STATUS.as("s");
+    public static final SupervisionStatus supervisionStatus = Tables.SUPERVISION_STATUS.as("ss");
 
     @Nullable
     @Override
