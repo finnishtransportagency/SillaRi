@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.model;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Data
 public class SupervisionModel {
@@ -10,6 +11,7 @@ public class SupervisionModel {
     private Integer routeBridgeId;
     private Integer routeTransportId;
     private OffsetDateTime plannedTime;
-    private SupervisionStatus status;
     private Boolean conformsToPermit;
+    private SupervisionStatusModel currentStatus;
+    private List<SupervisionStatusModel> statusHistory;
 }
