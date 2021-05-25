@@ -1,0 +1,54 @@
+{
+  "number": "04/2355/2021",
+  "lastModified": "2019-02-05 15:36:47",
+  "permitVersion": 19,
+  "validFrom": "2017-01-19 11:23:18",
+  "validTo": "2022-08-05 05:37:26",
+  "customer": {
+    "name": "Vetokonepalvelu Oy",
+    "identifier": "fake_data"
+  },
+  "vehicles": [
+    {
+      "type": "fake_data",
+      "identifier": "fake_data"
+    }
+  ],
+  "axleChart": {
+    "axles": [
+      {
+        "axleNumber": 78,
+        "weight": 64.40,
+        "distance": 70.21,
+        "maxDistanceToNext": 61.57
+      }
+    ]
+  },
+  "transportTotalMass": 3.38,
+  "transportDimensions": {
+    "width": 57.18,
+    "legth": 59.90,
+    "height": 38.81
+  },
+  "additionalDetails": "fake_data",
+  "routes": [
+    {
+      "id": 92,
+      "name": "fake_data",
+      "order": 21,
+      "transportCount": 97,
+      "alternativeRoute": true,
+      "bridges": [
+        {
+          "oid": "fake_data",
+          "identifier": "fake_data",
+          "name": "fake_data",
+          "roadAddress": "fake_data",
+          "transportNumber": 76,
+          "supervisorName": "fake_data",
+          "additionalInfo": "fake_data"
+        }
+      ]
+    }
+  ]
+}
