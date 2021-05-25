@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.model;
 
-public enum SupervisionStatus {
+public enum SupervisionStatusType {
     PLANNED,
     CANCELLED,
     IN_PROGRESS,
