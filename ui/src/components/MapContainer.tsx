@@ -8,23 +8,25 @@ import { defaults, MousePosition } from "ol/control";
 import { createStringXY } from "ol/coordinate";
 import { Extent } from "ol/extent";
 import Feature from "ol/Feature";
-import { GeoJSON, WMTSCapabilities } from "ol/format";
+import { WMTSCapabilities } from "ol/format";
 import { Point } from "ol/geom";
 import { Layer, Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import MapOL from "ol/Map";
 import { get as getProj, fromLonLat } from "ol/proj";
 import { register } from "ol/proj/proj4";
-import { TileDebug, Vector as VectorSource, WMTS, XYZ } from "ol/source";
-import { optionsFromCapabilities } from "ol/source/WMTS";
-import { Circle, Fill, Icon, Stroke, Style, Text } from "ol/style";
-import { StyleFunction } from "ol/style/Style";
-import TileGrid from "ol/tilegrid/TileGrid";
+import { TileDebug } from "ol/source";
 import View from "ol/View";
 import proj4 from "proj4";
 import { routeBridgeQuery } from "../graphql/RouteBridgeQuery";
 import { routeQuery } from "../graphql/RouteQuery";
 import IBridgeDetail from "../interfaces/IBridgeDetail";
 import IRouteDetail from "../interfaces/IRouteDetail";
+import BackgroundTileLayer from "./map/BackgroundTileLayer";
+import BridgeTileLayer from "./map/BridgeTileLayer";
+import BridgeVectorLayer from "./map/BridgeVectorLayer";
+import RouteTileLayer from "./map/RouteTileLayer";
+import RouteVectorLayer from "./map/RouteVectorLayer";
+import UserVectorLayer from "./map/UserVectorLayer";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import { useTypedSelector } from "../store/store";
 import "./MapContainer.scss";
@@ -41,8 +43,7 @@ const MapContainer = (): JSX.Element => {
 
   const { routeBridgeId: routeBridgeIdParam, routeId: routeIdParam } = useParams<MapContainerProps>();
 
-  const [backgroundTileGrid, setBackgroundTileGrid] = useState<TileGrid>();
-  const [backgroundLayer, setBackgroundLayer] = useState<Layer>();
+  const [backgroundLayer, setBackgroundLayer] = useState<TileLayer>();
   const [bridgeLayer, setBridgeLayer] = useState<Layer>();
   const [routeLayer, setRouteLayer] = useState<Layer>();
   const [userLayer, setUserLayer] = useState<VectorLayer>();
@@ -83,70 +84,31 @@ const MapContainer = (): JSX.Element => {
 
     // Use an asynchronous function for getting the map layer since fetch returns a Promise
     const getBackgroundMapLayer = async () => {
-      let backgroundMapLayer;
+      // Try to use the Väylä map service if possible, so fetch the WMTS capabilities via the backend to avoid a CORS error
+      // Note: in development mode, this will use the proxy defined in package.json
+      const capabilitiesUrl = "/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities";
+      let capabilities;
 
       try {
-        // Try to use the Väylä map service if possible, so fetch the WMTS capabilities via the backend to avoid a CORS error
-        // Note: in development mode, this will use the proxy defined in package.json
-        const capabilitiesUrl = "/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities";
         const capabilitiesResponse = await fetch(capabilitiesUrl, { credentials: "include" });
 
         if (capabilitiesResponse.ok) {
           // Try to parse the capabilities XML using OpenLayers
           const capabilitiesXML = await (capabilitiesResponse.text() as Promise<string>);
           const parser = new WMTSCapabilities();
-          const capabilities = parser.read(capabilitiesXML);
+          capabilities = parser.read(capabilitiesXML);
           console.log("background capabilities", capabilities);
-
-          if (capabilities) {
-            console.log("using WMTS for background");
-
-            const wmtsOptions = optionsFromCapabilities(capabilities, {
-              layer: "taustakartta",
-              projection: getProj(projection),
-            });
-            console.log("wmtsOptions", wmtsOptions);
-
-            // Modify the URL to fetch tiles via the backend to avoid authentication issues on mobile
-            // Use the same URL as for the WMTS capabilities but make sure to receive binary images rather than XML
-            wmtsOptions.urls = [capabilitiesUrl.substr(0, capabilitiesUrl.indexOf("?")).replace("xml", "img")];
-
-            const wmtsSource = new WMTS(wmtsOptions);
-            setBackgroundTileGrid(wmtsSource.getTileGrid());
-
-            backgroundMapLayer = new TileLayer({ source: wmtsSource });
-            backgroundMapLayer.set("id", "background");
-            setBackgroundLayer(backgroundMapLayer);
-          }
         }
       } catch (err) {
         console.log("ERROR", err);
       }
 
-      if (!backgroundMapLayer) {
-        // Using the Väylä map service was not possible, so use the public Kapsi service as an alternative
-        console.log("using XYZ for background");
-
-        const origin = [-548576, 8388608];
-        const resolutions = [8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25];
-        const xyzTileGrid = new TileGrid({ origin, resolutions });
-        setBackgroundTileGrid(xyzTileGrid);
-
-        const xyzSource = new XYZ({
-          url: "https://tiles.kartat.kapsi.fi/taustakartta_3067/{z}/{x}/{y}.jpg",
-          projection: getProj(projection),
-          tileGrid: xyzTileGrid,
-          cacheSize: 2048,
-          attributions: `${t("map.attribution")}: Maanmittauslaitos | Taustakartta`,
-        });
-
-        backgroundMapLayer = new TileLayer({ source: xyzSource });
-        backgroundMapLayer.set("id", "background");
-        setBackgroundLayer(backgroundMapLayer);
-      }
+      const mmlAttribution = `${t("map.attribution")}: Maanmittauslaitos | Taustakartta`;
+      const backgroundMapLayer = new BackgroundTileLayer(projection, mmlAttribution, capabilitiesUrl, capabilities);
+      setBackgroundLayer(backgroundMapLayer);
     };
 
-    // Call the asynchronous functions here since initBackgroundMap is called from useEffect which is synchronous
+    // Call the asynchronous function here since initBackgroundMap is called from useEffect which is synchronous
     getBackgroundMapLayer();
   };
 
@@ -156,200 +118,31 @@ const MapContainer = (): JSX.Element => {
     // This function is called several times from useEffect when the dependencies change
     // However, the data layers should only be created once
     if (!mapInitialised && !bridgeLayer && !routeLayer) {
-      const getEmptyBridgeLayer = () => {
-        // Helper function to create an empty vector layer for bridges
-        const bridgeMapLayer = new VectorLayer();
-        bridgeMapLayer.set("id", "bridge");
-        setBridgeLayer(bridgeMapLayer);
-      };
-
-      const getEmptyRouteLayer = () => {
-        // Helper function to create an empty vector layer for the route
-        const routeMapLayer = new VectorLayer();
-        routeMapLayer.set("id", "route");
-        setRouteLayer(routeMapLayer);
-      };
-
-      const getBridgeVectorLayer = () => {
-        try {
-          if (routeBridgeIdParam && routeBridgeIdParam.length > 0 && bridgeGeojson && bridgeGeojson.length > 0) {
-            // Create geometry and a map feature using the bridge geojson
-            const geojson = new GeoJSON();
-            const bridgePoint = geojson.readGeometry(bridgeGeojson);
-            setBridgeCoords(bridgePoint as Point);
-
-            const bridgeFeature = new Feature({ geometry: bridgePoint });
-            const bridgeSource = new VectorSource({ features: [bridgeFeature] });
-
-            const bridgeStyle = new Style({
-              stroke: new Stroke({
-                color: "#000000",
-                width: 2,
-              }),
-              image: new Circle({
-                radius: 10,
-                fill: new Fill({
-                  color: "#FF7700",
-                }),
-                stroke: new Stroke({
-                  color: "#FFFFFF",
-                  width: 1,
-                }),
-              }),
-              text: new Text({
-                text: bridgeIdentifier,
-                stroke: new Stroke({
-                  color: "#FFFFFF",
-                  width: 1,
-                }),
-                offsetY: -14,
-              }),
-            });
-
-            // Create a vector layer showing the single bridge
-            const bridgeMapLayer = new VectorLayer({ source: bridgeSource, style: bridgeStyle });
-            bridgeMapLayer.set("id", "bridge");
-            setBridgeLayer(bridgeMapLayer);
-          } else if (routeIdParam && routeIdParam.length > 0 && routeGeojson && routeGeojson.length > 0) {
-            // Create geometry and map features using the route bridges geojson
-            const geojson = new GeoJSON();
-            const bridgeFeatures = routeBridges.map((rb) => {
-              const bridgePoint = geojson.readGeometry(rb.bridge.geojson);
-              return new Feature({ identifier: rb.bridge.identifier, geometry: bridgePoint });
-            });
-
-            const bridgeSource = new VectorSource({ features: bridgeFeatures });
-
-            const bridgeStyleFunction = (feature: Feature, resolution: number) => {
-              return new Style({
-                stroke:
-                  resolution <= 8
-                    ? new Stroke({
-                        color: "#000000",
-                        width: 2,
-                      })
-                    : undefined,
-                image: new Circle({
-                  radius: resolution <= 8 ? 10 : 5,
-                  fill: new Fill({
-                    color: "#FF7700",
-                  }),
-                  stroke: new Stroke({
-                    color: "#FFFFFF",
-                    width: 1,
-                  }),
-                }),
-                text:
-                  resolution <= 8 && feature.getGeometry() instanceof Point
-                    ? new Text({
-                        text: feature.get("identifier"),
-                        stroke: new Stroke({
-                          color: "#FFFFFF",
-                          width: 1,
-                        }),
-                        offsetY: -14,
-                      })
-                    : undefined,
-              });
-            };
-
-            // Create a vector layer showing all the bridges on the route
-            const bridgeMapLayer = new VectorLayer({ source: bridgeSource, style: bridgeStyleFunction as StyleFunction });
-            bridgeMapLayer.set("id", "bridge");
-            setBridgeLayer(bridgeMapLayer);
-          } else {
-            // No geometry, so create an empty vector layer
-            getEmptyBridgeLayer();
-          }
-        } catch (err) {
-          console.log("ERROR", err);
-          getEmptyBridgeLayer();
-        }
-      };
-
-      const getRouteVectorLayer = () => {
-        try {
-          if (routeGeojson && routeGeojson.length > 0) {
-            // Create geometry and a map feature using the route geojson
-            const geojson = new GeoJSON();
-            const routeLine = geojson.readGeometry(routeGeojson);
-            setRouteExtent(routeLine.getExtent());
-
-            const routeFeature = new Feature({ geometry: routeLine });
-            const routeSource = new VectorSource({ features: [routeFeature] });
-
-            const routeStyle = new Style({
-              stroke: new Stroke({
-                color: "rgba(0, 102, 204, 1.0)",
-                width: 2,
-              }),
-            });
-
-            // Create a vector layer showing the route
-            const routeMapLayer = new VectorLayer({ source: routeSource, style: routeStyle });
-            routeMapLayer.set("id", "route");
-            setRouteLayer(routeMapLayer);
-          } else {
-            // No geometry, so create an empty vector layer
-            getEmptyRouteLayer();
-          }
-        } catch (err) {
-          console.log("ERROR", err);
-          getEmptyRouteLayer();
-        }
-      };
-
       const getGeoServerTileLayers = async () => {
+        // Fetch the WMTS capabilities via the backend to avoid a CORS error
+        // Note: in development mode, this will use the proxy defined in package.json
+        const capabilitiesUrl = "/api/ui/getgeoserverlayerxml/gwc/service/wmts?REQUEST=GetCapabilities";
+        let capabilities;
+
         try {
-          // Fetch the WMTS capabilities via the backend to avoid a CORS error
-          // Note: in development mode, this will use the proxy defined in package.json
-          const capabilitiesUrl = "/api/ui/getgeoserverlayerxml/gwc/service/wmts?REQUEST=GetCapabilities";
           const capabilitiesResponse = await fetch(capabilitiesUrl, { credentials: "include" });
 
           if (capabilitiesResponse.ok) {
             // Try to parse the capabilities XML using OpenLayers
             const capabilitiesXML = await (capabilitiesResponse.text() as Promise<string>);
             const parser = new WMTSCapabilities();
-            const capabilities = parser.read(capabilitiesXML);
+            capabilities = parser.read(capabilitiesXML);
             console.log("data capabilities", capabilities);
-
-            if (capabilities) {
-              console.log("using WMTS for data");
-
-              const bridgeWmtsOptions = optionsFromCapabilities(capabilities, {
-                layer: "sillari:bridge",
-                projection: getProj(projection),
-              });
-              console.log("bridge wmtsOptions", bridgeWmtsOptions);
-
-              const routeWmtsOptions = optionsFromCapabilities(capabilities, {
-                layer: "sillari:route",
-                projection: getProj(projection),
-              });
-              console.log("route wmtsOptions", routeWmtsOptions);
-
-              // Modify the URL to fetch tiles via the backend to avoid authentication issues on mobile
-              // Use the same URL as for the WMTS capabilities but make sure to receive binary images rather than XML
-              bridgeWmtsOptions.urls = [capabilitiesUrl.substr(0, capabilitiesUrl.indexOf("?")).replace("xml", "img")];
-              routeWmtsOptions.urls = [capabilitiesUrl.substr(0, capabilitiesUrl.indexOf("?")).replace("xml", "img")];
-
-              // Create tile layers showing the bridges and route
-              setBridgeLayer(new TileLayer({ source: new WMTS(bridgeWmtsOptions) }));
-              setRouteLayer(new TileLayer({ source: new WMTS(routeWmtsOptions) }));
-            } else {
-              // No capabilities, so create empty vector layers
-              getEmptyBridgeLayer();
-              getEmptyRouteLayer();
-            }
-          } else {
-            getEmptyBridgeLayer();
-            getEmptyRouteLayer();
           }
         } catch (err) {
           console.log("ERROR", err);
-          getEmptyBridgeLayer();
-          getEmptyRouteLayer();
         }
+
+        const bridgeMapLayer = new BridgeTileLayer(projection, capabilitiesUrl, capabilities);
+        setBridgeLayer(bridgeMapLayer);
+
+        const routeMapLayer = new RouteTileLayer(projection, capabilitiesUrl, capabilities);
+        setRouteLayer(routeMapLayer);
       };
 
       // Note: the bridge and route detail in redux state is initially undefined
@@ -360,27 +153,19 @@ const MapContainer = (): JSX.Element => {
           getGeoServerTileLayers();
         } else {
           // Show the specific bridges and routes from the geojson values in redux state
-          getBridgeVectorLayer();
-          getRouteVectorLayer();
+          const bridgeMapLayer = new BridgeVectorLayer(routeBridgeIdParam, bridgeGeojson, bridgeIdentifier, routeIdParam, routeBridges);
+          setBridgeLayer(bridgeMapLayer);
+          setBridgeCoords(bridgeMapLayer.bridgeCoords);
+
+          const routeMapLayer = new RouteVectorLayer(routeGeojson);
+          setRouteLayer(routeMapLayer);
+          setRouteExtent(routeMapLayer.routeExtent);
         }
       }
     }
 
     if (!mapInitialised && !userLayer) {
-      // The marker feature will be added after initialisation
-      const userSource = new VectorSource({ features: [] });
-
-      // Note: to get this to work, the following has been added to location.svg: width='32px' height='32px' fill='#fff'
-      const userStyle = new Style({
-        image: new Icon({
-          src: "assets/location.svg",
-          color: "rgba(0, 102, 204, 1.0)",
-          anchor: [0.5, 1],
-        }),
-      });
-
-      const userMapLayer = new VectorLayer({ source: userSource, style: userStyle });
-      userMapLayer.set("id", "user");
+      const userMapLayer = new UserVectorLayer();
       setUserLayer(userMapLayer);
     }
   };
@@ -390,7 +175,9 @@ const MapContainer = (): JSX.Element => {
 
     // This function is called several times from useEffect when the dependencies change
     // However, the map should only be initialised once, otherwise duplicate OpenLayers viewports are rendered
-    if (!mapInitialised && backgroundTileGrid && backgroundLayer && bridgeLayer && routeLayer && userLayer) {
+    if (!mapInitialised && backgroundLayer && bridgeLayer && routeLayer && userLayer) {
+      const backgroundTileGrid = backgroundLayer.getSource().getTileGrid();
+
       // The tile grid and layer for the background map are defined, so create the OpenLayers view and map, and any other related components
       const view = new View({
         zoom: 3,
@@ -500,10 +287,9 @@ const MapContainer = (): JSX.Element => {
     mapInitialised,
   ]);
 
-  // Initialise the OpenLayers map with the background tile grid and layer, and data layers, as dependencies
+  // Initialise the OpenLayers map with the background tile layer and other data layers as dependencies
   // This means initMap is called several times but only when the dependencies change
   useEffect(initMap, [
-    backgroundTileGrid,
     backgroundLayer,
     bridgeLayer,
     routeLayer,
