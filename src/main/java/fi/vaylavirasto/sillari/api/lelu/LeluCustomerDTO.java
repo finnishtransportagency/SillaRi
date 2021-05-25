@@ -4,10 +4,17 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @Setter
-@ToString(callSuper = true)
+@ToString
 public class LeluCustomerDTO {
+
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String identifier;
+
 }
