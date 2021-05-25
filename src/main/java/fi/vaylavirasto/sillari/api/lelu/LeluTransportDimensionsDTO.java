@@ -1,4 +1,5 @@
 package fi.vaylavirasto.sillari.api.lelu;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,12 +12,15 @@ import javax.validation.constraints.NotNull;
 public class LeluTransportDimensionsDTO {
 
     @NotNull
+    @Schema(description = "Transport max width (m)", required = true)
     private Double width;
 
     @NotNull
-    private Double legth;
+    @Schema(description = "Transport max length (m)", required = true)
+    private Double length;
 
     @NotNull
+    @Schema(description = "Transport max height (m)", required = true)
     private Double height;
 
 }
