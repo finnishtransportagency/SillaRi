@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ public class LeluController {
     private static final Logger logger = LogManager.getLogger();
 
     @RequestMapping(value = "/testGet", method = RequestMethod.GET)
+    @Operation(summary = "Test basic get request")
     public String getTest() {
         logger.debug("Hello Lelu testGet!");
         return "Hello LeLu, this is SillaRi!";
@@ -19,6 +21,7 @@ public class LeluController {
     @RequestMapping(value = "/testPost", method = RequestMethod.POST)
     @ResponseBody
     @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(summary = "Test basic post request", description = "Returns posted string")
     public String postTest(@RequestBody String body) {
         logger.debug("Hello Lelu testPost!");
         return "Hello LeLu! SillaRi got post: " + body;
