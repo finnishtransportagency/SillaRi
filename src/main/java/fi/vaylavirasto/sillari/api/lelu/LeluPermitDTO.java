@@ -43,7 +43,7 @@ public class LeluPermitDTO {
 
     @Valid
     @NotEmpty
-    @Schema(description = "List of vehicles", required = true)
+    @Schema(description = "List of vehicles included in the permit", required = true)
     private List<LeluVehicleDTO> vehicles;
 
     @NotNull
@@ -63,7 +63,7 @@ public class LeluPermitDTO {
 
     @Valid
     @NotEmpty
-    @Schema(description = "List of routes", required = true)
+    @Schema(description = "List of routes included in the permit", required = true)
     private List<LeluRouteDTO> routes;
 
 }

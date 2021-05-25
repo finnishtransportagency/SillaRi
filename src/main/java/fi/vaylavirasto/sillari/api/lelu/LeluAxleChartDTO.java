@@ -16,7 +16,7 @@ public class LeluAxleChartDTO {
 
     @Valid
     @NotEmpty
-    @Schema(description = "List of axles", required = true)
+    @Schema(description = "List of axles in the axle chart", required = true)
     private List<LeluAxleDTO> axles;
 
 }
