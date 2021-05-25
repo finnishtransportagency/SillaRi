@@ -45,6 +45,7 @@ const MapContainer = (): JSX.Element => {
   const [backgroundLayer, setBackgroundLayer] = useState<Layer>();
   const [bridgeLayer, setBridgeLayer] = useState<Layer>();
   const [routeLayer, setRouteLayer] = useState<Layer>();
+  const [userLayer, setUserLayer] = useState<VectorLayer>();
   const [bridgeCoords, setBridgeCoords] = useState<Point>();
   const [routeExtent, setRouteExtent] = useState<Extent>();
   const [mapInitialised, setMapInitialised] = useState<boolean>(false);
@@ -364,6 +365,24 @@ const MapContainer = (): JSX.Element => {
         }
       }
     }
+
+    if (!mapInitialised && !userLayer) {
+      // The marker feature will be added after initialisation
+      const userSource = new VectorSource({ features: [] });
+
+      // Note: to get this to work, the following has been added to location.svg: width='32px' height='32px' fill='#fff'
+      const userStyle = new Style({
+        image: new Icon({
+          src: "assets/location.svg",
+          color: "rgba(0, 102, 204, 1.0)",
+          anchor: [0.5, 1],
+        }),
+      });
+
+      const userMapLayer = new VectorLayer({ source: userSource, style: userStyle });
+      userMapLayer.set("id", "user");
+      setUserLayer(userMapLayer);
+    }
   };
 
   const initMap = () => {
@@ -371,7 +390,7 @@ const MapContainer = (): JSX.Element => {
 
     // This function is called several times from useEffect when the dependencies change
     // However, the map should only be initialised once, otherwise duplicate OpenLayers viewports are rendered
-    if (!mapInitialised && backgroundTileGrid && backgroundLayer && bridgeLayer && routeLayer) {
+    if (!mapInitialised && backgroundTileGrid && backgroundLayer && bridgeLayer && routeLayer && userLayer) {
       // The tile grid and layer for the background map are defined, so create the OpenLayers view and map, and any other related components
       const view = new View({
         zoom: 3,
@@ -382,7 +401,7 @@ const MapContainer = (): JSX.Element => {
         maxZoom: 15,
       });
 
-      // In some cases, there are still duplicate OpenLayers viewports despite the mapInitialised check above
+      // In some cases, there are still duplicate OpenLayers viewports despite the checks above
       // So remove any existing viewports before creating a new OpenLayers map
       if (mapRef.current) {
         while (mapRef.current.firstChild) {
@@ -392,40 +411,10 @@ const MapContainer = (): JSX.Element => {
 
       const map = new MapOL({
         target: mapRef.current || undefined,
-        layers: [backgroundLayer, routeLayer, bridgeLayer],
+        layers: [backgroundLayer, routeLayer, bridgeLayer, userLayer],
         view,
         controls: defaults(),
       });
-
-      const getUserPosition = async () => {
-        try {
-          const { Geolocation } = Plugins;
-          const userPosition = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
-          console.log("user position", userPosition);
-
-          // Show a marker for the user position if valid coordinates were obtained
-          if (userPosition.coords && userPosition.coords.longitude > 0 && userPosition.coords.latitude > 0) {
-            const userPoint = new Point(fromLonLat([userPosition.coords.longitude, userPosition.coords.latitude], projection));
-            const userFeature = new Feature({ geometry: userPoint });
-            const userSource = new VectorSource({ features: [userFeature] });
-
-            // Note: to get this to work, the following has been added to location.svg: width='32px' height='32px' fill='#fff'
-            const userStyle = new Style({
-              image: new Icon({
-                src: "assets/location.svg",
-                color: "rgba(0, 102, 204, 1.0)",
-                anchor: [0.5, 1],
-              }),
-            });
-
-            const userMapLayer = new VectorLayer({ source: userSource, style: userStyle });
-            userMapLayer.set("id", "user");
-            map.addLayer(userMapLayer);
-          }
-        } catch (err) {
-          console.log("ERROR", err);
-        }
-      };
 
       if (debug) {
         // For debug purposes, show the mouse coordinates and tile grid overlay
@@ -451,8 +440,6 @@ const MapContainer = (): JSX.Element => {
         setMapInitialised(true);
 
         // Perform any other map operations
-        getUserPosition();
-
         if (routeIdParam && routeIdParam.length > 0 && routeExtent) {
           // Zoom to the route extent
           map.getView().fit(routeExtent, { duration: 1000 });
@@ -463,6 +450,32 @@ const MapContainer = (): JSX.Element => {
           map.getView().animate({ zoom: 12, center: bridgeCoords.getCoordinates() });
         }
       }, 500);
+    }
+  };
+
+  const initUserPosition = () => {
+    console.log("initUserPosition");
+
+    if (mapInitialised && userLayer) {
+      const getUserPosition = async () => {
+        try {
+          const { Geolocation } = Plugins;
+          const userPosition = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+          console.log("user position", userPosition);
+
+          // Show a marker for the user position if valid coordinates were obtained
+          if (userPosition.coords && userPosition.coords.longitude > 0 && userPosition.coords.latitude > 0) {
+            const userPoint = new Point(fromLonLat([userPosition.coords.longitude, userPosition.coords.latitude], projection));
+            const userFeature = new Feature({ geometry: userPoint });
+            userLayer.getSource().clear();
+            userLayer.getSource().addFeature(userFeature);
+          }
+        } catch (err) {
+          console.log("ERROR", err);
+        }
+      };
+
+      getUserPosition();
     }
   };
 
@@ -477,6 +490,7 @@ const MapContainer = (): JSX.Element => {
     selectedRouteDetail,
     bridgeLayer,
     routeLayer,
+    userLayer,
     routeBridgeIdParam,
     bridgeIdentifier,
     bridgeGeojson,
@@ -493,6 +507,7 @@ const MapContainer = (): JSX.Element => {
     backgroundLayer,
     bridgeLayer,
     routeLayer,
+    userLayer,
     routeBridgeIdParam,
     routeIdParam,
     bridgeCoords,
@@ -500,6 +515,10 @@ const MapContainer = (): JSX.Element => {
     mapInitialised,
     debug,
   ]);
+
+  // Initialise the marker showing the user position
+  // This is called once after the map has been initialised
+  useEffect(initUserPosition, [userLayer, mapInitialised]);
 
   return <div className="map" ref={mapRef} />;
 };
