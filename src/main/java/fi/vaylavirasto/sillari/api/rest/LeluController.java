@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.api.rest;
 
+import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,14 @@ public class LeluController {
     public String postTest(@RequestBody String body) {
         logger.debug("Hello Lelu testPost!");
         return "Hello LeLu! SillaRi got post: " + body;
+    }
+
+    @RequestMapping(value = "/permit", method = RequestMethod.POST)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(summary = "Create or update permit")
+    public void savePermit(@RequestBody LeluPermitDTO body) {
+        logger.debug("LeLu savePermit={}", body);
     }
 
 }
