@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS sillari.vehicle
 );
 
 INSERT INTO sillari.vehicle (permit_id, type, identifier) SELECT id, 'kuorma-auto', 'AAA-123' FROM sillari.permit ORDER BY id;
-INSERT INTO sillari.vehicle (permit_id, identifier) SELECT id, 'lavetti', 'BBB-456' FROM sillari.permit ORDER BY id;
+INSERT INTO sillari.vehicle (permit_id, type, identifier) SELECT id, 'lavetti', 'BBB-456' FROM sillari.permit ORDER BY id;
 
 
 
