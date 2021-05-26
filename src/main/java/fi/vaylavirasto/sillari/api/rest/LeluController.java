@@ -1,9 +1,11 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
+import fi.vaylavirasto.sillari.service.LeluService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,13 @@ import javax.validation.Valid;
 @RequestMapping("/lelu")
 public class LeluController {
     private static final Logger logger = LogManager.getLogger();
+
+    private final LeluService leluService;
+
+    @Autowired
+    public LeluController(LeluService leluService) {
+        this.leluService = leluService;
+    }
 
     @RequestMapping(value = "/testGet", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
@@ -35,8 +44,9 @@ public class LeluController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "Create or update permit", description = "Adds a new permit from LeLu to SillaRi. " +
             "If the same permit number is already found in SillaRi, updates that permit with the provided data.")
-    public void savePermit(@Valid @RequestBody LeluPermitDTO body) {
-        logger.debug("LeLu savePermit={}", body);
+    public void savePermit(@Valid @RequestBody LeluPermitDTO permitDTO) {
+        logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
+        leluService.createOrUpdatePermit(permitDTO);
     }
 
 }
