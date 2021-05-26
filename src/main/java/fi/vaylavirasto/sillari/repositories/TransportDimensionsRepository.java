@@ -15,16 +15,15 @@ public class TransportDimensionsRepository {
     @Autowired
     private DSLContext dsl;
 
-    public TransportDimensionsModel getTransportById(int id) {
-        return dsl.selectFrom(TransportDimensionsMapper.transport)
-                .where(TransportDimensionsMapper.transport.ID.eq(id))
+    public TransportDimensionsModel getTransportDimensionsById(int id) {
+        return dsl.selectFrom(TransportDimensionsMapper.transportDimensions)
+                .where(TransportDimensionsMapper.transportDimensions.ID.eq(id))
                 .fetchOne(new TransportDimensionsMapper());
     }
 
-    public TransportDimensionsModel getTransportByPermitIdAndRouteId(int permitId, int routeId) {
-        return dsl.selectFrom(TransportDimensionsMapper.permit)
-                .where(TransportDimensionsMapper.transport.PERMIT_ID.eq(permitId)
-                    .and(TransportDimensionsMapper.transport.ROUTE_ID.eq(routeId)))
+    public TransportDimensionsModel getTransportDimensionsByPermitId(int permitId) {
+        return dsl.selectFrom(TransportDimensionsMapper.transportDimensions)
+                .where(TransportDimensionsMapper.transportDimensions.PERMIT_ID.eq(permitId))
                 .fetchOne(new TransportDimensionsMapper());
     }
 }

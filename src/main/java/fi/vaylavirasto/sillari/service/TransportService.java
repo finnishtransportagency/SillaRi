@@ -26,7 +26,7 @@ public class TransportService {
         return transportDimensionsModel;
     }
 
-    public TransportDimensionsModel getTransportOfRoute(Integer permitId, Integer routeId) {
+    public TransportDimensionsModel getTransportDimensionsOfPermit(Integer permitId,) {
         TransportDimensionsModel transportDimensionsModel = transportDimensionsRepository.getTransportByPermitIdAndRouteId(permitId, routeId);
         if (transportDimensionsModel != null) {
             Integer transportId = Long.valueOf(transportDimensionsModel.getId()).intValue();
