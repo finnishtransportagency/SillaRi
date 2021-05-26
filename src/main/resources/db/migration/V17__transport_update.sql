@@ -11,6 +11,9 @@ CREATE TABLE IF NOT EXISTS sillari.transport_dimensions
     CONSTRAINT transport_dimensions_pkey PRIMARY KEY (id)
 );
 
+DELETE FROM sillari.transport_dimensions;
+INSERT INTO sillari.transport_dimension (permit_id, height, width, length) SELECT id, 4,5, 3, 48, 25 FROM sillari.permit ORDER BY id;
+
 CREATE SEQUENCE IF NOT EXISTS axle_chart_id_seq;
 
 CREATE TABLE IF NOT EXISTS sillari.axle_chart
@@ -21,20 +24,38 @@ CREATE TABLE IF NOT EXISTS sillari.axle_chart
     CONSTRAINT axle_chart_pkey PRIMARY KEY (id)
 );
 
+DELETE FROM sillari.axle_chart;
+INSERT INTO sillari.axle_chart (permit_id) SELECT id FROM sillari.permit ORDER BY id;
+
 ALTER TABLE sillari.permit ADD COLUMN IF NOT EXISTS total_mass decimal;
+UPDATE sillari.permit SET total_mass = 93;
 
 TRUNCATE TABLE sillari.axle;
 ALTER TABLE sillari.axle DROP COLUMN transport_id;
 ALTER TABLE sillari.axle ADD COLUMN axle_chart_id integer not null;
 ALTER TABLE sillari.axle ADD CONSTRAINT axle_chart_id_fkey FOREIGN KEY (axle_chart_id) REFERENCES axle_chart (id) DEFERRABLE;
 
+DELETE FROM sillari.axle;
+INSERT INTO sillari.axle (transport_id, axle_number, weight, distance_to_next) SELECT id, 1, 10, 2.93 FROM sillari.axle_chart ORDER BY id;
+INSERT INTO sillari.axle (transport_id, axle_number, weight, distance_to_next) SELECT id, 2, 7.5, 1.32 FROM sillari.axle_chart ORDER BY id;
+INSERT INTO sillari.axle (transport_id, axle_number, weight, distance_to_next) SELECT id, 3, 14.55, 1.37 FROM sillari.axle_chart ORDER BY id;
+INSERT INTO sillari.axle (transport_id, axle_number, weight, distance_to_next) SELECT id, 4, 14.55, 10.8 FROM sillari.axle_chart ORDER BY id;
+INSERT INTO sillari.axle (transport_id, axle_number, weight, distance_to_next) SELECT id, 5, 12, 1.35 FROM sillari.axle_chart ORDER BY id;
+INSERT INTO sillari.axle (transport_id, axle_number, weight, distance_to_next) SELECT id, 6, 12, 1.35 FROM sillari.axle_chart ORDER BY id;
+INSERT INTO sillari.axle (transport_id, axle_number, weight, distance_to_next) SELECT id, 7, 12, 1.35 FROM sillari.axle_chart ORDER BY id;
+INSERT INTO sillari.axle (transport_id, axle_number, weight, distance_to_next) SELECT id, 8, 12, 0 FROM sillari.axle_chart ORDER BY id;
+
 DROP TABLE sillari.transport_registration CASCADE;
 DROP TABLE sillari.transport CASCADE;
 
 ALTER TABLE sillari.permit ADD COLUMN permit_version integer;
+UPDATE sillari.permit SET permit_version = 1;
+
 ALTER TABLE sillari.permit ADD COLUMN additional_details text;
+UPDATE sillari.permit SET additional_details = 'blaa blaa';
 
 ALTER TABLE sillari.company ADD COLUMN customer_id text;
+UPDATE sillari.permit SET customer_id = 1;
 
 CREATE SEQUENCE IF NOT EXISTS vehicle_id_seq;
 CREATE TABLE IF NOT EXISTS sillari.vehicle
@@ -46,6 +67,9 @@ CREATE TABLE IF NOT EXISTS sillari.vehicle
     CONSTRAINT fk_vehicle_permit_id foreign key (permit_id) references sillari.permit(id),
     CONSTRAINT vehicle_pkey PRIMARY KEY (id)
 );
+
+INSERT INTO sillari.vehicle (permit_id, type, identifier) SELECT id, 'kuorma-auto', 'AAA-123' FROM sillari.permit ORDER BY id;
+INSERT INTO sillari.vehicle (transport_id, registration_number) SELECT id, 'lavetti', 'BBB-456' FROM sillari.permit ORDER BY id;
 
 
 
