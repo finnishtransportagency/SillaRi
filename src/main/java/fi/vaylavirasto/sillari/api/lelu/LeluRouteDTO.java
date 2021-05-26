@@ -27,7 +27,7 @@ public class LeluRouteDTO {
     @Schema(description = "Order number of the route", required = true)
     private Integer order;
 
-    @Schema(description = "Number of crossings permitted for the route. Alternative for number of crossings per bridge.")
+    @Schema(description = "Number of crossings permitted for the route")
     private Integer transportCount;
 
     @NotNull

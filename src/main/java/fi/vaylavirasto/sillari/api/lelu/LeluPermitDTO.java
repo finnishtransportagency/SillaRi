@@ -23,11 +23,11 @@ public class LeluPermitDTO {
 
     @NotNull
     @Schema(description = "When the permit was last modified in LeLu", required = true)
-    private LocalDateTime lastModified;
+    private LocalDateTime lastModifiedDate;
 
     @NotNull
     @Schema(description = "Version number of the approved permit, starting from 1.", required = true)
-    private Integer permitVersion;
+    private Integer version;
 
     @NotNull
     @Schema(description = "Permit valid starting from", required = true)

@@ -31,7 +31,8 @@ public class LeluController {
     @RequestMapping(value = "/permit", method = RequestMethod.POST)
     @ResponseBody
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @Operation(summary = "Create or update permit")
+    @Operation(summary = "Create or update permit", description = "Adds a new permit from LeLu to SillaRi. " +
+            "If the same permit number is already found in SillaRi, updates that permit with the provided data.")
     public void savePermit(@RequestBody LeluPermitDTO body) {
         logger.debug("LeLu savePermit={}", body);
     }

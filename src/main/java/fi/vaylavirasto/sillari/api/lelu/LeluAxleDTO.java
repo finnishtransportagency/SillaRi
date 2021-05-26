@@ -21,7 +21,7 @@ public class LeluAxleDTO {
 
     @NotNull
     @Schema(description = "Distance to the next axle (m). 0 if axle is the last one in the chart.", required = true)
-    private Double distance;
+    private Double distanceToNext;
 
     @Schema(description = "Varying axle length. Max distance to the next axle (m).")
     private Double maxDistanceToNext;

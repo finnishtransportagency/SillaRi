@@ -27,9 +27,6 @@ public class LeluBridgeDTO {
     @Schema(description = "Bridge road address (road number, lane, section and distance)")
     private String roadAddress;
 
-    @Schema(description = "Number of crossings, starting from 1. Alternative for crossing count per route.")
-    private Integer transportNumber;
-
     @Schema(description = "Name of the 1st supervisor")
     private String supervisorName;
 
