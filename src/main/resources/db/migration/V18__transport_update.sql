@@ -31,10 +31,12 @@ ALTER TABLE sillari.permit ADD COLUMN IF NOT EXISTS total_mass decimal;
 UPDATE sillari.permit SET total_mass = 93;
 
 TRUNCATE TABLE sillari.axle;
-ALTER TABLE sillari.axle DROP COLUMN transport_id;
-ALTER TABLE sillari.axle ADD COLUMN axle_chart_id integer not null;
+ALTER TABLE sillari.axle DROP COLUMN IF EXISTS transport_id;
+ALTER TABLE sillari.axle ADD COLUMN IF NOT EXISTS axle_chart_id integer not null;
 ALTER TABLE sillari.axle ADD CONSTRAINT axle_chart_id_fkey FOREIGN KEY (axle_chart_id) REFERENCES axle_chart (id) DEFERRABLE;
 
+DROP TABLE IF EXISTS sillari.transport_registration CASCADE;
+DROP TABLE IF EXISTS sillari.transport CASCADE;
 DELETE FROM sillari.axle;
 INSERT INTO sillari.axle (transport_id, axle_number, weight, distance_to_next) SELECT id, 1, 10, 2.93 FROM sillari.axle_chart ORDER BY id;
 INSERT INTO sillari.axle (transport_id, axle_number, weight, distance_to_next) SELECT id, 2, 7.5, 1.32 FROM sillari.axle_chart ORDER BY id;
@@ -48,12 +50,15 @@ INSERT INTO sillari.axle (transport_id, axle_number, weight, distance_to_next) S
 DROP TABLE sillari.transport_registration CASCADE;
 DROP TABLE sillari.transport CASCADE;
 
+ALTER TABLE sillari.permit ADD COLUMN IF NOT EXISTS permit_version integer;
+ALTER TABLE sillari.permit ADD COLUMN IF NOT EXISTS additional_details text;
 ALTER TABLE sillari.permit ADD COLUMN permit_version integer;
 UPDATE sillari.permit SET permit_version = 1;
 
 ALTER TABLE sillari.permit ADD COLUMN additional_details text;
 UPDATE sillari.permit SET additional_details = 'blaa blaa';
 
+ALTER TABLE sillari.company ADD COLUMN IF NOT EXISTS customer_id text;
 ALTER TABLE sillari.company ADD COLUMN customer_id text;
 UPDATE sillari.permit SET customer_id = 1;
 
