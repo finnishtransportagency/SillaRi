@@ -7,6 +7,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/lelu")
 public class LeluController {
@@ -33,7 +35,7 @@ public class LeluController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "Create or update permit", description = "Adds a new permit from LeLu to SillaRi. " +
             "If the same permit number is already found in SillaRi, updates that permit with the provided data.")
-    public void savePermit(@RequestBody LeluPermitDTO body) {
+    public void savePermit(@Valid @RequestBody LeluPermitDTO body) {
         logger.debug("LeLu savePermit={}", body);
     }
 

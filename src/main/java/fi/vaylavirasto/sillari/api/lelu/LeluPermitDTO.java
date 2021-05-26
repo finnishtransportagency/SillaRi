@@ -37,6 +37,7 @@ public class LeluPermitDTO {
     @Schema(description = "Permit valid until", required = true, example = "2021-11-30T00:00:00.000Z")
     private LocalDateTime validTo;
 
+    @Valid
     @NotNull
     @Schema(description = "Who the permit was granted to", required = true)
     private LeluCustomerDTO customer;
@@ -46,6 +47,7 @@ public class LeluPermitDTO {
     @Schema(description = "List of vehicles included in the permit", required = true)
     private List<LeluVehicleDTO> vehicles;
 
+    @Valid
     @NotNull
     @Schema(description = "Axle chart of the transport, including all vehicles.", required = true)
     private LeluAxleChartDTO axleChart;
@@ -54,6 +56,7 @@ public class LeluPermitDTO {
     @Schema(description = "Total mass of the transport, including all vehicles (t).", required = true, example = "456.7")
     private Double transportTotalMass;
 
+    @Valid
     @NotNull
     @Schema(description = "Max dimensions of the transport, including all vehicles.", required = true)
     private LeluTransportDimensionsDTO transportDimensions;
