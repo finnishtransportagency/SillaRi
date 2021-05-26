@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString(callSuper = true)
+@ToString
 public class LeluRouteDTO {
 
     @NotNull
