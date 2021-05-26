@@ -13,24 +13,24 @@ import javax.validation.constraints.NotBlank;
 public class LeluBridgeDTO {
 
     @NotBlank
-    @Schema(description = "Bridge OID in Taitorakennerekisteri", required = true)
+    @Schema(description = "Bridge OID in Taitorakennerekisteri", required = true, example = "1.2.246.578.1.15.400025")
     private String oid;
 
     @NotBlank
-    @Schema(description = "Bridge identifier in Taitorakennerekisteri", required = true)
+    @Schema(description = "Bridge identifier in Taitorakennerekisteri", required = true, example = "H-25")
     private String identifier;
 
     @NotBlank
-    @Schema(description = "Bridge name", required = true)
+    @Schema(description = "Bridge name", required = true, example = "Kaivannon silta")
     private String name;
 
-    @Schema(description = "Bridge road address (road number, lane, section and distance)")
+    @Schema(description = "Bridge road address (road number, section, lane and distance)", example = "00012 204 0 03788")
     private String roadAddress;
 
-    @Schema(description = "Name of the 1st supervisor")
+    @Schema(description = "Name of the 1st supervisor", example = "Vilja Valvoja")
     private String supervisorName;
 
-    @Schema(description = "Bridge crossing instructions and other possible supervisors")
+    @Schema(description = "Bridge crossing instructions and other possible supervisors", example = "Ajoneuvon keskilinjan oltava 4,25 metrin etäisyydellä idänpuoleisesta kaiteesta.")
     private String additionalInfo;
 
 }

@@ -12,15 +12,15 @@ import javax.validation.constraints.NotNull;
 public class LeluTransportDimensionsDTO {
 
     @NotNull
-    @Schema(description = "Transport max width (m)", required = true)
+    @Schema(description = "Transport max width (m)", required = true, example = "3.45")
     private Double width;
 
     @NotNull
-    @Schema(description = "Transport max length (m)", required = true)
+    @Schema(description = "Transport max length (m)", required = true, example = "23.4")
     private Double length;
 
     @NotNull
-    @Schema(description = "Transport max height (m)", required = true)
+    @Schema(description = "Transport max height from the ground (m)", required = true, example = "4.5")
     private Double height;
 
 }

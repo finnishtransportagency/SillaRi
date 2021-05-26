@@ -18,23 +18,23 @@ import java.util.List;
 public class LeluPermitDTO {
 
     @NotBlank
-    @Schema(description = "Number identifying the permit", required = true)
+    @Schema(description = "Number identifying the permit", required = true, example = "1234/2021")
     private String number;
 
     @NotNull
-    @Schema(description = "When the permit was last modified in LeLu", required = true)
+    @Schema(description = "When the permit was last modified in LeLu", required = true, example = "2021-05-26T08:02:36.000Z" )
     private LocalDateTime lastModifiedDate;
 
     @NotNull
-    @Schema(description = "Version number of the approved permit, starting from 1.", required = true)
+    @Schema(description = "Version number of the approved permit, starting from 1.", required = true, example = "1")
     private Integer version;
 
     @NotNull
-    @Schema(description = "Permit valid starting from", required = true)
+    @Schema(description = "Permit valid starting from", required = true, example = "2021-05-26T00:00:00.000Z")
     private LocalDateTime validFrom;
 
     @NotNull
-    @Schema(description = "Permit valid until", required = true)
+    @Schema(description = "Permit valid until", required = true, example = "2021-11-30T00:00:00.000Z")
     private LocalDateTime validTo;
 
     @NotNull
@@ -51,14 +51,14 @@ public class LeluPermitDTO {
     private LeluAxleChartDTO axleChart;
 
     @NotNull
-    @Schema(description = "Total mass of the transport, including all vehicles (t).", required = true)
+    @Schema(description = "Total mass of the transport, including all vehicles (t).", required = true, example = "456.7")
     private Double transportTotalMass;
 
     @NotNull
     @Schema(description = "Max dimensions of the transport, including all vehicles.", required = true)
     private LeluTransportDimensionsDTO transportDimensions;
 
-    @Schema(description = "Additional details")
+    @Schema(description = "Additional details", example = "Muita huomioita")
     private String additionalDetails;
 
     @Valid

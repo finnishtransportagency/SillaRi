@@ -16,22 +16,22 @@ import java.util.List;
 public class LeluRouteDTO {
 
     @NotNull
-    @Schema(description = "Route ID in LeLu, needed for fetching route lines.", required = true)
+    @Schema(description = "Route ID in LeLu, needed for fetching route lines.", required = true, example = "12345")
     private Long id;
 
     @NotBlank
-    @Schema(description = "Route name describing the route", required = true)
+    @Schema(description = "Route name describing the route", required = true, example = "Kotka - Tampere")
     private String name;
 
     @NotNull
-    @Schema(description = "Order number of the route", required = true)
+    @Schema(description = "Order number of the route", required = true, example = "1")
     private Integer order;
 
-    @Schema(description = "Number of crossings permitted for the route")
+    @Schema(description = "Number of crossings permitted for the route", example = "3")
     private Integer transportCount;
 
     @NotNull
-    @Schema(description = "Describes if the route is used as an alternative for another route.", required = true)
+    @Schema(description = "Describes if the route is used as an alternative for another route.", required = true, example = "false")
     private Boolean alternativeRoute;
 
     @Valid

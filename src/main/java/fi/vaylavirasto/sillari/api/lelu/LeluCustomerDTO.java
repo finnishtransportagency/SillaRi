@@ -13,11 +13,11 @@ import javax.validation.constraints.NotBlank;
 public class LeluCustomerDTO {
 
     @NotBlank
-    @Schema(description = "Name of the customer", required = true)
+    @Schema(description = "Name of the customer", required = true, example = "Yritys Y")
     private String name;
 
     @NotBlank
-    @Schema(description = "Business ID", required = true)
+    @Schema(description = "Business ID", required = true, example = "1234567-8")
     private String identifier;
 
 }

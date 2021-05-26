@@ -12,18 +12,18 @@ import javax.validation.constraints.NotNull;
 public class LeluAxleDTO {
 
     @NotNull
-    @Schema(description = "Order number of the axle", required = true)
+    @Schema(description = "Order number of the axle", required = true, example = "1")
     private Integer axleNumber;
 
     @NotNull
-    @Schema(description = "Axle weight (t)", required = true)
+    @Schema(description = "Axle weight (t)", required = true, example = "9.1")
     private Double weight;
 
     @NotNull
-    @Schema(description = "Distance to the next axle (m). 0 if axle is the last one in the chart.", required = true)
+    @Schema(description = "Distance to the next axle (m). 0 if axle is the last one in the chart.", required = true, example = "8.5")
     private Double distanceToNext;
 
-    @Schema(description = "Varying axle length. Max distance to the next axle (m).")
+    @Schema(description = "Varying axle length. Max distance to the next axle (m).", example = "10.5")
     private Double maxDistanceToNext;
 
 }
