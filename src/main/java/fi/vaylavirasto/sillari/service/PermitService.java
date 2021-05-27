@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PermitService {
     @Autowired
-    PermitRepository permitRepository;
+        PermitRepository     permitRepository;
 
     public PermitModel getPermit(Integer permitId) {
         return permitRepository.getPermit(permitId);
