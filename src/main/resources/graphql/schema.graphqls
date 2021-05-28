@@ -27,6 +27,14 @@ type TransportRegistration {
     registrationNumber: String
 }
 
+type TransportDimensions {
+    id: ID!
+    permitId: Int
+    height: Float
+    width: Float
+    length: Float
+}
+
 type Axle {
     id: ID!
     transportId: Int
@@ -42,8 +50,10 @@ type Permit {
     permitNumber: String
     validStartDate: String
     validEndDate: String
+    totalMass: Float
+    transportDimensions: TransportDimensions
     routes: [Route]
-    transports: [Transport]
+    axles: [Axle]
 }
 
 type Address {
@@ -148,6 +158,5 @@ type Query {
     Permit(id :Int!) : Permit
     Crossing(id :Int!) : Crossing
     CrossingOfRouteBridge(routeBridgeId :Int!) : Crossing
-    Transport(id :Int!): Transport
     TransportOfRoute(permitId :Int!, routeId :Int!): Transport
 }

@@ -3,29 +3,42 @@ import { DocumentNode, gql } from "@apollo/client";
 export const permitQuery = (id: number): DocumentNode => gql`
     {
         Permit(id: ${id}) {
+            id
+            companyId
+            permitNumber
+            validStartDate
+            validEndDate
+            axles {
                 id
-                companyId
-                permitNumber
-                validStartDate
-                validEndDate
-                routes {
+                transportId
+                axleNumber
+                weight
+                distanceToNext
+                maxDistanceToNext
+            }
+            transportDimensions{
+                height
+                width
+                length
+            }
+            routes {
+                id
+                departureTime
+                arrivalTime
+                arrivalAddress {
                     id
-                    departureTime
-                    arrivalTime
-                    arrivalAddress {
-                        id
-                        city
-                        postalcode
-                        street
-                    }
-                    departureAddress {
-                        id
-                        city
-                        postalcode
-                        street
-                    }
+                    city
+                    postalcode
+                    street
+                }
+                departureAddress {
+                    id
+                    city
+                    postalcode
+                    street
                 }
             }
+        }
     }
 `;
 
