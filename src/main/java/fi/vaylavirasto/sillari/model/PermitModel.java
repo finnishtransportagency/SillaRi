@@ -13,6 +13,7 @@ public class PermitModel {
     private String validEndDate;
     private Double totalMass;
     private List<RouteModel> routes;
-    private List<TransportDimensionsModel> transportsDimensionss;
-    private List<AxleChartModel> axleCharts;
+    private TransportDimensionsModel transportsDimensions;
+    private AxleChartModel axleChart;
+    private List<AxleModel> axles;
 }

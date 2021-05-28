@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.PermitMapper;
 import fi.vaylavirasto.sillari.model.PermitModel;
+import fi.vaylavirasto.sillari.model.SupervisionMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -22,8 +23,13 @@ public class PermitRepository {
                 .fetch(new PermitMapper());
     }
     public PermitModel getPermit(Integer id) {
-        return dsl.selectFrom(PermitMapper.permit)
+        return dsl.select().from(PermitMapper.permit)
+                .leftJoin(PermitMapper.axleChart)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
+                .leftJoin(PermitMapper.transportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
                 .where(PermitMapper.permit.ID.eq(id))
                 .fetchOne(new PermitMapper());
     }
+
 }

@@ -1,6 +1,8 @@
 package fi.vaylavirasto.sillari.model;
 
+import fi.vaylavirasto.sillari.model.tables.AxleChart;
 import fi.vaylavirasto.sillari.model.tables.Permit;
+import fi.vaylavirasto.sillari.model.tables.TransportDimensions;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -10,6 +12,8 @@ import java.util.ArrayList;
 
 public class PermitMapper implements RecordMapper<Record, PermitModel> {
     public static final Permit permit = Tables.PERMIT.as("p");
+    public static final AxleChart axleChart = Tables.AXLE_CHART.as("a");
+    public static final TransportDimensions transportDimensions = Tables.TRANSPORT_DIMENSIONS.as("t");
 
     @Nullable
     @Override
@@ -23,8 +27,12 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         BigDecimal totalMass = record.get(permit.TOTAL_MASS);
         permitModel.setTotalMass(totalMass != null ? totalMass.doubleValue() : null);
         permitModel.setRoutes(new ArrayList<>());
-        permitModel.setTransportsDimensionss(new ArrayList<>());
-        permitModel.setAxleCharts(new ArrayList<>());
+
+        TransportDimensionsMapper transportDimensionsMapper = new TransportDimensionsMapper();
+        permitModel.setTransportsDimensions(transportDimensionsMapper.map(record));
+
+        AxleChartMapper axleChartMapper = new AxleChartMapper();
+        permitModel.setAxleChart(axleChartMapper.map(record));
         return permitModel;
     }
 }
