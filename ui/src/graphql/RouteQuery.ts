@@ -5,8 +5,6 @@ export const routeQuery = (id: number): DocumentNode => gql`
         Route(id: ${id}) {
             id
             name
-            departureTime
-            arrivalTime
             arrivalAddress {
                 id
                 city

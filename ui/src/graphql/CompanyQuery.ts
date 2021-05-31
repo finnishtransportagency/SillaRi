@@ -13,8 +13,6 @@ export const companiesQuery = (): DocumentNode => gql`
         validEndDate
         routes {
           id
-          departureTime
-          arrivalTime
           arrivalAddress {
             id
             city
@@ -75,8 +73,6 @@ export const companyQuery = (id: number): DocumentNode => gql`
         routes {
           id
           name
-          departureTime
-          arrivalTime
           arrivalAddress {
             id
             city

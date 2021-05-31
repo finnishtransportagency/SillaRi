@@ -11,8 +11,6 @@ public class RouteModel {
     private String name;
     private AddressModel departureAddress;
     private AddressModel arrivalAddress;
-    private String departureTime;
-    private String arrivalTime;
     private List<RouteBridgeModel> routeBridges;
     private List<TransportModel> transports;
     private List<CrossingModel> crossings;

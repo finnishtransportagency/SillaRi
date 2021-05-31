@@ -21,8 +21,6 @@ public class RouteMapper  implements RecordMapper<Record, RouteModel> {
         routeModel.setId(record.get(route.ID));
         routeModel.setPermitId(record.get(route.PERMIT_ID));
         routeModel.setName(record.get(route.NAME));
-        routeModel.setDepartureTime(record.get(route.DEPARTURE_TIME));
-        routeModel.setArrivalTime(record.get(route.ARRIVAL_TIME));
         routeModel.setRouteBridges(new ArrayList<>());
         routeModel.setTransports(new ArrayList<>());
         routeModel.setCrossings(new ArrayList<>());

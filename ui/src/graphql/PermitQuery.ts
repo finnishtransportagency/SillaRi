@@ -10,8 +10,6 @@ export const permitQuery = (id: number): DocumentNode => gql`
                 validEndDate
                 routes {
                     id
-                    departureTime
-                    arrivalTime
                     arrivalAddress {
                         id
                         city

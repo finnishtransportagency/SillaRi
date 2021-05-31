@@ -97,8 +97,6 @@ type Route {
     name: String
     departureAddress: Address
     arrivalAddress: Address
-    departureTime: String
-    arrivalTime: String
     routeBridges: [RouteBridge]
     transports: [Transport]
     crossings: [Crossing]

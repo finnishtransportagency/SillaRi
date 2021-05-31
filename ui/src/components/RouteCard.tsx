@@ -2,9 +2,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
 import { analyticsOutline } from "ionicons/icons";
-import Moment from "react-moment";
+// import Moment from "react-moment";
 import IRoute from "../interfaces/IRoute";
-import { dateTimeFormat } from "../utils/constants";
+// import { dateTimeFormat } from "../utils/constants";
 
 interface RouteCardProps {
   route: IRoute;
@@ -18,7 +18,6 @@ const RouteCard = ({ route, permitId }: RouteCardProps): JSX.Element => {
   const {
     departureAddress: { street: departureStreet, postalcode: departurePostalCode, city: departureCity },
     arrivalAddress: { street: arrivalStreet, postalcode: arrivalPostalCode, city: arrivalCity },
-    departureTime,
   } = route;
 
   return (
@@ -44,11 +43,15 @@ const RouteCard = ({ route, permitId }: RouteCardProps): JSX.Element => {
               <IonText>{`> ${arrivalStreet}, ${arrivalPostalCode} ${arrivalCity}`}</IonText>
             </IonCol>
           </IonRow>
+          {/* TODO We do not get departure time from route, should we fetch route transport and read the departure status?
+          How do we get that transport instance, since route can have multiple transport instances? */}
+          {/*
           <IonRow>
             <IonCol>
               <Moment format={dateTimeFormat}>{departureTime}</Moment>
             </IonCol>
           </IonRow>
+          */}
         </IonGrid>
       </IonCardContent>
     </IonCard>
