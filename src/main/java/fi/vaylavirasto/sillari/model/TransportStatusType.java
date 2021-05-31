@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.model;
 
-public enum TransportStatus {
+public enum TransportStatusType {
     DEPARTED,
     STOPPED,
     IN_PROGRESS,

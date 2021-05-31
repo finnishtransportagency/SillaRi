@@ -1,6 +1,7 @@
 package fi.vaylavirasto.sillari.model;
 
 import fi.vaylavirasto.sillari.model.tables.RouteTransport;
+import fi.vaylavirasto.sillari.model.tables.RouteTransportStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 
 public class RouteTransportMapper implements RecordMapper<Record, RouteTransportModel> {
     public static final RouteTransport transport = Tables.ROUTE_TRANSPORT.as("t");
+    public static final RouteTransportStatus transportStatus = Tables.ROUTE_TRANSPORT_STATUS.as("ts");
 
     @Nullable
     @Override
@@ -16,11 +18,15 @@ public class RouteTransportMapper implements RecordMapper<Record, RouteTransport
         RouteTransportModel routeTransportModel = new RouteTransportModel();
         routeTransportModel.setId(record.get(transport.ID));
         routeTransportModel.setRouteId(record.get(transport.ROUTE_ID));
-        routeTransportModel.setDepartureTime(record.get(transport.DEPARTURE_TIME));
-        routeTransportModel.setArrivalTime(record.get(transport.ARRIVAL_TIME));
-        routeTransportModel.setStatus(record.get(transport.STATUS, new TransportStatusConverter(String.class, TransportStatus.class)));
-        routeTransportModel.setCurrentLocation(record.get(transport.CURRENT_LOCATION));
-        routeTransportModel.setCurrentLocationUpdated(record.get(transport.CURRENT_LOCATION_UPDATED));
+
+        RouteTransportStatusModel statusModel = new RouteTransportStatusModel();
+        statusModel.setId(record.get(transportStatus.ID));
+        statusModel.setRouteTransportId(record.get(transportStatus.ROUTE_TRANSPORT_ID));
+        statusModel.setStatus(record.get(transportStatus.STATUS, new TransportStatusTypeConverter(String.class, TransportStatusType.class)));
+        statusModel.setTime(record.get(transportStatus.TIME));
+        routeTransportModel.setCurrentStatus(statusModel);
+
+        routeTransportModel.setStatusHistory(new ArrayList<>());
         routeTransportModel.setSupervisions(new ArrayList<>());
         return routeTransportModel;
     }

@@ -99,8 +99,6 @@ type Route {
     name: String
     departureAddress: Address
     arrivalAddress: Address
-    departureTime: String
-    arrivalTime: String
     geojson: String
     routeBridges: [RouteBridge]
     transports: [Transport]
