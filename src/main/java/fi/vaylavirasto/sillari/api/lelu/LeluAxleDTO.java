@@ -11,15 +11,15 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class LeluAxleDTO {
 
-    @NotNull
+    @NotNull(message = "{axle.number.not.null}")
     @Schema(description = "Order number of the axle", required = true, example = "1")
     private Integer axleNumber;
 
-    @NotNull
+    @NotNull(message = "{axle.weight.not.null}")
     @Schema(description = "Axle weight (t)", required = true, example = "9.1")
     private Double weight;
 
-    @NotNull
+    @NotNull(message = "{axle.distance.not.null}")
     @Schema(description = "Distance to the next axle (m). 0 if axle is the last one in the chart.", required = true, example = "8.5")
     private Double distanceToNext;
 

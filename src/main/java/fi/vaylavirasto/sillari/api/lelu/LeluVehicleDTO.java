@@ -12,11 +12,11 @@ import javax.validation.constraints.NotBlank;
 @ToString
 public class LeluVehicleDTO {
 
-    @NotBlank
+    @NotBlank(message = "{vehicle.type.not.blank}")
     @Schema(description = "Vehicle type", required = true, example = "kuorma-auto")
     private String type;
 
-    @NotBlank
+    @NotBlank(message = "{vehicle.identifier.not.blank}")
     @Schema(description = "Registration number", required = true, example = "ABC-123")
     private String identifier;
 

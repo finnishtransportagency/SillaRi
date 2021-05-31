@@ -12,15 +12,15 @@ import javax.validation.constraints.NotBlank;
 @ToString
 public class LeluBridgeDTO {
 
-    @NotBlank
+    @NotBlank(message = "{bridge.oid.not.blank}")
     @Schema(description = "Bridge OID in Taitorakennerekisteri", required = true, example = "1.2.246.578.1.15.400025")
     private String oid;
 
-    @NotBlank
+    @NotBlank(message = "{bridge.identifier.not.blank}")
     @Schema(description = "Bridge identifier in Taitorakennerekisteri", required = true, example = "H-25")
     private String identifier;
 
-    @NotBlank
+    @NotBlank(message = "{bridge.name.not.blank}")
     @Schema(description = "Bridge name", required = true, example = "Kaivannon silta")
     private String name;
 

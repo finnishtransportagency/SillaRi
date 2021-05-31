@@ -17,47 +17,47 @@ import java.util.List;
 @ToString
 public class LeluPermitDTO {
 
-    @NotBlank
+    @NotBlank(message = "{permit.number.not.blank}")
     @Schema(description = "Number identifying the permit", required = true, example = "1234/2021")
     private String number;
 
-    @NotNull
+    @NotNull(message = "{permit.last.modified.not.null}")
     @Schema(description = "When the permit was last modified in LeLu", required = true, example = "2021-05-26T08:02:36.000Z" )
     private LocalDateTime lastModifiedDate;
 
-    @NotNull
+    @NotNull(message = "{permit.version.not.null}")
     @Schema(description = "Version number of the approved permit, starting from 1.", required = true, example = "1")
     private Integer version;
 
-    @NotNull
+    @NotNull(message = "{permit.valid.from.not.null}")
     @Schema(description = "Permit valid starting from", required = true, example = "2021-05-26T00:00:00.000Z")
     private LocalDateTime validFrom;
 
-    @NotNull
+    @NotNull(message = "{permit.valid.to.not.null}")
     @Schema(description = "Permit valid until", required = true, example = "2021-11-30T00:00:00.000Z")
     private LocalDateTime validTo;
 
     @Valid
-    @NotNull
+    @NotNull(message = "{permit.customer.not.null}")
     @Schema(description = "Who the permit was granted to", required = true)
     private LeluCustomerDTO customer;
 
     @Valid
-    @NotEmpty
+    @NotEmpty(message = "{permit.vehicles.not.empty}")
     @Schema(description = "List of vehicles included in the permit", required = true)
     private List<LeluVehicleDTO> vehicles;
 
     @Valid
-    @NotNull
+    @NotNull(message = "{permit.axle.chart.not.null}")
     @Schema(description = "Axle chart of the transport, including all vehicles.", required = true)
     private LeluAxleChartDTO axleChart;
 
-    @NotNull
+    @NotNull(message = "{permit.transport.total.mass.not.null}")
     @Schema(description = "Total mass of the transport, including all vehicles (t).", required = true, example = "456.7")
     private Double transportTotalMass;
 
     @Valid
-    @NotNull
+    @NotNull(message = "{permit.transport.dimensions.not.null}")
     @Schema(description = "Max dimensions of the transport, including all vehicles.", required = true)
     private LeluTransportDimensionsDTO transportDimensions;
 
@@ -65,7 +65,7 @@ public class LeluPermitDTO {
     private String additionalDetails;
 
     @Valid
-    @NotEmpty
+    @NotEmpty(message = "{permit.routes.not.empty}")
     @Schema(description = "List of routes included in the permit", required = true)
     private List<LeluRouteDTO> routes;
 

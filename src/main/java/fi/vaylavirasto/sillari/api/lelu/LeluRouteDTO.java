@@ -15,27 +15,28 @@ import java.util.List;
 @ToString
 public class LeluRouteDTO {
 
-    @NotNull
+    @NotNull(message = "{route.id.not.null}")
     @Schema(description = "Route ID in LeLu, needed for fetching route lines.", required = true, example = "12345")
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "{route.name.not.blank}")
     @Schema(description = "Route name describing the route", required = true, example = "Kotka - Tampere")
     private String name;
 
-    @NotNull
+    @NotNull(message = "{route.order.not.null}")
     @Schema(description = "Order number of the route", required = true, example = "1")
     private Integer order;
 
+    @NotNull(message = "{route.transport.count.not.null}")
     @Schema(description = "Number of crossings permitted for the route", example = "3")
     private Integer transportCount;
 
-    @NotNull
+    @NotNull(message = "{route.alternative.route.not.null}")
     @Schema(description = "Describes if the route is used as an alternative for another route.", required = true, example = "false")
     private Boolean alternativeRoute;
 
     @Valid
-    @NotEmpty
+    @NotEmpty(message = "{route.bridges.not.empty}")
     @Schema(description = "List of bridges on the route", required = true)
     private List<LeluBridgeDTO> bridges;
 

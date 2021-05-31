@@ -15,7 +15,7 @@ import java.util.List;
 public class LeluAxleChartDTO {
 
     @Valid
-    @NotEmpty
+    @NotEmpty(message = "{axles.not.empty}")
     @Schema(description = "List of axles in the axle chart", required = true)
     private List<LeluAxleDTO> axles;
 
