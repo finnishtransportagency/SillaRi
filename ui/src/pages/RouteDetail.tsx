@@ -50,6 +50,8 @@ const RouteDetail = (): JSX.Element => {
       <Header title={`${permitNumber} - ${name}`} />
       <IonContent>
         <RoutePermit selectedPermit={selectedPermitDetail as IPermit} selectedRoute={selectedRouteDetail as IRoute} />
+        <RouteTransport selectedPermit={selectedPermitDetail as IPermit} />
+
         <IonGrid>
           <IonRow>
             <IonCol size="auto">
