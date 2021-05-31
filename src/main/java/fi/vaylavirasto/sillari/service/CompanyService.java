@@ -29,7 +29,7 @@ public class CompanyService {
             for(PermitModel permitModel : companyModel.getPermits()) {
                 permitModel.setRoutes(routeRepository.getRoutes(Long.valueOf(permitModel.getId()).intValue()));
                 for(RouteModel routeModel : permitModel.getRoutes()) {
-                    List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRoutesBridges(Long.valueOf(routeModel.getId()).intValue());
+                    List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRoutesBridges(routeModel.getId());
                     routeModel.setRouteBridges(routeBridgeModels);
                 }
             }

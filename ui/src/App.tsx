@@ -48,6 +48,8 @@ const App: React.FC = () => (
           <Route path="/" component={Home} exact />
           <Route path="/settings" component={Settings} exact />
           <Route path="/map" component={Map} exact />
+          <Route path="/bridgemap/:routeBridgeId" component={Map} exact />
+          <Route path="/routemap/:routeId" component={Map} exact />
           <Route path="/companydetail/:id" component={CompanyDetail} exact />
           <Route path="/routeDetail/:permitId/:routeId" component={RouteDetail} exact />
           <Route path="/bridgeDetail/:routeBridgeId" component={BridgeDetail} exact />

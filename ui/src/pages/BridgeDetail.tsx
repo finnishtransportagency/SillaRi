@@ -1,7 +1,20 @@
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCheckbox, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonPage, IonRow, IonText } from "@ionic/react";
+import {
+  IonButton,
+  IonCheckbox,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonPage,
+  IonRouterLink,
+  IonRow,
+  IonText,
+} from "@ionic/react";
 import React from "react";
 import { useQuery } from "@apollo/client";
 import { location } from "ionicons/icons";
@@ -53,8 +66,10 @@ const BridgeDetail = (): JSX.Element => {
                 </IonRow>
                 <IonRow>
                   <IonCol>
-                    <IonIcon icon={location} />
-                    <IonText>{` ${name}, ${municipality}`}</IonText>
+                    <IonRouterLink routerLink={`/bridgemap/${routeBridgeId}`}>
+                      <IonIcon icon={location} />
+                      <IonText className="linkText">{` ${name}, ${municipality}`}</IonText>
+                    </IonRouterLink>
                   </IonCol>
                 </IonRow>
                 <IonRow>
