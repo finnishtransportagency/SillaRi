@@ -29,7 +29,7 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         permitModel.setRoutes(new ArrayList<>());
 
         TransportDimensionsMapper transportDimensionsMapper = new TransportDimensionsMapper();
-        permitModel.setTransportsDimensions(transportDimensionsMapper.map(record));
+        permitModel.setTransportDimensions(transportDimensionsMapper.map(record));
 
         AxleChartMapper axleChartMapper = new AxleChartMapper();
         permitModel.setAxleChart(axleChartMapper.map(record));
