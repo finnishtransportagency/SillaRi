@@ -18,12 +18,10 @@ public class RouteTransportStatusRepository {
     private DSLContext dsl;
 
     public List<RouteTransportStatusModel> getTransportStatusHistory(Integer routeTransportId) {
-        List<RouteTransportStatusModel> models = dsl.selectFrom(RouteTransportStatusMapper.transportStatus)
+        return dsl.selectFrom(RouteTransportStatusMapper.transportStatus)
                 .where(RouteTransportStatusMapper.transportStatus.ROUTE_TRANSPORT_ID.eq(routeTransportId))
                 .orderBy(RouteTransportStatusMapper.transportStatus.TIME.desc())
                 .fetch(new RouteTransportStatusMapper());
-        logger.info(models);
-        return models;
     }
 
 }

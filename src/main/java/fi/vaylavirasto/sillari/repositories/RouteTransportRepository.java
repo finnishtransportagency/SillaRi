@@ -27,13 +27,11 @@ public class RouteTransportRepository {
 
     public RouteTransportModel getRouteTransportByRouteId(int routeId) {
         // TODO route can have multiple transport instances, how do we specify this instance?
-        RouteTransportModel model = dsl.select().from(RouteTransportMapper.transport)
+        return dsl.select().from(RouteTransportMapper.transport)
                 .leftJoin(RouteTransportStatusMapper.transportStatus)
                 .on(RouteTransportMapper.transport.ID.eq(RouteTransportStatusMapper.transportStatus.ROUTE_TRANSPORT_ID))
                 .where(RouteTransportMapper.transport.ROUTE_ID.eq(routeId))
                 .orderBy(RouteTransportStatusMapper.transportStatus.TIME.desc())
                 .limit(1).fetchOne(new RouteTransportMapper());
-        logger.info(model);
-        return model;
     }
 }
