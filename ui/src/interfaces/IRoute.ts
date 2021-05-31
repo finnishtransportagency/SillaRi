@@ -7,5 +7,6 @@ export default interface IRoute {
   name: string;
   departureAddress: IAddress;
   arrivalAddress: IAddress;
+  geojson: string;
   routeBridges: IRouteBridge[];
 }

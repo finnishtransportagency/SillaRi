@@ -58,10 +58,12 @@ type Bridge {
     name: String
     identifier: String
     municipality: String
+    geojson: String
 }
 
 type RouteBridge {
     id: ID!
+    routeId: Int!
     bridge: Bridge!
     crossingInstruction: String
 }
@@ -97,6 +99,7 @@ type Route {
     name: String
     departureAddress: Address
     arrivalAddress: Address
+    geojson: String
     routeBridges: [RouteBridge]
     transports: [Transport]
     crossings: [Crossing]

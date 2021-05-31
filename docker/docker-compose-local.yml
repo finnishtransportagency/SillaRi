@@ -11,11 +11,21 @@ services:
       - 8080:8080
     depends_on:
       - sillari-local-db
+  sillari-geoserver:
+    hostname: sillari-geoserver
+    build:
+      context: ./geoserver
+      dockerfile: Dockerfile_local
+    ports:
+      - 8081:8080
+    depends_on:
+      - sillari-local-db
   sillari-local-db:
     hostname: sillari-local-db
     build:
       context: ./sillari-local-db
     environment:
+      - POSTGRES_DB=sillari
       - POSTGRES_PASSWORD=docker
       - PGDATA=/pgdata
     ports:

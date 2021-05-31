@@ -8,7 +8,7 @@ import java.util.List;
 public class TransportModel {
     private long id;
     private long permitId;
-    private long routeId;
+    private Integer routeId;
     private String name;
     private Double height;
     private Double width;
