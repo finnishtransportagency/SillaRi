@@ -11,7 +11,6 @@ export const permitQuery = (id: number): DocumentNode => gql`
             totalMass
             axles {
                 id
-                permitId
                 axleNumber
                 weight
                 distanceToNext

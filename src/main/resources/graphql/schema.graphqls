@@ -18,7 +18,6 @@ type TransportDimensions {
 
 type Axle {
     id: ID!
-    permitId: Int
     axleNumber: Int
     weight: Int
     distanceToNext: Float

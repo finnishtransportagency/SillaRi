@@ -6,7 +6,6 @@ import lombok.Data;
 public class AxleModel {
     private long id;
     private long axleChartId;
-    private long permitId;
     private Integer axleNumber;
     private Integer weight;
     private Double distanceToNext;
