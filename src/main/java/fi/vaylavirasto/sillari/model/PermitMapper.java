@@ -22,6 +22,8 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         permitModel.setId(record.get(permit.ID));
         permitModel.setCompanyId(record.get(permit.COMPANY_ID));
         permitModel.setPermitNumber(record.get(permit.PERMIT_NUMBER));
+        permitModel.setLeluVersion(record.get(permit.LELU_VERSION));
+        permitModel.setLeluLastModifiedDate(record.get(permit.LELU_LAST_MODIFIED_DATE));
         permitModel.setValidStartDate(record.get(permit.VALID_START_DATE));
         permitModel.setValidEndDate(record.get(permit.VALID_END_DATE));
         BigDecimal totalMass = record.get(permit.TOTAL_MASS);
