@@ -1,5 +1,7 @@
 import IRoute from "./IRoute";
-import ITransport from "./ITransport";
+import IVehicle from "./IVehicle";
+import IAxle from "./IAxle";
+import ITransportDimensions from "./ITransportDimensions";
 
 export default interface IPermit {
   id: number;
@@ -8,5 +10,8 @@ export default interface IPermit {
   validStartDate: string;
   validEndDate: string;
   routes: IRoute[];
-  transports: ITransport[];
+  transportDimensions: ITransportDimensions;
+  vehicles: IVehicle[];
+  axles: IAxle[];
+  totalMass: number;
 }

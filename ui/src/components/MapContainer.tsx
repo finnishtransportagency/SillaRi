@@ -1,30 +1,74 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { useQuery } from "@apollo/client";
 import { Plugins } from "@capacitor/core";
-import MapOL from "ol/Map";
-import View from "ol/View";
 import { defaults, MousePosition } from "ol/control";
 import { createStringXY } from "ol/coordinate";
+import { Extent } from "ol/extent";
 import Feature from "ol/Feature";
 import { WMTSCapabilities } from "ol/format";
 import { Point } from "ol/geom";
-import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import { Layer, Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import MapOL from "ol/Map";
 import { get as getProj, fromLonLat } from "ol/proj";
 import { register } from "ol/proj/proj4";
-import { TileDebug, Vector as VectorSource, WMTS, XYZ } from "ol/source";
-import { optionsFromCapabilities } from "ol/source/WMTS";
-import { Icon, Style } from "ol/style";
-import TileGrid from "ol/tilegrid/TileGrid";
+import { TileDebug } from "ol/source";
+import View from "ol/View";
 import proj4 from "proj4";
+import { routeBridgeQuery } from "../graphql/RouteBridgeQuery";
+import { routeQuery } from "../graphql/RouteQuery";
+import IBridgeDetail from "../interfaces/IBridgeDetail";
+import IRouteDetail from "../interfaces/IRouteDetail";
+import BackgroundTileLayer from "./map/BackgroundTileLayer";
+import BridgeTileLayer from "./map/BridgeTileLayer";
+import BridgeVectorLayer from "./map/BridgeVectorLayer";
+import RouteTileLayer from "./map/RouteTileLayer";
+import RouteVectorLayer from "./map/RouteVectorLayer";
+import UserVectorLayer from "./map/UserVectorLayer";
+import { actions as crossingActions } from "../store/crossingsSlice";
+import { useTypedSelector } from "../store/store";
 import "./MapContainer.scss";
+
+interface MapContainerProps {
+  routeBridgeId: string;
+  routeId: string;
+}
 
 const MapContainer = (): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const mapRef = useRef<HTMLDivElement>(null);
 
-  const [backgroundTileGrid, setBackgroundTileGrid] = useState<TileGrid>();
+  const { routeBridgeId: routeBridgeIdParam, routeId: routeIdParam } = useParams<MapContainerProps>();
+
   const [backgroundLayer, setBackgroundLayer] = useState<TileLayer>();
+  const [bridgeLayer, setBridgeLayer] = useState<Layer>();
+  const [routeLayer, setRouteLayer] = useState<Layer>();
+  const [userLayer, setUserLayer] = useState<VectorLayer>();
+  const [bridgeCoords, setBridgeCoords] = useState<Point>();
+  const [routeExtent, setRouteExtent] = useState<Extent>();
   const [mapInitialised, setMapInitialised] = useState<boolean>(false);
+
+  const crossingsState = useTypedSelector((state) => state.crossingsReducer);
+  const { selectedBridgeDetail, selectedRouteDetail } = crossingsState;
+  const { bridge, routeId = 0 } = selectedBridgeDetail || {};
+  const { identifier: bridgeIdentifier, geojson: bridgeGeojson } = bridge || {};
+  const { geojson: routeGeojson, routeBridges = [] } = selectedRouteDetail || {};
+
+  useQuery<IBridgeDetail>(routeBridgeQuery(routeBridgeIdParam && routeBridgeIdParam.length > 0 ? Number(routeBridgeIdParam) : 0), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_BRIDGE, payload: response }),
+    onError: (err) => console.error(err),
+  });
+
+  // Note: when showing single bridges on the map, the route line is also needed to be shown,
+  // so 'skip' is used to fetch the route data only after routeId has been fetched from the routebridge data
+  useQuery<IRouteDetail>(routeQuery(routeIdParam && routeIdParam.length > 0 ? Number(routeIdParam) : routeId), {
+    onCompleted: (response) => dispatch({ type: crossingActions.GET_ROUTE, payload: response }),
+    onError: (err) => console.error(err),
+    skip: !!routeBridgeIdParam && routeBridgeIdParam.length > 0 && (!routeId || routeId === 0),
+  });
 
   const projection = "EPSG:3067";
   const debug = false;
@@ -40,75 +84,100 @@ const MapContainer = (): JSX.Element => {
 
     // Use an asynchronous function for getting the map layer since fetch returns a Promise
     const getBackgroundMapLayer = async () => {
-      let backgroundMapLayer;
+      // Try to use the Väylä map service if possible, so fetch the WMTS capabilities via the backend to avoid a CORS error
+      // Note: in development mode, this will use the proxy defined in package.json
+      const capabilitiesUrl = "/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities";
+      let capabilities;
 
       try {
-        // Try to use the Väylä map service if possible, so fetch the WMTS capabilities via the backend to avoid a CORS error
-        // Note: in development mode, this will use the proxy defined in package.json
-        const capabilitiesUrl = "/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities";
         const capabilitiesResponse = await fetch(capabilitiesUrl, { credentials: "include" });
 
         if (capabilitiesResponse.ok) {
           // Try to parse the capabilities XML using OpenLayers
           const capabilitiesXML = await (capabilitiesResponse.text() as Promise<string>);
           const parser = new WMTSCapabilities();
-          const capabilities = parser.read(capabilitiesXML);
-          console.log("capabilities", capabilities);
-
-          if (capabilities) {
-            console.log("using WMTS");
-
-            const wmtsOptions = optionsFromCapabilities(capabilities, {
-              layer: "taustakartta",
-              projection: getProj(projection),
-            });
-            console.log("wmtsOptions", wmtsOptions);
-
-            // Modify the URL to fetch tiles via the backend to avoid authentication issues on mobile
-            // Use the same URL as for the WMTS capabilities but make sure to receive binary images rather than XML
-            wmtsOptions.urls = [capabilitiesUrl.substr(0, capabilitiesUrl.indexOf("?")).replace("xml", "img")];
-
-            const wmtsSource = new WMTS(wmtsOptions);
-            setBackgroundTileGrid(wmtsSource.getTileGrid());
-
-            backgroundMapLayer = new TileLayer({ source: wmtsSource });
-            setBackgroundLayer(backgroundMapLayer);
-          }
+          capabilities = parser.read(capabilitiesXML);
+          console.log("background capabilities", capabilities);
         }
       } catch (err) {
         console.log("ERROR", err);
       }
 
-      if (!backgroundMapLayer) {
-        // Using the Väylä map service was not possible, so use the public Kapsi service as an alternative
-        console.log("using XYZ");
-
-        const origin = [-548576, 8388608];
-        const resolutions = [8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25];
-        const xyzTileGrid = new TileGrid({ origin, resolutions });
-        setBackgroundTileGrid(xyzTileGrid);
-
-        const xyzSource = new XYZ({
-          url: "https://tiles.kartat.kapsi.fi/taustakartta_3067/{z}/{x}/{y}.jpg",
-          projection: getProj(projection),
-          tileGrid: xyzTileGrid,
-          cacheSize: 2048,
-          attributions: `${t("map.attribution")}: Maanmittauslaitos | Taustakartta`,
-        });
-        setBackgroundLayer(new TileLayer({ source: xyzSource }));
-      }
+      const mmlAttribution = `${t("map.attribution")}: Maanmittauslaitos | Taustakartta`;
+      const backgroundMapLayer = new BackgroundTileLayer(projection, mmlAttribution, capabilitiesUrl, capabilities);
+      setBackgroundLayer(backgroundMapLayer);
     };
 
-    // Call the asynchronous functions here since initBackgroundMap is called from useEffect which is synchronous
+    // Call the asynchronous function here since initBackgroundMap is called from useEffect which is synchronous
     getBackgroundMapLayer();
   };
 
+  const initDataLayers = () => {
+    console.log("initDataLayers");
+
+    // This function is called several times from useEffect when the dependencies change
+    // However, the data layers should only be created once
+    if (!mapInitialised && !bridgeLayer && !routeLayer) {
+      const getGeoServerTileLayers = async () => {
+        // Fetch the WMTS capabilities via the backend to avoid a CORS error
+        // Note: in development mode, this will use the proxy defined in package.json
+        const capabilitiesUrl = "/api/ui/getgeoserverlayerxml/gwc/service/wmts?REQUEST=GetCapabilities";
+        let capabilities;
+
+        try {
+          const capabilitiesResponse = await fetch(capabilitiesUrl, { credentials: "include" });
+
+          if (capabilitiesResponse.ok) {
+            // Try to parse the capabilities XML using OpenLayers
+            const capabilitiesXML = await (capabilitiesResponse.text() as Promise<string>);
+            const parser = new WMTSCapabilities();
+            capabilities = parser.read(capabilitiesXML);
+            console.log("data capabilities", capabilities);
+          }
+        } catch (err) {
+          console.log("ERROR", err);
+        }
+
+        const bridgeMapLayer = new BridgeTileLayer(projection, capabilitiesUrl, capabilities);
+        setBridgeLayer(bridgeMapLayer);
+
+        const routeMapLayer = new RouteTileLayer(projection, capabilitiesUrl, capabilities);
+        setRouteLayer(routeMapLayer);
+      };
+
+      // Note: the bridge and route detail in redux state is initially undefined
+      // When the queries are done and the data is in redux state, the detail will be either an object or null, not undefined anymore
+      if (selectedBridgeDetail !== undefined && selectedRouteDetail !== undefined) {
+        if ((!routeBridgeIdParam || routeBridgeIdParam.length === 0) && (!routeIdParam || routeIdParam.length === 0)) {
+          // No specific bridge or route to show, so show all the bridge and route data from geoserver
+          getGeoServerTileLayers();
+        } else {
+          // Show the specific bridges and routes from the geojson values in redux state
+          const bridgeMapLayer = new BridgeVectorLayer(routeBridgeIdParam, bridgeGeojson, bridgeIdentifier, routeIdParam, routeBridges);
+          setBridgeLayer(bridgeMapLayer);
+          setBridgeCoords(bridgeMapLayer.bridgeCoords);
+
+          const routeMapLayer = new RouteVectorLayer(routeGeojson);
+          setRouteLayer(routeMapLayer);
+          setRouteExtent(routeMapLayer.routeExtent);
+        }
+      }
+    }
+
+    if (!mapInitialised && !userLayer) {
+      const userMapLayer = new UserVectorLayer();
+      setUserLayer(userMapLayer);
+    }
+  };
+
   const initMap = () => {
-    console.log("initMap grid", backgroundTileGrid, "layer", backgroundLayer);
+    console.log("initMap, mapInitialised", mapInitialised);
 
     // This function is called several times from useEffect when the dependencies change
     // However, the map should only be initialised once, otherwise duplicate OpenLayers viewports are rendered
-    if (!mapInitialised && backgroundTileGrid && backgroundLayer) {
+    if (!mapInitialised && backgroundLayer && bridgeLayer && routeLayer && userLayer) {
+      const backgroundTileGrid = backgroundLayer.getSource().getTileGrid();
+
       // The tile grid and layer for the background map are defined, so create the OpenLayers view and map, and any other related components
       const view = new View({
         zoom: 3,
@@ -119,44 +188,20 @@ const MapContainer = (): JSX.Element => {
         maxZoom: 15,
       });
 
+      // In some cases, there are still duplicate OpenLayers viewports despite the checks above
+      // So remove any existing viewports before creating a new OpenLayers map
+      if (mapRef.current) {
+        while (mapRef.current.firstChild) {
+          mapRef.current.removeChild(mapRef.current.firstChild);
+        }
+      }
+
       const map = new MapOL({
         target: mapRef.current || undefined,
-        layers: [backgroundLayer],
+        layers: [backgroundLayer, routeLayer, bridgeLayer, userLayer],
         view,
         controls: defaults(),
       });
-
-      const getUserPosition = async () => {
-        try {
-          const { Geolocation } = Plugins;
-          const userPosition = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
-          console.log("user position", userPosition);
-
-          // Show a marker for the user position if valid coordinates were obtained
-          if (userPosition.coords && userPosition.coords.longitude > 0 && userPosition.coords.latitude > 0) {
-            const userPoint = new Point(fromLonLat([userPosition.coords.longitude, userPosition.coords.latitude], projection));
-            const userFeature = new Feature({ geometry: userPoint });
-            const userSource = new VectorSource({ features: [userFeature] });
-
-            // Note: to get this to work, the following has been added to location.svg: width='32px' height='32px' fill='#fff'
-            const userStyle = new Style({
-              image: new Icon({
-                src: "assets/location.svg",
-                color: "rgba(0, 102, 204, 1.0)",
-                anchor: [0.5, 1],
-              }),
-            });
-
-            const userLayer = new VectorLayer({ source: userSource, style: userStyle });
-            map.addLayer(userLayer);
-
-            // Zoom to the user position
-            map.getView().animate({ zoom: 12, center: userPoint.getCoordinates() });
-          }
-        } catch (err) {
-          console.log("ERROR", err);
-        }
-      };
 
       if (debug) {
         // For debug purposes, show the mouse coordinates and tile grid overlay
@@ -182,8 +227,42 @@ const MapContainer = (): JSX.Element => {
         setMapInitialised(true);
 
         // Perform any other map operations
-        getUserPosition();
+        if (routeIdParam && routeIdParam.length > 0 && routeExtent) {
+          // Zoom to the route extent
+          map.getView().fit(routeExtent, { duration: 1000 });
+        }
+
+        if (routeBridgeIdParam && routeBridgeIdParam.length > 0 && bridgeCoords) {
+          // Zoom to the bridge coordinates
+          map.getView().animate({ zoom: 12, center: bridgeCoords.getCoordinates() });
+        }
       }, 500);
+    }
+  };
+
+  const initUserPosition = () => {
+    console.log("initUserPosition");
+
+    if (mapInitialised && userLayer) {
+      const getUserPosition = async () => {
+        try {
+          const { Geolocation } = Plugins;
+          const userPosition = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+          console.log("user position", userPosition);
+
+          // Show a marker for the user position if valid coordinates were obtained
+          if (userPosition.coords && userPosition.coords.longitude > 0 && userPosition.coords.latitude > 0) {
+            const userPoint = new Point(fromLonLat([userPosition.coords.longitude, userPosition.coords.latitude], projection));
+            const userFeature = new Feature({ geometry: userPoint });
+            userLayer.getSource().clear();
+            userLayer.getSource().addFeature(userFeature);
+          }
+        } catch (err) {
+          console.log("ERROR", err);
+        }
+      };
+
+      getUserPosition();
     }
   };
 
@@ -191,9 +270,41 @@ const MapContainer = (): JSX.Element => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(initBackgroundMap, []);
 
-  // Initialise the OpenLayers map with the background tile grid and layer as dependencies
+  // Initialise the data layers with bridge and route information as dependencies
+  // This means initDataLayers is called several times but only when the dependencies change
+  useEffect(initDataLayers, [
+    selectedBridgeDetail,
+    selectedRouteDetail,
+    bridgeLayer,
+    routeLayer,
+    userLayer,
+    routeBridgeIdParam,
+    bridgeIdentifier,
+    bridgeGeojson,
+    routeIdParam,
+    routeGeojson,
+    routeBridges,
+    mapInitialised,
+  ]);
+
+  // Initialise the OpenLayers map with the background tile layer and other data layers as dependencies
   // This means initMap is called several times but only when the dependencies change
-  useEffect(initMap, [backgroundTileGrid, backgroundLayer, mapInitialised, debug]);
+  useEffect(initMap, [
+    backgroundLayer,
+    bridgeLayer,
+    routeLayer,
+    userLayer,
+    routeBridgeIdParam,
+    routeIdParam,
+    bridgeCoords,
+    routeExtent,
+    mapInitialised,
+    debug,
+  ]);
+
+  // Initialise the marker showing the user position
+  // This is called once after the map has been initialised
+  useEffect(initUserPosition, [userLayer, mapInitialised]);
 
   return <div className="map" ref={mapRef} />;
 };

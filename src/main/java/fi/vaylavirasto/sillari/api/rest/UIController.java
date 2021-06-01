@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Map;
 
@@ -59,6 +60,38 @@ public class UIController {
         }
     }
 
+    @Operation(summary = "Get geoserver layer xml")
+    @GetMapping
+    @RequestMapping(value = "getgeoserverlayerxml/**", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getGeoserverLayerXml(@RequestParam Map<String, String> params, HttpServletRequest request) {
+        ServiceMetric serviceMetric = new ServiceMetric("UIController", "getGeoserverLayerXml");
+
+        try {
+            String baseUrl = sillariConfig.getGeoserver().getUrl();
+            String proxyHost = sillariConfig.getGeoserver().getProxyHost();
+            Integer proxyPort = sillariConfig.getGeoserver().getProxyPort();
+
+            // In RequestMapping above, '/**' means the request URI will also include any sub-paths after 'getgeoserverlayerxml'
+            // For example, the sub-path is '/gwc/service/wmts' in the URL '/api/ui/getgeoserverlayerxml/gwc/service/wmts?REQUEST=GetCapabilities'
+            // Get the full URL by replacing the first part with the GeoServer URL from the config, but keeping the rest
+            String extraPath = request.getRequestURI().replace("/api/ui/getgeoserverlayerxml/", "");
+            String fullUrl = baseUrl + extraPath;
+
+            try {
+                return this.uiService.getExternalData(fullUrl, params, proxyHost, proxyPort, false);
+            }
+            catch (Exception ex) {
+                String message = "Error getting geoserver data xml";
+                logger.error(message, ex);
+
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("response", message));
+            }
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Get background map image")
     @GetMapping
     @RequestMapping(value = "getbackgroundmapimg", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
@@ -73,6 +106,38 @@ public class UIController {
 
             try {
                 return this.uiService.getExternalData(baseUrl, params, proxyHost, proxyPort, true);
+            }
+            catch (Exception ex) {
+                String message = "Error getting background map image";
+                logger.error(message, ex);
+
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("response", message));
+            }
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Get geoserver layer image")
+    @GetMapping
+    @RequestMapping(value = "getgeoserverlayerimg/**", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getGeoserverLayerImage(@RequestParam Map<String, String> params, HttpServletRequest request){
+        ServiceMetric serviceMetric = new ServiceMetric("UIController", "getGeoserverLayerImage");
+
+        try {
+            String baseUrl = sillariConfig.getGeoserver().getUrl();
+            String proxyHost = sillariConfig.getGeoserver().getProxyHost();
+            Integer proxyPort = sillariConfig.getGeoserver().getProxyPort();
+
+            // In RequestMapping above, '/**' means the request URI will also include any sub-paths after 'getgeoserverlayerimg'
+            // For example, the sub-path is '/gwc/service/wmts' in the URL '/api/ui/getgeoserverlayerimg/gwc/service/wmts?layer=sillari%3Abridge&style=point&tilematrixset=EPSG%3A3067&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fpng&TileMatrix=EPSG%3A3067%3A8&TileCol=111&TileRow=188'
+            // Get the full URL by replacing the first part with the GeoServer URL from the config, but keeping the rest
+            String extraPath = request.getRequestURI().replace("/api/ui/getgeoserverlayerimg/", "");
+            String fullUrl = baseUrl + extraPath;
+
+            try {
+                return this.uiService.getExternalData(fullUrl, params, proxyHost, proxyPort, true);
             }
             catch (Exception ex) {
                 String message = "Error getting background map image";

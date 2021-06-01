@@ -5,8 +5,7 @@ export const routeQuery = (id: number): DocumentNode => gql`
         Route(id: ${id}) {
             id
             name
-            departureTime
-            arrivalTime
+            geojson
             arrivalAddress {
                 id
                 city
@@ -25,6 +24,7 @@ export const routeQuery = (id: number): DocumentNode => gql`
                     id
                     name
                     identifier
+                    geojson
                 }
                 crossingInstruction
             }

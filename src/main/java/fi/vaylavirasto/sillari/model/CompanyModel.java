@@ -8,6 +8,6 @@ import java.util.List;
 public class CompanyModel {
     private long id;
     private String name;
-    private String businessId;
+    private String customer_id;
     private List<PermitModel> permits;
 }

@@ -15,8 +15,6 @@ import ICrossingDetail from "../interfaces/ICrossingDetails";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ICrossingStart from "../interfaces/ICrossingStart";
 import ICrossingUpdate from "../interfaces/ICrossingUpdate";
-import ITransport from "../interfaces/ITransport";
-import ITransportDetail from "../interfaces/ITransportDetail";
 
 interface IStateProps {
   Companies: ICompany[];
@@ -24,7 +22,6 @@ interface IStateProps {
   selectedCompany: number;
   selectedCompanyDetail?: ICompany;
   selectedRouteDetail?: IRoute;
-  selectedTransportDetail?: ITransport;
   selectedBridgeDetail?: IRouteBridge;
   selectedCrossingDetail?: ICrossing;
   selectedPermitDetail?: IPermit;
@@ -66,9 +63,6 @@ const crossingsSlice = createSlice({
     },
     GET_ROUTE: (state, action: PayloadAction<IRouteDetail>) => {
       return { ...state, selectedRouteDetail: action.payload.Route };
-    },
-    GET_TRANSPORT: (state, action: PayloadAction<ITransportDetail>) => {
-      return { ...state, selectedTransportDetail: action.payload.Transport || action.payload.TransportOfRoute };
     },
     GET_BRIDGE: (state, action: PayloadAction<IBridgeDetail>) => {
       return { ...state, selectedBridgeDetail: action.payload.RouteBridge };

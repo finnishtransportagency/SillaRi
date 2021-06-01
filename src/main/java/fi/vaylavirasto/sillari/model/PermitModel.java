@@ -11,6 +11,9 @@ public class PermitModel {
     private String permitNumber;
     private String validStartDate;
     private String validEndDate;
+    private Double totalMass;
     private List<RouteModel> routes;
-    private List<TransportModel> transports;
+    private TransportDimensionsModel transportDimensions;
+    private AxleChartModel axleChart;
+    private List<AxleModel> axles;
 }

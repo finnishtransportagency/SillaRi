@@ -13,9 +13,19 @@ import javax.validation.constraints.NotNull;
 public class SillariConfig {
     @NotNull
     private Wmts wmts;
+    @NotNull
+    private Geoserver geoserver;
 
     @Data
     public static class Wmts {
+        @NotBlank
+        private String url;
+        private String proxyHost;
+        private Integer proxyPort;
+    }
+
+    @Data
+    public static class Geoserver {
         @NotBlank
         private String url;
         private String proxyHost;

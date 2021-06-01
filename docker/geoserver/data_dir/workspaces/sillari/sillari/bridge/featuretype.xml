@@ -1,0 +1,75 @@
+<featureType>
+  <id>FeatureTypeInfoImpl-3e601e5d:178f46d7635:-7ff3</id>
+  <name>bridge</name>
+  <nativeName>bridge</nativeName>
+  <namespace>
+    <id>NamespaceInfoImpl-3e601e5d:178f46d7635:-7ff5</id>
+  </namespace>
+  <title>bridge</title>
+  <keywords>
+    <string>features</string>
+    <string>bridge</string>
+  </keywords>
+  <nativeCRS class="projected">PROJCS[&quot;ETRS89 / TM35FIN(E,N)&quot;, 
+  GEOGCS[&quot;ETRS89&quot;, 
+    DATUM[&quot;European Terrestrial Reference System 1989&quot;, 
+      SPHEROID[&quot;GRS 1980&quot;, 6378137.0, 298.257222101, AUTHORITY[&quot;EPSG&quot;,&quot;7019&quot;]], 
+      TOWGS84[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+      AUTHORITY[&quot;EPSG&quot;,&quot;6258&quot;]], 
+    PRIMEM[&quot;Greenwich&quot;, 0.0, AUTHORITY[&quot;EPSG&quot;,&quot;8901&quot;]], 
+    UNIT[&quot;degree&quot;, 0.017453292519943295], 
+    AXIS[&quot;Geodetic longitude&quot;, EAST], 
+    AXIS[&quot;Geodetic latitude&quot;, NORTH], 
+    AUTHORITY[&quot;EPSG&quot;,&quot;4258&quot;]], 
+  PROJECTION[&quot;Transverse_Mercator&quot;], 
+  PARAMETER[&quot;central_meridian&quot;, 27.0], 
+  PARAMETER[&quot;latitude_of_origin&quot;, 0.0], 
+  PARAMETER[&quot;scale_factor&quot;, 0.9996], 
+  PARAMETER[&quot;false_easting&quot;, 500000.0], 
+  PARAMETER[&quot;false_northing&quot;, 0.0], 
+  UNIT[&quot;m&quot;, 1.0], 
+  AXIS[&quot;Easting&quot;, EAST], 
+  AXIS[&quot;Northing&quot;, NORTH], 
+  AUTHORITY[&quot;EPSG&quot;,&quot;3067&quot;]]</nativeCRS>
+  <srs>EPSG:3067</srs>
+  <nativeBoundingBox>
+    <minx>-548576.0</minx>
+    <maxx>1548576.0</maxx>
+    <miny>6291456.0</miny>
+    <maxy>8388608.0</maxy>
+    <crs class="projected">EPSG:3067</crs>
+  </nativeBoundingBox>
+  <latLonBoundingBox>
+    <minx>-6.381538627062841</minx>
+    <maxx>60.38153862706284</maxx>
+    <miny>55.61796450968175</miny>
+    <maxy>75.58257023417977</maxy>
+    <crs>EPSG:4326</crs>
+  </latLonBoundingBox>
+  <projectionPolicy>FORCE_DECLARED</projectionPolicy>
+  <enabled>true</enabled>
+  <metadata>
+    <entry key="elevation">
+      <dimensionInfo>
+        <enabled>false</enabled>
+      </dimensionInfo>
+    </entry>
+    <entry key="time">
+      <dimensionInfo>
+        <enabled>false</enabled>
+      </dimensionInfo>
+    </entry>
+    <entry key="cachingEnabled">false</entry>
+  </metadata>
+  <store class="dataStore">
+    <id>DataStoreInfoImpl-3e601e5d:178f46d7635:-7ff4</id>
+  </store>
+  <serviceConfiguration>false</serviceConfiguration>
+  <maxFeatures>0</maxFeatures>
+  <numDecimals>0</numDecimals>
+  <padWithZeros>false</padWithZeros>
+  <forcedDecimal>false</forcedDecimal>
+  <overridingServiceSRS>false</overridingServiceSRS>
+  <skipNumberMatched>false</skipNumberMatched>
+  <circularArcPresent>false</circularArcPresent>
+</featureType>
