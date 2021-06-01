@@ -2,7 +2,6 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.PermitMapper;
 import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.SupervisionMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
