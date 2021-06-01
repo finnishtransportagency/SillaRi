@@ -49,10 +49,12 @@ type Bridge {
     name: String
     identifier: String
     municipality: String
+    geojson: String
 }
 
 type RouteBridge {
     id: ID!
+    routeId: Int!
     bridge: Bridge!
     crossingInstruction: String
 }
@@ -88,8 +90,7 @@ type Route {
     name: String
     departureAddress: Address
     arrivalAddress: Address
-    departureTime: String
-    arrivalTime: String
+    geojson: String
     routeBridges: [RouteBridge]
     crossings: [Crossing]
 }

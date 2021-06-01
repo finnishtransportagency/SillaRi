@@ -1,0 +1,17 @@
+<layer>
+  <name>bridge</name>
+  <id>LayerInfoImpl-3e601e5d:178f46d7635:-7ff2</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl-3e601e5d:178f46d7635:-8000</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl-3e601e5d:178f46d7635:-7ff3</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2021-04-21 13:13:28.891 UTC</dateCreated>
+  <dateModified>2021-04-30 13:45:44.618 UTC</dateModified>
+</layer>

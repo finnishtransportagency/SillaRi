@@ -26,8 +26,6 @@ export const permitQuery = (id: number): DocumentNode => gql`
             }
             routes {
                 id
-                departureTime
-                arrivalTime
                 arrivalAddress {
                     id
                     city

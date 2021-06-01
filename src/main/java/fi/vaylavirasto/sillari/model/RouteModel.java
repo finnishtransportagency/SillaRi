@@ -6,13 +6,12 @@ import java.util.List;
 
 @Data
 public class RouteModel {
-    private long id;
+    private Integer id;
     private long permitId;
     private String name;
     private AddressModel departureAddress;
     private AddressModel arrivalAddress;
-    private String departureTime;
-    private String arrivalTime;
+    private String geojson;
     private List<RouteBridgeModel> routeBridges;
     private List<TransportDimensionsModel> transportDimensions;
     private List<CrossingModel> crossings;
