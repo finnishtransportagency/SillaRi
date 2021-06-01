@@ -1,52 +1,51 @@
 {
-  "number": "04/2355/2021",
-  "lastModified": "2019-02-05 15:36:47",
-  "permitVersion": 19,
-  "validFrom": "2017-01-19 11:23:18",
-  "validTo": "2022-08-05 05:37:26",
+  "number": "1234/2021",
+  "lastModifiedDate": "2021-05-26T08:02:36Z",
+  "version": 1,
+  "validFrom": "2021-05-26T00:00:00Z",
+  "validTo": "2021-11-30T00:00:00Z",
   "customer": {
-    "name": "Vetokonepalvelu Oy",
-    "identifier": "fake_data"
+    "name": "Yritys Y",
+    "identifier": "1234567-8"
   },
   "vehicles": [
     {
-      "type": "fake_data",
-      "identifier": "fake_data"
+      "type": "kuorma-auto",
+      "identifier": "ABC-123"
     }
   ],
   "axleChart": {
     "axles": [
       {
-        "axleNumber": 78,
-        "weight": 64.40,
-        "distance": 70.21,
-        "maxDistanceToNext": 61.57
+        "axleNumber": 1,
+        "weight": 9.1,
+        "distanceToNext": 8.5,
+        "maxDistanceToNext": 10.5
       }
     ]
   },
-  "transportTotalMass": 3.38,
+  "transportTotalMass": 456.7,
   "transportDimensions": {
-    "width": 57.18,
-    "legth": 59.90,
-    "height": 38.81
+    "width": 3.45,
+    "length": 23.4,
+    "height": 4.5
   },
-  "additionalDetails": "fake_data",
+  "additionalDetails": "Muita huomioita",
   "routes": [
     {
-      "id": 92,
-      "name": "fake_data",
-      "order": 21,
-      "transportCount": 97,
-      "alternativeRoute": true,
+      "id": 12345,
+      "name": "Kotka - Tampere",
+      "order": 1,
+      "transportCount": 3,
+      "alternativeRoute": false,
       "bridges": [
         {
-          "oid": "fake_data",
-          "identifier": "fake_data",
-          "name": "fake_data",
-          "roadAddress": "fake_data",
-          "transportNumber": 76,
-          "supervisorName": "fake_data",
-          "additionalInfo": "fake_data"
+          "oid": "1.2.246.578.1.15.400025",
+          "identifier": "H-25",
+          "name": "Kaivannon silta",
+          "roadAddress": "00012 204 0 03788",
+          "supervisorName": "Vilja Valvoja",
+          "additionalInfo": "Ajoneuvon keskilinjan oltava 4,25 metrin etäisyydellä idänpuoleisesta kaiteesta."
         }
       ]
     }
