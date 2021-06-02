@@ -6,6 +6,7 @@ import fi.vaylavirasto.sillari.model.VehicleMapper;
 import fi.vaylavirasto.sillari.model.VehicleModel;
 import fi.vaylavirasto.sillari.repositories.PermitRepository;
 import fi.vaylavirasto.sillari.repositories.AxleRepository;
+import fi.vaylavirasto.sillari.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +30,8 @@ public class PermitService {
             permitModel.setAxles(axles);
         }
         if (permitModel != null) {
-            List<VehicleModel> axles = axleRepository.getAxlesOfChart(Long.valueOf(permitModel.getAxleChart().getId()).intValue());
-            permitModel.setAxles(axles);
+            List<VehicleModel> vehicles = vehicleRepository.getVehiclesOfPermit(Long.valueOf(permitModel.getId()).intValue());
+            permitModel.setVehicles(vehicles);
         }
         return permitModel;
     }

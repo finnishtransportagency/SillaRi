@@ -16,4 +16,5 @@ public class PermitModel {
     private TransportDimensionsModel transportDimensions;
     private AxleChartModel axleChart;
     private List<AxleModel> axles;
+    private List<VehicleModel> vehicles;
 }

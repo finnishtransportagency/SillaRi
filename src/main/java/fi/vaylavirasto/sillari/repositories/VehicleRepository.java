@@ -20,7 +20,7 @@ public class VehicleRepository {
     
     public List<VehicleModel> getVehiclesOfPermit(Integer permitID) {
         return dsl.select().from(VehicleMapper.vehicle)
-                .where(VehicleMapper.vehicle..eq(vehicleChartID))
+                .where(VehicleMapper.vehicle.PERMIT_ID.eq(permitID))
                 .fetch(new VehicleMapper());
     }
 }
