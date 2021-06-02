@@ -7,6 +7,7 @@ import fi.vaylavirasto.sillari.repositories.PermitRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,8 +15,9 @@ public class LeluService {
     private static final Logger logger = LogManager.getLogger();
     private final LeluDTOMapper dtoMapper = Mappers.getMapper(LeluDTOMapper.class);
 
-    private final PermitRepository permitRepository;
+    private PermitRepository permitRepository;
 
+    @Autowired
     public LeluService(PermitRepository permitRepository) {
         this.permitRepository = permitRepository;
     }
@@ -23,7 +25,7 @@ public class LeluService {
     public void createOrUpdatePermit(LeluPermitDTO permitDTO) {
         // TODO
         logger.debug(permitDTO);
-        PermitModel permitModel = dtoMapper.leluPermitToPermit(permitDTO);
+        PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
         logger.debug(permitModel);
     }
 
