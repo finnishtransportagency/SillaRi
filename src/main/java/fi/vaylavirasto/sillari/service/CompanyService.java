@@ -25,7 +25,7 @@ public class CompanyService {
     public List<CompanyModel> getCompanies(Integer limit) {
         List<CompanyModel> companies = companyRepository.getAllCompanies(limit);
         for(CompanyModel companyModel : companies) {
-            companyModel.setPermits(permitRepository.getCompanysPermits(Long.valueOf(companyModel.getId()).intValue()));
+            companyModel.setPermits(permitRepository.getCompanysPermits(companyModel.getId()));
             for(PermitModel permitModel : companyModel.getPermits()) {
                 permitModel.setRoutes(routeRepository.getRoutes(permitModel.getId()));
                 for(RouteModel routeModel : permitModel.getRoutes()) {
@@ -41,7 +41,7 @@ public class CompanyService {
         if (limit >= 0) {
             List<CompanyModel> companyList = companyRepository.getAllCompanies(limit);
             for (CompanyModel companyModel : companyList) {
-                companyModel.setPermits(permitRepository.getCompanysPermits(Long.valueOf(companyModel.getId()).intValue()));
+                companyModel.setPermits(permitRepository.getCompanysPermits(companyModel.getId()));
             }
             return companyList;
         } else {

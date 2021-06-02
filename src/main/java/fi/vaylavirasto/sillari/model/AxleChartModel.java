@@ -5,7 +5,7 @@ import java.util.List;
 
 @Data
 public class AxleChartModel {
-    private long id;
-    private long permitId;
+    private Integer id;
+    private Integer permitId;
     private List<AxleModel> axles;
 }
