@@ -23,6 +23,12 @@ export const permitQuery = (id: number): DocumentNode => gql`
                 width
                 length
             }
+            vehicles {
+                id
+                permitId
+                type
+                identifier
+            }
             routes {
                 id
                 arrivalAddress {
