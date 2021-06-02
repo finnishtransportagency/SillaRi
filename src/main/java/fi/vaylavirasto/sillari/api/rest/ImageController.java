@@ -21,14 +21,14 @@ import java.util.Base64;
 public class ImageController {
     @Autowired
     AWSS3Client awss3Client;
-    @Operation(summary = "Get all transports")
-    @GetMapping
-    @RequestMapping(value = "get", method = RequestMethod.GET)
+
+    @Operation(summary = "Get image")
+    @GetMapping("/get")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public void getImage(HttpServletResponse response, @RequestParam String objectKey) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "getImage");
         try {
-            byte image[] = awss3Client.download(new String(Base64.getDecoder().decode(objectKey)));
+            byte[] image = awss3Client.download(new String(Base64.getDecoder().decode(objectKey)));
             response.setContentType("image/jpeg");
             OutputStream out = response.getOutputStream();
             ByteArrayInputStream in = new ByteArrayInputStream(image);
@@ -39,7 +39,9 @@ public class ImageController {
             serviceMetric.end();
         }
     }
-    @RequestMapping(value = "keepalive", method = RequestMethod.GET)
+
+    @Operation(summary = "Keep alive")
+    @GetMapping("/keepalive")
     public String keepalive() {
         return "Alive";
     }

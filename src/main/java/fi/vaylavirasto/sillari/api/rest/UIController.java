@@ -35,8 +35,7 @@ public class UIController {
     private SillariConfig sillariConfig;
 
     @Operation(summary = "Get background map xml")
-    @GetMapping
-    @RequestMapping(value = "getbackgroundmapxml", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping(value = "/getbackgroundmapxml", produces = MediaType.APPLICATION_XML_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public ResponseEntity<?> getBackgroundMapXml(@RequestParam Map<String, String> params) {
         ServiceMetric serviceMetric = new ServiceMetric("UIController", "getBackgroundMapXml");
@@ -61,8 +60,7 @@ public class UIController {
     }
 
     @Operation(summary = "Get geoserver layer xml")
-    @GetMapping
-    @RequestMapping(value = "getgeoserverlayerxml/**", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping(value = "/getgeoserverlayerxml/**", produces = MediaType.APPLICATION_XML_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public ResponseEntity<?> getGeoserverLayerXml(@RequestParam Map<String, String> params, HttpServletRequest request) {
         ServiceMetric serviceMetric = new ServiceMetric("UIController", "getGeoserverLayerXml");
@@ -93,8 +91,7 @@ public class UIController {
     }
 
     @Operation(summary = "Get background map image")
-    @GetMapping
-    @RequestMapping(value = "getbackgroundmapimg", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/getbackgroundmapimg", produces = MediaType.IMAGE_PNG_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public ResponseEntity<?> getBackgroundMapImage(@RequestParam Map<String, String> params){
         ServiceMetric serviceMetric = new ServiceMetric("UIController", "getBackgroundMapImage");
@@ -119,8 +116,7 @@ public class UIController {
     }
 
     @Operation(summary = "Get geoserver layer image")
-    @GetMapping
-    @RequestMapping(value = "getgeoserverlayerimg/**", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/getgeoserverlayerimg/**", produces = MediaType.IMAGE_PNG_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public ResponseEntity<?> getGeoserverLayerImage(@RequestParam Map<String, String> params, HttpServletRequest request){
         ServiceMetric serviceMetric = new ServiceMetric("UIController", "getGeoserverLayerImage");
