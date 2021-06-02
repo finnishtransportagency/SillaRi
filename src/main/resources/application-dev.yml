@@ -48,3 +48,18 @@ management:
 endpoints:
   prometheus:
     enabled: true
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operationsSorter: alpha
+    tagsSorter: alpha
+  show-actuator: true
+  version: 3.0
+  api-docs:
+    groups:
+      enabled: true
+  group-configs:
+    - group: api
+      packagesToScan: fi.vaylavirasto.sillari.api
