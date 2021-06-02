@@ -7,13 +7,17 @@ import java.util.List;
 @Data
 public class RouteModel {
     private Integer id;
-    private long leluId;
-    private long permitId;
+    private Integer permitId;
+    private Long leluId;
     private String name;
-    private AddressModel departureAddress;
-    private AddressModel arrivalAddress;
+    private Integer order;
+    private Integer transportCount;
+    private Boolean alternativeRoute;
     private String geojson;
     private List<RouteBridgeModel> routeBridges;
-    private List<TransportDimensionsModel> transportDimensions;
     private List<CrossingModel> crossings;
+
+    // TODO Not from Lelu, how do we get these?
+    private AddressModel departureAddress;
+    private AddressModel arrivalAddress;
 }

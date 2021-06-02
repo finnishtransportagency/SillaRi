@@ -22,8 +22,9 @@ public class RouteMapper  implements RecordMapper<Record, RouteModel> {
         routeModel.setPermitId(record.get(route.PERMIT_ID));
         routeModel.setLeluId(record.get(route.LELU_ID));
         routeModel.setName(record.get(route.NAME));
+        routeModel.setOrder(record.get(route.ORDER));
+        routeModel.setTransportCount(record.get(route.TRANSPORT_COUNT));
         routeModel.setRouteBridges(new ArrayList<>());
-        routeModel.setTransportDimensions(new ArrayList<>());
         routeModel.setCrossings(new ArrayList<>());
 
         AddressModel aa = new AddressModel();
