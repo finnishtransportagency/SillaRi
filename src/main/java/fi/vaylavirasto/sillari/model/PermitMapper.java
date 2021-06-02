@@ -26,8 +26,9 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         permitModel.setLeluLastModifiedDate(record.get(permit.LELU_LAST_MODIFIED_DATE));
         permitModel.setValidStartDate(record.get(permit.VALID_START_DATE));
         permitModel.setValidEndDate(record.get(permit.VALID_END_DATE));
-        BigDecimal totalMass = record.get(permit.TOTAL_MASS);
-        permitModel.setTotalMass(totalMass != null ? totalMass.doubleValue() : null);
+        BigDecimal totalMass = record.get(permit.TRANSPORT_TOTAL_MASS);
+        permitModel.setTransportTotalMass(totalMass != null ? totalMass.doubleValue() : null);
+        permitModel.setAdditionalDetails(record.get(permit.ADDITIONAL_DETAILS));
         permitModel.setRoutes(new ArrayList<>());
 
         TransportDimensionsMapper transportDimensionsMapper = new TransportDimensionsMapper();

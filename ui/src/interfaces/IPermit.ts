@@ -13,5 +13,5 @@ export default interface IPermit {
   transportDimensions: ITransportDimensions;
   vehicles: IVehicle[];
   axles: IAxle[];
-  totalMass: number;
+  transportTotalMass: number;
 }

@@ -13,4 +13,5 @@ update sillari.permit set lelu_last_modified_date = '2021-01-01 08:00:00 +03:00'
 update sillari.permit set valid_start_date = '2021-01-01 00:00:00 +03:00';
 update sillari.permit set valid_end_date = '2022-01-01 00:00:00 +03:00';
 
+alter table sillari.permit rename column total_mass to transport_total_mass;
 alter table sillari.company rename column customer_id to business_id;

@@ -30,7 +30,7 @@ type Permit {
     permitNumber: String
     validStartDate: String
     validEndDate: String
-    totalMass: Float
+    transportTotalMass: Float
     transportDimensions: TransportDimensions
     routes: [Route]
     axles: [Axle]
