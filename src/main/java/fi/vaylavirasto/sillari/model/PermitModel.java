@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class PermitModel {
     private OffsetDateTime leluLastModifiedDate;
     private OffsetDateTime validStartDate;
     private OffsetDateTime validEndDate;
-    private Double transportTotalMass;
+    private BigDecimal transportTotalMass;
     private TransportDimensionsModel transportDimensions;
     private String additionalDetails;
     private List<VehicleModel> vehicles;
