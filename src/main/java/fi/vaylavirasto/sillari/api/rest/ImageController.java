@@ -39,4 +39,8 @@ public class ImageController {
             serviceMetric.end();
         }
     }
+    @RequestMapping(value = "keepalive", method = RequestMethod.GET)
+    public String keepalive() {
+        return "Alive";
+    }
 }
