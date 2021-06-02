@@ -1,9 +1,6 @@
 package fi.vaylavirasto.sillari.api.lelu;
 
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.model.VehicleModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.util.DateMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -40,6 +37,24 @@ public interface LeluDTOMapper {
 
     @Mappings({
             @Mapping(target="id", ignore = true),
+            @Mapping(target="permitId", ignore = true)
+    })
+    AxleChartModel leluAxleChartToAxleChart(LeluAxleChartDTO dto);
+
+    @Mappings({
+            @Mapping(target="id", ignore = true),
+            @Mapping(target="axleChartId", ignore = true)
+    })
+    AxleModel leluAxleToAxle(LeluAxleDTO dto);
+
+    @Mappings({
+            @Mapping(target="id", ignore = true),
+            @Mapping(target="permitId", ignore = true)
+    })
+    TransportDimensionsModel leluTransportDimensionsToTransportDimensions(LeluTransportDimensionsDTO dto);
+
+    @Mappings({
+            @Mapping(target="id", ignore = true),
             @Mapping(target="permitId", ignore = true),
             @Mapping(target="leluId", source="dto.id"),
             @Mapping(target="geojson", ignore = true),
@@ -49,5 +64,16 @@ public interface LeluDTOMapper {
             @Mapping(target="arrivalAddress", ignore = true)
     })
     RouteModel leluRouteToRoute(LeluRouteDTO dto);
+
+    @Mappings({
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "routeId", ignore = true),
+            @Mapping(target = "bridge.oid", source = "dto.oid"),
+            @Mapping(target = "bridge.identifier", source = "dto.identifier"),
+            @Mapping(target = "bridge.name", source = "dto.name"),
+            @Mapping(target = "bridge.roadAddress", source = "dto.roadAddress"),
+            @Mapping(target = "crossingInstruction", source = "dto.additionalInfo")
+    })
+    RouteBridgeModel leluBridgeToRouteBridge(LeluBridgeDTO dto);
 
 }

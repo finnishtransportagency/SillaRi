@@ -7,7 +7,7 @@ public class AxleModel {
     private long id;
     private long axleChartId;
     private Integer axleNumber;
-    private Integer weight;
+    private Double weight;
     private Double distanceToNext;
     private Double maxDistanceToNext;
 }

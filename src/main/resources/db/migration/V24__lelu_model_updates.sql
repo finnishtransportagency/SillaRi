@@ -17,3 +17,6 @@ update sillari.permit set valid_end_date = '2022-01-01 00:00:00 +03:00';
 
 alter table sillari.permit rename column total_mass to transport_total_mass;
 alter table sillari.company rename column customer_id to business_id;
+
+alter table sillari.bridge add column if not exists road_address text;
+alter table sillari.axle alter column weight type numeric;

@@ -15,8 +15,10 @@ public class BridgeMapper implements RecordMapper<Record, BridgeModel> {
     public BridgeModel map(Record record) {
         BridgeModel model = new BridgeModel();
         model.setId(record.get(bridge.ID));
-        model.setName(record.get(bridge.NAME));
+        model.setOid(record.get(bridge.OID));
         model.setIdentifier(record.get(bridge.IDENTIFIER));
+        model.setName(record.get(bridge.NAME));
+        model.setRoadAddress(record.get(bridge.ROAD_ADDRESS));
         model.setMunicipality(record.get(bridge.MUNICIPALITY));
         model.setRouteBridges(new ArrayList<>());
         return model;

@@ -17,7 +17,8 @@ public class AxleMapper implements RecordMapper<Record, AxleModel> {
         axleModel.setId(record.get(axle.ID));
         axleModel.setAxleChartId(record.get(axle.AXLE_CHART_ID));
         axleModel.setAxleNumber(record.get(axle.AXLE_NUMBER));
-        axleModel.setWeight(record.get(axle.WEIGHT));
+        BigDecimal weight = record.get(axle.WEIGHT);
+        axleModel.setWeight(weight != null ? weight.doubleValue() : null);
         BigDecimal distanceToNext = record.get(axle.DISTANCE_TO_NEXT);
         axleModel.setDistanceToNext(distanceToNext != null ? distanceToNext.doubleValue() : null);
         BigDecimal maxDistanceToNext = record.get(axle.MAX_DISTANCE_TO_NEXT);
