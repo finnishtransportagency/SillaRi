@@ -23,17 +23,25 @@ public class LeluService {
     }
 
     public void createOrUpdatePermit(LeluPermitDTO permitDTO) {
-        // TODO
         logger.debug(permitDTO);
         PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
         logger.debug(permitModel);
+
+        Integer permitId = permitRepository.getPermitIdByPermitNumber(permitModel.getPermitNumber());
+        logger.debug(permitId);
+
+        if (permitId != null) {
+            updatePermit(permitId, permitModel);
+        } else {
+            createPermit(permitModel);
+        }
     }
 
     private void createPermit(PermitModel permitModel) {
 
     }
 
-    private void updatePermit(PermitModel permitModel) {
+    private void updatePermit(Integer permitId, PermitModel permitModel) {
 
     }
 

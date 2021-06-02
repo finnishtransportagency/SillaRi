@@ -5,6 +5,7 @@ import fi.vaylavirasto.sillari.model.PermitModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
+import org.jooq.Record1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +26,7 @@ public class PermitRepository {
                 .where(PermitMapper.permit.COMPANY_ID.eq(companyId))
                 .fetch(new PermitMapper());
     }
+
     public PermitModel getPermit(Integer id) {
         return dsl.select().from(PermitMapper.permit)
                 .leftJoin(PermitMapper.axleChart)
@@ -33,6 +35,13 @@ public class PermitRepository {
                 .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
                 .where(PermitMapper.permit.ID.eq(id))
                 .fetchOne(new PermitMapper());
+    }
+
+    public Integer getPermitIdByPermitNumber(String permitNumber) {
+        Record1<Integer> record = dsl.select(PermitMapper.permit.ID).from(PermitMapper.permit)
+                .where(PermitMapper.permit.PERMIT_NUMBER.eq(permitNumber))
+                .fetchOne();
+        return record != null ? record.value1() : null;
     }
 
 }
