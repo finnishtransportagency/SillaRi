@@ -10,7 +10,7 @@ interface RouteTransportProps {
 const RouteTransport = ({ selectedPermit }: RouteTransportProps): JSX.Element | null => {
   const { t } = useTranslation();
 
-  const { transportDimensions, totalMass, vehicles = [], axles = [] } = selectedPermit || {};
+  const { transportDimensions, transportTotalMass, vehicles = [], axles = [] } = selectedPermit || {};
 
   return !selectedPermit ? null : (
     <>
@@ -57,10 +57,10 @@ const RouteTransport = ({ selectedPermit }: RouteTransportProps): JSX.Element | 
         </IonRow>
         <IonRow>
           <IonCol>
-            <IonText>{t("route.transportInfo.totalMass")}</IonText>
+            <IonText>{t("route.transportInfo.transportTotalMass")}</IonText>
           </IonCol>
           <IonCol>
-            <IonText>{`${totalMass} t`}</IonText>
+            <IonText>{`${transportTotalMass} t`}</IonText>
           </IonCol>
         </IonRow>
         <IonRow>

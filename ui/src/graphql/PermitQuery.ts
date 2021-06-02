@@ -8,7 +8,7 @@ export const permitQuery = (id: number): DocumentNode => gql`
             permitNumber
             validStartDate
             validEndDate
-            totalMass
+            transportTotalMass
             axles {
                 id
                 axleNumber
