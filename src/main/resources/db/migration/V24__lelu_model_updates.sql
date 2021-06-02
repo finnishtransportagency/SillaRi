@@ -1,4 +1,6 @@
-alter table sillari.route add column if not exists lelu_id int;
+alter table sillari.route add column if not exists lelu_id bigint;
+alter table sillari.route add column if not exists "order" integer;
+alter table sillari.route add column if not exists transport_count integer;
 
 alter table sillari.permit drop column if exists valid_start_date;
 alter table sillari.permit drop column if exists valid_end_date;
