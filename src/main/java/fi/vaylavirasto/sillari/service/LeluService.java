@@ -58,8 +58,7 @@ public class LeluService {
         // TODO
         // Insert new permit and all child records
 
-        /* Insert permit data, transport dimensions, vehicle, axle chart and axles done, missing:
-        - routes
+        /* Insert permit data, transport dimensions, vehicle, axle chart, axles, routes done, missing:
         - addresses (not yet in lelu model)
         - route bridges
         */

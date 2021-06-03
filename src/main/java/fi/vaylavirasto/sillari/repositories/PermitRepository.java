@@ -76,6 +76,7 @@ public class PermitRepository {
             insertTransportDimensions(ctx, permitModel);
             insertVehicles(ctx, permitModel);
             insertAxleChart(ctx, permitModel);
+            insertRoutes(ctx, permitModel);
 
             return permitId;
         });
@@ -147,6 +148,35 @@ public class PermitRepository {
                             axle.getDistanceToNext(),
                             axle.getMaxDistanceToNext())
                     .execute();
+        }
+    }
+
+    private void insertRoutes(DSLContext ctx, PermitModel permitModel) {
+        List<RouteModel> routes = permitModel.getRoutes();
+
+        for (RouteModel route : routes) {
+            route.setPermitId(permitModel.getId());
+
+            Record1<Integer> routeIdResult = ctx.insertInto(PermitMapper.route,
+                    PermitMapper.route.PERMIT_ID,
+                    PermitMapper.route.LELU_ID,
+                    PermitMapper.route.NAME,
+                    PermitMapper.route.ORDER_NUMBER,
+                    PermitMapper.route.TRANSPORT_COUNT
+                    // TODO address ids
+            ).values(
+                    route.getPermitId(),
+                    route.getLeluId(),
+                    route.getName(),
+                    route.getOrderNumber(),
+                    route.getTransportCount())
+                    .returningResult(PermitMapper.route.ID)
+                    .fetchOne();
+
+            Integer routeID = routeIdResult != null ? routeIdResult.value1() : null;
+            route.setId(routeID);
+
+            // TODO route bridges
         }
     }
 
