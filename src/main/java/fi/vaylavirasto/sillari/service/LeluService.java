@@ -2,7 +2,9 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.api.lelu.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
+import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.PermitModel;
+import fi.vaylavirasto.sillari.repositories.CompanyRepository;
 import fi.vaylavirasto.sillari.repositories.PermitRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,29 +18,40 @@ public class LeluService {
     private final LeluDTOMapper dtoMapper = Mappers.getMapper(LeluDTOMapper.class);
 
     private PermitRepository permitRepository;
+    private CompanyRepository companyRepository;
 
     @Autowired
-    public LeluService(PermitRepository permitRepository) {
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository) {
         this.permitRepository = permitRepository;
+        this.companyRepository = companyRepository;
     }
 
     public void createOrUpdatePermit(LeluPermitDTO permitDTO) {
-        logger.debug(permitDTO);
         PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
-        logger.debug(permitModel);
+        logger.debug("Permit mapped from LeLu model: {}", permitModel);
+
+        // Fetch company from DB with business ID. If not found, insert new company.
+        Integer companyId = getCompanyIdByBusinessId(permitModel.getCompany());
+        permitModel.setCompanyId(companyId);
 
         Integer permitId = permitRepository.getPermitIdByPermitNumber(permitModel.getPermitNumber());
-        logger.debug(permitId);
-
-        // TODO fetch companyId by customer business ID
-        // If company is found, set companyId to permit
-        // If not, create new company with business ID and name
 
         if (permitId != null) {
+            logger.debug("Permit with id {} found, update", permitId);
             updatePermit(permitId, permitModel);
         } else {
+            logger.debug("Permit not found with id {}, create new", permitId);
             createPermit(permitModel);
         }
+    }
+
+    private Integer getCompanyIdByBusinessId(CompanyModel companyModel) {
+        Integer companyId = companyRepository.getCompanyIdByBusinessId(companyModel.getBusinessId());
+        if (companyId == null) {
+            logger.debug("Create new company with business ID {}", companyModel.getBusinessId());
+            companyId = companyRepository.createCompany(companyModel);
+        }
+        return companyId;
     }
 
     private void createPermit(PermitModel permitModel) {

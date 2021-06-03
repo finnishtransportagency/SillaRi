@@ -25,5 +25,4 @@ public class PermitModel {
     // For mapping purposes only
     private CompanyModel company;
     private List<AxleModel> axles;
-    private List<VehicleModel> vehicles;
 }
