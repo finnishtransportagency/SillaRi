@@ -25,8 +25,8 @@ public class LeluController {
 
     @RequestMapping(value = "/testGet", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
-    public String getTest() {
-        logger.debug("Hello Lelu testGet!");
+    public String getTest(@RequestHeader(value="accept-version",required = false) String version) {
+        logger.debug("Hello Lelu testGet! " + version);
         return "Hello LeLu, this is SillaRi!";
     }
 
