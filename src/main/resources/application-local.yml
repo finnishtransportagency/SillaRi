@@ -51,8 +51,10 @@ endpoints:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+    disable-swagger-default-url: true
     display-request-duration: true
-    groups-order: DESC
+    operationsSorter: alpha
+    tagsSorter: alpha
   show-actuator: true
   version: 3.0
   api-docs:
