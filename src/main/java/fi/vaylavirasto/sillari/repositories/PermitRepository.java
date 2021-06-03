@@ -2,11 +2,12 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.PermitMapper;
 import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.Sequences;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
+import org.jooq.exception.DataAccessException;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -45,14 +46,11 @@ public class PermitRepository {
         return record != null ? record.value1() : null;
     }
 
-    public Integer createPermit(PermitModel permitModel) {
-        Integer[] id = new Integer[1];
+    public Integer createPermit(PermitModel permitModel) throws DataAccessException {
+        return dsl.transactionResult(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
 
-        dsl.transaction(configuration -> {
-            id[0] = dsl.nextval(Sequences.AUTHORIZATION_ID_SEQ).intValue();
-
-            configuration.dsl().insertInto(PermitMapper.permit,
-                    PermitMapper.permit.ID,
+            Record1<Integer> permitId = ctx.insertInto(PermitMapper.permit,
                     PermitMapper.permit.COMPANY_ID,
                     PermitMapper.permit.PERMIT_NUMBER,
                     PermitMapper.permit.LELU_VERSION,
@@ -61,20 +59,19 @@ public class PermitRepository {
                     PermitMapper.permit.VALID_END_DATE,
                     PermitMapper.permit.TRANSPORT_TOTAL_MASS,
                     PermitMapper.permit.ADDITIONAL_DETAILS
-            )
-                    .values(id[0],
-                            1, // FIXME!
-                            permitModel.getPermitNumber(),
-                            permitModel.getLeluVersion(),
-                            permitModel.getLeluLastModifiedDate(),
-                            permitModel.getValidStartDate(),
-                            permitModel.getValidEndDate(),
-                            permitModel.getTransportTotalMass(),
-                            permitModel.getAdditionalDetails())
-                    .execute();
-        });
+            ).values(1, // FIXME!
+                    permitModel.getPermitNumber(),
+                    permitModel.getLeluVersion(),
+                    permitModel.getLeluLastModifiedDate(),
+                    permitModel.getValidStartDate(),
+                    permitModel.getValidEndDate(),
+                    permitModel.getTransportTotalMass(),
+                    permitModel.getAdditionalDetails())
+                    .returningResult(PermitMapper.permit.ID)
+                    .fetchOne(); // Execute and return zero or one record
 
-        return id[0];
+            return permitId != null ? permitId.value1() : null;
+        });
     }
 
     public Integer updatePermit(PermitModel permitModel) {
