@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.PermitMapper;
 import fi.vaylavirasto.sillari.model.PermitModel;
+import fi.vaylavirasto.sillari.model.TransportDimensionsModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -50,7 +51,7 @@ public class PermitRepository {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
-            Record1<Integer> permitId = ctx.insertInto(PermitMapper.permit,
+            Record1<Integer> permitIdResult = ctx.insertInto(PermitMapper.permit,
                     PermitMapper.permit.COMPANY_ID,
                     PermitMapper.permit.PERMIT_NUMBER,
                     PermitMapper.permit.LELU_VERSION,
@@ -70,8 +71,30 @@ public class PermitRepository {
                     .returningResult(PermitMapper.permit.ID)
                     .fetchOne(); // Execute and return zero or one record
 
-            return permitId != null ? permitId.value1() : null;
+            Integer permitId = permitIdResult != null ? permitIdResult.value1() : null;
+            permitModel.setId(permitId);
+
+            insertTransportDimensions(ctx, permitModel);
+
+            return permitId;
         });
+    }
+
+    private void insertTransportDimensions(DSLContext ctx, PermitModel permitModel) {
+        TransportDimensionsModel transportDimensionsModel = permitModel.getTransportDimensions();
+        transportDimensionsModel.setPermitId(permitModel.getId());
+
+        ctx.insertInto(PermitMapper.transportDimensions,
+                PermitMapper.transportDimensions.PERMIT_ID,
+                PermitMapper.transportDimensions.HEIGHT,
+                PermitMapper.transportDimensions.WIDTH,
+                PermitMapper.transportDimensions.LENGTH
+        ).values(
+                transportDimensionsModel.getPermitId(),
+                transportDimensionsModel.getHeight(),
+                transportDimensionsModel.getWidth(),
+                transportDimensionsModel.getLength())
+                .execute();
     }
 
     public Integer updatePermit(PermitModel permitModel) {

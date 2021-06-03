@@ -16,12 +16,9 @@ public class TransportDimensionsMapper implements RecordMapper<Record, Transport
         TransportDimensionsModel transportDimensionsModel = new TransportDimensionsModel();
         transportDimensionsModel.setId(record.get(transportDimensions.ID));
         transportDimensionsModel.setPermitId(record.get(transportDimensions.PERMIT_ID));
-        BigDecimal height = record.get(transportDimensions.HEIGHT);
-        transportDimensionsModel.setHeight(height != null ? height.doubleValue() : null);
-        BigDecimal width = record.get(transportDimensions.WIDTH);
-        transportDimensionsModel.setWidth(width != null ? width.doubleValue() : null);
-        BigDecimal length = record.get(transportDimensions.LENGTH);
-        transportDimensionsModel.setLength(length != null ? length.doubleValue() : null);
+        transportDimensionsModel.setHeight(record.get(transportDimensions.HEIGHT));
+        transportDimensionsModel.setWidth(record.get(transportDimensions.WIDTH));
+        transportDimensionsModel.setLength(record.get(transportDimensions.LENGTH));
         return transportDimensionsModel;
     }
 }
