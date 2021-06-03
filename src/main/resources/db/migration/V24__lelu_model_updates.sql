@@ -20,3 +20,5 @@ alter table sillari.company rename column customer_id to business_id;
 
 alter table sillari.bridge add column if not exists road_address text;
 alter table sillari.axle alter column weight type numeric;
+
+create index if not exists bridge_oid ON sillari.bridge (oid);

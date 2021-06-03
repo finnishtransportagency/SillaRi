@@ -4,6 +4,8 @@ import fi.vaylavirasto.sillari.api.lelu.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.PermitModel;
+import fi.vaylavirasto.sillari.model.RouteModel;
+import fi.vaylavirasto.sillari.repositories.BridgeRepository;
 import fi.vaylavirasto.sillari.repositories.CompanyRepository;
 import fi.vaylavirasto.sillari.repositories.PermitRepository;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +14,9 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 public class LeluService {
     private static final Logger logger = LogManager.getLogger();
@@ -19,11 +24,13 @@ public class LeluService {
 
     private PermitRepository permitRepository;
     private CompanyRepository companyRepository;
+    private BridgeRepository bridgeRepository;
 
     @Autowired
-    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository) {
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, BridgeRepository bridgeRepository) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
+        this.bridgeRepository = bridgeRepository;
     }
 
     public void createOrUpdatePermit(LeluPermitDTO permitDTO) {
@@ -33,6 +40,8 @@ public class LeluService {
         // Fetch company from DB with business ID. If not found, insert new company.
         Integer companyId = getCompanyIdByBusinessId(permitModel.getCompany());
         permitModel.setCompanyId(companyId);
+
+        getBridgeIdsWithOIDs(permitModel);
 
         Integer permitId = permitRepository.getPermitIdByPermitNumber(permitModel.getPermitNumber());
 
@@ -52,6 +61,18 @@ public class LeluService {
             companyId = companyRepository.createCompany(companyModel);
         }
         return companyId;
+    }
+
+    private void getBridgeIdsWithOIDs(PermitModel permitModel) {
+        List<String> allOIDs = new ArrayList<>();
+        for (RouteModel routeModel : permitModel.getRoutes()) {
+            allOIDs.addAll(routeModel.getRouteBridges().stream()
+                    .map(routeBridge -> routeBridge.getBridge().getOid())
+                    .collect(Collectors.toList()));
+        }
+        // Filter duplicates
+        List<String> uniqueOIDs = new ArrayList<>(new HashSet<>(allOIDs));
+        Map<Integer, String> bridgeIdMap = bridgeRepository.getBridgeIdsWithOIDs(uniqueOIDs);
     }
 
     private void createPermit(PermitModel permitModel) {
