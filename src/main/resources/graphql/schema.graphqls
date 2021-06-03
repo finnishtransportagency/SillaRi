@@ -8,28 +8,16 @@ scalar GraphQLBigInteger
 scalar Url
 scalar Json
 
-type Transport {
+type TransportDimensions {
     id: ID!
     permitId: Int
-    routeId: Int
-    name: String!
     height: Float
     width: Float
     length: Float
-    totalMass: Float
-    registrations: [TransportRegistration]
-    axles: [Axle]
-}
-
-type TransportRegistration {
-    id: ID!
-    transportId: Int
-    registrationNumber: String
 }
 
 type Axle {
     id: ID!
-    transportId: Int
     axleNumber: Int
     weight: Int
     distanceToNext: Float
@@ -42,8 +30,18 @@ type Permit {
     permitNumber: String
     validStartDate: String
     validEndDate: String
+    transportTotalMass: Float
+    transportDimensions: TransportDimensions
     routes: [Route]
-    transports: [Transport]
+    axles: [Axle]
+    vehicles: [Vehicle]
+}
+
+type Vehicle {
+    id: ID!
+    permitId: Int
+    type: String
+    identifier: String
 }
 
 type Address {
@@ -58,10 +56,12 @@ type Bridge {
     name: String
     identifier: String
     municipality: String
+    geojson: String
 }
 
 type RouteBridge {
     id: ID!
+    routeId: Int!
     bridge: Bridge!
     crossingInstruction: String
 }
@@ -97,10 +97,8 @@ type Route {
     name: String
     departureAddress: Address
     arrivalAddress: Address
-    departureTime: String
-    arrivalTime: String
+    geojson: String
     routeBridges: [RouteBridge]
-    transports: [Transport]
     crossings: [Crossing]
 }
 
@@ -148,6 +146,4 @@ type Query {
     Permit(id :Int!) : Permit
     Crossing(id :Int!) : Crossing
     CrossingOfRouteBridge(routeBridgeId :Int!) : Crossing
-    Transport(id :Int!): Transport
-    TransportOfRoute(permitId :Int!, routeId :Int!): Transport
 }

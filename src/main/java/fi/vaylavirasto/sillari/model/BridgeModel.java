@@ -6,9 +6,12 @@ import java.util.List;
 
 @Data
 public class BridgeModel {
-    private long id;
-    private String name;
+    private Integer id;
+    private String oid;
     private String identifier;
+    private String name;
+    private String roadAddress;
     private String municipality;
+    private String geojson;
     private List<RouteBridgeModel> routeBridges;
 }

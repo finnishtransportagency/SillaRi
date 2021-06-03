@@ -16,6 +16,7 @@ public class CompanyMapper implements RecordMapper<Record, CompanyModel> {
         CompanyModel companyModel = new CompanyModel();
         companyModel.setId(record.get(company.ID));
         companyModel.setName(record.get(company.NAME));
+        companyModel.setBusinessId(record.get(company.BUSINESS_ID));
         companyModel.setPermits(new ArrayList<>());
         return companyModel;
     }

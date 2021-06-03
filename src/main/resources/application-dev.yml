@@ -1,6 +1,8 @@
 sillari:
   wmts:
     url: https://oag.vayla.fi/rasteripalvelu-mml/wmts/maasto/1.0.0/
+  geoserver:
+    url: https://sillaridev.testivaylapilvi.fi/geoserver/
 spring:
   application:
     name: SillaRi
@@ -46,3 +48,18 @@ management:
 endpoints:
   prometheus:
     enabled: true
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operationsSorter: alpha
+    tagsSorter: alpha
+  show-actuator: true
+  version: 3.0
+  api-docs:
+    groups:
+      enabled: true
+  group-configs:
+    - group: api
+      packagesToScan: fi.vaylavirasto.sillari.api

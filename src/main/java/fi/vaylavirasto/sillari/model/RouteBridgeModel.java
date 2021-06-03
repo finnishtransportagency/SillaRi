@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class RouteBridgeModel {
-    private long id;
-    private long routeId;
+    private Integer id;
+    private Integer routeId;
     private BridgeModel bridge;
     private String crossingInstruction;
     private SupervisionModel supervision;

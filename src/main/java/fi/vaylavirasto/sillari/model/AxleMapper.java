@@ -15,13 +15,11 @@ public class AxleMapper implements RecordMapper<Record, AxleModel> {
     public AxleModel map(Record record) {
         AxleModel axleModel = new AxleModel();
         axleModel.setId(record.get(axle.ID));
-        axleModel.setTransportId(record.get(axle.TRANSPORT_ID));
+        axleModel.setAxleChartId(record.get(axle.AXLE_CHART_ID));
         axleModel.setAxleNumber(record.get(axle.AXLE_NUMBER));
         axleModel.setWeight(record.get(axle.WEIGHT));
-        BigDecimal distanceToNext = record.get(axle.DISTANCE_TO_NEXT);
-        axleModel.setDistanceToNext(distanceToNext != null ? distanceToNext.doubleValue() : null);
-        BigDecimal maxDistanceToNext = record.get(axle.MAX_DISTANCE_TO_NEXT);
-        axleModel.setMaxDistanceToNext(maxDistanceToNext != null ? maxDistanceToNext.doubleValue() : null);
+        axleModel.setDistanceToNext(record.get(axle.DISTANCE_TO_NEXT));
+        axleModel.setMaxDistanceToNext(record.get(axle.MAX_DISTANCE_TO_NEXT));
         return axleModel;
     }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 @Data
 public class SupervisorModel {
-    private long id;
+    private Integer id;
     private String firstName;
     private String lastName;
     private List<SupervisionModel> supervisions;

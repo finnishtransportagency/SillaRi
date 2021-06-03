@@ -20,9 +20,19 @@
         <Logger name="fi.vaylavirasto.sillari" additivity="false">
             <AppenderRef ref="ConsoleAppender" level="debug"/>
         </Logger>
-        <Logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
-            <AppenderRef ref="ConsoleAppender" level="debug"/>
+
+        <Logger name="fi.vaylavirasto.sillari.service.UIService" additivity="false">
+            <AppenderRef ref="ConsoleAppender" level="info"/>
         </Logger>
+
+        <Logger name="fi.vaylavirasto.sillari.auth.JwtRequestFilter" additivity="false">
+            <AppenderRef ref="ConsoleAppender" level="info"/>
+        </Logger>
+
+        <Logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
+            <AppenderRef ref="ConsoleAppender" level="info"/>
+        </Logger>
+
         <Root level="all">
             <AppenderRef ref="ConsoleAppender" level="info"/>
         </Root>

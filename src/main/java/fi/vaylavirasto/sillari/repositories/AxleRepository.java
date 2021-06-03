@@ -23,9 +23,9 @@ public class AxleRepository {
                 .fetchOne(new AxleMapper());
     }
 
-    public List<AxleModel> getAxlesOfTransport(Integer transportId) {
+    public List<AxleModel> getAxlesOfChart(Integer axleChartID) {
         return dsl.select().from(AxleMapper.axle)
-                .where(AxleMapper.axle.TRANSPORT_ID.eq(transportId))
+                .where(AxleMapper.axle.AXLE_CHART_ID.eq(axleChartID))
                 .fetch(new AxleMapper());
     }
 }

@@ -1,18 +1,18 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
-import ITransport from "../interfaces/ITransport";
+import IPermit from "../interfaces/IPermit";
 
 interface RouteTransportProps {
-  selectedTransport: ITransport;
+  selectedPermit: IPermit;
 }
 
-const RouteTransport = ({ selectedTransport }: RouteTransportProps): JSX.Element | null => {
+const RouteTransport = ({ selectedPermit }: RouteTransportProps): JSX.Element | null => {
   const { t } = useTranslation();
 
-  const { height, width, length, totalMass, registrations = [], axles = [] } = selectedTransport || {};
+  const { transportDimensions, transportTotalMass, vehicles = [], axles = [] } = selectedPermit || {};
 
-  return !selectedTransport ? null : (
+  return !selectedPermit ? null : (
     <>
       <IonGrid>
         <IonRow>
@@ -28,7 +28,7 @@ const RouteTransport = ({ selectedTransport }: RouteTransportProps): JSX.Element
             <IonText>{t("route.transportInfo.registrationNumbers")}</IonText>
           </IonCol>
           <IonCol>
-            <IonText>{registrations.map((r) => r.registrationNumber).join(", ")}</IonText>
+            <IonText>{vehicles.map((v) => v.identifier).join(", ")}</IonText>
           </IonCol>
         </IonRow>
         <IonRow>
@@ -39,17 +39,17 @@ const RouteTransport = ({ selectedTransport }: RouteTransportProps): JSX.Element
             <IonGrid className="ion-no-padding">
               <IonRow>
                 <IonCol>
-                  <IonText>{`${t("route.transportInfo.height")} ${height} m`}</IonText>
+                  <IonText>{`${t("route.transportInfo.height")} ${transportDimensions.height} m`}</IonText>
                 </IonCol>
               </IonRow>
               <IonRow>
                 <IonCol>
-                  <IonText>{`${t("route.transportInfo.width")} ${width} m`}</IonText>
+                  <IonText>{`${t("route.transportInfo.width")} ${transportDimensions.width} m`}</IonText>
                 </IonCol>
               </IonRow>
               <IonRow>
                 <IonCol>
-                  <IonText>{`${t("route.transportInfo.length")} ${length} m`}</IonText>
+                  <IonText>{`${t("route.transportInfo.length")} ${transportDimensions.length} m`}</IonText>
                 </IonCol>
               </IonRow>
             </IonGrid>
@@ -57,10 +57,10 @@ const RouteTransport = ({ selectedTransport }: RouteTransportProps): JSX.Element
         </IonRow>
         <IonRow>
           <IonCol>
-            <IonText>{t("route.transportInfo.totalMass")}</IonText>
+            <IonText>{t("route.transportInfo.transportTotalMass")}</IonText>
           </IonCol>
           <IonCol>
-            <IonText>{`${totalMass} t`}</IonText>
+            <IonText>{`${transportTotalMass} t`}</IonText>
           </IonCol>
         </IonRow>
         <IonRow>

@@ -1,0 +1,199 @@
+{
+  "number": "1236/2021",
+  "lastModifiedDate": "2021-05-26T08:02:36Z",
+  "version": 1,
+  "validFrom": "2021-05-26T00:00:00Z",
+  "validTo": "2021-11-30T00:00:00Z",
+  "customer": {
+    "name": "Yritys Z",
+    "identifier": "9234567-8"
+  },
+  "vehicles": [
+    {
+      "type": "kuorma-auto",
+      "identifier": "ABC-124"
+    },
+    {
+      "type": "kuorma-auto",
+      "identifier": "ABD-224"
+    },
+    {
+      "type": "perävaunu",
+      "identifier": "BBC-124"
+    }
+  ],
+  "axleChart": {
+    "axles": [
+      {
+        "axleNumber": 1,
+        "weight": 9.1,
+        "distanceToNext": 2.4
+      },
+      {
+        "axleNumber": 2,
+        "weight": 8.1,
+        "distanceToNext": 1.4
+      },
+      {
+        "axleNumber": 3,
+        "weight": 19.1,
+        "distanceToNext": 3.4
+      },
+      {
+        "axleNumber": 4,
+        "weight": 9.1,
+        "distanceToNext": 1.4
+      },
+      {
+        "axleNumber": 5,
+        "weight": 17.1,
+        "distanceToNext": 1.4
+      },
+      {
+        "axleNumber": 6,
+        "weight": 5.1,
+        "distanceToNext": 1.4
+      },
+      {
+        "axleNumber": 7,
+        "weight": 5.3,
+        "distanceToNext": 1.4
+      },
+      {
+        "axleNumber": 8,
+        "weight": 9.1,
+        "distanceToNext": 3.4,
+        "maxDistanceToNext": 10.5
+      },
+      {
+        "axleNumber": 9,
+        "weight": 9.1,
+        "distanceToNext": 2.4
+      },
+      {
+        "axleNumber": 10,
+        "weight": 15.1,
+        "distanceToNext": 2.4
+      },
+      {
+        "axleNumber": 11,
+        "weight": 15.1,
+        "distanceToNext": 2.4
+      },
+      {
+        "axleNumber": 12,
+        "weight": 15.1,
+        "distanceToNext": 2.4
+      },
+      {
+        "axleNumber": 13,
+        "weight": 9.1,
+        "distanceToNext": 2.4
+      },
+      {
+        "axleNumber": 14,
+        "weight": 2.1,
+        "distanceToNext": 2.4
+      }
+    ]
+  },
+  "transportTotalMass": 147.6,
+  "transportDimensions": {
+    "width": 3.55,
+    "length": 50.3,
+    "height": 4.9
+  },
+  "additionalDetails": "Muita huomioita",
+  "routes": [
+    {
+      "id": 32345,
+      "name": "Kuopio - Haukipudas",
+      "order": 1,
+      "transportCount": 3,
+      "alternativeRoute": false,
+      "bridges": [
+        {
+          "oid": "1.2.246.578.1.15.800684",
+          "identifier": "SK-684",
+          "name": "Ahkiolahden kanavan silta",
+          "roadAddress": "00077 030 0 02481",
+          "supervisorName": "Vilja Valvoja",
+          "additionalInfo": "Ajoneuvon keskilinjan oltava 4,35 metrin etäisyydellä idänpuoleisesta kaiteesta."
+        },
+        {
+          "oid": "1.2.246.578.1.15.900638",
+          "identifier": "KeS-638",
+          "name": "Heinäjoen silta",
+          "roadAddress": "00004 326 0 04379",
+          "supervisorName": "Viljo Valvonen",
+          "additionalInfo": "Ajoneuvon keskilinjan oltava 4,25 metrin etäisyydellä luoteenpuoleisesta kaiteesta."
+        },
+        {
+          "oid": "1.2.246.578.1.15.1201538",
+          "identifier": "O-1538",
+          "name": "Yläsiirtolan ylikulkusilta",
+          "roadAddress": "00004 402 1 00581",
+          "supervisorName": "Vilma Valvo",
+          "additionalInfo": "Ajoneuvon reunan oltava 4,25 metrin etäisyydellä idänpuoleisesta rotvallista."
+        }
+      ]
+    },
+    {
+      "id": 92345,
+      "name": "Kemi - Kemijärvi",
+      "order": 2,
+      "transportCount": 3,
+      "alternativeRoute": false,
+      "bridges": [
+        {
+          "roadAddress": "00004 441 0 07942",
+          "oid": "1.2.246.578.1.15.1400105",
+          "identifier": "L-105",
+          "name": "Leivejoen silta",
+          "supervisorName": "Veikko Valvoline",
+          "additionalInfo": "Ajoneuvon reunan oltava 4,25 metrin etäisyydellä idänpuoleisesta rotvallista."
+        },
+        {
+          "roadAddress": "00004 446 0 03448",
+          "oid": "1.2.246.578.1.15.1400111",
+          "identifier": "L-111",
+          "name": "Ternujoen silta",
+          "supervisorName": "Sophie Supervisor",
+          "additionalInfo": "Ajoneuvon vasemman renkaan oltava 4,25 metrin etäisyydellä idänpuoleisesta rotvallista."
+        },
+        {
+          "roadAddress": "00004 503 0 02030",
+          "oid": "1.2.246.578.1.15.1402051",
+          "identifier": "L-2051",
+          "name": "Revontulireitin alikulkukäytävä",
+          "supervisorName": "Seppo Super",
+          "additionalInfo": "Ajoneuvon painopisteen oltava 3,25 metrin etäisyydellä idänpuoleisesta rotvallista."
+        },
+        {
+          "roadAddress": "00079 001 1 00576",
+          "oid": "1.2.246.578.1.15.1401967",
+          "identifier": "L-1967",
+          "name": "Pöllikadun alikulkukäytävä",
+          "supervisorName": "Ville Visor",
+          "additionalInfo": "Ajoneuvon reunan oltava 1,25 metrin etäisyydellä idänpuoleisesta rotvallista."
+        },
+        {
+          "roadAddress": "00004 503 1 01398",
+          "oid": "1.2.246.578.1.15.1402054",
+          "identifier": "L-2054",
+          "name": "Napapiirin alikulkukäytävä",
+          "supervisorName": "John Doe",
+          "additionalInfo": "Ajoneuvon reunan oltava 2,25 metrin etäisyydellä idänpuoleisesta rotvallista."
+        },
+        {
+          "roadAddress": "00004 504 0 03758",
+          "oid": "1.2.246.578.1.15.1400410",
+          "identifier": "L-410",
+          "name": "Kurjenojan silta",
+          "supervisorName": "Jussi Jokinen",
+          "additionalInfo": "Ajoneuvon reunan oltava 4,15 metrin etäisyydellä idänpuoleisesta rotvallista."
+        }
+      ]
+    }
+  ]
+}

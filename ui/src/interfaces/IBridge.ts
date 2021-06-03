@@ -3,4 +3,5 @@ export default interface IBridge {
   name: string;
   identifier: string;
   municipality: string;
+  geojson: string;
 }

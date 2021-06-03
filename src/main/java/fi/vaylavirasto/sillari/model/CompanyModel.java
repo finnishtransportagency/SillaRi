@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class CompanyModel {
-    private long id;
+    private Integer id;
     private String name;
     private String businessId;
     private List<PermitModel> permits;
