@@ -1,19 +1,18 @@
 package fi.vaylavirasto.sillari.model;
 
-import fi.vaylavirasto.sillari.model.tables.AxleChart;
-import fi.vaylavirasto.sillari.model.tables.Permit;
-import fi.vaylavirasto.sillari.model.tables.TransportDimensions;
+import fi.vaylavirasto.sillari.model.tables.*;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class PermitMapper implements RecordMapper<Record, PermitModel> {
     public static final Permit permit = Tables.PERMIT.as("p");
-    public static final AxleChart axleChart = Tables.AXLE_CHART.as("a");
     public static final TransportDimensions transportDimensions = Tables.TRANSPORT_DIMENSIONS.as("t");
+    public static final Vehicle vehicle = Tables.VEHICLE.as("v");
+    public static final AxleChart axleChart = Tables.AXLE_CHART.as("ac");
+    public static final Axle axle = Tables.AXLE.as("a");
 
     @Nullable
     @Override

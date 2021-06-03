@@ -1,8 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.PermitMapper;
-import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.TransportDimensionsModel;
+import fi.vaylavirasto.sillari.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -60,7 +58,8 @@ public class PermitRepository {
                     PermitMapper.permit.VALID_END_DATE,
                     PermitMapper.permit.TRANSPORT_TOTAL_MASS,
                     PermitMapper.permit.ADDITIONAL_DETAILS
-            ).values(1, // FIXME!
+            ).values(
+                    1, // FIXME!
                     permitModel.getPermitNumber(),
                     permitModel.getLeluVersion(),
                     permitModel.getLeluLastModifiedDate(),
@@ -75,14 +74,16 @@ public class PermitRepository {
             permitModel.setId(permitId);
 
             insertTransportDimensions(ctx, permitModel);
+            insertVehicles(ctx, permitModel);
+            insertAxleChart(ctx, permitModel);
 
             return permitId;
         });
     }
 
     private void insertTransportDimensions(DSLContext ctx, PermitModel permitModel) {
-        TransportDimensionsModel transportDimensionsModel = permitModel.getTransportDimensions();
-        transportDimensionsModel.setPermitId(permitModel.getId());
+        TransportDimensionsModel transportDimensions = permitModel.getTransportDimensions();
+        transportDimensions.setPermitId(permitModel.getId());
 
         ctx.insertInto(PermitMapper.transportDimensions,
                 PermitMapper.transportDimensions.PERMIT_ID,
@@ -90,11 +91,63 @@ public class PermitRepository {
                 PermitMapper.transportDimensions.WIDTH,
                 PermitMapper.transportDimensions.LENGTH
         ).values(
-                transportDimensionsModel.getPermitId(),
-                transportDimensionsModel.getHeight(),
-                transportDimensionsModel.getWidth(),
-                transportDimensionsModel.getLength())
+                transportDimensions.getPermitId(),
+                transportDimensions.getHeight(),
+                transportDimensions.getWidth(),
+                transportDimensions.getLength())
                 .execute();
+    }
+
+    private void insertVehicles(DSLContext ctx, PermitModel permitModel) {
+        List<VehicleModel> vehicles = permitModel.getVehicles();
+
+        for (VehicleModel vehicle : vehicles) {
+            vehicle.setPermitId(permitModel.getId());
+
+            ctx.insertInto(PermitMapper.vehicle,
+                    PermitMapper.vehicle.PERMIT_ID,
+                    PermitMapper.vehicle.TYPE,
+                    PermitMapper.vehicle.IDENTIFIER
+            ).values(
+                    vehicle.getPermitId(),
+                    vehicle.getType(),
+                    vehicle.getIdentifier())
+                    .execute();
+        }
+    }
+
+    private void insertAxleChart(DSLContext ctx, PermitModel permitModel) {
+        AxleChartModel axleChart = permitModel.getAxleChart();
+        axleChart.setPermitId(permitModel.getId());
+
+        Record1<Integer> axleChartIdResult = ctx.insertInto(PermitMapper.axleChart,
+                PermitMapper.axleChart.PERMIT_ID)
+                .values(axleChart.getPermitId())
+                .returningResult(PermitMapper.axleChart.ID)
+                .fetchOne();
+
+        Integer axleChartId = axleChartIdResult != null ? axleChartIdResult.value1() : null;
+        axleChart.setId(axleChartId);
+
+        List<AxleModel> axles = axleChart.getAxles();
+
+        for (AxleModel axle : axles) {
+            axle.setAxleChartId(axleChartId);
+
+            ctx.insertInto(PermitMapper.axle,
+                    PermitMapper.axle.AXLE_CHART_ID,
+                    PermitMapper.axle.AXLE_NUMBER,
+                    PermitMapper.axle.WEIGHT,
+                    PermitMapper.axle.DISTANCE_TO_NEXT,
+                    PermitMapper.axle.MAX_DISTANCE_TO_NEXT)
+                    .values(
+                            axle.getAxleChartId(),
+                            axle.getAxleNumber(),
+                            axle.getWeight(),
+                            axle.getDistanceToNext(),
+                            axle.getMaxDistanceToNext())
+                    .execute();
+        }
     }
 
     public Integer updatePermit(PermitModel permitModel) {

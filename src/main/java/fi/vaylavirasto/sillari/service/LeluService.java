@@ -42,9 +42,16 @@ public class LeluService {
     }
 
     private void createPermit(PermitModel permitModel) {
-        permitRepository.createPermit(permitModel);
         // TODO
         // Insert new permit and all child records
+
+        /* Insert permit data, transport dimensions, vehicle, axle chart and axles done, missing:
+        - routes
+        - addresses (not yet in lelu model)
+        - route bridges
+        */
+
+        permitRepository.createPermit(permitModel);
 
         // Bridges still unclear - probably get bridgeId with OID from Sillari bridge list and add id to route bridges?
         // What to do if bridge is not found?
