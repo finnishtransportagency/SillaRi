@@ -35,15 +35,9 @@ public class BridgeRepository {
     }
 
     public Map<Integer, String> getBridgeIdsWithOIDs(List<String> oids) {
-        List<Condition> conditions = new ArrayList<>();
-        for (String oid : oids) {
-            conditions.add(BridgeMapper.bridge.OID.eq(oid));
-        }
-
         Result<Record2<Integer, String>> result = dsl.select(BridgeMapper.bridge.ID, BridgeMapper.bridge.OID)
                 .from(BridgeMapper.bridge)
-                .where(BridgeMapper.bridge.STATUS.isNotNull()) // FIXME status should be what exactly?
-                .and(DSL.or(conditions))
+                .where(BridgeMapper.bridge.OID.in(oids))
                 .orderBy(BridgeMapper.bridge.OID)
                 .fetch();
 
