@@ -1,5 +1,6 @@
-package fi.vaylavirasto.sillari.api.rest;
+package fi.vaylavirasto.sillari.api.rest.error;
 
+import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -9,9 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,6 +42,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         logger.warn("MethodArgumentNotValidException 'errors':'{}', 'headers':'{}', 'status':'{}'", errors, headers, status);
 
         return createErrorResponse(status, null, errors);
+    }
+
+    // Let Spring handle the exception, we just override the status code
+    @ExceptionHandler(Exception.class)
+    public void other(Exception ex, HttpServletResponse response) throws IOException {
+        logger.error("General Exception: ", ex);
+        response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+
+
+    @ExceptionHandler(APIVersionException.class)
+    public ResponseEntity<Object> apiVersionException(APIVersionException ex) {
+        logger.error("apiVersionException 'reason':'{}'", ex.getMessage());
+        return createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
     }
 
     private ResponseEntity<Object> createErrorResponse(HttpStatus status, String message, List<String> errors) {
