@@ -59,8 +59,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(APIVersionException.class)
-    public ResponseEntity<Object> apiValidationException(APIVersionException ex) {
-        LOGGER.error("APIValidationException 'reason':'{}'", ex.getMessage());
+    public ResponseEntity<Object> apiVersionException(APIVersionException ex) {
+        LOGGER.error("apiVersionException 'reason':'{}'", ex.getMessage());
         return handleCustomException(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
