@@ -176,7 +176,29 @@ public class PermitRepository {
             Integer routeID = routeIdResult != null ? routeIdResult.value1() : null;
             route.setId(routeID);
 
-            // TODO route bridges
+            insertRouteBridges(ctx, route);
+        }
+    }
+
+    private void insertRouteBridges(DSLContext ctx, RouteModel routeModel) {
+        List<RouteBridgeModel> routeBridges = routeModel.getRouteBridges();
+
+        for (RouteBridgeModel routeBridge : routeBridges) {
+            if (routeBridge.getBridgeId() != null) {
+                routeBridge.setRouteId(routeModel.getId());
+
+                ctx.insertInto(PermitMapper.routeBridge,
+                        PermitMapper.routeBridge.ROUTE_ID,
+                        PermitMapper.routeBridge.BRIDGE_ID,
+                        PermitMapper.routeBridge.CROSSING_INSTRUCTION
+                ).values(
+                        routeBridge.getRouteId(),
+                        routeBridge.getBridgeId(),
+                        routeBridge.getCrossingInstruction())
+                        .execute();
+            } else {
+                logger.warn("BridgeId missing for routeBridge, cannot insert");
+            }
         }
     }
 

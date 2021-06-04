@@ -34,14 +34,14 @@ public class BridgeRepository {
                 .fetchOne(geojsonField);
     }
 
-    public Map<Integer, String> getBridgeIdsWithOIDs(List<String> oids) {
-        Result<Record2<Integer, String>> result = dsl.select(BridgeMapper.bridge.ID, BridgeMapper.bridge.OID)
+    public Map<String, Integer> getBridgeIdsWithOIDs(List<String> oids) {
+        Result<Record2<String, Integer>> result = dsl.select(BridgeMapper.bridge.OID, BridgeMapper.bridge.ID)
                 .from(BridgeMapper.bridge)
                 .where(BridgeMapper.bridge.OID.in(oids))
                 .orderBy(BridgeMapper.bridge.OID)
                 .fetch();
 
-        Map<Integer, String> resultMap = result.intoMap(BridgeMapper.bridge.ID, BridgeMapper.bridge.OID);
+        Map<String, Integer> resultMap = result.intoMap(BridgeMapper.bridge.OID, BridgeMapper.bridge.ID);
         logger.debug(resultMap);
         return resultMap;
     }

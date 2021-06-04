@@ -6,7 +6,9 @@ import lombok.Data;
 public class RouteBridgeModel {
     private Integer id;
     private Integer routeId;
-    private BridgeModel bridge;
+    private Integer bridgeId;
     private String crossingInstruction;
+
+    private BridgeModel bridge;
     private SupervisionModel supervision;
 }

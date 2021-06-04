@@ -4,6 +4,7 @@ import fi.vaylavirasto.sillari.api.lelu.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.PermitModel;
+import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.repositories.BridgeRepository;
 import fi.vaylavirasto.sillari.repositories.CompanyRepository;
@@ -41,7 +42,8 @@ public class LeluService {
         Integer companyId = getCompanyIdByBusinessId(permitModel.getCompany());
         permitModel.setCompanyId(companyId);
 
-        getBridgeIdsWithOIDs(permitModel);
+        // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
+        setBridgeIdsToRouteBridges(permitModel);
 
         Integer permitId = permitRepository.getPermitIdByPermitNumber(permitModel.getPermitNumber());
 
@@ -50,7 +52,10 @@ public class LeluService {
             updatePermit(permitId, permitModel);
         } else {
             logger.debug("Permit not found with id {}, create new", permitId);
-            createPermit(permitModel);
+
+            // Insert new permit and all child records
+            // Missing route addresses (not yet in lelu model)
+            permitRepository.createPermit(permitModel);
         }
     }
 
@@ -63,7 +68,25 @@ public class LeluService {
         return companyId;
     }
 
-    private void getBridgeIdsWithOIDs(PermitModel permitModel) {
+
+    private void setBridgeIdsToRouteBridges(PermitModel permitModel) {
+        // Get bridge IDs for unique bridges in routes
+        Map<String, Integer> idOIDMap = getBridgeIdsWithOIDs(permitModel);
+
+        for (RouteModel route : permitModel.getRoutes()) {
+            for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
+                Integer bridgeId = idOIDMap.get(routeBridge.getBridge().getOid());
+                if (bridgeId != null) {
+                    routeBridge.setBridgeId(bridgeId);
+                } else {
+                    // TODO What to do if bridge is not found?
+                    logger.warn("Bridge missing from db with oid {}", routeBridge.getBridge().getOid());
+                }
+            }
+        }
+    }
+
+    private Map<String, Integer> getBridgeIdsWithOIDs(PermitModel permitModel) {
         List<String> allOIDs = new ArrayList<>();
         for (RouteModel routeModel : permitModel.getRoutes()) {
             allOIDs.addAll(routeModel.getRouteBridges().stream()
@@ -72,22 +95,7 @@ public class LeluService {
         }
         // Filter duplicates
         List<String> uniqueOIDs = new ArrayList<>(new HashSet<>(allOIDs));
-        Map<Integer, String> bridgeIdMap = bridgeRepository.getBridgeIdsWithOIDs(uniqueOIDs);
-    }
-
-    private void createPermit(PermitModel permitModel) {
-        // TODO
-        // Insert new permit and all child records
-
-        /* Insert permit data, transport dimensions, vehicle, axle chart, axles, routes done, missing:
-        - addresses (not yet in lelu model)
-        - route bridges
-        */
-
-        permitRepository.createPermit(permitModel);
-
-        // Bridges still unclear - probably get bridgeId with OID from Sillari bridge list and add id to route bridges?
-        // What to do if bridge is not found?
+        return bridgeRepository.getBridgeIdsWithOIDs(uniqueOIDs);
     }
 
     private void updatePermit(Integer permitId, PermitModel permitModel) {
