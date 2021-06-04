@@ -1,7 +1,7 @@
 package fi.vaylavirasto.sillari.util;
 
 public class SemanticVersioningUtil {
-    private static final String SEPARATOR = ".";
+    private static final String SEPARATOR = "\\.";
 
     public static String getMajorVersion(String versionNumber){
         if(versionNumber == null){
@@ -19,9 +19,9 @@ public class SemanticVersioningUtil {
 
     public static boolean matchesMajorVersion(String versionNumber1, String versionNumber2){
 
-        var majorVersion1 = getMajorVersion(versionNumber1);
-        var majorVersion2 = getMajorVersion(versionNumber2);
-
+        String majorVersion1 = getMajorVersion(versionNumber1);
+        String majorVersion2 = getMajorVersion(versionNumber2);
+ 
         if(majorVersion1 == null){
             if(majorVersion2 ==null){
                 return true;

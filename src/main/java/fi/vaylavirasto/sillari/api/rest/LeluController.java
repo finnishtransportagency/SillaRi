@@ -16,7 +16,7 @@ import javax.validation.Valid;
 @RequestMapping("/lelu")
 public class LeluController {
     private static final Logger logger = LogManager.getLogger();
-    private static final String LELU_API_VERSION ="0.1.0";
+    private static final String LELU_API_VERSION ="1.1.0";
     private static final String LELU_API_VERSION_HEADER_NAME ="accept-version";
     private final LeluService leluService;
 

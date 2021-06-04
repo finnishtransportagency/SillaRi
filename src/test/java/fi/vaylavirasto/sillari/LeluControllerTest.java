@@ -18,7 +18,7 @@ class LeluControllerTest {
 
         String responseString = client.get()
                 .uri("/testGetWithVersion")
-                .header("accept-version", "0.1.0")
+                .header("accept-version", "1.1.0")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
@@ -34,7 +34,23 @@ class LeluControllerTest {
 
         String responseString = client.get()
                 .uri("/testGetWithVersion")
-                .header("accept-version", "0.0.0")
+                .header("accept-version", "1.0.0")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        System.out.println("HEllo:"+ responseString);
+
+
+    }
+
+    @Test
+    void testWithMajorOldVersion() {
+        WebClient client = buildClient();
+
+        String responseString = client.get()
+                .uri("/testGetWithVersion")
+                .header("accept-version", "0.9.9")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
