@@ -130,10 +130,14 @@ public class PermitRepository {
         Integer axleChartId = axleChartIdResult != null ? axleChartIdResult.value1() : null;
         axleChart.setId(axleChartId);
 
+        insertAxles(ctx, axleChart);
+    }
+
+    private void insertAxles(DSLContext ctx, AxleChartModel axleChart) {
         List<AxleModel> axles = axleChart.getAxles();
 
         for (AxleModel axle : axles) {
-            axle.setAxleChartId(axleChartId);
+            axle.setAxleChartId(axleChart.getId());
 
             ctx.insertInto(PermitMapper.axle,
                     PermitMapper.axle.AXLE_CHART_ID,
@@ -202,18 +206,64 @@ public class PermitRepository {
         }
     }
 
-    public Integer updatePermit(PermitModel permitModel) {
-        dsl.update(PermitMapper.permit)
-                .set(PermitMapper.permit.PERMIT_NUMBER, permitModel.getPermitNumber())
-                .set(PermitMapper.permit.LELU_VERSION, permitModel.getLeluVersion())
-                .set(PermitMapper.permit.LELU_LAST_MODIFIED_DATE, permitModel.getLeluLastModifiedDate())
-                .set(PermitMapper.permit.VALID_START_DATE, permitModel.getValidStartDate())
-                .set(PermitMapper.permit.VALID_END_DATE, permitModel.getValidEndDate())
-                .set(PermitMapper.permit.TRANSPORT_TOTAL_MASS, permitModel.getTransportTotalMass())
-                .set(PermitMapper.permit.ADDITIONAL_DETAILS, permitModel.getAdditionalDetails())
-                .where(PermitMapper.permit.ID.eq(permitModel.getId()))
+    public Integer updatePermit(PermitModel permitModel, List<Integer> routesToDelete) {
+        return dsl.transactionResult(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            ctx.update(PermitMapper.permit)
+                    .set(PermitMapper.permit.PERMIT_NUMBER, permitModel.getPermitNumber())
+                    .set(PermitMapper.permit.LELU_VERSION, permitModel.getLeluVersion())
+                    .set(PermitMapper.permit.LELU_LAST_MODIFIED_DATE, permitModel.getLeluLastModifiedDate())
+                    .set(PermitMapper.permit.VALID_START_DATE, permitModel.getValidStartDate())
+                    .set(PermitMapper.permit.VALID_END_DATE, permitModel.getValidEndDate())
+                    .set(PermitMapper.permit.TRANSPORT_TOTAL_MASS, permitModel.getTransportTotalMass())
+                    .set(PermitMapper.permit.ADDITIONAL_DETAILS, permitModel.getAdditionalDetails())
+                    .where(PermitMapper.permit.ID.eq(permitModel.getId()))
+                    .execute();
+
+            updateTransportDimensions(ctx, permitModel);
+            deleteVehiclesAndInsertNew(ctx, permitModel);
+            deleteAxlesAndInsertNew(ctx, permitModel);
+
+            // TODO
+            // delete old route bridges (supervision, supervision_status?)
+            // delete routes in routesToDelete (route transport, route_transport_status?)
+            // update routes with id, insert routes without id
+            // insert new route bridges
+
+            return permitModel.getId();
+        });
+    }
+
+    private void updateTransportDimensions(DSLContext ctx, PermitModel permitModel) {
+        ctx.update(PermitMapper.transportDimensions)
+                .set(PermitMapper.transportDimensions.HEIGHT, permitModel.getTransportDimensions().getHeight())
+                .set(PermitMapper.transportDimensions.WIDTH, permitModel.getTransportDimensions().getWidth())
+                .set(PermitMapper.transportDimensions.LENGTH, permitModel.getTransportDimensions().getLength())
                 .execute();
-        return permitModel.getId();
+    }
+
+    private void deleteVehiclesAndInsertNew(DSLContext ctx, PermitModel permitModel) {
+        ctx.delete(PermitMapper.vehicle)
+                .where(PermitMapper.vehicle.PERMIT_ID.eq(permitModel.getId()))
+                .execute();
+
+        insertVehicles(ctx, permitModel);
+    }
+
+    private void deleteAxlesAndInsertNew(DSLContext ctx, PermitModel permitModel) {
+        Record1<Integer> axleChartIdResult = ctx.select(PermitMapper.axleChart.ID).from(PermitMapper.axleChart)
+                .where(PermitMapper.axleChart.PERMIT_ID.eq(permitModel.getId()))
+                .fetchOne();
+
+        Integer axleChartId = axleChartIdResult != null ? axleChartIdResult.value1() : null;
+        permitModel.getAxleChart().setId(axleChartId);
+
+        ctx.delete(PermitMapper.axle)
+                .where(PermitMapper.axle.AXLE_CHART_ID.eq(axleChartId))
+                .execute();
+
+        insertAxles(ctx, permitModel.getAxleChart());
     }
 
 }

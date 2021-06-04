@@ -9,6 +9,7 @@ import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.repositories.BridgeRepository;
 import fi.vaylavirasto.sillari.repositories.CompanyRepository;
 import fi.vaylavirasto.sillari.repositories.PermitRepository;
+import fi.vaylavirasto.sillari.repositories.RouteRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
@@ -25,12 +26,14 @@ public class LeluService {
 
     private PermitRepository permitRepository;
     private CompanyRepository companyRepository;
+    private RouteRepository routeRepository;
     private BridgeRepository bridgeRepository;
 
     @Autowired
-    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, BridgeRepository bridgeRepository) {
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, BridgeRepository bridgeRepository) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
+        this.routeRepository = routeRepository;
         this.bridgeRepository = bridgeRepository;
     }
 
@@ -49,7 +52,8 @@ public class LeluService {
 
         if (permitId != null) {
             logger.debug("Permit with id {} found, update", permitId);
-            updatePermit(permitId, permitModel);
+            permitModel.setId(permitId);
+            updatePermit(permitModel);
         } else {
             logger.debug("Permit not found with id {}, create new", permitId);
 
@@ -98,16 +102,33 @@ public class LeluService {
         return bridgeRepository.getBridgeIdsWithOIDs(uniqueOIDs);
     }
 
-    private void updatePermit(Integer permitId, PermitModel permitModel) {
-        // TODO
-        // Update permit record with new data
+    private void updatePermit(PermitModel permitModel) {
+        // TODO WIP
+        // Update permit data
+        // Update transport dimensions
+        // Delete vehicles and axles, add new ones
+        // Create new routes if route is not already in DB with leluId
+        // Update route if route is in DB with same leluId - keep geometry
+        // Delete old route from DB if it's not included in permit anymore
+        // Remove old route bridges and add new ones
+        Map<Long, Integer> oldRouteIdLeluIdMap = routeRepository.getRouteIdsWithLeluIds(permitModel.getId());
+        List<Long> newLeluIds = permitModel.getRoutes().stream().map(RouteModel::getLeluId).collect(Collectors.toList());
 
-        // Fetch routes from DB with route leluId
-        // If route is still in permit data, update route data BUT keep geometry. Delete route bridges.
-        // If route is NOT found, delete all route records and route bridges.
+        List<Integer> routeIdsToRemove = new ArrayList<>();
 
-        // Delete all other child records (vehicle, axle chart, axles, transport dimensions)
-        // Insert new child records (including route bridges and possible new routes not already in DB)
+        for (Long oldLeluId : oldRouteIdLeluIdMap.keySet()) {
+            if (!newLeluIds.contains(oldLeluId)) {
+                routeIdsToRemove.add(oldRouteIdLeluIdMap.get(oldLeluId));
+            }
+        }
+
+        for (RouteModel route : permitModel.getRoutes()) {
+            if (oldRouteIdLeluIdMap.containsKey(route.getLeluId())) {
+                route.setId(oldRouteIdLeluIdMap.get(route.getLeluId()));
+            }
+        }
+
+        permitRepository.updatePermit(permitModel, routeIdsToRemove);
     }
 
 }
