@@ -25,7 +25,7 @@ graphql:
     mapping: "/graphql"
     corsEnabled: true
 server:
-  port: 8080
+  port: 8081
   servlet: # 2.0
     context-path: /api
 management:
