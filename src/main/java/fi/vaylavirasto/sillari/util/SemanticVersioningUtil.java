@@ -21,7 +21,7 @@ public class SemanticVersioningUtil {
 
         String majorVersion1 = getMajorVersion(versionNumber1);
         String majorVersion2 = getMajorVersion(versionNumber2);
- 
+
         if(majorVersion1 == null){
             if(majorVersion2 ==null){
                 return true;
