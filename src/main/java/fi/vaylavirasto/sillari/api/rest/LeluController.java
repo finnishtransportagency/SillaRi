@@ -1,16 +1,20 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
+import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
 import fi.vaylavirasto.sillari.service.LeluService;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Locale;
+
 
 @RestController
 @RequestMapping("/lelu")
@@ -19,6 +23,9 @@ public class LeluController {
     private static final String LELU_API_VERSION ="1.1.0";
     private static final String LELU_API_VERSION_HEADER_NAME ="accept-version";
     private final LeluService leluService;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Autowired
     public LeluController(LeluService leluService) {
@@ -42,7 +49,7 @@ public class LeluController {
 
     @RequestMapping(value = "/testGetWithVersion", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
-    public String getTestWithVersion(@RequestHeader(value=LELU_API_VERSION_HEADER_NAME,required = false) String version) {
+    public String getTestWithVersion(@RequestHeader(value=LELU_API_VERSION_HEADER_NAME,required = false) String version) throws APIVersionException {
         logger.debug("Hello Lelu testGet version " + version);
         if(version == null){
             return "Hello version missing";
@@ -51,7 +58,7 @@ public class LeluController {
             return "Hello major version match";
         }
         else{
-            return "Hello major version mismatch";
+            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + version + " vs " + LELU_API_VERSION );
         }
     }
 
