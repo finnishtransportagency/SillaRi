@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
 import fi.vaylavirasto.sillari.service.LeluService;
+import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,12 +16,20 @@ import javax.validation.Valid;
 @RequestMapping("/lelu")
 public class LeluController {
     private static final Logger logger = LogManager.getLogger();
-
+    private static final String LELU_API_VERSION ="1.1.0";
+    private static final String LELU_API_VERSION_HEADER_NAME ="accept-version";
     private final LeluService leluService;
 
     @Autowired
     public LeluController(LeluService leluService) {
         this.leluService = leluService;
+    }
+
+
+    @RequestMapping(value = "/version", method = RequestMethod.GET)
+    @Operation(summary = "Return api version")
+    public String version() {
+        return LELU_API_VERSION;
     }
 
     @RequestMapping(value = "/testGet", method = RequestMethod.GET)
@@ -29,6 +38,24 @@ public class LeluController {
         logger.debug("Hello Lelu testGet!");
         return "Hello LeLu, this is SillaRi!";
     }
+
+
+    @RequestMapping(value = "/testGetWithVersion", method = RequestMethod.GET)
+    @Operation(summary = "Test basic get request")
+    public String getTestWithVersion(@RequestHeader(value=LELU_API_VERSION_HEADER_NAME,required = false) String version) {
+        logger.debug("Hello Lelu testGet version " + version);
+        if(version == null){
+            return "Hello version missing";
+        }
+        if(SemanticVersioningUtil.matchesMajorVersion(version, LELU_API_VERSION)) {
+            return "Hello major version match";
+        }
+        else{
+            return "Hello major version mismatch";
+        }
+    }
+
+
 
     @RequestMapping(value = "/testPost", method = RequestMethod.POST)
     @ResponseBody
