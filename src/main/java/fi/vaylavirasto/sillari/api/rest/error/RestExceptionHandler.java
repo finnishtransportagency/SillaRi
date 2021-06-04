@@ -1,4 +1,4 @@
-package fi.cgi.klp.rest.error;
+package fi.vaylavirasto.sillari.api.rest.error;
 
 import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
 import org.slf4j.Logger;
