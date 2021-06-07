@@ -4,7 +4,7 @@ sillari:
   geoserver:
     url: https://sillaridev.testivaylapilvi.fi/geoserver/
   lelu:
-    version: @project.version@
+    version: @leluApiVersion@
 spring:
   application:
     name: SillaRi

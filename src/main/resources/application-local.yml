@@ -4,7 +4,7 @@ sillari:
   geoserver:
     url: http://sillari-geoserver:8080/geoserver/
   lelu:
-    version: @project.version@
+    version: @leluApiVersion@
 spring:
   application:
     name: SillaRi
