@@ -103,14 +103,8 @@ public class LeluService {
     }
 
     private void updatePermit(PermitModel permitModel) {
-        // TODO WIP
-        // Update permit data
-        // Update transport dimensions
-        // Delete vehicles and axles, add new ones
-        // Create new routes if route is not already in DB with leluId
-        // Update route if route is in DB with same leluId - keep geometry
-        // Delete old route from DB if it's not included in permit anymore
-        // Remove old route bridges and add new ones
+        // Check if old routes are all included in permit, routes not included anymore should be deleted
+        // Routes with same lelu ID should be updated and not inserted as new, set existing sillari ID to those route models
         Map<Long, Integer> oldRouteIdLeluIdMap = routeRepository.getRouteIdsWithLeluIds(permitModel.getId());
         List<Long> newLeluIds = permitModel.getRoutes().stream().map(RouteModel::getLeluId).collect(Collectors.toList());
 
@@ -122,9 +116,9 @@ public class LeluService {
             }
         }
 
-        for (RouteModel route : permitModel.getRoutes()) {
-            if (oldRouteIdLeluIdMap.containsKey(route.getLeluId())) {
-                route.setId(oldRouteIdLeluIdMap.get(route.getLeluId()));
+        for (RouteModel newRoute : permitModel.getRoutes()) {
+            if (oldRouteIdLeluIdMap.containsKey(newRoute.getLeluId())) {
+                newRoute.setId(oldRouteIdLeluIdMap.get(newRoute.getLeluId()));
             }
         }
 
