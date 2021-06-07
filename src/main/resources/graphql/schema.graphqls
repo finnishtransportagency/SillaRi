@@ -19,7 +19,7 @@ type TransportDimensions {
 type Axle {
     id: ID!
     axleNumber: Int
-    weight: Int
+    weight: Float
     distanceToNext: Float
     maxDistanceToNext: Float
 }
