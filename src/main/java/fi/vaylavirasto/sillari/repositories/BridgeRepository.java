@@ -44,7 +44,7 @@ public class BridgeRepository {
                 .fetch();
 
         Map<String, Integer> resultMap = result.intoMap(BridgeMapper.bridge.OID, BridgeMapper.bridge.ID);
-        logger.debug(resultMap);
+        logger.debug("Bridge OIDs with corresponding Bridge IDs resultMap={}", resultMap);
         return resultMap;
     }
 

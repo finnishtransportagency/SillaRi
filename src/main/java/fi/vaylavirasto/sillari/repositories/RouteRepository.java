@@ -54,7 +54,7 @@ public class RouteRepository {
                 .fetch();
 
         Map<Long, Integer> resultMap = result.intoMap(RouteMapper.route.LELU_ID, RouteMapper.route.ID);
-        logger.debug(resultMap);
+        logger.debug("Route LeLu IDs with corresponding Route IDs resultMap={}", resultMap);
         return resultMap;
     }
 

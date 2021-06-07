@@ -77,7 +77,10 @@ public class LeluController {
     @ResponseBody
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "Create or update permit", description = "Adds a new permit from LeLu to SillaRi. " +
-            "If the same permit number is already found in SillaRi, updates that permit with the provided data.")
+            "If the same permit number is already found in SillaRi, updates that permit with the provided data. " +
+            "If permit is updated, updates routes found with same LeLu ID, adds new routes and deletes routes that are no longer included in the permit. " +
+            "CURRENT LIMITATIONS: 1. Bridge OID must be found in SillaRi DB, otherwise bridge is not added. " +
+            "2. Updated routes must not have existing transport instances or supervisions.")
     public void savePermit(@Valid @RequestBody LeluPermitDTO permitDTO) {
         logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
         leluService.createOrUpdatePermit(permitDTO);
