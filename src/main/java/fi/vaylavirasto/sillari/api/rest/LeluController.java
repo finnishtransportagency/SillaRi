@@ -60,7 +60,7 @@ public class LeluController {
         if (apiVersion == null) {
             return "Hello api version missing";
         }
-        if (SemanticVersioningUtil.matchesMajorVersion(apiVersion, currentApiVersion)) {
+        if (SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             return "Hello major api version match";
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + apiVersion);
@@ -89,7 +89,7 @@ public class LeluController {
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
     })
     public LeluPermitResponseDTO savePermit(@Valid @RequestBody LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
-        if (apiVersion == null || SemanticVersioningUtil.matchesMajorVersion(apiVersion, currentApiVersion)) {
+        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             return leluService.createOrUpdatePermit(permitDTO);
         } else {
