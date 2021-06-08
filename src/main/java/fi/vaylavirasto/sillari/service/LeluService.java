@@ -2,6 +2,8 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.api.lelu.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
+import fi.vaylavirasto.sillari.api.lelu.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.LeluPermitStatus;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.PermitModel;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
@@ -16,6 +18,8 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,7 +41,9 @@ public class LeluService {
         this.bridgeRepository = bridgeRepository;
     }
 
-    public void createOrUpdatePermit(LeluPermitDTO permitDTO) {
+    public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) {
+        LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
+
         PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
         logger.debug("Permit mapped from LeLu model: {}", permitModel);
 
@@ -52,14 +58,23 @@ public class LeluService {
 
         if (permitId != null) {
             logger.debug("Permit with id {} found, update", permitId);
+
             permitModel.setId(permitId);
             updatePermit(permitModel);
+
+            response.setPermitId(permitId);
+            response.setStatus(LeluPermitStatus.UPDATED);
+            return response;
         } else {
             logger.debug("Permit not found with id {}, create new", permitId);
 
             // Insert new permit and all child records
             // Missing route addresses (not yet in lelu model)
-            permitRepository.createPermit(permitModel);
+            Integer permitModelId = permitRepository.createPermit(permitModel);
+
+            response.setPermitId(permitModelId);
+            response.setStatus(LeluPermitStatus.CREATED);
+            return response;
         }
     }
 
