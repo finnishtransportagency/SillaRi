@@ -91,8 +91,7 @@ public class LeluController {
         if (apiVersion == null || SemanticVersioningUtil.matchesMajorVersion(apiVersion, currentApiVersion)) {
             logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             leluService.createOrUpdatePermit(permitDTO);
-        }
-        else{
+        } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
         }
     }
