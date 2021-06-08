@@ -6,18 +6,18 @@ export const routeQuery = (id: number): DocumentNode => gql`
             id
             name
             geojson
-            arrivalAddress {
-                id
-                city
-                postalcode
-                street
-            }
-            departureAddress {
-                id
-                city
-                postalcode
-                street
-            }
+#            arrivalAddress {
+#                id
+#                city
+#                postalcode
+#                street
+#            }
+#            departureAddress {
+#                id
+#                city
+#                postalcode
+#                street
+#            }
             routeBridges {
                 id
                 bridge {

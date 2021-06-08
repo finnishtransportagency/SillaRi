@@ -31,18 +31,18 @@ export const permitQuery = (id: number): DocumentNode => gql`
             }
             routes {
                 id
-                arrivalAddress {
-                    id
-                    city
-                    postalcode
-                    street
-                }
-                departureAddress {
-                    id
-                    city
-                    postalcode
-                    street
-                }
+#                arrivalAddress {
+#                    id
+#                    city
+#                    postalcode
+#                    street
+#                }
+#                departureAddress {
+#                    id
+#                    city
+#                    postalcode
+#                    street
+#                }
             }
         }
     }
