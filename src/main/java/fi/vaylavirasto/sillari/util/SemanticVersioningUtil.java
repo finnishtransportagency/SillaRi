@@ -27,41 +27,66 @@ public class SemanticVersioningUtil {
         }
     }
 
-
-    public static boolean legalVersion(String versionNumber1, String versionNumber2) {
-        return matchesMajorVersion(versionNumber1, versionNumber2) && !tooNewMinorVersion(versionNumber1, versionNumber2);
+    public static String getPatchVersion(String versionNumber) {
+        if (versionNumber == null) {
+            return null;
+        }
+        String[] splitted = versionNumber.split(SEPARATOR);
+        if (splitted.length < 3) {
+            return null;
+        } else {
+            return splitted[2];
+        }
     }
 
-    private static boolean matchesMajorVersion(String versionNumber1, String versionNumber2) {
 
-        String majorVersion1 = getMajorVersion(versionNumber1);
-        String majorVersion2 = getMajorVersion(versionNumber2);
+    public static boolean legalVersion(String clientVersionNumber, String serverVersionNumber) {
+        return serverVersionNumber == null || (isValidVersionNumber(clientVersionNumber) && matchesMajorVersion(clientVersionNumber, serverVersionNumber) && !tooNewMinorVersion(clientVersionNumber, serverVersionNumber));
+    }
 
-        if (majorVersion1 == null) {
-            return majorVersion2 == null;
+    private static boolean isValidVersionNumber(String clientVersionNumber) {
+        try {
+            Integer.valueOf(getMajorVersion(clientVersionNumber));
+            Integer.valueOf(getMinorVersion(clientVersionNumber));
+            Integer.valueOf(getPatchVersion(clientVersionNumber));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static boolean matchesMajorVersion(String clientVersionNumber, String serverVersionNumber) {
+
+        String clientMajorVersion = getMajorVersion(clientVersionNumber);
+        String serverMajorVersion = getMajorVersion(serverVersionNumber);
+
+        if (clientMajorVersion == null) {
+            return serverMajorVersion == null;
         }
 
-        if (majorVersion2 == null) {
-            return majorVersion1 == null;
+        if (serverMajorVersion == null) {
+            return clientMajorVersion == null;
         }
 
-        return majorVersion1.equals(majorVersion2);
+        return clientMajorVersion.equals(serverMajorVersion);
     }
 
     //If client has newer MINOR version, it's a breach. Client might be using new features not available yet.
-    private static boolean tooNewMinorVersion(String versionNumber1, String versionNumber2) {
+    //Assumes version numbers are corrext format x.x.x where x int. 
+    //Assumes no MAJOR number breach.
+    private static boolean tooNewMinorVersion(String clientVersionNumber, String serverVersionNumber) {
 
-        String minorVersion1 = getMinorVersion(versionNumber1);
-        String minorVersion2 = getMinorVersion(versionNumber2);
+        String clientMinorVersion = getMinorVersion(clientVersionNumber);
+        String serverMinorVersion = getMinorVersion(serverVersionNumber);
 
-        if (minorVersion1 == null) {
-            return minorVersion2 == null;
+        if (clientMinorVersion == null) {
+            return serverMinorVersion == null;
         }
 
-        if (minorVersion2 == null) {
-            return minorVersion1 == null;
+        if (serverMinorVersion == null) {
+            return clientMinorVersion == null;
         }
 
-        return minorVersion1.equals(minorVersion2);
+        return Integer.valueOf(clientMinorVersion).compareTo(Integer.valueOf(serverMinorVersion)) > 0;
     }
 }
