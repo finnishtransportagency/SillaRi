@@ -102,6 +102,9 @@ public class SemanticVersioningUtil {
         String clientPatchVersion = getPatchVersion(clientVersionNumber);
         String serverPatchVersion = getPatchVersion(serverVersionNumber);
 
+        String clientMinorVersion = getMinorVersion(clientVersionNumber);
+        String serverMinorVersion = getMinorVersion(serverVersionNumber);
+
         if (clientPatchVersion == null) {
             return serverPatchVersion == null;
         }
@@ -110,6 +113,6 @@ public class SemanticVersioningUtil {
             return clientPatchVersion == null;
         }
 
-        return Integer.valueOf(clientPatchVersion).compareTo(Integer.valueOf(serverPatchVersion)) > 0;
+        return Integer.valueOf(clientMinorVersion).compareTo(Integer.valueOf(serverMinorVersion))==0 && Integer.valueOf(clientPatchVersion).compareTo(Integer.valueOf(serverPatchVersion)) > 0;
     }
 }
