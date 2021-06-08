@@ -68,7 +68,7 @@ public class LeluController {
 
     @RequestMapping(value = "/testPost", method = RequestMethod.POST)
     @ResponseBody
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Test basic post request", description = "Returns posted string")
     public String postTest(@RequestBody String body) {
         logger.debug("Hello Lelu testPost!");
@@ -77,14 +77,15 @@ public class LeluController {
 
     @RequestMapping(value = "/permit", method = RequestMethod.POST)
     @ResponseBody
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Create or update permit", description = "Adds a new permit from LeLu to SillaRi. " +
             "If the same permit number is already found in SillaRi, updates that permit with the provided data. " +
             "If permit is updated, updates routes found with same LeLu ID, adds new routes and deletes routes that are no longer included in the permit. " +
             "CURRENT LIMITATIONS: 1. Bridge OID must be found in SillaRi DB, otherwise bridge is not added. " +
             "2. Updated routes must not have existing transport instances or supervisions.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "HttpStatus.BAD_REQUEST", description = "API version mismatch"),
+            @ApiResponse(responseCode = "200 OK", description = "Permit saved/updated"),
+            @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
     })
     public void savePermit(@Valid @RequestBody LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
         if (apiVersion == null || SemanticVersioningUtil.matchesMajorVersion(apiVersion, currentApiVersion)) {
