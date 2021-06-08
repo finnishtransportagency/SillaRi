@@ -24,7 +24,7 @@ import java.util.Locale;
 @RequestMapping("/lelu")
 public class LeluController {
     private static final Logger logger = LogManager.getLogger();
-    private static final String LELU_API_VERSION_HEADER_NAME = "accept-version";
+    private static final String LELU_API_VERSION_HEADER_NAME = "lelu-api-accept-version";
 
     @Value("${sillari.lelu.version}")
     private String currentApiVersion;

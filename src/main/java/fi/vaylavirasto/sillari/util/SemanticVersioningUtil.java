@@ -3,8 +3,8 @@ package fi.vaylavirasto.sillari.util;
 public class SemanticVersioningUtil {
     private static final String SEPARATOR = "\\.";
 
-    public static String getMajorVersion(String versionNumber){
-        if(versionNumber == null){
+    public static String getMajorVersion(String versionNumber) {
+        if (versionNumber == null) {
             return null;
         }
         String[] splitted = versionNumber.split(SEPARATOR);
@@ -41,7 +41,11 @@ public class SemanticVersioningUtil {
 
 
     public static boolean legalVersion(String clientVersionNumber, String serverVersionNumber) {
-        return serverVersionNumber == null || (isValidVersionNumber(clientVersionNumber) && matchesMajorVersion(clientVersionNumber, serverVersionNumber) && !tooNewMinorVersion(clientVersionNumber, serverVersionNumber));
+        return serverVersionNumber == null ||
+                (isValidVersionNumber(clientVersionNumber)
+                        && matchesMajorVersion(clientVersionNumber, serverVersionNumber)
+                        && !tooNewMinorVersion(clientVersionNumber, serverVersionNumber)
+                        && !tooNewPatchVersion(clientVersionNumber, serverVersionNumber));
     }
 
     private static boolean isValidVersionNumber(String clientVersionNumber) {
@@ -88,5 +92,24 @@ public class SemanticVersioningUtil {
         }
 
         return Integer.valueOf(clientMinorVersion).compareTo(Integer.valueOf(serverMinorVersion)) > 0;
+    }
+
+    //If client has newer PATCH version, it's a breach. Client might be using new features not available yet.
+    //Assumes version numbers are corrext format x.x.x where x int. 
+    //Assumes no MAJOR number breach.
+    private static boolean tooNewPatchVersion(String clientVersionNumber, String serverVersionNumber) {
+
+        String clientPatchVersion = getPatchVersion(clientVersionNumber);
+        String serverPatchVersion = getPatchVersion(serverVersionNumber);
+
+        if (clientPatchVersion == null) {
+            return serverPatchVersion == null;
+        }
+
+        if (serverPatchVersion == null) {
+            return clientPatchVersion == null;
+        }
+
+        return Integer.valueOf(clientPatchVersion).compareTo(Integer.valueOf(serverPatchVersion)) > 0;
     }
 }

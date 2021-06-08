@@ -15,7 +15,7 @@
     <description>Demo project for Spring Boot</description>
 
     <properties>
-        <leluApiVersion>1.0.0</leluApiVersion>
+        <leluApiVersion>1.1.1</leluApiVersion>
         <java.version>11</java.version>
         <aws.sdk.version>1.11.1010</aws.sdk.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
