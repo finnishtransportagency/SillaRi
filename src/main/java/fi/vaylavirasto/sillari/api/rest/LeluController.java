@@ -24,7 +24,7 @@ public class LeluController {
     private static final String LELU_API_VERSION_HEADER_NAME = "accept-version";
 
     @Value("${sillari.lelu.version}")
-    private String apiVersion;
+    private String currentApiVersion;
 
     private final LeluService leluService;
     private final MessageSource messageSource;
@@ -35,10 +35,10 @@ public class LeluController {
         this.messageSource = messageSource;
     }
 
-    @RequestMapping(value = "/version", method = RequestMethod.GET)
+    @RequestMapping(value = "/apiVersion", method = RequestMethod.GET)
     @Operation(summary = "Return api version")
-    public String version() {
-        return apiVersion;
+    public String apiVersion() {
+        return currentApiVersion;
     }
 
     @RequestMapping(value = "/testGet", method = RequestMethod.GET)
@@ -51,16 +51,16 @@ public class LeluController {
 
     @RequestMapping(value = "/testGetWithVersion", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
-    public String getTestWithVersion(@RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String version) throws APIVersionException {
-        logger.debug("Hello Lelu testGet version " + version);
+    public String getTestWithVersion(@RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+        logger.debug("Hello Lelu testGet version " + apiVersion);
 
-        if (version == null) {
-            return "Hello version missing";
+        if (apiVersion == null) {
+            return "Hello api version missing";
         }
-        if (SemanticVersioningUtil.matchesMajorVersion(version, apiVersion)) {
-            return "Hello major version match";
+        if (SemanticVersioningUtil.matchesMajorVersion(apiVersion, currentApiVersion)) {
+            return "Hello major api version match";
         } else {
-            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + version + " vs " + apiVersion);
+            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + apiVersion);
         }
     }
 
@@ -81,9 +81,14 @@ public class LeluController {
             "If permit is updated, updates routes found with same LeLu ID, adds new routes and deletes routes that are no longer included in the permit. " +
             "CURRENT LIMITATIONS: 1. Bridge OID must be found in SillaRi DB, otherwise bridge is not added. " +
             "2. Updated routes must not have existing transport instances or supervisions.")
-    public void savePermit(@Valid @RequestBody LeluPermitDTO permitDTO) {
-        logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
-        leluService.createOrUpdatePermit(permitDTO);
+    public void savePermit(@Valid @RequestBody LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+        if (apiVersion == null || SemanticVersioningUtil.matchesMajorVersion(apiVersion, currentApiVersion)) {
+            logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
+            leluService.createOrUpdatePermit(permitDTO);
+        }
+        else{
+            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
+        }
     }
 
 }
