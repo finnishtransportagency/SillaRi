@@ -58,10 +58,10 @@ public class LeluController {
         logger.debug("Hello Lelu testGet version " + apiVersion);
 
         if (apiVersion == null) {
-            return "Hello api version missing";
+            return "api version missing";
         }
         if (SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
-            return "Hello major api version match";
+            return "api version match";
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
         }

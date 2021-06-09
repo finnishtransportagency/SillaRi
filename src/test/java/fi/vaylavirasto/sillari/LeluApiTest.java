@@ -1,6 +1,7 @@
 package fi.vaylavirasto.sillari;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.Assert.assertEquals;
 
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.http.HttpHeaders;
@@ -18,18 +19,20 @@ class LeluApiTest {
 
         String responseString = client.get()
                 .uri("/testGetWithVersion")
-                .header("accept-version", "1.1.0")
+                .header("accept-version", "1.1.1")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
 
-        System.out.println("HEllo:"+ responseString);
+
+        System.out.println("HEllo:" + responseString);
+        assertEquals("api version match", responseString);
 
 
     }
 
     @Test
-    void testWithOldVersion() {
+    void testWithOldMajorVersion() {
         WebClient client = buildClient();
 
         String responseString = client.get()
@@ -39,7 +42,7 @@ class LeluApiTest {
                 .bodyToMono(String.class)
                 .block();
 
-        System.out.println("HEllo:"+ responseString);
+        System.out.println("HEllo:" + responseString);
 
 
     }
@@ -70,7 +73,7 @@ class LeluApiTest {
                 .bodyToMono(String.class)
                 .block();
 
-        System.out.println("HEllo:"+ responseString);
+        assertEquals("api version missing", responseString);
 
 
     }
