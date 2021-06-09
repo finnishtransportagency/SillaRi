@@ -1,4 +1,4 @@
-FROM 384409174079.dkr.ecr.eu-west-1.amazonaws.com/sillari-java:latest
+FROM openjdk:11
 MAINTAINER Jari Piitulainen <jari.piitulainen@cgi.com>
 ADD app/sillari.jar sillari.jar
 ADD startapp.sh /startapp.sh
