@@ -81,6 +81,44 @@ public class LeluServiceTest {
         assertNotNull(response.getTimestamp());
     }
 
+    @Test
+    public void testCreatePermitWithNewCompany() {
+        Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(null);
+        Mockito.when(companyRepository.createCompany(Mockito.any(CompanyModel.class))).thenReturn(2);
+
+        Mockito.when(permitRepository.getPermitIdByPermitNumber(Mockito.anyString())).thenReturn(null);
+        Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(2);
+        Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
+
+        LeluPermitResponseDTO response = leluService.createOrUpdatePermit(getPermitDTO());
+
+        // Verify that permitRepository.createPermit is called and check that company and bridge IDs have been filled
+        Mockito.verify(permitRepository).createPermit(permitModelCaptor.capture());
+        PermitModel permitModel = permitModelCaptor.getValue();
+        logger.debug("Captured permitModel: {}", permitModel);
+
+        assertPermitDTOMappedToModel(permitModel);
+
+        // Assert company ID is added to permit
+        assertEquals(2, permitModel.getCompanyId().intValue());
+
+        // Assert bridge IDs are added to route bridges
+        assertEquals(1, permitModel.getRoutes().get(0).getRouteBridges().get(0).getBridgeId().intValue());
+        assertEquals(2, permitModel.getRoutes().get(0).getRouteBridges().get(1).getBridgeId().intValue());
+        assertEquals(3, permitModel.getRoutes().get(0).getRouteBridges().get(2).getBridgeId().intValue());
+        assertEquals(4, permitModel.getRoutes().get(1).getRouteBridges().get(0).getBridgeId().intValue());
+        assertEquals(5, permitModel.getRoutes().get(1).getRouteBridges().get(1).getBridgeId().intValue());
+        assertEquals(6, permitModel.getRoutes().get(2).getRouteBridges().get(0).getBridgeId().intValue());
+        assertEquals(7, permitModel.getRoutes().get(2).getRouteBridges().get(1).getBridgeId().intValue());
+
+        // Assert the resulting response
+        assertNotNull(response);
+        assertEquals(2, response.getPermitId().intValue());
+        assertEquals("1234/2021", response.getPermitNumber());
+        assertEquals(LeluPermitStatus.CREATED, response.getStatus());
+        assertNotNull(response.getTimestamp());
+    }
+
     private LeluPermitDTO getPermitDTO() {
         LeluPermitDTO permit = new LeluPermitDTO();
         permit.setNumber("1234/2021");
