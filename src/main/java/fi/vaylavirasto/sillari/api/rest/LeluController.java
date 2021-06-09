@@ -55,7 +55,7 @@ public class LeluController {
     @RequestMapping(value = "/testGetWithVersion", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
     public String getTestWithVersion(@RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
-        logger.debug("Hello Lelu testGet version " + apiVersion);
+        logger.debug("Lelu testGet version " + apiVersion);
 
         if (apiVersion == null) {
             return "api version missing";

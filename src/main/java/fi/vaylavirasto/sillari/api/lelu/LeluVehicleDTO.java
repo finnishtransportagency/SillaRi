@@ -20,4 +20,12 @@ public class LeluVehicleDTO {
     @Schema(description = "Registration number", required = true, example = "ABC-123")
     private String identifier;
 
+    public LeluVehicleDTO() {
+    }
+
+    public LeluVehicleDTO(String type, String identifier) {
+        this.type = type;
+        this.identifier = identifier;
+    }
+
 }

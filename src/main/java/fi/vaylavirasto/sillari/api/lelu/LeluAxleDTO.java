@@ -26,4 +26,14 @@ public class LeluAxleDTO {
     @Schema(description = "Varying axle length. Max distance to the next axle (m).", example = "10.5")
     private Double maxDistanceToNext;
 
+    public LeluAxleDTO() {
+    }
+
+    public LeluAxleDTO(Integer axleNumber, Double weight, Double distanceToNext, Double maxDistanceToNext) {
+        this.axleNumber = axleNumber;
+        this.weight = weight;
+        this.distanceToNext = distanceToNext;
+        this.maxDistanceToNext = maxDistanceToNext;
+    }
+
 }

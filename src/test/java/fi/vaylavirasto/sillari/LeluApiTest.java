@@ -1,7 +1,10 @@
 package fi.vaylavirasto.sillari;
 
+import org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.http.HttpHeaders;
@@ -14,18 +17,30 @@ import java.util.Collections;
 class LeluApiTest {
 
     @Test
-    void testWithCorrectVersion() {
+    public void testWithCorrectVersion() {
         WebClient client = buildClient();
 
         String responseString = client.get()
                 .uri("/testGetWithVersion")
-                .header("accept-version", "1.1.1")
+                .header("lelu-api-accept-version", "1.1.1")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
 
+        assertEquals("api version match", responseString);
+    }
 
-        System.out.println("HEllo:" + responseString);
+    @Test
+    public void testWithOlderSameMajorVersion() {
+        WebClient client = buildClient();
+
+        String responseString = client.get()
+                .uri("/testGetWithVersion")
+                .header("lelu-api-accept-version", "1.0.0")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
         assertEquals("api version match", responseString);
 
 
@@ -35,33 +50,48 @@ class LeluApiTest {
     void testWithOldMajorVersion() {
         WebClient client = buildClient();
 
-        String responseString = client.get()
-                .uri("/testGetWithVersion")
-                .header("accept-version", "1.0.0")
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        assertThrows(BadRequest.class, () -> {
+            String responseString = client.get()
+                    .uri("/testGetWithVersion")
+                    .header("lelu-api-accept-version", "0.9.9")
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        });
 
-        System.out.println("HEllo:" + responseString);
+    }
 
+
+    @Test
+    void testWithTooNewPatchVersion() {
+        WebClient client = buildClient();
+
+        assertThrows(BadRequest.class, () -> {
+            String responseString = client.get()
+                    .uri("/testGetWithVersion")
+                    .header("lelu-api-accept-version", "1.1.2")
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        });
 
     }
 
     @Test
-    void testWithMajorOldVersion() {
+    void testWithTooNewMinorVersion() {
         WebClient client = buildClient();
 
-        String responseString = client.get()
-                .uri("/testGetWithVersion")
-                .header("accept-version", "0.9.9")
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-
-        System.out.println("HEllo:"+ responseString);
-
+        assertThrows(BadRequest.class, () -> {
+            String responseString = client.get()
+                    .uri("/testGetWithVersion")
+                    .header("lelu-api-accept-version", "1.2.1")
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        });
 
     }
+
 
     @Test
     void testWithNoVersion() {
@@ -85,6 +115,8 @@ class LeluApiTest {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8080"))
                 .build();
+
     }
+
 
 }

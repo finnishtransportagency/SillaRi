@@ -19,4 +19,11 @@ public class LeluAxleChartDTO {
     @Schema(description = "List of axles in the axle chart", required = true)
     private List<LeluAxleDTO> axles;
 
+    public LeluAxleChartDTO() {
+    }
+
+    public LeluAxleChartDTO(List<LeluAxleDTO> axles) {
+        this.axles = axles;
+    }
+
 }

@@ -40,4 +40,16 @@ public class LeluRouteDTO {
     @Schema(description = "List of bridges on the route", required = true)
     private List<LeluBridgeDTO> bridges;
 
+    public LeluRouteDTO() {
+    }
+
+    public LeluRouteDTO(Long id, String name, Integer order, Integer transportCount, Boolean alternativeRoute, List<LeluBridgeDTO> bridges) {
+        this.id = id;
+        this.name = name;
+        this.order = order;
+        this.transportCount = transportCount;
+        this.alternativeRoute = alternativeRoute;
+        this.bridges = bridges;
+    }
+
 }
