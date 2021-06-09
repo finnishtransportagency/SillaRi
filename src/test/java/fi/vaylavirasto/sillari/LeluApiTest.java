@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import java.util.Collections;
 
 
-class LeluControllerTest {
+class LeluApiTest {
 
     @Test
     void testWithCorrectVersion() {
