@@ -1,10 +1,7 @@
 package fi.vaylavirasto.sillari;
 
 import fi.vaylavirasto.sillari.api.lelu.*;
-import fi.vaylavirasto.sillari.model.AxleModel;
-import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.RouteBridgeModel;
-import fi.vaylavirasto.sillari.model.RouteModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.BridgeRepository;
 import fi.vaylavirasto.sillari.repositories.CompanyRepository;
 import fi.vaylavirasto.sillari.repositories.PermitRepository;
@@ -62,17 +59,19 @@ public class LeluServiceTest {
         PermitModel permitModel = permitModelCaptor.getValue();
         logger.debug("Captured permitModel: {}", permitModel);
 
-        assertNotNull(permitModel);
         assertPermitDTOMappedToModel(permitModel);
 
+        // Assert company ID is added to permit
         assertEquals(1, permitModel.getCompanyId().intValue());
-        assertEquals(3, permitModel.getRoutes().size());
-        for (RouteModel route : permitModel.getRoutes()) {
-            assertTrue(route.getRouteBridges().size() > 0);
-            for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
-                assertNotNull(routeBridge.getBridgeId());
-            }
-        }
+
+        // Assert bridge IDs are added to route bridges
+        assertEquals(1, permitModel.getRoutes().get(0).getRouteBridges().get(0).getBridgeId().intValue());
+        assertEquals(2, permitModel.getRoutes().get(0).getRouteBridges().get(1).getBridgeId().intValue());
+        assertEquals(3, permitModel.getRoutes().get(0).getRouteBridges().get(2).getBridgeId().intValue());
+        assertEquals(4, permitModel.getRoutes().get(1).getRouteBridges().get(0).getBridgeId().intValue());
+        assertEquals(5, permitModel.getRoutes().get(1).getRouteBridges().get(1).getBridgeId().intValue());
+        assertEquals(6, permitModel.getRoutes().get(2).getRouteBridges().get(0).getBridgeId().intValue());
+        assertEquals(7, permitModel.getRoutes().get(2).getRouteBridges().get(1).getBridgeId().intValue());
 
         // Assert the resulting response
         assertNotNull(response);
@@ -186,6 +185,7 @@ public class LeluServiceTest {
     }
 
     private void assertPermitDTOMappedToModel(PermitModel permitModel) {
+        assertNotNull(permitModel);
         assertEquals("1234/2021", permitModel.getPermitNumber());
         assertEquals(1, permitModel.getLeluVersion().intValue());
 
@@ -239,11 +239,19 @@ public class LeluServiceTest {
         assertEquals(1, route1.getOrderNumber().intValue());
         assertEquals(3, route1.getTransportCount().intValue());
         assertFalse(route1.getAlternativeRoute());
-
         assertEquals(3, route1.getRouteBridges().size());
+
         RouteBridgeModel routeBridge1 = route1.getRouteBridges().get(0);
+        assertEquals("info1", routeBridge1.getCrossingInstruction());
+        assertBridge(routeBridge1.getBridge(), "1.1.111.111.1.11.111111", "B-01", "Bridge1", "00001 001 0 01111");
+
         RouteBridgeModel routeBridge2 = route1.getRouteBridges().get(1);
+        assertEquals("info2", routeBridge2.getCrossingInstruction());
+        assertBridge(routeBridge2.getBridge(), "2.2.222.222.2.22.222222", "B-02", "Bridge2", "00002 002 0 02222");
+
         RouteBridgeModel routeBridge3 = route1.getRouteBridges().get(2);
+        assertEquals("info3", routeBridge3.getCrossingInstruction());
+        assertBridge(routeBridge3.getBridge(), "3.3.333.333.3.33.333333", "B-03", "Bridge3", "00003 003 0 03333");
 
         RouteModel route2 = permitModel.getRoutes().get(1);
         assertEquals(23456, route2.getLeluId().longValue());
@@ -251,10 +259,15 @@ public class LeluServiceTest {
         assertEquals(2, route2.getOrderNumber().intValue());
         assertEquals(5, route2.getTransportCount().intValue());
         assertFalse(route2.getAlternativeRoute());
-
         assertEquals(2, route2.getRouteBridges().size());
+
         RouteBridgeModel routeBridge4 = route2.getRouteBridges().get(0);
+        assertEquals("info4", routeBridge4.getCrossingInstruction());
+        assertBridge(routeBridge4.getBridge(), "4.4.444.444.4.44.444444", "B-04", "Bridge4", "00004 004 0 04444");
+
         RouteBridgeModel routeBridge5 = route2.getRouteBridges().get(1);
+        assertEquals("info5", routeBridge5.getCrossingInstruction());
+        assertBridge(routeBridge5.getBridge(), "5.5.555.555.5.55.555555", "B-05", "Bridge5", "00005 005 0 05555");
 
         RouteModel route3 = permitModel.getRoutes().get(2);
         assertEquals(34567, route3.getLeluId().longValue());
@@ -262,10 +275,16 @@ public class LeluServiceTest {
         assertEquals(3, route3.getOrderNumber().intValue());
         assertEquals(7, route3.getTransportCount().intValue());
         assertFalse(route3.getAlternativeRoute());
-
         assertEquals(2, route3.getRouteBridges().size());
+
         RouteBridgeModel routeBridge6 = route3.getRouteBridges().get(0);
+        assertEquals("info6", routeBridge6.getCrossingInstruction());
+        assertBridge(routeBridge6.getBridge(), "6.6.666.666.6.66.666666", "B-06", "Bridge6", "00006 006 0 06666");
+
         RouteBridgeModel routeBridge7 = route3.getRouteBridges().get(1);
+        assertEquals("info7", routeBridge7.getCrossingInstruction());
+        assertBridge(routeBridge7.getBridge(), "7.7.777.777.7.77.777777", "B-07", "Bridge7", "00007 007 0 07777");
+
     }
 
     private void assertAxle(AxleModel axle, Integer axleNumber, Double weight, Double distanceToNext, Double maxDistanceToNext) {
@@ -275,6 +294,14 @@ public class LeluServiceTest {
         if (maxDistanceToNext != null) {
             assertEquals(BigDecimal.valueOf(maxDistanceToNext), axle.getMaxDistanceToNext());
         }
+    }
+
+    private void assertBridge(BridgeModel bridge, String oid, String identifier, String name, String roadAddress) {
+        assertNotNull(bridge);
+        assertEquals(oid, bridge.getOid());
+        assertEquals(identifier, bridge.getIdentifier());
+        assertEquals(name, bridge.getName());
+        assertEquals(roadAddress, bridge.getRoadAddress());
     }
 
     private ZoneOffset getZoneOffset(LocalDateTime localDateTime) {
