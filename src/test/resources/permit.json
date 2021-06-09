@@ -1,0 +1,117 @@
+{
+  "number": "1234/2021",
+  "lastModifiedDate": "2021-05-26T08:02:36Z",
+  "version": 1,
+  "validFrom": "2021-05-26T00:00:00Z",
+  "validTo": "2021-11-30T00:00:00Z",
+  "customer": {
+    "name": "Yritys Y",
+    "identifier": "1234567-8"
+  },
+  "vehicles": [
+    {
+      "type": "kuorma-auto",
+      "identifier": "ABC-123"
+    }
+  ],
+  "axleChart": {
+    "axles": [
+      {
+        "axleNumber": 1,
+        "weight": 9.1,
+        "distanceToNext": 2.4
+      },
+      {
+        "axleNumber": 2,
+        "weight": 8.1,
+        "distanceToNext": 1.4
+      },
+      {
+        "axleNumber": 3,
+        "weight": 19.1,
+        "distanceToNext": 3.4
+      },
+      {
+        "axleNumber": 4,
+        "weight": 9.1,
+        "distanceToNext": 1.4
+      },
+      {
+        "axleNumber": 5,
+        "weight": 17.1,
+        "distanceToNext": 1.4
+      },
+      {
+        "axleNumber": 6,
+        "weight": 5.1,
+        "distanceToNext": 1.4
+      },
+      {
+        "axleNumber": 7,
+        "weight": 5.3,
+        "distanceToNext": 1.4
+      },
+      {
+        "axleNumber": 8,
+        "weight": 9.1,
+        "distanceToNext": 3.4
+      },
+      {
+        "axleNumber": 9,
+        "weight": 9.1,
+        "distanceToNext": 2.4
+      },
+      {
+        "axleNumber": 10,
+        "weight": 15.1,
+        "distanceToNext": 2.4
+      },
+      {
+        "axleNumber": 11,
+        "weight": 15.1,
+        "distanceToNext": 2.4
+      },
+      {
+        "axleNumber": 12,
+        "weight": 15.1,
+        "distanceToNext": 2.4
+      },
+      {
+        "axleNumber": 13,
+        "weight": 9.1,
+        "distanceToNext": 2.4
+      },
+      {
+        "axleNumber": 14,
+        "weight": 2.1,
+        "distanceToNext": 2.4
+      }
+    ]
+  },
+  "transportTotalMass": 147.6,
+  "transportDimensions": {
+    "width": 3.45,
+    "length": 33.3,
+    "height": 4.5
+  },
+  "additionalDetails": "Muita huomioita",
+  "routes": [
+    {
+      "id": 12345,
+      "name": "Kotka - Tampere",
+      "order": 1,
+      "transportCount": 3,
+      "alternativeRoute": false,
+      "bridges": [
+        {
+          "oid": "1.2.246.578.1.15.400025",
+          "identifier": "H-25",
+          "name": "Kaivannon silta",
+          "roadAddress": "00012 204 0 03788",
+          "supervisorName": "Vilja Valvoja",
+          "additionalInfo": "Ajoneuvon keskilinjan oltava 4,25 metrin etäisyydellä idänpuoleisesta kaiteesta."
+        }
+      ]
+    }
+  ]
+}

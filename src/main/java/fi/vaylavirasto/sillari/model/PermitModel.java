@@ -2,19 +2,27 @@ package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
 public class PermitModel {
-    private long id;
-    private long companyId;
+    private Integer id;
+    private Integer companyId;
     private String permitNumber;
-    private String validStartDate;
-    private String validEndDate;
-    private Double totalMass;
-    private List<RouteModel> routes;
+    private Integer leluVersion;
+    private OffsetDateTime leluLastModifiedDate;
+    private OffsetDateTime validStartDate;
+    private OffsetDateTime validEndDate;
+    private BigDecimal transportTotalMass;
     private TransportDimensionsModel transportDimensions;
-    private AxleChartModel axleChart;
-    private List<AxleModel> axles;
+    private String additionalDetails;
     private List<VehicleModel> vehicles;
+    private AxleChartModel axleChart;
+    private List<RouteModel> routes;
+
+    // For mapping purposes only
+    private CompanyModel company;
+    private List<AxleModel> axles;
 }

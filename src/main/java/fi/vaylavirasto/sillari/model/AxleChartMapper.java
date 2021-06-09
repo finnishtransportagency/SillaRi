@@ -5,8 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
-import java.math.BigDecimal;
-
 public class AxleChartMapper implements RecordMapper<Record, AxleChartModel> {
     public static final AxleChart axleChart = Tables.AXLE_CHART.as("a");
 

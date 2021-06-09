@@ -65,7 +65,7 @@
       "height": "Korkeus maasta",
       "width": "Leveys",
       "length": "Pituus",
-      "totalMass": "Kokonaismassa",
+      "transportTotalMass": "Kokonaismassa",
       "axleWeightsDistances": "Akselipainot ja -välit"
     },
     "transportValid": "Kuljetus on luvanmukainen lähtiessä",

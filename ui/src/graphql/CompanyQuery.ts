@@ -13,18 +13,18 @@ export const companiesQuery = (): DocumentNode => gql`
         validEndDate
         routes {
           id
-          arrivalAddress {
-            id
-            city
-            postalcode
-            street
-          }
-          departureAddress {
-            id
-            city
-            postalcode
-            street
-          }
+          #          arrivalAddress {
+          #            id
+          #            city
+          #            postalcode
+          #            street
+          #          }
+          #          departureAddress {
+          #            id
+          #            city
+          #            postalcode
+          #            street
+          #          }
           crossings {
             id
             drivingLineInfo
@@ -73,18 +73,18 @@ export const companyQuery = (id: number): DocumentNode => gql`
         routes {
           id
           name
-          arrivalAddress {
-            id
-            city
-            postalcode
-            street
-          }
-          departureAddress {
-            id
-            city
-            postalcode
-            street
-          }
+#          arrivalAddress {
+#            id
+#            city
+#            postalcode
+#            street
+#          }
+#          departureAddress {
+#            id
+#            city
+#            postalcode
+#            street
+#          }
         }
       }
     }

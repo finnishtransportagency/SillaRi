@@ -2,15 +2,13 @@ package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 @Data
 public class TransportDimensionsModel {
-    private long id;
-    private long permitId;
-    private Double height;
-    private Double width;
-    private Double length;
-
-
+    private Integer id;
+    private Integer permitId;
+    private BigDecimal height;
+    private BigDecimal width;
+    private BigDecimal length;
 }

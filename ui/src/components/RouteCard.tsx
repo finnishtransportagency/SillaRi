@@ -15,10 +15,10 @@ const RouteCard = ({ route, permitId }: RouteCardProps): JSX.Element => {
   const { id: routeId, name } = route;
   const { t } = useTranslation();
 
-  const {
-    departureAddress: { street: departureStreet, postalcode: departurePostalCode, city: departureCity },
-    arrivalAddress: { street: arrivalStreet, postalcode: arrivalPostalCode, city: arrivalCity },
-  } = route;
+  // Route address not yet implemented in LeLu API, might be null
+  const { departureAddress, arrivalAddress } = route || {};
+  const { street: departureStreet, postalcode: departurePostalCode, city: departureCity } = departureAddress || {};
+  const { street: arrivalStreet, postalcode: arrivalPostalCode, city: arrivalCity } = arrivalAddress || {};
 
   return (
     <IonCard button routerLink={`/routeDetail/${permitId}/${routeId}`}>
@@ -33,16 +33,20 @@ const RouteCard = ({ route, permitId }: RouteCardProps): JSX.Element => {
       </IonCardHeader>
       <IonCardContent className="ion-text-left">
         <IonGrid>
-          <IonRow>
-            <IonCol>
-              <IonText>{`${departureStreet}, ${departurePostalCode} ${departureCity}`}</IonText>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonText>{`> ${arrivalStreet}, ${arrivalPostalCode} ${arrivalCity}`}</IonText>
-            </IonCol>
-          </IonRow>
+          {departureAddress && (
+            <IonRow>
+              <IonCol>
+                <IonText>{`${departureStreet}, ${departurePostalCode} ${departureCity}`}</IonText>
+              </IonCol>
+            </IonRow>
+          )}
+          {arrivalAddress && (
+            <IonRow>
+              <IonCol>
+                <IonText>{`> ${arrivalStreet}, ${arrivalPostalCode} ${arrivalCity}`}</IonText>
+              </IonCol>
+            </IonRow>
+          )}
           {/* TODO We do not get departure time from route, should we fetch route transport and read the departure status?
           How do we get that transport instance, since route can have multiple transport instances? */}
           {/*
