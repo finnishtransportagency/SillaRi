@@ -1,0 +1,166 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  (1.0) AWS CloudFormation Template to launch Vaylapilvi 1.0 default app load balancer, services and tasks
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Vaylapilvi 1.0 ECS, LB and Services Configuration
+Parameters:
+  Environment:
+      AllowedValues: [Development, Test, Production]
+      Description: Environment value to decide resources
+      Type: String
+      Default: Development
+  Subnet1:
+    Type: String
+    Default: subnet-05081b8f507e1af79
+  Subnet2:
+    Type: String
+    Default: subnet-0c5e64f135a73dc1c
+  VPC:
+    Type: String
+    Default: vpc-0b695ee1219477e75
+  ServiceName:
+    Type: String
+    Default: SILLARI-UI-DEV-FG
+  ContainerNameUI:
+    Type: String
+    Default: SILLARI-UI-DEV-FG
+  ClusterName:
+    Type: String
+    Default: sillari-dev
+  ImageUI:
+    Type: String
+    Default: 384409174079.dkr.ecr.eu-west-1.amazonaws.com/sillari-ui:latest
+  TargetGroupUIId:
+    Type: String
+    Default: arn:aws:elasticloadbalancing:eu-west-1:384409174079:targetgroup/sillari-ui-fg/769b70c84e8b0fdb
+
+Resources:
+  DiscoveryService:
+    Type: AWS::ServiceDiscovery::Service
+    Properties:
+      Description: Discovery Service for SillaRi UI
+      DnsConfig:
+        RoutingPolicy: MULTIVALUE
+        DnsRecords:
+          - TTL: 60
+            Type: A
+          - TTL: 60
+            Type: SRV
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: sillari-ui-dev
+      NamespaceId: ns-6rwymbcy2xp7dhbv
+
+  CloudwatchLogsGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join ['-', [ECSLogGroup, !Ref 'AWS::StackName']]
+      RetentionInDays: 14
+
+  SILLARIUISERVICE:
+    Type: AWS::ECS::Service
+    Properties:
+        ServiceName: !Ref ServiceName
+        Cluster: !Ref ClusterName
+        LaunchType: FARGATE
+        NetworkConfiguration:
+          AwsvpcConfiguration:
+            Subnets:
+              - !Ref Subnet1
+              - !Ref Subnet2
+        LoadBalancers:
+        - ContainerName: !Ref ContainerNameUI
+          ContainerPort: 8095
+          TargetGroupArn: !Ref TargetGroupUIId
+        DesiredCount: 1
+        TaskDefinition: !Ref SILLARIUITASK
+        ServiceRegistries:
+          - RegistryArn: !GetAtt DiscoveryService.Arn
+            Port: 80
+
+  SILLARIUITASK:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      Family: !Ref ContainerNameUI
+      Cpu: 256
+      Memory: 512
+      TaskRoleArn: !Ref TaskRole
+      ExecutionRoleArn: !Ref ExecutionRole
+      ContainerDefinitions:
+      - Name: !Ref ContainerNameUI
+        Image: !Ref ImageUI
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group: !Ref 'CloudwatchLogsGroup'
+            awslogs-region: !Ref 'AWS::Region'
+            awslogs-stream-prefix: !Join ['', [sillari-ui-fg-, !Ref Environment]]
+        MountPoints:
+          - SourceVolume: "volume-0"
+            ContainerPath: "/data"
+            ReadOnly: false
+          - SourceVolume: "volume-1"
+            ContainerPath: "/var/sillari"
+            ReadOnly: false
+        PortMappings:
+          - ContainerPort: 8095
+            HostPort: 8095
+            Protocol: "tcp"
+        Environment:
+          - Name: "environment"
+            Value: "dev"
+          - Name: "roleArn"
+            Value: "arn:aws:iam::384409174079:role/SillariPhotosRole"
+      Volumes:
+        - Name: "volume-0"
+          EFSVolumeConfiguration:
+            FilesystemId: "fs-2bdd8ce1"
+            RootDirectory: "/"
+            TransitEncryption: ENABLED
+            AuthorizationConfig:
+              IAM: ENABLED
+        - Name: "volume-1"
+          EFSVolumeConfiguration:
+            FilesystemId: "fs-2bdd8ce1"
+            RootDirectory: "/var/sillari"
+            TransitEncryption: ENABLED
+            AuthorizationConfig:
+              IAM: ENABLED
+        # "The Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role that grants containers in the task permission to call AWS APIs on your behalf."
+
+  # A role needed by ECS
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join ['', [!Ref ServiceName, -ExecutionRole]]
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy'
+        - 'arn:aws:iam::384409174079:policy/sillari-efs-policy'
+        - 'arn:aws:iam::384409174079:policy/sillari-task-kms-decrypt'
+
+  # A role for the containers
+  TaskRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: !Join ['', [!Ref ServiceName, -TaskRole]]
+        AssumeRolePolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: ecs-tasks.amazonaws.com
+              Action: 'sts:AssumeRole'
+        ManagedPolicyArns:
+        - 'arn:aws:iam::384409174079:policy/sillari-efs-policy'
+        - 'arn:aws:iam::384409174079:policy/sillari-task-kms-decrypt'

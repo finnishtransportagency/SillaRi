@@ -4,6 +4,7 @@ services:
     hostname: sillari-backend
     build:
       context: ./sillari-backend
+      dockerfile: Dockerfile_local
     environment:
       - environment=local
       - SPRING_DATASOURCE_URL=jdbc:postgresql://sillari-local-db:5432/sillari

@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  (1.0) AWS CloudFormation Template to sillari service Discovery
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Vaylapilvi 1.0 Sillari Discovery Configuration
+Resources:
+  PrivateNamespace:
+      Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+      Properties:
+          Name: devsillari.local
+          Vpc: vpc-0b695ee1219477e75
+
+  DiscoveryService:
+    Type: AWS::ServiceDiscovery::Service
+    Properties:
+      Description: Discovery Service for the Demo Application
+      DnsConfig:
+        RoutingPolicy: MULTIVALUE
+        DnsRecords:
+          - TTL: 60
+            Type: A
+          - TTL: 60
+            Type: SRV
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: sillari-services
+      NamespaceId: !Ref PrivateNamespace
