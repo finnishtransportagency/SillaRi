@@ -55,13 +55,13 @@ public class LeluController {
     @RequestMapping(value = "/testGetWithVersion", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
     public String getTestWithVersion(@RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
-        logger.debug("Hello Lelu testGet version " + apiVersion);
+        logger.debug("Lelu testGet version " + apiVersion);
 
         if (apiVersion == null) {
-            return "Hello api version missing";
+            return "api version missing";
         }
         if (SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
-            return "Hello major api version match";
+            return "api version match";
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
         }
