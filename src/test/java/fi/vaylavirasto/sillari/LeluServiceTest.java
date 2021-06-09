@@ -41,6 +41,8 @@ public class LeluServiceTest {
 
     @Captor
     ArgumentCaptor<PermitModel> permitModelCaptor;
+    @Captor
+    ArgumentCaptor<List<Integer>> routeIdsToDeleteCaptor;
 
     @InjectMocks
     private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, bridgeRepository);
@@ -54,24 +56,19 @@ public class LeluServiceTest {
 
         LeluPermitResponseDTO response = leluService.createOrUpdatePermit(getPermitDTO());
 
-        // Verify that permitRepository.createPermit is called and check that company and bridge IDs have been filled
+        // Verify that permitRepository.createPermit is called and capture parameters
         Mockito.verify(permitRepository).createPermit(permitModelCaptor.capture());
         PermitModel permitModel = permitModelCaptor.getValue();
         logger.debug("Captured permitModel: {}", permitModel);
 
+        // Check that all values are correctly mapped from Lelu DTOs to models
         assertPermitDTOMappedToModel(permitModel);
 
         // Assert company ID is added to permit
         assertEquals(1, permitModel.getCompanyId().intValue());
 
-        // Assert bridge IDs are added to route bridges
-        assertEquals(1, permitModel.getRoutes().get(0).getRouteBridges().get(0).getBridgeId().intValue());
-        assertEquals(2, permitModel.getRoutes().get(0).getRouteBridges().get(1).getBridgeId().intValue());
-        assertEquals(3, permitModel.getRoutes().get(0).getRouteBridges().get(2).getBridgeId().intValue());
-        assertEquals(4, permitModel.getRoutes().get(1).getRouteBridges().get(0).getBridgeId().intValue());
-        assertEquals(5, permitModel.getRoutes().get(1).getRouteBridges().get(1).getBridgeId().intValue());
-        assertEquals(6, permitModel.getRoutes().get(2).getRouteBridges().get(0).getBridgeId().intValue());
-        assertEquals(7, permitModel.getRoutes().get(2).getRouteBridges().get(1).getBridgeId().intValue());
+        // Assert correct bridge IDs are added to route bridges
+        assertBridgeIdsAdded(permitModel);
 
         // Assert the resulting response
         assertNotNull(response);
@@ -92,30 +89,68 @@ public class LeluServiceTest {
 
         LeluPermitResponseDTO response = leluService.createOrUpdatePermit(getPermitDTO());
 
-        // Verify that permitRepository.createPermit is called and check that company and bridge IDs have been filled
+        // Verify that permitRepository.createPermit is called and capture parameters
         Mockito.verify(permitRepository).createPermit(permitModelCaptor.capture());
         PermitModel permitModel = permitModelCaptor.getValue();
         logger.debug("Captured permitModel: {}", permitModel);
 
+        // Check that all values are correctly mapped from Lelu DTOs to models
         assertPermitDTOMappedToModel(permitModel);
 
         // Assert company ID is added to permit
         assertEquals(2, permitModel.getCompanyId().intValue());
 
-        // Assert bridge IDs are added to route bridges
-        assertEquals(1, permitModel.getRoutes().get(0).getRouteBridges().get(0).getBridgeId().intValue());
-        assertEquals(2, permitModel.getRoutes().get(0).getRouteBridges().get(1).getBridgeId().intValue());
-        assertEquals(3, permitModel.getRoutes().get(0).getRouteBridges().get(2).getBridgeId().intValue());
-        assertEquals(4, permitModel.getRoutes().get(1).getRouteBridges().get(0).getBridgeId().intValue());
-        assertEquals(5, permitModel.getRoutes().get(1).getRouteBridges().get(1).getBridgeId().intValue());
-        assertEquals(6, permitModel.getRoutes().get(2).getRouteBridges().get(0).getBridgeId().intValue());
-        assertEquals(7, permitModel.getRoutes().get(2).getRouteBridges().get(1).getBridgeId().intValue());
+        // Assert correct bridge IDs are added to route bridges
+        assertBridgeIdsAdded(permitModel);
 
         // Assert the resulting response
         assertNotNull(response);
         assertEquals(2, response.getPermitId().intValue());
         assertEquals("1234/2021", response.getPermitNumber());
         assertEquals(LeluPermitStatus.CREATED, response.getStatus());
+        assertNotNull(response.getTimestamp());
+    }
+
+    @Test
+    public void testUpdatePermit() {
+        Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
+        Mockito.when(permitRepository.getPermitIdByPermitNumber(Mockito.anyString())).thenReturn(2);
+        Mockito.when(routeRepository.getRouteIdsWithLeluIds(Mockito.anyInt())).thenReturn(getRouteLeluIdAndIdMap());
+        Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
+
+        LeluPermitResponseDTO response = leluService.createOrUpdatePermit(getPermitDTO());
+
+        // Verify that permitRepository.updatePermit is called and capture parameters
+        Mockito.verify(permitRepository).updatePermit(permitModelCaptor.capture(), routeIdsToDeleteCaptor.capture());
+        PermitModel permitModel = permitModelCaptor.getValue();
+        logger.debug("Captured permitModel: {}", permitModel);
+        List<Integer> routeIdsToDelete = routeIdsToDeleteCaptor.getValue();
+        logger.debug("Captured routeIdsToDelete: {}", routeIdsToDelete);
+
+        // Check that all values are correctly mapped from Lelu DTOs to models
+        assertPermitDTOMappedToModel(permitModel);
+
+        // Route with Lelu ID 43567 is found from DB but not found in permitModel, check it's marked for deletion
+        assertNotNull(routeIdsToDelete);
+        assertEquals(1, routeIdsToDelete.size());
+        assertEquals(4, routeIdsToDelete.get(0).intValue());
+
+        // Assert existing route IDs are added, third one is new and has no ID
+        assertEquals(1, permitModel.getRoutes().get(0).getId().intValue());
+        assertEquals(2, permitModel.getRoutes().get(1).getId().intValue());
+        assertNull(permitModel.getRoutes().get(2).getId());
+
+        // Assert company ID is added to permit
+        assertEquals(1, permitModel.getCompanyId().intValue());
+
+        // Assert correct bridge IDs are added to route bridges
+        assertBridgeIdsAdded(permitModel);
+
+        // Assert the resulting response
+        assertNotNull(response);
+        assertEquals(2, response.getPermitId().intValue());
+        assertEquals("1234/2021", response.getPermitNumber());
+        assertEquals(LeluPermitStatus.UPDATED, response.getStatus());
         assertNotNull(response.getTimestamp());
     }
 
@@ -219,6 +254,14 @@ public class LeluServiceTest {
         map.put("5.5.555.555.5.55.555555", 5);
         map.put("6.6.666.666.6.66.666666", 6);
         map.put("7.7.777.777.7.77.777777", 7);
+        return map;
+    }
+
+    private Map<Long, Integer> getRouteLeluIdAndIdMap() {
+        Map<Long, Integer> map = new HashMap<>();
+        map.put((long) 12345, 1);
+        map.put((long) 23456, 2);
+        map.put((long) 43567, 4);
         return map;
     }
 
@@ -340,6 +383,16 @@ public class LeluServiceTest {
         assertEquals(identifier, bridge.getIdentifier());
         assertEquals(name, bridge.getName());
         assertEquals(roadAddress, bridge.getRoadAddress());
+    }
+
+    private void assertBridgeIdsAdded(PermitModel permitModel) {
+        assertEquals(1, permitModel.getRoutes().get(0).getRouteBridges().get(0).getBridgeId().intValue());
+        assertEquals(2, permitModel.getRoutes().get(0).getRouteBridges().get(1).getBridgeId().intValue());
+        assertEquals(3, permitModel.getRoutes().get(0).getRouteBridges().get(2).getBridgeId().intValue());
+        assertEquals(4, permitModel.getRoutes().get(1).getRouteBridges().get(0).getBridgeId().intValue());
+        assertEquals(5, permitModel.getRoutes().get(1).getRouteBridges().get(1).getBridgeId().intValue());
+        assertEquals(6, permitModel.getRoutes().get(2).getRouteBridges().get(0).getBridgeId().intValue());
+        assertEquals(7, permitModel.getRoutes().get(2).getRouteBridges().get(1).getBridgeId().intValue());
     }
 
     private ZoneOffset getZoneOffset(LocalDateTime localDateTime) {
