@@ -23,4 +23,13 @@ public class LeluTransportDimensionsDTO {
     @Schema(description = "Transport max height from the ground (m)", required = true, example = "4.5")
     private Double height;
 
+    public LeluTransportDimensionsDTO() {
+    }
+
+    public LeluTransportDimensionsDTO(Double width, Double length, Double height) {
+        this.width = width;
+        this.length = length;
+        this.height = height;
+    }
+
 }

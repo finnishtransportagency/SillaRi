@@ -20,4 +20,12 @@ public class LeluCustomerDTO {
     @Schema(description = "Business ID", required = true, example = "1234567-8")
     private String identifier;
 
+    public LeluCustomerDTO() {
+    }
+
+    public LeluCustomerDTO(String name, String identifier) {
+        this.name = name;
+        this.identifier = identifier;
+    }
+
 }

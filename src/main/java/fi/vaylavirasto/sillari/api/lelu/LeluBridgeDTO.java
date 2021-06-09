@@ -33,4 +33,16 @@ public class LeluBridgeDTO {
     @Schema(description = "Bridge crossing instructions and other possible supervisors", example = "Ajoneuvon keskilinjan oltava 4,25 metrin etäisyydellä idänpuoleisesta kaiteesta.")
     private String additionalInfo;
 
+    public LeluBridgeDTO() {
+    }
+
+    public LeluBridgeDTO(String oid, String identifier, String name, String roadAddress, String supervisorName, String additionalInfo) {
+        this.oid = oid;
+        this.identifier = identifier;
+        this.name = name;
+        this.roadAddress = roadAddress;
+        this.supervisorName = supervisorName;
+        this.additionalInfo = additionalInfo;
+    }
+
 }
