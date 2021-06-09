@@ -63,7 +63,7 @@ public class LeluController {
         if (SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             return "Hello major api version match";
         } else {
-            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + apiVersion);
+            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
         }
     }
 
