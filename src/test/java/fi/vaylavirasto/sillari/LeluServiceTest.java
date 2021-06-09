@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.*;
@@ -22,6 +24,8 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles({"test"})
 public class LeluServiceTest {
     private static final Logger logger = LogManager.getLogger();
 
