@@ -11,8 +11,6 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @ToString
-
-
 public class LeluAddressDTO {
     @NotBlank(message = "{address.address.not.blank}")
     @Schema(description = "Street address", required = true, example = "Aleksanterinkatu 17, 00100 Helsinki")
