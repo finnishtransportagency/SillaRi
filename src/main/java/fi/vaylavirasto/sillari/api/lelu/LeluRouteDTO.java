@@ -1,4 +1,6 @@
 package fi.vaylavirasto.sillari.api.lelu;
+
+import fi.vaylavirasto.sillari.model.AddressModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +41,14 @@ public class LeluRouteDTO {
     @NotEmpty(message = "{route.bridges.not.empty}")
     @Schema(description = "List of bridges on the route", required = true)
     private List<LeluBridgeDTO> bridges;
+
+    @NotNull(message = "{route.departureAddress.not.null}")
+    @Schema(description = "Departure address of the route.", required = true)
+    private LeluAddressDTO departureAddress;
+
+    @NotNull(message = "{route.arrivalAddress.not.null}")
+    @Schema(description = "Arrival address of the route.", required = true)
+    private LeluAddressDTO arrivalAddress;
 
     public LeluRouteDTO() {
     }
