@@ -23,10 +23,10 @@ public class RouteBridgeController {
     @Operation(summary = "Get route bridge")
     @GetMapping("/getroutebridge")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public RouteBridgeModel getRouteBridge(@RequestParam Integer id) {
+    public RouteBridgeModel getRouteBridge(@RequestParam Integer routeBridgeId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteBridgeController", "getRouteBridge");
         try {
-            return routeBridgeService.getRouteBridge(id);
+            return routeBridgeService.getRouteBridge(routeBridgeId);
         } finally {
             serviceMetric.end();
         }

@@ -22,10 +22,10 @@ public class PermitController {
     @Operation(summary = "Get permit")
     @GetMapping("/getpermit")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public PermitModel getPermit(@RequestParam Integer id) {
+    public PermitModel getPermit(@RequestParam Integer permitId) {
         ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermit");
         try {
-            return permitService.getPermit(id);
+            return permitService.getPermit(permitId);
         } finally {
             serviceMetric.end();
         }
