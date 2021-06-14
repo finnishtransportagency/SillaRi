@@ -1,31 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { checkmarkCircleOutline } from "ionicons/icons";
 import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonPage, IonRow, IonThumbnail } from "@ionic/react";
-import { useMutation, useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
-import { apiUrl, client } from "../service/apolloClient";
-import uploadMutation from "../graphql/UploadMutation";
-import { updateCrossingMutation } from "../graphql/CrossingMutation";
+import { apiUrl } from "../service/apolloClient";
 import ICrossingInput from "../interfaces/ICrossingInput";
-import ICrossingDetail from "../interfaces/ICrossingDetails";
-import { actions as crossingActions } from "../store/crossingsSlice";
-import { crossingQuery } from "../graphql/CrossingQuery";
-import ICrossingUpdate from "../interfaces/ICrossingUpdate";
+import IFileInput from "../interfaces/IFileInput";
+import { getCrossing, sendCrossingUpdate, sendSingleUpload } from "../utils/backendData";
+import { dateTimeFormat } from "../utils/constants";
 
 interface CrossingSummaryProps {
   crossingId: string;
 }
 
-export const CrossingSummary = (): JSX.Element => {
+const CrossingSummary = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { crossingId } = useParams<CrossingSummaryProps>();
+  const { crossingId = "0" } = useParams<CrossingSummaryProps>();
 
   const { selectedPermitDetail, selectedBridgeDetail, selectedCrossingDetail, images = [] } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
@@ -48,16 +44,9 @@ export const CrossingSummary = (): JSX.Element => {
     images: crossingImages,
   } = selectedCrossingDetail || {};
 
-  useQuery<ICrossingDetail>(crossingQuery(Number(crossingId)), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
-    onError: (err) => console.error(err),
-    fetchPolicy: "cache-and-network",
-  });
-
-  const [updateCrossing, { data }] = useMutation<ICrossingUpdate>(updateCrossingMutation, {
-    onCompleted: (response) => dispatch({ type: crossingActions.CROSSING_SAVED, payload: response }),
-    onError: (err) => console.error(err),
-  });
+  useEffect(() => {
+    getCrossing(dispatch, Number(crossingId), null);
+  }, [dispatch, crossingId]);
 
   function save() {
     if (selectedCrossingDetail !== undefined) {
@@ -79,22 +68,19 @@ export const CrossingSummary = (): JSX.Element => {
         draft: false,
       } as ICrossingInput;
 
-      updateCrossing({
-        variables: { crossing: updateRequest },
-      }).then(() => {
-        images.forEach((image) => {
-          const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
-          const ret = client.mutate({
-            mutation: uploadMutation.uploadMutation,
-            variables: {
-              crossingId: selectedCrossingDetail.id.toString(),
-              filename: image.filename,
-              base64image: image.dataUrl,
-              taken: pataken,
-            },
-          });
-        });
+      sendCrossingUpdate(dispatch, updateRequest, null);
+
+      images.forEach((image) => {
+        const fileUpload = {
+          crossingId: selectedCrossingDetail.id.toString(),
+          filename: image.filename,
+          base64: image.dataUrl,
+          taken: moment(image.date).format(dateTimeFormat),
+        } as IFileInput;
+
+        sendSingleUpload(fileUpload);
       });
+      alert("Talletettu");
     }
   }
 

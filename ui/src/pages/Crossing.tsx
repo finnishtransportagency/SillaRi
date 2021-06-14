@@ -17,7 +17,6 @@ import {
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { useMutation, useQuery } from "@apollo/client";
 import { useParams, useHistory } from "react-router-dom";
 import moment from "moment";
 import Header from "../components/Header";
@@ -25,24 +24,20 @@ import { useTypedSelector } from "../store/store";
 import IRadioValue from "../interfaces/IRadioValue";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
-import { startCrossingMutation, updateCrossingMutation } from "../graphql/CrossingMutation";
-import ICrossingDetail from "../interfaces/ICrossingDetails";
 import ICrossingInput from "../interfaces/ICrossingInput";
-import { client } from "../service/apolloClient";
-import uploadMutation from "../graphql/UploadMutation";
-import { crossingOfRouteBridgeQuery } from "../graphql/CrossingQuery";
-import ICrossingUpdate from "../interfaces/ICrossingUpdate";
-import ICrossingStart from "../interfaces/ICrossingStart";
+import IFileInput from "../interfaces/IFileInput";
+import { getCrossingOfRouteBridge, sendCrossingStart, sendCrossingUpdate, sendSingleUpload } from "../utils/backendData";
+import { dateTimeFormat } from "../utils/constants";
 
 interface CrossingProps {
   routeBridgeId: string;
 }
 
-export const Crossing = (): JSX.Element => {
+const Crossing = (): JSX.Element => {
   const { t } = useTranslation();
   const hist = useHistory();
   const dispatch = useDispatch();
-  const { routeBridgeId } = useParams<CrossingProps>();
+  const { routeBridgeId = "0" } = useParams<CrossingProps>();
 
   const { selectedPermitDetail, selectedBridgeDetail, selectedCrossingDetail, images = [] } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
@@ -64,35 +59,17 @@ export const Crossing = (): JSX.Element => {
     id = -1,
   } = selectedCrossingDetail || {};
 
-  // Added useQuery to clear previous crossing from Redux store, otherwise that one is used
-  useQuery<ICrossingDetail>(crossingOfRouteBridgeQuery(Number(routeBridgeId)), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_CROSSING, payload: response }),
-    onError: (err) => console.error(err),
-    fetchPolicy: "cache-and-network",
-  });
-
-  const [startCrossing, { data }] = useMutation<ICrossingStart>(startCrossingMutation, {
-    onCompleted: (response) => dispatch({ type: crossingActions.START_CROSSING, payload: response }),
-    onError: (err) => console.error(err),
-  });
-
-  const [updateCrossing, { data: updateData }] = useMutation<ICrossingUpdate>(updateCrossingMutation, {
-    onCompleted: (response) => {
-      dispatch({ type: crossingActions.CROSSING_SUMMARY, payload: response });
-      console.log("history");
-      hist.push(`/summary/${id}`);
-    },
-    onError: (err) => console.error(err),
-  });
+  // Added query to clear previous crossing from Redux store, otherwise that one is used
+  useEffect(() => {
+    getCrossingOfRouteBridge(dispatch, Number(routeBridgeId), null);
+  }, [dispatch, routeBridgeId]);
 
   useEffect(() => {
     // selectedCrossingDetail is undefined when query is still unresolved, but returns null if not found from DB
     if (selectedCrossingDetail === null) {
-      startCrossing({
-        variables: { routeBridgeId },
-      });
+      sendCrossingStart(dispatch, Number(routeBridgeId), null);
     }
-  }, [routeBridgeId, selectedCrossingDetail, startCrossing]);
+  }, [dispatch, selectedCrossingDetail, routeBridgeId]);
 
   function changeTextAreaValue(pname: string, pvalue: string) {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
@@ -120,22 +97,21 @@ export const Crossing = (): JSX.Element => {
       draft: true,
     } as ICrossingInput;
 
-    updateCrossing({
-      variables: { crossing: updateRequest },
-    }).then(() => {
-      images.forEach((image) => {
-        const pataken = moment(image.date, "dd.MM.yyyy HH:mm:ss");
-        const ret = client.mutate({
-          mutation: uploadMutation.uploadMutation,
-          variables: {
-            crossingId: id.toString(),
-            filename: image.filename,
-            base64image: image.dataUrl,
-            taken: pataken,
-          },
-        });
-      });
+    sendCrossingUpdate(dispatch, updateRequest, null);
+
+    images.forEach((image) => {
+      const fileUpload = {
+        crossingId: id.toString(),
+        filename: image.filename,
+        base64: image.dataUrl,
+        taken: moment(image.date).format(dateTimeFormat),
+      } as IFileInput;
+
+      sendSingleUpload(fileUpload);
     });
+
+    console.log("history");
+    hist.push(`/summary/${id}`);
   }
 
   function radioClicked(radioName: string, radioValue: string) {
