@@ -1,12 +1,9 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-public class Epsg4326 {
-
-    @JsonProperty("lon")
+public @Data
+class Epsg4326 {
     private Double lon;
-
-    @JsonProperty("lat")
     private Double lat;
 }

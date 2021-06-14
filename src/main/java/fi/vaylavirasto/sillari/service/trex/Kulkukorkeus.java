@@ -1,12 +1,9 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-public class Kulkukorkeus {
-
-    @JsonProperty("arvo")
+public @Data
+class Kulkukorkeus {
     private Double arvo;
-
-    @JsonProperty("yksikko")
     private String yksikko;
 }

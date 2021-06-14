@@ -1,12 +1,9 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-public class Epsg3067 {
-
-	@JsonProperty("x")
+public @Data
+class Epsg3067 {
 	private Integer X;
-
-	@JsonProperty("y")
 	private Integer Y;
 }

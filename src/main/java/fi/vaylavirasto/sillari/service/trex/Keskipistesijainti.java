@@ -1,15 +1,10 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-public class Keskipistesijainti {
-
-    @JsonProperty("epsg-4326")
+public @Data
+class Keskipistesijainti {
     private Epsg4326 epsg4326;
-
-    @JsonProperty("epsg-3067")
     private Epsg3067 epsg3067;
-
-    @JsonProperty("tarkkuustaso")
     private Tarkkuustaso tarkkuustaso;
 }

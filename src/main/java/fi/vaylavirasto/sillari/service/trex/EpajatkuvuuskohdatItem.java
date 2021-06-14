@@ -1,15 +1,10 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-public class EpajatkuvuuskohdatItem {
-
-    @JsonProperty("edeltavanJanteenNumero")
+public @Data
+class EpajatkuvuuskohdatItem {
     private Integer edeltavanJanteenNumero;
-
-    @JsonProperty("pituus")
     private Pituus pituus;
-
-    @JsonProperty("kohtisuoraPituus")
     private KohtisuoraPituus kohtisuoraPituus;
 }

@@ -1,24 +1,13 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-public class TieosoitteetItem {
-
-    @JsonProperty("tieosa")
+public @Data
+class TieosoitteetItem {
     private Integer tieosa;
-
-    @JsonProperty("nimi")
     private String nimi;
-
-    @JsonProperty("tienumero")
     private Integer tienumero;
-
-    @JsonProperty("sijainti")
     private String sijainti;
-
-    @JsonProperty("etaisyys")
     private Integer etaisyys;
-
-    @JsonProperty("ajorata")
     private Integer ajorata;
 }

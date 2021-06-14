@@ -1,12 +1,9 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-public class Minimi {
-
-    @JsonProperty("arvo")
+public @Data
+class Minimi {
     private Double arvo;
-
-    @JsonProperty("yksikko")
     private String yksikko;
 }

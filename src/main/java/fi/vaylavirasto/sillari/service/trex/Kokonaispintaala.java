@@ -1,12 +1,9 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-public class Kokonaispintaala {
-
-    @JsonProperty("arvo")
+public @Data
+class Kokonaispintaala {
     private Double arvo;
-
-    @JsonProperty("yksikko")
     private String yksikko;
 }
