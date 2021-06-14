@@ -79,8 +79,8 @@ public class CrossingRepository {
 
     public Integer insertFile(FileModel fileModel) {
         Integer imageId = dsl.nextval(Sequences.CROSSING_IMAGE_ID_SEQ).intValue();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-        LocalDateTime taken = LocalDateTime.parse(fileModel.getTaken().substring(0,19), formatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+        LocalDateTime taken = LocalDateTime.parse(fileModel.getTaken(), formatter);
         dsl.insertInto(FileMapper.image,
                 FileMapper.image.ID,
                 FileMapper.image.CROSSING_ID,

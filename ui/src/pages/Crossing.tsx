@@ -199,7 +199,7 @@ const Crossing = (): JSX.Element => {
                       class="crossingTextArea"
                       value={drivingLineInfoDescription}
                       onIonChange={(e) => {
-                        return changeTextAreaValue("drivingLineInfoDescription", e.detail.value!);
+                        return changeTextAreaValue("drivingLineInfoDescription", e.detail.value ?? "");
                       }}
                     />
                   </IonCard>
@@ -237,7 +237,7 @@ const Crossing = (): JSX.Element => {
                       class="crossingTextArea"
                       value={speedInfoDescription}
                       onIonChange={(e) => {
-                        return changeTextAreaValue("speedInfoDescription", e.detail.value!);
+                        return changeTextAreaValue("speedInfoDescription", e.detail.value ?? "");
                       }}
                     />
                   </IonCard>
@@ -306,7 +306,7 @@ const Crossing = (): JSX.Element => {
                     class="crossingTextArea"
                     value={exceptionsInfoDescription}
                     onIonChange={(e) => {
-                      return changeTextAreaValue("exceptionsInfoDescription", e.detail.value!);
+                      return changeTextAreaValue("exceptionsInfoDescription", e.detail.value ?? "");
                     }}
                   />
                 </IonCard>
@@ -322,7 +322,7 @@ const Crossing = (): JSX.Element => {
                     class="crossingTextArea"
                     value={extraInfoDescription}
                     onIonChange={(e) => {
-                      return changeTextAreaValue("extraInfoDescription", e.detail.value!);
+                      return changeTextAreaValue("extraInfoDescription", e.detail.value ?? "");
                     }}
                   />
                 </IonCard>

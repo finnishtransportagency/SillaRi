@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { IonButton, IonContent, IonFab, IonIcon, IonImg, IonItem, IonLabel, IonList, IonListHeader, IonThumbnail } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import { Camera, CameraSource, CameraResultType } from "@capacitor/camera";
@@ -6,7 +6,6 @@ import Moment from "react-moment";
 import { camera, trash } from "ionicons/icons";
 import { useDispatch } from "react-redux";
 import { RootState, useTypedSelector } from "../store/store";
-import IImageItem from "../interfaces/IImageItem";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import { dateTimeFormat } from "../utils/constants";
 
@@ -15,8 +14,6 @@ const CameraContainer: React.FC = () => {
   const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
   const dispatch = useDispatch();
   const { images } = crossingProps;
-
-  // const [imageItems, setImageItems] = useState<IImageItem[]>([]);
 
   const TakePicture = async () => {
     try {
@@ -37,8 +34,10 @@ const CameraContainer: React.FC = () => {
   };
 
   const RemoveImageItem = (index: number) => {
-    images.splice(index, 1);
-    dispatch({ type: crossingActions.SAVE_IMAGES, payload: images });
+    // Use a copy of the array to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
+    const imagesToEdit = [...images];
+    imagesToEdit.splice(index, 1);
+    dispatch({ type: crossingActions.SAVE_IMAGES, payload: imagesToEdit });
   };
 
   return (
