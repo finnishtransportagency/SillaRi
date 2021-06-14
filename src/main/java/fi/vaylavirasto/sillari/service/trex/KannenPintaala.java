@@ -1,9 +1,12 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public @Data
-class KannenPintaala {
-    private Double arvo;
-    private String yksikko;
+public class KannenPintaala {
+
+	@JsonProperty("arvo")
+	private Double arvo;
+
+	@JsonProperty("yksikko")
+	private String yksikko;
 }

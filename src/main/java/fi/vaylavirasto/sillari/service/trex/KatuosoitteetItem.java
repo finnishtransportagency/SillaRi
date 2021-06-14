@@ -1,10 +1,15 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public @Data
-class KatuosoitteetItem {
+public class KatuosoitteetItem {
+
+    @JsonProperty("nimi")
     private String nimi;
+
+    @JsonProperty("sijainti")
     private String sijainti;
+
+    @JsonProperty("kunta")
     private Kunta kunta;
 }

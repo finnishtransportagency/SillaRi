@@ -1,10 +1,15 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public @Data
-class Mitta {
+public class Mitta {
+
+    @JsonProperty("arvo")
     private Integer arvo;
+
+    @JsonProperty("yksikko")
     private String yksikko;
+
+    @JsonProperty("kerrannaisyksikko")
     private String kerrannaisyksikko;
 }

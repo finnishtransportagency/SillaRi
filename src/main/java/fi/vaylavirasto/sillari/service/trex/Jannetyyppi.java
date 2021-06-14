@@ -1,11 +1,18 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public @Data
-class Jannetyyppi {
+public class Jannetyyppi {
+
+    @JsonProperty("nimi")
     private String nimi;
+
+    @JsonProperty("tunnus")
     private String tunnus;
+
+    @JsonProperty("kuvaus")
     private String kuvaus;
+
+    @JsonProperty("lyhenne")
     private String lyhenne;
 }

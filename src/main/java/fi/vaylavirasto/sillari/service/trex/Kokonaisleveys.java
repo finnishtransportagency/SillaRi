@@ -1,9 +1,12 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public @Data
-class Kokonaisleveys {
+public class Kokonaisleveys {
+
+    @JsonProperty("minimi")
     private Minimi minimi;
+
+    @JsonProperty("maksimi")
     private Maksimi maksimi;
 }

@@ -1,9 +1,12 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public @Data
-class HistoriallinenMerkittavyys {
-    private String nimi;
-    private String tunnus;
+public class HistoriallinenMerkittavyys {
+
+	@JsonProperty("nimi")
+	private String nimi;
+
+	@JsonProperty("tunnus")
+	private String tunnus;
 }

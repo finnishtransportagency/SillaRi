@@ -1,8 +1,9 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public @Data
-class Sijaintisuunta {
+public class Sijaintisuunta {
+
+    @JsonProperty("tunnus")
     private String tunnus;
 }

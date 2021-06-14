@@ -1,10 +1,15 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public @Data
-class AjoradanLeveys {
-    private Integer arvo;
-    private String yksikko;
-    private String kerrannaisyksikko;
+public class AjoradanLeveys {
+
+	@JsonProperty("arvo")
+	private Integer arvo;
+
+	@JsonProperty("yksikko")
+	private String yksikko;
+
+	@JsonProperty("kerrannaisyksikko")
+	private String kerrannaisyksikko;
 }

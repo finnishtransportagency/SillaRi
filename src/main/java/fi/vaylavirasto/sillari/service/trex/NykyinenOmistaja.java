@@ -1,9 +1,12 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public @Data
-class NykyinenOmistaja {
+public class NykyinenOmistaja {
+
+    @JsonProperty("nimi")
     private String nimi;
+
+    @JsonProperty("y-tunnus")
     private String yTunnus;
 }

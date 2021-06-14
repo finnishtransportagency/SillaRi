@@ -1,10 +1,15 @@
 package fi.vaylavirasto.sillari.service.trex;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public @Data
-class Vapaaaukko {
+public class Vapaaaukko {
+
+    @JsonProperty("mitta")
     private Mitta mitta;
+
+    @JsonProperty("kohtisuoraMitta")
     private KohtisuoraMitta kohtisuoraMitta;
+
+    @JsonProperty("alikulkukorkeus")
     private Alikulkukorkeus alikulkukorkeus;
 }
