@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { checkmarkCircleOutline } from "ionicons/icons";
-import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonPage, IonRow, IonThumbnail } from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonPage, IonRow, IonThumbnail, IonToast } from "@ionic/react";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 
@@ -22,6 +22,7 @@ const CrossingSummary = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { crossingId = "0" } = useParams<CrossingSummaryProps>();
+  const [toastMessage, setToastMessage] = useState("");
 
   const { selectedPermitDetail, selectedBridgeDetail, selectedCrossingDetail, images = [] } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
@@ -80,7 +81,8 @@ const CrossingSummary = (): JSX.Element => {
 
         sendSingleUpload(fileUpload);
       });
-      alert("Talletettu");
+
+      setToastMessage(t("crossing.summary.saved"));
     }
   }
 
@@ -207,6 +209,15 @@ const CrossingSummary = (): JSX.Element => {
             </IonCol>
           </IonRow>
         </IonGrid>
+
+        <IonToast
+          isOpen={toastMessage.length > 0}
+          message={toastMessage}
+          onDidDismiss={() => setToastMessage("")}
+          duration={5000}
+          position="top"
+          color="success"
+        />
       </IonContent>
     </IonPage>
   );
