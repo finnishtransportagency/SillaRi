@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useQuery } from "@apollo/client";
-import { Plugins } from "@capacitor/core";
+import { Geolocation } from "@capacitor/geolocation";
 import { defaults, MousePosition } from "ol/control";
 import { createStringXY } from "ol/coordinate";
 import { Extent } from "ol/extent";
@@ -246,7 +246,6 @@ const MapContainer = (): JSX.Element => {
     if (mapInitialised && userLayer) {
       const getUserPosition = async () => {
         try {
-          const { Geolocation } = Plugins;
           const userPosition = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
           console.log("user position", userPosition);
 

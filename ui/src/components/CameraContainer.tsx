@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IonButton, IonContent, IonFab, IonIcon, IonImg, IonItem, IonLabel, IonList, IonListHeader, IonThumbnail } from "@ionic/react";
 import { useTranslation } from "react-i18next";
-import { Plugins, CameraSource, CameraResultType } from "@capacitor/core";
+import { Camera, CameraSource, CameraResultType } from "@capacitor/camera";
 import Moment from "react-moment";
 import { camera, trash } from "ionicons/icons";
 import { useDispatch } from "react-redux";
@@ -12,7 +12,6 @@ import { dateTimeFormat } from "../utils/constants";
 
 const CameraContainer: React.FC = () => {
   const { t } = useTranslation();
-  const { Camera } = Plugins;
   const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
   const dispatch = useDispatch();
   const { images } = crossingProps;
