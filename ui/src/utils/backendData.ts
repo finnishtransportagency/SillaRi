@@ -56,7 +56,7 @@ export const getCrossing = async (dispatch: Dispatch, crossingId: number, payloa
 
 export const getCrossingOfRouteBridge = async (dispatch: Dispatch, routeBridgeId: number, payloadOnFailure?: ICrossing | null): Promise<void> => {
   try {
-    const crossingOfRouteBridgeResponse = await fetch(`/api/routebridge/getcrossingofroutebridge?routeBridgeId=${routeBridgeId}`);
+    const crossingOfRouteBridgeResponse = await fetch(`/api/crossing/getcrossingofroutebridge?routeBridgeId=${routeBridgeId}`);
     if (crossingOfRouteBridgeResponse.ok) {
       const crossingOfRouteBridge = (await crossingOfRouteBridgeResponse.json()) as Promise<ICrossing>;
       dispatch({ type: crossingActions.GET_CROSSING, payload: crossingOfRouteBridge });
