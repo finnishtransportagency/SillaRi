@@ -19,7 +19,7 @@ import {
 import { location } from "ionicons/icons";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
-import { getRouteBridge } from "../utils/backendData";
+import { getPermitOfRouteBridge, getRouteBridge } from "../utils/backendData";
 
 interface BridgeDetailProps {
   routeBridgeId: string;
@@ -39,6 +39,7 @@ const BridgeDetail = (): JSX.Element => {
 
   useEffect(() => {
     getRouteBridge(dispatch, Number(routeBridgeId));
+    getPermitOfRouteBridge(dispatch, Number(routeBridgeId));
   }, [dispatch, routeBridgeId]);
 
   return (

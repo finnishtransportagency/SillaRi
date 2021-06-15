@@ -26,7 +26,14 @@ import { actions as crossingActions } from "../store/crossingsSlice";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import IFileInput from "../interfaces/IFileInput";
-import { getCrossingOfRouteBridge, sendCrossingStart, sendCrossingUpdate, sendSingleUpload } from "../utils/backendData";
+import {
+  getCrossingOfRouteBridge,
+  getPermitOfRouteBridge,
+  getRouteBridge,
+  sendCrossingStart,
+  sendCrossingUpdate,
+  sendSingleUpload,
+} from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
 
 interface CrossingProps {
@@ -61,7 +68,9 @@ const Crossing = (): JSX.Element => {
 
   // Added query to clear previous crossing from Redux store, otherwise that one is used
   useEffect(() => {
+    getRouteBridge(dispatch, Number(routeBridgeId));
     getCrossingOfRouteBridge(dispatch, Number(routeBridgeId), null);
+    getPermitOfRouteBridge(dispatch, Number(routeBridgeId));
   }, [dispatch, routeBridgeId]);
 
   useEffect(() => {

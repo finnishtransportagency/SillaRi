@@ -25,7 +25,7 @@ import Header from "../components/Header";
 import { apiUrl } from "../service/apolloClient";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import IFileInput from "../interfaces/IFileInput";
-import { getCrossing, sendCrossingUpdate, sendSingleUpload } from "../utils/backendData";
+import { getCrossing, getPermitOfRouteBridge, getRouteBridge, sendCrossingUpdate, sendSingleUpload } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
 
 interface CrossingSummaryProps {
@@ -43,7 +43,7 @@ const CrossingSummary = (): JSX.Element => {
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
 
   const {
-    routeBridgeId,
+    routeBridgeId = "0",
     started = "",
     drivingLineInfo,
     drivingLineInfoDescription,
@@ -62,6 +62,13 @@ const CrossingSummary = (): JSX.Element => {
   useEffect(() => {
     getCrossing(dispatch, Number(crossingId), null);
   }, [dispatch, crossingId]);
+
+  useEffect(() => {
+    if (selectedCrossingDetail !== undefined) {
+      getRouteBridge(dispatch, Number(routeBridgeId));
+      getPermitOfRouteBridge(dispatch, Number(routeBridgeId));
+    }
+  }, [dispatch, selectedCrossingDetail, routeBridgeId]);
 
   const save = () => {
     if (selectedCrossingDetail !== undefined) {

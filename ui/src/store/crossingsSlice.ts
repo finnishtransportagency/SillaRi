@@ -9,9 +9,7 @@ import IPermit from "../interfaces/IPermit";
 import IRouteBridge from "../interfaces/IRouteBridge";
 
 interface IStateProps {
-  Companies: ICompany[];
   companyList: ICompany[];
-  selectedCompany: number;
   selectedCompanyDetail?: ICompany;
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
@@ -25,9 +23,7 @@ interface IStateProps {
 }
 
 const initialState: IStateProps = {
-  Companies: [],
   companyList: [],
-  selectedCompany: 0,
   selectedCompanyDetail: undefined,
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
