@@ -140,6 +140,21 @@ export const getPermit = async (dispatch: Dispatch, permitId: number, payloadOnF
   }
 };
 
+export const getPermitOfRoute = async (dispatch: Dispatch, routeId: number, payloadOnFailure?: IPermit | null): Promise<void> => {
+  try {
+    const permitOfRouteResponse = await fetch(`/api/permit/getpermitofroute?routeId=${routeId}`);
+    if (permitOfRouteResponse.ok) {
+      const permitOfRoute = (await permitOfRouteResponse.json()) as Promise<IPermit>;
+      dispatch({ type: crossingActions.GET_PERMIT, payload: permitOfRoute });
+    } else {
+      dispatch({ type: crossingActions.GET_PERMIT, payload: payloadOnFailure });
+    }
+  } catch (err) {
+    console.error("ERROR", err);
+    dispatch({ type: crossingActions.GET_PERMIT, payload: payloadOnFailure });
+  }
+};
+
 export const getPermitOfRouteBridge = async (dispatch: Dispatch, routeBridgeId: number, payloadOnFailure?: IPermit | null): Promise<void> => {
   try {
     const permitOfRouteBridgeResponse = await fetch(`/api/permit/getpermitofroutebridge?routeBridgeId=${routeBridgeId}`);

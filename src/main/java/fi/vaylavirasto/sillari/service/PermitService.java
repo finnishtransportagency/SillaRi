@@ -36,6 +36,19 @@ public class PermitService {
         return permitModel;
     }
 
+    public PermitModel getPermitOfRoute(Integer routeId) {
+        PermitModel permitModel = permitRepository.getPermitByRouteId(routeId);
+        if (permitModel != null) {
+            List<AxleModel> axles = axleRepository.getAxlesOfChart(Long.valueOf(permitModel.getAxleChart().getId()).intValue());
+            permitModel.setAxles(axles);
+        }
+        if (permitModel != null) {
+            List<VehicleModel> vehicles = vehicleRepository.getVehiclesOfPermit(Long.valueOf(permitModel.getId()).intValue());
+            permitModel.setVehicles(vehicles);
+        }
+        return permitModel;
+    }
+
     public PermitModel getPermitOfRouteBridge(Integer routeBridgeId) {
         PermitModel permitModel = permitRepository.getPermitByRouteBridgeId(routeBridgeId);
         if (permitModel != null) {

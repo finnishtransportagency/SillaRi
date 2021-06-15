@@ -31,6 +31,18 @@ public class PermitController {
         }
     }
 
+    @Operation(summary = "Get permit of route")
+    @GetMapping("/getpermitofroute")
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public PermitModel getPermitOfRoute(@RequestParam Integer routeId) {
+        ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitOfRoute");
+        try {
+            return permitService.getPermitOfRoute(routeId);
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Get permit of route bridge")
     @GetMapping("/getpermitofroutebridge")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")

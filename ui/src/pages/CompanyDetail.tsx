@@ -35,7 +35,7 @@ const CompanyDetail = (): JSX.Element => {
         <div className="cardListContainer">
           {permits.map((permit, index) => {
             const key = `permit_${index}`;
-            const { id, permitNumber, validStartDate, validEndDate, routes } = permit;
+            const { permitNumber, validStartDate, validEndDate, routes } = permit;
             return (
               <div key={key}>
                 <IonGrid>
@@ -66,7 +66,7 @@ const CompanyDetail = (): JSX.Element => {
                   </IonRow>
                 </IonGrid>
 
-                <RouteCardList routes={routes} permitId={id} />
+                <RouteCardList routes={routes} />
               </div>
             );
           })}

@@ -38,6 +38,18 @@ public class PermitRepository {
                 .fetchOne(new PermitMapper());
     }
 
+    public PermitModel getPermitByRouteId(Integer routeId) {
+        return dsl.select().from(PermitMapper.permit)
+                .join(PermitMapper.route)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.route.PERMIT_ID))
+                .leftJoin(PermitMapper.axleChart)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
+                .leftJoin(PermitMapper.transportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .where(PermitMapper.route.ID.eq(routeId))
+                .fetchOne(new PermitMapper());
+    }
+
     public PermitModel getPermitByRouteBridgeId(Integer routeBridgeId) {
         return dsl.select().from(PermitMapper.permit)
                 .join(PermitMapper.route)

@@ -10,11 +10,10 @@ import RouteTransport from "../components/RouteTransport";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import { useTypedSelector } from "../store/store";
-import { getPermit, getRoute } from "../utils/backendData";
+import { getPermitOfRoute, getRoute } from "../utils/backendData";
 
 interface RouteDetailProps {
   routeId: string;
-  permitId: string;
 }
 
 const RouteDetail = (): JSX.Element => {
@@ -28,12 +27,12 @@ const RouteDetail = (): JSX.Element => {
   const { permitNumber } = selectedPermitDetail || {};
   const { name = "", routeBridges = [] } = selectedRouteDetail || {};
 
-  const { routeId = "0", permitId = "0" } = useParams<RouteDetailProps>();
+  const { routeId = "0" } = useParams<RouteDetailProps>();
 
   useEffect(() => {
-    getPermit(dispatch, Number(permitId));
     getRoute(dispatch, Number(routeId));
-  }, [dispatch, permitId, routeId]);
+    getPermitOfRoute(dispatch, Number(routeId));
+  }, [dispatch, routeId]);
 
   return (
     <IonPage>
