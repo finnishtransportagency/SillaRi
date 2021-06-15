@@ -71,25 +71,25 @@ const Crossing = (): JSX.Element => {
     }
   }, [dispatch, selectedCrossingDetail, routeBridgeId]);
 
-  function changeTextAreaValue(pname: string, pvalue: string) {
+  const changeTextAreaValue = (pname: string, pvalue: string) => {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
     dispatch({ type: crossingActions.CROSSING_TEXTAREA_CHANGED, payload: change });
-  }
+  };
 
   // Note that even though summary has been saved before (not draft), it's reset here as draft until summary is saved again.
   // Should we disable all changes to crossing when it is not draft anymore, so this does not happen?
-  function summaryClicked() {
+  const summaryClicked = () => {
     const updateRequest = {
       id,
       routeBridgeId: Number(routeBridgeId),
       started,
       drivingLineInfo,
-      drivingLineInfoDescription,
+      drivingLineInfoDescription: !drivingLineInfo ? drivingLineInfoDescription : "",
       speedInfo,
-      speedInfoDescription,
+      speedInfoDescription: !speedInfo ? speedInfoDescription : "",
       exceptionsInfo,
-      exceptionsInfoDescription,
       describe,
+      exceptionsInfoDescription: describe ? exceptionsInfoDescription : "",
       extraInfoDescription,
       permanentBendings,
       twist,
@@ -112,23 +112,23 @@ const Crossing = (): JSX.Element => {
 
     console.log("history");
     hist.push(`/summary/${id}`);
-  }
+  };
 
-  function radioClicked(radioName: string, radioValue: string) {
+  const radioClicked = (radioName: string, radioValue: string) => {
     const radioPayload = {
       name: radioName,
       value: radioValue === "yes",
     } as IRadioValue;
     dispatch({ type: crossingActions.CROSSING_RADIO_CHANGED, payload: radioPayload });
-  }
+  };
 
-  function checkBoxClicked(checkBoxName: string, checkBoxValue: boolean) {
+  const checkBoxClicked = (checkBoxName: string, checkBoxValue: boolean) => {
     const radioPayload = {
       name: checkBoxName,
       value: checkBoxValue,
     } as IRadioValue;
     dispatch({ type: crossingActions.CROSSING_RADIO_CHANGED, payload: radioPayload });
-  }
+  };
 
   return (
     <IonPage>
@@ -192,17 +192,15 @@ const Crossing = (): JSX.Element => {
             </IonRow>
             <IonRow style={!drivingLineInfo ? {} : { display: "none" }} id="drivigingLineInfoRow" class="whyRow">
               <IonCol class="whyCol">
+                <IonLabel class="crossingLabelBold">{t("crossing.question.drivingLineInfo")}</IonLabel>
                 <IonCard>
-                  <IonLabel class="crossingLabelBold">{t("crossing.question.drivingLineInfo")}</IonLabel>
-                  <IonCard>
-                    <IonTextarea
-                      class="crossingTextArea"
-                      value={drivingLineInfoDescription}
-                      onIonChange={(e) => {
-                        return changeTextAreaValue("drivingLineInfoDescription", e.detail.value ?? "");
-                      }}
-                    />
-                  </IonCard>
+                  <IonTextarea
+                    class="crossingTextArea"
+                    value={drivingLineInfoDescription}
+                    onIonChange={(e) => {
+                      return changeTextAreaValue("drivingLineInfoDescription", e.detail.value ?? "");
+                    }}
+                  />
                 </IonCard>
               </IonCol>
             </IonRow>
@@ -230,17 +228,15 @@ const Crossing = (): JSX.Element => {
             </IonRow>
             <IonRow style={!speedInfo ? {} : { display: "none" }} class="whyRow">
               <IonCol class="whyCol">
+                <IonLabel class="crossingLabelBold">{t("crossing.question.speedInfo")}</IonLabel>
                 <IonCard>
-                  <IonLabel class="crossingLabelBold">{t("crossing.question.speedInfo")}</IonLabel>
-                  <IonCard>
-                    <IonTextarea
-                      class="crossingTextArea"
-                      value={speedInfoDescription}
-                      onIonChange={(e) => {
-                        return changeTextAreaValue("speedInfoDescription", e.detail.value ?? "");
-                      }}
-                    />
-                  </IonCard>
+                  <IonTextarea
+                    class="crossingTextArea"
+                    value={speedInfoDescription}
+                    onIonChange={(e) => {
+                      return changeTextAreaValue("speedInfoDescription", e.detail.value ?? "");
+                    }}
+                  />
                 </IonCard>
               </IonCol>
             </IonRow>
@@ -299,33 +295,29 @@ const Crossing = (): JSX.Element => {
           </IonRow>
           <IonRow style={describe ? {} : { display: "none" }}>
             <IonCol>
+              <IonLabel class="crossingLabelBold">{t("crossing.exceptions.describe")}</IonLabel>
               <IonCard>
-                <IonLabel class="crossingLabelBold">{t("crossing.exceptions.describe")}</IonLabel>
-                <IonCard>
-                  <IonTextarea
-                    class="crossingTextArea"
-                    value={exceptionsInfoDescription}
-                    onIonChange={(e) => {
-                      return changeTextAreaValue("exceptionsInfoDescription", e.detail.value ?? "");
-                    }}
-                  />
-                </IonCard>
+                <IonTextarea
+                  class="crossingTextArea"
+                  value={exceptionsInfoDescription}
+                  onIonChange={(e) => {
+                    return changeTextAreaValue("exceptionsInfoDescription", e.detail.value ?? "");
+                  }}
+                />
               </IonCard>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol class="whyCol">
+              <IonLabel class="crossingLabelBold">{t("crossing.extraInfo")}</IonLabel>
               <IonCard>
-                <IonLabel class="crossingLabelBold">{t("crossing.extraInfo")}</IonLabel>
-                <IonCard>
-                  <IonTextarea
-                    class="crossingTextArea"
-                    value={extraInfoDescription}
-                    onIonChange={(e) => {
-                      return changeTextAreaValue("extraInfoDescription", e.detail.value ?? "");
-                    }}
-                  />
-                </IonCard>
+                <IonTextarea
+                  class="crossingTextArea"
+                  value={extraInfoDescription}
+                  onIonChange={(e) => {
+                    return changeTextAreaValue("extraInfoDescription", e.detail.value ?? "");
+                  }}
+                />
               </IonCard>
             </IonCol>
           </IonRow>

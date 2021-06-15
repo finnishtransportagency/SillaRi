@@ -1,8 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { checkmarkCircleOutline } from "ionicons/icons";
-import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonPage, IonRow, IonThumbnail, IonToast } from "@ionic/react";
+import { checkmarkCircleOutline, closeCircleOutline } from "ionicons/icons";
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonIcon,
+  IonImg,
+  IonItem,
+  IonLabel,
+  IonPage,
+  IonRow,
+  IonText,
+  IonThumbnail,
+  IonToast,
+} from "@ionic/react";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 
@@ -49,7 +63,7 @@ const CrossingSummary = (): JSX.Element => {
     getCrossing(dispatch, Number(crossingId), null);
   }, [dispatch, crossingId]);
 
-  function save() {
+  const save = () => {
     if (selectedCrossingDetail !== undefined) {
       const updateRequest = {
         id: Number(crossingId),
@@ -84,7 +98,7 @@ const CrossingSummary = (): JSX.Element => {
 
       setToastMessage(t("crossing.summary.saved"));
     }
-  }
+  };
 
   let exceptionsText = "";
   if (exceptionsInfo) {
@@ -169,10 +183,21 @@ const CrossingSummary = (): JSX.Element => {
               : ""}
           </IonRow>
           <IonRow>
-            <IonIcon icon={checkmarkCircleOutline} class={!drivingLineInfo ? "checkMarkRed" : "checkMarkGreen"} />
-            <IonCol class="crossingCheckedLabel">{t("crossing.summary.drivingLine")}</IonCol>
-            <IonIcon icon={checkmarkCircleOutline} class={!speedInfo ? "checkMarkRed" : "checkMarkGreen"} />
-            <IonCol class="crossingCheckedLabel">{t("crossing.summary.speed")}</IonCol>
+            <IonCol size="auto">
+              <IonItem>
+                <IonIcon
+                  icon={!drivingLineInfo ? closeCircleOutline : checkmarkCircleOutline}
+                  class={!drivingLineInfo ? "checkMarkRed" : "checkMarkGreen"}
+                />
+                <IonText class="crossingCheckedLabel">{t("crossing.summary.drivingLine")}</IonText>
+              </IonItem>
+            </IonCol>
+            <IonCol size="auto">
+              <IonItem>
+                <IonIcon icon={!speedInfo ? closeCircleOutline : checkmarkCircleOutline} class={!speedInfo ? "checkMarkRed" : "checkMarkGreen"} />
+                <IonText class="crossingCheckedLabel">{t("crossing.summary.speed")}</IonText>
+              </IonItem>
+            </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
