@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 public class FileMapper implements RecordMapper<Record, FileModel> {
-    public static final CrossingImage image = Tables.CROSSING_IMAGE.as("i");
+    public static final CrossingImage image = Tables.CROSSING_IMAGE.as("ci");
     private boolean base64on;
     public FileMapper() {
         this.base64on=false;
