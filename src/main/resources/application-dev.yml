@@ -5,6 +5,8 @@ sillari:
     url: https://sillaridev.testivaylapilvi.fi/geoserver/
   lelu:
     version: @leluApiVersion@
+  trex:
+    url: https://testioag.vayla.fi/trex/rajapinta/taitorakenne/
 spring:
   application:
     name: SillaRi
