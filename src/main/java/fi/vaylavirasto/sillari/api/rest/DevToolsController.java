@@ -2,22 +2,13 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJson;
-import io.prometheus.client.spring.web.MethodTimer;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @Profile("local")
@@ -38,12 +29,13 @@ public class DevToolsController {
 
     @RequestMapping(value = "/testConnectionToTrex", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
-    public String trexConnctions() {
+    public TrexBridgeInfoResponseJson trexConnctions() {
 
         logger.debug("HELLO tsest connetntons");
         String returnString = "";
+        TrexBridgeInfoResponseJson b = null;
         try {
-            TrexBridgeInfoResponseJson b = tRexService.getBridgeInfo("1.2.246.578.1.15.401830");
+            b = tRexService.getBridgeInfo("1.2.246.578.1.15.401830");
             if (b == null) {
                 returnString += "trex fail birge null";
             } else {
@@ -53,7 +45,7 @@ public class DevToolsController {
             returnString += "trex fail " + e.getClass().getName() + " " + e.getMessage();
         }
 
-        return returnString;
+        return b;
     }
 
 
