@@ -17,7 +17,7 @@ import {
   IonThumbnail,
   IonToast,
 } from "@ionic/react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import moment from "moment";
 
 import { useTypedSelector } from "../store/store";
@@ -34,6 +34,7 @@ interface CrossingSummaryProps {
 
 const CrossingSummary = (): JSX.Element => {
   const { t } = useTranslation();
+  const history = useHistory();
   const dispatch = useDispatch();
   const { crossingId = "0" } = useParams<CrossingSummaryProps>();
   const [toastMessage, setToastMessage] = useState("");
@@ -56,7 +57,7 @@ const CrossingSummary = (): JSX.Element => {
     permanentBendings,
     twist,
     damage,
-    images: crossingImages,
+    images: crossingImages = [],
   } = selectedCrossingDetail || {};
 
   useEffect(() => {
@@ -162,32 +163,32 @@ const CrossingSummary = (): JSX.Element => {
           <IonRow>
             <IonCol>
               <IonLabel class="crossingLabelBold">
-                {t("crossing.summary.images")} ({images.length === 0 && crossingImages !== undefined ? crossingImages.length : images.length}{" "}
+                {t("crossing.summary.images")} ({images.length === 0 && crossingImages.length > 0 ? crossingImages.length : images.length}{" "}
                 {t("crossing.summary.kpl")})
               </IonLabel>
             </IonCol>
           </IonRow>
           <IonRow>
-            {images.map((imageItem) => (
-              <IonItem key={imageItem.id}>
-                <IonCol>
-                  <IonThumbnail>
-                    <IonImg src={imageItem.dataUrl} />
-                  </IonThumbnail>
-                </IonCol>
-              </IonItem>
-            ))}
-            {crossingImages !== undefined
-              ? crossingImages.map((crossingImage) => (
-                  <IonItem key={crossingImage.id}>
-                    <IonCol>
-                      <IonThumbnail>
-                        <IonImg src={`${apiUrl}images/get?objectKey=${crossingImage.objectKey}`} />
-                      </IonThumbnail>
-                    </IonCol>
-                  </IonItem>
-                ))
-              : ""}
+            {crossingImages.length === 0 &&
+              images.map((imageItem) => (
+                <IonItem key={imageItem.id}>
+                  <IonCol>
+                    <IonThumbnail>
+                      <IonImg src={imageItem.dataUrl} />
+                    </IonThumbnail>
+                  </IonCol>
+                </IonItem>
+              ))}
+            {crossingImages.length > 0 &&
+              crossingImages.map((crossingImage) => (
+                <IonItem key={crossingImage.id}>
+                  <IonCol>
+                    <IonThumbnail>
+                      <IonImg src={`${apiUrl}images/get?objectKey=${crossingImage.objectKey}`} />
+                    </IonThumbnail>
+                  </IonCol>
+                </IonItem>
+              ))}
           </IonRow>
           <IonRow>
             <IonCol size="auto">
@@ -226,9 +227,7 @@ const CrossingSummary = (): JSX.Element => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonButton routerLink={`/crossing/${routeBridgeId}`} routerDirection="back">
-                {t("crossing.summary.buttons.edit")}
-              </IonButton>
+              <IonButton onClick={() => history.goBack()}>{t("crossing.summary.buttons.edit")}</IonButton>
             </IonCol>
             <IonCol>
               <IonButton

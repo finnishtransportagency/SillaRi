@@ -22,7 +22,7 @@ const CameraContainer: React.FC = () => {
         resultType: CameraResultType.DataUrl,
       });
       const now = new Date();
-      const fname = images.length;
+      const fname = `image_${images.length + 1}`;
       dispatch({
         type: crossingActions.SAVE_IMAGES,
         payload: [...images, { id: images.length, filename: fname, dataUrl: image.dataUrl, date: now }],
@@ -54,7 +54,7 @@ const CameraContainer: React.FC = () => {
               <IonImg src={imageItem.dataUrl} />
             </IonThumbnail>
             <IonLabel>
-              <Moment format={dateTimeFormat}>{imageItem.date.toString()}</Moment>
+              <Moment format={dateTimeFormat}>{imageItem.date}</Moment>
             </IonLabel>
             <IonButton slot="end" onClick={() => RemoveImageItem(i)}>
               <IonIcon icon={trash} slot="start" />

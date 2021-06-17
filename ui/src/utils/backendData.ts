@@ -118,7 +118,7 @@ export const sendSingleUpload = async (fileUpload: IFileInput): Promise<void> =>
     });
     if (singleUploadResponse.ok) {
       const singleUpload = (await singleUploadResponse.json()) as Promise<IFile>;
-      console.log("singleUpload", singleUpload);
+      console.log("singleUpload response", singleUpload);
     }
   } catch (err) {
     console.error("ERROR", err);

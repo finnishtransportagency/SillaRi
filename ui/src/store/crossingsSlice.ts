@@ -16,10 +16,6 @@ interface IStateProps {
   selectedCrossingDetail?: ICrossing;
   selectedPermitDetail?: IPermit;
   images: IImageItem[];
-  selectedPermit: number;
-  selectedRoute: number;
-  selectedCrossing: number;
-  crossing?: ICrossing;
 }
 
 const initialState: IStateProps = {
@@ -30,10 +26,6 @@ const initialState: IStateProps = {
   selectedCrossingDetail: undefined,
   selectedPermitDetail: undefined,
   images: [],
-  selectedPermit: 0,
-  selectedRoute: 0,
-  selectedCrossing: 0,
-  crossing: undefined,
 };
 
 const crossingsSlice = createSlice({

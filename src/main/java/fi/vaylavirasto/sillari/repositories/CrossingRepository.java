@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.*;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -77,30 +78,47 @@ public class CrossingRepository {
                 .fetchOne(new CrossingMapper());
     }
 
-    public Integer insertFile(FileModel fileModel) {
-        Integer imageId = dsl.nextval(Sequences.CROSSING_IMAGE_ID_SEQ).intValue();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
-        LocalDateTime taken = LocalDateTime.parse(fileModel.getTaken(), formatter);
-        dsl.insertInto(FileMapper.image,
-                FileMapper.image.ID,
-                FileMapper.image.CROSSING_ID,
-                FileMapper.image.FILENAME,
-                FileMapper.image.OBJECT_KEY,
-                FileMapper.image.TAKEN)
-                .values(imageId,
-                        Long.valueOf(fileModel.getCrossingId()).intValue(),
-                        fileModel.getFilename()+"_"+fileModel.getTaken()+"_"+imageId+".jpg",
-                        fileModel.getObjectKey(),
-                        taken)
-                .execute();
-        return imageId;
+    public Integer insertFileIfNotExists(FileModel fileModel) {
+        Integer existingId = getFileIdByObjectKey(fileModel.getObjectKey());
+        if (existingId == null || existingId == 0) {
+            Integer imageId = dsl.nextval(Sequences.CROSSING_IMAGE_ID_SEQ).intValue();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+            LocalDateTime taken = LocalDateTime.parse(fileModel.getTaken(), formatter);
+            dsl.insertInto(FileMapper.image,
+                    FileMapper.image.ID,
+                    FileMapper.image.CROSSING_ID,
+                    FileMapper.image.FILENAME,
+                    FileMapper.image.OBJECT_KEY,
+                    FileMapper.image.TAKEN)
+                    .select(dsl.select(DSL.val(imageId),
+                            DSL.val(Long.valueOf(fileModel.getCrossingId()).intValue()),
+                            DSL.val(fileModel.getFilename() + "_" + fileModel.getTaken() + "_" + imageId + ".jpg"),
+                            DSL.val(fileModel.getObjectKey()),
+                            DSL.val(taken))
+                            .whereNotExists(dsl.selectOne()
+                                    .from(FileMapper.image)
+                                    .where(FileMapper.image.OBJECT_KEY.eq(fileModel.getObjectKey()))))
+                    .execute();
+            return imageId;
+        } else {
+            return existingId;
+        }
     }
+
     public FileModel getFile(Integer fileId) {
         return dsl.select().from(FileMapper.image)
                 .where(FileMapper.image.ID.eq(fileId))
                 .fetchOne(new FileMapper());
 
     }
+
+    public Integer getFileIdByObjectKey(String objectKey) {
+        return dsl.select().from(FileMapper.image)
+                .where(FileMapper.image.OBJECT_KEY.eq(objectKey))
+                .fetchOne(FileMapper.image.ID);
+
+    }
+
     public List<FileModel> getFiles(Integer crossingId) {
         return dsl.select().from(FileMapper.image).where(FileMapper.image.CROSSING_ID.eq(crossingId))
                 .fetch(new FileMapper(true));
