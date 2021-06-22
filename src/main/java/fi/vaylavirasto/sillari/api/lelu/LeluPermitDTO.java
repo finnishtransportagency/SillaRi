@@ -61,6 +61,10 @@ public class LeluPermitDTO {
     @Schema(description = "Max dimensions of the transport, including all vehicles.", required = true)
     private LeluTransportDimensionsDTO transportDimensions;
 
+    @Valid
+    @Schema(description = "Unloaded max dimensions of the transport, including all vehicles. Unloaded dimensions are added to the permit only when using non- EU/EEA transport equipment, so not all permits contain this information", required = false)
+    private LeluTransportDimensionsDTO unloadedTransportDimensions;
+
     @Schema(description = "Additional details", example = "Muita huomioita")
     private String additionalDetails;
 
