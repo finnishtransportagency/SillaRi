@@ -41,10 +41,12 @@ public class LeluRouteDTO {
     @Schema(description = "List of bridges on the route", required = true)
     private List<LeluBridgeDTO> bridges;
 
+    @Valid
     @NotNull(message = "{route.departureAddress.not.null}")
     @Schema(description = "Departure address of the route.", required = true)
     private LeluAddressDTO departureAddress;
 
+    @Valid
     @NotNull(message = "{route.arrivalAddress.not.null}")
     @Schema(description = "Arrival address of the route.", required = true)
     private LeluAddressDTO arrivalAddress;

@@ -9,7 +9,7 @@ import org.jooq.RecordMapper;
 import java.util.ArrayList;
 
 public class SupervisionMapper implements RecordMapper<Record, SupervisionModel> {
-    public static final Supervision supervision = Tables.SUPERVISION.as("s");
+    public static final Supervision supervision = Tables.SUPERVISION.as("sn");
     public static final SupervisionStatus supervisionStatus = Tables.SUPERVISION_STATUS.as("ss");
 
     @Nullable

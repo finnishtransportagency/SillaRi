@@ -5,15 +5,14 @@ import "./RouteCardList.css";
 
 interface RouteCardListProps {
   routes: IRoute[];
-  permitId: number;
 }
 
-const RouteCardList = ({ routes, permitId }: RouteCardListProps): JSX.Element => {
+const RouteCardList = ({ routes }: RouteCardListProps): JSX.Element => {
   return (
     <div className="cardListContainer">
       {routes.map((route, index) => {
         const key = `route_${index}`;
-        return <RouteCard key={key} route={route} permitId={permitId} />;
+        return <RouteCard key={key} route={route} />;
       })}
     </div>
   );

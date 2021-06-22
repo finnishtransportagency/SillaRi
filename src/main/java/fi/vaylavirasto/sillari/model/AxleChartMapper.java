@@ -6,7 +6,7 @@ import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 public class AxleChartMapper implements RecordMapper<Record, AxleChartModel> {
-    public static final AxleChart axleChart = Tables.AXLE_CHART.as("a");
+    public static final AxleChart axleChart = Tables.AXLE_CHART.as("ac");
 
     @Nullable
     @Override

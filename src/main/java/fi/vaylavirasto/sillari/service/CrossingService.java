@@ -19,6 +19,14 @@ public class CrossingService {
         return crossingModel;
     }
 
+    public CrossingModel getCrossingOfRouteBridge(Integer routeBridgeId) {
+        CrossingModel crossingModel = crossingRepository.getCrossingByRouteBridgeId(routeBridgeId);
+        if (crossingModel != null) {
+            crossingModel.setImages(crossingRepository.getFiles(crossingModel.getId()));
+        }
+        return crossingModel;
+    }
+
     public CrossingModel createCrossing(Integer routeBridgeId) {
         CrossingModel crossingModel = crossingRepository.getCrossingByRouteBridgeId(routeBridgeId);
         if (crossingModel != null) {

@@ -8,7 +8,7 @@ import org.jooq.RecordMapper;
 import java.util.ArrayList;
 
 public class SupervisorMapper implements RecordMapper<Record, SupervisorModel> {
-    public static final Supervisor supervisor = Tables.SUPERVISOR.as("s");
+    public static final Supervisor supervisor = Tables.SUPERVISOR.as("sr");
 
     @Nullable
     @Override

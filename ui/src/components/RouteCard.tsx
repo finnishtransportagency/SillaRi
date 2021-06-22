@@ -8,10 +8,9 @@ import IRoute from "../interfaces/IRoute";
 
 interface RouteCardProps {
   route: IRoute;
-  permitId: number;
 }
 
-const RouteCard = ({ route, permitId }: RouteCardProps): JSX.Element => {
+const RouteCard = ({ route }: RouteCardProps): JSX.Element => {
   const { id: routeId, name } = route;
   const { t } = useTranslation();
 
@@ -21,7 +20,7 @@ const RouteCard = ({ route, permitId }: RouteCardProps): JSX.Element => {
   const { street: arrivalStreet, postalcode: arrivalPostalCode, city: arrivalCity } = arrivalAddress || {};
 
   return (
-    <IonCard button routerLink={`/routeDetail/${permitId}/${routeId}`}>
+    <IonCard button routerLink={`/routeDetail/${routeId}`}>
       <IonCardHeader className="ion-text-left">
         <IonCardTitle>
           <IonText>{`${t("company.route")} ${name}`} </IonText>

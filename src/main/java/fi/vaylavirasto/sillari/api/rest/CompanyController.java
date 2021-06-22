@@ -52,10 +52,10 @@ public class CompanyController {
     @Operation(summary = "Get company")
     @GetMapping("/getcompany")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public CompanyModel getCompany(@RequestParam Integer id) {
+    public CompanyModel getCompany(@RequestParam Integer companyId) {
         ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getCompany");
         try {
-            return companyService.getCompany(id);
+            return companyService.getCompany(companyId);
         } finally {
             serviceMetric.end();
         }

@@ -8,7 +8,7 @@ import org.jooq.RecordMapper;
 import java.math.BigDecimal;
 
 public class TransportDimensionsMapper implements RecordMapper<Record, TransportDimensionsModel> {
-    public static final TransportDimensions transportDimensions = Tables.TRANSPORT_DIMENSIONS.as("t");
+    public static final TransportDimensions transportDimensions = Tables.TRANSPORT_DIMENSIONS.as("td");
 
     @Nullable
     @Override

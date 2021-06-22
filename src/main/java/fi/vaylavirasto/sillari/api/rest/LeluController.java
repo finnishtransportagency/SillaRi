@@ -39,7 +39,7 @@ public class LeluController {
     }
 
     @RequestMapping(value = "/apiVersion", method = RequestMethod.GET)
-    @Operation(summary = "Return api version")
+    @Operation(summary = "Return currently valid API version")
     public String apiVersion() {
         return currentApiVersion;
     }

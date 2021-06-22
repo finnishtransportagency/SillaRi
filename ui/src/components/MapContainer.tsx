@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { useQuery } from "@apollo/client";
-import { Plugins } from "@capacitor/core";
+import { Geolocation } from "@capacitor/geolocation";
 import { defaults, MousePosition } from "ol/control";
 import { createStringXY } from "ol/coordinate";
 import { Extent } from "ol/extent";
@@ -17,18 +16,14 @@ import { register } from "ol/proj/proj4";
 import { TileDebug } from "ol/source";
 import View from "ol/View";
 import proj4 from "proj4";
-import { routeBridgeQuery } from "../graphql/RouteBridgeQuery";
-import { routeQuery } from "../graphql/RouteQuery";
-import IBridgeDetail from "../interfaces/IBridgeDetail";
-import IRouteDetail from "../interfaces/IRouteDetail";
 import BackgroundTileLayer from "./map/BackgroundTileLayer";
 import BridgeTileLayer from "./map/BridgeTileLayer";
 import BridgeVectorLayer from "./map/BridgeVectorLayer";
 import RouteTileLayer from "./map/RouteTileLayer";
 import RouteVectorLayer from "./map/RouteVectorLayer";
 import UserVectorLayer from "./map/UserVectorLayer";
-import { actions as crossingActions } from "../store/crossingsSlice";
 import { useTypedSelector } from "../store/store";
+import { getRoute, getRouteBridge } from "../utils/backendData";
 import "./MapContainer.scss";
 
 interface MapContainerProps {
@@ -41,6 +36,8 @@ const MapContainer = (): JSX.Element => {
   const dispatch = useDispatch();
   const mapRef = useRef<HTMLDivElement>(null);
 
+  // The page route provides either routeBridgeId or routeId, but not both
+  // These values are checked later, so don't use default values here
   const { routeBridgeId: routeBridgeIdParam, routeId: routeIdParam } = useParams<MapContainerProps>();
 
   const [backgroundLayer, setBackgroundLayer] = useState<TileLayer>();
@@ -57,18 +54,17 @@ const MapContainer = (): JSX.Element => {
   const { identifier: bridgeIdentifier, geojson: bridgeGeojson } = bridge || {};
   const { geojson: routeGeojson, routeBridges = [] } = selectedRouteDetail || {};
 
-  useQuery<IBridgeDetail>(routeBridgeQuery(routeBridgeIdParam && routeBridgeIdParam.length > 0 ? Number(routeBridgeIdParam) : 0), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_BRIDGE, payload: response }),
-    onError: (err) => console.error(err),
-  });
+  useEffect(() => {
+    if (!mapInitialised && !bridgeLayer && !routeLayer) {
+      getRouteBridge(dispatch, routeBridgeIdParam && routeBridgeIdParam.length > 0 ? Number(routeBridgeIdParam) : 0, null);
 
-  // Note: when showing single bridges on the map, the route line is also needed to be shown,
-  // so 'skip' is used to fetch the route data only after routeId has been fetched from the routebridge data
-  useQuery<IRouteDetail>(routeQuery(routeIdParam && routeIdParam.length > 0 ? Number(routeIdParam) : routeId), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_ROUTE, payload: response }),
-    onError: (err) => console.error(err),
-    skip: !!routeBridgeIdParam && routeBridgeIdParam.length > 0 && (!routeId || routeId === 0),
-  });
+      // Note: when showing single bridges on the map, the route line is also needed to be shown,
+      // so fetch the route data only after routeId has been fetched from the routebridge data
+      if ((!!routeIdParam && routeIdParam.length > 0) || (!!routeBridgeIdParam && routeBridgeIdParam.length > 0 && !!routeId && routeId > 0)) {
+        getRoute(dispatch, routeIdParam && routeIdParam.length > 0 ? Number(routeIdParam) : routeId, null);
+      }
+    }
+  }, [dispatch, routeBridgeIdParam, routeIdParam, routeId, bridgeLayer, routeLayer, mapInitialised]);
 
   const projection = "EPSG:3067";
   const debug = false;
@@ -246,7 +242,6 @@ const MapContainer = (): JSX.Element => {
     if (mapInitialised && userLayer) {
       const getUserPosition = async () => {
         try {
-          const { Geolocation } = Plugins;
           const userPosition = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
           console.log("user position", userPosition);
 

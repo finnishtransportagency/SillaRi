@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class CrossingMapper implements RecordMapper<Record,CrossingModel> {
-    public static final Crossing crossing = Tables.CROSSING.as("c");
+    public static final Crossing crossing = Tables.CROSSING.as("cr");
 
     @Nullable
     @Override
