@@ -6,7 +6,7 @@ import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 public class AddressMapper implements RecordMapper<Record, AddressModel> {
-    public static final Address address = Tables.ADDRESS.as("a");
+    public static final Address address = Tables.ADDRESS.as("ad");
 
     @Nullable
     @Override

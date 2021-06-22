@@ -1,10 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useQuery } from "@apollo/client";
-import { companyListQuery } from "../graphql/CompanyQuery";
-import ICompanyList from "../interfaces/ICompanyList";
-import { actions as crossingActions } from "../store/crossingsSlice";
 import { useTypedSelector } from "../store/store";
+import { getCompanyList } from "../utils/backendData";
 import CompanyCard from "./CompanyCard";
 import "./CompanyCardList.css";
 
@@ -13,11 +10,9 @@ const CompanyCardList = (): JSX.Element => {
   const { companyList } = crossings;
   const dispatch = useDispatch();
 
-  useQuery<ICompanyList>(companyListQuery(10), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_COMPANY_LIST, payload: response }),
-    onError: (err) => console.error(err),
-    fetchPolicy: "cache-first",
-  });
+  useEffect(() => {
+    getCompanyList(dispatch);
+  }, [dispatch]);
 
   return (
     <div className="cardListContainer">

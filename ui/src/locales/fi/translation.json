@@ -140,7 +140,8 @@
       "buttons": {
         "edit": "Muokkaa",
         "save": "Tallenna"
-      }
+      },
+      "saved": "Tallennettu"
     }
   }
 }

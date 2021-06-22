@@ -6,7 +6,7 @@ import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 public class RouteTransportStatusMapper implements RecordMapper<Record, RouteTransportStatusModel> {
-    public static final RouteTransportStatus transportStatus = Tables.ROUTE_TRANSPORT_STATUS.as("ts");
+    public static final RouteTransportStatus transportStatus = Tables.ROUTE_TRANSPORT_STATUS.as("rts");
 
     @Nullable
     @Override

@@ -1,17 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { IonCol, IonContent, IonGrid, IonIcon, IonPage, IonRow, IonText } from "@ionic/react";
 import { documentTextOutline } from "ionicons/icons";
-import { useQuery } from "@apollo/client";
 import Moment from "react-moment";
 import Header from "../components/Header";
 import RouteCardList from "../components/RouteCardList";
-import { companyQuery } from "../graphql/CompanyQuery";
-import ICompanyDetail from "../interfaces/ICompanyDetail";
-import { actions as crossingActions } from "../store/crossingsSlice";
 import { useTypedSelector } from "../store/store";
+import { getCompany } from "../utils/backendData";
 import { dateFormat } from "../utils/constants";
 
 interface CompanyDetailProps {
@@ -25,12 +22,11 @@ const CompanyDetail = (): JSX.Element => {
   const crossings = useTypedSelector((state) => state.crossingsReducer);
   const { selectedCompanyDetail } = crossings;
   const { name = "", permits = [] } = selectedCompanyDetail || {};
-  const { id: companyId } = useParams<CompanyDetailProps>();
+  const { id: companyId = "0" } = useParams<CompanyDetailProps>();
 
-  useQuery<ICompanyDetail>(companyQuery(Number(companyId)), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_COMPANY, payload: response }),
-    onError: (err) => console.error(err),
-  });
+  useEffect(() => {
+    getCompany(dispatch, Number(companyId));
+  }, [dispatch, companyId]);
 
   return (
     <IonPage>
@@ -39,7 +35,7 @@ const CompanyDetail = (): JSX.Element => {
         <div className="cardListContainer">
           {permits.map((permit, index) => {
             const key = `permit_${index}`;
-            const { id, permitNumber, validStartDate, validEndDate, routes } = permit;
+            const { permitNumber, validStartDate, validEndDate, routes } = permit;
             return (
               <div key={key}>
                 <IonGrid>
@@ -70,7 +66,7 @@ const CompanyDetail = (): JSX.Element => {
                   </IonRow>
                 </IonGrid>
 
-                <RouteCardList routes={routes} permitId={id} />
+                <RouteCardList routes={routes} />
               </div>
             );
           })}
