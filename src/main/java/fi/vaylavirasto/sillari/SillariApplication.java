@@ -1,7 +1,5 @@
 package fi.vaylavirasto.sillari;
 
-import graphql.scalars.ExtendedScalars;
-import graphql.schema.idl.RuntimeWiring;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
@@ -25,17 +23,6 @@ public class SillariApplication {
     private static final Logger logger = LogManager.getLogger();
     public static void main(String[] args) {
         logger.debug("application starting");
-        RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.DateTime);
-        RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.Date);
-        RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.Time);
-        RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.Object);
-        RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.Json);
-        RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.Locale);
-        RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.GraphQLBigDecimal);
-        RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.GraphQLBigInteger);
-        RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.GraphQLLong);
-        RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.GraphQLShort);
-        RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.Url);
         SpringApplication.run(SillariApplication.class, args);
     }
     @Bean

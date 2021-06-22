@@ -21,11 +21,6 @@ spring:
     baselineOnMigrate: true
 logging:
   config: classpath:log4j2-local.xml
-graphql:
-  servlet:
-    enabled: true
-    mapping: "/graphql"
-    corsEnabled: true
 server:
   port: 8080
   servlet: # 2.0

@@ -41,7 +41,7 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-warning-contrast: #000000;
   --ion-color-warning-contrast-rgb: 0, 0, 0;
   --ion-color-warning-shade: #e0ac00;
-  --ion-color-warning-tint: #ffc91a;;
+  --ion-color-warning-tint: #ffc91a;
 
   /** danger **/
   --ion-color-danger: #eb445a;
