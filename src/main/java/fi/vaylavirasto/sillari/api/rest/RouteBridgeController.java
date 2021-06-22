@@ -1,7 +1,6 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
-import fi.vaylavirasto.sillari.model.CrossingModel;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.service.RouteBridgeService;
 import io.micrometer.core.annotation.Timed;
@@ -23,25 +22,12 @@ public class RouteBridgeController {
     @Operation(summary = "Get route bridge")
     @GetMapping("/getroutebridge")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public RouteBridgeModel getRouteBridge(@RequestParam Integer id) {
+    public RouteBridgeModel getRouteBridge(@RequestParam Integer routeBridgeId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteBridgeController", "getRouteBridge");
         try {
-            return routeBridgeService.getRouteBridge(id);
+            return routeBridgeService.getRouteBridge(routeBridgeId);
         } finally {
             serviceMetric.end();
         }
     }
-
-    @Operation(summary = "Get crossing of route bridge")
-    @GetMapping("/getcrossingofroutebridge")
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public CrossingModel getCrossingOfRouteBridge(@RequestParam Integer routeBridgeId) {
-        ServiceMetric serviceMetric = new ServiceMetric("RouteBridgeController", "getCrossingOfRouteBridge");
-        try {
-            return routeBridgeService.getCrossingOfRouteBridge(routeBridgeId);
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
 }

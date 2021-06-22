@@ -8,13 +8,13 @@ import org.jooq.RecordMapper;
 import java.util.ArrayList;
 
 public class PermitMapper implements RecordMapper<Record, PermitModel> {
-    public static final Permit permit = Tables.PERMIT.as("p");
-    public static final TransportDimensions transportDimensions = Tables.TRANSPORT_DIMENSIONS.as("t");
-    public static final Vehicle vehicle = Tables.VEHICLE.as("v");
+    public static final Permit permit = Tables.PERMIT.as("pe");
+    public static final TransportDimensions transportDimensions = Tables.TRANSPORT_DIMENSIONS.as("td");
+    public static final Vehicle vehicle = Tables.VEHICLE.as("ve");
     public static final AxleChart axleChart = Tables.AXLE_CHART.as("ac");
-    public static final Axle axle = Tables.AXLE.as("a");
-    public static final Route route = Tables.ROUTE.as("r");
-    public static final RouteBridge routeBridge = Tables.ROUTE_BRIDGE.as("rb");
+    public static final Axle axle = Tables.AXLE.as("ax");
+    public static final Route route = Tables.ROUTE.as("ro");
+    public static final RouteBridge routeBridge = Tables.ROUTE_BRIDGE.as("rbr");
 
     @Nullable
     @Override

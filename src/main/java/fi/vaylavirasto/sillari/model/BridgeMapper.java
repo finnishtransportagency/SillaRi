@@ -8,7 +8,7 @@ import org.jooq.RecordMapper;
 import java.util.ArrayList;
 
 public class BridgeMapper implements RecordMapper<Record, BridgeModel> {
-    public static final Bridge bridge = Tables.BRIDGE.as("b");
+    public static final Bridge bridge = Tables.BRIDGE.as("br");
 
     @Nullable
     @Override

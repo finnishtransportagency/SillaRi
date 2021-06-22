@@ -22,10 +22,10 @@ public class BridgeController {
     @Operation(summary = "Get bridge")
     @GetMapping("/getbridge")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public BridgeModel getBridge(@RequestParam Integer id) {
+    public BridgeModel getBridge(@RequestParam Integer bridgeId) {
         ServiceMetric serviceMetric = new ServiceMetric("BridgeController", "getBridge");
         try {
-            return bridgeService.getBridge(id);
+            return bridgeService.getBridge(bridgeId);
         } finally {
             serviceMetric.end();
         }

@@ -15,7 +15,7 @@ import DenyCrossing from "./pages/DenyCrossing";
 import BridgeDetail from "./pages/BridgeDetail";
 import CrossingSummary from "./pages/CrossingSummary";
 import SidebarMenu from "./components/SidebarMenu";
-import client from "./service/apolloClient";
+import apolloClient from "./service/apolloClient";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -40,7 +40,7 @@ import "./theme/variables.css";
 import "./theme/sillari.css";
 
 const App: React.FC = () => (
-  <ApolloProvider client={client}>
+  <ApolloProvider client={apolloClient}>
     <IonApp>
       <IonReactRouter>
         <SidebarMenu />
@@ -51,7 +51,7 @@ const App: React.FC = () => (
           <Route path="/bridgemap/:routeBridgeId" component={Map} exact />
           <Route path="/routemap/:routeId" component={Map} exact />
           <Route path="/companydetail/:id" component={CompanyDetail} exact />
-          <Route path="/routeDetail/:permitId/:routeId" component={RouteDetail} exact />
+          <Route path="/routeDetail/:routeId" component={RouteDetail} exact />
           <Route path="/bridgeDetail/:routeBridgeId" component={BridgeDetail} exact />
           <Route path="/crossing/:routeBridgeId" component={Crossing} exact />
           <Route path="/denyCrossing/:routeBridgeId" component={DenyCrossing} exact />

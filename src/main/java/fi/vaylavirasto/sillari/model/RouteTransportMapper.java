@@ -9,8 +9,8 @@ import org.jooq.RecordMapper;
 import java.util.ArrayList;
 
 public class RouteTransportMapper implements RecordMapper<Record, RouteTransportModel> {
-    public static final RouteTransport transport = Tables.ROUTE_TRANSPORT.as("t");
-    public static final RouteTransportStatus transportStatus = Tables.ROUTE_TRANSPORT_STATUS.as("ts");
+    public static final RouteTransport transport = Tables.ROUTE_TRANSPORT.as("rt");
+    public static final RouteTransportStatus transportStatus = Tables.ROUTE_TRANSPORT_STATUS.as("rts");
 
     @Nullable
     @Override

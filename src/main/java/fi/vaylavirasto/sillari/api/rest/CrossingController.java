@@ -35,6 +35,18 @@ public class CrossingController {
         }
     }
 
+    @Operation(summary = "Get crossing of route bridge")
+    @GetMapping("/getcrossingofroutebridge")
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public CrossingModel getCrossingOfRouteBridge(@RequestParam Integer routeBridgeId) {
+        ServiceMetric serviceMetric = new ServiceMetric("CrossingController", "getCrossingOfRouteBridge");
+        try {
+            return crossingService.getCrossingOfRouteBridge(routeBridgeId);
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Start crossing")
     @PostMapping("/startcrossing")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")

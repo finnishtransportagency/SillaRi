@@ -22,10 +22,10 @@ public class RouteController {
     @Operation(summary = "Get route")
     @GetMapping("/getroute")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public RouteModel getRoute(@RequestParam Integer id) {
+    public RouteModel getRoute(@RequestParam Integer routeId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteController", "getRoute");
         try {
-            return routeService.getRoute(id);
+            return routeService.getRoute(routeId);
         } finally {
             serviceMetric.end();
         }

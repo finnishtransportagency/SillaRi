@@ -8,7 +8,7 @@ import org.jooq.RecordMapper;
 import java.math.BigDecimal;
 
 public class AxleMapper implements RecordMapper<Record, AxleModel> {
-    public static final Axle axle = Tables.AXLE.as("a");
+    public static final Axle axle = Tables.AXLE.as("ax");
 
     @Nullable
     @Override

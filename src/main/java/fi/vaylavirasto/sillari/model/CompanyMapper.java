@@ -8,7 +8,7 @@ import org.jooq.RecordMapper;
 import java.util.ArrayList;
 
 public class CompanyMapper implements RecordMapper<Record, CompanyModel> {
-    public static final Company company = Tables.COMPANY.as("c");
+    public static final Company company = Tables.COMPANY.as("co");
 
     @Nullable
     @Override

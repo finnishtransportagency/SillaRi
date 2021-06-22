@@ -38,6 +38,32 @@ public class PermitRepository {
                 .fetchOne(new PermitMapper());
     }
 
+    public PermitModel getPermitByRouteId(Integer routeId) {
+        return dsl.select().from(PermitMapper.permit)
+                .join(PermitMapper.route)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.route.PERMIT_ID))
+                .leftJoin(PermitMapper.axleChart)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
+                .leftJoin(PermitMapper.transportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .where(PermitMapper.route.ID.eq(routeId))
+                .fetchOne(new PermitMapper());
+    }
+
+    public PermitModel getPermitByRouteBridgeId(Integer routeBridgeId) {
+        return dsl.select().from(PermitMapper.permit)
+                .join(PermitMapper.route)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.route.PERMIT_ID))
+                .join(PermitMapper.routeBridge)
+                .on(PermitMapper.route.ID.eq(PermitMapper.routeBridge.ROUTE_ID))
+                .leftJoin(PermitMapper.axleChart)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
+                .leftJoin(PermitMapper.transportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .where(PermitMapper.routeBridge.ID.eq(routeBridgeId))
+                .fetchOne(new PermitMapper());
+    }
+
     public Integer getPermitIdByPermitNumber(String permitNumber) {
         Record1<Integer> record = dsl.select(PermitMapper.permit.ID).from(PermitMapper.permit)
                 .where(PermitMapper.permit.PERMIT_NUMBER.eq(permitNumber))
