@@ -22,7 +22,6 @@ import moment from "moment";
 
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
-import { apiUrl } from "../service/apolloClient";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import IFileInput from "../interfaces/IFileInput";
 import { getCrossing, getPermitOfRouteBridge, getRouteBridge, sendCrossingUpdate, sendSingleUpload } from "../utils/backendData";
@@ -184,7 +183,7 @@ const CrossingSummary = (): JSX.Element => {
                 <IonItem key={crossingImage.id}>
                   <IonCol>
                     <IonThumbnail>
-                      <IonImg src={`${apiUrl}images/get?objectKey=${crossingImage.objectKey}`} />
+                      <IonImg src={`/api/images/get?objectKey=${crossingImage.objectKey}`} />
                     </IonThumbnail>
                   </IonCol>
                 </IonItem>
