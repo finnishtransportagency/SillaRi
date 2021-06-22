@@ -17,6 +17,7 @@ public class PermitModel {
     private OffsetDateTime validEndDate;
     private BigDecimal transportTotalMass;
     private TransportDimensionsModel transportDimensions;
+    private UnloadedTransportDimensionsModel unloadedTransportDimensions;
     private String additionalDetails;
     private List<VehicleModel> vehicles;
     private AxleChartModel axleChart;

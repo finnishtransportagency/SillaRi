@@ -24,6 +24,8 @@ public class PermitRepository {
                 .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
                 .leftJoin(PermitMapper.transportDimensions)
                 .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .leftJoin(PermitMapper.unloadedTransportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
                 .where(PermitMapper.permit.COMPANY_ID.eq(companyId))
                 .fetch(new PermitMapper());
     }
@@ -34,6 +36,8 @@ public class PermitRepository {
                 .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
                 .leftJoin(PermitMapper.transportDimensions)
                 .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .leftJoin(PermitMapper.unloadedTransportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
                 .where(PermitMapper.permit.ID.eq(id))
                 .fetchOne(new PermitMapper());
     }
@@ -46,6 +50,8 @@ public class PermitRepository {
                 .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
                 .leftJoin(PermitMapper.transportDimensions)
                 .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .leftJoin(PermitMapper.unloadedTransportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
                 .where(PermitMapper.route.ID.eq(routeId))
                 .fetchOne(new PermitMapper());
     }
@@ -60,6 +66,8 @@ public class PermitRepository {
                 .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
                 .leftJoin(PermitMapper.transportDimensions)
                 .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .leftJoin(PermitMapper.unloadedTransportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
                 .where(PermitMapper.routeBridge.ID.eq(routeBridgeId))
                 .fetchOne(new PermitMapper());
     }
@@ -100,6 +108,7 @@ public class PermitRepository {
             permitModel.setId(permitId);
 
             insertTransportDimensions(ctx, permitModel);
+            insertUnloadedTransportDimensions(ctx, permitModel);
             insertVehicles(ctx, permitModel);
             insertAxleChart(ctx, permitModel);
 
@@ -126,6 +135,23 @@ public class PermitRepository {
                 transportDimensionsModel.getHeight(),
                 transportDimensionsModel.getWidth(),
                 transportDimensionsModel.getLength())
+                .execute();
+    }
+
+    private void insertUnloadedTransportDimensions(DSLContext ctx, PermitModel permitModel) {
+        UnloadedTransportDimensionsModel unloadedTransportDimensionsModel = permitModel.getUnloadedTransportDimensions();
+        unloadedTransportDimensionsModel.setPermitId(permitModel.getId());
+
+        ctx.insertInto(PermitMapper.unloadedTransportDimensions,
+                PermitMapper.unloadedTransportDimensions.PERMIT_ID,
+                PermitMapper.unloadedTransportDimensions.HEIGHT,
+                PermitMapper.unloadedTransportDimensions.WIDTH,
+                PermitMapper.unloadedTransportDimensions.LENGTH
+        ).values(
+                unloadedTransportDimensionsModel.getPermitId(),
+                unloadedTransportDimensionsModel.getHeight(),
+                unloadedTransportDimensionsModel.getWidth(),
+                unloadedTransportDimensionsModel.getLength())
                 .execute();
     }
 
