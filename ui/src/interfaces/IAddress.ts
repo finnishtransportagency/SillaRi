@@ -1,5 +1,5 @@
 export default interface IAddress {
-  id: string;
+  id: number;
   city: string;
   postalcode: string;
   street: string;
