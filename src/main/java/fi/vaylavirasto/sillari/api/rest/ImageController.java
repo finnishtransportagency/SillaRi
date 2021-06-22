@@ -29,12 +29,14 @@ public class ImageController {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "getImage");
         try {
             byte[] image = awss3Client.download(new String(Base64.getDecoder().decode(objectKey)));
-            response.setContentType("image/jpeg");
-            OutputStream out = response.getOutputStream();
-            ByteArrayInputStream in = new ByteArrayInputStream(image);
-            IOUtils.copy(in, out);
-            out.close();
-            in.close();
+            if (image != null) {
+                response.setContentType("image/jpeg");
+                OutputStream out = response.getOutputStream();
+                ByteArrayInputStream in = new ByteArrayInputStream(image);
+                IOUtils.copy(in, out);
+                out.close();
+                in.close();
+            }
         } finally {
             serviceMetric.end();
         }

@@ -10,7 +10,7 @@ public class FileService {
     @Autowired
     CrossingRepository crossingRepository;
     public FileModel createFile(FileModel fileModel) {
-        Integer id = crossingRepository.insertFile(fileModel);
+        Integer id = crossingRepository.insertFileIfNotExists(fileModel);
         return crossingRepository.getFile(id);
     }
 }

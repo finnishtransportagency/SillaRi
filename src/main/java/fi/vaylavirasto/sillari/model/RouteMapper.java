@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class RouteMapper  implements RecordMapper<Record, RouteModel> {
     // Table aliases
-    public static final Route route = Tables.ROUTE.as("r");
+    public static final Route route = Tables.ROUTE.as("ro");
     public static final Address arrivalAddress = Tables.ADDRESS.as("aa");
     public static final Address departureAddress = Tables.ADDRESS.as("da");
 

@@ -1,14 +1,11 @@
 import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText, IonTextarea } from "@ionic/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useQuery } from "@apollo/client";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
-import IBridgeDetail from "../interfaces/IBridgeDetail";
-import { actions as crossingActions } from "../store/crossingsSlice";
-import { routeBridgeQuery } from "../graphql/RouteBridgeQuery";
+import { getRouteBridge } from "../utils/backendData";
 
 interface DenyCrossingProps {
   routeBridgeId: string;
@@ -17,16 +14,15 @@ interface DenyCrossingProps {
 const DenyCrossing = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { routeBridgeId } = useParams<DenyCrossingProps>();
+  const { routeBridgeId = "0" } = useParams<DenyCrossingProps>();
 
   const { selectedBridgeDetail } = useTypedSelector((state) => state.crossingsReducer);
   const { bridge } = selectedBridgeDetail || {};
   const { name = "" } = bridge || {};
 
-  useQuery<IBridgeDetail>(routeBridgeQuery(Number(routeBridgeId)), {
-    onCompleted: (response) => dispatch({ type: crossingActions.GET_BRIDGE, payload: response }),
-    onError: (err) => console.error(err),
-  });
+  useEffect(() => {
+    getRouteBridge(dispatch, Number(routeBridgeId));
+  }, [dispatch, routeBridgeId]);
 
   return (
     <IonPage>

@@ -6,7 +6,7 @@ import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 public class VehicleMapper implements RecordMapper<Record, VehicleModel> {
-    public static final Vehicle vehicle = Tables.VEHICLE.as("v");
+    public static final Vehicle vehicle = Tables.VEHICLE.as("ve");
 
     @Nullable
     @Override
