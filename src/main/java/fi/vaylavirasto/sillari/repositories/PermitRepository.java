@@ -216,7 +216,6 @@ public class PermitRepository {
                 PermitMapper.route.PERMIT_ID,
                 PermitMapper.route.LELU_ID,
                 PermitMapper.route.NAME,
-                PermitMapper.route.ORDER_NUMBER,
                 PermitMapper.route.TRANSPORT_COUNT,
                 PermitMapper.route.ALTERNATIVE_ROUTE
                 // TODO address ids
