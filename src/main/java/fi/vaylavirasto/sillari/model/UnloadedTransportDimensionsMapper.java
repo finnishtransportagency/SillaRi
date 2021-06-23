@@ -11,12 +11,12 @@ public class UnloadedTransportDimensionsMapper implements RecordMapper<Record, U
     @Nullable
     @Override
     public UnloadedTransportDimensionsModel map(Record record) {
-        UnloadedTransportDimensionsModel transportDimensionsModel = new UnloadedTransportDimensionsModel();
-        transportDimensionsModel.setId(record.get(unloadedTransportDimensions.ID));
-        transportDimensionsModel.setPermitId(record.get(unloadedTransportDimensions.PERMIT_ID));
-        transportDimensionsModel.setHeight(record.get(unloadedTransportDimensions.HEIGHT));
-        transportDimensionsModel.setWidth(record.get(unloadedTransportDimensions.WIDTH));
-        transportDimensionsModel.setLength(record.get(unloadedTransportDimensions.LENGTH));
-        return transportDimensionsModel;
+        UnloadedTransportDimensionsModel unloadedTransportDimensionsModel = new UnloadedTransportDimensionsModel();
+        unloadedTransportDimensionsModel.setId(record.get(unloadedTransportDimensions.ID));
+        unloadedTransportDimensionsModel.setPermitId(record.get(unloadedTransportDimensions.PERMIT_ID));
+        unloadedTransportDimensionsModel.setHeight(record.get(unloadedTransportDimensions.HEIGHT));
+        unloadedTransportDimensionsModel.setWidth(record.get(unloadedTransportDimensions.WIDTH));
+        unloadedTransportDimensionsModel.setLength(record.get(unloadedTransportDimensions.LENGTH));
+        return unloadedTransportDimensionsModel;
     }
 }

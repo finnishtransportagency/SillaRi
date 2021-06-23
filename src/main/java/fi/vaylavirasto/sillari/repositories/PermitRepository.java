@@ -274,6 +274,7 @@ public class PermitRepository {
                     .execute();
 
             updateTransportDimensions(ctx, permitModel);
+            updateUnloadedTransportDimensions(ctx, permitModel);
             deleteVehiclesAndInsertNew(ctx, permitModel);
             deleteAxlesAndInsertNew(ctx, permitModel);
 
@@ -304,6 +305,15 @@ public class PermitRepository {
                 .set(PermitMapper.transportDimensions.WIDTH, permitModel.getTransportDimensions().getWidth())
                 .set(PermitMapper.transportDimensions.LENGTH, permitModel.getTransportDimensions().getLength())
                 .where(PermitMapper.transportDimensions.PERMIT_ID.eq(permitModel.getId()))
+                .execute();
+    }
+
+    private void updateUnloadedTransportDimensions(DSLContext ctx, PermitModel permitModel) {
+        ctx.update(PermitMapper.unloadedTransportDimensions)
+                .set(PermitMapper.unloadedTransportDimensions.HEIGHT, permitModel.getUnloadedTransportDimensions().getHeight())
+                .set(PermitMapper.unloadedTransportDimensions.WIDTH, permitModel.getUnloadedTransportDimensions().getWidth())
+                .set(PermitMapper.unloadedTransportDimensions.LENGTH, permitModel.getUnloadedTransportDimensions().getLength())
+                .where(PermitMapper.unloadedTransportDimensions.PERMIT_ID.eq(permitModel.getId()))
                 .execute();
     }
 
