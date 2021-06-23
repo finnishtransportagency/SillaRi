@@ -10,7 +10,6 @@ public class RouteModel {
     private Integer permitId;
     private Long leluId;
     private String name;
-    private Integer orderNumber;
     private Integer transportCount;
     private Boolean alternativeRoute;
     private String geojson;

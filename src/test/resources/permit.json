@@ -99,7 +99,6 @@
     {
       "id": 12345,
       "name": "Kotka - Tampere",
-      "order": 1,
       "transportCount": 3,
       "alternativeRoute": false,
       "bridges": [

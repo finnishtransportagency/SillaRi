@@ -224,7 +224,6 @@ public class PermitRepository {
                 routeModel.getPermitId(),
                 routeModel.getLeluId(),
                 routeModel.getName(),
-                routeModel.getOrderNumber(),
                 routeModel.getTransportCount(),
                 routeModel.getAlternativeRoute())
                 .returningResult(PermitMapper.route.ID)
@@ -353,7 +352,6 @@ public class PermitRepository {
     private void updateRouteAndInsertRouteBridges(DSLContext ctx, RouteModel routeModel) {
         ctx.update(PermitMapper.route)
                 .set(PermitMapper.route.NAME, routeModel.getName())
-                .set(PermitMapper.route.ORDER_NUMBER, routeModel.getOrderNumber())
                 .set(PermitMapper.route.TRANSPORT_COUNT, routeModel.getTransportCount())
                 .set(PermitMapper.route.ALTERNATIVE_ROUTE, routeModel.getAlternativeRoute())
                 .where(PermitMapper.route.ID.eq(routeModel.getId()))
