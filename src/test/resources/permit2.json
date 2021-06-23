@@ -104,7 +104,6 @@
     {
       "id": 22345,
       "name": "Kuopio - Haukipudas",
-      "order": 1,
       "transportCount": 3,
       "alternativeRoute": false,
       "bridges": [

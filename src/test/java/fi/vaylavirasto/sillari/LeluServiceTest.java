@@ -236,9 +236,9 @@ public class LeluServiceTest {
         bridges6to7.add(bridge6);
         bridges6to7.add(bridge7);
 
-        LeluRouteDTO route1 = new LeluRouteDTO((long) 12345, "Bridges 1 to 3", 1, 3, false, bridges1to3);
-        LeluRouteDTO route2 = new LeluRouteDTO((long) 23456, "Bridges 4 to 5", 2, 5, false, bridges4to5);
-        LeluRouteDTO route3 = new LeluRouteDTO((long) 34567, "Bridges 6 to 7", 3, 7, false, bridges6to7);
+        LeluRouteDTO route1 = new LeluRouteDTO((long) 12345, "Bridges 1 to 3", 3, false, bridges1to3);
+        LeluRouteDTO route2 = new LeluRouteDTO((long) 23456, "Bridges 4 to 5", 5, false, bridges4to5);
+        LeluRouteDTO route3 = new LeluRouteDTO((long) 34567, "Bridges 6 to 7", 7, false, bridges6to7);
 
         routes.add(route1);
         routes.add(route2);
@@ -321,7 +321,6 @@ public class LeluServiceTest {
         RouteModel route1 = permitModel.getRoutes().get(0);
         assertEquals(12345, route1.getLeluId().longValue());
         assertEquals("Bridges 1 to 3", route1.getName());
-        assertEquals(1, route1.getOrderNumber().intValue());
         assertEquals(3, route1.getTransportCount().intValue());
         assertFalse(route1.getAlternativeRoute());
         assertEquals(3, route1.getRouteBridges().size());
@@ -341,7 +340,7 @@ public class LeluServiceTest {
         RouteModel route2 = permitModel.getRoutes().get(1);
         assertEquals(23456, route2.getLeluId().longValue());
         assertEquals("Bridges 4 to 5", route2.getName());
-        assertEquals(2, route2.getOrderNumber().intValue());
+
         assertEquals(5, route2.getTransportCount().intValue());
         assertFalse(route2.getAlternativeRoute());
         assertEquals(2, route2.getRouteBridges().size());
@@ -357,7 +356,6 @@ public class LeluServiceTest {
         RouteModel route3 = permitModel.getRoutes().get(2);
         assertEquals(34567, route3.getLeluId().longValue());
         assertEquals("Bridges 6 to 7", route3.getName());
-        assertEquals(3, route3.getOrderNumber().intValue());
         assertEquals(7, route3.getTransportCount().intValue());
         assertFalse(route3.getAlternativeRoute());
         assertEquals(2, route3.getRouteBridges().size());

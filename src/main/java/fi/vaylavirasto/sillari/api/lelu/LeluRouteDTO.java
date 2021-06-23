@@ -24,10 +24,6 @@ public class LeluRouteDTO {
     @Schema(description = "Route name describing the route", required = true, example = "Kotka - Tampere")
     private String name;
 
-    @NotNull(message = "{route.order.not.null}")
-    @Schema(description = "Order number of the route", required = true, example = "1")
-    private Integer order;
-
     @NotNull(message = "{route.transport.count.not.null}")
     @Schema(description = "Number of crossings permitted for the route", example = "3")
     private Integer transportCount;
@@ -54,10 +50,9 @@ public class LeluRouteDTO {
     public LeluRouteDTO() {
     }
 
-    public LeluRouteDTO(Long id, String name, Integer order, Integer transportCount, Boolean alternativeRoute, List<LeluBridgeDTO> bridges) {
+    public LeluRouteDTO(Long id, String name, Integer transportCount, Boolean alternativeRoute, List<LeluBridgeDTO> bridges) {
         this.id = id;
         this.name = name;
-        this.order = order;
         this.transportCount = transportCount;
         this.alternativeRoute = alternativeRoute;
         this.bridges = bridges;

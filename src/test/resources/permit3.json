@@ -108,7 +108,6 @@
     {
       "id": 32345,
       "name": "Kuopio - Haukipudas",
-      "order": 1,
       "transportCount": 3,
       "alternativeRoute": false,
       "bridges": [
@@ -141,7 +140,6 @@
     {
       "id": 92345,
       "name": "Kemi - Kemijärvi",
-      "order": 2,
       "transportCount": 3,
       "alternativeRoute": false,
       "bridges": [

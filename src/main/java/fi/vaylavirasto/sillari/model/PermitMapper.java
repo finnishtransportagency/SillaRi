@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class PermitMapper implements RecordMapper<Record, PermitModel> {
     public static final Permit permit = Tables.PERMIT.as("pe");
     public static final TransportDimensions transportDimensions = Tables.TRANSPORT_DIMENSIONS.as("td");
+    public static final UnloadedTransportDimensions unloadedTransportDimensions = Tables.UNLOADED_TRANSPORT_DIMENSIONS.as("ud");
     public static final Vehicle vehicle = Tables.VEHICLE.as("ve");
     public static final AxleChart axleChart = Tables.AXLE_CHART.as("ac");
     public static final Axle axle = Tables.AXLE.as("ax");
@@ -33,6 +34,9 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
 
         TransportDimensionsMapper transportDimensionsMapper = new TransportDimensionsMapper();
         permitModel.setTransportDimensions(transportDimensionsMapper.map(record));
+
+        UnloadedTransportDimensionsMapper unloadedTransportDimensionsMapper = new UnloadedTransportDimensionsMapper();
+        permitModel.setUnloadedTransportDimensions(unloadedTransportDimensionsMapper.map(record));
 
         AxleChartMapper axleChartMapper = new AxleChartMapper();
         permitModel.setAxleChart(axleChartMapper.map(record));
