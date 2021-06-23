@@ -49,9 +49,9 @@
             </activation>
             <properties>
                 <db.driver>org.postgresql.Driver</db.driver>
-                <db.url>jdbc:postgresql://sillari-dev.cpakz3z86ezw.eu-west-1.rds.amazonaws.com:5432/sillari</db.url>
+                <db.url>jdbc:postgresql://${env.DATABASE_HOST}:5432/sillari</db.url>
                 <db.username>sillari</db.username>
-                <db.password>silLari1234B7</db.password>
+                <db.password>${env.DATABASE_PASSWORD}</db.password>
             </properties>
         </profile>
     </profiles>
