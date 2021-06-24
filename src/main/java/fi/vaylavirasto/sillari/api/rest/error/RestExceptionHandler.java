@@ -51,6 +51,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
+    @ExceptionHandler(LeluPermitSaveException.class)
+    public ResponseEntity<Object> leluPermitNotFoundException(LeluPermitSaveException ex) {
+        logger.error("LeluPermitSaveException 'id':'{}'", ex.getMessage());
+        return handleCustomException(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(APIVersionException.class)
     public ResponseEntity<Object> apiVersionException(APIVersionException ex) {
@@ -70,4 +75,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         }
         return new ResponseEntity<>(body, status);
     }
+
+    private ResponseEntity<Object> handleCustomException(String message, HttpStatus status) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", new Date());
+        body.put("status", status.value());
+        body.put("message", message);
+        return new ResponseEntity<>(body, status);
+    }
+
 }
