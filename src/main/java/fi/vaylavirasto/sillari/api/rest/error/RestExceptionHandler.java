@@ -52,7 +52,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(LeluPermitSaveException.class)
-    public ResponseEntity<Object> leluPermitNotFoundException(LeluPermitSaveException ex) {
+    public ResponseEntity<Object> leluPermitSaveException(LeluPermitSaveException ex) {
         logger.error("LeluPermitSaveException 'id':'{}'", ex.getMessage());
         return handleCustomException(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -96,7 +96,7 @@ public class LeluController {
                 return leluService.createOrUpdatePermit(permitDTO);
             } catch (Exception e) {
                 logger.error(e.getMessage());
-                throw new LeluPermitSaveException(messageSource.getMessage("lelu.permit.save.failed", null, Locale.ROOT));
+                throw new LeluPermitSaveException(messageSource.getMessage("lelu.permit.save.failed", null, Locale.ROOT) + e.getMessage());
             }
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
