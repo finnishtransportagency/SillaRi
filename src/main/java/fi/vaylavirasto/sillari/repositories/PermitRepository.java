@@ -307,12 +307,14 @@ public class PermitRepository {
     }
 
     private void updateUnloadedTransportDimensions(DSLContext ctx, PermitModel permitModel) {
-        ctx.update(PermitMapper.unloadedTransportDimensions)
-                .set(PermitMapper.unloadedTransportDimensions.HEIGHT, permitModel.getUnloadedTransportDimensions().getHeight())
-                .set(PermitMapper.unloadedTransportDimensions.WIDTH, permitModel.getUnloadedTransportDimensions().getWidth())
-                .set(PermitMapper.unloadedTransportDimensions.LENGTH, permitModel.getUnloadedTransportDimensions().getLength())
-                .where(PermitMapper.unloadedTransportDimensions.PERMIT_ID.eq(permitModel.getId()))
-                .execute();
+        if (permitModel.getUnloadedTransportDimensions() != null) {
+            ctx.update(PermitMapper.unloadedTransportDimensions)
+                    .set(PermitMapper.unloadedTransportDimensions.HEIGHT, permitModel.getUnloadedTransportDimensions().getHeight())
+                    .set(PermitMapper.unloadedTransportDimensions.WIDTH, permitModel.getUnloadedTransportDimensions().getWidth())
+                    .set(PermitMapper.unloadedTransportDimensions.LENGTH, permitModel.getUnloadedTransportDimensions().getLength())
+                    .where(PermitMapper.unloadedTransportDimensions.PERMIT_ID.eq(permitModel.getId()))
+                    .execute();
+        }
     }
 
     private void deleteVehiclesAndInsertNew(DSLContext ctx, PermitModel permitModel) {
