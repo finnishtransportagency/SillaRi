@@ -1,5 +1,7 @@
 package fi.vaylavirasto.sillari.api.rest;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJson;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,15 +39,19 @@ public class DevToolsController {
         try {
             b = tRexService.getBridgeInfo("1.2.246.578.1.15.401830");
             if (b == null) {
-                returnString += "trex fail birge null";
+                logger.error("trex fail  bridge null");
+                return null;
+
             } else {
-                returnString += "trexOK " + b.toString();
+                logger.debug("success getting bridge from trex: " + b.toString());
+                return b;
             }
         } catch (Exception e) {
-            returnString += "trex fail " + e.getClass().getName() + " " + e.getMessage();
+            logger.error("trex fail " + e.getClass().getName() + " " + e.getMessage());
+            return null;
         }
 
-        return b;
+
     }
 
 
@@ -65,7 +71,21 @@ public class DevToolsController {
 
 
     @RequestMapping(value = "/localHardCodedBridgeInfoJson", method = RequestMethod.GET)
-    public String trexHardInfo() {
+    public TrexBridgeInfoResponseJson trexHardInfo() {
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+
+        try {
+            var a = objectMapper.readValue(trexHardString(), TrexBridgeInfoResponseJson.class);
+            return a;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+
+    private String trexHardString() {
         return "{\n" +
                 "  \"tila\": \"kaytossa\",\n" +
                 "  \"janteet\": [\n" +

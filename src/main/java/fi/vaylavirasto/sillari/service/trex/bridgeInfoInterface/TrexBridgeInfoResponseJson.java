@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class TrexBridgeInfoResponseJson {
+import lombok.Data;
+
+public @Data
+class TrexBridgeInfoResponseJson {
 
     @JsonProperty("nykyinenKunnossapitaja")
     private NykyinenKunnossapitaja nykyinenKunnossapitaja;

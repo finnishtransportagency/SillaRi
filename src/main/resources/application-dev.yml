@@ -6,7 +6,7 @@ sillari:
   lelu:
     version: @leluApiVersion@
   trex:
-    url: https://testioag.vayla.fi/trex/rajapinta/taitorakenne/
+    url: https://testioag.vayla.fi/trex/rajapinta/taitorakenne/v2/yleistiedot/silta
 spring:
   application:
     name: SillaRi

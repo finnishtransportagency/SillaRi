@@ -23,6 +23,10 @@ public class TRexService {
             WebClient webClient = buildClient();
             try {
                 TrexBridgeInfoResponseJson bridgeInfo = webClient.get()
+                        .uri(uriBuilder -> uriBuilder
+
+                                .queryParam("oid", bridgeOid)
+                                .build())
                         .retrieve()
                         .bodyToMono(TrexBridgeInfoResponseJson.class)
                         .block();
