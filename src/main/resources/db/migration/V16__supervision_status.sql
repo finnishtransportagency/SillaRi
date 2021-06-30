@@ -19,7 +19,7 @@ insert into sillari.supervision_status (supervision_id, status, time)
 select s.id,
        'PLANNED',
        ('2021-08-0' || (floor(random() * (9 - 1 + 1) + 1)::int) || ' 0' || (floor(random() * (9 - 1 + 1) + 1)::int) ||
-        ':0' || (floor(random() * (9 - 1 + 1) + 1)::int) || ':00 +03:00')::timestamp
+        ':0' || (floor(random() * (9 - 1 + 1) + 1)::int) || ':00 +03:00')::timestamptz
 from sillari.supervision s;
 
 --Supervision
