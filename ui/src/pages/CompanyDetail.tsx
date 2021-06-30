@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { IonCol, IonContent, IonGrid, IonIcon, IonPage, IonRow, IonText } from "@ionic/react";
@@ -8,7 +9,7 @@ import Moment from "react-moment";
 import Header from "../components/Header";
 import RouteCardList from "../components/RouteCardList";
 import { useTypedSelector } from "../store/store";
-import { getCompany } from "../utils/backendData";
+import { getCompany, onRetry } from "../utils/backendData";
 import { dateFormat } from "../utils/constants";
 
 interface CompanyDetailProps {
@@ -24,9 +25,7 @@ const CompanyDetail = (): JSX.Element => {
   const { name = "", permits = [] } = selectedCompanyDetail || {};
   const { id: companyId = "0" } = useParams<CompanyDetailProps>();
 
-  useEffect(() => {
-    getCompany(dispatch, Number(companyId));
-  }, [dispatch, companyId]);
+  useQuery(["getCompany", companyId], () => getCompany(Number(companyId), dispatch), { retry: onRetry });
 
   return (
     <IonPage>

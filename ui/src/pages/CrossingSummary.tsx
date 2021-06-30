@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useMutation, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { checkmarkCircleOutline, closeCircleOutline } from "ionicons/icons";
 import {
@@ -24,7 +25,7 @@ import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import IFileInput from "../interfaces/IFileInput";
-import { getCrossing, getPermitOfRouteBridge, getRouteBridge, sendCrossingUpdate, sendSingleUpload } from "../utils/backendData";
+import { getCrossing, getPermitOfRouteBridge, getRouteBridge, onRetry, sendCrossingUpdate, sendSingleUpload } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
 import { getOrigin } from "../utils/request";
 
@@ -60,16 +61,28 @@ const CrossingSummary = (): JSX.Element => {
     images: crossingImages = [],
   } = selectedCrossingDetail || {};
 
-  useEffect(() => {
-    getCrossing(dispatch, Number(crossingId), null);
-  }, [dispatch, crossingId]);
+  useQuery(["getCrossing", crossingId], () => getCrossing(Number(crossingId), dispatch), { retry: onRetry });
 
+  // Use the enabled option to only fetch data when routeBridgeId is available
+  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch), {
+    retry: onRetry,
+    enabled: Number(routeBridgeId) > 0,
+  });
+  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch), {
+    retry: onRetry,
+    enabled: Number(routeBridgeId) > 0,
+  });
+
+  // Set-up mutations for modifying data later
+  const crossingUpdateMutation = useMutation((updateRequest: ICrossingInput) => sendCrossingUpdate(updateRequest, dispatch), { retry: onRetry });
+  const singleUploadMutation = useMutation((fileUpload: IFileInput) => sendSingleUpload(fileUpload, dispatch), { retry: onRetry });
+
+  const { isSuccess: isCrossingUpdateSuccessful } = crossingUpdateMutation;
   useEffect(() => {
-    if (selectedCrossingDetail !== undefined) {
-      getRouteBridge(dispatch, Number(routeBridgeId));
-      getPermitOfRouteBridge(dispatch, Number(routeBridgeId));
+    if (isCrossingUpdateSuccessful) {
+      setToastMessage(t("crossing.summary.saved"));
     }
-  }, [dispatch, selectedCrossingDetail, routeBridgeId]);
+  }, [isCrossingUpdateSuccessful, t]);
 
   const save = () => {
     if (selectedCrossingDetail !== undefined) {
@@ -91,7 +104,7 @@ const CrossingSummary = (): JSX.Element => {
         draft: false,
       } as ICrossingInput;
 
-      sendCrossingUpdate(dispatch, updateRequest, null);
+      crossingUpdateMutation.mutate(updateRequest);
 
       images.forEach((image) => {
         const fileUpload = {
@@ -101,10 +114,8 @@ const CrossingSummary = (): JSX.Element => {
           taken: moment(image.date).format(dateTimeFormat),
         } as IFileInput;
 
-        sendSingleUpload(fileUpload);
+        singleUploadMutation.mutate(fileUpload);
       });
-
-      setToastMessage(t("crossing.summary.saved"));
     }
   };
 

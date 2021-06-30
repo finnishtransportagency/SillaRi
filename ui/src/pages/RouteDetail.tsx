@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonCheckbox, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
 import Header from "../components/Header";
@@ -10,7 +11,7 @@ import RouteTransport from "../components/RouteTransport";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import { useTypedSelector } from "../store/store";
-import { getPermitOfRoute, getRoute } from "../utils/backendData";
+import { getPermitOfRoute, getRoute, onRetry } from "../utils/backendData";
 
 interface RouteDetailProps {
   routeId: string;
@@ -29,10 +30,8 @@ const RouteDetail = (): JSX.Element => {
 
   const { routeId = "0" } = useParams<RouteDetailProps>();
 
-  useEffect(() => {
-    getRoute(dispatch, Number(routeId));
-    getPermitOfRoute(dispatch, Number(routeId));
-  }, [dispatch, routeId]);
+  useQuery(["getRoute", routeId], () => getRoute(Number(routeId), dispatch), { retry: onRetry });
+  useQuery(["getPermitOfRoute", routeId], () => getPermitOfRoute(Number(routeId), dispatch), { retry: onRetry });
 
   return (
     <IonPage>

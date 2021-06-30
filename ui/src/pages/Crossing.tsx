@@ -14,8 +14,9 @@ import {
   IonRow,
   IonTextarea,
 } from "@ionic/react";
-import React, { useEffect } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { useMutation, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useParams, useHistory } from "react-router-dom";
 import moment from "moment";
@@ -30,6 +31,7 @@ import {
   getCrossingOfRouteBridge,
   getPermitOfRouteBridge,
   getRouteBridge,
+  onRetry,
   sendCrossingStart,
   sendCrossingUpdate,
   sendSingleUpload,
@@ -63,22 +65,28 @@ const Crossing = (): JSX.Element => {
     twist = false,
     permanentBendings = false,
     started = "",
-    id = -1,
+    id: crossingId = -1,
   } = selectedCrossingDetail || {};
 
   // Added query to clear previous crossing from Redux store, otherwise that one is used
-  useEffect(() => {
-    getRouteBridge(dispatch, Number(routeBridgeId));
-    getCrossingOfRouteBridge(dispatch, Number(routeBridgeId), null);
-    getPermitOfRouteBridge(dispatch, Number(routeBridgeId));
-  }, [dispatch, routeBridgeId]);
+  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch), { retry: onRetry });
+  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch), { retry: onRetry });
+  const { isLoading: isLoadingCrossing } = useQuery(
+    ["getCrossingOfRouteBridge", routeBridgeId],
+    () => getCrossingOfRouteBridge(Number(routeBridgeId), dispatch),
+    { retry: onRetry }
+  );
 
-  useEffect(() => {
-    // selectedCrossingDetail is undefined when query is still unresolved, but returns null if not found from DB
-    if (selectedCrossingDetail === null) {
-      sendCrossingStart(dispatch, Number(routeBridgeId), null);
-    }
-  }, [dispatch, selectedCrossingDetail, routeBridgeId]);
+  // Set-up mutations for modifying data later
+  const crossingStartMutation = useMutation((routeBrId: number) => sendCrossingStart(routeBrId, dispatch), { retry: onRetry });
+  const crossingUpdateMutation = useMutation((updateRequest: ICrossingInput) => sendCrossingUpdate(updateRequest, dispatch), { retry: onRetry });
+  const singleUploadMutation = useMutation((fileUpload: IFileInput) => sendSingleUpload(fileUpload, dispatch), { retry: onRetry });
+
+  // Start the crossing if not already done
+  const { isLoading: isSendingCrossingStart } = crossingStartMutation;
+  if (!isLoadingCrossing && !isSendingCrossingStart && crossingId <= 0) {
+    crossingStartMutation.mutate(Number(routeBridgeId));
+  }
 
   const changeTextAreaValue = (pname: string, pvalue: string) => {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
@@ -89,7 +97,7 @@ const Crossing = (): JSX.Element => {
   // Should we disable all changes to crossing when it is not draft anymore, so this does not happen?
   const summaryClicked = () => {
     const updateRequest = {
-      id,
+      id: crossingId,
       routeBridgeId: Number(routeBridgeId),
       started,
       drivingLineInfo,
@@ -106,21 +114,21 @@ const Crossing = (): JSX.Element => {
       draft: true,
     } as ICrossingInput;
 
-    sendCrossingUpdate(dispatch, updateRequest, null);
+    crossingUpdateMutation.mutate(updateRequest);
 
     images.forEach((image) => {
       const fileUpload = {
-        crossingId: id.toString(),
+        crossingId: crossingId.toString(),
         filename: image.filename,
         base64: image.dataUrl,
         taken: moment(image.date).format(dateTimeFormat),
       } as IFileInput;
 
-      sendSingleUpload(fileUpload);
+      singleUploadMutation.mutate(fileUpload);
     });
 
     console.log("history");
-    hist.push(`/summary/${id}`);
+    hist.push(`/summary/${crossingId}`);
   };
 
   const radioClicked = (radioName: string, radioValue: string) => {
@@ -335,7 +343,9 @@ const Crossing = (): JSX.Element => {
               <IonButton disabled>{t("crossing.buttons.exit")}</IonButton>
             </IonCol>
             <IonCol>
-              <IonButton onClick={() => summaryClicked()}>{t("crossing.buttons.summary")}</IonButton>
+              <IonButton disabled={crossingId <= 0} onClick={() => summaryClicked()}>
+                {t("crossing.buttons.summary")}
+              </IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>

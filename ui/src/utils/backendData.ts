@@ -12,6 +12,12 @@ import { actions as crossingActions } from "../store/crossingsSlice";
 
 const notOkError = "Network response was not ok";
 
+export const onRetry = (failureCount: number, error: string): boolean => {
+  // Retry forever by returning true
+  console.error("ERROR", failureCount, error);
+  return true;
+};
+
 export const getCompany = async (companyId: number, dispatch: Dispatch): Promise<void> => {
   try {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCompany: false } });

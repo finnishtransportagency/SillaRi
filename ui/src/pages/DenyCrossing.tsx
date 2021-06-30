@@ -1,11 +1,12 @@
 import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText, IonTextarea } from "@ionic/react";
-import React, { useEffect } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
-import { getRouteBridge } from "../utils/backendData";
+import { getRouteBridge, onRetry } from "../utils/backendData";
 
 interface DenyCrossingProps {
   routeBridgeId: string;
@@ -20,9 +21,7 @@ const DenyCrossing = (): JSX.Element => {
   const { bridge } = selectedBridgeDetail || {};
   const { name = "" } = bridge || {};
 
-  useEffect(() => {
-    getRouteBridge(dispatch, Number(routeBridgeId));
-  }, [dispatch, routeBridgeId]);
+  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch), { retry: onRetry });
 
   return (
     <IonPage>

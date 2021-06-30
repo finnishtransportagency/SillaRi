@@ -1,18 +1,17 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useTypedSelector } from "../store/store";
-import { getCompanyList } from "../utils/backendData";
+import { getCompanyList, onRetry } from "../utils/backendData";
 import CompanyCard from "./CompanyCard";
 import "./CompanyCardList.css";
 
 const CompanyCardList = (): JSX.Element => {
   const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const { companyList } = crossings;
+  const { companyList = [] } = crossings;
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    getCompanyList(dispatch);
-  }, [dispatch]);
+  useQuery(["getCompanyList"], () => getCompanyList(dispatch), { retry: onRetry });
 
   return (
     <div className="cardListContainer">

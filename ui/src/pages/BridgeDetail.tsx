@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import {
   IonButton,
@@ -19,7 +20,7 @@ import {
 import { location } from "ionicons/icons";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
-import { getPermitOfRouteBridge, getRouteBridge } from "../utils/backendData";
+import { getPermitOfRouteBridge, getRouteBridge, onRetry } from "../utils/backendData";
 
 interface BridgeDetailProps {
   routeBridgeId: string;
@@ -37,10 +38,8 @@ const BridgeDetail = (): JSX.Element => {
 
   const [conformsToPermit, setConformsToPermit] = React.useState(false);
 
-  useEffect(() => {
-    getRouteBridge(dispatch, Number(routeBridgeId));
-    getPermitOfRouteBridge(dispatch, Number(routeBridgeId));
-  }, [dispatch, routeBridgeId]);
+  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch), { retry: onRetry });
+  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch), { retry: onRetry });
 
   return (
     <IonPage>
