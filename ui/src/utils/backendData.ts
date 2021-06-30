@@ -7,11 +7,12 @@ import IFileInput from "../interfaces/IFileInput";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
+import { getOrigin } from "./request";
 import { actions as crossingActions } from "../store/crossingsSlice";
 
 export const getCompany = async (dispatch: Dispatch, companyId: number, payloadOnFailure?: ICompany | null): Promise<void> => {
   try {
-    const companyResponse = await fetch(`/api/company/getcompany?companyId=${companyId}`);
+    const companyResponse = await fetch(`${getOrigin()}/api/company/getcompany?companyId=${companyId}`);
     if (companyResponse.ok) {
       const company = (await companyResponse.json()) as Promise<ICompany>;
       dispatch({ type: crossingActions.GET_COMPANY, payload: company });
@@ -26,7 +27,7 @@ export const getCompany = async (dispatch: Dispatch, companyId: number, payloadO
 
 export const getCompanyList = async (dispatch: Dispatch, payloadOnFailure?: ICompany[] | null): Promise<void> => {
   try {
-    const companyListResponse = await fetch("/api/company/getcompanylist?limit=10");
+    const companyListResponse = await fetch(`${getOrigin()}/api/company/getcompanylist?limit=10`);
     if (companyListResponse.ok) {
       const companyList = (await companyListResponse.json()) as Promise<ICompany[]>;
       dispatch({ type: crossingActions.GET_COMPANY_LIST, payload: companyList });
@@ -41,7 +42,7 @@ export const getCompanyList = async (dispatch: Dispatch, payloadOnFailure?: ICom
 
 export const getCrossing = async (dispatch: Dispatch, crossingId: number, payloadOnFailure?: ICrossing | null): Promise<void> => {
   try {
-    const crossingResponse = await fetch(`/api/crossing/getcrossing?crossingId=${crossingId}`);
+    const crossingResponse = await fetch(`${getOrigin()}/api/crossing/getcrossing?crossingId=${crossingId}`);
     if (crossingResponse.ok) {
       const crossing = (await crossingResponse.json()) as Promise<ICrossing>;
       dispatch({ type: crossingActions.GET_CROSSING, payload: crossing });
@@ -56,7 +57,7 @@ export const getCrossing = async (dispatch: Dispatch, crossingId: number, payloa
 
 export const getCrossingOfRouteBridge = async (dispatch: Dispatch, routeBridgeId: number, payloadOnFailure?: ICrossing | null): Promise<void> => {
   try {
-    const crossingOfRouteBridgeResponse = await fetch(`/api/crossing/getcrossingofroutebridge?routeBridgeId=${routeBridgeId}`);
+    const crossingOfRouteBridgeResponse = await fetch(`${getOrigin()}/api/crossing/getcrossingofroutebridge?routeBridgeId=${routeBridgeId}`);
     if (crossingOfRouteBridgeResponse.ok) {
       const crossingOfRouteBridge = (await crossingOfRouteBridgeResponse.json()) as Promise<ICrossing>;
       dispatch({ type: crossingActions.GET_CROSSING, payload: crossingOfRouteBridge });
@@ -71,7 +72,7 @@ export const getCrossingOfRouteBridge = async (dispatch: Dispatch, routeBridgeId
 
 export const sendCrossingStart = async (dispatch: Dispatch, routeBridgeId: number, payloadOnFailure?: ICrossing | null): Promise<void> => {
   try {
-    const crossingStartResponse = await fetch(`/api/crossing/startcrossing?routeBridgeId=${routeBridgeId}`, {
+    const crossingStartResponse = await fetch(`${getOrigin()}/api/crossing/startcrossing?routeBridgeId=${routeBridgeId}`, {
       method: "POST",
     });
     if (crossingStartResponse.ok) {
@@ -88,7 +89,7 @@ export const sendCrossingStart = async (dispatch: Dispatch, routeBridgeId: numbe
 
 export const sendCrossingUpdate = async (dispatch: Dispatch, updateRequest: ICrossingInput, payloadOnFailure?: ICrossing | null): Promise<void> => {
   try {
-    const crossingUpdateResponse = await fetch("/api/crossing/updatecrossing", {
+    const crossingUpdateResponse = await fetch(`${getOrigin()}/api/crossing/updatecrossing`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -109,7 +110,7 @@ export const sendCrossingUpdate = async (dispatch: Dispatch, updateRequest: ICro
 
 export const sendSingleUpload = async (fileUpload: IFileInput): Promise<void> => {
   try {
-    const singleUploadResponse = await fetch("/api/upload/singleupload", {
+    const singleUploadResponse = await fetch(`${getOrigin()}/api/upload/singleupload`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -127,7 +128,7 @@ export const sendSingleUpload = async (fileUpload: IFileInput): Promise<void> =>
 
 export const getPermit = async (dispatch: Dispatch, permitId: number, payloadOnFailure?: IPermit | null): Promise<void> => {
   try {
-    const permitResponse = await fetch(`/api/permit/getpermit?permitId=${permitId}`);
+    const permitResponse = await fetch(`${getOrigin()}/api/permit/getpermit?permitId=${permitId}`);
     if (permitResponse.ok) {
       const permit = (await permitResponse.json()) as Promise<IPermit>;
       dispatch({ type: crossingActions.GET_PERMIT, payload: permit });
@@ -142,7 +143,7 @@ export const getPermit = async (dispatch: Dispatch, permitId: number, payloadOnF
 
 export const getPermitOfRoute = async (dispatch: Dispatch, routeId: number, payloadOnFailure?: IPermit | null): Promise<void> => {
   try {
-    const permitOfRouteResponse = await fetch(`/api/permit/getpermitofroute?routeId=${routeId}`);
+    const permitOfRouteResponse = await fetch(`${getOrigin()}/api/permit/getpermitofroute?routeId=${routeId}`);
     if (permitOfRouteResponse.ok) {
       const permitOfRoute = (await permitOfRouteResponse.json()) as Promise<IPermit>;
       dispatch({ type: crossingActions.GET_PERMIT, payload: permitOfRoute });
@@ -157,7 +158,7 @@ export const getPermitOfRoute = async (dispatch: Dispatch, routeId: number, payl
 
 export const getPermitOfRouteBridge = async (dispatch: Dispatch, routeBridgeId: number, payloadOnFailure?: IPermit | null): Promise<void> => {
   try {
-    const permitOfRouteBridgeResponse = await fetch(`/api/permit/getpermitofroutebridge?routeBridgeId=${routeBridgeId}`);
+    const permitOfRouteBridgeResponse = await fetch(`${getOrigin()}/api/permit/getpermitofroutebridge?routeBridgeId=${routeBridgeId}`);
     if (permitOfRouteBridgeResponse.ok) {
       const permitOfRouteBridge = (await permitOfRouteBridgeResponse.json()) as Promise<IPermit>;
       dispatch({ type: crossingActions.GET_PERMIT, payload: permitOfRouteBridge });
@@ -172,7 +173,7 @@ export const getPermitOfRouteBridge = async (dispatch: Dispatch, routeBridgeId: 
 
 export const getRoute = async (dispatch: Dispatch, routeId: number, payloadOnFailure?: IRouteBridge | null): Promise<void> => {
   try {
-    const routeResponse = await fetch(`/api/route/getroute?routeId=${routeId}`);
+    const routeResponse = await fetch(`${getOrigin()}/api/route/getroute?routeId=${routeId}`);
     if (routeResponse.ok) {
       const route = (await routeResponse.json()) as Promise<IRoute>;
       dispatch({ type: crossingActions.GET_ROUTE, payload: route });
@@ -187,7 +188,7 @@ export const getRoute = async (dispatch: Dispatch, routeId: number, payloadOnFai
 
 export const getRouteBridge = async (dispatch: Dispatch, routeBridgeId: number, payloadOnFailure?: IRouteBridge | null): Promise<void> => {
   try {
-    const routeBridgeResponse = await fetch(`/api/routebridge/getroutebridge?routeBridgeId=${routeBridgeId}`);
+    const routeBridgeResponse = await fetch(`${getOrigin()}/api/routebridge/getroutebridge?routeBridgeId=${routeBridgeId}`);
     if (routeBridgeResponse.ok) {
       const routeBridge = (await routeBridgeResponse.json()) as Promise<IRouteBridge>;
       dispatch({ type: crossingActions.GET_ROUTE_BRIDGE, payload: routeBridge });

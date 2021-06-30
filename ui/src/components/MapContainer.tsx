@@ -22,6 +22,7 @@ import BridgeVectorLayer from "./map/BridgeVectorLayer";
 import RouteTileLayer from "./map/RouteTileLayer";
 import RouteVectorLayer from "./map/RouteVectorLayer";
 import UserVectorLayer from "./map/UserVectorLayer";
+import { getOrigin } from "../utils/request";
 import { useTypedSelector } from "../store/store";
 import { getRoute, getRouteBridge } from "../utils/backendData";
 import "./MapContainer.scss";
@@ -82,7 +83,7 @@ const MapContainer = (): JSX.Element => {
     const getBackgroundMapLayer = async () => {
       // Try to use the Väylä map service if possible, so fetch the WMTS capabilities via the backend to avoid a CORS error
       // Note: in development mode, this will use the proxy defined in package.json
-      const capabilitiesUrl = "/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities";
+      const capabilitiesUrl = `${getOrigin()}/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities`;
       let capabilities;
 
       try {
@@ -117,7 +118,7 @@ const MapContainer = (): JSX.Element => {
       const getGeoServerTileLayers = async () => {
         // Fetch the WMTS capabilities via the backend to avoid a CORS error
         // Note: in development mode, this will use the proxy defined in package.json
-        const capabilitiesUrl = "/api/ui/getgeoserverlayerxml/gwc/service/wmts?REQUEST=GetCapabilities";
+        const capabilitiesUrl = `${getOrigin()}/api/ui/getgeoserverlayerxml/gwc/service/wmts?REQUEST=GetCapabilities`;
         let capabilities;
 
         try {

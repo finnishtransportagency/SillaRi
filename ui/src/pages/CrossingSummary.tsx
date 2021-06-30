@@ -26,6 +26,7 @@ import ICrossingInput from "../interfaces/ICrossingInput";
 import IFileInput from "../interfaces/IFileInput";
 import { getCrossing, getPermitOfRouteBridge, getRouteBridge, sendCrossingUpdate, sendSingleUpload } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
+import { getOrigin } from "../utils/request";
 
 interface CrossingSummaryProps {
   crossingId: string;
@@ -183,7 +184,7 @@ const CrossingSummary = (): JSX.Element => {
                 <IonItem key={crossingImage.id}>
                   <IonCol>
                     <IonThumbnail>
-                      <IonImg src={`/api/images/get?objectKey=${crossingImage.objectKey}`} />
+                      <IonImg src={`${getOrigin()}/api/images/get?objectKey=${crossingImage.objectKey}`} />
                     </IonThumbnail>
                   </IonCol>
                 </IonItem>
