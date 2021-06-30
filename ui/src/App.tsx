@@ -1,6 +1,6 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import { IonApp, IonRouterOutlet } from "@ionic/react";
+import { IonApp, IonRouterOutlet, setupConfig } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -37,6 +37,11 @@ import "./theme/variables.css";
 
 /* Sillari.css */
 import "./theme/sillari.css";
+
+// Use the same style for all platforms
+setupConfig({
+  mode: "md",
+});
 
 // NOTE: the react-query client is currently using the default options as described here: https://react-query.tanstack.com/guides/important-defaults
 // This means cached data is considered as stale, so data is always refetched, for example during page navigation or when the browser window gets focus
