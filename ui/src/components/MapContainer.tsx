@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { Geolocation } from "@capacitor/geolocation";
 import { defaults, MousePosition } from "ol/control";
@@ -22,8 +23,9 @@ import BridgeVectorLayer from "./map/BridgeVectorLayer";
 import RouteTileLayer from "./map/RouteTileLayer";
 import RouteVectorLayer from "./map/RouteVectorLayer";
 import UserVectorLayer from "./map/UserVectorLayer";
+import { getOrigin } from "../utils/request";
 import { useTypedSelector } from "../store/store";
-import { getRoute, getRouteBridge } from "../utils/backendData";
+import { getRoute, getRouteBridge, onRetry } from "../utils/backendData";
 import "./MapContainer.scss";
 
 interface MapContainerProps {
@@ -54,17 +56,24 @@ const MapContainer = (): JSX.Element => {
   const { identifier: bridgeIdentifier, geojson: bridgeGeojson } = bridge || {};
   const { geojson: routeGeojson, routeBridges = [] } = selectedRouteDetail || {};
 
-  useEffect(() => {
-    if (!mapInitialised && !bridgeLayer && !routeLayer) {
-      getRouteBridge(dispatch, routeBridgeIdParam && routeBridgeIdParam.length > 0 ? Number(routeBridgeIdParam) : 0, null);
+  // Only fetch the data if the layers have not been created yet
+  const queryRouteBridgeId = routeBridgeIdParam && routeBridgeIdParam.length > 0 ? Number(routeBridgeIdParam) : 0;
+  useQuery(["getRouteBridge", queryRouteBridgeId], () => getRouteBridge(Number(queryRouteBridgeId), dispatch, selectedBridgeDetail), {
+    retry: onRetry,
+    enabled: !mapInitialised && !bridgeLayer && !routeLayer && queryRouteBridgeId > 0,
+  });
 
-      // Note: when showing single bridges on the map, the route line is also needed to be shown,
-      // so fetch the route data only after routeId has been fetched from the routebridge data
-      if ((!!routeIdParam && routeIdParam.length > 0) || (!!routeBridgeIdParam && routeBridgeIdParam.length > 0 && !!routeId && routeId > 0)) {
-        getRoute(dispatch, routeIdParam && routeIdParam.length > 0 ? Number(routeIdParam) : routeId, null);
-      }
-    }
-  }, [dispatch, routeBridgeIdParam, routeIdParam, routeId, bridgeLayer, routeLayer, mapInitialised]);
+  // Note: when showing single bridges on the map, the route line is also needed to be shown,
+  // so fetch the route data only after routeId has been fetched from the routebridge data
+  const queryRouteId = routeIdParam && routeIdParam.length > 0 ? Number(routeIdParam) : routeId;
+  useQuery(["getRoute", queryRouteId], () => getRoute(queryRouteId, dispatch, selectedRouteDetail), {
+    retry: onRetry,
+    enabled:
+      !mapInitialised &&
+      !bridgeLayer &&
+      !routeLayer &&
+      ((!!routeIdParam && routeIdParam.length > 0) || (!!routeBridgeIdParam && routeBridgeIdParam.length > 0 && !!routeId && routeId > 0)),
+  });
 
   const projection = "EPSG:3067";
   const debug = false;
@@ -82,7 +91,7 @@ const MapContainer = (): JSX.Element => {
     const getBackgroundMapLayer = async () => {
       // Try to use the Väylä map service if possible, so fetch the WMTS capabilities via the backend to avoid a CORS error
       // Note: in development mode, this will use the proxy defined in package.json
-      const capabilitiesUrl = "/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities";
+      const capabilitiesUrl = `${getOrigin()}/api/ui/getbackgroundmapxml?SERVICE=WMTS&REQUEST=GetCapabilities`;
       let capabilities;
 
       try {
@@ -117,7 +126,7 @@ const MapContainer = (): JSX.Element => {
       const getGeoServerTileLayers = async () => {
         // Fetch the WMTS capabilities via the backend to avoid a CORS error
         // Note: in development mode, this will use the proxy defined in package.json
-        const capabilitiesUrl = "/api/ui/getgeoserverlayerxml/gwc/service/wmts?REQUEST=GetCapabilities";
+        const capabilitiesUrl = `${getOrigin()}/api/ui/getgeoserverlayerxml/gwc/service/wmts?REQUEST=GetCapabilities`;
         let capabilities;
 
         try {

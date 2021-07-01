@@ -9,7 +9,8 @@
     "tab": {
       "transportCompanies": "Kuljetusyritykset",
       "upcomingBridges": "Tulevat sillat"
-    }
+    },
+    "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen..."
   },
   "map": {
     "attribution": "Aineisto"
