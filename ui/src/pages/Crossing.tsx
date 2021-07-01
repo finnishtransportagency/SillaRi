@@ -76,11 +76,13 @@ const Crossing = (): JSX.Element => {
   } = selectedCrossingDetail || {};
 
   // Added query to clear previous crossing from Redux store, otherwise that one is used
-  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch), { retry: onRetry });
-  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch), { retry: onRetry });
+  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
+  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
+    retry: onRetry,
+  });
   const { isLoading: isLoadingCrossing } = useQuery(
     ["getCrossingOfRouteBridge", routeBridgeId],
-    () => getCrossingOfRouteBridge(Number(routeBridgeId), dispatch),
+    () => getCrossingOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail),
     { retry: onRetry }
   );
 

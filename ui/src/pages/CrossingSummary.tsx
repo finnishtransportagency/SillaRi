@@ -68,14 +68,14 @@ const CrossingSummary = (): JSX.Element => {
     images: crossingImages = [],
   } = selectedCrossingDetail || {};
 
-  useQuery(["getCrossing", crossingId], () => getCrossing(Number(crossingId), dispatch), { retry: onRetry });
+  useQuery(["getCrossing", crossingId], () => getCrossing(Number(crossingId), dispatch, selectedCrossingDetail), { retry: onRetry });
 
   // Use the enabled option to only fetch data when routeBridgeId is available
-  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch), {
+  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
     retry: onRetry,
     enabled: Number(routeBridgeId) > 0,
   });
-  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch), {
+  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
     retry: onRetry,
     enabled: Number(routeBridgeId) > 0,
   });

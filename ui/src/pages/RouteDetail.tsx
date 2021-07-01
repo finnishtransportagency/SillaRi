@@ -35,8 +35,8 @@ const RouteDetail = (): JSX.Element => {
 
   const { routeId = "0" } = useParams<RouteDetailProps>();
 
-  useQuery(["getRoute", routeId], () => getRoute(Number(routeId), dispatch), { retry: onRetry });
-  useQuery(["getPermitOfRoute", routeId], () => getPermitOfRoute(Number(routeId), dispatch), { retry: onRetry });
+  useQuery(["getRoute", routeId], () => getRoute(Number(routeId), dispatch, selectedRouteDetail), { retry: onRetry });
+  useQuery(["getPermitOfRoute", routeId], () => getPermitOfRoute(Number(routeId), dispatch, selectedRouteDetail), { retry: onRetry });
 
   const noNetworkNoData =
     (isFailed.getRoute && selectedRouteDetail === undefined) || (isFailed.getPermitOfRoute && selectedPermitDetail === undefined);

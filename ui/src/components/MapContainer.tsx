@@ -58,7 +58,7 @@ const MapContainer = (): JSX.Element => {
 
   // Only fetch the data if the layers have not been created yet
   const queryRouteBridgeId = routeBridgeIdParam && routeBridgeIdParam.length > 0 ? Number(routeBridgeIdParam) : 0;
-  useQuery(["getRouteBridge", queryRouteBridgeId], () => getRouteBridge(Number(queryRouteBridgeId), dispatch), {
+  useQuery(["getRouteBridge", queryRouteBridgeId], () => getRouteBridge(Number(queryRouteBridgeId), dispatch, selectedBridgeDetail), {
     retry: onRetry,
     enabled: !mapInitialised && !bridgeLayer && !routeLayer && queryRouteBridgeId > 0,
   });
@@ -66,7 +66,7 @@ const MapContainer = (): JSX.Element => {
   // Note: when showing single bridges on the map, the route line is also needed to be shown,
   // so fetch the route data only after routeId has been fetched from the routebridge data
   const queryRouteId = routeIdParam && routeIdParam.length > 0 ? Number(routeIdParam) : routeId;
-  useQuery(["getRoute", queryRouteId], () => getRoute(queryRouteId, dispatch), {
+  useQuery(["getRoute", queryRouteId], () => getRoute(queryRouteId, dispatch, selectedRouteDetail), {
     retry: onRetry,
     enabled:
       !mapInitialised &&

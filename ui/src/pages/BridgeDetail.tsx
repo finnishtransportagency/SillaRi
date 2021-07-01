@@ -43,8 +43,10 @@ const BridgeDetail = (): JSX.Element => {
 
   const [conformsToPermit, setConformsToPermit] = React.useState(false);
 
-  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch), { retry: onRetry });
-  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch), { retry: onRetry });
+  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
+  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
+    retry: onRetry,
+  });
 
   const noNetworkNoData =
     (isFailed.getRouteBridge && selectedBridgeDetail === undefined) || (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);

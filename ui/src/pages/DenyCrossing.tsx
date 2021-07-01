@@ -25,7 +25,7 @@ const DenyCrossing = (): JSX.Element => {
   const { bridge } = selectedBridgeDetail || {};
   const { name = "" } = bridge || {};
 
-  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch), { retry: onRetry });
+  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
 
   const noNetworkNoData = isFailed.getRouteBridge && selectedBridgeDetail === undefined;
 

@@ -29,7 +29,7 @@ const CompanyDetail = (): JSX.Element => {
   const { name = "", permits = [] } = selectedCompanyDetail || {};
   const { id: companyId = "0" } = useParams<CompanyDetailProps>();
 
-  useQuery(["getCompany", companyId], () => getCompany(Number(companyId), dispatch), { retry: onRetry });
+  useQuery(["getCompany", companyId], () => getCompany(Number(companyId), dispatch, selectedCompanyDetail), { retry: onRetry });
 
   const noNetworkNoData = isFailed.getCompany && selectedCompanyDetail === undefined;
 

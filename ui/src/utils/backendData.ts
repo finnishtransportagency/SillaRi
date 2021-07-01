@@ -18,8 +18,12 @@ export const onRetry = (failureCount: number, error: string): boolean => {
   return true;
 };
 
-export const getCompany = async (companyId: number, dispatch: Dispatch): Promise<void> => {
+export const getCompany = async (companyId: number, dispatch: Dispatch, selectedCompanyDetail?: ICompany): Promise<void> => {
   try {
+    // Clear the details in the state if the requested id doesn't match to avoid showing incorrect data
+    if (selectedCompanyDetail && selectedCompanyDetail.id !== companyId) {
+      dispatch({ type: crossingActions.GET_COMPANY, payload: undefined });
+    }
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCompany: false } });
 
     const companyResponse = await fetch(`${getOrigin()}/api/company/getcompany?companyId=${companyId}`);
@@ -56,8 +60,11 @@ export const getCompanyList = async (dispatch: Dispatch): Promise<void> => {
   }
 };
 
-export const getCrossing = async (crossingId: number, dispatch: Dispatch): Promise<void> => {
+export const getCrossing = async (crossingId: number, dispatch: Dispatch, selectedCrossingDetail?: ICrossing): Promise<void> => {
   try {
+    if (selectedCrossingDetail && selectedCrossingDetail.id !== crossingId) {
+      dispatch({ type: crossingActions.GET_CROSSING, payload: undefined });
+    }
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCrossing: false } });
 
     const crossingResponse = await fetch(`${getOrigin()}/api/crossing/getcrossing?crossingId=${crossingId}`);
@@ -75,8 +82,11 @@ export const getCrossing = async (crossingId: number, dispatch: Dispatch): Promi
   }
 };
 
-export const getCrossingOfRouteBridge = async (routeBridgeId: number, dispatch: Dispatch): Promise<void> => {
+export const getCrossingOfRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, selectedBridgeDetail?: IRouteBridge): Promise<void> => {
   try {
+    if (selectedBridgeDetail && selectedBridgeDetail.id !== routeBridgeId) {
+      dispatch({ type: crossingActions.GET_CROSSING, payload: undefined });
+    }
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCrossingOfRouteBridge: false } });
 
     const crossingOfRouteBridgeResponse = await fetch(`${getOrigin()}/api/crossing/getcrossingofroutebridge?routeBridgeId=${routeBridgeId}`);
@@ -167,8 +177,11 @@ export const sendSingleUpload = async (fileUpload: IFileInput, dispatch: Dispatc
   }
 };
 
-export const getPermit = async (permitId: number, dispatch: Dispatch): Promise<void> => {
+export const getPermit = async (permitId: number, dispatch: Dispatch, selectedPermitDetail?: IPermit): Promise<void> => {
   try {
+    if (selectedPermitDetail && selectedPermitDetail.id !== permitId) {
+      dispatch({ type: crossingActions.GET_PERMIT, payload: undefined });
+    }
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getPermit: false } });
 
     const permitResponse = await fetch(`${getOrigin()}/api/permit/getpermit?permitId=${permitId}`);
@@ -186,8 +199,11 @@ export const getPermit = async (permitId: number, dispatch: Dispatch): Promise<v
   }
 };
 
-export const getPermitOfRoute = async (routeId: number, dispatch: Dispatch): Promise<void> => {
+export const getPermitOfRoute = async (routeId: number, dispatch: Dispatch, selectedRouteDetail?: IRoute): Promise<void> => {
   try {
+    if (selectedRouteDetail && selectedRouteDetail.id !== routeId) {
+      dispatch({ type: crossingActions.GET_PERMIT, payload: undefined });
+    }
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getPermitOfRoute: false } });
 
     const permitOfRouteResponse = await fetch(`${getOrigin()}/api/permit/getpermitofroute?routeId=${routeId}`);
@@ -205,8 +221,11 @@ export const getPermitOfRoute = async (routeId: number, dispatch: Dispatch): Pro
   }
 };
 
-export const getPermitOfRouteBridge = async (routeBridgeId: number, dispatch: Dispatch): Promise<void> => {
+export const getPermitOfRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, selectedBridgeDetail?: IRouteBridge): Promise<void> => {
   try {
+    if (selectedBridgeDetail && selectedBridgeDetail.id !== routeBridgeId) {
+      dispatch({ type: crossingActions.GET_PERMIT, payload: undefined });
+    }
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getPermitOfRouteBridge: false } });
 
     const permitOfRouteBridgeResponse = await fetch(`${getOrigin()}/api/permit/getpermitofroutebridge?routeBridgeId=${routeBridgeId}`);
@@ -224,8 +243,11 @@ export const getPermitOfRouteBridge = async (routeBridgeId: number, dispatch: Di
   }
 };
 
-export const getRoute = async (routeId: number, dispatch: Dispatch): Promise<void> => {
+export const getRoute = async (routeId: number, dispatch: Dispatch, selectedRouteDetail?: IRoute): Promise<void> => {
   try {
+    if (selectedRouteDetail && selectedRouteDetail.id !== routeId) {
+      dispatch({ type: crossingActions.GET_ROUTE, payload: undefined });
+    }
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getRoute: false } });
 
     const routeResponse = await fetch(`${getOrigin()}/api/route/getroute?routeId=${routeId}`);
@@ -243,8 +265,11 @@ export const getRoute = async (routeId: number, dispatch: Dispatch): Promise<voi
   }
 };
 
-export const getRouteBridge = async (routeBridgeId: number, dispatch: Dispatch): Promise<void> => {
+export const getRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, selectedBridgeDetail?: IRouteBridge): Promise<void> => {
   try {
+    if (selectedBridgeDetail && selectedBridgeDetail.id !== routeBridgeId) {
+      dispatch({ type: crossingActions.GET_ROUTE_BRIDGE, payload: undefined });
+    }
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getRouteBridge: false } });
 
     const routeBridgeResponse = await fetch(`${getOrigin()}/api/routebridge/getroutebridge?routeBridgeId=${routeBridgeId}`);
