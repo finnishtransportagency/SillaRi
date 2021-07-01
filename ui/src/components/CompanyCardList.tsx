@@ -1,24 +1,15 @@
 import React from "react";
-import { useQuery } from "react-query";
-import { useDispatch } from "react-redux";
-import { useTypedSelector } from "../store/store";
-import { getCompanyList, onRetry } from "../utils/backendData";
+import ICompany from "../interfaces/ICompany";
 import CompanyCard from "./CompanyCard";
 import NoNetworkNoData from "./NoNetworkNoData";
 import "./CompanyCardList.css";
 
-const CompanyCardList = (): JSX.Element => {
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const {
-    companyList = [],
-    networkStatus: { isFailed = {} },
-  } = crossings;
-  const dispatch = useDispatch();
+interface CompanyCardListProps {
+  companyList: ICompany[];
+  noNetworkNoData: boolean;
+}
 
-  useQuery(["getCompanyList"], () => getCompanyList(dispatch), { retry: onRetry });
-
-  const noNetworkNoData = isFailed.getCompanyList && companyList.length === 0;
-
+const CompanyCardList = ({ companyList, noNetworkNoData }: CompanyCardListProps): JSX.Element => {
   return (
     <div className="cardListContainer">
       {noNetworkNoData ? (
