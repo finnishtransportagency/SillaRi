@@ -44,7 +44,7 @@ const Home = (): JSX.Element => {
             <CompanyCardList />
           </IonSlide>
           <IonSlide>
-            <div>TODO</div>
+            <div className="ion-padding">TODO</div>
           </IonSlide>
         </IonSlides>
       </IonContent>

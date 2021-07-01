@@ -9,7 +9,8 @@
     "tab": {
       "transportCompanies": "Transport companies",
       "upcomingBridges": "Upcoming bridges"
-    }
+    },
+    "noNetworkNoData": "Unable to retrieve data, trying again..."
   },
   "map": {
     "attribution": "Material"

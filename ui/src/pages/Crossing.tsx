@@ -21,6 +21,7 @@ import { useDispatch } from "react-redux";
 import { useParams, useHistory } from "react-router-dom";
 import moment from "moment";
 import Header from "../components/Header";
+import NoNetworkNoData from "../components/NoNetworkNoData";
 import { useTypedSelector } from "../store/store";
 import IRadioValue from "../interfaces/IRadioValue";
 import { actions as crossingActions } from "../store/crossingsSlice";
@@ -48,7 +49,13 @@ const Crossing = (): JSX.Element => {
   const dispatch = useDispatch();
   const { routeBridgeId = "0" } = useParams<CrossingProps>();
 
-  const { selectedPermitDetail, selectedBridgeDetail, selectedCrossingDetail, images = [] } = useTypedSelector((state) => state.crossingsReducer);
+  const {
+    selectedPermitDetail,
+    selectedBridgeDetail,
+    selectedCrossingDetail,
+    images = [],
+    networkStatus: { isFailed = {} },
+  } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
 
@@ -147,208 +154,217 @@ const Crossing = (): JSX.Element => {
     dispatch({ type: crossingActions.CROSSING_RADIO_CHANGED, payload: radioPayload });
   };
 
+  const noNetworkNoData =
+    (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
+    (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined) ||
+    (isFailed.getCrossingOfRouteBridge && selectedCrossingDetail === undefined);
+
   return (
     <IonPage>
       <Header title={t("crossing.title")} />
       <IonContent fullscreen>
-        <IonGrid>
-          <IonRow>
-            <IonCol>
-              <IonLabel class="crossingLabel">
-                {t("crossing.permitNumber")} {permitNumber}
-              </IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonLabel class="crossingLabel">
-                {t("crossing.crossingStarted")} {started}
-              </IonLabel>
-            </IonCol>
-          </IonRow>
-
-          <IonRow>
-            <IonCol>
-              <IonLabel class="crossingLabel">
-                {t("crossing.bridgeName")} {bridgeName} | {bridgeIdentifier}
-              </IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <a href="fooo">{t("crossing.crossingInstructions")}</a>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonButton routerLink="/takephotos">{t("crossing.buttons.takePhotos")}</IonButton>
-            </IonCol>
-            <IonCol>
-              <IonButton disabled>{t("crossing.buttons.drivingLine")}</IonButton>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol class="crossingHeader">
-              <IonLabel class="crossingLabelBold">{t("crossing.question.drivingLine")}</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRadioGroup value={drivingLineInfo ? "yes" : "no"} onIonChange={(e) => radioClicked("drivingLineInfo", e.detail.value)}>
+        {noNetworkNoData ? (
+          <NoNetworkNoData />
+        ) : (
+          <IonGrid>
             <IonRow>
-              <IonCol class="crossingRadioCol">
-                <IonItem>
-                  <IonLabel class="crossingRadioLabel">{t("crossing.answer.yes")}</IonLabel>
-                  <IonRadio slot="start" value="yes" />
-                </IonItem>
+              <IonCol>
+                <IonLabel class="crossingLabel">
+                  {t("crossing.permitNumber")} {permitNumber}
+                </IonLabel>
               </IonCol>
-              <IonCol class="crossingRadioCol">
-                <IonItem>
-                  <IonLabel class="crossingRadioLabel">{t("crossing.answer.no")}</IonLabel>
-                  <IonRadio slot="start" value="no" />
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonLabel class="crossingLabel">
+                  {t("crossing.crossingStarted")} {started}
+                </IonLabel>
+              </IonCol>
+            </IonRow>
+
+            <IonRow>
+              <IonCol>
+                <IonLabel class="crossingLabel">
+                  {t("crossing.bridgeName")} {bridgeName} | {bridgeIdentifier}
+                </IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <a href="fooo">{t("crossing.crossingInstructions")}</a>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonButton routerLink="/takephotos">{t("crossing.buttons.takePhotos")}</IonButton>
+              </IonCol>
+              <IonCol>
+                <IonButton disabled>{t("crossing.buttons.drivingLine")}</IonButton>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol class="crossingHeader">
+                <IonLabel class="crossingLabelBold">{t("crossing.question.drivingLine")}</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRadioGroup value={drivingLineInfo ? "yes" : "no"} onIonChange={(e) => radioClicked("drivingLineInfo", e.detail.value)}>
+              <IonRow>
+                <IonCol class="crossingRadioCol">
+                  <IonItem>
+                    <IonLabel class="crossingRadioLabel">{t("crossing.answer.yes")}</IonLabel>
+                    <IonRadio slot="start" value="yes" />
+                  </IonItem>
+                </IonCol>
+                <IonCol class="crossingRadioCol">
+                  <IonItem>
+                    <IonLabel class="crossingRadioLabel">{t("crossing.answer.no")}</IonLabel>
+                    <IonRadio slot="start" value="no" />
+                  </IonItem>
+                </IonCol>
+              </IonRow>
+              <IonRow style={!drivingLineInfo ? {} : { display: "none" }} id="drivigingLineInfoRow" class="whyRow">
+                <IonCol class="whyCol">
+                  <IonLabel class="crossingLabelBold">{t("crossing.question.drivingLineInfo")}</IonLabel>
+                  <IonCard>
+                    <IonTextarea
+                      class="crossingTextArea"
+                      value={drivingLineInfoDescription}
+                      onIonChange={(e) => {
+                        return changeTextAreaValue("drivingLineInfoDescription", e.detail.value ?? "");
+                      }}
+                    />
+                  </IonCard>
+                </IonCol>
+              </IonRow>
+            </IonRadioGroup>
+
+            <IonRow class="crossingHeader">
+              <IonCol>
+                <IonLabel class="crossingLabelBold">{t("crossing.question.speed")}</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRadioGroup value={speedInfo ? "yes" : "no"} onIonChange={(e) => radioClicked("speedInfo", e.detail.value)}>
+              <IonRow>
+                <IonCol class="crossingRadioCol">
+                  <IonItem>
+                    <IonLabel>{t("crossing.answer.yes")}</IonLabel>
+                    <IonRadio slot="start" value="yes" />
+                  </IonItem>
+                </IonCol>
+                <IonCol class="crossingRadioCol">
+                  <IonItem>
+                    <IonLabel>{t("crossing.answer.no")}</IonLabel>
+                    <IonRadio slot="start" value="no" />
+                  </IonItem>
+                </IonCol>
+              </IonRow>
+              <IonRow style={!speedInfo ? {} : { display: "none" }} class="whyRow">
+                <IonCol class="whyCol">
+                  <IonLabel class="crossingLabelBold">{t("crossing.question.speedInfo")}</IonLabel>
+                  <IonCard>
+                    <IonTextarea
+                      class="crossingTextArea"
+                      value={speedInfoDescription}
+                      onIonChange={(e) => {
+                        return changeTextAreaValue("speedInfoDescription", e.detail.value ?? "");
+                      }}
+                    />
+                  </IonCard>
+                </IonCol>
+              </IonRow>
+            </IonRadioGroup>
+
+            <IonRow class="crossingHeader">
+              <IonCol>
+                <IonLabel class="crossingLabelBold">{t("crossing.question.exceptions")}</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRadioGroup value={exceptionsInfo ? "yes" : "no"} onIonChange={(e) => radioClicked("exceptionsInfo", e.detail.value)}>
+              <IonRow>
+                <IonCol class="crossingRadioCol">
+                  <IonItem>
+                    <IonLabel class="whyLabel">{t("crossing.answer.yes")}</IonLabel>
+                    <IonRadio slot="start" value="yes" />
+                  </IonItem>
+                </IonCol>
+                <IonCol class="crossingRadioCol">
+                  <IonItem>
+                    <IonLabel class="whyLabel">{t("crossing.answer.no")}</IonLabel>
+                    <IonRadio slot="start" value="no" />
+                  </IonItem>
+                </IonCol>
+              </IonRow>
+            </IonRadioGroup>
+            <IonRow style={exceptionsInfo ? {} : { display: "none" }} class="whyRow">
+              <IonCol class="whyCol">
+                <IonItem class="whyItem">
+                  <IonListHeader>
+                    <IonLabel class="whyLabel">{t("crossing.question.exceptionsInfo")}</IonLabel>
+                  </IonListHeader>
+                </IonItem>
+                <IonItem key="bendings">
+                  <IonCheckbox
+                    slot="start"
+                    value="bending"
+                    checked={permanentBendings}
+                    onClick={() => checkBoxClicked("permantBendings", !permanentBendings)}
+                  />
+                  <IonLabel>{t("crossing.exceptions.permanentBendings")}</IonLabel>
+                </IonItem>
+                <IonItem key="twist">
+                  <IonCheckbox slot="start" value="twist" checked={twist} onClick={() => checkBoxClicked("twist", !twist)} />
+                  <IonLabel>{t("crossing.exceptions.twist")}</IonLabel>
+                </IonItem>
+                <IonItem key="damage">
+                  <IonCheckbox slot="start" value="damage" checked={damage} onClick={() => checkBoxClicked("damage", !damage)} />
+                  <IonLabel>{t("crossing.exceptions.damage")}</IonLabel>
+                </IonItem>
+                <IonItem key="somethingElse">
+                  <IonCheckbox slot="start" value="somethingElse" checked={describe} onClick={() => checkBoxClicked("someThingElse", !describe)} />
+                  <IonLabel>{t("crossing.exceptions.somethingElse")}</IonLabel>
                 </IonItem>
               </IonCol>
             </IonRow>
-            <IonRow style={!drivingLineInfo ? {} : { display: "none" }} id="drivigingLineInfoRow" class="whyRow">
-              <IonCol class="whyCol">
-                <IonLabel class="crossingLabelBold">{t("crossing.question.drivingLineInfo")}</IonLabel>
+            <IonRow style={describe ? {} : { display: "none" }}>
+              <IonCol>
+                <IonLabel class="crossingLabelBold">{t("crossing.exceptions.describe")}</IonLabel>
                 <IonCard>
                   <IonTextarea
                     class="crossingTextArea"
-                    value={drivingLineInfoDescription}
+                    value={exceptionsInfoDescription}
                     onIonChange={(e) => {
-                      return changeTextAreaValue("drivingLineInfoDescription", e.detail.value ?? "");
+                      return changeTextAreaValue("exceptionsInfoDescription", e.detail.value ?? "");
                     }}
                   />
                 </IonCard>
               </IonCol>
             </IonRow>
-          </IonRadioGroup>
-
-          <IonRow class="crossingHeader">
-            <IonCol>
-              <IonLabel class="crossingLabelBold">{t("crossing.question.speed")}</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRadioGroup value={speedInfo ? "yes" : "no"} onIonChange={(e) => radioClicked("speedInfo", e.detail.value)}>
             <IonRow>
-              <IonCol class="crossingRadioCol">
-                <IonItem>
-                  <IonLabel>{t("crossing.answer.yes")}</IonLabel>
-                  <IonRadio slot="start" value="yes" />
-                </IonItem>
-              </IonCol>
-              <IonCol class="crossingRadioCol">
-                <IonItem>
-                  <IonLabel>{t("crossing.answer.no")}</IonLabel>
-                  <IonRadio slot="start" value="no" />
-                </IonItem>
-              </IonCol>
-            </IonRow>
-            <IonRow style={!speedInfo ? {} : { display: "none" }} class="whyRow">
               <IonCol class="whyCol">
-                <IonLabel class="crossingLabelBold">{t("crossing.question.speedInfo")}</IonLabel>
+                <IonLabel class="crossingLabelBold">{t("crossing.extraInfo")}</IonLabel>
                 <IonCard>
                   <IonTextarea
                     class="crossingTextArea"
-                    value={speedInfoDescription}
+                    value={extraInfoDescription}
                     onIonChange={(e) => {
-                      return changeTextAreaValue("speedInfoDescription", e.detail.value ?? "");
+                      return changeTextAreaValue("extraInfoDescription", e.detail.value ?? "");
                     }}
                   />
                 </IonCard>
               </IonCol>
             </IonRow>
-          </IonRadioGroup>
-
-          <IonRow class="crossingHeader">
-            <IonCol>
-              <IonLabel class="crossingLabelBold">{t("crossing.question.exceptions")}</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRadioGroup value={exceptionsInfo ? "yes" : "no"} onIonChange={(e) => radioClicked("exceptionsInfo", e.detail.value)}>
             <IonRow>
-              <IonCol class="crossingRadioCol">
-                <IonItem>
-                  <IonLabel class="whyLabel">{t("crossing.answer.yes")}</IonLabel>
-                  <IonRadio slot="start" value="yes" />
-                </IonItem>
+              <IonCol>
+                <IonButton disabled>{t("crossing.buttons.exit")}</IonButton>
               </IonCol>
-              <IonCol class="crossingRadioCol">
-                <IonItem>
-                  <IonLabel class="whyLabel">{t("crossing.answer.no")}</IonLabel>
-                  <IonRadio slot="start" value="no" />
-                </IonItem>
+              <IonCol>
+                <IonButton disabled={crossingId <= 0} onClick={() => summaryClicked()}>
+                  {t("crossing.buttons.summary")}
+                </IonButton>
               </IonCol>
             </IonRow>
-          </IonRadioGroup>
-          <IonRow style={exceptionsInfo ? {} : { display: "none" }} class="whyRow">
-            <IonCol class="whyCol">
-              <IonItem class="whyItem">
-                <IonListHeader>
-                  <IonLabel class="whyLabel">{t("crossing.question.exceptionsInfo")}</IonLabel>
-                </IonListHeader>
-              </IonItem>
-              <IonItem key="bendings">
-                <IonCheckbox
-                  slot="start"
-                  value="bending"
-                  checked={permanentBendings}
-                  onClick={() => checkBoxClicked("permantBendings", !permanentBendings)}
-                />
-                <IonLabel>{t("crossing.exceptions.permanentBendings")}</IonLabel>
-              </IonItem>
-              <IonItem key="twist">
-                <IonCheckbox slot="start" value="twist" checked={twist} onClick={() => checkBoxClicked("twist", !twist)} />
-                <IonLabel>{t("crossing.exceptions.twist")}</IonLabel>
-              </IonItem>
-              <IonItem key="damage">
-                <IonCheckbox slot="start" value="damage" checked={damage} onClick={() => checkBoxClicked("damage", !damage)} />
-                <IonLabel>{t("crossing.exceptions.damage")}</IonLabel>
-              </IonItem>
-              <IonItem key="somethingElse">
-                <IonCheckbox slot="start" value="somethingElse" checked={describe} onClick={() => checkBoxClicked("someThingElse", !describe)} />
-                <IonLabel>{t("crossing.exceptions.somethingElse")}</IonLabel>
-              </IonItem>
-            </IonCol>
-          </IonRow>
-          <IonRow style={describe ? {} : { display: "none" }}>
-            <IonCol>
-              <IonLabel class="crossingLabelBold">{t("crossing.exceptions.describe")}</IonLabel>
-              <IonCard>
-                <IonTextarea
-                  class="crossingTextArea"
-                  value={exceptionsInfoDescription}
-                  onIonChange={(e) => {
-                    return changeTextAreaValue("exceptionsInfoDescription", e.detail.value ?? "");
-                  }}
-                />
-              </IonCard>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol class="whyCol">
-              <IonLabel class="crossingLabelBold">{t("crossing.extraInfo")}</IonLabel>
-              <IonCard>
-                <IonTextarea
-                  class="crossingTextArea"
-                  value={extraInfoDescription}
-                  onIonChange={(e) => {
-                    return changeTextAreaValue("extraInfoDescription", e.detail.value ?? "");
-                  }}
-                />
-              </IonCard>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonButton disabled>{t("crossing.buttons.exit")}</IonButton>
-            </IonCol>
-            <IonCol>
-              <IonButton disabled={crossingId <= 0} onClick={() => summaryClicked()}>
-                {t("crossing.buttons.summary")}
-              </IonButton>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
+          </IonGrid>
+        )}
       </IonContent>
     </IonPage>
   );
