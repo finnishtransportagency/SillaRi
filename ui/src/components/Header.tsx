@@ -3,20 +3,18 @@ import { useHistory, useLocation } from "react-router-dom";
 import { useIsFetching, useIsMutating } from "react-query";
 import { IonButton, IonHeader, IonIcon, IonToolbar, IonButtons, IonMenuButton, IonTitle } from "@ionic/react";
 import { arrowBackOutline, cloudDownloadOutline, cloudOfflineOutline, cloudOutline, cloudUploadOutline } from "ionicons/icons";
-import { useTypedSelector } from "../store/store";
 
 interface HeaderProps {
   title: string;
+  somethingFailed?: boolean;
 }
 
-const Header = ({ title }: HeaderProps): JSX.Element => {
+const Header = ({ title, somethingFailed }: HeaderProps): JSX.Element => {
   const history = useHistory();
   const { pathname } = useLocation();
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
   const canGoBack = pathname !== "/";
-  const somethingFailed = Object.keys(crossings.networkStatus.isFailed).some((k) => crossings.networkStatus.isFailed[k]);
 
   return (
     <IonHeader>
@@ -45,6 +43,10 @@ const Header = ({ title }: HeaderProps): JSX.Element => {
       </IonToolbar>
     </IonHeader>
   );
+};
+
+Header.defaultProps = {
+  somethingFailed: false,
 };
 
 export default Header;

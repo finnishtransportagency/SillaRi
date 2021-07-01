@@ -31,7 +31,7 @@ const DenyCrossing = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={name} />
+      <Header title={name} somethingFailed={isFailed.getRouteBridge} />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

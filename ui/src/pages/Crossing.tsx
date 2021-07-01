@@ -163,7 +163,10 @@ const Crossing = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("crossing.title")} />
+      <Header
+        title={t("crossing.title")}
+        somethingFailed={isFailed.getRouteBridge || isFailed.getPermitOfRouteBridge || isFailed.getCrossingOfRouteBridge}
+      />
       <IonContent fullscreen>
         {noNetworkNoData ? (
           <NoNetworkNoData />

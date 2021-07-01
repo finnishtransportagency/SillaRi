@@ -43,7 +43,7 @@ const RouteDetail = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={`${permitNumber} - ${name}`} />
+      <Header title={`${permitNumber} - ${name}`} somethingFailed={isFailed.getRoute || isFailed.getPermitOfRoute} />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

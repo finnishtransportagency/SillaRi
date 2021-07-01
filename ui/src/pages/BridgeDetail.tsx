@@ -53,7 +53,7 @@ const BridgeDetail = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={name} />
+      <Header title={name} somethingFailed={isFailed.getRouteBridge || isFailed.getPermitOfRouteBridge} />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

@@ -35,7 +35,7 @@ const CompanyDetail = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={name} />
+      <Header title={name} somethingFailed={isFailed.getCompany} />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

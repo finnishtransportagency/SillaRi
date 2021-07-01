@@ -84,7 +84,7 @@ const CrossingSummary = (): JSX.Element => {
   const crossingUpdateMutation = useMutation((updateRequest: ICrossingInput) => sendCrossingUpdate(updateRequest, dispatch), { retry: onRetry });
   const singleUploadMutation = useMutation((fileUpload: IFileInput) => sendSingleUpload(fileUpload, dispatch), { retry: onRetry });
 
-  const { isSuccess: isCrossingUpdateSuccessful } = crossingUpdateMutation;
+  const { isLoading: isSendingCrossingUpdate, isSuccess: isCrossingUpdateSuccessful } = crossingUpdateMutation;
   useEffect(() => {
     if (isCrossingUpdateSuccessful) {
       setToastMessage(t("crossing.summary.saved"));
@@ -158,7 +158,10 @@ const CrossingSummary = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("crossing.summary.title")} />
+      <Header
+        title={t("crossing.summary.title")}
+        somethingFailed={isFailed.getCrossing || isFailed.getRouteBridge || isFailed.getPermitOfRouteBridge}
+      />
       <IonContent fullscreen>
         {noNetworkNoData ? (
           <NoNetworkNoData />
@@ -257,6 +260,7 @@ const CrossingSummary = (): JSX.Element => {
               </IonCol>
               <IonCol>
                 <IonButton
+                  disabled={isSendingCrossingUpdate}
                   onClick={() => {
                     save();
                   }}
