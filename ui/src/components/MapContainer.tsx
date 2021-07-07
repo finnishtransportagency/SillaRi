@@ -60,7 +60,6 @@ const MapContainer = (): JSX.Element => {
   const queryRouteBridgeId = routeBridgeIdParam && routeBridgeIdParam.length > 0 ? Number(routeBridgeIdParam) : 0;
   useQuery(["getRouteBridge", queryRouteBridgeId], () => getRouteBridge(Number(queryRouteBridgeId), dispatch, selectedBridgeDetail), {
     retry: onRetry,
-    enabled: !mapInitialised && !bridgeLayer && !routeLayer && queryRouteBridgeId > 0,
   });
 
   // Note: when showing single bridges on the map, the route line is also needed to be shown,
@@ -68,11 +67,7 @@ const MapContainer = (): JSX.Element => {
   const queryRouteId = routeIdParam && routeIdParam.length > 0 ? Number(routeIdParam) : routeId;
   useQuery(["getRoute", queryRouteId], () => getRoute(queryRouteId, dispatch, selectedRouteDetail), {
     retry: onRetry,
-    enabled:
-      !mapInitialised &&
-      !bridgeLayer &&
-      !routeLayer &&
-      ((!!routeIdParam && routeIdParam.length > 0) || (!!routeBridgeIdParam && routeBridgeIdParam.length > 0 && !!routeId && routeId > 0)),
+    enabled: (!!routeIdParam && routeIdParam.length > 0) || (!!routeBridgeIdParam && routeBridgeIdParam.length > 0 && !!routeId && routeId > 0),
   });
 
   const projection = "EPSG:3067";
@@ -119,6 +114,8 @@ const MapContainer = (): JSX.Element => {
 
   const initDataLayers = () => {
     console.log("initDataLayers");
+    console.log("initDataLayers bridgeLayer", bridgeLayer, "routeLayer", routeLayer);
+    console.log("initDataLayers selectedBridgeDetail", selectedBridgeDetail, "selectedRouteDetail", selectedRouteDetail);
 
     // This function is called several times from useEffect when the dependencies change
     // However, the data layers should only be created once
@@ -177,6 +174,7 @@ const MapContainer = (): JSX.Element => {
 
   const initMap = () => {
     console.log("initMap, mapInitialised", mapInitialised);
+    console.log("initMap, bridgeLayer", bridgeLayer, "routeLayer", routeLayer);
 
     // This function is called several times from useEffect when the dependencies change
     // However, the map should only be initialised once, otherwise duplicate OpenLayers viewports are rendered
