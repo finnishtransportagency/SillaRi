@@ -11,7 +11,7 @@ import NoNetworkNoData from "../components/NoNetworkNoData";
 import RouteCardList from "../components/RouteCardList";
 import { useTypedSelector } from "../store/store";
 import { getCompany, onRetry } from "../utils/backendData";
-import { dateFormat } from "../utils/constants";
+import { dateTimeFormat } from "../utils/constants";
 
 interface CompanyDetailProps {
   id: string;
@@ -58,9 +58,9 @@ const CompanyDetail = (): JSX.Element => {
                           <IonCol>
                             <small>
                               <IonText>{`${t("company.validityPeriod")} `}</IonText>
-                              <Moment format={dateFormat}>{validStartDate}</Moment>
+                              <Moment format={dateTimeFormat}>{validStartDate}</Moment>
                               <IonText>{" - "}</IonText>
-                              <Moment format={dateFormat}>{validEndDate}</Moment>
+                              <Moment format={dateTimeFormat}>{validEndDate}</Moment>
                             </small>
                           </IonCol>
                         </IonRow>
