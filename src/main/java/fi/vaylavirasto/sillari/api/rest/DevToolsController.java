@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Profile("local")
+@Profile({"local", "dev"})
 @RequestMapping(value = "/devtools")
 public class DevToolsController {
     private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger();
