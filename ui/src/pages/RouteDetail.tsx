@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonCheckbox, IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
 import Header from "../components/Header";
 import BridgeCardList from "../components/BridgeCardList";
+import NoNetworkNoData from "../components/NoNetworkNoData";
 import RoutePermit from "../components/RoutePermit";
 import RouteTransport from "../components/RouteTransport";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import { useTypedSelector } from "../store/store";
-import { getPermitOfRoute, getRoute } from "../utils/backendData";
+import { getPermitOfRoute, getRoute, onRetry } from "../utils/backendData";
 
 interface RouteDetailProps {
   routeId: string;
@@ -23,36 +25,47 @@ const RouteDetail = (): JSX.Element => {
   const [transportValid, setTransportValid] = useState(false);
 
   const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedPermitDetail, selectedRouteDetail } = crossingsState;
-  const { permitNumber } = selectedPermitDetail || {};
+  const {
+    selectedPermitDetail,
+    selectedRouteDetail,
+    networkStatus: { isFailed = {} },
+  } = crossingsState;
+  const { permitNumber = "" } = selectedPermitDetail || {};
   const { name = "", routeBridges = [] } = selectedRouteDetail || {};
 
   const { routeId = "0" } = useParams<RouteDetailProps>();
 
-  useEffect(() => {
-    getRoute(dispatch, Number(routeId));
-    getPermitOfRoute(dispatch, Number(routeId));
-  }, [dispatch, routeId]);
+  useQuery(["getRoute", routeId], () => getRoute(Number(routeId), dispatch, selectedRouteDetail), { retry: onRetry });
+  useQuery(["getPermitOfRoute", routeId], () => getPermitOfRoute(Number(routeId), dispatch, selectedRouteDetail), { retry: onRetry });
+
+  const noNetworkNoData =
+    (isFailed.getRoute && selectedRouteDetail === undefined) || (isFailed.getPermitOfRoute && selectedPermitDetail === undefined);
 
   return (
     <IonPage>
-      <Header title={`${permitNumber} - ${name}`} />
+      <Header title={`${permitNumber} - ${name}`} somethingFailed={isFailed.getRoute || isFailed.getPermitOfRoute} />
       <IonContent>
-        <RoutePermit selectedPermit={selectedPermitDetail as IPermit} selectedRoute={selectedRouteDetail as IRoute} />
-        <RouteTransport selectedPermit={selectedPermitDetail as IPermit} />
+        {noNetworkNoData ? (
+          <NoNetworkNoData />
+        ) : (
+          <>
+            <RoutePermit selectedPermit={selectedPermitDetail as IPermit} selectedRoute={selectedRouteDetail as IRoute} />
+            <RouteTransport selectedPermit={selectedPermitDetail as IPermit} />
 
-        <IonGrid>
-          <IonRow>
-            <IonCol size="auto">
-              <IonCheckbox checked={transportValid} onIonChange={(e) => setTransportValid(e.detail.checked)} />
-            </IonCol>
-            <IonCol>
-              <IonText>{t("route.transportValid")} </IonText>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
+            <IonGrid>
+              <IonRow>
+                <IonCol size="auto">
+                  <IonCheckbox checked={transportValid} onIonChange={(e) => setTransportValid(e.detail.checked)} />
+                </IonCol>
+                <IonCol>
+                  <IonText>{t("route.transportValid")} </IonText>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
 
-        <BridgeCardList routeBridges={routeBridges} />
+            <BridgeCardList routeBridges={routeBridges} />
+          </>
+        )}
       </IonContent>
     </IonPage>
   );

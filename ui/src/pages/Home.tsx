@@ -1,16 +1,28 @@
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
+import { useDispatch } from "react-redux";
 import { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonIcon, IonLabel, IonPage, IonSegment, IonSegmentButton, IonSlide, IonSlides } from "@ionic/react";
 import { barbellOutline, bus } from "ionicons/icons";
 import Header from "../components/Header";
 import CompanyCardList from "../components/CompanyCardList";
+import { useTypedSelector } from "../store/store";
+import { getCompanyList, onRetry } from "../utils/backendData";
 import "./Home.css";
 
 const Home = (): JSX.Element => {
   const { t } = useTranslation();
   const [currentSegment, setCurrentSegment] = useState<string>("0");
   const slidesRef = useRef<HTMLIonSlidesElement>(null);
+  const crossings = useTypedSelector((state) => state.crossingsReducer);
+  const {
+    companyList = [],
+    networkStatus: { isFailed = {} },
+  } = crossings;
+  const dispatch = useDispatch();
+
+  useQuery(["getCompanyList"], () => getCompanyList(dispatch), { retry: onRetry });
 
   const changeSlide = (evt: CustomEvent<SegmentChangeEventDetail>) => {
     if (slidesRef.current) {
@@ -25,9 +37,11 @@ const Home = (): JSX.Element => {
     }
   };
 
+  const noNetworkNoData = isFailed.getCompanyList && companyList.length === 0;
+
   return (
     <IonPage>
-      <Header title={t("main.header.title")} />
+      <Header title={t("main.header.title")} somethingFailed={isFailed.getCompanyList} />
       <IonSegment value={currentSegment} onIonChange={changeSlide}>
         <IonSegmentButton value="0">
           <IonIcon icon={bus} />
@@ -41,10 +55,10 @@ const Home = (): JSX.Element => {
       <IonContent>
         <IonSlides ref={slidesRef} onIonSlideDidChange={changeSegment}>
           <IonSlide>
-            <CompanyCardList />
+            <CompanyCardList companyList={companyList} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
           <IonSlide>
-            <div>TODO</div>
+            <div className="ion-padding">TODO</div>
           </IonSlide>
         </IonSlides>
       </IonContent>

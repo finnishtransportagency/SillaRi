@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 public class LeluCoordinatesDTO {
     @NotNull(message = "{coordinates.x.not.null}")
     @Schema(description = "x", required = true, example = "60.2252994299582")
-    private Integer x;
+    private Double x;
 
     @NotNull(message = "{coordinates.y.not.null}")
     @Schema(description = "y", required = true, example = "24.72591876940719")

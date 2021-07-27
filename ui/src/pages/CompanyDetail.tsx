@@ -1,15 +1,17 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { IonCol, IonContent, IonGrid, IonIcon, IonPage, IonRow, IonText } from "@ionic/react";
 import { documentTextOutline } from "ionicons/icons";
 import Moment from "react-moment";
 import Header from "../components/Header";
+import NoNetworkNoData from "../components/NoNetworkNoData";
 import RouteCardList from "../components/RouteCardList";
 import { useTypedSelector } from "../store/store";
-import { getCompany } from "../utils/backendData";
-import { dateFormat } from "../utils/constants";
+import { getCompany, onRetry } from "../utils/backendData";
+import { dateTimeFormat } from "../utils/constants";
 
 interface CompanyDetailProps {
   id: string;
@@ -20,20 +22,25 @@ const CompanyDetail = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedCompanyDetail } = crossings;
+  const {
+    selectedCompanyDetail,
+    networkStatus: { isFailed = {} },
+  } = crossings;
   const { name = "", permits = [] } = selectedCompanyDetail || {};
   const { id: companyId = "0" } = useParams<CompanyDetailProps>();
 
-  useEffect(() => {
-    getCompany(dispatch, Number(companyId));
-  }, [dispatch, companyId]);
+  useQuery(["getCompany", companyId], () => getCompany(Number(companyId), dispatch, selectedCompanyDetail), { retry: onRetry });
+
+  const noNetworkNoData = isFailed.getCompany && selectedCompanyDetail === undefined;
 
   return (
     <IonPage>
-      <Header title={name} />
+      <Header title={name} somethingFailed={isFailed.getCompany} />
       <IonContent>
-        <div className="cardListContainer">
-          {permits.map((permit, index) => {
+        {noNetworkNoData ? (
+          <NoNetworkNoData />
+        ) : (
+          permits.map((permit, index) => {
             const key = `permit_${index}`;
             const { permitNumber, validStartDate, validEndDate, routes } = permit;
             return (
@@ -51,9 +58,9 @@ const CompanyDetail = (): JSX.Element => {
                           <IonCol>
                             <small>
                               <IonText>{`${t("company.validityPeriod")} `}</IonText>
-                              <Moment format={dateFormat}>{validStartDate}</Moment>
+                              <Moment format={dateTimeFormat}>{validStartDate}</Moment>
                               <IonText>{" - "}</IonText>
-                              <Moment format={dateFormat}>{validEndDate}</Moment>
+                              <Moment format={dateTimeFormat}>{validEndDate}</Moment>
                             </small>
                           </IonCol>
                         </IonRow>
@@ -69,8 +76,8 @@ const CompanyDetail = (): JSX.Element => {
                 <RouteCardList routes={routes} />
               </div>
             );
-          })}
-        </div>
+          })
+        )}
       </IonContent>
     </IonPage>
   );
