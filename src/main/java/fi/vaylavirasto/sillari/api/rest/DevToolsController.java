@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJson;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,10 +32,10 @@ public class DevToolsController {
 
 
     @RequestMapping(value = "/testConnectionToTrex", method = RequestMethod.GET)
-    @Operation(summary = "Test basic get request")
-    public TrexBridgeInfoResponseJson trexConnctions() {
+    @Operation(summary = "Test basic get request with constant bridge")
+    public TrexBridgeInfoResponseJson testConnectionToTrex() throws TRexRestException {
 
-        logger.debug("HELLO tsest connetntons");
+        logger.debug("HELLO test connections");
         String returnString = "";
         TrexBridgeInfoResponseJson b = null;
         try {
@@ -55,25 +57,17 @@ public class DevToolsController {
     }
 
 
-/*    //get bridge data from trex and construct our Bridge object
     @RequestMapping(value = "/trexTest", method = RequestMethod.GET)
-    public Bridge trexTest(@RequestParam(value = "tunnus") String tunnus) throws TRexRestException {
-        return tRexService.getBridgeInfo(tunnus, true, true);
+    @Operation(summary = "Get bridge info with oid")
+    public TrexBridgeInfoResponseJson trexTest(@RequestParam(value = "oid") String oid) throws TRexRestException {
+        return tRexService.getBridgeInfo(oid);
     }
 
-    //return json from trex (actually only fields in our trex json model class)
-    @RequestMapping(value = "/trexTestRaw", method = RequestMethod.GET)
-    public String trexTestRaw(@RequestParam(value = "tunnus") String tunnus) throws TRexRestException {
 
-        return tRexService.getBridgeInfoAndCapacityRaw(tunnus);
-    }
-*/
-
-
+    //this can be set as "trex url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,
     @RequestMapping(value = "/localHardCodedBridgeInfoJson", method = RequestMethod.GET)
     public TrexBridgeInfoResponseJson trexHardInfo() {
         ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
 
         try {
             var a = objectMapper.readValue(trexHardString(), TrexBridgeInfoResponseJson.class);

@@ -3,6 +3,8 @@ package fi.vaylavirasto.sillari.api.rest.error;
 import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,15 +18,15 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger logger = LogManager.getLogger();
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Override
     @NonNull
@@ -61,6 +63,27 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> apiVersionException(APIVersionException ex) {
         logger.error("apiVersionException 'reason':'{}'", ex.getMessage());
         return createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(TRexRestException.class)
+    public ResponseEntity<Object> tRexRestException(TRexRestException ex) {
+        String message;
+        switch (ex.getStatusCode().value()) {
+            case 400:
+                message = messageSource.getMessage("trex.400", null, Locale.ROOT);
+                break;
+            case 404:
+                message = messageSource.getMessage("trex.404", null, Locale.ROOT);
+                break;
+            case 502:
+                message = messageSource.getMessage("trex.502", null, Locale.ROOT);
+                break;
+            default:
+                message = messageSource.getMessage("trex.500", null, Locale.ROOT);
+        }
+
+        logger.error("TRexRestException 'statusCode':{}, 'originalMessage':'{}', 'newMessage':'{}'", ex.getStatusCode().value(), ex.getMessage(), message);
+        return handleCustomException(message, ex.getStatusCode());
     }
 
     private ResponseEntity<Object> createErrorResponse(HttpStatus status, String message, List<String> errors) {
