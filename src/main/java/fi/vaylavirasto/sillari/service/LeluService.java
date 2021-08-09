@@ -91,7 +91,6 @@ public class LeluService {
     private void setBridgeIdsToRouteBridges(PermitModel permitModel) {
         // Get bridge IDs for unique bridges in routes
         Map<String, Integer> idOIDMap = getBridgeIdsWithOIDs(permitModel);
-
         for (RouteModel route : permitModel.getRoutes()) {
             for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
                 Integer bridgeId = idOIDMap.get(routeBridge.getBridge().getOid());

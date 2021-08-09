@@ -211,20 +211,54 @@ public class PermitRepository {
         }
     }
 
+
     private void insertRouteAndRouteBridges(DSLContext ctx, RouteModel routeModel) {
+        Record1<Integer> departureAddressIdResult = ctx.insertInto(AddressMapper.address,
+                AddressMapper.address.STREET,
+                AddressMapper.address.CITY,
+                AddressMapper.address.POSTALCODE
+        ).values(
+                routeModel.getDepartureAddress().getStreet(),
+                routeModel.getDepartureAddress().getCity(),
+                routeModel.getDepartureAddress().getPostalcode()
+        )
+                .returningResult(AddressMapper.address.ID)
+                .fetchOne();
+        Integer departureAddressId = departureAddressIdResult != null ? departureAddressIdResult.value1() : null;
+        routeModel.getDepartureAddress().setId(departureAddressId);
+
+        Record1<Integer> arrivalAddressIdResult = ctx.insertInto(AddressMapper.address,
+                AddressMapper.address.STREET,
+                AddressMapper.address.CITY,
+                AddressMapper.address.POSTALCODE
+        ).values(
+                routeModel.getArrivalAddress().getStreet(),
+                routeModel.getArrivalAddress().getCity(),
+                routeModel.getArrivalAddress().getPostalcode()
+        )
+                .returningResult(AddressMapper.address.ID)
+                .fetchOne();
+        Integer arrivalAddressId = arrivalAddressIdResult != null ? arrivalAddressIdResult.value1() : null;
+        routeModel.getArrivalAddress().setId(arrivalAddressId);
+
+
         Record1<Integer> routeIdResult = ctx.insertInto(PermitMapper.route,
                 PermitMapper.route.PERMIT_ID,
                 PermitMapper.route.LELU_ID,
                 PermitMapper.route.NAME,
                 PermitMapper.route.TRANSPORT_COUNT,
-                PermitMapper.route.ALTERNATIVE_ROUTE
-                // TODO address ids
+                PermitMapper.route.ALTERNATIVE_ROUTE,
+                PermitMapper.route.DEPARTURE_ADDRESS_ID,
+                PermitMapper.route.ARRIVAL_ADDRESS_ID
+
         ).values(
                 routeModel.getPermitId(),
                 routeModel.getLeluId(),
                 routeModel.getName(),
                 routeModel.getTransportCount(),
-                routeModel.getAlternativeRoute())
+                routeModel.getAlternativeRoute(),
+                departureAddressId,
+                arrivalAddressId)
                 .returningResult(PermitMapper.route.ID)
                 .fetchOne();
 

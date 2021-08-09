@@ -16,7 +16,6 @@ public class RouteModel {
     private List<RouteBridgeModel> routeBridges;
     private List<CrossingModel> crossings;
 
-    // TODO Not from Lelu, how do we get these?
     private AddressModel departureAddress;
     private AddressModel arrivalAddress;
 }
