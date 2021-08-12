@@ -12,7 +12,9 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.MessageSource;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
@@ -43,13 +45,17 @@ public class LeluServiceTest {
     @Mock
     private BridgeRepository bridgeRepository;
 
+    @Autowired
+    private MessageSource messageSource;
+
+
     @Captor
     ArgumentCaptor<PermitModel> permitModelCaptor;
     @Captor
     ArgumentCaptor<List<Integer>> routeIdsToDeleteCaptor;
 
     @InjectMocks
-    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, bridgeRepository);
+    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, bridgeRepository, messageSource);
 
     @Test
     public void testCreatePermitWithExistingCompany() {
