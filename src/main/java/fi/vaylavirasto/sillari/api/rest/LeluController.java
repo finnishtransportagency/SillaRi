@@ -2,10 +2,14 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
+import fi.vaylavirasto.sillari.api.rest.error.LeluPermitNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluPermitSaveException;
+import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
 import fi.vaylavirasto.sillari.service.LeluService;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -16,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.Locale;
@@ -26,6 +31,8 @@ import java.util.Locale;
 public class LeluController {
     private static final Logger logger = LogManager.getLogger();
     private static final String LELU_API_VERSION_HEADER_NAME = "lelu-api-accept-version";
+    @Value("${sillari.lelu.routeuploadpath}")
+    private String routeuploadpath;
 
     @Value("${sillari.lelu.version}")
     private String currentApiVersion;
@@ -101,6 +108,26 @@ public class LeluController {
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
         }
+    }
+
+
+    @RequestMapping(value = "/uploadroutegeometry", method = RequestMethod.POST)
+    @ResponseBody
+    @Operation(summary = "Uploads the route geometry to a permit",
+            description = "Uploads the route geometry to an existing permit.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400 BAD_REQUEST", description = "File is empty."),
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Permit request is not found with provided permitRequestId."),
+            @ApiResponse(responseCode = "405 METHOD_NOT_ALLOWED", description = "Updating the permit request is not allowed. Missing user rights or permit/calculation status not valid."),
+            @ApiResponse(responseCode = "500 INTERNAL_SERVER_ERROR", description = "Error processing route geometry file.")
+    })
+    public LeluRouteGeometryResponseDTO uploadRouteGeometry(@RequestParam Integer permitRequestId,
+                                                            @RequestParam("file") @ApiParam(required = true, value = "Geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix) compressed to a single zip file") MultipartFile file)
+            throws LeluPermitNotFoundException, LeluRouteGeometryUploadException {
+        logger.debug("Lelu uploadroutegeometry {}", permitRequestId);
+        return leluService.uploadRouteGeometry(permitRequestId, file, routeuploadpath);
+
+
     }
 
 }
