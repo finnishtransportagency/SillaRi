@@ -28,7 +28,7 @@ public class LeluRouteUploadUtil {
 
                     // Define a command line process for running the import script
                     ProcessBuilder ogr2ogr = new ProcessBuilder();
-                    ogr2ogr.command("./import_route_zip.sh", file.getOriginalFilename(), calculationId.toString());
+                    ogr2ogr.command("./lelu_import_route_zip.sh", file.getOriginalFilename(), calculationId.toString());
                     ogr2ogr.directory(new File(routeUploadPath));
                     ogr2ogr.inheritIO();
 
