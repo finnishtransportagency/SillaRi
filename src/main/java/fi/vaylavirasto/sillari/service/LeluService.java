@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,15 +37,17 @@ public class LeluService {
     private RouteRepository routeRepository;
     private BridgeRepository bridgeRepository;
     private final MessageSource messageSource;
+    private LeluRouteUploadUtil leluRouteUploadUtil;
 
     @Autowired
-    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, BridgeRepository bridgeRepository, MessageSource messageSource) {
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, BridgeRepository bridgeRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil
+    ) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
         this.routeRepository = routeRepository;
         this.bridgeRepository = bridgeRepository;
         this.messageSource = messageSource;
-
+        this.leluRouteUploadUtil = leluRouteUploadUtil;
     }
 
     public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) {
@@ -87,7 +90,7 @@ public class LeluService {
     public LeluRouteGeometryResponseDTO uploadRouteGeometry(Integer permitId, MultipartFile file, String routeUploadPath) throws LeluPermitNotFoundException, LeluRouteGeometryUploadException {
         PermitModel permit = permitRepository.getPermit(permitId);
 
-        ResponseEntity<?> responseEntity = LeluRouteUploadUtil.doRouteGeometryUpload(permitId, file, routeUploadPath);
+        ResponseEntity<?> responseEntity = leluRouteUploadUtil.doRouteGeometryUpload(permitId, file, routeUploadPath);
 
         if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
             String responseMessage = responseEntity.getBody() != null ? responseEntity.getBody().toString() : responseEntity.getStatusCode().getReasonPhrase();

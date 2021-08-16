@@ -6,6 +6,7 @@ import fi.vaylavirasto.sillari.repositories.BridgeRepository;
 import fi.vaylavirasto.sillari.repositories.CompanyRepository;
 import fi.vaylavirasto.sillari.repositories.PermitRepository;
 import fi.vaylavirasto.sillari.repositories.RouteRepository;
+import fi.vaylavirasto.sillari.service.LeluRouteUploadUtil;
 import fi.vaylavirasto.sillari.service.LeluService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +16,7 @@ import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
@@ -48,6 +50,12 @@ public class LeluServiceTest {
     @Autowired
     private MessageSource messageSource;
 
+    @Autowired
+    private ResourceLoader resourceLoader;
+
+    @Autowired
+    private LeluRouteUploadUtil leluRouteUploadUtil;
+
 
     @Captor
     ArgumentCaptor<PermitModel> permitModelCaptor;
@@ -55,7 +63,7 @@ public class LeluServiceTest {
     ArgumentCaptor<List<Integer>> routeIdsToDeleteCaptor;
 
     @InjectMocks
-    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, bridgeRepository, messageSource);
+    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, bridgeRepository, messageSource, leluRouteUploadUtil);
 
     @Test
     public void testCreatePermitWithExistingCompany() {
