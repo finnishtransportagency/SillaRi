@@ -121,11 +121,11 @@ public class LeluController {
             @ApiResponse(responseCode = "405 METHOD_NOT_ALLOWED", description = "Updating the permit request is not allowed. Missing user rights or permit/calculation status not valid."),
             @ApiResponse(responseCode = "500 INTERNAL_SERVER_ERROR", description = "Error processing route geometry file.")
     })
-    public LeluRouteGeometryResponseDTO uploadRouteGeometry(@RequestParam Integer permitRequestId,
+    public LeluRouteGeometryResponseDTO uploadRouteGeometry(@RequestParam Integer permitId,
                                                             @RequestParam("file") @ApiParam(required = true, value = "Geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix) compressed to a single zip file") MultipartFile file)
             throws LeluPermitNotFoundException, LeluRouteGeometryUploadException {
-        logger.debug("Lelu uploadroutegeometry {}", permitRequestId);
-        return leluService.uploadRouteGeometry(permitRequestId, file, routeuploadpath);
+        logger.debug("Lelu uploadroutegeometry {}", permitId);
+        return leluService.uploadRouteGeometry(permitId, file, routeuploadpath);
 
 
     }
