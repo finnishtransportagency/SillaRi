@@ -14,6 +14,8 @@ import RouteDetail from "./pages/RouteDetail";
 import DenyCrossing from "./pages/DenyCrossing";
 import BridgeDetail from "./pages/BridgeDetail";
 import CrossingSummary from "./pages/CrossingSummary";
+import CompanySummary from "./pages/management/CompanySummary";
+import AddTransport from "./pages/management/AddTransport";
 import SidebarMenu from "./components/SidebarMenu";
 
 /* Core CSS required for Ionic components to work properly */
@@ -66,6 +68,8 @@ const App: React.FC = () => (
           <Route path="/denyCrossing/:routeBridgeId" component={DenyCrossing} exact />
           <Route path="/takePhotos" component={Camera} exact />
           <Route path="/summary/:crossingId" component={CrossingSummary} exact />
+          <Route path="/management/:companyId" component={CompanySummary} exact />
+          <Route path="/management/addTransport/:permitId" component={AddTransport} exact />
         </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>
