@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonPage, IonRow, IonText } from "@ionic/react";
 import { add, chevronDown, chevronUp } from "ionicons/icons";
 import Moment from "react-moment";
-import { stopPropagation } from "ol/events/Event";
 import { Accordion, AccordionItem, AccordionItemButton, AccordionItemHeading, AccordionItemPanel } from "react-accessible-accordion";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
@@ -68,7 +67,7 @@ const CompanySummary = (): JSX.Element => {
                           <IonButton
                             routerLink={addRouteLink}
                             onClick={(evt) => {
-                              stopPropagation(evt);
+                              evt.stopPropagation();
                             }}
                           >
                             {t("management.companySummary.addTransportButtonLabel")}
