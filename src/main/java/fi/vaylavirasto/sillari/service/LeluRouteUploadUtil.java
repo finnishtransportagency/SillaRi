@@ -16,13 +16,17 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Set;
+
 
 @Service
 public class LeluRouteUploadUtil {
     private static final Logger logger = LogManager.getLogger();
     public static final String LELU_IMPORT_ROUTE_SCRIPT_SH = "classpath:lelu_import_route_zip.sh";
     public static final String LELU_IMPORT_ROUTE_SCRIPT_SH_COMMAND = "./lelu_import_route_zip.sh";
+
 
     @Autowired
     ResourceLoader resourceLoader;
@@ -48,6 +52,10 @@ public class LeluRouteUploadUtil {
                     Path fullScriptPath = Paths.get(routeUploadPath, LELU_IMPORT_ROUTE_SCRIPT_SH_COMMAND);
                     logger.debug("hello2: " + fullScriptPath.toString());
                     Files.write(fullScriptPath, inputStream.readAllBytes());
+
+                    Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
+                    Files.setPosixFilePermissions(fullScriptPath, perms);
+
 
 
                     // Define a command line process for running the import script
