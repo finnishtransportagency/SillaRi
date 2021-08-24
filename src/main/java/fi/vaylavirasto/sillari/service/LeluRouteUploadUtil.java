@@ -41,7 +41,7 @@ public class LeluRouteUploadUtil {
                     // Save the file to the path specified in the config
                     logger.debug("hello.1: " + file.getOriginalFilename());
                     Path fullPath = Paths.get(routeUploadPath, file.getOriginalFilename());
-                    logger.debug("hello0: " + fullPath.toString());
+                    logger.debug("hello0x: " + fullPath.toString());
                     file.transferTo(fullPath);
 
                     //copy script to the working dir
