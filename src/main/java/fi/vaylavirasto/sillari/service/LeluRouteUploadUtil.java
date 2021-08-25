@@ -4,6 +4,7 @@ import fi.vaylavirasto.sillari.api.rest.LeluRouteUploadResponseWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
@@ -24,33 +25,46 @@ import java.util.Set;
 @Service
 public class LeluRouteUploadUtil {
     private static final Logger logger = LogManager.getLogger();
-    public static final String LELU_IMPORT_ROUTE_SCRIPT_SH = "classpath:lelu_import_route_zip.sh";
-    public static final String LELU_IMPORT_ROUTE_SCRIPT_SH_COMMAND = "./lelu_import_route_zip.sh";
-
+    public static final String LELU_IMPORT_ROUTE_SCRIPT_FILENAME = "lelu_import_route_zip.sh";
 
     @Autowired
     ResourceLoader resourceLoader;
 
-    public ResponseEntity<?> doRouteGeometryUpload(Integer calculationId, MultipartFile file, String routeUploadPath) {
+    @Value("${sillari.lelu.routeuploadpath}")
+    private String routeUploadPath;
+
+    @Value("${spring.datasource.url}")
+    private String datasourceUrl;
+
+    @Value("${spring.datasource.username}")
+    private String datasourceUsername;
+
+    @Value("${spring.datasource.password}")
+    private String datasourcePassword;
+
+
+    public ResponseEntity<?> doRouteGeometryUpload(Integer calculationId, MultipartFile file) {
 
         try {
+            String connectionString = constructConnectionString(datasourceUrl, datasourceUsername, datasourcePassword);
             File routeUploadDirectory = new File(routeUploadPath);
             logger.debug("routeUploadPath: " + routeUploadPath);
+            logger.debug("connectionString: " + connectionString);
             if (routeUploadDirectory.exists() && routeUploadDirectory.isDirectory() && routeUploadDirectory.canWrite()) {
                 if (calculationId != null && calculationId > 0 && file != null && !file.isEmpty()) {
                     // Save the file to the path specified in the config
-                    logger.debug("hello.1: " + file.getOriginalFilename());
+                    logger.debug("filename " + file.getOriginalFilename());
                     Path fullPath = Paths.get(routeUploadPath, file.getOriginalFilename());
-                    logger.debug("hello0x: " + fullPath.toString());
+                    logger.debug("path: " + fullPath.toString());
                     file.transferTo(fullPath);
 
                     //copy script to the working dir
-                    Resource r = resourceLoader.getResource(LELU_IMPORT_ROUTE_SCRIPT_SH);
+                    Resource r = resourceLoader.getResource("classpath:"+LELU_IMPORT_ROUTE_SCRIPT_FILENAME);
                     InputStream inputStream = r.getInputStream();
 
 
-                    Path fullScriptPath = Paths.get(routeUploadPath, LELU_IMPORT_ROUTE_SCRIPT_SH_COMMAND);
-                    logger.debug("hello2: " + fullScriptPath.toString());
+                    Path fullScriptPath = Paths.get(routeUploadPath, LELU_IMPORT_ROUTE_SCRIPT_FILENAME);
+                    logger.debug("script path: " + fullScriptPath.toString());
                     Files.write(fullScriptPath, inputStream.readAllBytes());
 
                     Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
@@ -60,7 +74,7 @@ public class LeluRouteUploadUtil {
 
                     // Define a command line process for running the import script
                     ProcessBuilder ogr2ogr = new ProcessBuilder();
-                    ogr2ogr.command(LELU_IMPORT_ROUTE_SCRIPT_SH_COMMAND, file.getOriginalFilename(), calculationId.toString());
+                    ogr2ogr.command("./"+LELU_IMPORT_ROUTE_SCRIPT_FILENAME, file.getOriginalFilename(), calculationId.toString(), connectionString);
                     ogr2ogr.directory(new File(routeUploadPath));
                     ogr2ogr.inheritIO();
 
@@ -103,5 +117,16 @@ public class LeluRouteUploadUtil {
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LeluRouteUploadResponseWrapper(-1, message));
         }
+    }
+
+    private String constructConnectionString(String datasourceUrl, String datasourceUsername, String datasourcePassword) {
+       // jdbc:postgresql://sillari-local-db:5432/sillari
+        //"host=sillari-local-db  port=5432 dbname=sillari user=sillari password=sillari1234"
+       String tmp =  datasourceUrl.split("//")[1];
+       String host = tmp.split(":")[0];
+       tmp = tmp.split(":")[1];
+       String port = tmp.split("/")[0];
+       String dbName = tmp.split("/")[1];
+       return "host=" + host + " port="+port+ " dbname="+ dbName +" user="+datasourceUsername +" password="+datasourcePassword;
     }
 }

@@ -31,8 +31,7 @@ import java.util.Locale;
 public class LeluController {
     private static final Logger logger = LogManager.getLogger();
     private static final String LELU_API_VERSION_HEADER_NAME = "lelu-api-accept-version";
-    @Value("${sillari.lelu.routeuploadpath}")
-    private String routeuploadpath;
+
 
     @Value("${sillari.lelu.version}")
     private String currentApiVersion;
@@ -125,7 +124,7 @@ public class LeluController {
                                                             @RequestParam("file") @ApiParam(required = true, value = "Geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix) compressed to a single zip file") MultipartFile file)
             throws LeluPermitNotFoundException, LeluRouteGeometryUploadException {
         logger.debug("Lelu uploadroutegeometry {}", permitId);
-        return leluService.uploadRouteGeometry(permitId, file, routeuploadpath);
+        return leluService.uploadRouteGeometry(permitId, file);
 
 
     }

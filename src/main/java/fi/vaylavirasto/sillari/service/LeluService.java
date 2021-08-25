@@ -87,10 +87,10 @@ public class LeluService {
         }
     }
 
-    public LeluRouteGeometryResponseDTO uploadRouteGeometry(Integer permitId, MultipartFile file, String routeUploadPath) throws LeluPermitNotFoundException, LeluRouteGeometryUploadException {
+    public LeluRouteGeometryResponseDTO uploadRouteGeometry(Integer permitId, MultipartFile file) throws LeluPermitNotFoundException, LeluRouteGeometryUploadException {
         PermitModel permit = permitRepository.getPermit(permitId);
 
-        ResponseEntity<?> responseEntity = leluRouteUploadUtil.doRouteGeometryUpload(permitId, file, routeUploadPath);
+        ResponseEntity<?> responseEntity = leluRouteUploadUtil.doRouteGeometryUpload(permitId, file);
 
         if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
             String responseMessage = responseEntity.getBody() != null ? responseEntity.getBody().toString() : responseEntity.getStatusCode().getReasonPhrase();
