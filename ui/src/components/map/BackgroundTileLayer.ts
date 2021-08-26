@@ -5,7 +5,7 @@ import { Tile as TileSource, WMTS, XYZ } from "ol/source";
 import { optionsFromCapabilities } from "ol/source/WMTS";
 import TileGrid from "ol/tilegrid/TileGrid";
 
-export default class BackgroundTileLayer extends TileLayer {
+export default class BackgroundTileLayer extends TileLayer<TileSource> {
   constructor(projection: string, mmlAttribution: string, capabilitiesUrl: string, capabilities?: XML) {
     let backgroundSource: TileSource | undefined;
 

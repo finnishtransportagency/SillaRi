@@ -2,9 +2,10 @@ import XML from "ol/format/XML";
 import { Tile as TileLayer } from "ol/layer";
 import { get as getProj } from "ol/proj";
 import { WMTS } from "ol/source";
+import TileSource from "ol/source/Tile";
 import { optionsFromCapabilities } from "ol/source/WMTS";
 
-export default class BridgeTileLayer extends TileLayer {
+export default class BridgeTileLayer extends TileLayer<TileSource> {
   constructor(projection: string, capabilitiesUrl: string, capabilities?: XML) {
     let bridgeSource: WMTS | undefined;
 

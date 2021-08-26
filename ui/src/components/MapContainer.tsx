@@ -14,9 +14,11 @@ import { Layer, Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import MapOL from "ol/Map";
 import { get as getProj, fromLonLat } from "ol/proj";
 import { register } from "ol/proj/proj4";
-import { TileDebug } from "ol/source";
+import { Source, TileDebug } from "ol/source";
 import View from "ol/View";
 import proj4 from "proj4";
+import TileSource from "ol/source/Tile";
+import VectorSource from "ol/source/Vector";
 import BackgroundTileLayer from "./map/BackgroundTileLayer";
 import BridgeTileLayer from "./map/BridgeTileLayer";
 import BridgeVectorLayer from "./map/BridgeVectorLayer";
@@ -42,10 +44,10 @@ const MapContainer = (): JSX.Element => {
   // These values are checked later, so don't use default values here
   const { routeBridgeId: routeBridgeIdParam, routeId: routeIdParam } = useParams<MapContainerProps>();
 
-  const [backgroundLayer, setBackgroundLayer] = useState<TileLayer>();
-  const [bridgeLayer, setBridgeLayer] = useState<Layer>();
-  const [routeLayer, setRouteLayer] = useState<Layer>();
-  const [userLayer, setUserLayer] = useState<VectorLayer>();
+  const [backgroundLayer, setBackgroundLayer] = useState<TileLayer<TileSource>>();
+  const [bridgeLayer, setBridgeLayer] = useState<Layer<Source>>();
+  const [routeLayer, setRouteLayer] = useState<Layer<Source>>();
+  const [userLayer, setUserLayer] = useState<VectorLayer<VectorSource<any>>>();
   const [bridgeCoords, setBridgeCoords] = useState<Point>();
   const [routeExtent, setRouteExtent] = useState<Extent>();
   const [mapInitialised, setMapInitialised] = useState<boolean>(false);

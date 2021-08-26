@@ -1,7 +1,7 @@
 import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonTitle, IonToolbar } from "@ionic/react";
 import React from "react";
 import "./SidebarMenu.css";
-import { home, settings, mapOutline } from "ionicons/icons";
+import { home, settings, mapOutline, calendar } from "ionicons/icons";
 import { useTranslation } from "react-i18next";
 
 const SidebarMenu: React.FC = () => {
@@ -38,6 +38,12 @@ const SidebarMenu: React.FC = () => {
             <IonItem routerLink="/crossingSupervision">
               <IonIcon icon={mapOutline} slot="start" />
               <IonLabel>{t("SidebarMenu.crossing")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
+            <IonItem routerLink="/management/1">
+              <IonIcon icon={calendar} slot="start" />
+              <IonLabel>{t("SidebarMenu.management")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
         </IonList>
