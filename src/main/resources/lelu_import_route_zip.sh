@@ -14,7 +14,7 @@ error_handler() {
 }
 trap error_handler ERR
 
-# import the shapefile in the zip to a temporary table 'route_import'
+# import the shapefile in the zip to a temporary table 'feature<route_id>'
 echo "ogr2ogr --config PG_USE_COPY YES -f PGDump /vsistdout/ /vsizip/$1 -lco SCHEMA=sillari -lco GEOMETRY_NAME=geom$2 | psql "$connection_string" -f -"
 ogr2ogr --config PG_USE_COPY YES -f PGDump /vsistdout/ /vsizip/$1 -nln "feature$2" -lco SCHEMA=sillari -lco GEOMETRY_NAME="geom" | psql "$connection_string" -f -
 
