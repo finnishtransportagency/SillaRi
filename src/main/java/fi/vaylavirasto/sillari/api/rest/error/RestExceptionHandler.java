@@ -59,6 +59,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handleCustomException(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(LeluRouteGeometryUploadException.class)
+    public ResponseEntity<Object> leluRouteGeometryUploadException(LeluRouteGeometryUploadException ex) {
+        logger.error("LeluRouteGeometryUploadException 'reason':'{}'", ex.getMessage());
+        return handleCustomException(ex.getMessage(), ex.getStatusCode());
+    }
+
+    @ExceptionHandler(LeluPermitNotFoundException.class)
+    public ResponseEntity<Object> leluPermitNotFoundException(LeluPermitNotFoundException ex) {
+        logger.error("LeluPermitNotFoundException 'reason':'{}'", ex.getMessage());
+        return handleCustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(APIVersionException.class)
     public ResponseEntity<Object> apiVersionException(APIVersionException ex) {
         logger.error("apiVersionException 'reason':'{}'", ex.getMessage());
