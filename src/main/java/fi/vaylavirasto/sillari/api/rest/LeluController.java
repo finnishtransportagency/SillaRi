@@ -116,8 +116,7 @@ public class LeluController {
             description = "Uploads the route geometry to an existing permit.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "File is empty."),
-            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Permit request is not found with provided permitRequestId."),
-            @ApiResponse(responseCode = "405 METHOD_NOT_ALLOWED", description = "Updating the permit request is not allowed. Missing user rights or permit/calculation status not valid."),
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Permit is not found with provided permitId."),
             @ApiResponse(responseCode = "500 INTERNAL_SERVER_ERROR", description = "Error processing route geometry file.")
     })
     public LeluRouteGeometryResponseDTO uploadRouteGeometry(@RequestParam Integer permitId,
@@ -125,7 +124,7 @@ public class LeluController {
             throws LeluPermitNotFoundException, LeluRouteGeometryUploadException {
         logger.debug("Lelu uploadroutegeometry {}", permitId);
         return leluService.uploadRouteGeometry(permitId, file);
-
+re
 
     }
 
