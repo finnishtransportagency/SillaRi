@@ -124,7 +124,7 @@ public class LeluController {
             throws LeluPermitNotFoundException, LeluRouteGeometryUploadException {
         logger.debug("Lelu uploadroutegeometry {}", permitId);
         return leluService.uploadRouteGeometry(permitId, file);
-re
+
 
     }
 
