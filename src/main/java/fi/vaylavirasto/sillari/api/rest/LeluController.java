@@ -4,7 +4,7 @@ import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
-import fi.vaylavirasto.sillari.api.rest.error.LeluPermitNotFoundException;
+import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluPermitSaveException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
 import fi.vaylavirasto.sillari.service.LeluService;
@@ -112,18 +112,18 @@ public class LeluController {
 
     @PostMapping(value = "/uploadroutegeometry", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    @Operation(summary = "Uploads the route geometry to a permit",
-            description = "Uploads the route geometry to an existing permit. File must be a geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix compressed to a single zip file")
+    @Operation(summary = "Uploads the route geometry to a route",
+            description = "Uploads the route geometry to an existing route. File must be a geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix compressed to a single zip file")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "File is empty."),
             @ApiResponse(responseCode = "404 NOT_FOUND", description = "Permit is not found with provided permitId."),
             @ApiResponse(responseCode = "500 INTERNAL_SERVER_ERROR", description = "Error processing route geometry file.")
     })
-    public LeluRouteGeometryResponseDTO uploadRouteGeometry(@RequestParam(required = true) Integer permitId,
+    public LeluRouteGeometryResponseDTO uploadRouteGeometry(@RequestParam(required = true) Integer routeId,
                                                             @RequestPart("file") MultipartFile file)
             // @ApiParam(required = true, value = "Geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix compressed to a single zip file")
-            throws LeluPermitNotFoundException, LeluRouteGeometryUploadException {
-        logger.debug("Lelu uploadroutegeometry {}", permitId);
-        return leluService.uploadRouteGeometry(permitId, file);
+            throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
+        logger.debug("Lelu uploadroutegeometry {}", routeId);
+        return leluService.uploadRouteGeometry(routeId, file);
     }
 }

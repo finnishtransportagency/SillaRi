@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class LeluPermitNotFoundException extends Exception {
+public class LeluRouteNotFoundException extends Exception {
 
-    public LeluPermitNotFoundException(String message) {
+    public LeluRouteNotFoundException(String message) {
         super(message);
     }
 

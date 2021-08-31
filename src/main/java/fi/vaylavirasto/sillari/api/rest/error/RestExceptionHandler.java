@@ -1,6 +1,5 @@
 package fi.vaylavirasto.sillari.api.rest.error;
 
-import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +64,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handleCustomException(ex.getMessage(), ex.getStatusCode());
     }
 
-    @ExceptionHandler(LeluPermitNotFoundException.class)
-    public ResponseEntity<Object> leluPermitNotFoundException(LeluPermitNotFoundException ex) {
+    @ExceptionHandler(LeluRouteNotFoundException.class)
+    public ResponseEntity<Object> leluPermitNotFoundException(LeluRouteNotFoundException ex) {
         logger.error("LeluPermitNotFoundException 'reason':'{}'", ex.getMessage());
         return handleCustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
