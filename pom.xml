@@ -67,7 +67,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.5.9</version>
+            <version>1.5.10</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -239,12 +239,6 @@
             <artifactId>annotations</artifactId>
             <version>21.0.1</version>
         </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-common</artifactId>
-            <version>2.9.2</version>
-        </dependency>
-
         <!-- MONTHLY DEPENDENCY CHECK -->
         <!--
         <dependency>
