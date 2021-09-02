@@ -86,10 +86,11 @@ public class LeluService {
         }
     }
 
-    public LeluRouteGeometryResponseDTO uploadRouteGeometry(Integer routeId, MultipartFile file) throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
-        RouteModel route = routeRepository.getRoute(routeId);
+    public LeluRouteGeometryResponseDTO uploadRouteGeometry(Long routeId, MultipartFile file) throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
+        RouteModel route = routeRepository.getRouteWithLeluId(routeId);
 
         if(route == null){
+            logger.warn("Route not found with lelu id "+routeId);
             throw new LeluRouteNotFoundException(messageSource.getMessage("lelu.route.not.found", null, Locale.ROOT));
         }
 

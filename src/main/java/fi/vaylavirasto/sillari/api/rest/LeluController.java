@@ -116,10 +116,10 @@ public class LeluController {
             description = "Uploads the route geometry to an existing route. File must be a geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix compressed to a single zip file")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "File is empty."),
-            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Permit is not found with provided permitId."),
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route not found with provided id."),
             @ApiResponse(responseCode = "500 INTERNAL_SERVER_ERROR", description = "Error processing route geometry file.")
     })
-    public LeluRouteGeometryResponseDTO uploadRouteGeometry(@RequestParam(required = true) Integer routeId,
+    public LeluRouteGeometryResponseDTO uploadRouteGeometry(@RequestParam(required = true) Long routeId,
                                                             @RequestPart("file") MultipartFile file)
             // @ApiParam(required = true, value = "Geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix compressed to a single zip file")
             throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {

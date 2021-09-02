@@ -43,7 +43,7 @@ public class LeluRouteUploadUtil {
     private String datasourcePassword;
 
 
-    public ResponseEntity<?> doRouteGeometryUpload(Integer calculationId, MultipartFile file) {
+    public ResponseEntity<?> doRouteGeometryUpload(Long routeId, MultipartFile file) {
 
         try {
             String connectionString = constructConnectionString(datasourceUrl, datasourceUsername, datasourcePassword);
@@ -51,7 +51,7 @@ public class LeluRouteUploadUtil {
             logger.debug("routeUploadPath: " + routeUploadPath);
             logger.debug("connectionString: " + connectionString);
             if (routeUploadDirectory.exists() && routeUploadDirectory.isDirectory() && routeUploadDirectory.canWrite()) {
-                if (calculationId != null && calculationId > 0 && file != null && !file.isEmpty()) {
+                if (routeId != null && routeId > 0 && file != null && !file.isEmpty()) {
                     // Save the file to the path specified in the config
                     logger.debug("filename " + file.getOriginalFilename());
                     Path fullPath = Paths.get(routeUploadPath, file.getOriginalFilename());
@@ -74,7 +74,7 @@ public class LeluRouteUploadUtil {
 
                     // Define a command line process for running the import script
                     ProcessBuilder ogr2ogr = new ProcessBuilder();
-                    ogr2ogr.command("./"+LELU_IMPORT_ROUTE_SCRIPT_FILENAME, file.getOriginalFilename(), calculationId.toString(), connectionString);
+                    ogr2ogr.command("./"+LELU_IMPORT_ROUTE_SCRIPT_FILENAME, file.getOriginalFilename(), routeId.toString(), connectionString);
                     ogr2ogr.directory(new File(routeUploadPath));
                     ogr2ogr.inheritIO();
 
