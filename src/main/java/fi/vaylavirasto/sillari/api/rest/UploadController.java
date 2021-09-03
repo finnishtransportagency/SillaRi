@@ -15,7 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
@@ -41,7 +40,7 @@ public class UploadController {
         model.setMimetype("");
         model.setEncoding("");
         model.setTaken(fileInputModel.getTaken());
-        model.setCrossingId(Long.parseLong(fileInputModel.getCrossingId()));
+        model.setSupervisionId(Integer.parseInt(fileInputModel.getCrossingId()));
         Tika tika = new Tika();
         model = fileService.createFile(model);
         File outputFile = new File("/outputFile.jpg");

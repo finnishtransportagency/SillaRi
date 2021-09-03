@@ -9,14 +9,16 @@ import IRadioValue from "../interfaces/IRadioValue";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
+import ISupervision from "../interfaces/ISupervision";
 
 interface IStateProps {
   companyList: ICompany[];
   selectedCompanyDetail?: ICompany;
+  selectedPermitDetail?: IPermit;
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
+  selectedSupervisionDetail?: ISupervision;
   selectedCrossingDetail?: ICrossing;
-  selectedPermitDetail?: IPermit;
   images: IImageItem[];
   networkStatus: INetworkStatus;
 }
@@ -24,10 +26,11 @@ interface IStateProps {
 const initialState: IStateProps = {
   companyList: [],
   selectedCompanyDetail: undefined,
+  selectedPermitDetail: undefined,
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
+  selectedSupervisionDetail: undefined,
   selectedCrossingDetail: undefined,
-  selectedPermitDetail: undefined,
   images: [],
   networkStatus: {
     isFailed: {},
@@ -93,6 +96,10 @@ const crossingsSlice = createSlice({
           selectedCrossingDetail.damage = action.payload.value;
         }
       }
+    },
+    GET_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
+      console.log("GET_SUPERVISION", action.payload);
+      return { ...state, selectedSupervisionDetail: action.payload };
     },
     GET_CROSSING: (state, action: PayloadAction<ICrossing>) => {
       console.log("GET_CROSSING", action.payload);

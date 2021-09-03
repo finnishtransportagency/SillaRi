@@ -21,7 +21,7 @@ import { location } from "ionicons/icons";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
-import { getPermitOfRouteBridge, getRouteBridge, onRetry } from "../utils/backendData";
+import { getPermitOfRouteBridge, getRouteBridge, getSupervisionOfRouteBridge, onRetry } from "../utils/backendData";
 
 interface BridgeDetailProps {
   routeBridgeId: string;
@@ -35,16 +35,21 @@ const BridgeDetail = (): JSX.Element => {
   const {
     selectedBridgeDetail,
     selectedPermitDetail,
+    selectedSupervisionDetail,
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.crossingsReducer);
   const { bridge, crossingInstruction = "" } = selectedBridgeDetail || {};
   const { name = "", identifier = "", municipality = "" } = bridge || {};
   const { permitNumber } = selectedPermitDetail || {};
+  const { id: supervisionId, conformsToPermit } = selectedSupervisionDetail || {};
 
-  const [conformsToPermit, setConformsToPermit] = React.useState(false);
+  const setConformsToPermit = (conforms: boolean) => console.log(`TODO set ${conforms}!`);
 
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
   useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
+    retry: onRetry,
+  });
+  useQuery(["getSupervisionOfRouteBridge", routeBridgeId], () => getSupervisionOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
     retry: onRetry,
   });
 
@@ -136,7 +141,7 @@ const BridgeDetail = (): JSX.Element => {
                 </IonButton>
               </IonRow>
               <IonRow>
-                <IonButton disabled={!conformsToPermit} color="primary" routerLink={`/crossing/${routeBridgeId}`}>
+                <IonButton disabled={!conformsToPermit} color="primary" routerLink={`/supervision/${supervisionId}`}>
                   {t("bridgeDetail.startSupervision")}
                 </IonButton>
               </IonRow>

@@ -9,6 +9,7 @@ import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import { getOrigin } from "./request";
 import { actions as crossingActions } from "../store/crossingsSlice";
+import ISupervision from "../interfaces/ISupervision";
 
 const notOkError = "Network response was not ok";
 
@@ -152,31 +153,6 @@ export const sendCrossingUpdate = async (updateRequest: ICrossingInput, dispatch
   }
 };
 
-export const sendSingleUpload = async (fileUpload: IFileInput, dispatch: Dispatch): Promise<void> => {
-  try {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: false } });
-
-    const singleUploadResponse = await fetch(`${getOrigin()}/api/upload/singleupload`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(fileUpload),
-    });
-
-    if (singleUploadResponse.ok) {
-      const singleUpload = (await singleUploadResponse.json()) as Promise<IFile>;
-      console.log("singleUpload response", singleUpload);
-    } else {
-      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
-    throw new Error(err);
-  }
-};
-
 export const getPermit = async (permitId: number, dispatch: Dispatch, selectedPermitDetail?: IPermit): Promise<void> => {
   try {
     if (selectedPermitDetail && selectedPermitDetail.id !== permitId) {
@@ -283,6 +259,75 @@ export const getRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, 
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getRouteBridge: true } });
+    throw new Error(err);
+  }
+};
+
+export const getSupervision = async (supervisionId: number, dispatch: Dispatch, selectedSupervisionDetail?: ISupervision): Promise<void> => {
+  try {
+    if (selectedSupervisionDetail && selectedSupervisionDetail.id !== supervisionId) {
+      dispatch({ type: crossingActions.GET_SUPERVISION, payload: undefined });
+    }
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervision: false } });
+
+    const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}`);
+
+    if (supervisionResponse.ok) {
+      const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;
+      dispatch({ type: crossingActions.GET_SUPERVISION, payload: supervision });
+    } else {
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervision: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervision: true } });
+    throw new Error(err);
+  }
+};
+
+export const getSupervisionOfRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, selectedBridgeDetail?: IRouteBridge): Promise<void> => {
+  try {
+    if (selectedBridgeDetail && selectedBridgeDetail.id !== routeBridgeId) {
+      dispatch({ type: crossingActions.GET_SUPERVISION, payload: undefined });
+    }
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionOfRouteBridge: false } });
+
+    const supervisionOfRouteBridgeResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionofroutebridge?routeBridgeId=${routeBridgeId}`);
+
+    if (supervisionOfRouteBridgeResponse.ok) {
+      const supervisionOfRouteBridge = (await supervisionOfRouteBridgeResponse.json()) as Promise<ISupervision>;
+      dispatch({ type: crossingActions.GET_SUPERVISION, payload: supervisionOfRouteBridge });
+    } else {
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionOfRouteBridge: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionOfRouteBridge: true } });
+    throw new Error(err);
+  }
+};
+
+export const sendSingleUpload = async (fileUpload: IFileInput, dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: false } });
+
+    const singleUploadResponse = await fetch(`${getOrigin()}/api/upload/singleupload`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(fileUpload),
+    });
+
+    if (singleUploadResponse.ok) {
+      const singleUpload = (await singleUploadResponse.json()) as Promise<IFile>;
+      console.log("singleUpload response", singleUpload);
+    } else {
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
     throw new Error(err);
   }
 };
