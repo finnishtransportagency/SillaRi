@@ -53,12 +53,16 @@ const BridgeDetail = (): JSX.Element => {
     retry: onRetry,
   });
 
+  console.log(selectedSupervisionDetail);
+
   const noNetworkNoData =
-    (isFailed.getRouteBridge && selectedBridgeDetail === undefined) || (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);
+    (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
+    (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined) ||
+    (isFailed.getSupervision && selectedSupervisionDetail === undefined);
 
   return (
     <IonPage>
-      <Header title={name} somethingFailed={isFailed.getRouteBridge || isFailed.getPermitOfRouteBridge} />
+      <Header title={name} somethingFailed={isFailed.getRouteBridge || isFailed.getPermitOfRouteBridge || isFailed.getSupervisionOfRouteBridge} />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

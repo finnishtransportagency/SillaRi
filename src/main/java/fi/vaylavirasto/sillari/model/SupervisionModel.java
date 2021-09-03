@@ -16,6 +16,6 @@ public class SupervisionModel {
     // TODO supervisor
     private SupervisionStatusModel currentStatus;
     private List<SupervisionStatusModel> statusHistory;
-    // TODO supervision report
+    private SupervisionReportModel report;
     private List<FileModel> images;
 }

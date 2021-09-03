@@ -1,14 +1,16 @@
 import IFile from "./IFile";
-import ICrossing from "./ICrossing";
+import ISupervisionStatus from "../ISupervisionStatus";
+import ISupervisionReport from "./ISupervisionReport";
 
 export default interface ISupervision {
   id: number;
   routeBridgeId: number;
   routeTransportId: number;
-  plannedTime: string;
+  plannedTime: Date;
   conformsToPermit: boolean;
   // TODO supervisor
-  // TODO status
-  report: ICrossing; // TODO change type
+  currentStatus: ISupervisionStatus;
+  statusHistory: [ISupervisionStatus];
+  report: ISupervisionReport;
   images: [IFile];
 }

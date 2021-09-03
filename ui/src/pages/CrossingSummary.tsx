@@ -26,7 +26,7 @@ import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import IFileInput from "../interfaces/IFileInput";
-import { getCrossing, getPermitOfRouteBridge, getRouteBridge, onRetry, sendCrossingUpdate, sendSingleUpload } from "../utils/backendData";
+import { getPermitOfRouteBridge, getRouteBridge, onRetry, sendCrossingUpdate, sendSingleUpload, getCrossing } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
 import { getOrigin } from "../utils/request";
 
@@ -115,7 +115,7 @@ const CrossingSummary = (): JSX.Element => {
 
       images.forEach((image) => {
         const fileUpload = {
-          crossingId: selectedCrossingDetail.id.toString(),
+          supervisionId: selectedCrossingDetail.id.toString(),
           filename: image.filename,
           base64: image.dataUrl,
           taken: moment(image.date).format(dateTimeFormat),

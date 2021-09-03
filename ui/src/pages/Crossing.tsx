@@ -18,7 +18,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { useParams, useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import moment from "moment";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
@@ -29,9 +29,9 @@ import ITextAreaValue from "../interfaces/ITextAreaValue";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import IFileInput from "../interfaces/IFileInput";
 import {
-  getCrossingOfRouteBridge,
   getPermitOfRouteBridge,
   getRouteBridge,
+  getSupervision,
   onRetry,
   sendCrossingStart,
   sendCrossingUpdate,
@@ -39,25 +39,27 @@ import {
 } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
 
-interface CrossingProps {
-  routeBridgeId: string;
+interface SupervisionProps {
+  supervisionId: string;
 }
 
 const Crossing = (): JSX.Element => {
   const { t } = useTranslation();
   const hist = useHistory();
   const dispatch = useDispatch();
-  const { routeBridgeId = "0" } = useParams<CrossingProps>();
+  const { supervisionId = "0" } = useParams<SupervisionProps>();
 
   const {
     selectedPermitDetail,
     selectedBridgeDetail,
     selectedCrossingDetail,
+    selectedSupervisionDetail,
     images = [],
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
+  const { routeBridgeId } = selectedSupervisionDetail || {};
 
   const {
     speedInfo = true,
@@ -72,29 +74,36 @@ const Crossing = (): JSX.Element => {
     twist = false,
     permanentBendings = false,
     started = "",
-    id: crossingId = -1,
+    id: supervisionReportId = -1,
   } = selectedCrossingDetail || {};
 
-  // Added query to clear previous crossing from Redux store, otherwise that one is used
+  // Added query to clear previous supervision from Redux store, otherwise that one is used
+  useQuery(["getSupervision", supervisionId], () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail), { retry: onRetry });
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
   useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
     retry: onRetry,
   });
-  const { isLoading: isLoadingCrossing } = useQuery(
-    ["getCrossingOfRouteBridge", routeBridgeId],
-    () => getCrossingOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail),
+
+  // TODO change to report
+  const { isLoading: isLoadingSupervisionReport } = useQuery(
+    ["getSupervision", supervisionId],
+    () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail),
     { retry: onRetry }
   );
 
   // Set-up mutations for modifying data later
-  const crossingStartMutation = useMutation((routeBrId: number) => sendCrossingStart(routeBrId, dispatch), { retry: onRetry });
-  const crossingUpdateMutation = useMutation((updateRequest: ICrossingInput) => sendCrossingUpdate(updateRequest, dispatch), { retry: onRetry });
+  // TODO change to report
+  const supervisionStartMutation = useMutation((routeBrId: number) => sendCrossingStart(routeBrId, dispatch), { retry: onRetry });
+  const supervisionUpdateMutation = useMutation((updateRequest: ICrossingInput) => sendCrossingUpdate(updateRequest, dispatch), {
+    retry: onRetry,
+  });
   const singleUploadMutation = useMutation((fileUpload: IFileInput) => sendSingleUpload(fileUpload, dispatch), { retry: onRetry });
 
   // Start the crossing if not already done
-  const { isLoading: isSendingCrossingStart } = crossingStartMutation;
-  if (!isLoadingCrossing && !isSendingCrossingStart && crossingId <= 0) {
-    crossingStartMutation.mutate(Number(routeBridgeId));
+  // TODO change to report
+  const { isLoading: isSendingSupervisionStart } = supervisionStartMutation;
+  if (!isLoadingSupervisionReport && !isSendingSupervisionStart && supervisionReportId <= 0) {
+    supervisionStartMutation.mutate(Number(supervisionReportId));
   }
 
   const changeTextAreaValue = (pname: string, pvalue: string) => {
@@ -106,7 +115,7 @@ const Crossing = (): JSX.Element => {
   // Should we disable all changes to crossing when it is not draft anymore, so this does not happen?
   const summaryClicked = () => {
     const updateRequest = {
-      id: crossingId,
+      id: supervisionReportId,
       routeBridgeId: Number(routeBridgeId),
       started,
       drivingLineInfo,
@@ -123,11 +132,11 @@ const Crossing = (): JSX.Element => {
       draft: true,
     } as ICrossingInput;
 
-    crossingUpdateMutation.mutate(updateRequest);
+    supervisionUpdateMutation.mutate(updateRequest);
 
     images.forEach((image) => {
       const fileUpload = {
-        crossingId: crossingId.toString(),
+        supervisionId: supervisionId.toString(),
         filename: image.filename,
         base64: image.dataUrl,
         taken: moment(image.date).format(dateTimeFormat),
@@ -137,7 +146,7 @@ const Crossing = (): JSX.Element => {
     });
 
     console.log("history");
-    hist.push(`/summary/${crossingId}`);
+    hist.push(`/summary/${supervisionId}`);
   };
 
   const radioClicked = (radioName: string, radioValue: string) => {
@@ -157,6 +166,7 @@ const Crossing = (): JSX.Element => {
   };
 
   const noNetworkNoData =
+    (isFailed.getSupervision && selectedSupervisionDetail === undefined) ||
     (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
     (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined) ||
     (isFailed.getCrossingOfRouteBridge && selectedCrossingDetail === undefined);
@@ -165,7 +175,7 @@ const Crossing = (): JSX.Element => {
     <IonPage>
       <Header
         title={t("crossing.title")}
-        somethingFailed={isFailed.getRouteBridge || isFailed.getPermitOfRouteBridge || isFailed.getCrossingOfRouteBridge}
+        somethingFailed={isFailed.getSupervision || isFailed.getRouteBridge || isFailed.getPermitOfRouteBridge || isFailed.getCrossingOfRouteBridge}
       />
       <IonContent fullscreen>
         {noNetworkNoData ? (
@@ -363,7 +373,7 @@ const Crossing = (): JSX.Element => {
                 <IonButton disabled>{t("crossing.buttons.exit")}</IonButton>
               </IonCol>
               <IonCol>
-                <IonButton disabled={crossingId <= 0} onClick={() => summaryClicked()}>
+                <IonButton disabled={supervisionReportId <= 0} onClick={() => summaryClicked()}>
                   {t("crossing.buttons.summary")}
                 </IonButton>
               </IonCol>
