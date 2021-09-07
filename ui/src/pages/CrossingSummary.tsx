@@ -26,7 +26,7 @@ import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import IFileInput from "../interfaces/IFileInput";
-import { getPermitOfRouteBridge, getRouteBridge, onRetry, sendCrossingUpdate, sendSingleUpload, getCrossing } from "../utils/backendData";
+import { getPermitOfRouteBridge, getRouteBridge, onRetry, sendSupervisionReportUpdate, sendSingleUpload, getCrossing } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
 import { getOrigin } from "../utils/request";
 
@@ -81,7 +81,7 @@ const CrossingSummary = (): JSX.Element => {
   });
 
   // Set-up mutations for modifying data later
-  const crossingUpdateMutation = useMutation((updateRequest: ICrossingInput) => sendCrossingUpdate(updateRequest, dispatch), { retry: onRetry });
+  const crossingUpdateMutation = useMutation((updateRequest: ICrossingInput) => sendSupervisionReportUpdate(updateRequest, dispatch), { retry: onRetry });
   const singleUploadMutation = useMutation((fileUpload: IFileInput) => sendSingleUpload(fileUpload, dispatch), { retry: onRetry });
 
   const { isLoading: isSendingCrossingUpdate, isSuccess: isCrossingUpdateSuccessful } = crossingUpdateMutation;
@@ -177,7 +177,7 @@ const CrossingSummary = (): JSX.Element => {
             <IonRow>
               <IonCol>
                 <IonLabel class="crossingLabel">
-                  {t("crossing.summary.crossingStarted")} {started}
+                  {t("crossing.summary.supervisionStarted")} {started}
                 </IonLabel>
               </IonCol>
             </IonRow>

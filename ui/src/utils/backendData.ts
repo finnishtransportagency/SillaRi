@@ -1,7 +1,6 @@
 import { Dispatch } from "redux";
 import ICompany from "../interfaces/ICompany";
 import ICrossing from "../interfaces/ICrossing";
-import ICrossingInput from "../interfaces/ICrossingInput";
 import IFile from "../interfaces/IFile";
 import IFileInput from "../interfaces/IFileInput";
 import IPermit from "../interfaces/IPermit";
@@ -10,6 +9,7 @@ import IRouteBridge from "../interfaces/IRouteBridge";
 import { getOrigin } from "./request";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import ISupervision from "../interfaces/ISupervision";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 const notOkError = "Network response was not ok";
 
@@ -101,54 +101,6 @@ export const getCrossingOfRouteBridge = async (routeBridgeId: number, dispatch: 
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCrossingOfRouteBridge: true } });
-    throw new Error(err);
-  }
-};
-
-export const sendCrossingStart = async (routeBridgeId: number, dispatch: Dispatch): Promise<void> => {
-  try {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingStart: false } });
-
-    const crossingStartResponse = await fetch(`${getOrigin()}/api/crossing/startcrossing?routeBridgeId=${routeBridgeId}`, {
-      method: "POST",
-    });
-
-    if (crossingStartResponse.ok) {
-      const crossingStart = (await crossingStartResponse.json()) as Promise<ICrossing>;
-      dispatch({ type: crossingActions.START_CROSSING, payload: crossingStart });
-    } else {
-      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingStart: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingStart: true } });
-    throw new Error(err);
-  }
-};
-
-export const sendCrossingUpdate = async (updateRequest: ICrossingInput, dispatch: Dispatch): Promise<void> => {
-  try {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: false } });
-
-    console.log("SENDING CROSSING UPDATE", updateRequest);
-
-    const crossingUpdateResponse = await fetch(`${getOrigin()}/api/crossing/updatecrossing`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updateRequest),
-    });
-
-    if (crossingUpdateResponse.ok) {
-      const crossingUpdate = (await crossingUpdateResponse.json()) as Promise<ICrossing>;
-      dispatch({ type: crossingActions.CROSSING_SUMMARY, payload: crossingUpdate });
-    } else {
-      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
     throw new Error(err);
   }
 };
@@ -303,6 +255,54 @@ export const getSupervisionOfRouteBridge = async (routeBridgeId: number, dispatc
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionOfRouteBridge: true } });
+    throw new Error(err);
+  }
+};
+
+export const sendSupervisionStart = async (supervisionId: number, dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingStart: false } });
+
+    const crossingStartResponse = await fetch(`${getOrigin()}/api/crossing/startcrossing?routeBridgeId=${supervisionId}`, {
+      method: "POST",
+    });
+
+    if (crossingStartResponse.ok) {
+      const crossingStart = (await crossingStartResponse.json()) as Promise<ISupervisionReport>;
+      dispatch({ type: crossingActions.START_CROSSING, payload: crossingStart });
+    } else {
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingStart: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingStart: true } });
+    throw new Error(err);
+  }
+};
+
+export const sendSupervisionReportUpdate = async (updateRequest: ISupervisionReport, dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: false } });
+
+    console.log("SENDING CROSSING UPDATE", updateRequest);
+
+    const crossingUpdateResponse = await fetch(`${getOrigin()}/api/crossing/updatecrossing`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateRequest),
+    });
+
+    if (crossingUpdateResponse.ok) {
+      const crossingUpdate = (await crossingUpdateResponse.json()) as Promise<ICrossing>;
+      dispatch({ type: crossingActions.CROSSING_SUMMARY, payload: crossingUpdate });
+    } else {
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
     throw new Error(err);
   }
 };

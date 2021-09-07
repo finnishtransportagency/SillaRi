@@ -63,37 +63,39 @@ const crossingsSlice = createSlice({
     },
     CROSSING_TEXTAREA_CHANGED: (state, action: PayloadAction<ITextAreaValue>) => {
       console.log("CROSSING_TEXTAREA_CHANGED", action.payload);
-      const { selectedCrossingDetail } = state;
-      if (selectedCrossingDetail) {
-        if (action.payload.name === "extraInfoDescription") {
-          selectedCrossingDetail.extraInfoDescription = action.payload.value;
-        } else if (action.payload.name === "speedInfoDescription") {
-          selectedCrossingDetail.speedInfoDescription = action.payload.value;
-        } else if (action.payload.name === "drivingLineInfoDescription") {
-          selectedCrossingDetail.drivingLineInfoDescription = action.payload.value;
-        } else if (action.payload.name === "exceptionsInfoDescription") {
-          selectedCrossingDetail.exceptionsInfoDescription = action.payload.value;
+      const { selectedSupervisionDetail } = state;
+      const { report } = selectedSupervisionDetail || {};
+      if (selectedSupervisionDetail && report) {
+        if (action.payload.name === "drivingLineInfo") {
+          report.drivingLineInfo = action.payload.value;
+        } else if (action.payload.name === "speedLimitInfo") {
+          report.speedLimitInfo = action.payload.value;
+        } else if (action.payload.name === "otherObservations") {
+          report.otherObservations = action.payload.value;
+        } else if (action.payload.name === "anomaliesDescription") {
+          report.anomaliesDescription = action.payload.value;
+        } else if (action.payload.name === "additionalInfo") {
+          report.additionalInfo = action.payload.value;
         }
       }
     },
     CROSSING_RADIO_CHANGED: (state, action: PayloadAction<IRadioValue>) => {
       console.log("CROSSING_RADIO_CHANGED", action.payload);
-      const { selectedCrossingDetail } = state;
-      if (selectedCrossingDetail) {
-        if (action.payload.name === "drivingLineInfo") {
-          selectedCrossingDetail.drivingLineInfo = action.payload.value;
-        } else if (action.payload.name === "speedInfo") {
-          selectedCrossingDetail.speedInfo = action.payload.value;
-        } else if (action.payload.name === "exceptionsInfo") {
-          selectedCrossingDetail.exceptionsInfo = action.payload.value;
-        } else if (action.payload.name === "someThingElse") {
-          selectedCrossingDetail.describe = action.payload.value;
-        } else if (action.payload.name === "twist") {
-          selectedCrossingDetail.twist = action.payload.value;
-        } else if (action.payload.name === "permantBendings") {
-          selectedCrossingDetail.permanentBendings = action.payload.value;
-        } else if (action.payload.name === "damage") {
-          selectedCrossingDetail.damage = action.payload.value;
+      const { selectedSupervisionDetail } = state;
+      const { report } = selectedSupervisionDetail || {};
+      if (selectedSupervisionDetail && report) {
+        if (action.payload.name === "drivingLineOk") {
+          report.drivingLineOk = action.payload.value;
+        } else if (action.payload.name === "speedLimitOk") {
+          report.speedLimitOk = action.payload.value;
+        } else if (action.payload.name === "anomalies") {
+          report.anomalies = action.payload.value;
+        } else if (action.payload.name === "surfaceDamage") {
+          report.surfaceDamage = action.payload.value;
+        } else if (action.payload.name === "seamDamage") {
+          report.seamDamage = action.payload.value;
+        } else if (action.payload.name === "bendsDisplacements") {
+          report.bendsDisplacements = action.payload.value;
         }
       }
     },
