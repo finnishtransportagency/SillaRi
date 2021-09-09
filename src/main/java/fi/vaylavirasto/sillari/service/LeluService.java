@@ -1,7 +1,7 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.api.lelu.*;
-import fi.vaylavirasto.sillari.api.rest.error.LeluPermitNotFoundException;
+import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.PermitModel;
@@ -16,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -87,21 +86,22 @@ public class LeluService {
         }
     }
 
-    public LeluRouteGeometryResponseDTO uploadRouteGeometry(Integer permitId, MultipartFile file) throws LeluPermitNotFoundException, LeluRouteGeometryUploadException {
-        PermitModel permit = permitRepository.getPermit(permitId);
+    public LeluRouteGeometryResponseDTO uploadRouteGeometry(Long routeId, MultipartFile file) throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
+        RouteModel route = routeRepository.getRouteWithLeluId(routeId);
 
-        if(permit == null){
-            throw new LeluPermitNotFoundException(messageSource.getMessage("lelu.permit.not.found", null, Locale.ROOT));
+        if(route == null){
+            logger.warn("Route not found with lelu id "+routeId);
+            throw new LeluRouteNotFoundException(messageSource.getMessage("lelu.route.not.found", null, Locale.ROOT));
         }
 
-        ResponseEntity<?> responseEntity = leluRouteUploadUtil.doRouteGeometryUpload(permitId, file);
+        ResponseEntity<?> responseEntity = leluRouteUploadUtil.doRouteGeometryUpload(routeId, file);
 
         if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
             String responseMessage = responseEntity.getBody() != null ? responseEntity.getBody().toString() : responseEntity.getStatusCode().getReasonPhrase();
             throw new LeluRouteGeometryUploadException(responseMessage, responseEntity.getStatusCode());
         }
 
-        return new LeluRouteGeometryResponseDTO(permitId, messageSource.getMessage("lelu.route.geometry.upload.completed", null, Locale.ROOT));
+        return new LeluRouteGeometryResponseDTO(routeId, messageSource.getMessage("lelu.route.geometry.upload.completed", null, Locale.ROOT));
 
     }
 

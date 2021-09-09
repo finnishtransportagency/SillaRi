@@ -12,7 +12,7 @@ import lombok.*;
 
 public class LeluRouteGeometryResponseDTO {
     @Schema(description = "Permit ID in SillaRi", example = "737")
-    private Integer permitRequestId;
+    private Long routeId;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @Schema(description = "Response success message", example = "Reittigeometria päivitetty lupaan")

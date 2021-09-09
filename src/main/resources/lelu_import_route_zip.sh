@@ -19,7 +19,7 @@ echo "import file"
 ogr2ogr --config PG_USE_COPY YES -f PGDump /vsistdout/ /vsizip/$1 -nln "feature$2" -lco SCHEMA=sillari -lco GEOMETRY_NAME="geom" | psql "$connection_string" -f -
 
 # copy the route geometry to the 'calculation' table, using ST_Collect to combine all LineStrings into a single MultiLineString
-psql "$connection_string" -c "update route set geom = (select geom as geom from feature$2) where id = $2;"
+psql "$connection_string" -c "update route set geom = (select geom as geom from feature$2) where lelu_id = $2;"
 
 # drop the temporary table
 psql "$connection_string" -c "drop table feature$2;"
