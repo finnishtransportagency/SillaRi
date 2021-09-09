@@ -123,4 +123,10 @@ public class CrossingRepository {
         return dsl.select().from(FileMapper.image).where(FileMapper.image.CROSSING_ID.eq(crossingId))
                 .fetch(new FileMapper(true));
     }
+
+    public int deleteFileByObjectKey(String objectKey) {
+        return dsl.delete(FileMapper.image)
+                .where(FileMapper.image.OBJECT_KEY.eq(objectKey))
+                .execute();
+    }
 }
