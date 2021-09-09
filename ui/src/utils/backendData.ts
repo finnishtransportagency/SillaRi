@@ -37,7 +37,7 @@ export const getCompany = async (companyId: number, dispatch: Dispatch, selected
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCompany: true } });
-    throw new Error(err);
+    throw new Error(err as string);
   }
 };
 
@@ -56,7 +56,7 @@ export const getCompanyList = async (dispatch: Dispatch): Promise<void> => {
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCompanyList: true } });
-    throw new Error(err);
+    throw new Error(err as string);
   }
 };
 
@@ -78,7 +78,7 @@ export const getCrossing = async (crossingId: number, dispatch: Dispatch, select
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCrossing: true } });
-    throw new Error(err);
+    throw new Error(err as string);
   }
 };
 
@@ -100,7 +100,7 @@ export const getCrossingOfRouteBridge = async (routeBridgeId: number, dispatch: 
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCrossingOfRouteBridge: true } });
-    throw new Error(err);
+    throw new Error(err as string);
   }
 };
 
@@ -121,7 +121,7 @@ export const sendCrossingStart = async (routeBridgeId: number, dispatch: Dispatc
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingStart: true } });
-    throw new Error(err);
+    throw new Error(err as string);
   }
 };
 
@@ -148,15 +148,15 @@ export const sendCrossingUpdate = async (updateRequest: ICrossingInput, dispatch
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
-    throw new Error(err);
+    throw new Error(err as string);
   }
 };
 
-export const sendSingleUpload = async (fileUpload: IFileInput, dispatch: Dispatch): Promise<void> => {
+export const sendImageUpload = async (fileUpload: IFileInput, dispatch: Dispatch): Promise<void> => {
   try {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: false } });
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendImageUpload: false } });
 
-    const singleUploadResponse = await fetch(`${getOrigin()}/api/upload/singleupload`, {
+    const imageUploadResponse = await fetch(`${getOrigin()}/api/images/upload`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -164,16 +164,40 @@ export const sendSingleUpload = async (fileUpload: IFileInput, dispatch: Dispatc
       body: JSON.stringify(fileUpload),
     });
 
-    if (singleUploadResponse.ok) {
-      const singleUpload = (await singleUploadResponse.json()) as Promise<IFile>;
-      console.log("singleUpload response", singleUpload);
+    if (imageUploadResponse.ok) {
+      const imageUpload = (await imageUploadResponse.json()) as Promise<IFile>;
+      console.log("imageUpload response", imageUpload);
     } else {
-      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendImageUpload: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
-    throw new Error(err);
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendImageUpload: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { deleteImage: false } });
+
+    const imageDeleteResponse = await fetch(`${getOrigin()}/api/images/delete?objectKey=${objectKey}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (imageDeleteResponse.ok) {
+      const imageDelete = (await imageDeleteResponse.json()) as Promise<IFile>;
+      console.log("deleteImage response", imageDelete);
+    } else {
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { deleteImage: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { deleteImage: true } });
+    throw new Error(err as string);
   }
 };
 
@@ -195,7 +219,7 @@ export const getPermit = async (permitId: number, dispatch: Dispatch, selectedPe
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getPermit: true } });
-    throw new Error(err);
+    throw new Error(err as string);
   }
 };
 
@@ -217,7 +241,7 @@ export const getPermitOfRoute = async (routeId: number, dispatch: Dispatch, sele
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getPermitOfRoute: true } });
-    throw new Error(err);
+    throw new Error(err as string);
   }
 };
 
@@ -239,7 +263,7 @@ export const getPermitOfRouteBridge = async (routeBridgeId: number, dispatch: Di
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getPermitOfRouteBridge: true } });
-    throw new Error(err);
+    throw new Error(err as string);
   }
 };
 
@@ -261,7 +285,7 @@ export const getRoute = async (routeId: number, dispatch: Dispatch, selectedRout
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getRoute: true } });
-    throw new Error(err);
+    throw new Error(err as string);
   }
 };
 
@@ -283,6 +307,6 @@ export const getRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, 
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getRouteBridge: true } });
-    throw new Error(err);
+    throw new Error(err as string);
   }
 };
