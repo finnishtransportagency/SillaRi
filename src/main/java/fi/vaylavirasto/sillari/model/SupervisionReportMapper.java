@@ -24,10 +24,9 @@ public class SupervisionReportMapper implements RecordMapper<Record, Supervision
         supervisionReportModel.setSeamDamage(record.get(supervisionReport.SEAM_DAMAGE));
         supervisionReportModel.setBendsDisplacements(record.get(supervisionReport.BENDS_DISPLACEMENTS));
         supervisionReportModel.setOtherObservations(record.get(supervisionReport.OTHER_OBSERVATIONS));
+        supervisionReportModel.setOtherObservationsInfo(record.get(supervisionReport.OTHER_OBSERVATIONS_INFO));
         supervisionReportModel.setAdditionalInfo(record.get(supervisionReport.ADDITIONAL_INFO));
         supervisionReportModel.setDraft(record.get(supervisionReport.DRAFT));
-        supervisionReportModel.setCreated(record.get(supervisionReport.CREATED));
-        supervisionReportModel.setModified(record.get(supervisionReport.MODIFIED));
         return supervisionReportModel;
     }
 }

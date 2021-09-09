@@ -17,9 +17,8 @@ public class SupervisionReportModel {
     private Boolean surfaceDamage;
     private Boolean seamDamage;
     private Boolean bendsDisplacements;
-    private String otherObservations;
+    private Boolean otherObservations;
+    private String otherObservationsInfo;
     private String additionalInfo;
     private Boolean draft;
-    private OffsetDateTime created;
-    private OffsetDateTime modified;
 }
