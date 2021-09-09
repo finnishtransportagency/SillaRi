@@ -1,7 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 import ICompany from "../interfaces/ICompany";
 import ICrossing from "../interfaces/ICrossing";
 import IFailedQuery from "../interfaces/IFailedQuery";
+import IFile from "../interfaces/IFile";
 import IImageItem from "../interfaces/IImageItem";
 import INetworkStatus from "../interfaces/INetworkStatus";
 import IPermit from "../interfaces/IPermit";
@@ -110,8 +111,18 @@ const crossingsSlice = createSlice({
       console.log("SAVE_IMAGES", action.payload);
       return { ...state, images: action.payload };
     },
+    UPDATE_IMAGES: (state, action: PayloadAction<IFile[]>) => {
+      // Remove any camera images from the state that have been uploaded, and so are now in the crossing images
+      console.log("UPDATE_IMAGES", action.payload);
+      const crossingImages = action.payload || [];
+      const cameraImages = current(state.images).reduce((acc: IImageItem[], image) => {
+        const isStateImageInPayload = crossingImages.some((crossingImage) => crossingImage.filename === image.filename);
+        return isStateImageInPayload ? acc : [...acc, image];
+      }, []);
+      return { ...state, images: cameraImages };
+    },
     SET_FAILED_QUERY: (state, action: PayloadAction<IFailedQuery>) => {
-      console.log("SET_FAILED_QUERY", action.payload);
+      // console.log("SET_FAILED_QUERY", action.payload);
       return { ...state, networkStatus: { ...state.networkStatus, isFailed: { ...state.networkStatus.isFailed, ...action.payload } } };
     },
   },

@@ -1,3 +1,4 @@
+import React from "react";
 import {
   IonButton,
   IonCard,
@@ -11,16 +12,18 @@ import {
   IonPage,
   IonRadio,
   IonRadioGroup,
+  IonRouterLink,
   IonRow,
+  IonText,
   IonTextarea,
 } from "@ionic/react";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useParams, useHistory } from "react-router-dom";
 import moment from "moment";
 import Header from "../components/Header";
+import ImageThumbnailRow from "../components/ImageThumbnailRow";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import { useTypedSelector } from "../store/store";
 import IRadioValue from "../interfaces/IRadioValue";
@@ -35,7 +38,7 @@ import {
   onRetry,
   sendCrossingStart,
   sendCrossingUpdate,
-  sendSingleUpload,
+  sendImageUpload,
 } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
 
@@ -73,6 +76,7 @@ const Crossing = (): JSX.Element => {
     permanentBendings = false,
     started = "",
     id: crossingId = -1,
+    images: crossingImages = [],
   } = selectedCrossingDetail || {};
 
   // Added query to clear previous crossing from Redux store, otherwise that one is used
@@ -89,7 +93,7 @@ const Crossing = (): JSX.Element => {
   // Set-up mutations for modifying data later
   const crossingStartMutation = useMutation((routeBrId: number) => sendCrossingStart(routeBrId, dispatch), { retry: onRetry });
   const crossingUpdateMutation = useMutation((updateRequest: ICrossingInput) => sendCrossingUpdate(updateRequest, dispatch), { retry: onRetry });
-  const singleUploadMutation = useMutation((fileUpload: IFileInput) => sendSingleUpload(fileUpload, dispatch), { retry: onRetry });
+  const imageUploadMutation = useMutation((fileUpload: IFileInput) => sendImageUpload(fileUpload, dispatch), { retry: onRetry });
 
   // Start the crossing if not already done
   const { isLoading: isSendingCrossingStart } = crossingStartMutation;
@@ -133,7 +137,7 @@ const Crossing = (): JSX.Element => {
         taken: moment(image.date).format(dateTimeFormat),
       } as IFileInput;
 
-      singleUploadMutation.mutate(fileUpload);
+      imageUploadMutation.mutate(fileUpload);
     });
 
     console.log("history");
@@ -196,12 +200,18 @@ const Crossing = (): JSX.Element => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <a href="fooo">{t("crossing.crossingInstructions")}</a>
+                {/* TODO */}
+                <IonRouterLink className="disabledLink">
+                  <IonText className="linkText">{t("crossing.crossingInstructions")}</IonText>
+                </IonRouterLink>
               </IonCol>
             </IonRow>
+
+            <ImageThumbnailRow images={images} crossingImages={crossingImages} />
+
             <IonRow>
               <IonCol>
-                <IonButton routerLink="/takephotos">{t("crossing.buttons.takePhotos")}</IonButton>
+                <IonButton routerLink={`/takephotos/${crossingId}`}>{t("crossing.buttons.takePhotos")}</IonButton>
               </IonCol>
               <IonCol>
                 <IonButton disabled>{t("crossing.buttons.drivingLine")}</IonButton>

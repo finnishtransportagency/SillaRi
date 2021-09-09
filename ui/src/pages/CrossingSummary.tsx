@@ -3,32 +3,18 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { checkmarkCircleOutline, closeCircleOutline } from "ionicons/icons";
-import {
-  IonButton,
-  IonCol,
-  IonContent,
-  IonGrid,
-  IonIcon,
-  IonImg,
-  IonItem,
-  IonLabel,
-  IonPage,
-  IonRow,
-  IonText,
-  IonThumbnail,
-  IonToast,
-} from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonPage, IonRow, IonText, IonToast } from "@ionic/react";
 import { useHistory, useParams } from "react-router-dom";
 import moment from "moment";
-
+import { actions as crossingActions } from "../store/crossingsSlice";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
+import ImageThumbnailRow from "../components/ImageThumbnailRow";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import ICrossingInput from "../interfaces/ICrossingInput";
 import IFileInput from "../interfaces/IFileInput";
-import { getCrossing, getPermitOfRouteBridge, getRouteBridge, onRetry, sendCrossingUpdate, sendSingleUpload } from "../utils/backendData";
+import { getCrossing, getPermitOfRouteBridge, getRouteBridge, onRetry, sendCrossingUpdate, sendImageUpload } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
-import { getOrigin } from "../utils/request";
 
 interface CrossingSummaryProps {
   crossingId: string;
@@ -68,7 +54,11 @@ const CrossingSummary = (): JSX.Element => {
     images: crossingImages = [],
   } = selectedCrossingDetail || {};
 
-  useQuery(["getCrossing", crossingId], () => getCrossing(Number(crossingId), dispatch, selectedCrossingDetail), { retry: onRetry });
+  const { isLoading: isLoadingCrossing } = useQuery(
+    ["getCrossing", crossingId],
+    () => getCrossing(Number(crossingId), dispatch, selectedCrossingDetail),
+    { retry: onRetry }
+  );
 
   // Use the enabled option to only fetch data when routeBridgeId is available
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
@@ -81,15 +71,22 @@ const CrossingSummary = (): JSX.Element => {
   });
 
   // Set-up mutations for modifying data later
-  const crossingUpdateMutation = useMutation((updateRequest: ICrossingInput) => sendCrossingUpdate(updateRequest, dispatch), { retry: onRetry });
-  const singleUploadMutation = useMutation((fileUpload: IFileInput) => sendSingleUpload(fileUpload, dispatch), { retry: onRetry });
-
-  const { isLoading: isSendingCrossingUpdate, isSuccess: isCrossingUpdateSuccessful } = crossingUpdateMutation;
-  useEffect(() => {
-    if (isCrossingUpdateSuccessful) {
+  const crossingUpdateMutation = useMutation((updateRequest: ICrossingInput) => sendCrossingUpdate(updateRequest, dispatch), {
+    retry: onRetry,
+    onSuccess: () => {
       setToastMessage(t("crossing.summary.saved"));
+    },
+  });
+  const imageUploadMutation = useMutation((fileUpload: IFileInput) => sendImageUpload(fileUpload, dispatch), { retry: onRetry });
+
+  const { isLoading: isSendingCrossingUpdate } = crossingUpdateMutation;
+
+  useEffect(() => {
+    if (!isLoadingCrossing) {
+      // Remove any uploaded images from the camera images stored in redux
+      dispatch({ type: crossingActions.UPDATE_IMAGES, payload: crossingImages });
     }
-  }, [isCrossingUpdateSuccessful, t]);
+  }, [isLoadingCrossing, crossingImages, dispatch]);
 
   const save = () => {
     if (selectedCrossingDetail !== undefined) {
@@ -121,7 +118,7 @@ const CrossingSummary = (): JSX.Element => {
           taken: moment(image.date).format(dateTimeFormat),
         } as IFileInput;
 
-        singleUploadMutation.mutate(fileUpload);
+        imageUploadMutation.mutate(fileUpload);
       });
     }
   };
@@ -192,33 +189,13 @@ const CrossingSummary = (): JSX.Element => {
             <IonRow>
               <IonCol>
                 <IonLabel class="crossingLabelBold">
-                  {t("crossing.summary.images")} ({images.length === 0 && crossingImages.length > 0 ? crossingImages.length : images.length}{" "}
-                  {t("crossing.summary.kpl")})
+                  {t("crossing.summary.images")} ({images.length + crossingImages.length} {t("crossing.summary.kpl")})
                 </IonLabel>
               </IonCol>
             </IonRow>
-            <IonRow>
-              {crossingImages.length === 0 &&
-                images.map((imageItem) => (
-                  <IonItem key={imageItem.id}>
-                    <IonCol>
-                      <IonThumbnail>
-                        <IonImg src={imageItem.dataUrl} />
-                      </IonThumbnail>
-                    </IonCol>
-                  </IonItem>
-                ))}
-              {crossingImages.length > 0 &&
-                crossingImages.map((crossingImage) => (
-                  <IonItem key={crossingImage.id}>
-                    <IonCol>
-                      <IonThumbnail>
-                        <IonImg src={`${getOrigin()}/api/images/get?objectKey=${crossingImage.objectKey}`} />
-                      </IonThumbnail>
-                    </IonCol>
-                  </IonItem>
-                ))}
-            </IonRow>
+
+            <ImageThumbnailRow images={images} crossingImages={crossingImages} />
+
             <IonRow>
               <IonCol size="auto">
                 <IonItem>
