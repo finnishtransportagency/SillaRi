@@ -92,7 +92,7 @@ public class CrossingRepository {
                     FileMapper.image.TAKEN)
                     .select(dsl.select(DSL.val(imageId),
                             DSL.val(Long.valueOf(fileModel.getCrossingId()).intValue()),
-                            DSL.val(fileModel.getFilename() + "_" + fileModel.getTaken() + "_" + imageId + ".jpg"),
+                            DSL.val(fileModel.getFilename()),
                             DSL.val(fileModel.getObjectKey()),
                             DSL.val(taken))
                             .whereNotExists(dsl.selectOne()

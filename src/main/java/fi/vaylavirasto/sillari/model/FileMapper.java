@@ -30,7 +30,7 @@ public class FileMapper implements RecordMapper<Record, FileModel> {
             fileModel.setObjectKey(record.get(image.OBJECT_KEY));
         }
         fileModel.setFilename(record.get(image.FILENAME));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
         fileModel.setTaken(record.get(image.TAKEN).format(formatter));
         fileModel.setMimetype("");
         fileModel.setEncoding("");
