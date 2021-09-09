@@ -41,9 +41,10 @@ public class ImageController {
     public void getImage(HttpServletResponse response, @RequestParam String objectKey) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "getImage");
         try {
+            String decodedKey = new String(Base64.getDecoder().decode(objectKey));
+
             if (activeProfile.equals("local")) {
                 // Get from local file system
-                String decodedKey = new String(Base64.getDecoder().decode(objectKey));
                 String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
 
                 File inputFile = new File("/", filename);
@@ -57,7 +58,7 @@ public class ImageController {
                 }
             } else {
                 // Get from AWS
-                byte[] image = awss3Client.download(new String(Base64.getDecoder().decode(objectKey)));
+                byte[] image = awss3Client.download(decodedKey);
                 if (image != null) {
                     response.setContentType("image/jpeg");
                     OutputStream out = response.getOutputStream();
@@ -129,7 +130,7 @@ public class ImageController {
                 }
             } else {
                 // Delete from AWS
-                awss3Client.delete(objectKey);
+                awss3Client.delete(decodedKey);
             }
 
             // Delete the image row from the database
