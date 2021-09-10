@@ -103,17 +103,33 @@ const crossingsSlice = createSlice({
       console.log("GET_SUPERVISION", action.payload);
       return { ...state, selectedSupervisionDetail: action.payload };
     },
+    CREATE_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
+      console.log("CREATE_SUPERVISION", action.payload);
+      return { ...state, selectedSupervisionDetail: action.payload };
+    },
+    UPDATE_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
+      console.log("UPDATE_SUPERVISION", action.payload);
+      return { ...state, selectedSupervisionDetail: action.payload };
+    },
     GET_CROSSING: (state, action: PayloadAction<ICrossing>) => {
       console.log("GET_CROSSING", action.payload);
       return { ...state, selectedCrossingDetail: action.payload };
     },
-    START_CROSSING: (state, action: PayloadAction<ICrossing>) => {
-      console.log("START_CROSSING", action.payload);
-      return { ...state, selectedCrossingDetail: action.payload };
+    START_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
+      console.log("START_SUPERVISION", action.payload);
+      return { ...state, selectedSupervisionDetail: action.payload };
     },
-    CROSSING_SUMMARY: (state, action: PayloadAction<ICrossing>) => {
-      console.log("CROSSING_SUMMARY", action.payload);
-      return { ...state, loading: false, selectedCrossingDetail: action.payload };
+    CANCEL_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
+      console.log("CANCEL_SUPERVISION", action.payload);
+      return { ...state, selectedSupervisionDetail: action.payload };
+    },
+    FINISH_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
+      console.log("FINISH_SUPERVISION", action.payload);
+      return { ...state, selectedSupervisionDetail: action.payload };
+    },
+    SUPERVISION_SUMMARY: (state, action: PayloadAction<ISupervision>) => {
+      console.log("SUPERVISION_SUMMARY", action.payload);
+      return { ...state, loading: false, selectedSupervisionDetail: action.payload };
     },
     SAVE_IMAGES: (state, action: PayloadAction<IImageItem[]>) => {
       console.log("SAVE_IMAGES", action.payload);

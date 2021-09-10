@@ -34,7 +34,7 @@ import {
   onRetry,
   sendSingleUpload,
   sendSupervisionReportUpdate,
-  sendSupervisionStart,
+  sendSupervisionStarted,
 } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
@@ -52,7 +52,6 @@ const Crossing = (): JSX.Element => {
   const {
     selectedPermitDetail,
     selectedBridgeDetail,
-    selectedCrossingDetail,
     selectedSupervisionDetail,
     images = [],
     networkStatus: { isFailed = {} },
@@ -84,24 +83,23 @@ const Crossing = (): JSX.Element => {
     { retry: onRetry }
   );
 
+  // FIXME probably cannot use routeBridgeId from supervision here
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
   useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
     retry: onRetry,
   });
 
   // Set-up mutations for modifying data later
-  // TODO change to report
-  const supervisionStartMutation = useMutation((superId: number) => sendSupervisionStart(superId, dispatch), { retry: onRetry });
+  const supervisionStartMutation = useMutation((superId: number) => sendSupervisionStarted(superId, dispatch), { retry: onRetry });
   const supervisionReportMutation = useMutation((updateRequest: ISupervisionReport) => sendSupervisionReportUpdate(updateRequest, dispatch), {
     retry: onRetry,
   });
   const singleUploadMutation = useMutation((fileUpload: IFileInput) => sendSingleUpload(fileUpload, dispatch), { retry: onRetry });
 
-  // Start the crossing if not already done
-  // TODO change to report
+  // Start the supervision if not already done
   const { isLoading: isSendingSupervisionStart } = supervisionStartMutation;
   if (!isLoadingSupervision && !isSendingSupervisionStart && supervisionReportId <= 0) {
-    supervisionStartMutation.mutate(Number(supervisionReportId));
+    supervisionStartMutation.mutate(Number(supervisionId));
   }
 
   const changeTextAreaValue = (pname: string, pvalue: string) => {
@@ -112,7 +110,7 @@ const Crossing = (): JSX.Element => {
   // Note that even though summary has been saved before (not draft), it's reset here as draft until summary is saved again.
   // Should we disable all changes to report when it is not draft anymore, so this does not happen?
   const summaryClicked = () => {
-    const updateRequest = {
+    const updatedReport = {
       id: supervisionReportId,
       supervisionId: Number(supervisionId),
       drivingLineOk,
@@ -129,7 +127,7 @@ const Crossing = (): JSX.Element => {
       draft: true,
     } as ISupervisionReport;
 
-    supervisionReportMutation.mutate(updateRequest);
+    supervisionReportMutation.mutate(updatedReport);
 
     images.forEach((image) => {
       const fileUpload = {
@@ -165,8 +163,7 @@ const Crossing = (): JSX.Element => {
   const noNetworkNoData =
     (isFailed.getSupervision && selectedSupervisionDetail === undefined) ||
     (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
-    (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined) ||
-    (isFailed.getCrossingOfRouteBridge && selectedCrossingDetail === undefined);
+    (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);
 
   return (
     <IonPage>

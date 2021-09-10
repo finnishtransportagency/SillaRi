@@ -259,34 +259,36 @@ export const getSupervisionOfRouteBridge = async (routeBridgeId: number, dispatc
   }
 };
 
-export const sendSupervisionStart = async (supervisionId: number, dispatch: Dispatch): Promise<void> => {
+export const sendSupervisionPlanned = async (createRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
   try {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingStart: false } });
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionPlanned: false } });
 
-    const crossingStartResponse = await fetch(`${getOrigin()}/api/crossing/startcrossing?routeBridgeId=${supervisionId}`, {
+    const createSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/createSupervision`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(createRequest),
     });
 
-    if (crossingStartResponse.ok) {
-      const crossingStart = (await crossingStartResponse.json()) as Promise<ISupervisionReport>;
-      dispatch({ type: crossingActions.START_CROSSING, payload: crossingStart });
+    if (createSupervisionResponse.ok) {
+      const plannedSupervision = (await createSupervisionResponse.json()) as Promise<ISupervision>;
+      dispatch({ type: crossingActions.CREATE_SUPERVISION, payload: plannedSupervision });
     } else {
-      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingStart: true } });
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionPlanned: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingStart: true } });
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionPlanned: true } });
     throw new Error(err);
   }
 };
 
-export const sendSupervisionReportUpdate = async (updateRequest: ISupervisionReport, dispatch: Dispatch): Promise<void> => {
+export const sendSupervisionUpdate = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
   try {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: false } });
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionUpdate: false } });
 
-    console.log("SENDING CROSSING UPDATE", updateRequest);
-
-    const crossingUpdateResponse = await fetch(`${getOrigin()}/api/crossing/updatecrossing`, {
+    const updateSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/updatesupervision`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -294,22 +296,120 @@ export const sendSupervisionReportUpdate = async (updateRequest: ISupervisionRep
       body: JSON.stringify(updateRequest),
     });
 
-    if (crossingUpdateResponse.ok) {
-      const crossingUpdate = (await crossingUpdateResponse.json()) as Promise<ICrossing>;
-      dispatch({ type: crossingActions.CROSSING_SUMMARY, payload: crossingUpdate });
+    if (updateSupervisionResponse.ok) {
+      const updatedSupervision = (await updateSupervisionResponse.json()) as Promise<ISupervision>;
+      dispatch({ type: crossingActions.UPDATE_SUPERVISION, payload: updatedSupervision });
     } else {
-      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionUpdate: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionUpdate: true } });
+    throw new Error(err);
+  }
+};
+
+export const sendSupervisionStarted = async (supervisionId: number, dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionStarted: false } });
+
+    const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision?supervisionId=${supervisionId}`, {
+      method: "POST",
+    });
+
+    if (startSupervisionResponse.ok) {
+      const startedSupervision = (await startSupervisionResponse.json()) as Promise<ISupervision>;
+      dispatch({ type: crossingActions.START_SUPERVISION, payload: startedSupervision });
+    } else {
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionStarted: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionStarted: true } });
+    throw new Error(err);
+  }
+};
+
+export const sendSupervisionCancelled = async (cancelRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionCancelled: false } });
+
+    const cancelSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/cancelsupervision`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cancelRequest),
+    });
+
+    if (cancelSupervisionResponse.ok) {
+      const cancelledSupervision = (await cancelSupervisionResponse.json()) as Promise<ISupervision>;
+      dispatch({ type: crossingActions.CANCEL_SUPERVISION, payload: cancelledSupervision });
+    } else {
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionCancelled: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionCancelled: true } });
+    throw new Error(err);
+  }
+};
+
+export const sendSupervisionFinished = async (finishRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionFinished: false } });
+
+    const finishSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/finishsupervision`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(finishRequest),
+    });
+
+    if (finishSupervisionResponse.ok) {
+      const finishedSupervision = (await finishSupervisionResponse.json()) as Promise<ISupervision>;
+      dispatch({ type: crossingActions.FINISH_SUPERVISION, payload: finishedSupervision });
+    } else {
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionFinished: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionFinished: true } });
+    throw new Error(err);
+  }
+};
+
+export const sendSupervisionReportUpdate = async (updateRequest: ISupervisionReport, dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionReportUpdate: false } });
+
+    console.log("SENDING SUPERVISION REPORT UPDATE", updateRequest);
+
+    const updateReportResponse = await fetch(`${getOrigin()}/api/supervision/updatesupervisionreport`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateRequest),
+    });
+
+    if (updateReportResponse.ok) {
+      const updatedSupervision = (await updateReportResponse.json()) as Promise<ISupervision>;
+      dispatch({ type: crossingActions.SUPERVISION_SUMMARY, payload: updatedSupervision });
+    } else {
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionReportUpdate: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionReportUpdate: true } });
     throw new Error(err);
   }
 };
 
 export const sendSingleUpload = async (fileUpload: IFileInput, dispatch: Dispatch): Promise<void> => {
   try {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: false } });
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSingleUpload: false } });
 
     const singleUploadResponse = await fetch(`${getOrigin()}/api/upload/singleupload`, {
       method: "POST",
@@ -323,11 +423,11 @@ export const sendSingleUpload = async (fileUpload: IFileInput, dispatch: Dispatc
       const singleUpload = (await singleUploadResponse.json()) as Promise<IFile>;
       console.log("singleUpload response", singleUpload);
     } else {
-      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSingleUpload: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendCrossingUpdate: true } });
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSingleUpload: true } });
     throw new Error(err);
   }
 };

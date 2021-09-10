@@ -97,9 +97,7 @@ public class SupervisionRepository {
         });
     }
 
-    public Integer createSupervisionReport(SupervisionModel supervisionModel) throws DataAccessException {
-        Integer supervisionId = supervisionModel.getId();
-
+    public Integer createSupervisionReport(Integer supervisionId) throws DataAccessException {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
@@ -141,33 +139,6 @@ public class SupervisionRepository {
         });
     }
 
-    public void updateSupervisionReport(SupervisionModel supervisionModel) {
-        SupervisionReportModel supervisionReport = supervisionModel.getReport();
-
-        if (supervisionReport != null) {
-            dsl.transaction(configuration -> {
-                DSLContext ctx = DSL.using(configuration);
-
-                ctx.update(SupervisionMapper.supervisionReport)
-                        .set(SupervisionMapper.supervisionReport.DRIVING_LINE_OK, supervisionReport.getDrivingLineOk())
-                        .set(SupervisionMapper.supervisionReport.DRIVING_LINE_INFO, supervisionReport.getDrivingLineInfo())
-                        .set(SupervisionMapper.supervisionReport.SPEED_LIMIT_OK, supervisionReport.getSpeedLimitOk())
-                        .set(SupervisionMapper.supervisionReport.SPEED_LIMIT_INFO, supervisionReport.getSpeedLimitInfo())
-                        .set(SupervisionMapper.supervisionReport.ANOMALIES, supervisionReport.getAnomalies())
-                        .set(SupervisionMapper.supervisionReport.ANOMALIES_DESCRIPTION, supervisionReport.getAnomaliesDescription())
-                        .set(SupervisionMapper.supervisionReport.SURFACE_DAMAGE, supervisionReport.getSurfaceDamage())
-                        .set(SupervisionMapper.supervisionReport.SEAM_DAMAGE, supervisionReport.getSeamDamage())
-                        .set(SupervisionMapper.supervisionReport.BENDS_DISPLACEMENTS, supervisionReport.getBendsDisplacements())
-                        .set(SupervisionMapper.supervisionReport.OTHER_OBSERVATIONS, supervisionReport.getOtherObservations())
-                        .set(SupervisionMapper.supervisionReport.OTHER_OBSERVATIONS_INFO, supervisionReport.getOtherObservationsInfo())
-                        .set(SupervisionMapper.supervisionReport.ADDITIONAL_INFO, supervisionReport.getAdditionalInfo())
-                        .set(SupervisionMapper.supervisionReport.DRAFT, supervisionReport.getDraft())
-                        .where(SupervisionMapper.supervisionReport.ID.eq(supervisionReport.getId()))
-                        .execute();
-            });
-        }
-    }
-
     public void cancelSupervision(SupervisionModel supervisionModel) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
@@ -179,6 +150,29 @@ public class SupervisionRepository {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
             insertSupervisionStatus(ctx, supervisionModel.getId(), SupervisionStatusType.FINISHED);
+        });
+    }
+
+    public void updateSupervisionReport(SupervisionReportModel supervisionReport) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            ctx.update(SupervisionMapper.supervisionReport)
+                    .set(SupervisionMapper.supervisionReport.DRIVING_LINE_OK, supervisionReport.getDrivingLineOk())
+                    .set(SupervisionMapper.supervisionReport.DRIVING_LINE_INFO, supervisionReport.getDrivingLineInfo())
+                    .set(SupervisionMapper.supervisionReport.SPEED_LIMIT_OK, supervisionReport.getSpeedLimitOk())
+                    .set(SupervisionMapper.supervisionReport.SPEED_LIMIT_INFO, supervisionReport.getSpeedLimitInfo())
+                    .set(SupervisionMapper.supervisionReport.ANOMALIES, supervisionReport.getAnomalies())
+                    .set(SupervisionMapper.supervisionReport.ANOMALIES_DESCRIPTION, supervisionReport.getAnomaliesDescription())
+                    .set(SupervisionMapper.supervisionReport.SURFACE_DAMAGE, supervisionReport.getSurfaceDamage())
+                    .set(SupervisionMapper.supervisionReport.SEAM_DAMAGE, supervisionReport.getSeamDamage())
+                    .set(SupervisionMapper.supervisionReport.BENDS_DISPLACEMENTS, supervisionReport.getBendsDisplacements())
+                    .set(SupervisionMapper.supervisionReport.OTHER_OBSERVATIONS, supervisionReport.getOtherObservations())
+                    .set(SupervisionMapper.supervisionReport.OTHER_OBSERVATIONS_INFO, supervisionReport.getOtherObservationsInfo())
+                    .set(SupervisionMapper.supervisionReport.ADDITIONAL_INFO, supervisionReport.getAdditionalInfo())
+                    .set(SupervisionMapper.supervisionReport.DRAFT, supervisionReport.getDraft())
+                    .where(SupervisionMapper.supervisionReport.ID.eq(supervisionReport.getId()))
+                    .execute();
         });
     }
 

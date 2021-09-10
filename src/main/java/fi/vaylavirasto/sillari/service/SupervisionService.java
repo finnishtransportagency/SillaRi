@@ -1,6 +1,7 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.repositories.FileRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionStatusRepository;
@@ -45,16 +46,9 @@ public class SupervisionService {
     }
 
     // Adds the status IN_PROGRESS and creates a new supervision report
-    public SupervisionModel startSupervision(SupervisionModel supervisionModel) {
-        supervisionRepository.createSupervisionReport(supervisionModel);
-        return getSupervision(supervisionModel.getId());
-    }
-
-    // Updates the report fields
-    // TODO do we need to add a new status row?
-    public SupervisionModel updateSupervisionReport(SupervisionModel supervisionModel) {
-        supervisionRepository.updateSupervisionReport(supervisionModel);
-        return getSupervision(supervisionModel.getId());
+    public SupervisionModel startSupervision(Integer supervisionId) {
+        supervisionRepository.createSupervisionReport(supervisionId);
+        return getSupervision(supervisionId);
     }
 
     // Cancels the supervision by adding the status CANCELLED
@@ -67,6 +61,13 @@ public class SupervisionService {
     public SupervisionModel finishSupervision(SupervisionModel supervisionModel) {
         supervisionRepository.finishSupervision(supervisionModel);
         return getSupervision(supervisionModel.getId());
+    }
+
+    // Updates the report fields
+    // TODO do we need to add a new status row?
+    public SupervisionModel updateSupervisionReport(SupervisionReportModel supervisionReportModel) {
+        supervisionRepository.updateSupervisionReport(supervisionReportModel);
+        return getSupervision(supervisionReportModel.getSupervisionId());
     }
 
 }
