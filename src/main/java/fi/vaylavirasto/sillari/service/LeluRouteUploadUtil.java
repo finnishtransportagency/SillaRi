@@ -129,7 +129,7 @@ public class LeluRouteUploadUtil {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LeluRouteUploadResponseWrapper(-1, message));
             }
         } catch (Exception ex) {
-            String message = "Error uploading route geometry file!";
+            String message = "Exception while uploading route geometry file!";
             logger.error(message, ex);
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LeluRouteUploadResponseWrapper(-1, message));
