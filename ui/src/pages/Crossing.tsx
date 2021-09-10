@@ -26,16 +26,15 @@ import { useTypedSelector } from "../store/store";
 import IRadioValue from "../interfaces/IRadioValue";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
-import ICrossingInput from "../interfaces/ICrossingInput";
 import IFileInput from "../interfaces/IFileInput";
 import {
   getPermitOfRouteBridge,
   getRouteBridge,
   getSupervision,
   onRetry,
-  sendSupervisionStart,
-  sendSupervisionReportUpdate,
   sendSingleUpload,
+  sendSupervisionReportUpdate,
+  sendSupervisionStart,
 } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
@@ -349,7 +348,7 @@ const Crossing = (): JSX.Element => {
                   />
                   <IonLabel>{t("supervision.report.bendsDisplacements")}</IonLabel>
                 </IonItem>
-                <IonItem key="somethingElse">
+                <IonItem key="otherObservations">
                   <IonLabel>{t("supervision.report.otherObservations")}</IonLabel>
                   <IonTextarea
                     class="crossingTextArea"

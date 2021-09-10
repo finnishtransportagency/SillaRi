@@ -12,3 +12,5 @@ select s.id,
         ':0' || (floor(random() * (9 - 1 + 1) + 1)::int) || ':00 +03:00')::timestamptz
 from sillari.supervision s left join sillari.supervision_status ss on s.id = ss.supervision_id
 where ss.id is null;
+
+alter table sillari.supervision alter column route_transport_id drop not null;

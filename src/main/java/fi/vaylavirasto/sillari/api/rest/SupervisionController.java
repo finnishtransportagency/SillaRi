@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Timed
@@ -28,8 +25,8 @@ public class SupervisionController {
     public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervision");
         try {
-            SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
-            return ResponseEntity.ok().body(supervision != null ? supervision : new EmptyJsonResponse());
+            SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId);
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
@@ -41,8 +38,86 @@ public class SupervisionController {
     public ResponseEntity<?> getSupervisionOfRouteBridge(@RequestParam Integer routeBridgeId) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionOfRouteBridge");
         try {
-            SupervisionModel supervision = supervisionService.getSupervisionOfRouteBridge(routeBridgeId);
-            return ResponseEntity.ok().body(supervision != null ? supervision : new EmptyJsonResponse());
+            SupervisionModel supervisionModel = supervisionService.getSupervisionOfRouteBridge(routeBridgeId);
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Create planned supervision")
+    @PostMapping(value = "/createsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> createSupervision(@RequestBody SupervisionModel supervision) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "createSupervision");
+        try {
+            SupervisionModel supervisionModel = supervisionService.createSupervision(supervision);
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Update supervision")
+    @PostMapping(value = "/updatesupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> updateSupervision(@RequestBody SupervisionModel supervision) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateSupervision");
+        try {
+            SupervisionModel supervisionModel = supervisionService.updateSupervision(supervision);
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Start supervision, create empty supervision report")
+    @PostMapping(value = "/startsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> startSupervision(@RequestBody SupervisionModel supervision) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "startSupervision");
+        try {
+            SupervisionModel supervisionModel = supervisionService.startSupervision(supervision);
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Update supervision report")
+    @PostMapping(value = "/updatesupervisionreport", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> updateSupervisionReport(@RequestBody SupervisionModel supervision) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateSupervisionReport");
+        try {
+            SupervisionModel supervisionModel = supervisionService.updateSupervisionReport(supervision);
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Cancel supervision")
+    @PostMapping(value = "/cancelsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> cancelSupervision(@RequestBody SupervisionModel supervision) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "cancelSupervision");
+        try {
+            SupervisionModel supervisionModel = supervisionService.cancelSupervision(supervision);
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Finish supervision")
+    @PostMapping(value = "/finishsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> finishSupervision(@RequestBody SupervisionModel supervision) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "finishSupervision");
+        try {
+            SupervisionModel supervisionModel = supervisionService.finishSupervision(supervision);
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
