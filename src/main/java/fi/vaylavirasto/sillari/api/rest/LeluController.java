@@ -126,4 +126,14 @@ public class LeluController {
         logger.debug("Lelu uploadroutegeometry {}", routeId);
         return leluService.uploadRouteGeometry(routeId, file);
     }
+
+    @RequestMapping(value = "/uploadroutegeometry2", method = RequestMethod.POST)
+    @ResponseBody
+    public LeluRouteGeometryResponseDTO uploadRouteGeometry2(@RequestParam Long routeId,
+                                                        @RequestParam("file") MultipartFile file)
+            throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
+        logger.debug("Lelu uploadroutegeometry2 {}", routeId);
+        return leluService.uploadRouteGeometry(routeId, file);
+    }
+
 }

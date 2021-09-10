@@ -87,6 +87,7 @@ public class LeluService {
     }
 
     public LeluRouteGeometryResponseDTO uploadRouteGeometry(Long routeId, MultipartFile file) throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
+        logger.debug("uploadRouteGeometry: " + routeId + " " +  file.getName());
         RouteModel route = routeRepository.getRouteWithLeluId(routeId);
 
         if(route == null){
