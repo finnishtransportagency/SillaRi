@@ -10,9 +10,8 @@ export default interface ISupervisionReport {
   surfaceDamage: boolean;
   seamDamage: boolean;
   bendsDisplacements: boolean;
-  otherObservations: string;
+  otherObservations: boolean;
+  otherObservationsInfo: string;
   additionalInfo: string;
   draft: boolean;
-  created: Date;
-  modified: Date;
 }

@@ -58,7 +58,7 @@ const Crossing = (): JSX.Element => {
   } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
-  const { routeBridgeId, report } = selectedSupervisionDetail || {};
+  const { routeBridgeId = "0", report } = selectedSupervisionDetail || {};
 
   const {
     id: supervisionReportId = -1,
@@ -71,9 +71,9 @@ const Crossing = (): JSX.Element => {
     surfaceDamage = false,
     seamDamage = false,
     bendsDisplacements = false,
-    otherObservations = "",
+    otherObservations = false,
+    otherObservationsInfo = "",
     additionalInfo = "",
-    created,
   } = report || {};
 
   // Added query to clear previous supervision from Redux store, otherwise that one is used
@@ -83,10 +83,13 @@ const Crossing = (): JSX.Element => {
     { retry: onRetry }
   );
 
-  // FIXME probably cannot use routeBridgeId from supervision here
-  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
+  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
+    retry: onRetry,
+    enabled: Number(routeBridgeId) > 0,
+  });
   useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
     retry: onRetry,
+    enabled: Number(routeBridgeId) > 0,
   });
 
   // Set-up mutations for modifying data later
@@ -185,9 +188,7 @@ const Crossing = (): JSX.Element => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <IonLabel class="crossingLabel">
-                  {t("supervision.supervisionStarted")} {created}
-                </IonLabel>
+                <IonLabel class="crossingLabel">{t("supervision.supervisionStarted")}TODO</IonLabel>
               </IonCol>
             </IonRow>
 
@@ -346,12 +347,21 @@ const Crossing = (): JSX.Element => {
                   <IonLabel>{t("supervision.report.bendsDisplacements")}</IonLabel>
                 </IonItem>
                 <IonItem key="otherObservations">
-                  <IonLabel>{t("supervision.report.otherObservations")}</IonLabel>
+                  <IonCheckbox
+                    slot="start"
+                    value="otherObservations"
+                    checked={otherObservations}
+                    onClick={() => checkBoxClicked("otherObservations", !otherObservations)}
+                  />
+                  <IonLabel>{t("supervision.report.bendsDisplacements")}</IonLabel>
+                </IonItem>
+                <IonItem key="otherObservationsInfo">
+                  <IonLabel>{t("supervision.report.otherObservationsInfo")}</IonLabel>
                   <IonTextarea
                     class="crossingTextArea"
-                    value={otherObservations}
+                    value={otherObservationsInfo}
                     onIonChange={(e) => {
-                      return changeTextAreaValue("otherObservations", e.detail.value ?? "");
+                      return changeTextAreaValue("otherObservationsInfo", e.detail.value ?? "");
                     }}
                   />
                 </IonItem>

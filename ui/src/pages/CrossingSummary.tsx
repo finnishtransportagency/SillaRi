@@ -24,51 +24,50 @@ import moment from "moment";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
-import ICrossingInput from "../interfaces/ICrossingInput";
 import IFileInput from "../interfaces/IFileInput";
-import { getPermitOfRouteBridge, getRouteBridge, onRetry, sendSupervisionReportUpdate, sendSingleUpload, getCrossing } from "../utils/backendData";
+import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry, sendSingleUpload, sendSupervisionReportUpdate } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
 import { getOrigin } from "../utils/request";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
 
-interface CrossingSummaryProps {
-  crossingId: string;
+interface SummaryProps {
+  supervisionId: string;
 }
 
 const CrossingSummary = (): JSX.Element => {
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { crossingId = "0" } = useParams<CrossingSummaryProps>();
+  const { supervisionId = "0" } = useParams<SummaryProps>();
   const [toastMessage, setToastMessage] = useState("");
 
   const {
     selectedPermitDetail,
     selectedBridgeDetail,
-    selectedCrossingDetail,
+    selectedSupervisionDetail,
     images = [],
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
+  const { routeBridgeId = "0", report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
   const {
-    routeBridgeId = "0",
-    started = "",
+    drivingLineOk,
     drivingLineInfo,
-    drivingLineInfoDescription,
-    speedInfo,
-    speedInfoDescription,
-    exceptionsInfo,
-    exceptionsInfoDescription,
-    describe,
-    extraInfoDescription,
-    permanentBendings,
-    twist,
-    damage,
-    images: crossingImages = [],
-  } = selectedCrossingDetail || {};
+    speedLimitOk,
+    speedLimitInfo,
+    anomalies,
+    anomaliesDescription,
+    surfaceDamage,
+    seamDamage,
+    bendsDisplacements,
+    otherObservations,
+    otherObservationsInfo,
+    additionalInfo,
+  } = report || {};
 
-  useQuery(["getCrossing", crossingId], () => getCrossing(Number(crossingId), dispatch, selectedCrossingDetail), { retry: onRetry });
+  useQuery(["getSupervision", supervisionId], () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail), { retry: onRetry });
 
   // Use the enabled option to only fetch data when routeBridgeId is available
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
@@ -81,41 +80,42 @@ const CrossingSummary = (): JSX.Element => {
   });
 
   // Set-up mutations for modifying data later
-  const crossingUpdateMutation = useMutation((updateRequest: ICrossingInput) => sendSupervisionReportUpdate(updateRequest, dispatch), { retry: onRetry });
+  const reportUpdateMutation = useMutation((updateRequest: ISupervisionReport) => sendSupervisionReportUpdate(updateRequest, dispatch), {
+    retry: onRetry,
+  });
   const singleUploadMutation = useMutation((fileUpload: IFileInput) => sendSingleUpload(fileUpload, dispatch), { retry: onRetry });
 
-  const { isLoading: isSendingCrossingUpdate, isSuccess: isCrossingUpdateSuccessful } = crossingUpdateMutation;
+  const { isLoading: isSendingReportUpdate, isSuccess: isReportUpdateSuccessful } = reportUpdateMutation;
   useEffect(() => {
-    if (isCrossingUpdateSuccessful) {
-      setToastMessage(t("crossing.summary.saved"));
+    if (isReportUpdateSuccessful) {
+      setToastMessage(t("supervision.summary.saved"));
     }
-  }, [isCrossingUpdateSuccessful, t]);
+  }, [isReportUpdateSuccessful, t]);
 
   const save = () => {
-    if (selectedCrossingDetail !== undefined) {
+    if (report !== undefined) {
       const updateRequest = {
-        id: Number(crossingId),
-        routeBridgeId,
-        started,
+        supervisionId: Number(supervisionId),
+        drivingLineOk,
         drivingLineInfo,
-        drivingLineInfoDescription,
-        speedInfo,
-        speedInfoDescription,
-        exceptionsInfo,
-        exceptionsInfoDescription,
-        describe,
-        extraInfoDescription,
-        permanentBendings,
-        twist,
-        damage,
+        speedLimitOk,
+        speedLimitInfo,
+        anomalies,
+        anomaliesDescription,
+        surfaceDamage,
+        seamDamage,
+        bendsDisplacements,
+        otherObservations,
+        otherObservationsInfo,
+        additionalInfo,
         draft: false,
-      } as ICrossingInput;
+      } as ISupervisionReport;
 
-      crossingUpdateMutation.mutate(updateRequest);
+      reportUpdateMutation.mutate(updateRequest);
 
       images.forEach((image) => {
         const fileUpload = {
-          supervisionId: selectedCrossingDetail.id.toString(),
+          supervisionId: supervisionId.toString(),
           filename: image.filename,
           base64: image.dataUrl,
           taken: moment(image.date).format(dateTimeFormat),
@@ -126,41 +126,41 @@ const CrossingSummary = (): JSX.Element => {
     }
   };
 
-  let exceptionsText = "";
-  if (exceptionsInfo) {
-    if (permanentBendings) {
-      exceptionsText = t("crossing.exceptions.permanentBendings");
+  let anomaliesSummary = "";
+  if (anomalies) {
+    if (surfaceDamage) {
+      anomaliesSummary = t("supervision.report.surfaceDamage");
     }
-    if (twist) {
-      if (exceptionsText.length > 0) {
-        exceptionsText += ", ";
+    if (seamDamage) {
+      if (anomaliesSummary.length > 0) {
+        anomaliesSummary += ", ";
       }
-      exceptionsText += t("crossing.exceptions.twist");
+      anomaliesSummary += t("supervision.report.seamDamage");
     }
-    if (damage) {
-      if (exceptionsText.length > 0) {
-        exceptionsText += ", ";
+    if (bendsDisplacements) {
+      if (anomaliesSummary.length > 0) {
+        anomaliesSummary += ", ";
       }
-      exceptionsText += t("crossing.exceptions.damage");
+      anomaliesSummary += t("supervision.report.bendsDisplacements");
     }
-    if (describe) {
-      if (exceptionsText.length > 0) {
-        exceptionsText += ", ";
+    if (otherObservations) {
+      if (anomaliesSummary.length > 0) {
+        anomaliesSummary += ", ";
       }
-      exceptionsText += t("crossing.exceptions.somethingElse");
+      anomaliesSummary += otherObservationsInfo;
     }
   }
 
   const noNetworkNoData =
-    (isFailed.getCrossing && selectedCrossingDetail === undefined) ||
+    (isFailed.getSupervision && selectedSupervisionDetail === undefined) ||
     (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
     (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);
 
   return (
     <IonPage>
       <Header
-        title={t("crossing.summary.title")}
-        somethingFailed={isFailed.getCrossing || isFailed.getRouteBridge || isFailed.getPermitOfRouteBridge}
+        title={t("supervision.summary.title")}
+        somethingFailed={isFailed.getSupervision || isFailed.getRouteBridge || isFailed.getPermitOfRouteBridge}
       />
       <IonContent fullscreen>
         {noNetworkNoData ? (
@@ -170,35 +170,33 @@ const CrossingSummary = (): JSX.Element => {
             <IonRow>
               <IonCol>
                 <IonLabel class="crossingLabel">
-                  {t("crossing.permitNumber")} {permitNumber}
+                  {t("supervision.permitNumber")} {permitNumber}
                 </IonLabel>
               </IonCol>
             </IonRow>
             <IonRow>
               <IonCol>
-                <IonLabel class="crossingLabel">
-                  {t("crossing.summary.supervisionStarted")} {started}
-                </IonLabel>
+                <IonLabel class="crossingLabel">{t("supervision.summary.supervisionStarted")}TODO</IonLabel>
               </IonCol>
             </IonRow>
 
             <IonRow>
               <IonCol>
                 <IonLabel class="crossingLabel">
-                  {t("crossing.summary.bridgeName")} {bridgeName} | {bridgeIdentifier}
+                  {t("supervision.summary.bridgeName")} {bridgeName} | {bridgeIdentifier}
                 </IonLabel>
               </IonCol>
             </IonRow>
             <IonRow>
               <IonCol>
                 <IonLabel class="crossingLabelBold">
-                  {t("crossing.summary.images")} ({images.length === 0 && crossingImages.length > 0 ? crossingImages.length : images.length}{" "}
-                  {t("crossing.summary.kpl")})
+                  {t("supervision.summary.images")} ({images.length === 0 && supervisionImages.length > 0 ? supervisionImages.length : images.length}{" "}
+                  {t("supervision.summary.kpl")})
                 </IonLabel>
               </IonCol>
             </IonRow>
             <IonRow>
-              {crossingImages.length === 0 &&
+              {supervisionImages.length === 0 &&
                 images.map((imageItem) => (
                   <IonItem key={imageItem.id}>
                     <IonCol>
@@ -208,12 +206,12 @@ const CrossingSummary = (): JSX.Element => {
                     </IonCol>
                   </IonItem>
                 ))}
-              {crossingImages.length > 0 &&
-                crossingImages.map((crossingImage) => (
-                  <IonItem key={crossingImage.id}>
+              {supervisionImages.length > 0 &&
+                supervisionImages.map((image) => (
+                  <IonItem key={image.id}>
                     <IonCol>
                       <IonThumbnail>
-                        <IonImg src={`${getOrigin()}/api/images/get?objectKey=${crossingImage.objectKey}`} />
+                        <IonImg src={`${getOrigin()}/api/images/get?objectKey=${image.objectKey}`} />
                       </IonThumbnail>
                     </IonCol>
                   </IonItem>
@@ -223,49 +221,50 @@ const CrossingSummary = (): JSX.Element => {
               <IonCol size="auto">
                 <IonItem>
                   <IonIcon
-                    icon={!drivingLineInfo ? closeCircleOutline : checkmarkCircleOutline}
-                    class={!drivingLineInfo ? "checkMarkRed" : "checkMarkGreen"}
+                    icon={!drivingLineOk ? closeCircleOutline : checkmarkCircleOutline}
+                    class={!drivingLineOk ? "checkMarkRed" : "checkMarkGreen"}
                   />
-                  <IonText class="crossingCheckedLabel">{t("crossing.summary.drivingLine")}</IonText>
+                  <IonText class="crossingCheckedLabel">{t("supervision.summary.drivingLine")}</IonText>
                 </IonItem>
               </IonCol>
               <IonCol size="auto">
                 <IonItem>
-                  <IonIcon icon={!speedInfo ? closeCircleOutline : checkmarkCircleOutline} class={!speedInfo ? "checkMarkRed" : "checkMarkGreen"} />
-                  <IonText class="crossingCheckedLabel">{t("crossing.summary.speed")}</IonText>
+                  <IonIcon
+                    icon={!speedLimitOk ? closeCircleOutline : checkmarkCircleOutline}
+                    class={!speedLimitOk ? "checkMarkRed" : "checkMarkGreen"}
+                  />
+                  <IonText class="crossingCheckedLabel">{t("supervision.summary.speedLimit")}</IonText>
                 </IonItem>
               </IonCol>
             </IonRow>
-            <IonRow>
+            <IonRow class={anomalies ? "crossingVisibleRow" : "crossingHiddenRow"}>
               <IonCol>
-                <IonLabel class="crossingLabelBold">{t("crossing.summary.exceptions")}:</IonLabel>
-                <IonItem>{exceptionsText}</IonItem>
+                <IonLabel class="crossingLabelBold">{t("supervision.summary.anomalies")}:</IonLabel>
+                <IonItem>{anomaliesSummary}</IonItem>
               </IonCol>
-            </IonRow>
-            <IonRow class={describe ? "crossingVisibleRow" : "crossingHiddenRow"}>
               <IonCol>
-                <IonLabel class="crossingLabelBold">{t("crossing.summary.exceptionsDesc")}:</IonLabel>
-                <IonItem>{exceptionsInfoDescription}</IonItem>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonLabel class="crossingLabelBold">{t("crossing.summary.extraInfo")}:</IonLabel>
-                <IonItem>{extraInfoDescription}</IonItem>
+                <IonLabel class="crossingLabelBold">{t("supervision.summary.anomaliesDescription")}:</IonLabel>
+                <IonItem>{anomaliesDescription}</IonItem>
               </IonCol>
             </IonRow>
             <IonRow>
               <IonCol>
-                <IonButton onClick={() => history.goBack()}>{t("crossing.summary.buttons.edit")}</IonButton>
+                <IonLabel class="crossingLabelBold">{t("supervision.summary.additionalInfo")}:</IonLabel>
+                <IonItem>{additionalInfo}</IonItem>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonButton onClick={() => history.goBack()}>{t("supervision.summary.buttons.edit")}</IonButton>
               </IonCol>
               <IonCol>
                 <IonButton
-                  disabled={isSendingCrossingUpdate}
+                  disabled={isSendingReportUpdate}
                   onClick={() => {
                     save();
                   }}
                 >
-                  {t("crossing.summary.buttons.save")}
+                  {t("supervision.summary.buttons.save")}
                 </IonButton>
               </IonCol>
             </IonRow>

@@ -70,8 +70,8 @@ const crossingsSlice = createSlice({
           report.drivingLineInfo = action.payload.value;
         } else if (action.payload.name === "speedLimitInfo") {
           report.speedLimitInfo = action.payload.value;
-        } else if (action.payload.name === "otherObservations") {
-          report.otherObservations = action.payload.value;
+        } else if (action.payload.name === "otherObservationsInfo") {
+          report.otherObservationsInfo = action.payload.value;
         } else if (action.payload.name === "anomaliesDescription") {
           report.anomaliesDescription = action.payload.value;
         } else if (action.payload.name === "additionalInfo") {
@@ -96,6 +96,8 @@ const crossingsSlice = createSlice({
           report.seamDamage = action.payload.value;
         } else if (action.payload.name === "bendsDisplacements") {
           report.bendsDisplacements = action.payload.value;
+        } else if (action.payload.name === "otherObservations") {
+          report.otherObservations = action.payload.value;
         }
       }
     },
