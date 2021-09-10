@@ -1,7 +1,9 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.repositories.FileRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionRepository;
+import fi.vaylavirasto.sillari.repositories.SupervisionStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,12 +11,16 @@ import org.springframework.stereotype.Service;
 public class SupervisionService {
     @Autowired
     SupervisionRepository supervisionRepository;
+    @Autowired
+    SupervisionStatusRepository supervisionStatusRepository;
+    @Autowired
+    FileRepository fileRepository;
 
     public SupervisionModel getSupervision(Integer supervisionId) {
         SupervisionModel supervisionModel = supervisionRepository.getSupervisionById(supervisionId);
         if (supervisionModel != null) {
-            // TODO statusHistory
-            supervisionModel.setImages(supervisionRepository.getFiles(supervisionId));
+            supervisionModel.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
+            supervisionModel.setImages(fileRepository.getFiles(supervisionId));
         }
         return supervisionModel;
     }

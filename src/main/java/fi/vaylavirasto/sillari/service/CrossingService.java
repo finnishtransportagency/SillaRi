@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.service;
 import fi.vaylavirasto.sillari.model.CrossingInputModel;
 import fi.vaylavirasto.sillari.model.CrossingModel;
 import fi.vaylavirasto.sillari.repositories.CrossingRepository;
+import fi.vaylavirasto.sillari.repositories.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,11 +11,13 @@ import org.springframework.stereotype.Service;
 public class CrossingService {
     @Autowired
     CrossingRepository crossingRepository;
+    @Autowired
+    FileRepository fileRepository;
 
     public CrossingModel getCrossing(Integer crossingId) {
         CrossingModel crossingModel = crossingRepository.getCrossingById(crossingId);
         if (crossingModel != null) {
-            crossingModel.setImages(crossingRepository.getFiles(crossingId));
+            crossingModel.setImages(fileRepository.getFiles(crossingId));
         }
         return crossingModel;
     }
@@ -22,7 +25,7 @@ public class CrossingService {
     public CrossingModel getCrossingOfRouteBridge(Integer routeBridgeId) {
         CrossingModel crossingModel = crossingRepository.getCrossingByRouteBridgeId(routeBridgeId);
         if (crossingModel != null) {
-            crossingModel.setImages(crossingRepository.getFiles(crossingModel.getId()));
+            crossingModel.setImages(fileRepository.getFiles(crossingModel.getId()));
         }
         return crossingModel;
     }
@@ -30,7 +33,7 @@ public class CrossingService {
     public CrossingModel createCrossing(Integer routeBridgeId) {
         CrossingModel crossingModel = crossingRepository.getCrossingByRouteBridgeId(routeBridgeId);
         if (crossingModel != null) {
-            crossingModel.setImages(crossingRepository.getFiles(crossingModel.getId()));
+            crossingModel.setImages(fileRepository.getFiles(crossingModel.getId()));
             return crossingModel;
         }
         return getCrossing(crossingRepository.createCrossing(routeBridgeId));

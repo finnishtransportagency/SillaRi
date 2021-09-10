@@ -2,12 +2,10 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.*;
 import org.jooq.DSLContext;
-import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Repository
@@ -78,8 +76,4 @@ public class CrossingRepository {
                 .fetchOne(new CrossingMapper());
     }
 
-    public List<FileModel> getFiles(Integer supervisionId) {
-        return dsl.select().from(FileMapper.image).where(FileMapper.image.SUPERVISION_ID.eq(supervisionId))
-                .fetch(new FileMapper(true));
-    }
 }
