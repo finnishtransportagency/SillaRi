@@ -107,7 +107,7 @@ const Crossing = (): JSX.Element => {
 
   const changeTextAreaValue = (pname: string, pvalue: string) => {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
-    dispatch({ type: crossingActions.CROSSING_TEXTAREA_CHANGED, payload: change });
+    dispatch({ type: crossingActions.SUPERVISION_TEXTAREA_CHANGED, payload: change });
   };
 
   // Note that even though summary has been saved before (not draft), it's reset here as draft until summary is saved again.
@@ -152,7 +152,7 @@ const Crossing = (): JSX.Element => {
       name: radioName,
       value: radioValue === "yes",
     } as IRadioValue;
-    dispatch({ type: crossingActions.CROSSING_RADIO_CHANGED, payload: radioPayload });
+    dispatch({ type: crossingActions.SUPERVISION_RADIO_CHANGED, payload: radioPayload });
   };
 
   const checkBoxClicked = (checkBoxName: string, checkBoxValue: boolean) => {
@@ -160,7 +160,7 @@ const Crossing = (): JSX.Element => {
       name: checkBoxName,
       value: checkBoxValue,
     } as IRadioValue;
-    dispatch({ type: crossingActions.CROSSING_RADIO_CHANGED, payload: radioPayload });
+    dispatch({ type: crossingActions.SUPERVISION_RADIO_CHANGED, payload: radioPayload });
   };
 
   const noNetworkNoData =
@@ -262,7 +262,7 @@ const Crossing = (): JSX.Element => {
 
             <IonRow class="crossingHeader">
               <IonCol>
-                <IonLabel class="crossingLabelBold">{t("supervision.report.speedLimit")}</IonLabel>
+                <IonLabel class="crossingLabelBold">{t("supervision.report.speedLimitOk")}</IonLabel>
               </IonCol>
             </IonRow>
             <IonRadioGroup value={speedLimitOk ? "yes" : "no"} onIonChange={(e) => radioClicked("speedLimitOk", e.detail.value)}>
@@ -319,11 +319,6 @@ const Crossing = (): JSX.Element => {
             </IonRadioGroup>
             <IonRow style={anomalies ? {} : { display: "none" }} class="whyRow">
               <IonCol class="whyCol">
-                <IonItem class="whyItem">
-                  <IonListHeader>
-                    <IonLabel class="whyLabel">{t("supervision.report.anomalies")}</IonLabel>
-                  </IonListHeader>
-                </IonItem>
                 <IonItem key="surfaceDamage">
                   <IonCheckbox
                     slot="start"
@@ -353,27 +348,18 @@ const Crossing = (): JSX.Element => {
                     checked={otherObservations}
                     onClick={() => checkBoxClicked("otherObservations", !otherObservations)}
                   />
-                  <IonLabel>{t("supervision.report.bendsDisplacements")}</IonLabel>
-                </IonItem>
-                <IonItem key="otherObservationsInfo">
-                  <IonLabel>{t("supervision.report.otherObservationsInfo")}</IonLabel>
-                  <IonTextarea
-                    class="crossingTextArea"
-                    value={otherObservationsInfo}
-                    onIonChange={(e) => {
-                      return changeTextAreaValue("otherObservationsInfo", e.detail.value ?? "");
-                    }}
-                  />
-                </IonItem>
-                <IonItem key="anomaliesDescription">
-                  <IonLabel>{t("supervision.report.anomaliesDescription")}</IonLabel>
-                  <IonTextarea
-                    class="crossingTextArea"
-                    value={anomaliesDescription}
-                    onIonChange={(e) => {
-                      return changeTextAreaValue("anomaliesDescription", e.detail.value ?? "");
-                    }}
-                  />
+                  <IonLabel style={!otherObservations ? {} : { display: "none" }}>{t("supervision.report.otherObservations")}</IonLabel>
+                  {otherObservations && (
+                    <IonTextarea
+                      class="crossingTextArea"
+                      disabled={!otherObservations}
+                      placeholder={t("supervision.report.otherObservations")}
+                      value={otherObservationsInfo}
+                      onIonChange={(e) => {
+                        return changeTextAreaValue("otherObservationsInfo", e.detail.value ?? "");
+                      }}
+                    />
+                  )}
                 </IonItem>
               </IonCol>
             </IonRow>

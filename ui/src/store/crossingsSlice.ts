@@ -61,8 +61,8 @@ const crossingsSlice = createSlice({
       console.log("GET_ROUTE_BRIDGE", action.payload);
       return { ...state, selectedBridgeDetail: action.payload };
     },
-    CROSSING_TEXTAREA_CHANGED: (state, action: PayloadAction<ITextAreaValue>) => {
-      console.log("CROSSING_TEXTAREA_CHANGED", action.payload);
+    SUPERVISION_TEXTAREA_CHANGED: (state, action: PayloadAction<ITextAreaValue>) => {
+      console.log("SUPERVISION_TEXTAREA_CHANGED", action.payload);
       const { selectedSupervisionDetail } = state;
       const { report } = selectedSupervisionDetail || {};
       if (selectedSupervisionDetail && report) {
@@ -79,8 +79,8 @@ const crossingsSlice = createSlice({
         }
       }
     },
-    CROSSING_RADIO_CHANGED: (state, action: PayloadAction<IRadioValue>) => {
-      console.log("CROSSING_RADIO_CHANGED", action.payload);
+    SUPERVISION_RADIO_CHANGED: (state, action: PayloadAction<IRadioValue>) => {
+      console.log("SUPERVISION_RADIO_CHANGED", action.payload);
       const { selectedSupervisionDetail } = state;
       const { report } = selectedSupervisionDetail || {};
       if (selectedSupervisionDetail && report) {

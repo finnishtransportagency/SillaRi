@@ -133,7 +133,7 @@ public class SupervisionRepository {
 
             Integer supervisionReportId = supervisionReportIdResult != null ? supervisionReportIdResult.value1() : null;
 
-            insertSupervisionStatus(ctx, supervisionReportId, SupervisionStatusType.IN_PROGRESS);
+            insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.IN_PROGRESS);
 
             return supervisionReportId;
         });
