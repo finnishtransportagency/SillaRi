@@ -158,6 +158,13 @@ const CrossingSummary = (): JSX.Element => {
     (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
     (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);
 
+  const imagesLength = () => {
+    if (images && images.length === 0 && supervisionImages && supervisionImages.length > 0) {
+      return supervisionImages.length;
+    }
+    return images ? images.length : " ";
+  };
+
   return (
     <IonPage>
       <Header
@@ -192,8 +199,7 @@ const CrossingSummary = (): JSX.Element => {
             <IonRow>
               <IonCol>
                 <IonLabel class="crossingLabelBold">
-                  {t("supervision.summary.images")} ({images.length === 0 && supervisionImages.length > 0 ? supervisionImages.length : images.length}{" "}
-                  {t("supervision.summary.kpl")})
+                  {t("supervision.summary.images")} ({imagesLength} {t("supervision.summary.kpl")})
                 </IonLabel>
               </IonCol>
             </IonRow>
