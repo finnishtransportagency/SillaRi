@@ -7,7 +7,6 @@ import {
   IonGrid,
   IonItem,
   IonLabel,
-  IonListHeader,
   IonPage,
   IonRadio,
   IonRadioGroup,
@@ -125,7 +124,8 @@ const Crossing = (): JSX.Element => {
       surfaceDamage: anomalies ? surfaceDamage : false,
       seamDamage: anomalies ? seamDamage : false,
       bendsDisplacements: anomalies ? bendsDisplacements : false,
-      otherObservations: anomalies ? otherObservations : "",
+      otherObservations: anomalies ? otherObservations : false,
+      otherObservationsInfo: anomalies && otherObservations ? otherObservationsInfo : "",
       additionalInfo,
       draft: true,
     } as ISupervisionReport;
@@ -282,7 +282,7 @@ const Crossing = (): JSX.Element => {
               </IonRow>
               <IonRow style={!speedLimitOk ? {} : { display: "none" }} class="whyRow">
                 <IonCol class="whyCol">
-                  <IonLabel class="crossingLabelBold">{t("supervision.report.speedLimitOk")}</IonLabel>
+                  <IonLabel class="crossingLabelBold">{t("supervision.report.speedLimitInfo")}</IonLabel>
                   <IonCard>
                     <IonTextarea
                       class="crossingTextArea"
@@ -352,7 +352,6 @@ const Crossing = (): JSX.Element => {
                   {otherObservations && (
                     <IonTextarea
                       class="crossingTextArea"
-                      disabled={!otherObservations}
                       placeholder={t("supervision.report.otherObservations")}
                       value={otherObservationsInfo}
                       onIonChange={(e) => {

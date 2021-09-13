@@ -60,7 +60,7 @@ public class SupervisionController {
     }
 
     @Operation(summary = "Update supervision")
-    @PostMapping(value = "/updatesupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/updatesupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public ResponseEntity<?> updateSupervision(@RequestBody SupervisionModel supervision) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateSupervision");
@@ -112,7 +112,7 @@ public class SupervisionController {
     }
 
     @Operation(summary = "Update supervision report")
-    @PostMapping(value = "/updatesupervisionreport", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/updatesupervisionreport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public ResponseEntity<?> updateSupervisionReport(@RequestBody SupervisionReportModel report) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateSupervisionReport");

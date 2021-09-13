@@ -53,6 +53,7 @@ const CrossingSummary = (): JSX.Element => {
   const { routeBridgeId = "0", report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
   const {
+    id: supervisionReportId,
     drivingLineOk,
     drivingLineInfo,
     speedLimitOk,
@@ -95,6 +96,7 @@ const CrossingSummary = (): JSX.Element => {
   const save = () => {
     if (report !== undefined) {
       const updateRequest = {
+        id: supervisionReportId,
         supervisionId: Number(supervisionId),
         drivingLineOk,
         drivingLineInfo,
@@ -143,7 +145,7 @@ const CrossingSummary = (): JSX.Element => {
       }
       anomaliesSummary += t("supervision.report.bendsDisplacements");
     }
-    if (otherObservations) {
+    if (otherObservations && otherObservationsInfo) {
       if (anomaliesSummary.length > 0) {
         anomaliesSummary += ", ";
       }
@@ -224,24 +226,41 @@ const CrossingSummary = (): JSX.Element => {
                     icon={!drivingLineOk ? closeCircleOutline : checkmarkCircleOutline}
                     class={!drivingLineOk ? "checkMarkRed" : "checkMarkGreen"}
                   />
-                  <IonText class="crossingCheckedLabel">{t("supervision.summary.drivingLine")}</IonText>
+                  <IonLabel class="crossingCheckedLabel">{t("supervision.summary.drivingLine")}</IonLabel>
                 </IonItem>
               </IonCol>
+              {!drivingLineOk && (
+                <IonCol size="auto">
+                  <IonItem>
+                    <IonText>{drivingLineInfo}</IonText>
+                  </IonItem>
+                </IonCol>
+              )}
               <IonCol size="auto">
                 <IonItem>
                   <IonIcon
                     icon={!speedLimitOk ? closeCircleOutline : checkmarkCircleOutline}
                     class={!speedLimitOk ? "checkMarkRed" : "checkMarkGreen"}
                   />
-                  <IonText class="crossingCheckedLabel">{t("supervision.summary.speedLimit")}</IonText>
+                  <IonLabel class="crossingCheckedLabel">{t("supervision.summary.speedLimit")}</IonLabel>
                 </IonItem>
               </IonCol>
+              {!speedLimitOk && (
+                <IonCol size="auto">
+                  <IonItem>
+                    <IonText>{speedLimitInfo}</IonText>
+                  </IonItem>
+                </IonCol>
+              )}
             </IonRow>
+
             <IonRow class={anomalies ? "crossingVisibleRow" : "crossingHiddenRow"}>
               <IonCol>
                 <IonLabel class="crossingLabelBold">{t("supervision.summary.anomalies")}:</IonLabel>
                 <IonItem>{anomaliesSummary}</IonItem>
               </IonCol>
+            </IonRow>
+            <IonRow>
               <IonCol>
                 <IonLabel class="crossingLabelBold">{t("supervision.summary.anomaliesDescription")}:</IonLabel>
                 <IonItem>{anomaliesDescription}</IonItem>

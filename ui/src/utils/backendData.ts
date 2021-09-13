@@ -335,7 +335,7 @@ export const sendSupervisionCancelled = async (cancelRequest: ISupervision, disp
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionCancelled: false } });
 
     const cancelSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/cancelsupervision`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -360,7 +360,7 @@ export const sendSupervisionFinished = async (finishRequest: ISupervision, dispa
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionFinished: false } });
 
     const finishSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/finishsupervision`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
