@@ -82,16 +82,19 @@ const CameraContainer = (): JSX.Element => {
     }
   };
 
+  const allImagesAmount = (images ? images.length : 0) + (supervisionImages ? supervisionImages.length : 0);
+
   // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
   return (
     <IonContent>
       <IonListHeader>
         <IonLabel>
-          {t("camera.listLabel")} ({images.length + supervisionImages.length} {t("camera.listLabelPcs")})
+          {t("camera.listLabel")} ({allImagesAmount} {t("camera.listLabelPcs")})
         </IonLabel>
       </IonListHeader>
       <IonList>
-        {images.length > 0 &&
+        {images &&
+          images.length > 0 &&
           [...images]
             .sort((a, b) => {
               const am = moment(a.date);
@@ -117,7 +120,8 @@ const CameraContainer = (): JSX.Element => {
               );
             })}
 
-        {supervisionImages.length > 0 &&
+        {supervisionImages &&
+          supervisionImages.length > 0 &&
           [...supervisionImages]
             .sort((a, b) => {
               const am = moment(a.taken);
