@@ -42,7 +42,7 @@ interface SupervisionProps {
   supervisionId: string;
 }
 
-const Crossing = (): JSX.Element => {
+const Supervision = (): JSX.Element => {
   const { t } = useTranslation();
   const hist = useHistory();
   const dispatch = useDispatch();
@@ -408,4 +408,4 @@ const Crossing = (): JSX.Element => {
     </IonPage>
   );
 };
-export default Crossing;
+export default Supervision;

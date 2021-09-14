@@ -34,7 +34,7 @@ interface SummaryProps {
   supervisionId: string;
 }
 
-const CrossingSummary = (): JSX.Element => {
+const SupervisionSummary = (): JSX.Element => {
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -309,4 +309,4 @@ const CrossingSummary = (): JSX.Element => {
   );
 };
 
-export default CrossingSummary;
+export default SupervisionSummary;
