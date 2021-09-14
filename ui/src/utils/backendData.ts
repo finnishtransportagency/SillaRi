@@ -1,6 +1,5 @@
 import { Dispatch } from "redux";
 import ICompany from "../interfaces/ICompany";
-import ICrossing from "../interfaces/ICrossing";
 import IFile from "../interfaces/IFile";
 import IFileInput from "../interfaces/IFileInput";
 import IPermit from "../interfaces/IPermit";
@@ -57,50 +56,6 @@ export const getCompanyList = async (dispatch: Dispatch): Promise<void> => {
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCompanyList: true } });
-    throw new Error(err);
-  }
-};
-
-export const getCrossing = async (crossingId: number, dispatch: Dispatch, selectedCrossingDetail?: ICrossing): Promise<void> => {
-  try {
-    if (selectedCrossingDetail && selectedCrossingDetail.id !== crossingId) {
-      dispatch({ type: crossingActions.GET_CROSSING, payload: undefined });
-    }
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCrossing: false } });
-
-    const crossingResponse = await fetch(`${getOrigin()}/api/crossing/getcrossing?crossingId=${crossingId}`);
-
-    if (crossingResponse.ok) {
-      const crossing = (await crossingResponse.json()) as Promise<ICrossing>;
-      dispatch({ type: crossingActions.GET_CROSSING, payload: crossing });
-    } else {
-      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCrossing: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCrossing: true } });
-    throw new Error(err);
-  }
-};
-
-export const getCrossingOfRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, selectedBridgeDetail?: IRouteBridge): Promise<void> => {
-  try {
-    if (selectedBridgeDetail && selectedBridgeDetail.id !== routeBridgeId) {
-      dispatch({ type: crossingActions.GET_CROSSING, payload: undefined });
-    }
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCrossingOfRouteBridge: false } });
-
-    const crossingOfRouteBridgeResponse = await fetch(`${getOrigin()}/api/crossing/getcrossingofroutebridge?routeBridgeId=${routeBridgeId}`);
-
-    if (crossingOfRouteBridgeResponse.ok) {
-      const crossingOfRouteBridge = (await crossingOfRouteBridgeResponse.json()) as Promise<ICrossing>;
-      dispatch({ type: crossingActions.GET_CROSSING, payload: crossingOfRouteBridge });
-    } else {
-      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCrossingOfRouteBridge: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getCrossingOfRouteBridge: true } });
     throw new Error(err);
   }
 };

@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import ICompany from "../interfaces/ICompany";
-import ICrossing from "../interfaces/ICrossing";
 import IFailedQuery from "../interfaces/IFailedQuery";
 import IImageItem from "../interfaces/IImageItem";
 import INetworkStatus from "../interfaces/INetworkStatus";
@@ -18,7 +17,6 @@ interface IStateProps {
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
   selectedSupervisionDetail?: ISupervision;
-  selectedCrossingDetail?: ICrossing;
   images: IImageItem[];
   networkStatus: INetworkStatus;
 }
@@ -30,7 +28,6 @@ const initialState: IStateProps = {
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
   selectedSupervisionDetail: undefined,
-  selectedCrossingDetail: undefined,
   images: [],
   networkStatus: {
     isFailed: {},
@@ -61,46 +58,6 @@ const crossingsSlice = createSlice({
       console.log("GET_ROUTE_BRIDGE", action.payload);
       return { ...state, selectedBridgeDetail: action.payload };
     },
-    SUPERVISION_TEXTAREA_CHANGED: (state, action: PayloadAction<ITextAreaValue>) => {
-      console.log("SUPERVISION_TEXTAREA_CHANGED", action.payload);
-      const { selectedSupervisionDetail } = state;
-      const { report } = selectedSupervisionDetail || {};
-      if (selectedSupervisionDetail && report) {
-        if (action.payload.name === "drivingLineInfo") {
-          report.drivingLineInfo = action.payload.value;
-        } else if (action.payload.name === "speedLimitInfo") {
-          report.speedLimitInfo = action.payload.value;
-        } else if (action.payload.name === "otherObservationsInfo") {
-          report.otherObservationsInfo = action.payload.value;
-        } else if (action.payload.name === "anomaliesDescription") {
-          report.anomaliesDescription = action.payload.value;
-        } else if (action.payload.name === "additionalInfo") {
-          report.additionalInfo = action.payload.value;
-        }
-      }
-    },
-    SUPERVISION_RADIO_CHANGED: (state, action: PayloadAction<IRadioValue>) => {
-      console.log("SUPERVISION_RADIO_CHANGED", action.payload);
-      const { selectedSupervisionDetail } = state;
-      const { report } = selectedSupervisionDetail || {};
-      if (selectedSupervisionDetail && report) {
-        if (action.payload.name === "drivingLineOk") {
-          report.drivingLineOk = action.payload.value;
-        } else if (action.payload.name === "speedLimitOk") {
-          report.speedLimitOk = action.payload.value;
-        } else if (action.payload.name === "anomalies") {
-          report.anomalies = action.payload.value;
-        } else if (action.payload.name === "surfaceDamage") {
-          report.surfaceDamage = action.payload.value;
-        } else if (action.payload.name === "seamDamage") {
-          report.seamDamage = action.payload.value;
-        } else if (action.payload.name === "bendsDisplacements") {
-          report.bendsDisplacements = action.payload.value;
-        } else if (action.payload.name === "otherObservations") {
-          report.otherObservations = action.payload.value;
-        }
-      }
-    },
     GET_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
       console.log("GET_SUPERVISION", action.payload);
       return { ...state, selectedSupervisionDetail: action.payload };
@@ -112,10 +69,6 @@ const crossingsSlice = createSlice({
     UPDATE_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
       console.log("UPDATE_SUPERVISION", action.payload);
       return { ...state, selectedSupervisionDetail: action.payload };
-    },
-    GET_CROSSING: (state, action: PayloadAction<ICrossing>) => {
-      console.log("GET_CROSSING", action.payload);
-      return { ...state, selectedCrossingDetail: action.payload };
     },
     START_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
       console.log("START_SUPERVISION", action.payload);
@@ -132,6 +85,44 @@ const crossingsSlice = createSlice({
     SUPERVISION_SUMMARY: (state, action: PayloadAction<ISupervision>) => {
       console.log("SUPERVISION_SUMMARY", action.payload);
       return { ...state, loading: false, selectedSupervisionDetail: action.payload };
+    },
+    REPORT_RADIO_CHANGED: (state, action: PayloadAction<IRadioValue>) => {
+      console.log("REPORT_RADIO_CHANGED", action.payload);
+      const { selectedSupervisionDetail } = state;
+      if (selectedSupervisionDetail) {
+        if (action.payload.name === "drivingLineOk") {
+          selectedSupervisionDetail.report.drivingLineOk = action.payload.value;
+        } else if (action.payload.name === "speedLimitOk") {
+          selectedSupervisionDetail.report.speedLimitOk = action.payload.value;
+        } else if (action.payload.name === "anomalies") {
+          selectedSupervisionDetail.report.anomalies = action.payload.value;
+        } else if (action.payload.name === "surfaceDamage") {
+          selectedSupervisionDetail.report.surfaceDamage = action.payload.value;
+        } else if (action.payload.name === "seamDamage") {
+          selectedSupervisionDetail.report.seamDamage = action.payload.value;
+        } else if (action.payload.name === "bendsDisplacements") {
+          selectedSupervisionDetail.report.bendsDisplacements = action.payload.value;
+        } else if (action.payload.name === "otherObservations") {
+          selectedSupervisionDetail.report.otherObservations = action.payload.value;
+        }
+      }
+    },
+    REPORT_TEXTAREA_CHANGED: (state, action: PayloadAction<ITextAreaValue>) => {
+      console.log("REPORT_TEXTAREA_CHANGED", action.payload);
+      const { selectedSupervisionDetail } = state;
+      if (selectedSupervisionDetail) {
+        if (action.payload.name === "drivingLineInfo") {
+          selectedSupervisionDetail.report.drivingLineInfo = action.payload.value;
+        } else if (action.payload.name === "speedLimitInfo") {
+          selectedSupervisionDetail.report.speedLimitInfo = action.payload.value;
+        } else if (action.payload.name === "otherObservationsInfo") {
+          selectedSupervisionDetail.report.otherObservationsInfo = action.payload.value;
+        } else if (action.payload.name === "anomaliesDescription") {
+          selectedSupervisionDetail.report.anomaliesDescription = action.payload.value;
+        } else if (action.payload.name === "additionalInfo") {
+          selectedSupervisionDetail.report.additionalInfo = action.payload.value;
+        }
+      }
     },
     SAVE_IMAGES: (state, action: PayloadAction<IImageItem[]>) => {
       console.log("SAVE_IMAGES", action.payload);

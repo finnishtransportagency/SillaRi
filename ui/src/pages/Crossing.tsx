@@ -104,11 +104,6 @@ const Crossing = (): JSX.Element => {
     supervisionStartMutation.mutate(Number(supervisionId));
   }
 
-  const changeTextAreaValue = (pname: string, pvalue: string) => {
-    const change = { name: pname, value: pvalue } as ITextAreaValue;
-    dispatch({ type: crossingActions.SUPERVISION_TEXTAREA_CHANGED, payload: change });
-  };
-
   // Note that even though summary has been saved before (not draft), it's reset here as draft until summary is saved again.
   // Should we disable all changes to report when it is not draft anymore, so this does not happen?
   const summaryClicked = () => {
@@ -152,7 +147,7 @@ const Crossing = (): JSX.Element => {
       name: radioName,
       value: radioValue === "yes",
     } as IRadioValue;
-    dispatch({ type: crossingActions.SUPERVISION_RADIO_CHANGED, payload: radioPayload });
+    dispatch({ type: crossingActions.REPORT_RADIO_CHANGED, payload: radioPayload });
   };
 
   const checkBoxClicked = (checkBoxName: string, checkBoxValue: boolean) => {
@@ -160,13 +155,20 @@ const Crossing = (): JSX.Element => {
       name: checkBoxName,
       value: checkBoxValue,
     } as IRadioValue;
-    dispatch({ type: crossingActions.SUPERVISION_RADIO_CHANGED, payload: radioPayload });
+    dispatch({ type: crossingActions.REPORT_RADIO_CHANGED, payload: radioPayload });
+  };
+
+  const textAreaValueChanged = (pname: string, pvalue: string) => {
+    const change = { name: pname, value: pvalue } as ITextAreaValue;
+    dispatch({ type: crossingActions.REPORT_TEXTAREA_CHANGED, payload: change });
   };
 
   const noNetworkNoData =
     (isFailed.getSupervision && selectedSupervisionDetail === undefined) ||
     (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
     (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);
+
+  console.log(report);
 
   return (
     <IonPage>
@@ -252,7 +254,7 @@ const Crossing = (): JSX.Element => {
                       class="crossingTextArea"
                       value={drivingLineInfo}
                       onIonChange={(e) => {
-                        return changeTextAreaValue("drivingLineInfo", e.detail.value ?? "");
+                        return textAreaValueChanged("drivingLineInfo", e.detail.value ?? "");
                       }}
                     />
                   </IonCard>
@@ -288,7 +290,7 @@ const Crossing = (): JSX.Element => {
                       class="crossingTextArea"
                       value={speedLimitInfo}
                       onIonChange={(e) => {
-                        return changeTextAreaValue("speedLimitInfo", e.detail.value ?? "");
+                        return textAreaValueChanged("speedLimitInfo", e.detail.value ?? "");
                       }}
                     />
                   </IonCard>
@@ -355,7 +357,7 @@ const Crossing = (): JSX.Element => {
                       placeholder={t("supervision.report.otherObservations")}
                       value={otherObservationsInfo}
                       onIonChange={(e) => {
-                        return changeTextAreaValue("otherObservationsInfo", e.detail.value ?? "");
+                        return textAreaValueChanged("otherObservationsInfo", e.detail.value ?? "");
                       }}
                     />
                   )}
@@ -370,7 +372,7 @@ const Crossing = (): JSX.Element => {
                     class="crossingTextArea"
                     value={anomaliesDescription}
                     onIonChange={(e) => {
-                      return changeTextAreaValue("anomaliesDescription", e.detail.value ?? "");
+                      return textAreaValueChanged("anomaliesDescription", e.detail.value ?? "");
                     }}
                   />
                 </IonCard>
@@ -384,7 +386,7 @@ const Crossing = (): JSX.Element => {
                     class="crossingTextArea"
                     value={additionalInfo}
                     onIonChange={(e) => {
-                      return changeTextAreaValue("additionalInfo", e.detail.value ?? "");
+                      return textAreaValueChanged("additionalInfo", e.detail.value ?? "");
                     }}
                   />
                 </IonCard>

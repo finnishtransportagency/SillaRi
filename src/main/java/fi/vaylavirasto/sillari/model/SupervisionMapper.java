@@ -27,12 +27,16 @@ public class SupervisionMapper implements RecordMapper<Record, SupervisionModel>
 
         SupervisionStatusMapper statusMapper = new SupervisionStatusMapper();
         SupervisionStatusModel statusModel = statusMapper.map(record);
-        supervisionModel.setCurrentStatus(statusModel);
+        if (statusModel != null && statusModel.getId() != null) {
+            supervisionModel.setCurrentStatus(statusModel);
+        }
         supervisionModel.setStatusHistory(new ArrayList<>());
 
         SupervisionReportMapper reportMapper = new SupervisionReportMapper();
         SupervisionReportModel reportModel = reportMapper.map(record);
-        supervisionModel.setReport(reportModel);
+        if (reportModel != null && reportModel.getId() != null) {
+            supervisionModel.setReport(reportModel);
+        }
 
         return supervisionModel;
     }

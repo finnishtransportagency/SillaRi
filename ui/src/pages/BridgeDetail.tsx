@@ -53,8 +53,6 @@ const BridgeDetail = (): JSX.Element => {
     retry: onRetry,
   });
 
-  console.log(selectedSupervisionDetail);
-
   const noNetworkNoData =
     (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
     (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined) ||
