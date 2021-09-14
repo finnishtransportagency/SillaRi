@@ -11,13 +11,13 @@ import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import { RootState, useTypedSelector } from "../store/store";
 import { actions as crossingActions } from "../store/crossingsSlice";
-import { deleteImage, getCrossing, onRetry } from "../utils/backendData";
+import { deleteImage, getSupervision, onRetry } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
 import { getOrigin } from "../utils/request";
 import ImagePreview from "./ImagePreview";
 
 interface CameraContainerProps {
-  crossingId: string;
+  supervisionId: string;
 }
 
 const CameraContainer = (): JSX.Element => {
@@ -25,7 +25,7 @@ const CameraContainer = (): JSX.Element => {
   const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const { crossingId = "0" } = useParams<CameraContainerProps>();
+  const { supervisionId = "0" } = useParams<CameraContainerProps>();
 
   const [isImagePreviewOpen, setImagePreviewOpen] = useState<boolean>(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
@@ -35,18 +35,18 @@ const CameraContainer = (): JSX.Element => {
     setImagePreviewUrl(imageUrl || imagePreviewUrl);
   };
 
-  const { selectedCrossingDetail, images = [] } = crossingProps;
+  const { selectedSupervisionDetail, images = [] } = crossingProps;
 
-  const { images: crossingImages = [] } = selectedCrossingDetail || {};
+  const { images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
-  useQuery(["getCrossing", crossingId], () => getCrossing(Number(crossingId), dispatch, selectedCrossingDetail), { retry: onRetry });
+  useQuery(["getSupervision", supervisionId], () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail), { retry: onRetry });
 
   // Set-up mutations for modifying data later
   const imageDeleteMutation = useMutation((objectKey: string) => deleteImage(objectKey, dispatch), {
     retry: onRetry,
     onSuccess: () => {
-      // Fetch the crossing data again to update the image list after the delete has finished
-      queryClient.invalidateQueries("getCrossing");
+      // Fetch the supervision data again to update the image list after the delete has finished
+      queryClient.invalidateQueries("getSupervision");
     },
   });
 
@@ -87,7 +87,7 @@ const CameraContainer = (): JSX.Element => {
     <IonContent>
       <IonListHeader>
         <IonLabel>
-          {t("camera.listLabel")} ({images.length + crossingImages.length} {t("camera.listLabelPcs")})
+          {t("camera.listLabel")} ({images.length + supervisionImages.length} {t("camera.listLabelPcs")})
         </IonLabel>
       </IonListHeader>
       <IonList>
@@ -117,23 +117,23 @@ const CameraContainer = (): JSX.Element => {
               );
             })}
 
-        {crossingImages.length > 0 &&
-          [...crossingImages]
+        {supervisionImages.length > 0 &&
+          [...supervisionImages]
             .sort((a, b) => {
               const am = moment(a.taken);
               const bm = moment(b.taken);
               return bm.diff(am, "seconds");
             })
-            .map((crossingImage) => {
-              const imageUrl = `${getOrigin()}/api/images/get?objectKey=${crossingImage.objectKey}`;
+            .map((supervisionImage) => {
+              const imageUrl = `${getOrigin()}/api/images/get?objectKey=${supervisionImage.objectKey}`;
 
               return (
-                <IonItem key={crossingImage.id}>
+                <IonItem key={supervisionImage.id}>
                   <IonThumbnail slot="start" onClick={() => showImage(true, imageUrl)}>
                     <IonImg src={imageUrl} />
                   </IonThumbnail>
-                  <IonLabel>{crossingImage.taken}</IonLabel>
-                  <IonButton slot="end" onClick={() => deleteImageObject(crossingImage.objectKey)}>
+                  <IonLabel>{supervisionImage.taken}</IonLabel>
+                  <IonButton slot="end" onClick={() => deleteImageObject(supervisionImage.objectKey)}>
                     <IonIcon icon={trash} slot="start" />
                     {t("camera.item.deleteButtonLabel")}
                   </IonButton>

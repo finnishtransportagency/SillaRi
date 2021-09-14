@@ -35,7 +35,7 @@ public class FileRepository {
                             FileMapper.image.TAKEN)
                     .select(dsl.select(DSL.val(imageId),
                                     DSL.val(fileModel.getSupervisionId()),
-                                    DSL.val(fileModel.getFilename() + "_" + fileModel.getTaken() + "_" + imageId + ".jpg"),
+                                    DSL.val(fileModel.getFilename()),
                                     DSL.val(fileModel.getObjectKey()),
                                     DSL.val(taken))
                             .whereNotExists(dsl.selectOne()
@@ -65,6 +65,12 @@ public class FileRepository {
     public List<FileModel> getFiles(Integer supervisionId) {
         return dsl.select().from(FileMapper.image).where(FileMapper.image.SUPERVISION_ID.eq(supervisionId))
                 .fetch(new FileMapper(true));
+    }
+
+    public int deleteFileByObjectKey(String objectKey) {
+        return dsl.delete(FileMapper.image)
+                .where(FileMapper.image.OBJECT_KEY.eq(objectKey))
+                .execute();
     }
 
 }

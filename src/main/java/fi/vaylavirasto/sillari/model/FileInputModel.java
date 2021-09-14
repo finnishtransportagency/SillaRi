@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class FileInputModel {
-    private String crossingId;
+    private String supervisionId;
     private String filename;
     private String base64;
     private String taken;

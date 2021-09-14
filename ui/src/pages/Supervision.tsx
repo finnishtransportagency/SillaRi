@@ -10,7 +10,9 @@ import {
   IonPage,
   IonRadio,
   IonRadioGroup,
+  IonRouterLink,
   IonRow,
+  IonText,
   IonTextarea,
 } from "@ionic/react";
 import React from "react";
@@ -31,12 +33,13 @@ import {
   getRouteBridge,
   getSupervision,
   onRetry,
-  sendSingleUpload,
+  sendImageUpload,
   sendSupervisionReportUpdate,
   sendSupervisionStarted,
 } from "../utils/backendData";
 import { dateTimeFormat } from "../utils/constants";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
+import ImageThumbnailRow from "../components/ImageThumbnailRow";
 
 interface SupervisionProps {
   supervisionId: string;
@@ -57,7 +60,7 @@ const Supervision = (): JSX.Element => {
   } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
-  const { routeBridgeId = "0", report } = selectedSupervisionDetail || {};
+  const { routeBridgeId = "0", report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
   const {
     id: supervisionReportId = -1,
@@ -96,7 +99,7 @@ const Supervision = (): JSX.Element => {
   const supervisionReportMutation = useMutation((updateRequest: ISupervisionReport) => sendSupervisionReportUpdate(updateRequest, dispatch), {
     retry: onRetry,
   });
-  const singleUploadMutation = useMutation((fileUpload: IFileInput) => sendSingleUpload(fileUpload, dispatch), { retry: onRetry });
+  const imageUploadMutation = useMutation((fileUpload: IFileInput) => sendImageUpload(fileUpload, dispatch), { retry: onRetry });
 
   // Start the supervision if not already done
   const { isLoading: isSendingSupervisionStart } = supervisionStartMutation;
@@ -135,7 +138,7 @@ const Supervision = (): JSX.Element => {
         taken: moment(image.date).format(dateTimeFormat),
       } as IFileInput;
 
-      singleUploadMutation.mutate(fileUpload);
+      imageUploadMutation.mutate(fileUpload);
     });
 
     console.log("history");
@@ -203,7 +206,10 @@ const Supervision = (): JSX.Element => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <a href="fooo">{t("supervision.crossingInstructions")}</a>
+                {/* TODO */}
+                <IonRouterLink className="disabledLink">
+                  <IonText className="linkText">{t("supervision.crossingInstructions")}</IonText>
+                </IonRouterLink>
               </IonCol>
             </IonRow>
             <IonRow>
@@ -211,9 +217,12 @@ const Supervision = (): JSX.Element => {
                 <IonLabel class="crossingHeader">{t("supervision.photosDrivingLine")}</IonLabel>
               </IonCol>
             </IonRow>
+
+            <ImageThumbnailRow images={images} supervisionImages={supervisionImages} />
+
             <IonRow>
               <IonCol>
-                <IonButton routerLink="/takephotos">{t("supervision.buttons.takePhotos")}</IonButton>
+                <IonButton routerLink={`/takephotos/${supervisionId}`}>{t("supervision.buttons.takePhotos")}</IonButton>
               </IonCol>
               <IonCol>
                 <IonButton disabled>{t("supervision.buttons.drivingLine")}</IonButton>

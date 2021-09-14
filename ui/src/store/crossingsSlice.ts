@@ -130,11 +130,11 @@ const crossingsSlice = createSlice({
       return { ...state, images: action.payload };
     },
     UPDATE_IMAGES: (state, action: PayloadAction<IFile[]>) => {
-      // Remove any camera images from the state that have been uploaded, and so are now in the crossing images
+      // Remove any camera images from the state that have been uploaded, and so are now in the supervision images
       console.log("UPDATE_IMAGES", action.payload);
-      const crossingImages = action.payload || [];
+      const supervisionImages = action.payload || [];
       const cameraImages = current(state.images).reduce((acc: IImageItem[], image) => {
-        const isStateImageInPayload = crossingImages.some((crossingImage) => crossingImage.filename === image.filename);
+        const isStateImageInPayload = supervisionImages.some((supervisionImage) => supervisionImage.filename === image.filename);
         return isStateImageInPayload ? acc : [...acc, image];
       }, []);
       return { ...state, images: cameraImages };

@@ -25,10 +25,12 @@ import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import IFileInput from "../interfaces/IFileInput";
-import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry, sendSingleUpload, sendSupervisionReportUpdate } from "../utils/backendData";
+import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry, sendImageUpload, sendSupervisionReportUpdate } from "../utils/backendData";
+import { actions as crossingActions } from "../store/crossingsSlice";
 import { dateTimeFormat } from "../utils/constants";
 import { getOrigin } from "../utils/request";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
+import ImageThumbnailRow from "../components/ImageThumbnailRow";
 
 interface SummaryProps {
   supervisionId: string;
@@ -50,7 +52,7 @@ const SupervisionSummary = (): JSX.Element => {
   } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
-  const { routeBridgeId = "0", report, images: savedImages = [] } = selectedSupervisionDetail || {};
+  const { routeBridgeId = "0", report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
   const {
     id: supervisionReportId,
@@ -68,7 +70,11 @@ const SupervisionSummary = (): JSX.Element => {
     additionalInfo,
   } = report || {};
 
-  useQuery(["getSupervision", supervisionId], () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail), { retry: onRetry });
+  const { isLoading: isLoadingSupervision } = useQuery(
+    ["getSupervision", supervisionId],
+    () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail),
+    { retry: onRetry }
+  );
 
   // Use the enabled option to only fetch data when routeBridgeId is available
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
@@ -83,15 +89,20 @@ const SupervisionSummary = (): JSX.Element => {
   // Set-up mutations for modifying data later
   const reportUpdateMutation = useMutation((updateRequest: ISupervisionReport) => sendSupervisionReportUpdate(updateRequest, dispatch), {
     retry: onRetry,
-  });
-  const singleUploadMutation = useMutation((fileUpload: IFileInput) => sendSingleUpload(fileUpload, dispatch), { retry: onRetry });
-
-  const { isLoading: isSendingReportUpdate, isSuccess: isReportUpdateSuccessful } = reportUpdateMutation;
-  useEffect(() => {
-    if (isReportUpdateSuccessful) {
+    onSuccess: () => {
       setToastMessage(t("supervision.summary.saved"));
+    },
+  });
+  const imageUploadMutation = useMutation((fileUpload: IFileInput) => sendImageUpload(fileUpload, dispatch), { retry: onRetry });
+
+  const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
+
+  useEffect(() => {
+    if (!isLoadingSupervision) {
+      // Remove any uploaded images from the camera images stored in redux
+      dispatch({ type: crossingActions.UPDATE_IMAGES, payload: supervisionImages });
     }
-  }, [isReportUpdateSuccessful, t]);
+  }, [isLoadingSupervision, supervisionImages, dispatch]);
 
   const save = () => {
     if (report !== undefined) {
@@ -123,7 +134,7 @@ const SupervisionSummary = (): JSX.Element => {
           taken: moment(image.date).format(dateTimeFormat),
         } as IFileInput;
 
-        singleUploadMutation.mutate(fileUpload);
+        imageUploadMutation.mutate(fileUpload);
       });
     }
   };
@@ -158,8 +169,7 @@ const SupervisionSummary = (): JSX.Element => {
     (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
     (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);
 
-  // If images are saved or images are not available in redux store, use saved length
-  const imagesLength = !images || (images.length === 0 && savedImages.length > 0) ? savedImages.length : images.length;
+  const allImagesAmount = (images ? images.length : 0) + (supervisionImages ? supervisionImages.length : 0);
 
   return (
     <IonPage>
@@ -195,33 +205,13 @@ const SupervisionSummary = (): JSX.Element => {
             <IonRow>
               <IonCol>
                 <IonLabel class="crossingLabelBold">
-                  {t("supervision.summary.images")} ({imagesLength} {t("supervision.summary.kpl")})
+                  {t("supervision.summary.images")} ({allImagesAmount} {t("supervision.summary.kpl")})
                 </IonLabel>
               </IonCol>
             </IonRow>
-            <IonRow>
-              {images &&
-                savedImages.length === 0 &&
-                images.map((imageItem) => (
-                  <IonItem key={imageItem.id}>
-                    <IonCol>
-                      <IonThumbnail>
-                        <IonImg src={imageItem.dataUrl} />
-                      </IonThumbnail>
-                    </IonCol>
-                  </IonItem>
-                ))}
-              {savedImages.length > 0 &&
-                savedImages.map((image) => (
-                  <IonItem key={image.id}>
-                    <IonCol>
-                      <IonThumbnail>
-                        <IonImg src={`${getOrigin()}/api/images/get?objectKey=${image.objectKey}`} />
-                      </IonThumbnail>
-                    </IonCol>
-                  </IonItem>
-                ))}
-            </IonRow>
+
+            <ImageThumbnailRow images={images} supervisionImages={supervisionImages} />
+
             <IonRow>
               <IonCol size="auto">
                 <IonItem>
