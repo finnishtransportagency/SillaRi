@@ -92,6 +92,7 @@ public class SupervisionRepository {
                     .set(SupervisionMapper.supervision.ROUTE_TRANSPORT_ID, supervisionModel.getRouteTransportId())
                     .set(SupervisionMapper.supervision.SUPERVISOR_ID, supervisionModel.getSupervisorId())
                     .set(SupervisionMapper.supervision.PLANNED_TIME, supervisionModel.getPlannedTime())
+                    .set(SupervisionMapper.supervision.CONFORMS_TO_PERMIT, supervisionModel.getConformsToPermit())
                     .where(SupervisionMapper.supervision.ID.eq(supervisionModel.getId()))
                     .execute();
         });

@@ -50,7 +50,7 @@ const SupervisionSummary = (): JSX.Element => {
   } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
-  const { routeBridgeId = "0", report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
+  const { routeBridgeId = "0", report, images: savedImages = [] } = selectedSupervisionDetail || {};
 
   const {
     id: supervisionReportId,
@@ -158,12 +158,8 @@ const SupervisionSummary = (): JSX.Element => {
     (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
     (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);
 
-  const imagesLength = () => {
-    if (images && images.length === 0 && supervisionImages && supervisionImages.length > 0) {
-      return supervisionImages.length;
-    }
-    return images ? images.length : " ";
-  };
+  // If images are saved or images are not available in redux store, use saved length
+  const imagesLength = !images || (images.length === 0 && savedImages.length > 0) ? savedImages.length : images.length;
 
   return (
     <IonPage>
@@ -204,7 +200,8 @@ const SupervisionSummary = (): JSX.Element => {
               </IonCol>
             </IonRow>
             <IonRow>
-              {supervisionImages.length === 0 &&
+              {images &&
+                savedImages.length === 0 &&
                 images.map((imageItem) => (
                   <IonItem key={imageItem.id}>
                     <IonCol>
@@ -214,8 +211,8 @@ const SupervisionSummary = (): JSX.Element => {
                     </IonCol>
                   </IonItem>
                 ))}
-              {supervisionImages.length > 0 &&
-                supervisionImages.map((image) => (
+              {savedImages.length > 0 &&
+                savedImages.map((image) => (
                   <IonItem key={image.id}>
                     <IonCol>
                       <IonThumbnail>

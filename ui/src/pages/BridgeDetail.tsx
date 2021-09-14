@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import {
   IonButton,
@@ -21,7 +21,8 @@ import { location } from "ionicons/icons";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
-import { getPermitOfRouteBridge, getRouteBridge, getSupervisionOfRouteBridge, onRetry } from "../utils/backendData";
+import { getPermitOfRouteBridge, getRouteBridge, getSupervisionOfRouteBridge, onRetry, sendSupervisionUpdate } from "../utils/backendData";
+import ISupervision from "../interfaces/ISupervision";
 
 interface BridgeDetailProps {
   routeBridgeId: string;
@@ -41,17 +42,36 @@ const BridgeDetail = (): JSX.Element => {
   const { bridge, crossingInstruction = "" } = selectedBridgeDetail || {};
   const { name = "", identifier = "", municipality = "" } = bridge || {};
   const { permitNumber } = selectedPermitDetail || {};
-  const { id: supervisionId, conformsToPermit } = selectedSupervisionDetail || {};
-
-  const setConformsToPermit = (conforms: boolean) => console.log(`TODO set ${conforms}!`);
+  const { id: supervisionId, routeTransportId, plannedTime, conformsToPermit = false } = selectedSupervisionDetail || {};
 
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
   useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
     retry: onRetry,
   });
-  useQuery(["getSupervisionOfRouteBridge", routeBridgeId], () => getSupervisionOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
-    retry: onRetry,
-  });
+  const { isLoading: isLoadingSupervision } = useQuery(
+    ["getSupervisionOfRouteBridge", routeBridgeId],
+    () => getSupervisionOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail),
+    {
+      retry: onRetry,
+    }
+  );
+
+  const supervisionUpdateMutation = useMutation((supervision: ISupervision) => sendSupervisionUpdate(supervision, dispatch), { retry: onRetry });
+
+  const setConformsToPermit = (conforms: boolean) => {
+    const updatedSupervision = {
+      id: supervisionId,
+      routeBridgeId: Number(routeBridgeId),
+      routeTransportId,
+      plannedTime,
+      conformsToPermit: conforms,
+      // TODO add supervisorID when available
+    } as ISupervision;
+
+    if (!isLoadingSupervision) {
+      supervisionUpdateMutation.mutate(updatedSupervision);
+    }
+  };
 
   const noNetworkNoData =
     (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
