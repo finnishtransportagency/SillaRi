@@ -23,7 +23,8 @@ const ImageThumbnailRow = ({ images, supervisionImages }: ImageThumbnailRowProps
   // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
   return (
     <IonRow>
-      {images.length > 0 &&
+      {images &&
+        images.length > 0 &&
         [...images]
           .sort((a, b) => {
             const am = moment(a.date);
@@ -44,7 +45,8 @@ const ImageThumbnailRow = ({ images, supervisionImages }: ImageThumbnailRowProps
             );
           })}
 
-      {supervisionImages.length > 0 &&
+      {supervisionImages &&
+        supervisionImages.length > 0 &&
         [...supervisionImages]
           .sort((a, b) => {
             const am = moment(a.taken);
