@@ -18,14 +18,18 @@ trap error_handler ERR
 echo "import file"
 ogr2ogr --config PG_USE_COPY YES -f PGDump /vsistdout/ /vsizip/$1 -nln "feature$2" -lco SCHEMA=sillari -lco GEOMETRY_NAME="geom" | psql "$connection_string" -f -
 
-# copy the route geometry to the 'calculation' table, using ST_Collect to combine all LineStrings into a single MultiLineString
+
+
+# copy the route geometry to the 'route' table.
+echo "copy to route table"
 psql "$connection_string" -c "update route set geom = (select geom as geom from feature$2) where lelu_id = $2;"
 
 # drop the temporary table
+echo "drop temp table"
 psql "$connection_string" -c "drop table feature$2;"
 
-# delete the file
-rm ./$1
+# delete the file TODO uncomment
+#rm ./$1
 
 echo "done"
 exit 0

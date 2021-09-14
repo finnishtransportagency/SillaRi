@@ -66,8 +66,8 @@ const App: React.FC = () => (
           <Route path="/bridgeDetail/:routeBridgeId" component={BridgeDetail} exact />
           <Route path="/supervision/:supervisionId" component={Supervision} exact />
           <Route path="/denyCrossing/:routeBridgeId" component={DenyCrossing} exact />
-          <Route path="/takePhotos" component={Camera} exact />
           <Route path="/summary/:supervisionId" component={SupervisionSummary} exact />
+          <Route path="/takePhotos/:supervisionId" component={Camera} exact />
           <Route path="/management/:companyId" component={CompanySummary} exact />
           <Route path="/management/addTransport/:permitId" component={AddTransport} exact />
         </IonRouterOutlet>

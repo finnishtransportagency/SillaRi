@@ -1,0 +1,15 @@
+.imagePreview .popover-content {
+  width: 90%;
+  height: 90%;
+  justify-content: center;
+}
+
+.imagePreview .popover-viewport {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.imagePreview ion-img {
+  width: 100%;
+  height: 100%;
+}

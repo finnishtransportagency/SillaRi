@@ -36,6 +36,11 @@
   text-decoration: underline;
 }
 
+.disabledLink {
+  color: grey;
+  cursor: default;
+}
+
 .hidden {
   display: none;
 }
