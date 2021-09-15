@@ -1,17 +1,17 @@
 import Feature from "ol/Feature";
 import { GeoJSON } from "ol/format";
-import { Point } from "ol/geom";
+import { Geometry, Point } from "ol/geom";
 import { Vector as VectorLayer } from "ol/layer";
 import { Vector as VectorSource } from "ol/source";
 import { Circle, Fill, Stroke, Style, Text } from "ol/style";
 import { StyleFunction, StyleLike } from "ol/style/Style";
 import IRouteBridge from "../../interfaces/IRouteBridge";
 
-export default class BridgeVectorLayer extends VectorLayer {
+export default class BridgeVectorLayer extends VectorLayer<VectorSource<any>> {
   bridgeCoords?: Point;
 
   constructor(routeBridgeIdParam?: string, bridgeGeojson?: string, bridgeIdentifier?: string, routeIdParam?: string, routeBridges?: IRouteBridge[]) {
-    let bridgeSource: VectorSource | undefined;
+    let bridgeSource: VectorSource<any> | undefined;
     let bridgeStyle: StyleLike | undefined;
     let bridgeCoords: Point | undefined;
 
@@ -59,7 +59,7 @@ export default class BridgeVectorLayer extends VectorLayer {
 
         bridgeSource = new VectorSource({ features: bridgeFeatures });
 
-        bridgeStyle = ((feature: Feature, resolution: number) => {
+        bridgeStyle = ((feature: Feature<Geometry>, resolution: number) => {
           return new Style({
             stroke:
               resolution <= 8

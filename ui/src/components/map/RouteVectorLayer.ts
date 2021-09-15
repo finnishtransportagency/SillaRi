@@ -5,11 +5,11 @@ import { Vector as VectorLayer } from "ol/layer";
 import { Vector as VectorSource } from "ol/source";
 import { Stroke, Style } from "ol/style";
 
-export default class RouteVectorLayer extends VectorLayer {
+export default class RouteVectorLayer extends VectorLayer<VectorSource<any>> {
   routeExtent?: Extent;
 
   constructor(routeGeojson?: string) {
-    let routeSource: VectorSource | undefined;
+    let routeSource: VectorSource<any> | undefined;
     let routeStyle: Style | undefined;
     let routeExtent: Extent | undefined;
 

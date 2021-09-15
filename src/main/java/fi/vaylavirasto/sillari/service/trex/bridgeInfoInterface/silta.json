@@ -1,0 +1,259 @@
+{
+  "tila": "kaytossa",
+  "janteet": [
+    {
+      "numero": 0,
+      "rakennetyypit": [
+        {
+          "kansimateriaali": {
+            "nimi": "string",
+            "tunnus": "string",
+            "kuvaus": "string",
+            "lyhenne": "string"
+          },
+          "liittyvanJanteenNumero": 0,
+          "lyhenne": "string",
+          "maareet": [
+            {
+              "nimi": "Eroosio",
+              "tunnus": "001",
+              "erikseen": true,
+              "kuvaus": "string",
+              "avattava": true,
+              "lyhenne": "string"
+            }
+          ],
+          "nimi": "string",
+          "paarakennusmateriaali": {
+            "nimi": "Eroosio",
+            "tunnus": "001",
+            "adjektiivi": "string",
+            "kuvaus": "string",
+            "lyhenne": "string"
+          },
+          "rakentamistapa": {
+            "nimi": "string",
+            "tunnus": "string",
+            "kuvaus": "string",
+            "lyhenne": "string"
+          },
+          "staattinenRakenne": {
+            "nimi": "string",
+            "tunnus": "string",
+            "kuvaus": "string",
+            "lyhenne": "string"
+          }
+        }
+      ],
+      "jannetyyppi": {
+        "nimi": "Eroosio",
+        "tunnus": "001",
+        "kuvaus": "string",
+        "lyhenne": "string"
+      },
+      "pituus": {
+        "arvo": 0,
+        "yksikko": "pas",
+        "kerrannaisyksikko": "mega"
+      },
+      "kohtisuoraPituus": {
+        "arvo": 0,
+        "yksikko": "pas",
+        "kerrannaisyksikko": "mega"
+      },
+      "vapaaaukko": {
+        "mitta": {
+          "arvo": 0,
+          "yksikko": "pas",
+          "kerrannaisyksikko": "mega"
+        },
+        "kohtisuoraMitta": {
+          "arvo": 0,
+          "yksikko": "pas",
+          "kerrannaisyksikko": "mega"
+        },
+        "alikulkukorkeus": {
+          "arvo": 0,
+          "yksikko": "pas",
+          "kerrannaisyksikko": "mega"
+        }
+      }
+    }
+  ],
+  "kulkukorkeudenEste": "Ansaan yläpaarre",
+  "maaraavanJanteenNumero": 0,
+  "merivedenVaikutus": true,
+  "kokonaispintaala": {
+    "arvo": 23.4,
+    "yksikko": "neliometri"
+  },
+  "hyodyllinenLeveys": {
+    "minimi": {
+      "arvo": 7.25,
+      "yksikko": "metri"
+    },
+    "maksimi": {
+      "arvo": 7.3,
+      "yksikko": "metri"
+    }
+  },
+  "kulkukorkeus": {
+    "arvo": 2.9,
+    "yksikko": "metri"
+  },
+  "nykyinenOmistaja": {
+    "y-tunnus": "12345",
+    "nimi": "Väylävirasto"
+  },
+  "katuosoitteet": [
+    {
+      "nimi": "string",
+      "kunta": {
+        "tunnus": "285",
+        "nimi": "Kotka"
+      },
+      "sijainti": "oletus"
+    }
+  ],
+  "keskipistesijainti": {
+    "epsg-3067": {
+      "x": 222275,
+      "y": 7020592
+    },
+    "epsg-4326": {
+      "lat": 63.2067184984122,
+      "lon": 21.4728801056541
+    },
+    "tarkkuustaso": {
+      "tunnus": "002",
+      "nimi": "GPS-tieto",
+      "jarjestysnumero": 2
+    }
+  },
+  "kokonaispituus": {
+    "arvo": 22.3,
+    "yksikko": "metri"
+  },
+  "ymparistorasitus": {
+    "tunnus": "18",
+    "nimi": "Glykoli"
+  },
+  "tunnus": "H-12",
+  "rataosoitteet": [
+    {
+      "ratanumero": "string",
+      "ratakilometri": 0,
+      "etaisyys": 0,
+      "sijaintiraide": "string",
+      "nimi": "string",
+      "sijainti": "oletus"
+    }
+  ],
+  "vaylanpito": {
+    "tunnus": "TIE",
+    "nimi": "Tieväylien pito"
+  },
+  "sijaintikunnat": [
+    {
+      "tunnus": "285",
+      "nimi": "Kotka"
+    }
+  ],
+  "historiallinenMerkittavyys": {
+    "tunnus": "12",
+    "nimi": "Merkittävä"
+  },
+  "tieosoitteet": [
+    {
+      "tienumero": 0,
+      "tieosa": 0,
+      "etaisyys": 0,
+      "ajorata": 0,
+      "nimi": "string",
+      "sijainti": "oletus"
+    }
+  ],
+  "nimi": "Raippaluodon silta",
+  "kaareva": true,
+  "nykyinenKunnossapitaja": {
+    "y-tunnus": "12345",
+    "nimi": "Väylävirasto"
+  },
+  "oid": "string",
+  "vesivaylaosoitteet": [
+    {
+      "numero": 0,
+      "nimi": "string",
+      "sijainti": "alittava"
+    }
+  ],
+  "epajatkuvuuskohdat": [
+    {
+      "edeltavanJanteenNumero": 0,
+      "pituus": {
+        "arvo": 0,
+        "yksikko": "pas",
+        "kerrannaisyksikko": "mega"
+      },
+      "kohtisuoraPituus": {
+        "arvo": 0,
+        "yksikko": "pas",
+        "kerrannaisyksikko": "mega"
+      }
+    }
+  ],
+  "ajoradanLeveys": {
+    "arvo": 0,
+    "yksikko": "pas",
+    "kerrannaisyksikko": "mega"
+  },
+  "paivitetty": "2018-10-01",
+  "kayttotarkoitukset": [
+    {
+      "tunnus": "20",
+      "nimi": "Raittisilta",
+      "kuvaus": "Silta, joka johtaa kevyen-, traktori- yms. liikenteen tai karjan vesistön yli"
+    }
+  ],
+  "rakennekorkeus": {
+    "arvo": 5.2,
+    "yksikko": "metri"
+  },
+  "kannenPituus": {
+    "arvo": 21.7,
+    "yksikko": "metri"
+  },
+  "rakenneluokka": {
+    "tunnus": "S",
+    "nimi": "Silta"
+  },
+  "sijaintisuunta": {
+    "tunnus": "N"
+  },
+  "levennysvuosi": 2001,
+  "kokonaisleveys": {
+    "minimi": {
+      "arvo": 6.15,
+      "yksikko": "metri"
+    },
+    "maksimi": {
+      "arvo": 6.2,
+      "yksikko": "metri"
+    }
+  },
+  "kannenPintaala": {
+    "arvo": 62.25,
+    "yksikko": "neliometri"
+  },
+  "tienLeveys": {
+    "arvo": 0,
+    "yksikko": "pas",
+    "kerrannaisyksikko": "mega"
+  },
+  "levennys": {
+    "arvo": 0,
+    "yksikko": "pas",
+    "kerrannaisyksikko": "mega"
+  },
+  "valmistumisvuosi": 0
+}

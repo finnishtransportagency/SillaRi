@@ -39,6 +39,19 @@
     "mainPage" : "Huvudsida",
     "settings" : "Inställningar",
     "map" : "Karta",
-    "camera" : "Kamera"
+    "camera" : "Kamera",
+    "management" : "(SV) Management"
+  },
+  "management":
+  {
+    "companySummary":
+    {
+      "permitListTitle": "(SV) Transport permits",
+      "addTransportButtonLabel": "(SV) Add transport"
+    },
+    "addTransport":
+    {
+      "headerTitle": "(SV) Add transport"
+    }
   }
 }

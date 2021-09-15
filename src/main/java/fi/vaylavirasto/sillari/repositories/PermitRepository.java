@@ -24,6 +24,8 @@ public class PermitRepository {
                 .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
                 .leftJoin(PermitMapper.transportDimensions)
                 .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .leftJoin(PermitMapper.unloadedTransportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
                 .where(PermitMapper.permit.COMPANY_ID.eq(companyId))
                 .fetch(new PermitMapper());
     }
@@ -34,6 +36,8 @@ public class PermitRepository {
                 .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
                 .leftJoin(PermitMapper.transportDimensions)
                 .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .leftJoin(PermitMapper.unloadedTransportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
                 .where(PermitMapper.permit.ID.eq(id))
                 .fetchOne(new PermitMapper());
     }
@@ -46,6 +50,8 @@ public class PermitRepository {
                 .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
                 .leftJoin(PermitMapper.transportDimensions)
                 .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .leftJoin(PermitMapper.unloadedTransportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
                 .where(PermitMapper.route.ID.eq(routeId))
                 .fetchOne(new PermitMapper());
     }
@@ -60,6 +66,8 @@ public class PermitRepository {
                 .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
                 .leftJoin(PermitMapper.transportDimensions)
                 .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .leftJoin(PermitMapper.unloadedTransportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
                 .where(PermitMapper.routeBridge.ID.eq(routeBridgeId))
                 .fetchOne(new PermitMapper());
     }
@@ -100,6 +108,7 @@ public class PermitRepository {
             permitModel.setId(permitId);
 
             insertTransportDimensions(ctx, permitModel);
+            insertUnloadedTransportDimensions(ctx, permitModel);
             insertVehicles(ctx, permitModel);
             insertAxleChart(ctx, permitModel);
 
@@ -126,6 +135,23 @@ public class PermitRepository {
                 transportDimensionsModel.getHeight(),
                 transportDimensionsModel.getWidth(),
                 transportDimensionsModel.getLength())
+                .execute();
+    }
+
+    private void insertUnloadedTransportDimensions(DSLContext ctx, PermitModel permitModel) {
+        UnloadedTransportDimensionsModel unloadedTransportDimensionsModel = permitModel.getUnloadedTransportDimensions();
+        unloadedTransportDimensionsModel.setPermitId(permitModel.getId());
+
+        ctx.insertInto(PermitMapper.unloadedTransportDimensions,
+                PermitMapper.unloadedTransportDimensions.PERMIT_ID,
+                PermitMapper.unloadedTransportDimensions.HEIGHT,
+                PermitMapper.unloadedTransportDimensions.WIDTH,
+                PermitMapper.unloadedTransportDimensions.LENGTH
+        ).values(
+                unloadedTransportDimensionsModel.getPermitId(),
+                unloadedTransportDimensionsModel.getHeight(),
+                unloadedTransportDimensionsModel.getWidth(),
+                unloadedTransportDimensionsModel.getLength())
                 .execute();
     }
 
@@ -185,22 +211,54 @@ public class PermitRepository {
         }
     }
 
+
     private void insertRouteAndRouteBridges(DSLContext ctx, RouteModel routeModel) {
+        Record1<Integer> departureAddressIdResult = ctx.insertInto(AddressMapper.address,
+                AddressMapper.address.STREET,
+                AddressMapper.address.CITY,
+                AddressMapper.address.POSTALCODE
+        ).values(
+                routeModel.getDepartureAddress().getStreet(),
+                routeModel.getDepartureAddress().getCity(),
+                routeModel.getDepartureAddress().getPostalcode()
+        )
+                .returningResult(AddressMapper.address.ID)
+                .fetchOne();
+        Integer departureAddressId = departureAddressIdResult != null ? departureAddressIdResult.value1() : null;
+        routeModel.getDepartureAddress().setId(departureAddressId);
+
+        Record1<Integer> arrivalAddressIdResult = ctx.insertInto(AddressMapper.address,
+                AddressMapper.address.STREET,
+                AddressMapper.address.CITY,
+                AddressMapper.address.POSTALCODE
+        ).values(
+                routeModel.getArrivalAddress().getStreet(),
+                routeModel.getArrivalAddress().getCity(),
+                routeModel.getArrivalAddress().getPostalcode()
+        )
+                .returningResult(AddressMapper.address.ID)
+                .fetchOne();
+        Integer arrivalAddressId = arrivalAddressIdResult != null ? arrivalAddressIdResult.value1() : null;
+        routeModel.getArrivalAddress().setId(arrivalAddressId);
+
+
         Record1<Integer> routeIdResult = ctx.insertInto(PermitMapper.route,
                 PermitMapper.route.PERMIT_ID,
                 PermitMapper.route.LELU_ID,
                 PermitMapper.route.NAME,
-                PermitMapper.route.ORDER_NUMBER,
                 PermitMapper.route.TRANSPORT_COUNT,
-                PermitMapper.route.ALTERNATIVE_ROUTE
-                // TODO address ids
+                PermitMapper.route.ALTERNATIVE_ROUTE,
+                PermitMapper.route.DEPARTURE_ADDRESS_ID,
+                PermitMapper.route.ARRIVAL_ADDRESS_ID
+
         ).values(
                 routeModel.getPermitId(),
                 routeModel.getLeluId(),
                 routeModel.getName(),
-                routeModel.getOrderNumber(),
                 routeModel.getTransportCount(),
-                routeModel.getAlternativeRoute())
+                routeModel.getAlternativeRoute(),
+                departureAddressId,
+                arrivalAddressId)
                 .returningResult(PermitMapper.route.ID)
                 .fetchOne();
 
@@ -248,6 +306,7 @@ public class PermitRepository {
                     .execute();
 
             updateTransportDimensions(ctx, permitModel);
+            updateUnloadedTransportDimensions(ctx, permitModel);
             deleteVehiclesAndInsertNew(ctx, permitModel);
             deleteAxlesAndInsertNew(ctx, permitModel);
 
@@ -279,6 +338,17 @@ public class PermitRepository {
                 .set(PermitMapper.transportDimensions.LENGTH, permitModel.getTransportDimensions().getLength())
                 .where(PermitMapper.transportDimensions.PERMIT_ID.eq(permitModel.getId()))
                 .execute();
+    }
+
+    private void updateUnloadedTransportDimensions(DSLContext ctx, PermitModel permitModel) {
+        if (permitModel.getUnloadedTransportDimensions() != null) {
+            ctx.update(PermitMapper.unloadedTransportDimensions)
+                    .set(PermitMapper.unloadedTransportDimensions.HEIGHT, permitModel.getUnloadedTransportDimensions().getHeight())
+                    .set(PermitMapper.unloadedTransportDimensions.WIDTH, permitModel.getUnloadedTransportDimensions().getWidth())
+                    .set(PermitMapper.unloadedTransportDimensions.LENGTH, permitModel.getUnloadedTransportDimensions().getLength())
+                    .where(PermitMapper.unloadedTransportDimensions.PERMIT_ID.eq(permitModel.getId()))
+                    .execute();
+        }
     }
 
     private void deleteVehiclesAndInsertNew(DSLContext ctx, PermitModel permitModel) {
@@ -317,7 +387,6 @@ public class PermitRepository {
     private void updateRouteAndInsertRouteBridges(DSLContext ctx, RouteModel routeModel) {
         ctx.update(PermitMapper.route)
                 .set(PermitMapper.route.NAME, routeModel.getName())
-                .set(PermitMapper.route.ORDER_NUMBER, routeModel.getOrderNumber())
                 .set(PermitMapper.route.TRANSPORT_COUNT, routeModel.getTransportCount())
                 .set(PermitMapper.route.ALTERNATIVE_ROUTE, routeModel.getAlternativeRoute())
                 .where(PermitMapper.route.ID.eq(routeModel.getId()))

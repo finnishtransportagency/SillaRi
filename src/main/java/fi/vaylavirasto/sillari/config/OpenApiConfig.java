@@ -12,12 +12,12 @@ import io.swagger.v3.oas.annotations.servers.Server;
         ),
         servers = {
                 @Server(
-                        url="https://sillaridev.testivaylapilvi.fi/api/",
-                        description="Dev Server"
+                        url = "https://sillaridev.testivaylapilvi.fi/api/",
+                        description = "Dev Server"
                 ),
                 @Server(
-                        url="http://localhost:8080/api/",
-                        description="Local Server"
+                        url = "http://localhost:8080/api/",
+                        description = "Local Server"
                 )
         }
 )

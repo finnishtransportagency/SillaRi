@@ -1,11 +1,14 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
+import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.model.PermitModel;
 import fi.vaylavirasto.sillari.service.PermitService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,36 +23,39 @@ public class PermitController {
     PermitService permitService;
 
     @Operation(summary = "Get permit")
-    @GetMapping("/getpermit")
+    @GetMapping(value = "/getpermit", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public PermitModel getPermit(@RequestParam Integer permitId) {
+    public ResponseEntity<?> getPermit(@RequestParam Integer permitId) {
         ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermit");
         try {
-            return permitService.getPermit(permitId);
+            PermitModel permit = permitService.getPermit(permitId);
+            return ResponseEntity.ok().body(permit != null ? permit : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
     }
 
     @Operation(summary = "Get permit of route")
-    @GetMapping("/getpermitofroute")
+    @GetMapping(value = "/getpermitofroute", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public PermitModel getPermitOfRoute(@RequestParam Integer routeId) {
+    public ResponseEntity<?> getPermitOfRoute(@RequestParam Integer routeId) {
         ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitOfRoute");
         try {
-            return permitService.getPermitOfRoute(routeId);
+            PermitModel permit = permitService.getPermitOfRoute(routeId);
+            return ResponseEntity.ok().body(permit != null ? permit : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
     }
 
     @Operation(summary = "Get permit of route bridge")
-    @GetMapping("/getpermitofroutebridge")
+    @GetMapping(value = "/getpermitofroutebridge", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public PermitModel getPermitOfRouteBridge(@RequestParam Integer routeBridgeId) {
+    public ResponseEntity<?> getPermitOfRouteBridge(@RequestParam Integer routeBridgeId) {
         ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitOfRouteBridge");
         try {
-            return permitService.getPermitOfRouteBridge(routeBridgeId);
+            PermitModel permit = permitService.getPermitOfRouteBridge(routeBridgeId);
+            return ResponseEntity.ok().body(permit != null ? permit : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }

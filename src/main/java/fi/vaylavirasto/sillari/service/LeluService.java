@@ -1,9 +1,8 @@
 package fi.vaylavirasto.sillari.service;
 
-import fi.vaylavirasto.sillari.api.lelu.LeluDTOMapper;
-import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
-import fi.vaylavirasto.sillari.api.lelu.LeluPermitResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.LeluPermitStatus;
+import fi.vaylavirasto.sillari.api.lelu.*;
+import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
+import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.PermitModel;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
@@ -16,7 +15,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -32,13 +35,18 @@ public class LeluService {
     private CompanyRepository companyRepository;
     private RouteRepository routeRepository;
     private BridgeRepository bridgeRepository;
+    private final MessageSource messageSource;
+    private LeluRouteUploadUtil leluRouteUploadUtil;
 
     @Autowired
-    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, BridgeRepository bridgeRepository) {
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, BridgeRepository bridgeRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil
+    ) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
         this.routeRepository = routeRepository;
         this.bridgeRepository = bridgeRepository;
+        this.messageSource = messageSource;
+        this.leluRouteUploadUtil = leluRouteUploadUtil;
     }
 
     public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) {
@@ -78,6 +86,27 @@ public class LeluService {
         }
     }
 
+    public LeluRouteGeometryResponseDTO uploadRouteGeometry(Long routeId, MultipartFile file) throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
+        logger.debug("uploadRouteGeometry: " + routeId + " " +  file.getName());
+        List<RouteModel> routes = routeRepository.getRoutesWithLeluId(routeId);
+
+        if(routes == null || routes.isEmpty()){
+            logger.warn("Route not found with lelu id "+routeId);
+            throw new LeluRouteNotFoundException(messageSource.getMessage("lelu.route.not.found", null, Locale.ROOT));
+        }
+
+        ResponseEntity<?> responseEntity = leluRouteUploadUtil.doRouteGeometryUpload(routeId, file);
+
+        if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
+            String responseMessage = responseEntity.getBody() != null ? responseEntity.getBody().toString() : responseEntity.getStatusCode().getReasonPhrase();
+            throw new LeluRouteGeometryUploadException(responseMessage, responseEntity.getStatusCode());
+        }
+
+        return new LeluRouteGeometryResponseDTO(routeId, messageSource.getMessage("lelu.route.geometry.upload.completed", null, Locale.ROOT));
+
+    }
+
+
     private Integer getCompanyIdByBusinessId(CompanyModel companyModel) {
         Integer companyId = companyRepository.getCompanyIdByBusinessId(companyModel.getBusinessId());
         if (companyId == null) {
@@ -91,7 +120,6 @@ public class LeluService {
     private void setBridgeIdsToRouteBridges(PermitModel permitModel) {
         // Get bridge IDs for unique bridges in routes
         Map<String, Integer> idOIDMap = getBridgeIdsWithOIDs(permitModel);
-
         for (RouteModel route : permitModel.getRoutes()) {
             for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
                 Integer bridgeId = idOIDMap.get(routeBridge.getBridge().getOid());

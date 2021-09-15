@@ -2,11 +2,13 @@
   font-weight: bold;
 }
 
+/*
 .crossingLabel {
 }
 
 .crossingTextArea {
 }
+*/
 
 .crossingHiddenRow {
   visibility: hidden;
@@ -32,6 +34,11 @@
 
 .linkText {
   text-decoration: underline;
+}
+
+.disabledLink {
+  color: grey;
+  cursor: default;
 }
 
 .hidden {

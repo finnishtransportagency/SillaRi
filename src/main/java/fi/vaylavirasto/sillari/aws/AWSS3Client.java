@@ -7,6 +7,7 @@ import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -35,6 +36,7 @@ public class AWSS3Client {
     private String secretKey;
     private final String environment;
     private AssumeRoleResult roleResponse = null;
+
     public AWSS3Client() {
         environment = System.getenv("environment");
         if("localhost".equals(environment)) {
@@ -43,6 +45,7 @@ public class AWSS3Client {
         }
         roleArn = System.getenv("roleArn");
     }
+
     private void init() {
         if(roleResponse != null) {
             long now = new Date().getTime();
@@ -86,13 +89,14 @@ public class AWSS3Client {
                     .build();
         }
     }
-    public boolean upload(String key, byte photo[], long lenght, String contenttype) {
+
+    public boolean upload(String key, byte photo[], long length, String contenttype) {
         try {
             init();
             ByteArrayInputStream byteInputStream = new ByteArrayInputStream(photo);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contenttype);
-            metadata.setContentLength(lenght);
+            metadata.setContentLength(length);
             PutObjectRequest request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
             s3Client.putObject(request);
         } catch(Exception e) {
@@ -100,6 +104,7 @@ public class AWSS3Client {
         }
         return false;
     }
+
     public byte[] download(String objectKey) {
         try {
             init();
@@ -110,5 +115,15 @@ public class AWSS3Client {
             logger.error(e);
         }
         return null;
+    }
+
+    public void delete(String objectKey) {
+        try {
+            init();
+            DeleteObjectRequest request = new DeleteObjectRequest(bucketName, objectKey);
+            s3Client.deleteObject(request);
+        } catch(Exception e) {
+            logger.error(e);
+        }
     }
 }

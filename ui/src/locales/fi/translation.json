@@ -9,7 +9,8 @@
     "tab": {
       "transportCompanies": "Kuljetusyritykset",
       "upcomingBridges": "Tulevat sillat"
-    }
+    },
+    "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen..."
   },
   "map": {
     "attribution": "Aineisto"
@@ -44,7 +45,8 @@
     "settings" : "Asetukset",
     "map" : "Kartta",
     "camera" : "Kamera",
-    "crossing" : "Sillan ylitys"
+    "crossing" : "Sillan ylitys",
+    "management" : "Kuljetusten hallinta"
   },
   "company": {
     "transportPermit": "Kuljetuslupa",
@@ -142,6 +144,18 @@
         "save": "Tallenna"
       },
       "saved": "Tallennettu"
+    }
+  },
+  "management":
+  {
+    "companySummary":
+    {
+      "permitListTitle": "Kuljetusluvat",
+      "addTransportButtonLabel": "Lisää kuljetus"
+    },
+    "addTransport":
+    {
+      "headerTitle": "Lisää kuljetus"
     }
   }
 }

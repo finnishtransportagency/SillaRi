@@ -92,7 +92,7 @@ public class CrossingRepository {
                     FileMapper.image.TAKEN)
                     .select(dsl.select(DSL.val(imageId),
                             DSL.val(Long.valueOf(fileModel.getCrossingId()).intValue()),
-                            DSL.val(fileModel.getFilename() + "_" + fileModel.getTaken() + "_" + imageId + ".jpg"),
+                            DSL.val(fileModel.getFilename()),
                             DSL.val(fileModel.getObjectKey()),
                             DSL.val(taken))
                             .whereNotExists(dsl.selectOne()
@@ -122,5 +122,11 @@ public class CrossingRepository {
     public List<FileModel> getFiles(Integer crossingId) {
         return dsl.select().from(FileMapper.image).where(FileMapper.image.CROSSING_ID.eq(crossingId))
                 .fetch(new FileMapper(true));
+    }
+
+    public int deleteFileByObjectKey(String objectKey) {
+        return dsl.delete(FileMapper.image)
+                .where(FileMapper.image.OBJECT_KEY.eq(objectKey))
+                .execute();
     }
 }

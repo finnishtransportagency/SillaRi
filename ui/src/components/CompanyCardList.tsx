@@ -1,25 +1,25 @@
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { useTypedSelector } from "../store/store";
-import { getCompanyList } from "../utils/backendData";
+import React from "react";
+import ICompany from "../interfaces/ICompany";
 import CompanyCard from "./CompanyCard";
+import NoNetworkNoData from "./NoNetworkNoData";
 import "./CompanyCardList.css";
 
-const CompanyCardList = (): JSX.Element => {
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const { companyList } = crossings;
-  const dispatch = useDispatch();
+interface CompanyCardListProps {
+  companyList: ICompany[];
+  noNetworkNoData: boolean;
+}
 
-  useEffect(() => {
-    getCompanyList(dispatch);
-  }, [dispatch]);
-
+const CompanyCardList = ({ companyList, noNetworkNoData }: CompanyCardListProps): JSX.Element => {
   return (
     <div className="cardListContainer">
-      {companyList.map((company, index) => {
-        const key = `company_${index}`;
-        return <CompanyCard key={key} company={company} />;
-      })}
+      {noNetworkNoData ? (
+        <NoNetworkNoData />
+      ) : (
+        companyList.map((company, index) => {
+          const key = `company_${index}`;
+          return <CompanyCard key={key} company={company} />;
+        })
+      )}
     </div>
   );
 };

@@ -9,8 +9,13 @@ import org.springframework.stereotype.Service;
 public class FileService {
     @Autowired
     CrossingRepository crossingRepository;
+
     public FileModel createFile(FileModel fileModel) {
         Integer id = crossingRepository.insertFileIfNotExists(fileModel);
         return crossingRepository.getFile(id);
+    }
+
+    public int deleteFile(String objectKey) {
+        return crossingRepository.deleteFileByObjectKey(objectKey);
     }
 }

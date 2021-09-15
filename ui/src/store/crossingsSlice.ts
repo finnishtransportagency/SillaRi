@@ -1,12 +1,15 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 import ICompany from "../interfaces/ICompany";
-import IRadioValue from "../interfaces/IRadioValue";
-import IImageItem from "../interfaces/IImageItem";
-import ITextAreaValue from "../interfaces/ITextAreaValue";
 import ICrossing from "../interfaces/ICrossing";
-import IRoute from "../interfaces/IRoute";
+import IFailedQuery from "../interfaces/IFailedQuery";
+import IFile from "../interfaces/IFile";
+import IImageItem from "../interfaces/IImageItem";
+import INetworkStatus from "../interfaces/INetworkStatus";
 import IPermit from "../interfaces/IPermit";
+import IRadioValue from "../interfaces/IRadioValue";
+import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
+import ITextAreaValue from "../interfaces/ITextAreaValue";
 
 interface IStateProps {
   companyList: ICompany[];
@@ -16,6 +19,7 @@ interface IStateProps {
   selectedCrossingDetail?: ICrossing;
   selectedPermitDetail?: IPermit;
   images: IImageItem[];
+  networkStatus: INetworkStatus;
 }
 
 const initialState: IStateProps = {
@@ -26,6 +30,9 @@ const initialState: IStateProps = {
   selectedCrossingDetail: undefined,
   selectedPermitDetail: undefined,
   images: [],
+  networkStatus: {
+    isFailed: {},
+  },
 };
 
 const crossingsSlice = createSlice({
@@ -33,18 +40,23 @@ const crossingsSlice = createSlice({
   initialState,
   reducers: {
     GET_COMPANY_LIST: (state, action: PayloadAction<ICompany[]>) => {
+      console.log("GET_COMPANY_LIST", action.payload);
       return { ...state, companyList: action.payload };
     },
     GET_COMPANY: (state, action: PayloadAction<ICompany>) => {
+      console.log("GET_COMPANY", action.payload);
       return { ...state, selectedCompanyDetail: action.payload };
     },
     GET_PERMIT: (state, action: PayloadAction<IPermit>) => {
+      console.log("GET_PERMIT", action.payload);
       return { ...state, selectedPermitDetail: action.payload };
     },
     GET_ROUTE: (state, action: PayloadAction<IRoute>) => {
+      console.log("GET_ROUTE", action.payload);
       return { ...state, selectedRouteDetail: action.payload };
     },
     GET_ROUTE_BRIDGE: (state, action: PayloadAction<IRouteBridge>) => {
+      console.log("GET_ROUTE_BRIDGE", action.payload);
       return { ...state, selectedBridgeDetail: action.payload };
     },
     CROSSING_TEXTAREA_CHANGED: (state, action: PayloadAction<ITextAreaValue>) => {
@@ -98,6 +110,20 @@ const crossingsSlice = createSlice({
     SAVE_IMAGES: (state, action: PayloadAction<IImageItem[]>) => {
       console.log("SAVE_IMAGES", action.payload);
       return { ...state, images: action.payload };
+    },
+    UPDATE_IMAGES: (state, action: PayloadAction<IFile[]>) => {
+      // Remove any camera images from the state that have been uploaded, and so are now in the crossing images
+      console.log("UPDATE_IMAGES", action.payload);
+      const crossingImages = action.payload || [];
+      const cameraImages = current(state.images).reduce((acc: IImageItem[], image) => {
+        const isStateImageInPayload = crossingImages.some((crossingImage) => crossingImage.filename === image.filename);
+        return isStateImageInPayload ? acc : [...acc, image];
+      }, []);
+      return { ...state, images: cameraImages };
+    },
+    SET_FAILED_QUERY: (state, action: PayloadAction<IFailedQuery>) => {
+      // console.log("SET_FAILED_QUERY", action.payload);
+      return { ...state, networkStatus: { ...state.networkStatus, isFailed: { ...state.networkStatus.isFailed, ...action.payload } } };
     },
   },
 });

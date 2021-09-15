@@ -9,7 +9,8 @@
     "tab": {
       "transportCompanies": "Transport companies",
       "upcomingBridges": "Upcoming bridges"
-    }
+    },
+    "noNetworkNoData": "Unable to retrieve data, trying again..."
   },
   "map": {
     "attribution": "Material"
@@ -43,7 +44,8 @@
     "mainPage" : "Main page",
     "settings" : "Settings",
     "map" : "Map",
-    "camera" : "Camera"
+    "camera" : "Camera",
+    "management" : "Management"
   },
   "company": {
     "transportPermit": "Transport permit",
@@ -69,5 +71,17 @@
     },
     "transportValid": "Transport is in accordance with the permit on departure",
     "bridgesToSupervise": "Bridges to supervise"
+  },
+  "management":
+  {
+    "companySummary":
+    {
+      "permitListTitle": "Transport permits",
+      "addTransportButtonLabel": "Add transport"
+    },
+    "addTransport":
+    {
+      "headerTitle": "Add transport"
+    }
   }
 }

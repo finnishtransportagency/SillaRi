@@ -58,4 +58,12 @@ public class RouteRepository {
         return resultMap;
     }
 
+    public List<RouteModel> getRoutesWithLeluId(Long id) {
+        return dsl.select().from(RouteMapper.route)
+                .leftJoin(RouteMapper.arrivalAddress).on(RouteMapper.route.ARRIVAL_ADDRESS_ID.eq(RouteMapper.arrivalAddress.ID))
+                .leftJoin(RouteMapper.departureAddress).on(RouteMapper.route.DEPARTURE_ADDRESS_ID.eq(RouteMapper.departureAddress.ID))
+                .where(RouteMapper.route.LELU_ID.eq(id))
+                .fetch(new RouteMapper());
+    }
+
 }

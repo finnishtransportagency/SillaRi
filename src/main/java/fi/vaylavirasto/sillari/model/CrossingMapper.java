@@ -26,7 +26,7 @@ public class CrossingMapper implements RecordMapper<Record,CrossingModel> {
         crossingModel.setExceptionsInfoDescription(record.get(crossing.EXCEPTIONSINFODESCRIPTION));
         crossingModel.setExtraInfoDescription(record.get(crossing.EXTRAINFODESCRIPTION));
         LocalDateTime started = record.get(crossing.STARTED);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
         crossingModel.setStarted(started.format(formatter));
         crossingModel.setPermanentBendings(record.get(crossing.PERMANENTBENDINGS));
         crossingModel.setTwist(record.get(crossing.TWIST));
