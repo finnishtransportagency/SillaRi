@@ -56,10 +56,13 @@ public class LeluRouteUploadUtil {
             if (routeUploadDirectory.exists() && routeUploadDirectory.isDirectory() && routeUploadDirectory.canWrite()) {
                 if (routeId != null && routeId > 0 && file != null && !file.isEmpty()) {
                     // Save the file to the path specified in the config
-                    logger.debug("filename " + file.getOriginalFilename());
-                    Path fullPath = Paths.get(routeUploadPath, file.getOriginalFilename());
-                    logger.debug("path: " + fullPath.toString());
-                    file.transferTo(fullPath);
+                    logger.debug("zip filename " + file.getOriginalFilename());
+                    Path zipFilePath = Paths.get(routeUploadPath, file.getOriginalFilename());
+                    logger.debug("zipFilePath: " + zipFilePath.toString());
+                    file.transferTo(zipFilePath);
+
+                    Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
+                    Files.setPosixFilePermissions(zipFilePath, perms);
 
                     //copy script to the working dir
                     Resource r = resourceLoader.getResource("classpath:"+LELU_IMPORT_ROUTE_SCRIPT_FILENAME);
@@ -70,8 +73,8 @@ public class LeluRouteUploadUtil {
                     logger.debug("script path: " + fullScriptPath.toString());
                     Files.write(fullScriptPath, inputStream.readAllBytes());
 
-                    Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
                     Files.setPosixFilePermissions(fullScriptPath, perms);
+
 
 
 
