@@ -5,7 +5,7 @@ sillari:
     url: https://sillaridev.testivaylapilvi.fi/geoserver/
   lelu:
     version: @leluApiVersion@
-    routeuploadpath: /tmp
+    routeuploadpath: /data/lelu
   trex:
     url: https://testioag.vayla.fi/trex/rajapinta/taitorakenne/v2/yleistiedot/silta
 spring:
