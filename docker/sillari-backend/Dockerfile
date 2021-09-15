@@ -11,4 +11,6 @@ RUN apt-get update
 RUN apt-get install -y software-properties-common
 RUN apt-get install -y binutils libproj-dev gdal-bin
 RUN apt-get install -y postgresql-client
+ADD jmx_prometheus_javaagent-0.16.1.jar /javaagent.jar
+ADD config.yaml /config.yaml
 ENTRYPOINT ["/startapp.sh"]
