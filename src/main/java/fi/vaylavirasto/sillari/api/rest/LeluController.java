@@ -124,6 +124,10 @@ public class LeluController {
             // @ApiParam(required = true, value = "Geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix compressed to a single zip file")
             throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
         logger.debug("Lelu uploadroutegeometry {}", routeId);
+        logger.debug("FILE name:" + file.getName());
+        logger.debug("FILE OriginalFilename:" + file.getOriginalFilename());
+        logger.debug("FILE size:" + file.getSize());
+        logger.debug("FILE contenttype:" + file.getContentType());
         return leluService.uploadRouteGeometry(routeId, file);
     }
 
