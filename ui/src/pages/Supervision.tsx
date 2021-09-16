@@ -71,8 +71,8 @@ const Supervision = (): JSX.Element => {
     anomalies = false,
     anomaliesDescription = "",
     surfaceDamage = false,
-    seamDamage = false,
-    bendsDisplacements = false,
+    jointDamage = false,
+    bendOrDisplacement = false,
     otherObservations = false,
     otherObservationsInfo = "",
     additionalInfo = "",
@@ -82,7 +82,7 @@ const Supervision = (): JSX.Element => {
   const { isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
     () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail),
-    { retry: onRetry }
+    { retry: onRetry },
   );
 
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
@@ -120,8 +120,8 @@ const Supervision = (): JSX.Element => {
       anomalies,
       anomaliesDescription: anomalies ? anomaliesDescription : "",
       surfaceDamage: anomalies ? surfaceDamage : false,
-      seamDamage: anomalies ? seamDamage : false,
-      bendsDisplacements: anomalies ? bendsDisplacements : false,
+      jointDamage: anomalies ? jointDamage : false,
+      bendOrDisplacement: anomalies ? bendOrDisplacement : false,
       otherObservations: anomalies ? otherObservations : false,
       otherObservationsInfo: anomalies && otherObservations ? otherObservationsInfo : "",
       additionalInfo,
@@ -339,18 +339,18 @@ const Supervision = (): JSX.Element => {
                   />
                   <IonLabel>{t("supervision.report.surfaceDamage")}</IonLabel>
                 </IonItem>
-                <IonItem key="seamDamage">
-                  <IonCheckbox slot="start" value="seamDamage" checked={seamDamage} onClick={() => checkBoxClicked("seamDamage", !seamDamage)} />
-                  <IonLabel>{t("supervision.report.seamDamage")}</IonLabel>
+                <IonItem key="jointDamage">
+                  <IonCheckbox slot="start" value="jointDamage" checked={jointDamage} onClick={() => checkBoxClicked("jointDamage", !jointDamage)} />
+                  <IonLabel>{t("supervision.report.jointDamage")}</IonLabel>
                 </IonItem>
-                <IonItem key="bendsDisplacements">
+                <IonItem key="bendOrDisplacement">
                   <IonCheckbox
                     slot="start"
-                    value="bendsDisplacements"
-                    checked={bendsDisplacements}
-                    onClick={() => checkBoxClicked("bendsDisplacements", !bendsDisplacements)}
+                    value="bendOrDisplacement"
+                    checked={bendOrDisplacement}
+                    onClick={() => checkBoxClicked("bendOrDisplacement", !bendOrDisplacement)}
                   />
-                  <IonLabel>{t("supervision.report.bendsDisplacements")}</IonLabel>
+                  <IonLabel>{t("supervision.report.bendOrDisplacement")}</IonLabel>
                 </IonItem>
                 <IonItem key="otherObservations">
                   <IonCheckbox

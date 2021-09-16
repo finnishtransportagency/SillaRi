@@ -8,8 +8,8 @@ export default interface ISupervisionReport {
   anomalies: boolean;
   anomaliesDescription: string;
   surfaceDamage: boolean;
-  seamDamage: boolean;
-  bendsDisplacements: boolean;
+  jointDamage: boolean;
+  bendOrDisplacement: boolean;
   otherObservations: boolean;
   otherObservationsInfo: string;
   additionalInfo: string;

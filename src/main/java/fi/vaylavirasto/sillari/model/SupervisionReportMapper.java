@@ -21,8 +21,8 @@ public class SupervisionReportMapper implements RecordMapper<Record, Supervision
         supervisionReportModel.setAnomalies(record.get(supervisionReport.ANOMALIES));
         supervisionReportModel.setAnomaliesDescription(record.get(supervisionReport.ANOMALIES_DESCRIPTION));
         supervisionReportModel.setSurfaceDamage(record.get(supervisionReport.SURFACE_DAMAGE));
-        supervisionReportModel.setSeamDamage(record.get(supervisionReport.SEAM_DAMAGE));
-        supervisionReportModel.setBendsDisplacements(record.get(supervisionReport.BENDS_DISPLACEMENTS));
+        supervisionReportModel.setJointDamage(record.get(supervisionReport.JOINT_DAMAGE));
+        supervisionReportModel.setBendOrDisplacement(record.get(supervisionReport.BEND_OR_DISPLACEMENT));
         supervisionReportModel.setOtherObservations(record.get(supervisionReport.OTHER_OBSERVATIONS));
         supervisionReportModel.setOtherObservationsInfo(record.get(supervisionReport.OTHER_OBSERVATIONS_INFO));
         supervisionReportModel.setAdditionalInfo(record.get(supervisionReport.ADDITIONAL_INFO));

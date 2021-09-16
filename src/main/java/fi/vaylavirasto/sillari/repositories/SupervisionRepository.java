@@ -111,8 +111,8 @@ public class SupervisionRepository {
                             SupervisionMapper.supervisionReport.ANOMALIES,
                             SupervisionMapper.supervisionReport.ANOMALIES_DESCRIPTION,
                             SupervisionMapper.supervisionReport.SURFACE_DAMAGE,
-                            SupervisionMapper.supervisionReport.SEAM_DAMAGE,
-                            SupervisionMapper.supervisionReport.BENDS_DISPLACEMENTS,
+                            SupervisionMapper.supervisionReport.JOINT_DAMAGE,
+                            SupervisionMapper.supervisionReport.BEND_OR_DISPLACEMENT,
                             SupervisionMapper.supervisionReport.OTHER_OBSERVATIONS,
                             SupervisionMapper.supervisionReport.OTHER_OBSERVATIONS_INFO,
                             SupervisionMapper.supervisionReport.ADDITIONAL_INFO,
@@ -166,8 +166,8 @@ public class SupervisionRepository {
                     .set(SupervisionMapper.supervisionReport.ANOMALIES, supervisionReport.getAnomalies())
                     .set(SupervisionMapper.supervisionReport.ANOMALIES_DESCRIPTION, supervisionReport.getAnomaliesDescription())
                     .set(SupervisionMapper.supervisionReport.SURFACE_DAMAGE, supervisionReport.getSurfaceDamage())
-                    .set(SupervisionMapper.supervisionReport.SEAM_DAMAGE, supervisionReport.getSeamDamage())
-                    .set(SupervisionMapper.supervisionReport.BENDS_DISPLACEMENTS, supervisionReport.getBendsDisplacements())
+                    .set(SupervisionMapper.supervisionReport.JOINT_DAMAGE, supervisionReport.getJointDamage())
+                    .set(SupervisionMapper.supervisionReport.BEND_OR_DISPLACEMENT, supervisionReport.getBendOrDisplacement())
                     .set(SupervisionMapper.supervisionReport.OTHER_OBSERVATIONS, supervisionReport.getOtherObservations())
                     .set(SupervisionMapper.supervisionReport.OTHER_OBSERVATIONS_INFO, supervisionReport.getOtherObservationsInfo())
                     .set(SupervisionMapper.supervisionReport.ADDITIONAL_INFO, supervisionReport.getAdditionalInfo())

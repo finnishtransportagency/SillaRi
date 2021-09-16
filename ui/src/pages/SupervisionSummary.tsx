@@ -63,8 +63,8 @@ const SupervisionSummary = (): JSX.Element => {
     anomalies,
     anomaliesDescription,
     surfaceDamage,
-    seamDamage,
-    bendsDisplacements,
+    jointDamage,
+    bendOrDisplacement,
     otherObservations,
     otherObservationsInfo,
     additionalInfo,
@@ -116,8 +116,8 @@ const SupervisionSummary = (): JSX.Element => {
         anomalies,
         anomaliesDescription,
         surfaceDamage,
-        seamDamage,
-        bendsDisplacements,
+        jointDamage,
+        bendOrDisplacement,
         otherObservations,
         otherObservationsInfo,
         additionalInfo,
@@ -144,17 +144,17 @@ const SupervisionSummary = (): JSX.Element => {
     if (surfaceDamage) {
       anomaliesSummary = t("supervision.report.surfaceDamage");
     }
-    if (seamDamage) {
+    if (jointDamage) {
       if (anomaliesSummary.length > 0) {
         anomaliesSummary += ", ";
       }
-      anomaliesSummary += t("supervision.report.seamDamage");
+      anomaliesSummary += t("supervision.report.jointDamage");
     }
-    if (bendsDisplacements) {
+    if (bendOrDisplacement) {
       if (anomaliesSummary.length > 0) {
         anomaliesSummary += ", ";
       }
-      anomaliesSummary += t("supervision.report.bendsDisplacements");
+      anomaliesSummary += t("supervision.report.bendOrDisplacement");
     }
     if (otherObservations && otherObservationsInfo) {
       if (anomaliesSummary.length > 0) {

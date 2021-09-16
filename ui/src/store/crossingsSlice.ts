@@ -99,10 +99,10 @@ const crossingsSlice = createSlice({
           selectedSupervisionDetail.report.anomalies = action.payload.value;
         } else if (action.payload.name === "surfaceDamage") {
           selectedSupervisionDetail.report.surfaceDamage = action.payload.value;
-        } else if (action.payload.name === "seamDamage") {
-          selectedSupervisionDetail.report.seamDamage = action.payload.value;
-        } else if (action.payload.name === "bendsDisplacements") {
-          selectedSupervisionDetail.report.bendsDisplacements = action.payload.value;
+        } else if (action.payload.name === "jointDamage") {
+          selectedSupervisionDetail.report.jointDamage = action.payload.value;
+        } else if (action.payload.name === "bendOrDisplacement") {
+          selectedSupervisionDetail.report.bendOrDisplacement = action.payload.value;
         } else if (action.payload.name === "otherObservations") {
           selectedSupervisionDetail.report.otherObservations = action.payload.value;
         }

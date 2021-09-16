@@ -109,8 +109,8 @@
       "anomalies" : "Poikkeavia havaintoja",
       "anomaliesInfo" : "Tarkenna poikkeavia havaintoja:",
       "surfaceDamage" : "Päällystevaurio",
-      "seamDamage" : "Liikuntasauman rikkoutuminen",
-      "bendsDisplacements" : "Pysyvä taipuma tai muu siirtymä",
+      "jointDamage": "Liikuntasauman rikkoutuminen",
+      "bendOrDisplacement": "Pysyvä taipuma tai muu siirtymä",
       "otherObservations" : "Jotain muuta, mitä?",
       "anomaliesDescription" : "Kuvaile poikkeavia havaintoja",
       "additionalInfo" : "Lisätiedot"

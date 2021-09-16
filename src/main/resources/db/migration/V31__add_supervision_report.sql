@@ -11,8 +11,8 @@ create table sillari.supervision_report
     anomalies               boolean, --poikkeavia havaintoja
     anomalies_description   text,    --kuvaile poikkeavia havaintoja
     surface_damage          boolean, --päällystevaurio
-    seam_damage             boolean, --liikuntasauman rikkoutuminen
-    bends_displacements     boolean, --pysyvä taipuma tai muu siirtymä
+    joint_damage            boolean, --liikuntasauman rikkoutuminen
+    bend_or_displacement    boolean, --pysyvä taipuma tai muu siirtymä
     other_observations      boolean, --jotain muuta
     other_observations_info text,    --jotain muuta, mitä
     additional_info         text,    --lisätiedot

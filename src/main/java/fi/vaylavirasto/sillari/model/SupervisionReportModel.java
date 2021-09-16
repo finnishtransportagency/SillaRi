@@ -15,8 +15,8 @@ public class SupervisionReportModel {
     private Boolean anomalies;
     private String anomaliesDescription;
     private Boolean surfaceDamage;
-    private Boolean seamDamage;
-    private Boolean bendsDisplacements;
+    private Boolean jointDamage;
+    private Boolean bendOrDisplacement;
     private Boolean otherObservations;
     private String otherObservationsInfo;
     private String additionalInfo;
