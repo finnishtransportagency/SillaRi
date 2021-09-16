@@ -13,6 +13,9 @@ public class SupervisionModel {
     private Integer supervisorId;
     private OffsetDateTime plannedTime;
     private Boolean conformsToPermit;
+    // TODO supervisor
     private SupervisionStatusModel currentStatus;
     private List<SupervisionStatusModel> statusHistory;
+    private SupervisionReportModel report;
+    private List<FileModel> images;
 }

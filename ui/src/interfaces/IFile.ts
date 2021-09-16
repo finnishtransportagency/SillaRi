@@ -1,6 +1,6 @@
 export default interface IFile {
   id: number;
-  crossingId: number;
+  supervisionId: number;
   objectKey: string;
   taken: string;
   filename: string;

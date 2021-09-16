@@ -80,12 +80,12 @@ public class ImageController {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "uploadImage");
         FileModel model = new FileModel();
         try {
-            model.setObjectKey("crossings/" + fileInputModel.getCrossingId() + "/" + fileInputModel.getFilename());
+            model.setObjectKey("supervision/" + fileInputModel.getSupervisionId() + "/" + fileInputModel.getFilename());
             model.setFilename(fileInputModel.getFilename());
             model.setMimetype("");
             model.setEncoding("");
             model.setTaken(fileInputModel.getTaken());
-            model.setCrossingId(Long.parseLong(fileInputModel.getCrossingId()));
+            model.setSupervisionId(Integer.parseInt(fileInputModel.getSupervisionId()));
             model = fileService.createFile(model);
 
             Tika tika = new Tika();
