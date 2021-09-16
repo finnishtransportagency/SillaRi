@@ -139,6 +139,13 @@ const BridgeDetail = (): JSX.Element => {
                         </IonLabel>
                       </IonCol>
                     </IonRow>
+                    {!isLoadingSupervision && !supervisionId && (
+                      <IonRow>
+                        <IonCol>
+                          <IonLabel class="crossingLabelWarning">{t("bridgeDetail.supervisionMissing")}</IonLabel>
+                        </IonCol>
+                      </IonRow>
+                    )}
                     <IonRow>
                       <IonCol>
                         <IonItem key="conforms2">
@@ -146,6 +153,7 @@ const BridgeDetail = (): JSX.Element => {
                             slot="start"
                             value="conforms"
                             checked={conformsToPermit}
+                            disabled={!supervisionId}
                             onClick={() => setConformsToPermit(!conformsToPermit)}
                           />
                           <IonLabel>{t("bridgeDetail.conformsToPermit")}</IonLabel>
@@ -158,12 +166,12 @@ const BridgeDetail = (): JSX.Element => {
             </IonGrid>
             <IonGrid>
               <IonRow>
-                <IonButton color="primary" routerLink={`/denyCrossing/${routeBridgeId}`}>
+                <IonButton disabled={!supervisionId} color="primary" routerLink={`/denyCrossing/${routeBridgeId}`}>
                   {t("bridgeDetail.denyCrossing")}
                 </IonButton>
               </IonRow>
               <IonRow>
-                <IonButton disabled={!conformsToPermit} color="primary" routerLink={`/supervision/${supervisionId}`}>
+                <IonButton disabled={!supervisionId || !conformsToPermit} color="primary" routerLink={`/supervision/${supervisionId}`}>
                   {t("bridgeDetail.startSupervision")}
                 </IonButton>
               </IonRow>
