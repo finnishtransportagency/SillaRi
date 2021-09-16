@@ -88,7 +88,6 @@ const crossingsSlice = createSlice({
       return { ...state, loading: false, selectedSupervisionDetail: action.payload };
     },
     REPORT_RADIO_CHANGED: (state, action: PayloadAction<IRadioValue>) => {
-      console.log("REPORT_RADIO_CHANGED", action.payload);
       const { selectedSupervisionDetail } = state;
       if (selectedSupervisionDetail) {
         if (action.payload.name === "drivingLineOk") {
@@ -109,7 +108,6 @@ const crossingsSlice = createSlice({
       }
     },
     REPORT_TEXTAREA_CHANGED: (state, action: PayloadAction<ITextAreaValue>) => {
-      console.log("REPORT_TEXTAREA_CHANGED", action.payload);
       const { selectedSupervisionDetail } = state;
       if (selectedSupervisionDetail) {
         if (action.payload.name === "drivingLineInfo") {

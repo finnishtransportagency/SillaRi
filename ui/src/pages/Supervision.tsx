@@ -82,7 +82,7 @@ const Supervision = (): JSX.Element => {
   const { isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
     () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail),
-    { retry: onRetry },
+    { retry: onRetry }
   );
 
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
@@ -170,8 +170,6 @@ const Supervision = (): JSX.Element => {
     (isFailed.getSupervision && selectedSupervisionDetail === undefined) ||
     (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
     (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);
-
-  console.log(report);
 
   return (
     <IonPage>

@@ -339,8 +339,6 @@ export const sendSupervisionReportUpdate = async (updateRequest: ISupervisionRep
   try {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { sendSupervisionReportUpdate: false } });
 
-    console.log("SENDING SUPERVISION REPORT UPDATE", updateRequest);
-
     const updateReportResponse = await fetch(`${getOrigin()}/api/supervision/updatesupervisionreport`, {
       method: "PUT",
       headers: {

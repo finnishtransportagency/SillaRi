@@ -38,6 +38,8 @@ public class SupervisionMapper implements RecordMapper<Record, SupervisionModel>
             supervisionModel.setReport(reportModel);
         }
 
+        supervisionModel.setImages(new ArrayList<>());
+
         return supervisionModel;
     }
 }
