@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Timed
 @RequestMapping("/supervision")
 public class SupervisionController {
-    private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     SupervisionService supervisionService;
 
@@ -40,11 +40,9 @@ public class SupervisionController {
     @GetMapping(value = "/getsupervisionofroutebridge", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public ResponseEntity<?> getSupervisionOfRouteBridge(@RequestParam Integer routeBridgeId) {
-        logger.debug("HELLO: getSupervisionOfRouteBridge: "+ routeBridgeId);
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionOfRouteBridge");
         try {
             SupervisionModel supervisionModel = supervisionService.getSupervisionOfRouteBridge(routeBridgeId);
-            logger.debug("HELLO: supervisionModel: "+ supervisionModel);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
