@@ -7,6 +7,8 @@ import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Timed
 @RequestMapping("/supervision")
 public class SupervisionController {
+    private static final Logger logger = LogManager.getLogger();
     @Autowired
     SupervisionService supervisionService;
 
@@ -37,9 +40,11 @@ public class SupervisionController {
     @GetMapping(value = "/getsupervisionofroutebridge", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public ResponseEntity<?> getSupervisionOfRouteBridge(@RequestParam Integer routeBridgeId) {
+        logger.debug("HELLO: getSupervisionOfRouteBridge: "+ routeBridgeId);
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionOfRouteBridge");
         try {
             SupervisionModel supervisionModel = supervisionService.getSupervisionOfRouteBridge(routeBridgeId);
+            logger.debug("HELLO: supervisionModel: "+ supervisionModel);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
