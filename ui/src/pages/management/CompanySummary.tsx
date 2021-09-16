@@ -3,16 +3,16 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonPage, IonRow, IonText } from "@ionic/react";
-import { add, chevronDown, chevronUp } from "ionicons/icons";
+import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonPage, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
+import { add } from "ionicons/icons";
 import Moment from "react-moment";
-import { Accordion, AccordionItem, AccordionItemButton, AccordionItemHeading, AccordionItemPanel } from "react-accessible-accordion";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
+import CustomAccordion from "../../components/common/CustomAccordion";
+import RouteGrid from "../../components/management/RouteGrid";
 import { useTypedSelector } from "../../store/store";
 import { getCompany, onRetry } from "../../utils/backendData";
-import { dateTimeFormat } from "../../utils/constants";
-import "./CompanySummary.css";
+import { dateFormat } from "../../utils/constants";
 
 interface CompanySummaryProps {
   companyId: string;
@@ -32,71 +32,123 @@ const CompanySummary = (): JSX.Element => {
 
   useQuery(["getCompany", companyId], () => getCompany(Number(companyId), dispatch, selectedCompanyDetail), { retry: onRetry });
 
-  const noNetworkNoData = isFailed.getCompany && selectedCompanyDetail === undefined;
+  const addTransportButton = (addRouteLink: string, className?: string) => (
+    <IonButton
+      className={className}
+      color="secondary"
+      routerLink={addRouteLink}
+      onClick={(evt) => {
+        evt.stopPropagation();
+      }}
+    >
+      {t("management.companySummary.addTransportButtonLabel")}
+      <IonIcon icon={add} slot="start" />
+    </IonButton>
+  );
 
-  let content;
-  if (noNetworkNoData) {
-    content = <NoNetworkNoData />;
-  } else {
-    content = (
-      <Accordion id="CompanySummaryPermitList" allowMultipleExpanded allowZeroExpanded>
-        {permits.map((permit, index) => {
-          const key = `permit_${index}`;
-          const { id, permitNumber, validStartDate, validEndDate } = permit;
-          const addRouteLink = `addTransport/${id}`;
-          return (
-            <AccordionItem key={key}>
-              <AccordionItemHeading>
-                <AccordionItemButton>
-                  <IonItem lines="none" color="secondary">
-                    <IonIcon className="openIcon" icon={chevronDown} slot="end" />
-                    <IonIcon className="closeIcon" icon={chevronUp} slot="end" />
-                    <IonGrid color="secondary">
-                      <IonRow className="ion-align-items-center">
-                        <IonCol>
-                          <IonText className="headingText">{permitNumber}</IonText>
-                        </IonCol>
-                        <IonCol>
-                          <small>
-                            <Moment format={dateTimeFormat}>{validStartDate}</Moment>
-                            <IonText>{" - "}</IonText>
-                            <Moment format={dateTimeFormat}>{validEndDate}</Moment>
-                          </small>
-                        </IonCol>
-                        <IonCol>
-                          <IonButton
-                            routerLink={addRouteLink}
-                            onClick={(evt) => {
-                              evt.stopPropagation();
-                            }}
-                          >
-                            {t("management.companySummary.addTransportButtonLabel")}
-                            <IonIcon icon={add} slot="start" />
-                          </IonButton>
-                        </IonCol>
-                      </IonRow>
-                    </IonGrid>
-                  </IonItem>
-                </AccordionItemButton>
-              </AccordionItemHeading>
-              <AccordionItemPanel>
-                <p>Luvan [{permitNumber}] kuljetusten tiedot tähän...</p>
-              </AccordionItemPanel>
-            </AccordionItem>
-          );
-        })}
-      </Accordion>
-    );
-  }
+  const noNetworkNoData = isFailed.getCompany && selectedCompanyDetail === undefined;
 
   return (
     <IonPage>
       <Header title={name} somethingFailed={isFailed.getCompany} />
-      <IonContent>
-        <IonItem lines="none">
-          <h2>{t("management.companySummary.permitListTitle")}</h2>
-        </IonItem>
-        {content}
+      <IonContent fullscreen color="light">
+        {noNetworkNoData ? (
+          <NoNetworkNoData />
+        ) : (
+          <IonGrid className="ion-no-padding" fixed>
+            <IonRow>
+              <IonCol className="ion-padding">
+                <IonText className="headingText">{t("management.companySummary.permitListTitle")}</IonText>
+              </IonCol>
+            </IonRow>
+
+            <IonRow>
+              <IonCol className="whiteBackground">
+                <IonGrid className="ion-no-padding">
+                  <IonRow>
+                    <IonCol>
+                      <CustomAccordion
+                        items={permits.map((permit, index) => {
+                          const key = `permit_${index}`;
+                          const { id, permitNumber, validStartDate, validEndDate, routes = [] } = permit;
+                          const addRouteLink = `/management/addTransport/${id}`;
+
+                          return {
+                            uuid: key,
+                            headingColor: "primary",
+                            heading: (
+                              <IonGrid className="ion-no-padding">
+                                <IonRow className="ion-margin ion-align-items-center">
+                                  <IonCol>
+                                    <IonGrid className="ion-no-padding">
+                                      <IonRow>
+                                        <IonCol>
+                                          <IonText className="headingText">{permitNumber}</IonText>
+                                        </IonCol>
+                                      </IonRow>
+                                      <IonRow>
+                                        <IonCol>
+                                          <small>
+                                            <Moment format={dateFormat}>{validStartDate}</Moment>
+                                            <IonText>{" - "}</IonText>
+                                            <Moment format={dateFormat}>{validEndDate}</Moment>
+                                          </small>
+                                        </IonCol>
+                                      </IonRow>
+                                    </IonGrid>
+                                  </IonCol>
+                                  <IonCol>
+                                    <IonText>{`${t("management.companySummary.transports")}: ${routes.length}`}</IonText>
+                                  </IonCol>
+                                  <IonCol className="ion-hide-md-down">{addTransportButton(addRouteLink)}</IonCol>
+                                </IonRow>
+                              </IonGrid>
+                            ),
+                            isPanelOpen: index === 0,
+                            panel: (
+                              <IonGrid className="ion-no-padding">
+                                <IonRow className="ion-margin">
+                                  <IonCol size="12" size-sm="6" className="ion-padding-bottom ion-text-center">
+                                    {addTransportButton(addRouteLink, "ion-hide-md-up")}
+                                  </IonCol>
+                                  <IonCol size="12" size-sm="6">
+                                    <IonGrid className="ion-no-padding">
+                                      <IonRow>
+                                        <IonCol size="4" size-sm="4" className="ion-padding ion-text-right">
+                                          <IonText>{`${t("management.companySummary.filter.show")}: `}</IonText>
+                                        </IonCol>
+                                        <IonCol size="8" size-sm="8">
+                                          <IonSelect interface="action-sheet" cancelText={t("common.buttons.back")} value="all">
+                                            <IonSelectOption value="all">{t("management.companySummary.filter.status.all")}</IonSelectOption>
+                                            <IonSelectOption value="planned">{t("management.companySummary.filter.status.planned")}</IonSelectOption>
+                                            <IonSelectOption value="waiting">{t("management.companySummary.filter.status.waiting")}</IonSelectOption>
+                                            <IonSelectOption value="completed">
+                                              {t("management.companySummary.filter.status.completed")}
+                                            </IonSelectOption>
+                                          </IonSelect>
+                                        </IonCol>
+                                      </IonRow>
+                                    </IonGrid>
+                                  </IonCol>
+                                </IonRow>
+
+                                <IonRow className="ion-margin">
+                                  <IonCol>
+                                    <RouteGrid permit={permit} />
+                                  </IonCol>
+                                </IonRow>
+                              </IonGrid>
+                            ),
+                          };
+                        })}
+                      />
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        )}
       </IonContent>
     </IonPage>
   );

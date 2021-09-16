@@ -146,16 +146,76 @@
       "saved": "Tallennettu"
     }
   },
+  "common": {
+    "buttons": {
+      "done": "Valmis",
+      "back": "Peru",
+      "cancel": "Peruuta",
+      "save": "Tallenna"
+  }
+  },
   "management":
   {
     "companySummary":
     {
-      "permitListTitle": "Kuljetusluvat",
-      "addTransportButtonLabel": "Lisää kuljetus"
+      "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
+      "transports": "Kuljetuksia",
+      "addTransportButtonLabel": "Lisää kuljetus",
+      "filter": {
+        "show": "Näytä",
+        "status": {
+          "all": "Kaikki kuljetukset",
+          "planned": "Suunnitellut",
+          "waiting": "Lähtöä odottavat",
+          "completed": "Päättyneet"
+        }
+      },
+      "route": {
+        "id": "ID",
+        "route": "Reitti",
+        "supervision": "Sillanvalvonta",
+        "time": "Ajankohta",
+        "status": "Tila",
+        "action": "Toiminto"
+      }
     },
     "addTransport":
     {
-      "headerTitle": "Lisää kuljetus"
+      "headerTitle": "Lisää uusi kuljetus",
+      "transportPermit": "Kuljetuslupa",
+      "validityPeriod": "Voimassaoloaika",
+      "transportId": "Kuljetuksen ID",
+      "transportInformation": "Kuljetuksen tiedot",
+      "bridgesToSupervise": "Valvottavat sillat",
+      "buttons": {
+        "deleteTransport": "Poista kuljetus"
+      },
+      "routeInfo": {
+        "estimatedDepartureDate": "Arvioitu lähtöpäivä",
+        "estimatedDepartureTime": "Arvioitu lähtöaika",
+        "route": "Reitti",
+        "origin": "Lähtöpaikka",
+        "destination": "Määräpaikka",
+        "showRouteOnMap": "Näytä reitti kartalla"
+      },
+      "transportInfo": {
+        "title": "Enimmäismitat ja -massat",
+        "totalMass": "Kokonaismassa",
+        "dimensions": "Kuljetuksen mitat",
+        "height": "Korkeus maasta",
+        "width": "Leveys",
+        "length": "Pituus"
+      },
+      "bridgeInfo": {
+        "bridge": "Silta",
+        "estimatedCrossingTime": "Arvioitu ylitysaika",
+        "bridgeSupervisors": "Sillanvalvojat",
+        "ownSupervisor": "Omat valvojat",
+        "contractor": "Alueurakoitsija",
+        "bridgeSupervisor": "Sillanvalvoja (1.) ja varavalvoja (2.)",
+        "supervisor1": "Sillanvalvoja (1.)",
+        "supervisor2": "Varavalvoja (2.)"
+      }
     }
   }
 }

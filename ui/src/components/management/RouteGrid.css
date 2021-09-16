@@ -1,0 +1,7 @@
+.routeGrid {
+  border: 2px solid var(--ion-color-base);
+}
+
+.routeGrid > ion-row {
+  border-top: 2px solid var(--ion-color-base);
+}

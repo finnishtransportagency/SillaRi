@@ -41,8 +41,16 @@
   cursor: default;
 }
 
-.hidden {
-  display: none;
+.whiteBackground {
+  background-color: white;
+}
+
+.lightBackground {
+  background-color: var(--ion-color-light);
+}
+
+ion-select {
+  border: 2px solid var(--ion-color-base);
 }
 
 /** Additional Vayla colors **/

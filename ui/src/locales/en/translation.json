@@ -61,7 +61,7 @@
     },
     "transportInfo": {
       "title": "Transport information",
-      "registrationNumbers": "Registry identifiers",
+      "registrationNumbers": "Registration numbers",
       "dimensions": "Transport dimensions",
       "height": "Height from the ground",
       "width": "Width",
@@ -72,16 +72,76 @@
     "transportValid": "Transport is in accordance with the permit on departure",
     "bridgesToSupervise": "Bridges to supervise"
   },
+  "common": {
+    "buttons": {
+      "done": "Done",
+      "back": "Back",
+      "cancel": "Cancel",
+      "save": "Save"
+    }
+  },
   "management":
   {
     "companySummary":
     {
-      "permitListTitle": "Transport permits",
-      "addTransportButtonLabel": "Add transport"
+      "permitListTitle": "Transport permits and management",
+      "transports": "Transports",
+      "addTransportButtonLabel": "Add transport",
+      "filter": {
+        "show": "Show",
+        "status": {
+          "all": "All transports",
+          "planned": "Planned",
+          "waiting": "Waiting to leave",
+          "completed": "Completed"
+        }
+      },
+      "route": {
+        "id": "ID",
+        "route": "Route",
+        "supervision": "Supervision",
+        "time": "Time",
+        "status": "Status",
+        "action": "Action"
+      }
     },
     "addTransport":
     {
-      "headerTitle": "Add transport"
+      "headerTitle": "Add new transport",
+      "transportPermit": "Transport permit",
+      "validityPeriod": "Validity period",
+      "transportId": "Transport ID",
+      "transportInformation": "Transport information",
+      "bridgesToSupervise": "Bridges to supervise",
+      "buttons": {
+        "deleteTransport": "Delete transport"
+      },
+      "routeInfo": {
+        "estimatedDepartureDate": "Estimated departure date",
+        "estimatedDepartureTime": "Estimated departure time",
+        "route": "Route",
+        "origin": "Origin",
+        "destination": "Destination",
+        "showRouteOnMap": "Show route on map"
+      },
+      "transportInfo": {
+        "title": "Maximum dimensions and mass",
+        "totalMass": "Total mass",
+        "dimensions": "Transport dimensions",
+        "height": "Height from the ground",
+        "width": "Width",
+        "length": "Length"
+      },
+      "bridgeInfo": {
+        "bridge": "Bridge",
+        "estimatedCrossingTime": "Estimated crossing time",
+        "bridgeSupervisors": "Bridge supervisors",
+        "ownSupervisor": "Own supervisors",
+        "contractor": "Area contractor",
+        "bridgeSupervisor": "Bridge supervisor (1.) and backup supervisor (2.)",
+        "supervisor1": "Bridge supervisor (1.)",
+        "supervisor2": "Backup supervisor (2.)"
+      }
     }
   }
 }
