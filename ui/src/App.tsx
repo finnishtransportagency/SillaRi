@@ -7,13 +7,13 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Home from "./pages/Home";
 import Settings from "./pages/Settings";
 import Map from "./pages/Map";
-import Crossing from "./pages/Crossing";
+import Supervision from "./pages/Supervision";
 import Camera from "./pages/Camera";
 import CompanyDetail from "./pages/CompanyDetail";
 import RouteDetail from "./pages/RouteDetail";
 import DenyCrossing from "./pages/DenyCrossing";
 import BridgeDetail from "./pages/BridgeDetail";
-import CrossingSummary from "./pages/CrossingSummary";
+import SupervisionSummary from "./pages/SupervisionSummary";
 import CompanySummary from "./pages/management/CompanySummary";
 import AddTransport from "./pages/management/AddTransport";
 import SidebarMenu from "./components/SidebarMenu";
@@ -63,10 +63,10 @@ const App: React.FC = () => (
           <Route path="/companydetail/:id" component={CompanyDetail} exact />
           <Route path="/routeDetail/:routeId" component={RouteDetail} exact />
           <Route path="/bridgeDetail/:routeBridgeId" component={BridgeDetail} exact />
-          <Route path="/crossing/:routeBridgeId" component={Crossing} exact />
+          <Route path="/supervision/:supervisionId" component={Supervision} exact />
           <Route path="/denyCrossing/:routeBridgeId" component={DenyCrossing} exact />
-          <Route path="/takePhotos/:crossingId" component={Camera} exact />
-          <Route path="/summary/:crossingId" component={CrossingSummary} exact />
+          <Route path="/summary/:supervisionId" component={SupervisionSummary} exact />
+          <Route path="/takePhotos/:supervisionId" component={Camera} exact />
           <Route path="/management/:companyId" component={CompanySummary} exact />
           <Route path="/management/addTransport/:permitId" component={AddTransport} exact />
         </IonRouterOutlet>

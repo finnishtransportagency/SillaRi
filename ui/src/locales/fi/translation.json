@@ -45,7 +45,7 @@
     "settings" : "Asetukset",
     "map" : "Kartta",
     "camera" : "Kamera",
-    "crossing" : "Sillan ylitys",
+    "supervision": "Sillan ylitys",
     "management" : "Kuljetusten hallinta"
   },
   "company": {
@@ -82,7 +82,8 @@
     "permitNumber" : "LUPANUMERO: ",
     "conformsToPermit" : "Kuljetus on luvanmukainen",
     "startSupervision" : "Aloita valvonta",
-    "denyCrossing" : "Kuljetus ei voi ylittää siltaa"
+    "denyCrossing" : "Kuljetus ei voi ylittää siltaa",
+    "supervisionMissing" : "Sillanvalvontaa ei ole vielä suunniteltu"
   },
   "denyCrossing" :
   {
@@ -91,35 +92,35 @@
     "back" : "Takaisin",
     "send" : "Lähetä"
   },
-  "crossing" :
+  "supervision":
   {
     "title" : "Sillan valvonta",
     "permitNumber" : "LUPANUMERO:",
-    "crossingStarted" : "Valvonta aloitettu:",
-    "crossingInstructions" : "Ylitysohje",
+    "supervisionStarted": "Valvonta aloitettu:",
     "bridgeName": "Silta",
-    "question" :
+    "crossingInstructions" : "Ylitysohje",
+    "photosDrivingLine" : "Valokuvat ja ajolinja",
+    "report":
     {
-      "drivingLine" : "Voitiinko ajolinjaa noudattaa?",
-      "speed" : "Onko ajonopeus hyväksytty?",
-      "exceptions" : "Teitkö poikkeavia havaintoja?",
-      "drivingLineInfo" : "Miksi ajolinjaa ei voitu noudattaa?",
-      "speedInfo" : "Miksi ajonopeus ei ole hyväksytty?",
-      "exceptionsInfo" : "Tarkenna poikkeavia havaintoja"
-    },
-    "exceptions" : {
-      "permanentBendings": "Pysyviä taipumia",
-      "twist": "Kannen kiertymä",
-      "damage": "Päällystevaurioita",
-      "somethingElse": "Jotain muuta, mitä?",
-      "describe": "Kuvaile havaintoja"
+      "observations" : "Havainnot",
+      "drivingLineOk" : "Ajolinjaa on noudatettu",
+      "drivingLineInfo" : "Miksi ajolinjaa ei hyväksytä?",
+      "speedLimitOk" : "Ajonopeus on hyväksytty",
+      "speedLimitInfo": "Miksi ajonopeutta ei hyväksytä?",
+      "anomalies" : "Poikkeavia havaintoja",
+      "anomaliesInfo" : "Tarkenna poikkeavia havaintoja:",
+      "surfaceDamage" : "Päällystevaurio",
+      "jointDamage": "Liikuntasauman rikkoutuminen",
+      "bendOrDisplacement": "Pysyvä taipuma tai muu siirtymä",
+      "otherObservations" : "Jotain muuta, mitä?",
+      "anomaliesDescription" : "Kuvaile poikkeavia havaintoja",
+      "additionalInfo" : "Lisätiedot"
     },
     "answer" :
     {
       "yes" : "Kyllä",
       "no" : "Ei"
     },
-    "extraInfo" : "Lisätiedot",
     "buttons" :
     {
       "takePhotos" : "Ota valokuvia",
@@ -130,15 +131,15 @@
     "summary":
     {
       "title": "Yhteenveto",
-      "speed": "Ajonopeus",
       "bridgeName": "",
+      "speedLimit": "Ajonopeus",
       "drivingLine": "Ajolinja",
       "images": "Kuvat",
       "kpl": "kpl",
-      "crossingStarted": "VALVONTA ALOITETTU:",
-      "exceptions": "Poikkeavat havainnot",
-      "exceptionsDesc": "Poikkeavien havaintojen tarkennus",
-      "extraInfo": "Lisätiedot",
+      "supervisionStarted": "VALVONTA ALOITETTU:",
+      "anomalies": "Poikkeavat havainnot",
+      "anomaliesDescription": "Poikkeavien havaintojen tarkennus",
+      "additionalInfo": "Lisätiedot",
       "buttons": {
         "edit": "Muokkaa",
         "save": "Tallenna"

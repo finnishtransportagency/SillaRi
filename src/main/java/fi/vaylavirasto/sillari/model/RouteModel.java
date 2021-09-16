@@ -14,7 +14,6 @@ public class RouteModel {
     private Boolean alternativeRoute;
     private String geojson;
     private List<RouteBridgeModel> routeBridges;
-    private List<CrossingModel> crossings;
 
     private AddressModel departureAddress;
     private AddressModel arrivalAddress;
