@@ -28,7 +28,8 @@ const RoutePermit = ({ selectedPermit, selectedRoute }: RoutePermitProps): JSX.E
           <IonCol size="auto">
             <IonRouterLink routerLink={`/routemap/${routeId}`}>
               <IonIcon icon={analyticsOutline} />
-              <IonText className="linkText">{` ${t("company.route")}`}</IonText>
+              <IonText> </IonText>
+              <IonText className="linkText">{t("company.route")}</IonText>
             </IonRouterLink>
           </IonCol>
         </IonRow>

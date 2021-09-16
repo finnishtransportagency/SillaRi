@@ -77,7 +77,8 @@ const BridgeDetail = (): JSX.Element => {
                       <IonCol>
                         <IonRouterLink routerLink={`/bridgemap/${routeBridgeId}`}>
                           <IonIcon icon={location} />
-                          <IonText className="linkText">{` ${name}, ${municipality}`}</IonText>
+                          <IonText> </IonText>
+                          <IonText className="linkText">{`${name}, ${municipality}`}</IonText>
                         </IonRouterLink>
                       </IonCol>
                     </IonRow>
