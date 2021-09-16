@@ -44,15 +44,7 @@ public class SupervisionRepository {
                 .limit(1).fetchOne(new SupervisionMapper());
     }
 
-    public SupervisionModel getSupervisionRandomly(Integer routeBridgeId) {
-        return dsl.select().from(SupervisionMapper.supervision)
-                .leftJoin(SupervisionMapper.supervisionStatus)
-                .on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionStatus.SUPERVISION_ID))
-                .leftJoin(SupervisionMapper.supervisionReport)
-                .on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionReport.SUPERVISION_ID))
-                .orderBy(SupervisionMapper.supervisionStatus.TIME.desc())
-                .limit(1).fetchOne(new SupervisionMapper());
-    }
+
 
     public Integer createSupervision(SupervisionModel supervisionModel) throws DataAccessException {
         return dsl.transactionResult(configuration -> {

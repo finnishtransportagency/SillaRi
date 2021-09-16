@@ -28,7 +28,7 @@ public class SupervisionService {
 
     // Returns only the basic details of supervision, not report, images or status history
     public SupervisionModel getSupervisionOfRouteBridge(Integer routeBridgeId) {
-        return supervisionRepository.getSupervisionRandomly(routeBridgeId);
+        return supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeId);
     }
 
     // Creates new supervision and adds a new status with type PLANNED
