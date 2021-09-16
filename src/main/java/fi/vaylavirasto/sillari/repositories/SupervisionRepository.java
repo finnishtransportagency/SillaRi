@@ -50,7 +50,7 @@ public class SupervisionRepository {
                 .on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionStatus.SUPERVISION_ID))
                 .leftJoin(SupervisionMapper.supervisionReport)
                 .on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionReport.SUPERVISION_ID))
-                ..orderBy(SupervisionMapper.supervisionStatus.TIME.desc())
+                .orderBy(SupervisionMapper.supervisionStatus.TIME.desc())
                 .limit(1).fetchOne(new SupervisionMapper());
     }
 
