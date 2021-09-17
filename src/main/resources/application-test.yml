@@ -5,6 +5,9 @@ sillari:
     url: https://sillaritest.testivaylapilvi.fi/geoserver/
   lelu:
     version: @leluApiVersion@
+    routeuploadpath: /tmp
+  trex:
+    url: https://testioag.vayla.fi/trex/rajapinta/taitorakenne/v2/yleistiedot/silta
 spring:
   application:
     name: SillaRi
