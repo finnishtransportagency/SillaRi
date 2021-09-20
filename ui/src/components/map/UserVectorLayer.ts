@@ -1,8 +1,9 @@
+import { Geometry } from "ol/geom";
 import { Vector as VectorLayer } from "ol/layer";
 import { Vector as VectorSource } from "ol/source";
 import { Icon, Style } from "ol/style";
 
-export default class UserVectorLayer extends VectorLayer<VectorSource<any>> {
+export default class UserVectorLayer extends VectorLayer<VectorSource<Geometry>> {
   constructor() {
     // The marker feature will be added after initialisation
     const userSource = new VectorSource({ features: [] });

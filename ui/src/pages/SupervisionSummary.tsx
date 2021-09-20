@@ -3,21 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { checkmarkCircleOutline, closeCircleOutline } from "ionicons/icons";
-import {
-  IonButton,
-  IonCol,
-  IonContent,
-  IonGrid,
-  IonIcon,
-  IonImg,
-  IonItem,
-  IonLabel,
-  IonPage,
-  IonRow,
-  IonText,
-  IonThumbnail,
-  IonToast,
-} from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonPage, IonRow, IonText, IonToast } from "@ionic/react";
 import { useHistory, useParams } from "react-router-dom";
 import moment from "moment";
 
@@ -28,7 +14,6 @@ import IFileInput from "../interfaces/IFileInput";
 import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry, sendImageUpload, sendSupervisionReportUpdate } from "../utils/backendData";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import { dateTimeFormat } from "../utils/constants";
-import { getOrigin } from "../utils/request";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import ImageThumbnailRow from "../components/ImageThumbnailRow";
 

@@ -1,4 +1,4 @@
-import { Dispatch } from "redux";
+import type { Dispatch } from "redux";
 import ICompany from "../interfaces/ICompany";
 import IFile from "../interfaces/IFile";
 import IFileInput from "../interfaces/IFileInput";

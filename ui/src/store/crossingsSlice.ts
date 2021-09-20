@@ -1,4 +1,5 @@
-import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import ICompany from "../interfaces/ICompany";
 import IFailedQuery from "../interfaces/IFailedQuery";
 import IFile from "../interfaces/IFile";
