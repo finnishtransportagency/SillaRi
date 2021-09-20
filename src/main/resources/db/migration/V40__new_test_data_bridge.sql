@@ -1,7 +1,3 @@
--- Reset sequence
-SELECT setval('sillari.bridge_id_seq', 1, false);
-
--- bridge test data
 INSERT INTO sillari.bridge ("oid",identifier,"name",municipality,status,geom) VALUES ('1.2.246.578.1.15.401746','H-1746','Pihtilän alikulkukäytävä','tunnus:020,nimi:Akaa','kaytossa','SRID=3067;POINT (322391 6785680)'::geometry);
 INSERT INTO sillari.bridge ("oid",identifier,"name",municipality,status,geom) VALUES ('1.2.246.578.1.15.401751','H-1751','Kolsopin alikulkukäytävä','tunnus:980,nimi:Ylöjärvi','kaytossa','SRID=3067;POINT (316764 6829752)'::geometry);
 INSERT INTO sillari.bridge ("oid",identifier,"name",municipality,status,geom) VALUES ('1.2.246.578.1.15.401753','H-1753','Soppeentien alikulkukäytävä','tunnus:980,nimi:Ylöjärvi','kaytossa','SRID=3067;POINT (316703 6829723)'::geometry);

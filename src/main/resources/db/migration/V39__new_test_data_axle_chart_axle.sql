@@ -1,16 +1,10 @@
 --AXLE CHART
--- Reset sequence
-SELECT setval('sillari.axle_chart_id_seq', 1, false);
-
 INSERT INTO sillari.axle_chart (permit_id) VALUES (1);
 INSERT INTO sillari.axle_chart (permit_id) VALUES (2);
 INSERT INTO sillari.axle_chart (permit_id) VALUES (3);
 INSERT INTO sillari.axle_chart (permit_id) VALUES (4);
 
 --AXLE
--- Reset sequence
-SELECT setval('sillari.axle_id_seq', 1, false);
-
 INSERT INTO sillari.axle (axle_chart_id, axle_number, weight, distance_to_next) VALUES (1, 1, 8, 4.5);
 INSERT INTO sillari.axle (axle_chart_id, axle_number, weight, distance_to_next) VALUES (1, 2, 8.75, 1.5);
 INSERT INTO sillari.axle (axle_chart_id, axle_number, weight, distance_to_next) VALUES (1, 3, 8.75, 0);
