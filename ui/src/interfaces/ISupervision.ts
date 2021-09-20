@@ -1,5 +1,5 @@
 import IFile from "./IFile";
-import ISupervisionStatus from "../ISupervisionStatus";
+import ISupervisionStatus from "./ISupervisionStatus";
 import ISupervisionReport from "./ISupervisionReport";
 
 export default interface ISupervision {
