@@ -1,16 +1,9 @@
 -- COMPANY
--- Reset sequence, false ensures nextval is 1 instead of 2
-SELECT setval('sillari.company_id_seq', 1, false);
-
 INSERT INTO sillari.company ("name", business_id) VALUES ('CGI Suomi Oy', '0357502-9');
 INSERT INTO sillari.company ("name", business_id) VALUES ('Aitio Finland Oy', '2098655-9');
 INSERT INTO sillari.company ("name", business_id) VALUES ('Euroopan kemikaalivirasto (ECHA)', '2139942-8');
 
 --PERMIT
--- Reset sequence
-ALTER SEQUENCE IF EXISTS sillari.authorization_id_seq RENAME TO permit_id_seq;
-SELECT setval('sillari.permit_id_seq', 1, false);
-
 INSERT INTO sillari.permit (company_id, permit_number, transport_total_mass, lelu_version, additional_details, lelu_last_modified_date, valid_start_date, valid_end_date)
 VALUES (1, 'MV/176/2021', 25.5, 1, 'Reitin käytettävyys on varmistettava ennen kuljetusta. Käynnissä olevat silta- ja tietyöt sekä muut tilapäiset ja pysyvät rajoitusten muutokset on huomioitava.',
        '2021-07-06 15:31:49.000', '2021-06-28 09:00:00.000', '2022-03-28 00:00:00.000');
