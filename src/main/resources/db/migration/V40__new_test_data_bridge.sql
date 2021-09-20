@@ -1,8 +1,5 @@
--- delete the test data below if it exists but keep the original test data
-DELETE FROM sillari.bridge WHERE oid IS NOT NULL;
-
--- set the bridge id sequence value since it is currently set to 1
-SELECT setval('sillari.bridge_id_seq', (SELECT MAX(id) + 1 FROM sillari.bridge));
+-- Reset sequence
+SELECT setval('sillari.bridge_id_seq', 1, false);
 
 -- bridge test data
 INSERT INTO sillari.bridge ("oid",identifier,"name",municipality,status,geom) VALUES ('1.2.246.578.1.15.401746','H-1746','Pihtilän alikulkukäytävä','tunnus:020,nimi:Akaa','kaytossa','SRID=3067;POINT (322391 6785680)'::geometry);
