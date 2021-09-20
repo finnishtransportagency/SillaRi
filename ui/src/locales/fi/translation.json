@@ -46,7 +46,8 @@
     "map" : "Kartta",
     "camera" : "Kamera",
     "supervision": "Sillan ylitys",
-    "management" : "Kuljetusten hallinta"
+    "management" : "Kuljetusten hallinta",
+    "logout": "Kirjaudu ulos"
   },
   "company": {
     "transportPermit": "Kuljetuslupa",

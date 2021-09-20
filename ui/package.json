@@ -19,6 +19,7 @@
     "i18next": "^20.6.1",
     "immutable": "^4.0.0-rc.15",
     "ionicons": "^5.5.3",
+    "js-cookie": "^3.0.1",
     "moment": "^2.29.1",
     "ol": "^6.7.0",
     "proj4": "^2.7.5",
@@ -64,6 +65,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "3.2.3",
+    "@types/js-cookie": "^2.2.7",
     "@types/node": "^16.9.4",
     "@types/proj4": "^2.5.2",
     "@types/react": "^17.0.22",

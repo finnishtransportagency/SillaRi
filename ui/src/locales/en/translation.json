@@ -45,7 +45,8 @@
     "settings" : "Settings",
     "map" : "Map",
     "camera" : "Camera",
-    "management" : "Management"
+    "management" : "Management",
+    "logout": "Logout"
   },
   "company": {
     "transportPermit": "Transport permit",
