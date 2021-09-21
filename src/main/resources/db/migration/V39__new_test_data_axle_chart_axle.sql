@@ -1,8 +1,11 @@
 --AXLE CHART
-INSERT INTO sillari.axle_chart (permit_id) VALUES (1);
-INSERT INTO sillari.axle_chart (permit_id) VALUES (2);
-INSERT INTO sillari.axle_chart (permit_id) VALUES (3);
-INSERT INTO sillari.axle_chart (permit_id) VALUES (4);
+INSERT INTO sillari.axle_chart (id, permit_id) OVERRIDING SYSTEM VALUE VALUES (1, 1);
+INSERT INTO sillari.axle_chart (id, permit_id) OVERRIDING SYSTEM VALUE VALUES (2, 2);
+INSERT INTO sillari.axle_chart (id, permit_id) OVERRIDING SYSTEM VALUE VALUES (3, 3);
+INSERT INTO sillari.axle_chart (id, permit_id) OVERRIDING SYSTEM VALUE VALUES (4, 4);
+
+-- Overriding system value doesn't update the sequence
+SELECT setval('sillari.axle_chart_id_seq', 4);
 
 --AXLE
 INSERT INTO sillari.axle (axle_chart_id, axle_number, weight, distance_to_next) VALUES (1, 1, 8, 4.5);
