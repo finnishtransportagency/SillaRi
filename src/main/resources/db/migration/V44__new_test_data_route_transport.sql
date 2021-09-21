@@ -2,4 +2,3 @@ INSERT INTO sillari.route_transport (id, route_id, planned_departure_time) OVERR
 INSERT INTO sillari.route_transport (id, route_id, planned_departure_time) OVERRIDING SYSTEM VALUE VALUES (2, 2, null);
 INSERT INTO sillari.route_transport (id, route_id, planned_departure_time) OVERRIDING SYSTEM VALUE VALUES (3, 3, null);
 INSERT INTO sillari.route_transport (id, route_id, planned_departure_time) OVERRIDING SYSTEM VALUE VALUES (4, 4, null);
-INSERT INTO sillari.route_transport (id, route_id, planned_departure_time) OVERRIDING SYSTEM VALUE VALUES (5, 5, null);

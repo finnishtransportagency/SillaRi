@@ -12,5 +12,3 @@ SELECT 3, b.id FROM bridge b, (SELECT ST_Buffer(r.geom, 10) geom FROM route r WH
 INSERT INTO route_bridge (route_id, bridge_id)
 SELECT 4, b.id FROM bridge b, (SELECT ST_Buffer(r.geom, 10) geom FROM route r WHERE r.id = 4) a WHERE b.geom IS NOT NULL AND b.name LIKE '%silta%' AND b.status = 'kaytossa' AND ST_Contains(a.geom, b.geom) = TRUE;
 
-INSERT INTO route_bridge (route_id, bridge_id)
-SELECT 5, b.id FROM bridge b, (SELECT ST_Buffer(r.geom, 10) geom FROM route r WHERE r.id = 5) a WHERE b.geom IS NOT NULL AND b.name LIKE '%silta%' AND b.status = 'kaytossa' AND ST_Contains(a.geom, b.geom) = TRUE;
