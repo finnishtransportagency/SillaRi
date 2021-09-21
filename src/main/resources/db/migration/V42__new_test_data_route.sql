@@ -1,6 +1,6 @@
 -- route test data
 INSERT INTO sillari.route (id, permit_id, name, departure_address_id, arrival_address_id, geom, lelu_id, transport_count, alternative_route) OVERRIDING SYSTEM VALUE VALUES (1, 1, 'Tampere - Mäntyluoto', 1, 2, null, 12345, 3, false);
-INSERT INTO sillari.route (id, permit_id, name, departure_address_id, arrival_address_id, geom, lelu_id, transport_count, alternative_route) OVERRIDING SYSTEM VALUE VALUES (2, 2, 'Kotka - Tampere', 3, 4, null, 12346, 3, false);
+INSERT INTO sillari.route (id, permit_id, name, departure_address_id, arrival_address_id, geom, lelu_id, transport_count, alternative_route) OVERRIDING SYSTEM VALUE VALUES (2, 2, 'Kuopio - Uusikaupunki', 3, 4, null, 12346, 3, false);
 INSERT INTO sillari.route (id, permit_id, name, departure_address_id, arrival_address_id, geom, lelu_id, transport_count, alternative_route) OVERRIDING SYSTEM VALUE VALUES (3, 3, 'Kotka - Tampere', 5, 6, null, 12347, 3, false);
 INSERT INTO sillari.route (id, permit_id, name, departure_address_id, arrival_address_id, geom, lelu_id, transport_count, alternative_route) OVERRIDING SYSTEM VALUE VALUES (4, 4, 'Kotka - Tampere', 7, 8, null, 12348, 3, false);
 INSERT INTO sillari.route (id, permit_id, name, departure_address_id, arrival_address_id, geom, lelu_id, transport_count, alternative_route) OVERRIDING SYSTEM VALUE VALUES (5, 4, 'Kotka - Tampere', 9, 10, null, 12349, 3, false);
