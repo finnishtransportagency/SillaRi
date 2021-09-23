@@ -10,12 +10,11 @@ public class SupervisionModel {
     private Integer id;
     private Integer routeBridgeId;
     private Integer routeTransportId;
-    private Integer supervisorId;
     private OffsetDateTime plannedTime;
     private Boolean conformsToPermit;
-    // TODO supervisor
     private SupervisionStatusModel currentStatus;
     private List<SupervisionStatusModel> statusHistory;
+    private List<SupervisorModel> supervisors;
     private SupervisionReportModel report;
     private List<FileModel> images;
 }

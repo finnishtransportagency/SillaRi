@@ -5,6 +5,7 @@ import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.repositories.FileRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionStatusRepository;
+import fi.vaylavirasto.sillari.repositories.SupervisorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +16,15 @@ public class SupervisionService {
     @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
     @Autowired
+    SupervisorRepository supervisorRepository;
+    @Autowired
     FileRepository fileRepository;
 
     public SupervisionModel getSupervision(Integer supervisionId) {
         SupervisionModel supervisionModel = supervisionRepository.getSupervisionById(supervisionId);
         if (supervisionModel != null) {
             supervisionModel.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
+            supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
             supervisionModel.setImages(fileRepository.getFiles(supervisionId));
         }
         return supervisionModel;
