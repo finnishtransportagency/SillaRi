@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
+import fi.vaylavirasto.sillari.model.SupervisionStatusTimesDTO;
 import fi.vaylavirasto.sillari.repositories.FileRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionStatusRepository;
@@ -22,13 +23,23 @@ public class SupervisionService {
         if (supervisionModel != null) {
             supervisionModel.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
             supervisionModel.setImages(fileRepository.getFiles(supervisionId));
+
+            SupervisionStatusTimesDTO statusTimes = new SupervisionStatusTimesDTO(supervisionModel.getStatusHistory());
+            supervisionModel.setStatusTimes(statusTimes);
         }
         return supervisionModel;
     }
 
-    // Returns only the basic details of supervision, not report, images or status history
     public SupervisionModel getSupervisionOfRouteBridge(Integer routeBridgeId) {
-        return supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeId);
+        SupervisionModel supervisionModel = supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeId);
+        if (supervisionModel != null && supervisionModel.getId() != null) {
+            supervisionModel.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionModel.getId()));
+            supervisionModel.setImages(fileRepository.getFiles(supervisionModel.getId()));
+
+            SupervisionStatusTimesDTO statusTimes = new SupervisionStatusTimesDTO(supervisionModel.getStatusHistory());
+            supervisionModel.setStatusTimes(statusTimes);
+        }
+        return supervisionModel;
     }
 
     // Creates new supervision and adds a new status with type PLANNED

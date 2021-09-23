@@ -18,4 +18,7 @@ public class SupervisionModel {
     private List<SupervisionStatusModel> statusHistory;
     private SupervisionReportModel report;
     private List<FileModel> images;
+
+    private SupervisionStatusTimesDTO statusTimes; // Status timestamps mapped from status history
+
 }
