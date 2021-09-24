@@ -16,6 +16,7 @@ import { actions as crossingActions } from "../store/crossingsSlice";
 import { dateTimeFormat } from "../utils/constants";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import ImageThumbnailRow from "../components/ImageThumbnailRow";
+import Moment from "react-moment";
 
 interface SummaryProps {
   supervisionId: string;
@@ -37,7 +38,7 @@ const SupervisionSummary = (): JSX.Element => {
   } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
-  const { routeBridgeId = "0", report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
+  const { routeBridgeId = "0", startedTime, report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
   const {
     id: supervisionReportId,
@@ -176,7 +177,9 @@ const SupervisionSummary = (): JSX.Element => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <IonLabel class="crossingLabel">{t("supervision.summary.supervisionStarted")}TODO</IonLabel>
+                <IonLabel class="crossingLabel">
+                  {t("supervision.summary.supervisionStarted")} {startedTime ? <Moment format={dateTimeFormat}>{startedTime}</Moment> : ""}
+                </IonLabel>
               </IonCol>
             </IonRow>
 

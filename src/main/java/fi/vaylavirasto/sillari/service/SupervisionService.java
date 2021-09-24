@@ -2,12 +2,15 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
+import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
 import fi.vaylavirasto.sillari.repositories.FileRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionStatusRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SupervisionService {
@@ -23,16 +26,27 @@ public class SupervisionService {
     public SupervisionModel getSupervision(Integer supervisionId) {
         SupervisionModel supervisionModel = supervisionRepository.getSupervisionById(supervisionId);
         if (supervisionModel != null) {
-            supervisionModel.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
             supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
             supervisionModel.setImages(fileRepository.getFiles(supervisionId));
+
+            List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervisionId);
+            supervisionModel.setStatusHistory(statusHistory);
+            supervisionModel.setStatusTimes(statusHistory);
         }
         return supervisionModel;
     }
 
-    // Returns only the basic details of supervision, not report, images or status history
     public SupervisionModel getSupervisionOfRouteBridge(Integer routeBridgeId) {
-        return supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeId);
+        SupervisionModel supervisionModel = supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeId);
+        if (supervisionModel != null && supervisionModel.getId() != null) {
+            supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionModel.getId()));
+            supervisionModel.setImages(fileRepository.getFiles(supervisionModel.getId()));
+
+            List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervisionModel.getId());
+            supervisionModel.setStatusHistory(statusHistory);
+            supervisionModel.setStatusTimes(statusHistory);
+        }
+        return supervisionModel;
     }
 
     // Creates new supervision and adds a new status with type PLANNED
