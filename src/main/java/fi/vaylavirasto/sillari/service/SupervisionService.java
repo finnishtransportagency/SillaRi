@@ -6,6 +6,7 @@ import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
 import fi.vaylavirasto.sillari.repositories.FileRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionStatusRepository;
+import fi.vaylavirasto.sillari.repositories.SupervisorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +19,14 @@ public class SupervisionService {
     @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
     @Autowired
+    SupervisorRepository supervisorRepository;
+    @Autowired
     FileRepository fileRepository;
 
     public SupervisionModel getSupervision(Integer supervisionId) {
         SupervisionModel supervisionModel = supervisionRepository.getSupervisionById(supervisionId);
         if (supervisionModel != null) {
+            supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
             supervisionModel.setImages(fileRepository.getFiles(supervisionId));
 
             List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervisionId);
@@ -35,6 +39,7 @@ public class SupervisionService {
     public SupervisionModel getSupervisionOfRouteBridge(Integer routeBridgeId) {
         SupervisionModel supervisionModel = supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeId);
         if (supervisionModel != null && supervisionModel.getId() != null) {
+            supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
             supervisionModel.setImages(fileRepository.getFiles(supervisionModel.getId()));
 
             List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervisionModel.getId());
