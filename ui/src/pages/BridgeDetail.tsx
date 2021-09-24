@@ -44,7 +44,7 @@ const BridgeDetail = (): JSX.Element => {
   const { name = "", identifier = "", municipality = "" } = bridge || {};
   const { permitNumber } = selectedPermitDetail || {};
   const { id: supervisionId, routeTransportId, plannedTime, conformsToPermit = false, currentStatus } = selectedSupervisionDetail || {};
-  const crossingStarted = currentStatus && currentStatus.status !== supervisionStatusType.PLANNED;
+  const supervisionStarted = currentStatus && currentStatus.status !== supervisionStatusType.PLANNED;
 
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
   useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
@@ -156,7 +156,7 @@ const BridgeDetail = (): JSX.Element => {
                             slot="start"
                             value="conforms"
                             checked={conformsToPermit}
-                            disabled={!supervisionId || crossingStarted}
+                            disabled={!supervisionId || supervisionStarted}
                             onClick={() => setConformsToPermit(!conformsToPermit)}
                           />
                           <IonLabel>{t("bridgeDetail.conformsToPermit")}</IonLabel>
@@ -170,7 +170,7 @@ const BridgeDetail = (): JSX.Element => {
             <IonGrid>
               <IonRow>
                 <IonButton
-                  disabled={!supervisionId || !conformsToPermit || crossingStarted}
+                  disabled={!supervisionId || !conformsToPermit || supervisionStarted}
                   color="primary"
                   routerLink={`/supervision/${supervisionId}`}
                 >
@@ -178,7 +178,7 @@ const BridgeDetail = (): JSX.Element => {
                 </IonButton>
               </IonRow>
               <IonRow>
-                <IonButton disabled={!supervisionId || crossingStarted} color="primary" routerLink={`/denyCrossing/${routeBridgeId}`}>
+                <IonButton disabled={!supervisionId || supervisionStarted} color="primary" routerLink={`/denyCrossing/${routeBridgeId}`}>
                   {t("bridgeDetail.denyCrossing")}
                 </IonButton>
               </IonRow>

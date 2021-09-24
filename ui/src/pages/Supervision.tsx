@@ -61,7 +61,7 @@ const Supervision = (): JSX.Element => {
   } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
-  const { routeBridgeId = "0", statusTimes, report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
+  const { routeBridgeId = "0", startedTime, report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
   const {
     id: supervisionReportId = -1,
@@ -193,7 +193,7 @@ const Supervision = (): JSX.Element => {
             <IonRow>
               <IonCol>
                 <IonLabel class="crossingLabel">
-                  {t("supervision.supervisionStarted")} {statusTimes ? <Moment format={dateTimeFormat}>{statusTimes.startedTime}</Moment> : ""}
+                  {t("supervision.supervisionStarted")} {startedTime ? <Moment format={dateTimeFormat}>{startedTime}</Moment> : ""}
                 </IonLabel>
               </IonCol>
             </IonRow>

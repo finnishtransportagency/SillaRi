@@ -2,12 +2,14 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
-import fi.vaylavirasto.sillari.model.SupervisionStatusTimesDTO;
+import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
 import fi.vaylavirasto.sillari.repositories.FileRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SupervisionService {
@@ -21,11 +23,11 @@ public class SupervisionService {
     public SupervisionModel getSupervision(Integer supervisionId) {
         SupervisionModel supervisionModel = supervisionRepository.getSupervisionById(supervisionId);
         if (supervisionModel != null) {
-            supervisionModel.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
             supervisionModel.setImages(fileRepository.getFiles(supervisionId));
 
-            SupervisionStatusTimesDTO statusTimes = new SupervisionStatusTimesDTO(supervisionModel.getStatusHistory());
-            supervisionModel.setStatusTimes(statusTimes);
+            List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervisionId);
+            supervisionModel.setStatusHistory(statusHistory);
+            supervisionModel.setStatusTimes(statusHistory);
         }
         return supervisionModel;
     }
@@ -33,11 +35,11 @@ public class SupervisionService {
     public SupervisionModel getSupervisionOfRouteBridge(Integer routeBridgeId) {
         SupervisionModel supervisionModel = supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeId);
         if (supervisionModel != null && supervisionModel.getId() != null) {
-            supervisionModel.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionModel.getId()));
             supervisionModel.setImages(fileRepository.getFiles(supervisionModel.getId()));
 
-            SupervisionStatusTimesDTO statusTimes = new SupervisionStatusTimesDTO(supervisionModel.getStatusHistory());
-            supervisionModel.setStatusTimes(statusTimes);
+            List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervisionModel.getId());
+            supervisionModel.setStatusHistory(statusHistory);
+            supervisionModel.setStatusTimes(statusHistory);
         }
         return supervisionModel;
     }
