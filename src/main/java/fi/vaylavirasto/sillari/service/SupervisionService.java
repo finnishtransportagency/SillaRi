@@ -39,7 +39,7 @@ public class SupervisionService {
     public SupervisionModel getSupervisionOfRouteBridge(Integer routeBridgeId) {
         SupervisionModel supervisionModel = supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeId);
         if (supervisionModel != null && supervisionModel.getId() != null) {
-            supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
+            supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionModel.getId()));
             supervisionModel.setImages(fileRepository.getFiles(supervisionModel.getId()));
 
             List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervisionModel.getId());
