@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
@@ -29,6 +29,8 @@ const CompanySummary = (): JSX.Element => {
   } = crossings;
   const { name = "", permits = [] } = selectedCompanyDetail || {};
   const { companyId = "0" } = useParams<CompanySummaryProps>();
+
+  const [transportFilter, setTransportFilter] = useState<string>("");
 
   useQuery(["getCompany", companyId], () => getCompany(Number(companyId), dispatch, selectedCompanyDetail), { retry: onRetry });
 
@@ -118,10 +120,17 @@ const CompanySummary = (): JSX.Element => {
                                           <IonText>{`${t("management.companySummary.filter.show")}: `}</IonText>
                                         </IonCol>
                                         <IonCol size="8" size-sm="8">
-                                          <IonSelect interface="action-sheet" cancelText={t("common.buttons.back")} value="all">
-                                            <IonSelectOption value="all">{t("management.companySummary.filter.status.all")}</IonSelectOption>
+                                          <IonSelect
+                                            interface="action-sheet"
+                                            cancelText={t("common.buttons.back")}
+                                            value={transportFilter}
+                                            onIonChange={(e) => setTransportFilter(e.detail.value)}
+                                          >
+                                            <IonSelectOption value="">{t("management.companySummary.filter.status.all")}</IonSelectOption>
                                             <IonSelectOption value="planned">{t("management.companySummary.filter.status.planned")}</IonSelectOption>
-                                            <IonSelectOption value="waiting">{t("management.companySummary.filter.status.waiting")}</IonSelectOption>
+                                            <IonSelectOption value="in_progress">
+                                              {t("management.companySummary.filter.status.in_progress")}
+                                            </IonSelectOption>
                                             <IonSelectOption value="completed">
                                               {t("management.companySummary.filter.status.completed")}
                                             </IonSelectOption>
@@ -134,7 +143,7 @@ const CompanySummary = (): JSX.Element => {
 
                                 <IonRow className="ion-margin">
                                   <IonCol>
-                                    <RouteGrid permit={permit} />
+                                    <RouteGrid permit={permit} transportFilter={transportFilter} />
                                   </IonCol>
                                 </IonRow>
                               </IonGrid>
