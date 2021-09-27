@@ -18,6 +18,7 @@ public class RouteTransportMapper implements RecordMapper<Record, RouteTransport
         RouteTransportModel routeTransportModel = new RouteTransportModel();
         routeTransportModel.setId(record.get(transport.ID));
         routeTransportModel.setRouteId(record.get(transport.ROUTE_ID));
+        routeTransportModel.setPlannedDepartureTime(record.get(transport.PLANNED_DEPARTURE_TIME));
 
         RouteTransportStatusModel statusModel = new RouteTransportStatusModel();
         statusModel.setId(record.get(transportStatus.ID));
