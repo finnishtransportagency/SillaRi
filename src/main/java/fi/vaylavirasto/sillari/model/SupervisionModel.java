@@ -15,6 +15,7 @@ public class SupervisionModel {
     private Boolean conformsToPermit;
     private SupervisionStatusModel currentStatus;
     private List<SupervisionStatusModel> statusHistory;
+    private SupervisorType supervisorType;
     private List<SupervisorModel> supervisors;
     private SupervisionReportModel report;
     private List<FileModel> images;
