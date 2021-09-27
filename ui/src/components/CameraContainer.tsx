@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { RootState, useTypedSelector } from "../store/store";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import { deleteImage, getSupervision, onRetry } from "../utils/backendData";
-import { dateTimeFormat } from "../utils/constants";
+import { DATE_TIME_FORMAT } from "../utils/constants";
 import { getOrigin } from "../utils/request";
 import ImagePreview from "./ImagePreview";
 
@@ -110,7 +110,7 @@ const CameraContainer = (): JSX.Element => {
                     <IonImg src={imageUrl} />
                   </IonThumbnail>
                   <IonLabel>
-                    <Moment format={dateTimeFormat}>{imageItem.date}</Moment>
+                    <Moment format={DATE_TIME_FORMAT}>{imageItem.date}</Moment>
                   </IonLabel>
                   <IonButton slot="end" onClick={() => removeImageItem(imageItem.id)}>
                     <IonIcon icon={trash} slot="start" />

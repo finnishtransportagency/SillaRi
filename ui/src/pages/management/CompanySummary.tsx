@@ -12,7 +12,7 @@ import CustomAccordion from "../../components/common/CustomAccordion";
 import RouteGrid from "../../components/management/RouteGrid";
 import { useTypedSelector } from "../../store/store";
 import { getCompany, onRetry } from "../../utils/backendData";
-import { dateFormat } from "../../utils/constants";
+import { DATE_FORMAT } from "../../utils/constants";
 
 interface CompanySummaryProps {
   companyId: string;
@@ -89,9 +89,9 @@ const CompanySummary = (): JSX.Element => {
                                       <IonRow>
                                         <IonCol>
                                           <small>
-                                            <Moment format={dateFormat}>{validStartDate}</Moment>
+                                            <Moment format={DATE_FORMAT}>{validStartDate}</Moment>
                                             <IonText>{" - "}</IonText>
-                                            <Moment format={dateFormat}>{validEndDate}</Moment>
+                                            <Moment format={DATE_FORMAT}>{validEndDate}</Moment>
                                           </small>
                                         </IonCol>
                                       </IonRow>
