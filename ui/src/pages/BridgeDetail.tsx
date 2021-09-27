@@ -23,7 +23,7 @@ import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import { getPermitOfRouteBridge, getRouteBridge, getSupervisionOfRouteBridge, onRetry, sendSupervisionUpdate } from "../utils/backendData";
 import ISupervision from "../interfaces/ISupervision";
-import { supervisionStatusType } from "../utils/constants";
+import { SupervisionStatus } from "../utils/constants";
 
 interface BridgeDetailProps {
   routeBridgeId: string;
@@ -44,7 +44,7 @@ const BridgeDetail = (): JSX.Element => {
   const { name = "", identifier = "", municipality = "" } = bridge || {};
   const { permitNumber } = selectedPermitDetail || {};
   const { id: supervisionId, routeTransportId, plannedTime, conformsToPermit = false, currentStatus } = selectedSupervisionDetail || {};
-  const supervisionStarted = currentStatus && currentStatus.status !== supervisionStatusType.PLANNED;
+  const supervisionStarted = currentStatus && currentStatus.status !== SupervisionStatus.PLANNED;
 
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
   useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
