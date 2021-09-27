@@ -1,6 +1,7 @@
 import IFile from "./IFile";
 import ISupervisionStatus from "./ISupervisionStatus";
 import ISupervisionReport from "./ISupervisionReport";
+import ISupervisor from "./ISupervisor";
 import { SupervisorType } from "../utils/constants";
 
 export default interface ISupervision {
@@ -16,6 +17,7 @@ export default interface ISupervision {
   cancelledTime: Date; // Not in DB, first CANCELLED status timestamp filtered from statusHistory
   finishedTime: Date; // Not in DB, first FINISHED status timestamp filtered from statusHistory
   supervisorType: SupervisorType;
+  supervisors: ISupervisor[];
   report: ISupervisionReport;
   images: IFile[];
 }
