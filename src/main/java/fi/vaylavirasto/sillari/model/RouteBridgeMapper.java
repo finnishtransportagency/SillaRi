@@ -1,7 +1,6 @@
 package fi.vaylavirasto.sillari.model;
 
-import fi.vaylavirasto.sillari.model.tables.Bridge;
-import fi.vaylavirasto.sillari.model.tables.RouteBridge;
+import fi.vaylavirasto.sillari.model.tables.*;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -9,15 +8,18 @@ import org.jooq.RecordMapper;
 public class RouteBridgeMapper implements RecordMapper<Record,RouteBridgeModel> {
     public static final Bridge bridge = Tables.BRIDGE.as("br");
     public static final RouteBridge routebridge = Tables.ROUTE_BRIDGE.as("rbr");
+    public static final Supervision supervision = Tables.SUPERVISION.as("sn");
+    public static final SupervisionStatus supervisionStatus = Tables.SUPERVISION_STATUS.as("sns");
+    public static final SupervisionSupervisor supervisionSupervisor = Tables.SUPERVISION_SUPERVISOR.as("ss");
 
     @Nullable
     @Override
     public RouteBridgeModel map(Record record) {
-        BridgeModel bridgeModel = new BridgeModel();
-        bridgeModel.setId(record.get(bridge.ID));
-        bridgeModel.setName(record.get(bridge.NAME));
-        bridgeModel.setIdentifier(record.get(bridge.IDENTIFIER));
-        bridgeModel.setMunicipality(record.get(bridge.MUNICIPALITY));
+        BridgeMapper bridgeMapper = new BridgeMapper();
+        BridgeModel bridgeModel = bridgeMapper.map(record);
+
+        SupervisionMapper supervisionMapper = new SupervisionMapper();
+        SupervisionModel supervisionModel = supervisionMapper.map(record);
 
         RouteBridgeModel model = new RouteBridgeModel();
         model.setId(record.get(routebridge.ID));
@@ -25,7 +27,8 @@ public class RouteBridgeMapper implements RecordMapper<Record,RouteBridgeModel> 
         model.setBridgeId(record.get(routebridge.BRIDGE_ID));
         model.setCrossingInstruction(record.get(routebridge.CROSSING_INSTRUCTION));
         model.setBridge(bridgeModel);
-        model.setSupervision(new SupervisionModel());
+        model.setSupervision(supervisionModel);
+
         return model;
     }
 }

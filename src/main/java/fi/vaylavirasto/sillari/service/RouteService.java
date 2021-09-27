@@ -26,7 +26,7 @@ public class RouteService {
             String routeGeoJson = routeRepository.getRouteGeoJson(routeId);
             routeModel.setGeojson(routeGeoJson);
 
-            List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRoutesBridges(routeId);
+            List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRouteBridges(routeId);
             if (routeBridgeModels != null) {
                 routeBridgeModels.forEach(routeBridgeModel -> {
                     String bridgeGeoJson = bridgeRepository.getBridgeGeoJson(routeBridgeModel.getBridge().getId());

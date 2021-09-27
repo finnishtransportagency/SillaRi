@@ -1,13 +1,17 @@
 package fi.vaylavirasto.sillari.repositories;
 
+import fi.vaylavirasto.sillari.model.SupervisionMapper;
 import fi.vaylavirasto.sillari.model.SupervisionStatusMapper;
 import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
+import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
@@ -22,6 +26,23 @@ public class SupervisionStatusRepository {
                 .where(SupervisionStatusMapper.supervisionStatus.SUPERVISION_ID.eq(supervisionId))
                 .orderBy(SupervisionStatusMapper.supervisionStatus.TIME.desc())
                 .fetch(new SupervisionStatusMapper());
+    }
+
+    public void insertSupervisionStatus(Integer supervisionId, SupervisionStatusType statusType) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            ctx.insertInto(SupervisionMapper.supervisionStatus,
+                            SupervisionMapper.supervisionStatus.SUPERVISION_ID,
+                            SupervisionMapper.supervisionStatus.STATUS,
+                            SupervisionMapper.supervisionStatus.TIME
+                    ).values(
+                            supervisionId,
+                            String.valueOf(statusType),
+                            OffsetDateTime.now())
+                    .execute();
+        });
+
     }
 
 }
