@@ -1,6 +1,7 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
+import fi.vaylavirasto.sillari.model.RouteTransportStatusModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.repositories.RouteRepository;
 import fi.vaylavirasto.sillari.repositories.RouteTransportRepository;
@@ -29,7 +30,9 @@ public class RouteTransportService {
         RouteTransportModel routeTransportModel = routeTransportRepository.getRouteTransportById(routeTransportId);
 
         if (routeTransportModel != null) {
-            routeTransportModel.setStatusHistory(routeTransportStatusRepository.getTransportStatusHistory(routeTransportId));
+            List<RouteTransportStatusModel> statusHistory = routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId());
+            routeTransportModel.setStatusHistory(statusHistory);
+            routeTransportModel.setCurrentStatus(statusHistory);
             routeTransportModel.setRoute(routeRepository.getRoute(routeTransportModel.getRouteId()));
 
             List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportId);
@@ -49,7 +52,9 @@ public class RouteTransportService {
 
         if (routeTransportModels != null) {
             routeTransportModels.forEach(routeTransportModel -> {
-                routeTransportModel.setStatusHistory(routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId()));
+                List<RouteTransportStatusModel> statusHistory = routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId());
+                routeTransportModel.setStatusHistory(statusHistory);
+                routeTransportModel.setCurrentStatus(statusHistory);
                 routeTransportModel.setRoute(routeRepository.getRoute(routeTransportModel.getRouteId()));
 
                 List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportModel.getId());
