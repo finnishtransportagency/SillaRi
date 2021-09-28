@@ -21,6 +21,7 @@ public class SupervisionMapper implements RecordMapper<Record, SupervisionModel>
         supervisionModel.setRouteTransportId(record.get(supervision.ROUTE_TRANSPORT_ID));
         supervisionModel.setPlannedTime(record.get(supervision.PLANNED_TIME));
         supervisionModel.setConformsToPermit(record.get(supervision.CONFORMS_TO_PERMIT));
+        supervisionModel.setSupervisorType(record.get(supervision.SUPERVISOR_TYPE, new SupervisorTypeConverter(String.class, SupervisorType.class)));
 
         SupervisionStatusMapper statusMapper = new SupervisionStatusMapper();
         SupervisionStatusModel statusModel = statusMapper.map(record);

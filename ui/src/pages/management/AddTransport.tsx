@@ -12,7 +12,7 @@ import RouteInfo from "../../components/management/RouteInfo";
 import TransportInfo from "../../components/management/TransportInfo";
 import { useTypedSelector } from "../../store/store";
 import { getPermit, onRetry } from "../../utils/backendData";
-import { dateFormat } from "../../utils/constants";
+import { DATE_FORMAT } from "../../utils/constants";
 
 interface AddTransportProps {
   permitId: string;
@@ -61,7 +61,7 @@ const AddTransport = (): JSX.Element => {
                       <IonText className="headingText">{t("management.addTransport.validityPeriod")}</IonText>
                     </IonCol>
                     <IonCol size="12" size-sm="8" size-lg="3">
-                      <IonText>{`${moment(validStartDate).format(dateFormat)} - ${moment(validEndDate).format(dateFormat)}`}</IonText>
+                      <IonText>{`${moment(validStartDate).format(DATE_FORMAT)} - ${moment(validEndDate).format(DATE_FORMAT)}`}</IonText>
                     </IonCol>
 
                     <IonCol size="12" size-sm="4" size-lg="2">

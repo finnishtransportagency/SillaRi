@@ -37,7 +37,7 @@ import {
   sendSupervisionReportUpdate,
   sendSupervisionStarted,
 } from "../utils/backendData";
-import { dateTimeFormat } from "../utils/constants";
+import { DATE_TIME_FORMAT } from "../utils/constants";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import ImageThumbnailRow from "../components/ImageThumbnailRow";
 import Moment from "react-moment";
@@ -136,7 +136,7 @@ const Supervision = (): JSX.Element => {
         supervisionId: supervisionId.toString(),
         filename: image.filename,
         base64: image.dataUrl,
-        taken: moment(image.date).format(dateTimeFormat),
+        taken: moment(image.date).format(DATE_TIME_FORMAT),
       } as IFileInput;
 
       imageUploadMutation.mutate(fileUpload);
@@ -193,7 +193,7 @@ const Supervision = (): JSX.Element => {
             <IonRow>
               <IonCol>
                 <IonLabel class="crossingLabel">
-                  {t("supervision.supervisionStarted")} {startedTime ? <Moment format={dateTimeFormat}>{startedTime}</Moment> : ""}
+                  {t("supervision.supervisionStarted")} {startedTime ? <Moment format={DATE_TIME_FORMAT}>{startedTime}</Moment> : ""}
                 </IonLabel>
               </IonCol>
             </IonRow>
