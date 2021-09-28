@@ -94,6 +94,7 @@
           "all": "All transports",
           "planned": "Planned",
           "waiting": "Waiting to leave",
+          "in_progress": "In progress",
           "completed": "Completed"
         }
       },
@@ -104,6 +105,10 @@
         "time": "Time",
         "status": "Status",
         "action": "Action"
+      },
+      "action": {
+        "details": "Details",
+        "modify": "Modify"
       }
     },
     "addTransport":
@@ -143,6 +148,19 @@
         "supervisor1": "Bridge supervisor (1.)",
         "supervisor2": "Backup supervisor (2.)"
       }
+    },
+    "supervisionType": {
+      "unknown": "Information unknown",
+      "own_supervisor": "Own supervisors",
+      "area_contractor": "Area contractor"
+    },
+    "transportStatus": {
+      "unknown": "Information unknown",
+      "planned": "Planned",
+      "departed": "Departed",
+      "stopped": "Stopped",
+      "in_progress": "In progress",
+      "arrived": "Arrived"
     }
   }
 }

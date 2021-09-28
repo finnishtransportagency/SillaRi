@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Repository
 public class SupervisionRepository {
@@ -45,7 +46,16 @@ public class SupervisionRepository {
                 .limit(1).fetchOne(new SupervisionMapper());
     }
 
-
+    public List<SupervisionModel> getSupervisionsByRouteTransportId(Integer routeTransportId) {
+        return dsl.select().from(SupervisionMapper.supervision)
+                .leftJoin(SupervisionMapper.supervisionStatus)
+                .on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionStatus.SUPERVISION_ID))
+                .leftJoin(SupervisionMapper.supervisionReport)
+                .on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionReport.SUPERVISION_ID))
+                .where(SupervisionMapper.supervision.ROUTE_TRANSPORT_ID.eq(routeTransportId))
+                .orderBy(SupervisionMapper.supervisionStatus.TIME.desc())
+                .fetch(new SupervisionMapper());
+    }
 
     public Integer createSupervision(SupervisionModel supervisionModel) throws DataAccessException {
         return dsl.transactionResult(configuration -> {

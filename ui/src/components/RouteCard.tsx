@@ -4,7 +4,7 @@ import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, 
 import { analyticsOutline } from "ionicons/icons";
 // import Moment from "react-moment";
 import IRoute from "../interfaces/IRoute";
-// import { dateTimeFormat } from "../utils/constants";
+// import { DATE_TIME_FORMAT } from "../utils/constants";
 
 interface RouteCardProps {
   route: IRoute;
@@ -51,7 +51,7 @@ const RouteCard = ({ route }: RouteCardProps): JSX.Element => {
           {/*
           <IonRow>
             <IonCol>
-              <Moment format={dateTimeFormat}>{departureTime}</Moment>
+              <Moment format={DATE_TIME_FORMAT}>{departureTime}</Moment>
             </IonCol>
           </IonRow>
           */}
