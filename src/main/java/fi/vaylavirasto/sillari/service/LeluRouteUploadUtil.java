@@ -77,7 +77,18 @@ public class LeluRouteUploadUtil {
                     }
                     catch (Exception e){
                         logger.debug("couldnt base64 decode, prolly isnt encoded. " + e.getMessage());
+                        //add zip extension if missing
+                        if(!zipFileName.toLowerCase().endsWith(".zip")){
+                            String newZipFileName = zipFileName + ".zip";
+                            Path newZipFilePath = Paths.get(routeUploadPathString, newZipFileName);
+                            Files.move(zipFilePath, newZipFilePath);
+                            zipFilePath = newZipFilePath;
+                            zipFileName = newZipFileName;
+                        }
                     }
+
+
+
                     Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
                     Files.setPosixFilePermissions(zipFilePath, perms);
 
