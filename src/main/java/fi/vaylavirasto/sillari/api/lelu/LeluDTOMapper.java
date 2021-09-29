@@ -36,29 +36,20 @@ public interface LeluDTOMapper {
             @Mapping(target = "id", ignore = true),
             @Mapping(target = "leluId", source = "dto.id"),
             @Mapping(target = "routeBridges", source = "dto.bridges"),
-            @Mapping(expression = "java(splitAddress1(leluAddressDTO.getAddress()))", target = "departureAddress.street"),
-            @Mapping(expression = "java(splitAddress2(leluAddressDTO.getAddress(),0))", target = "departureAddress.postalcode"),
-            @Mapping(expression = "java(splitAddress2(leluAddressDTO.getAddress(),1))", target = "departureAddress.city"),
-            @Mapping(expression = "java(splitAddress1(leluAddressDTO.getAddress()))", target = "arrivalAddress.street"),
-            @Mapping(expression = "java(splitAddress2(leluAddressDTO.getAddress(),0))", target = "arrivalAddress.postalcode"),
-            @Mapping(expression = "java(splitAddress2(leluAddressDTO.getAddress(),1))", target = "arrivalAddress.city")
+            @Mapping(expression = "java(constructAddress(dto.getDepartureAddress()))", target = "departureAddress"),
+            @Mapping(expression = "java(constructAddress(dto.getArrivalAddress()))", target = "arrivalAddress"),
     })
+
+
     RouteModel fromDTOToModel(LeluRouteDTO dto);
 
-    default String splitAddress1(String address) {
-        try {
-            return address.split(",")[0];
-        } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
-            return "";
-        }
-    }
-
-    default String splitAddress2(String address, int partNumber) {
-        try {
-            return address.split(",")[1].trim().split(" ")[partNumber];
-        } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
-            return "";
-        }
+    default AddressModel constructAddress(LeluAddressDTO addressDTO) {
+        String address = addressDTO.getAddress();
+        AddressModel addressModel = new AddressModel();
+        addressModel.setStreet(LeluMappingUtil.splitAddress1(address));
+        addressModel.setPostalcode(LeluMappingUtil.splitAddress2(address,0));
+        addressModel.setCity(LeluMappingUtil.splitAddress2(address,1));
+        return addressModel;
     }
 
     @Mappings({
