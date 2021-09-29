@@ -2,11 +2,11 @@
 <Configuration>
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} %line - %msg%n"/>
         </Console>
         <RollingFile name="DebugAppender" fileName="/data/logs/${env:nodename:-nodex}/sillari-debug.log"
                      filePattern="/data/logs/${env:nodename:-nodex}/sillari-debug-%i.log.gz">
-            <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} %line - %msg%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="100MB" />
             </Policies>
