@@ -21,9 +21,9 @@ public class SupervisionMapper implements RecordMapper<Record, SupervisionModel>
         supervisionModel.setId(record.get(supervision.ID));
         supervisionModel.setRouteBridgeId(record.get(supervision.ROUTE_BRIDGE_ID));
         supervisionModel.setRouteTransportId(record.get(supervision.ROUTE_TRANSPORT_ID));
-        supervisionModel.setSupervisorId(record.get(supervision.SUPERVISOR_ID));
         supervisionModel.setPlannedTime(record.get(supervision.PLANNED_TIME));
         supervisionModel.setConformsToPermit(record.get(supervision.CONFORMS_TO_PERMIT));
+        supervisionModel.setSupervisorType(record.get(supervision.SUPERVISOR_TYPE, new SupervisorTypeConverter(String.class, SupervisorType.class)));
 
         SupervisionStatusMapper statusMapper = new SupervisionStatusMapper();
         SupervisionStatusModel statusModel = statusMapper.map(record);
@@ -31,6 +31,8 @@ public class SupervisionMapper implements RecordMapper<Record, SupervisionModel>
             supervisionModel.setCurrentStatus(statusModel);
         }
         supervisionModel.setStatusHistory(new ArrayList<>());
+
+        supervisionModel.setSupervisors(new ArrayList<>());
 
         SupervisionReportMapper reportMapper = new SupervisionReportMapper();
         SupervisionReportModel reportModel = reportMapper.map(record);

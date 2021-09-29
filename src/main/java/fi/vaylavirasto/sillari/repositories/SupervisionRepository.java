@@ -4,6 +4,7 @@ import fi.vaylavirasto.sillari.model.SupervisionMapper;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.model.SupervisorMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Repository
 public class SupervisionRepository {
@@ -44,7 +46,16 @@ public class SupervisionRepository {
                 .limit(1).fetchOne(new SupervisionMapper());
     }
 
-
+    public List<SupervisionModel> getSupervisionsByRouteTransportId(Integer routeTransportId) {
+        return dsl.select().from(SupervisionMapper.supervision)
+                .leftJoin(SupervisionMapper.supervisionStatus)
+                .on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionStatus.SUPERVISION_ID))
+                .leftJoin(SupervisionMapper.supervisionReport)
+                .on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionReport.SUPERVISION_ID))
+                .where(SupervisionMapper.supervision.ROUTE_TRANSPORT_ID.eq(routeTransportId))
+                .orderBy(SupervisionMapper.supervisionStatus.TIME.desc())
+                .fetch(new SupervisionMapper());
+    }
 
     public Integer createSupervision(SupervisionModel supervisionModel) throws DataAccessException {
         return dsl.transactionResult(configuration -> {
@@ -53,13 +64,11 @@ public class SupervisionRepository {
             Record1<Integer> supervisionIdResult = ctx.insertInto(SupervisionMapper.supervision,
                             SupervisionMapper.supervision.ROUTE_BRIDGE_ID,
                             SupervisionMapper.supervision.ROUTE_TRANSPORT_ID,
-                            SupervisionMapper.supervision.SUPERVISOR_ID,
                             SupervisionMapper.supervision.PLANNED_TIME,
                             SupervisionMapper.supervision.CONFORMS_TO_PERMIT
                     ).values(
                             supervisionModel.getRouteBridgeId(),
                             supervisionModel.getRouteTransportId(),
-                            supervisionModel.getSupervisorId(),
                             supervisionModel.getPlannedTime(),
                             false)
                     .returningResult(SupervisionMapper.supervision.ID)
@@ -69,6 +78,10 @@ public class SupervisionRepository {
             supervisionModel.setId(supervisionId);
 
             insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.PLANNED);
+
+            supervisionModel.getSupervisors().forEach(supervisorModel -> {
+                insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getId(), supervisorModel.getPriority());
+            });
 
             return supervisionId;
         });
@@ -86,13 +99,25 @@ public class SupervisionRepository {
                 .execute();
     }
 
+    private void insertSupervisionSupervisor(DSLContext ctx, Integer supervisionId, Integer supervisorId, Integer priority) {
+        ctx.insertInto(SupervisorMapper.supervisionSupervisor,
+                        SupervisorMapper.supervisionSupervisor.SUPERVISION_ID,
+                        SupervisorMapper.supervisionSupervisor.SUPERVISOR_ID,
+                        SupervisorMapper.supervisionSupervisor.PRIORITY
+                ).values(
+                        supervisionId,
+                        supervisorId,
+                        priority
+                )
+                .execute();
+    }
+
     public void updateSupervision(SupervisionModel supervisionModel) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
             ctx.update(SupervisionMapper.supervision)
                     .set(SupervisionMapper.supervision.ROUTE_TRANSPORT_ID, supervisionModel.getRouteTransportId())
-                    .set(SupervisionMapper.supervision.SUPERVISOR_ID, supervisionModel.getSupervisorId())
                     .set(SupervisionMapper.supervision.PLANNED_TIME, supervisionModel.getPlannedTime())
                     .set(SupervisionMapper.supervision.CONFORMS_TO_PERMIT, supervisionModel.getConformsToPermit())
                     .where(SupervisionMapper.supervision.ID.eq(supervisionModel.getId()))

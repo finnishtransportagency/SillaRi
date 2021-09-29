@@ -23,6 +23,7 @@ import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import { getPermitOfRouteBridge, getRouteBridge, getSupervisionOfRouteBridge, onRetry, sendSupervisionUpdate } from "../utils/backendData";
 import ISupervision from "../interfaces/ISupervision";
+import { SupervisionStatus } from "../utils/constants";
 
 interface BridgeDetailProps {
   routeBridgeId: string;
@@ -42,7 +43,8 @@ const BridgeDetail = (): JSX.Element => {
   const { bridge, crossingInstruction = "" } = selectedBridgeDetail || {};
   const { name = "", identifier = "", municipality = "" } = bridge || {};
   const { permitNumber } = selectedPermitDetail || {};
-  const { id: supervisionId, routeTransportId, plannedTime, conformsToPermit = false } = selectedSupervisionDetail || {};
+  const { id: supervisionId, routeTransportId, plannedTime, conformsToPermit = false, currentStatus } = selectedSupervisionDetail || {};
+  const supervisionStarted = currentStatus && currentStatus.status !== SupervisionStatus.PLANNED;
 
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
   useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
@@ -154,7 +156,7 @@ const BridgeDetail = (): JSX.Element => {
                             slot="start"
                             value="conforms"
                             checked={conformsToPermit}
-                            disabled={!supervisionId}
+                            disabled={!supervisionId || supervisionStarted}
                             onClick={() => setConformsToPermit(!conformsToPermit)}
                           />
                           <IonLabel>{t("bridgeDetail.conformsToPermit")}</IonLabel>
@@ -167,13 +169,17 @@ const BridgeDetail = (): JSX.Element => {
             </IonGrid>
             <IonGrid>
               <IonRow>
-                <IonButton disabled={!supervisionId} color="primary" routerLink={`/denyCrossing/${routeBridgeId}`}>
-                  {t("bridgeDetail.denyCrossing")}
+                <IonButton
+                  disabled={!supervisionId || !conformsToPermit || supervisionStarted}
+                  color="primary"
+                  routerLink={`/supervision/${supervisionId}`}
+                >
+                  {t("bridgeDetail.startSupervision")}
                 </IonButton>
               </IonRow>
               <IonRow>
-                <IonButton disabled={!supervisionId || !conformsToPermit} color="primary" routerLink={`/supervision/${supervisionId}`}>
-                  {t("bridgeDetail.startSupervision")}
+                <IonButton disabled={!supervisionId || supervisionStarted} color="primary" routerLink={`/denyCrossing/${routeBridgeId}`}>
+                  {t("bridgeDetail.denyCrossing")}
                 </IonButton>
               </IonRow>
             </IonGrid>
