@@ -37,9 +37,10 @@ import {
   sendSupervisionReportUpdate,
   sendSupervisionStarted,
 } from "../utils/backendData";
-import { dateTimeFormat } from "../utils/constants";
+import { DATE_TIME_FORMAT } from "../utils/constants";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import ImageThumbnailRow from "../components/ImageThumbnailRow";
+import Moment from "react-moment";
 
 interface SupervisionProps {
   supervisionId: string;
@@ -60,7 +61,7 @@ const Supervision = (): JSX.Element => {
   } = useTypedSelector((state) => state.crossingsReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
-  const { routeBridgeId = "0", report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
+  const { routeBridgeId = "0", startedTime, report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
   const {
     id: supervisionReportId = -1,
@@ -135,7 +136,7 @@ const Supervision = (): JSX.Element => {
         supervisionId: supervisionId.toString(),
         filename: image.filename,
         base64: image.dataUrl,
-        taken: moment(image.date).format(dateTimeFormat),
+        taken: moment(image.date).format(DATE_TIME_FORMAT),
       } as IFileInput;
 
       imageUploadMutation.mutate(fileUpload);
@@ -191,7 +192,9 @@ const Supervision = (): JSX.Element => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <IonLabel class="crossingLabel">{t("supervision.supervisionStarted")}TODO</IonLabel>
+                <IonLabel class="crossingLabel">
+                  {t("supervision.supervisionStarted")} {startedTime ? <Moment format={DATE_TIME_FORMAT}>{startedTime}</Moment> : ""}
+                </IonLabel>
               </IonCol>
             </IonRow>
 

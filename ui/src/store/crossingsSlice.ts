@@ -9,15 +9,18 @@ import IPermit from "../interfaces/IPermit";
 import IRadioValue from "../interfaces/IRadioValue";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
-import ITextAreaValue from "../interfaces/ITextAreaValue";
+import IRouteTransport from "../interfaces/IRouteTransport";
 import ISupervision from "../interfaces/ISupervision";
+import ITextAreaValue from "../interfaces/ITextAreaValue";
 
 interface IStateProps {
   companyList: ICompany[];
+  routeTransportList: IRouteTransport[];
   selectedCompanyDetail?: ICompany;
   selectedPermitDetail?: IPermit;
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
+  selectedRouteTransportDetail?: IRouteTransport;
   selectedSupervisionDetail?: ISupervision;
   images: IImageItem[];
   networkStatus: INetworkStatus;
@@ -25,10 +28,12 @@ interface IStateProps {
 
 const initialState: IStateProps = {
   companyList: [],
+  routeTransportList: [],
   selectedCompanyDetail: undefined,
   selectedPermitDetail: undefined,
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
+  selectedRouteTransportDetail: undefined,
   selectedSupervisionDetail: undefined,
   images: [],
   networkStatus: {
@@ -59,6 +64,14 @@ const crossingsSlice = createSlice({
     GET_ROUTE_BRIDGE: (state, action: PayloadAction<IRouteBridge>) => {
       console.log("GET_ROUTE_BRIDGE", action.payload);
       return { ...state, selectedBridgeDetail: action.payload };
+    },
+    GET_ROUTE_TRANSPORT_LIST: (state, action: PayloadAction<IRouteTransport[]>) => {
+      console.log("GET_ROUTE_TRANSPORT_LIST", action.payload);
+      return { ...state, routeTransportList: action.payload };
+    },
+    GET_ROUTE_TRANSPORT: (state, action: PayloadAction<IRouteTransport>) => {
+      console.log("GET_ROUTE_TRANSPORT", action.payload);
+      return { ...state, selectedRouteTransportDetail: action.payload };
     },
     GET_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
       console.log("GET_SUPERVISION", action.payload);

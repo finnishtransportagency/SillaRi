@@ -4,7 +4,7 @@ import { bus } from "ionicons/icons";
 import Moment from "react-moment";
 import moment from "moment";
 import ICompany from "../interfaces/ICompany";
-import { dateTimeFormat } from "../utils/constants";
+import { DATE_TIME_FORMAT } from "../utils/constants";
 
 interface CompanyCardProps {
   company: ICompany;
@@ -33,7 +33,7 @@ const CompanyCard = ({ company }: CompanyCardProps): JSX.Element => {
               <IonCardTitle>{name}</IonCardTitle>
             </IonCardHeader>
             <IonCardContent className="ion-text-left">
-              <Moment format={dateTimeFormat}>{minStartDate}</Moment>
+              <Moment format={DATE_TIME_FORMAT}>{minStartDate}</Moment>
             </IonCardContent>
           </IonCol>
         </IonRow>
