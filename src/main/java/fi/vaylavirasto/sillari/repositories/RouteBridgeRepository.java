@@ -29,7 +29,7 @@ public class RouteBridgeRepository {
                 .fetch(new RouteBridgeMapper());
     }
 
-    public List<RouteBridgeModel> getSupervisorRouteBridges(Integer supervisorId) {
+    public List<RouteBridgeModel> getRouteBridgesOfSupervisor(Integer supervisorId) {
         return dsl.select().from(RouteBridgeMapper.routebridge)
                 .leftJoin(RouteBridgeMapper.bridge).on(RouteBridgeMapper.bridge.ID.eq(RouteBridgeMapper.routebridge.BRIDGE_ID))
                 .leftJoin(RouteBridgeMapper.supervision).on(RouteBridgeMapper.routebridge.ID.eq(RouteBridgeMapper.supervision.ROUTE_BRIDGE_ID))

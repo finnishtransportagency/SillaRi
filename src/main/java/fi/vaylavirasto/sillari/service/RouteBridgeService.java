@@ -8,6 +8,8 @@ import fi.vaylavirasto.sillari.repositories.SupervisionStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RouteBridgeService {
     @Autowired
@@ -31,4 +33,16 @@ public class RouteBridgeService {
         }
         return routeBridgeModel;
     }
+
+    public List<RouteBridgeModel> getRouteBridgesOfSupervisor(Integer supervisorId) {
+        List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridgesOfSupervisor(supervisorId);
+        for (RouteBridgeModel routeBridge : routeBridges) {
+            SupervisionModel supervision = routeBridge.getSupervision();
+            if (supervision != null) {
+                supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+            }
+        }
+        return routeBridges;
+    }
+
 }

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @Timed
 @RequestMapping("/routebridge")
@@ -30,6 +32,19 @@ public class RouteBridgeController {
         try {
             RouteBridgeModel routeBridge = routeBridgeService.getRouteBridge(routeBridgeId);
             return ResponseEntity.ok().body(routeBridge != null ? routeBridge : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Get route bridges of supervisor")
+    @GetMapping(value = "/getroutebridgesofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getRouteBridgesOfSupervisor(@RequestParam Integer supervisorId) {
+        ServiceMetric serviceMetric = new ServiceMetric("RouteBridgeController", "getRouteBridgesOfSupervisor");
+        try {
+            List<RouteBridgeModel> routeBridges = routeBridgeService.getRouteBridgesOfSupervisor(supervisorId);
+            return ResponseEntity.ok().body(routeBridges != null ? routeBridges : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
