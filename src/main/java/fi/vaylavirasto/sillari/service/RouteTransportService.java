@@ -1,7 +1,6 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
-import fi.vaylavirasto.sillari.model.RouteTransportStatusModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.repositories.RouteRepository;
 import fi.vaylavirasto.sillari.repositories.RouteTransportRepository;

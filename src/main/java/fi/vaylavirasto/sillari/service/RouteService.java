@@ -18,8 +18,6 @@ public class RouteService {
     @Autowired
     BridgeRepository bridgeRepository;
     @Autowired
-    SupervisionRepository supervisionRepository;
-    @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
 
     public RouteModel getRoute(Integer routeId) {
@@ -35,11 +33,10 @@ public class RouteService {
                     String bridgeGeoJson = bridgeRepository.getBridgeGeoJson(routeBridgeModel.getBridge().getId());
                     routeBridgeModel.getBridge().setGeojson(bridgeGeoJson);
 
-                    SupervisionModel supervision = supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeModel.getId());
+                    SupervisionModel supervision = routeBridgeModel.getSupervision();
                     if (supervision != null) {
                         // Sets also current status and status timestamps
                         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
-                        routeBridgeModel.setSupervision(supervision);
                     }
                 });
             }
