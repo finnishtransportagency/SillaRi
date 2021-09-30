@@ -15,8 +15,8 @@ const RoutePermit = ({ selectedPermit, selectedRoute }: RoutePermitProps): JSX.E
 
   const { permitNumber } = selectedPermit || {};
   const { id: routeId, departureAddress, arrivalAddress } = selectedRoute || {};
-  const { street: departureStreet, postalcode: departurePostalCode, city: departureCity } = departureAddress || {};
-  const { street: arrivalStreet, postalcode: arrivalPostalCode, city: arrivalCity } = arrivalAddress || {};
+  const { streetaddress: departureStreetaddress, postalcode: departurePostalCode, city: departureCity } = departureAddress || {};
+  const { streetaddress: arrivalStreetaddress, postalcode: arrivalPostalCode, city: arrivalCity } = arrivalAddress || {};
 
   return !(selectedPermit && selectedRoute) ? null : (
     <>
@@ -53,7 +53,7 @@ const RoutePermit = ({ selectedPermit, selectedRoute }: RoutePermitProps): JSX.E
             <IonText>{t("route.permitInfo.routeDeparturePoint")}</IonText>
           </IonCol>
           <IonCol>
-            {departureAddress && <IonText>{`${departureStreet}, ${departurePostalCode} ${departureCity}`}</IonText>}
+            {departureAddress && <IonText>{`${departureStreetaddress}`}</IonText>}
             <IonText className="ion-float-right">
               <IonIcon icon={flagOutline} />
             </IonText>
@@ -64,7 +64,7 @@ const RoutePermit = ({ selectedPermit, selectedRoute }: RoutePermitProps): JSX.E
             <IonText>{t("route.permitInfo.routeArrivalPoint")}</IonText>
           </IonCol>
           <IonCol>
-            {arrivalAddress && <IonText>{`${arrivalStreet}, ${arrivalPostalCode} ${arrivalCity}`}</IonText>}
+            {arrivalAddress && <IonText>{`${arrivalStreetaddress}`}</IonText>}
             <IonText className="ion-float-right">
               <IonIcon icon={flagOutline} />
             </IonText>

@@ -27,14 +27,14 @@ public class RouteMapper  implements RecordMapper<Record, RouteModel> {
 
         AddressModel aa = new AddressModel();
         aa.setId(record.get(arrivalAddress.ID));
-        aa.setStreet(record.get(arrivalAddress.STREET));
+        aa.setStreetaddress(record.get(arrivalAddress.STREETADDRESS));
         aa.setPostalcode(record.get(arrivalAddress.POSTALCODE));
         aa.setCity(record.get(arrivalAddress.CITY));
         routeModel.setArrivalAddress(aa);
 
         AddressModel da = new AddressModel();
         da.setId(record.get(departureAddress.ID));
-        da.setStreet(record.get(departureAddress.STREET));
+        da.setStreetaddress(record.get(departureAddress.STREETADDRESS));
         da.setPostalcode(record.get(departureAddress.POSTALCODE));
         da.setCity(record.get(departureAddress.CITY));
         routeModel.setDepartureAddress(da);

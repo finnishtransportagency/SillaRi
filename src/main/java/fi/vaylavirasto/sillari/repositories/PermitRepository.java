@@ -214,11 +214,11 @@ public class PermitRepository {
 
     private void insertRouteAndRouteBridges(DSLContext ctx, RouteModel routeModel) {
         Record1<Integer> departureAddressIdResult = ctx.insertInto(AddressMapper.address,
-                AddressMapper.address.STREET,
+                AddressMapper.address.STREETADDRESS,
                 AddressMapper.address.CITY,
                 AddressMapper.address.POSTALCODE
         ).values(
-                routeModel.getDepartureAddress().getStreet(),
+                routeModel.getDepartureAddress().getStreetaddress(),
                 routeModel.getDepartureAddress().getCity(),
                 routeModel.getDepartureAddress().getPostalcode()
         )
@@ -228,11 +228,11 @@ public class PermitRepository {
         routeModel.getDepartureAddress().setId(departureAddressId);
 
         Record1<Integer> arrivalAddressIdResult = ctx.insertInto(AddressMapper.address,
-                AddressMapper.address.STREET,
+                AddressMapper.address.STREETADDRESS,
                 AddressMapper.address.CITY,
                 AddressMapper.address.POSTALCODE
         ).values(
-                routeModel.getArrivalAddress().getStreet(),
+                routeModel.getArrivalAddress().getStreetaddress(),
                 routeModel.getArrivalAddress().getCity(),
                 routeModel.getArrivalAddress().getPostalcode()
         )
