@@ -30,10 +30,9 @@ public class RouteTransportService {
         RouteTransportModel routeTransportModel = routeTransportRepository.getRouteTransportById(routeTransportId);
 
         if (routeTransportModel != null) {
-            List<RouteTransportStatusModel> statusHistory = routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId());
-            routeTransportModel.setStatusHistory(statusHistory);
-            routeTransportModel.setCurrentStatus(statusHistory);
             routeTransportModel.setRoute(routeRepository.getRoute(routeTransportModel.getRouteId()));
+            // Sets also current status
+            routeTransportModel.setStatusHistory(routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId()));
 
             List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportId);
             if (supervisions != null) {
@@ -52,10 +51,9 @@ public class RouteTransportService {
 
         if (routeTransportModels != null) {
             routeTransportModels.forEach(routeTransportModel -> {
-                List<RouteTransportStatusModel> statusHistory = routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId());
-                routeTransportModel.setStatusHistory(statusHistory);
-                routeTransportModel.setCurrentStatus(statusHistory);
                 routeTransportModel.setRoute(routeRepository.getRoute(routeTransportModel.getRouteId()));
+                // Sets also current status
+                routeTransportModel.setStatusHistory(routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId()));
 
                 List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportModel.getId());
                 if (supervisions != null) {
