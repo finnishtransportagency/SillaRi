@@ -2,13 +2,10 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
-import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class SupervisionService {
@@ -24,31 +21,29 @@ public class SupervisionService {
     FileRepository fileRepository;
 
     public SupervisionModel getSupervision(Integer supervisionId) {
-        SupervisionModel supervisionModel = supervisionRepository.getSupervisionById(supervisionId);
-        if (supervisionModel != null) {
-            supervisionModel.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
-            supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
-            supervisionModel.setImages(fileRepository.getFiles(supervisionId));
+        SupervisionModel supervision = supervisionRepository.getSupervisionById(supervisionId);
+        if (supervision != null) {
+            supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
+            supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
+            supervision.setImages(fileRepository.getFiles(supervisionId));
 
-            List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervisionId);
-            supervisionModel.setStatusHistory(statusHistory);
-            supervisionModel.setStatusTimes(statusHistory);
+            // Sets also current status and status timestamps
+            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
         }
-        return supervisionModel;
+        return supervision;
     }
 
     public SupervisionModel getSupervisionOfRouteBridge(Integer routeBridgeId) {
-        SupervisionModel supervisionModel = supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeId);
-        if (supervisionModel != null && supervisionModel.getId() != null) {
-            supervisionModel.setReport(supervisionReportRepository.getSupervisionReport(supervisionModel.getId()));
-            supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionModel.getId()));
-            supervisionModel.setImages(fileRepository.getFiles(supervisionModel.getId()));
+        SupervisionModel supervision = supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeId);
+        if (supervision != null && supervision.getId() != null) {
+            supervision.setReport(supervisionReportRepository.getSupervisionReport(supervision.getId()));
+            supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+            supervision.setImages(fileRepository.getFiles(supervision.getId()));
 
-            List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervisionModel.getId());
-            supervisionModel.setStatusHistory(statusHistory);
-            supervisionModel.setStatusTimes(statusHistory);
+            // Sets also current status and status timestamps
+            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
         }
-        return supervisionModel;
+        return supervision;
     }
 
     // Creates new supervision and adds a new status with type PLANNED

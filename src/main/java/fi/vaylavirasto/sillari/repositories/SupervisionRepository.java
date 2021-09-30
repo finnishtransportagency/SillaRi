@@ -2,8 +2,6 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.SupervisionMapper;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
-import fi.vaylavirasto.sillari.model.SupervisionReportModel;
-import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import fi.vaylavirasto.sillari.model.SupervisorMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +12,6 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
@@ -25,29 +22,20 @@ public class SupervisionRepository {
     private DSLContext dsl;
 
     public SupervisionModel getSupervisionById(Integer id) {
-        return dsl.select().from(SupervisionMapper.supervision)
-                .leftJoin(SupervisionMapper.supervisionStatus)
-                .on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionStatus.SUPERVISION_ID))
+        return dsl.selectFrom(SupervisionMapper.supervision)
                 .where(SupervisionMapper.supervision.ID.eq(id))
-                .orderBy(SupervisionMapper.supervisionStatus.TIME.desc())
-                .limit(1).fetchOne(new SupervisionMapper());
+                .fetchOne(new SupervisionMapper());
     }
 
     public SupervisionModel getSupervisionByRouteBridgeId(Integer routeBridgeId) {
-        return dsl.select().from(SupervisionMapper.supervision)
-                .leftJoin(SupervisionMapper.supervisionStatus)
-                .on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionStatus.SUPERVISION_ID))
+        return dsl.selectFrom(SupervisionMapper.supervision)
                 .where(SupervisionMapper.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
-                .orderBy(SupervisionMapper.supervisionStatus.TIME.desc())
-                .limit(1).fetchOne(new SupervisionMapper());
+                .fetchOne(new SupervisionMapper());
     }
 
     public List<SupervisionModel> getSupervisionsByRouteTransportId(Integer routeTransportId) {
         return dsl.select().from(SupervisionMapper.supervision)
-                .leftJoin(SupervisionMapper.supervisionStatus)
-                .on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionStatus.SUPERVISION_ID))
                 .where(SupervisionMapper.supervision.ROUTE_TRANSPORT_ID.eq(routeTransportId))
-                .orderBy(SupervisionMapper.supervisionStatus.TIME.desc())
                 .fetch(new SupervisionMapper());
     }
 

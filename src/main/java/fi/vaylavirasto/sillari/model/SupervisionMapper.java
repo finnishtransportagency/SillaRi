@@ -23,12 +23,6 @@ public class SupervisionMapper implements RecordMapper<Record, SupervisionModel>
         supervisionModel.setConformsToPermit(record.get(supervision.CONFORMS_TO_PERMIT));
         supervisionModel.setSupervisorType(record.get(supervision.SUPERVISOR_TYPE, new SupervisorTypeConverter(String.class, SupervisorType.class)));
 
-        SupervisionStatusMapper statusMapper = new SupervisionStatusMapper();
-        SupervisionStatusModel statusModel = statusMapper.map(record);
-        if (statusModel != null && statusModel.getId() != null) {
-            supervisionModel.setCurrentStatus(statusModel);
-        }
-
         supervisionModel.setStatusHistory(new ArrayList<>());
         supervisionModel.setSupervisors(new ArrayList<>());
         supervisionModel.setImages(new ArrayList<>());

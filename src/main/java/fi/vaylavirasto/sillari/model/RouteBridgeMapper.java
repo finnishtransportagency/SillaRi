@@ -9,7 +9,6 @@ public class RouteBridgeMapper implements RecordMapper<Record,RouteBridgeModel> 
     public static final Bridge bridge = Tables.BRIDGE.as("br");
     public static final RouteBridge routebridge = Tables.ROUTE_BRIDGE.as("rbr");
     public static final Supervision supervision = Tables.SUPERVISION.as("sn");
-    public static final SupervisionStatus supervisionStatus = Tables.SUPERVISION_STATUS.as("sns");
     public static final SupervisionSupervisor supervisionSupervisor = Tables.SUPERVISION_SUPERVISOR.as("ss");
 
     @Nullable
