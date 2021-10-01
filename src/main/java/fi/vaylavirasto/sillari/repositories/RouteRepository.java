@@ -46,14 +46,14 @@ public class RouteRepository {
                 .fetchOne(geojsonField);
     }
 
-    public Map<Long, Integer> getRouteIdsWithLeluIds(Integer permitId) {
-        Result<Record2<Long, Integer>> result = dsl.select(RouteMapper.route.LELU_ID, RouteMapper.route.ID)
+    public Map<Long, RouteModel> getRouteIdsWithLeluIds(Integer permitId) {
+        var result = dsl.select()
                 .from(RouteMapper.route)
                 .where(RouteMapper.route.PERMIT_ID.eq(permitId))
                 .orderBy(RouteMapper.route.LELU_ID)
                 .fetch();
 
-        Map<Long, Integer> resultMap = result.intoMap(RouteMapper.route.LELU_ID, RouteMapper.route.ID);
+        Map<Long, RouteModel> resultMap = result.intoMap(RouteMapper.route.LELU_ID, xxxxxxx);
         logger.debug("Route LeLu IDs with corresponding Route IDs resultMap={}", resultMap);
         return resultMap;
     }

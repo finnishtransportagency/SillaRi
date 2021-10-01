@@ -384,6 +384,11 @@ public class PermitRepository {
                 .set(PermitMapper.route.ALTERNATIVE_ROUTE, routeModel.getAlternativeRoute())
                 .where(PermitMapper.route.ID.eq(routeModel.getId()))
                 .execute();
+
+        ctx.select()
+        Record1<Integer> axleChartIdResult = ctx.select(PermitMapper.axleChart.ID).from(PermitMapper.axleChart)
+                .where(PermitMapper.axleChart.PERMIT_ID.eq(permitModel.getId()))
+                .fetchOne();
         updateRouteAddresses(ctx, routeModel);
 
         insertRouteBridges(ctx, routeModel);
@@ -392,12 +397,12 @@ public class PermitRepository {
     private void updateRouteAddresses(DSLContext ctx, RouteModel routeModel) {
         ctx.update(RouteMapper.departureAddress)
                 .set(RouteMapper.departureAddress.STREETADDRESS, routeModel.getDepartureAddress().getStreetaddress())
-                .where(RouteMapper.departureAddress.ID.eq(routeModel.getDepartureAddress().getId()))
+                .where(RouteMapper.route.ID.eq(routeModel.getId()))
                 .execute();
 
         ctx.update(RouteMapper.arrivalAddress)
                 .set(RouteMapper.arrivalAddress.STREETADDRESS, routeModel.getArrivalAddress().getStreetaddress())
-                .where(RouteMapper.arrivalAddress.ID.eq(routeModel.getArrivalAddress().getId()))
+                .where(RouteMapper.route.ID.eq(routeModel.getId()))
                 .execute();
 
 
