@@ -11,11 +11,13 @@ import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import ISupervision from "../interfaces/ISupervision";
+import ISupervisor from "../interfaces/ISupervisor";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
 
 interface IStateProps {
   companyList: ICompany[];
   routeTransportList: IRouteTransport[];
+  supervisorList: ISupervisor[];
   selectedCompanyDetail?: ICompany;
   selectedPermitDetail?: IPermit;
   selectedRouteDetail?: IRoute;
@@ -30,6 +32,7 @@ interface IStateProps {
 const initialState: IStateProps = {
   companyList: [],
   routeTransportList: [],
+  supervisorList: [],
   selectedCompanyDetail: undefined,
   selectedPermitDetail: undefined,
   selectedRouteDetail: undefined,
@@ -78,6 +81,10 @@ const crossingsSlice = createSlice({
     GET_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
       console.log("GET_SUPERVISION", action.payload);
       return { ...state, selectedSupervisionDetail: action.payload };
+    },
+    GET_SUPERVISOR_LIST: (state, action: PayloadAction<ISupervisor[]>) => {
+      console.log("GET_SUPERVISOR_LIST", action.payload);
+      return { ...state, supervisorList: action.payload };
     },
     CREATE_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
       console.log("CREATE_SUPERVISION", action.payload);

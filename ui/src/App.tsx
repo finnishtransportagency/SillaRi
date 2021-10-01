@@ -16,6 +16,7 @@ import BridgeDetail from "./pages/BridgeDetail";
 import SupervisionSummary from "./pages/SupervisionSummary";
 import CompanySummary from "./pages/management/CompanySummary";
 import AddTransport from "./pages/management/AddTransport";
+import TransportDetail from "./pages/management/TransportDetail";
 import SidebarMenu from "./components/SidebarMenu";
 
 /* Core CSS required for Ionic components to work properly */
@@ -69,6 +70,7 @@ const App: React.FC = () => (
           <Route path="/takePhotos/:supervisionId" component={Camera} exact />
           <Route path="/management/:companyId" component={CompanySummary} exact />
           <Route path="/management/addTransport/:permitId" component={AddTransport} exact />
+          <Route path="/management/transportDetail/:routeTransportId" component={TransportDetail} exact />
         </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>

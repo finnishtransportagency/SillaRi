@@ -9,29 +9,42 @@ import NoNetworkNoData from "../../components/NoNetworkNoData";
 import RouteTransportInfo from "../../components/management/RouteTransportInfo";
 import IPermit from "../../interfaces/IPermit";
 import { useTypedSelector } from "../../store/store";
-import { getPermit, getSupervisors, onRetry } from "../../utils/backendData";
+import { getPermitOfRouteTransport, getRouteTransport, getSupervisors, onRetry } from "../../utils/backendData";
 
-interface AddTransportProps {
-  permitId: string;
+interface TransportDetailProps {
+  routeTransportId: string;
 }
 
-const AddTransport = (): JSX.Element => {
+const TransportDetail = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const crossings = useTypedSelector((state) => state.crossingsReducer);
   const {
     selectedPermitDetail,
+    selectedRouteTransportDetail,
     supervisorList,
     networkStatus: { isFailed = {} },
   } = crossings;
 
-  const { permitId = "0" } = useParams<AddTransportProps>();
+  const { routeTransportId = "0" } = useParams<TransportDetailProps>();
 
-  useQuery(["getPermit", permitId], () => getPermit(Number(permitId), dispatch, selectedPermitDetail), { retry: onRetry });
+  useQuery(["getRouteTransport", routeTransportId], () => getRouteTransport(Number(routeTransportId), dispatch, selectedRouteTransportDetail), {
+    retry: onRetry,
+  });
+  useQuery(
+    ["getPermitOfRouteTransport", routeTransportId],
+    () => getPermitOfRouteTransport(Number(routeTransportId), dispatch, selectedRouteTransportDetail),
+    {
+      retry: onRetry,
+    }
+  );
   useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry });
 
-  const noNetworkNoData = (isFailed.getPermit && selectedPermitDetail === undefined) || (isFailed.getSupervisors && supervisorList.length === 0);
+  const noNetworkNoData =
+    (isFailed.getRouteTransport && selectedRouteTransportDetail === undefined) ||
+    (isFailed.getPermitOfRouteTransport && selectedPermitDetail === undefined) ||
+    (isFailed.getSupervisors && supervisorList.length === 0);
 
   return (
     <IonPage>
@@ -40,11 +53,11 @@ const AddTransport = (): JSX.Element => {
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (
-          <RouteTransportInfo permit={selectedPermitDetail as IPermit} routeTransport={undefined} supervisors={supervisorList} />
+          <RouteTransportInfo permit={selectedPermitDetail as IPermit} routeTransport={selectedRouteTransportDetail} supervisors={supervisorList} />
         )}
       </IonContent>
     </IonPage>
   );
 };
 
-export default AddTransport;
+export default TransportDetail;
