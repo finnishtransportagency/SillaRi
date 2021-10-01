@@ -377,14 +377,30 @@ public class PermitRepository {
     }
 
     private void updateRouteAndInsertRouteBridges(DSLContext ctx, RouteModel routeModel) {
+
         ctx.update(PermitMapper.route)
                 .set(PermitMapper.route.NAME, routeModel.getName())
                 .set(PermitMapper.route.TRANSPORT_COUNT, routeModel.getTransportCount())
                 .set(PermitMapper.route.ALTERNATIVE_ROUTE, routeModel.getAlternativeRoute())
                 .where(PermitMapper.route.ID.eq(routeModel.getId()))
                 .execute();
+        updateRouteAddresses(ctx, routeModel);
 
         insertRouteBridges(ctx, routeModel);
+    }
+
+    private void updateRouteAddresses(DSLContext ctx, RouteModel routeModel) {
+        ctx.update(RouteMapper.departureAddress)
+                .set(RouteMapper.departureAddress.STREETADDRESS, routeModel.getDepartureAddress().getStreetaddress())
+                .where(RouteMapper.departureAddress.ID.eq(routeModel.getDepartureAddress().getId()))
+                .execute();
+
+        ctx.update(RouteMapper.arrivalAddress)
+                .set(RouteMapper.arrivalAddress.STREETADDRESS, routeModel.getArrivalAddress().getStreetaddress())
+                .where(RouteMapper.arrivalAddress.ID.eq(routeModel.getArrivalAddress().getId()))
+                .execute();
+
+
     }
 
 
