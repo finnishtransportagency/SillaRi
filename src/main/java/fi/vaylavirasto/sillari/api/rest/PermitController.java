@@ -60,4 +60,17 @@ public class PermitController {
             serviceMetric.end();
         }
     }
+
+    @Operation(summary = "Get permit of route transport")
+    @GetMapping(value = "/getpermitofroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getPermitOfRouteTransport(@RequestParam Integer routeTransportId) {
+        ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitOfRouteTransport");
+        try {
+            PermitModel permit = permitService.getPermitOfRouteTransport(routeTransportId);
+            return ResponseEntity.ok().body(permit != null ? permit : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
 }

@@ -1,7 +1,5 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.PermitMapper;
-import fi.vaylavirasto.sillari.model.RouteMapper;
 import fi.vaylavirasto.sillari.model.RouteTransportMapper;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import org.apache.logging.log4j.LogManager;
@@ -34,11 +32,11 @@ public class RouteTransportRepository {
 
     public List<RouteTransportModel> getRouteTransportsByPermitId(Integer permitId) {
         return dsl.select().from(RouteTransportMapper.transport)
-                .join(RouteMapper.route)
-                .on(RouteMapper.route.ID.eq(RouteTransportMapper.transport.ROUTE_ID))
-                .join(PermitMapper.permit)
-                .on(PermitMapper.permit.ID.eq(RouteMapper.route.PERMIT_ID))
-                .where(PermitMapper.permit.ID.eq(permitId))
+                .join(RouteTransportMapper.route)
+                .on(RouteTransportMapper.route.ID.eq(RouteTransportMapper.transport.ROUTE_ID))
+                .join(RouteTransportMapper.permit)
+                .on(RouteTransportMapper.permit.ID.eq(RouteTransportMapper.route.PERMIT_ID))
+                .where(RouteTransportMapper.permit.ID.eq(permitId))
                 .fetch(new RouteTransportMapper());
     }
 }
