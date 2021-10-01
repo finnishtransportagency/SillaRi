@@ -40,7 +40,8 @@
     "settings" : "Inställningar",
     "map" : "Karta",
     "camera" : "Kamera",
-    "management" : "(SV) Management"
+    "management" : "(SV) Management",
+    "transports" : "(SV) Transports"
   },
   "management":
   {
@@ -52,6 +53,20 @@
     "addTransport":
     {
       "headerTitle": "(SV) Add transport"
+    }
+  },
+  "transports": {
+    "transportList": {
+      "header" :
+      {
+        "title" : "(SV) Transports"
+      }
+    },
+    "transport": {
+      "header" :
+      {
+        "title" : "(SV) Transport"
+      }
     }
   }
 }
