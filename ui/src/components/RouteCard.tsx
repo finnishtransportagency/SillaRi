@@ -16,8 +16,8 @@ const RouteCard = ({ route }: RouteCardProps): JSX.Element => {
 
   // Route address not yet implemented in LeLu API, might be null
   const { departureAddress, arrivalAddress } = route || {};
-  const { streetaddress: departureStreetaddress, postalcode: departurePostalCode, city: departureCity } = departureAddress || {};
-  const { streetaddress: arrivalStreetaddress, postalcode: arrivalPostalCode, city: arrivalCity } = arrivalAddress || {};
+  const departureStreetaddress = departureAddress.streetaddress || {};
+  const arrivalStreetaddress = arrivalAddress.streetaddress || {};
 
   return (
     <IonCard button routerLink={`/routeDetail/${routeId}`}>

@@ -12,11 +12,10 @@ interface RoutePermitProps {
 
 const RoutePermit = ({ selectedPermit, selectedRoute }: RoutePermitProps): JSX.Element | null => {
   const { t } = useTranslation();
-
   const { permitNumber } = selectedPermit || {};
   const { id: routeId, departureAddress, arrivalAddress } = selectedRoute || {};
-  const { streetaddress: departureStreetaddress, postalcode: departurePostalCode, city: departureCity } = departureAddress || {};
-  const { streetaddress: arrivalStreetaddress, postalcode: arrivalPostalCode, city: arrivalCity } = arrivalAddress || {};
+  const { streetaddress: departureStreetaddress } = departureAddress || {};
+  const { streetaddress: arrivalStreetaddress } = arrivalAddress || {};
 
   return !(selectedPermit && selectedRoute) ? null : (
     <>
