@@ -94,7 +94,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
         })
         .map((routeTransport, index) => {
           const key = `routetransport_${index}`;
-          const { id, currentStatus, route, supervisions } = routeTransport;
+          const { id: routeTransportId, currentStatus, route, supervisions } = routeTransport;
           const { name: routeName } = route;
           const { status } = currentStatus;
 
@@ -106,7 +106,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
             <IonRow key={key}>
               <IonCol size="12" size-lg="1" className="ion-padding">
                 <IonText className="headingText ion-hide-lg-up">{`${t("management.companySummary.route.id")}: `}</IonText>
-                <IonText>{id}</IonText>
+                <IonText>{routeTransportId}</IonText>
               </IonCol>
 
               <IonCol size="12" size-lg="3" className="ion-padding">

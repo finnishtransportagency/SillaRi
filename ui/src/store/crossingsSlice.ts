@@ -22,6 +22,7 @@ interface IStateProps {
   selectedBridgeDetail?: IRouteBridge;
   selectedRouteTransportDetail?: IRouteTransport;
   selectedSupervisionDetail?: ISupervision;
+  selectedRouteOption?: IRoute;
   images: IImageItem[];
   networkStatus: INetworkStatus;
 }
@@ -35,6 +36,7 @@ const initialState: IStateProps = {
   selectedBridgeDetail: undefined,
   selectedRouteTransportDetail: undefined,
   selectedSupervisionDetail: undefined,
+  selectedRouteOption: undefined,
   images: [],
   networkStatus: {
     isFailed: {},
@@ -150,6 +152,10 @@ const crossingsSlice = createSlice({
         return isStateImageInPayload ? acc : [...acc, image];
       }, []);
       return { ...state, images: cameraImages };
+    },
+    SET_SELECTED_ROUTE_OPTION: (state, action: PayloadAction<IRoute>) => {
+      console.log("SET_SELECTED_ROUTE_OPTION", action.payload);
+      return { ...state, selectedRouteOption: action.payload };
     },
     SET_FAILED_QUERY: (state, action: PayloadAction<IFailedQuery>) => {
       // console.log("SET_FAILED_QUERY", action.payload);

@@ -1,31 +1,37 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { IonCol, IonGrid, IonIcon, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
 import { flagOutline } from "ionicons/icons";
 import moment from "moment";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
+import IRoute from "../../interfaces/IRoute";
+import IRouteTransport from "../../interfaces/IRouteTransport";
+import { actions as crossingActions } from "../../store/crossingsSlice";
+import { useTypedSelector } from "../../store/store";
 
-const RouteInfo = (): JSX.Element => {
+interface RouteInfoGridProps {
+  permitRoutes: IRoute[];
+  routeTransport?: IRouteTransport;
+}
+
+const RouteInfoGrid = ({ permitRoutes = [], routeTransport }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
-  const mockData = {
-    routes: [
-      {
-        id: 3,
-        route: "Kemi Ajoksen satama - Helsinki Vuosaaren satama",
-      },
-      {
-        id: 2,
-        route: "Helsinki Vuosaaren satama - Tornio",
-      },
-      {
-        id: 1,
-        route: "Helsinki Vuosaaren satama - Tornio",
-      },
-    ],
-    departureAddress: "Mansikkanokankatu 17, 94100 Kemi",
-    arrivalAddress: "Komentosilta 1, 00980 Helsinki",
+  const crossings = useTypedSelector((state) => state.crossingsReducer);
+  const { selectedRouteOption } = crossings;
+  const { id: routeId, departureAddress, arrivalAddress } = selectedRouteOption || {};
+  const { streetaddress: departureStreetAddress } = departureAddress || {};
+  const { streetaddress: arrivalStreetAddress } = arrivalAddress || {};
+
+  const { plannedDepartureTime } = routeTransport || {};
+  const estimatedDeparture = moment(plannedDepartureTime);
+
+  const selectRoute = (selectedRouteId: number) => {
+    const selectedRoute = permitRoutes.find((route) => route.id === selectedRouteId);
+    dispatch({ type: crossingActions.SET_SELECTED_ROUTE_OPTION, payload: selectedRoute });
   };
 
   return (
@@ -40,7 +46,7 @@ const RouteInfo = (): JSX.Element => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <DatePicker value={moment().toDate()} />
+                <DatePicker value={estimatedDeparture.toDate()} />
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -55,7 +61,7 @@ const RouteInfo = (): JSX.Element => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <TimePicker value={moment().toDate()} />
+                <TimePicker value={estimatedDeparture.toDate()} />
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -70,14 +76,19 @@ const RouteInfo = (): JSX.Element => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <IonSelect interface="action-sheet" cancelText={t("common.buttons.back")} value={mockData.routes[0].id}>
-                  {mockData.routes.map((routeData, index) => {
-                    const { id, route } = routeData;
+                <IonSelect
+                  interface="action-sheet"
+                  cancelText={t("common.buttons.back")}
+                  value={routeId}
+                  onIonChange={(e) => selectRoute(e.detail.value)}
+                >
+                  {permitRoutes.map((route, index) => {
+                    const { id, name } = route;
                     const key = `route_${index}`;
 
                     return (
                       <IonSelectOption key={key} value={id}>
-                        {route}
+                        {name}
                       </IonSelectOption>
                     );
                   })}
@@ -96,7 +107,7 @@ const RouteInfo = (): JSX.Element => {
                 <IonText className="headingText">{t("management.addTransport.routeInfo.origin")}</IonText>
               </IonCol>
               <IonCol size="12" size-sm="8">
-                <IonText>{mockData.departureAddress}</IonText>
+                <IonText>{departureStreetAddress}</IonText>
               </IonCol>
             </IonRow>
             <IonRow className="ion-margin">
@@ -104,7 +115,7 @@ const RouteInfo = (): JSX.Element => {
                 <IonText className="headingText">{t("management.addTransport.routeInfo.destination")}</IonText>
               </IonCol>
               <IonCol size="12" size-sm="8">
-                <IonText>{mockData.arrivalAddress}</IonText>
+                <IonText>{arrivalStreetAddress}</IonText>
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -126,4 +137,4 @@ const RouteInfo = (): JSX.Element => {
   );
 };
 
-export default RouteInfo;
+export default RouteInfoGrid;

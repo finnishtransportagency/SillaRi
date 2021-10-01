@@ -4,32 +4,31 @@ import { IonCol, IonGrid, IonItem, IonLabel, IonRadio, IonRadioGroup, IonRow, Io
 import moment from "moment";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
+import IRouteBridge from "../../interfaces/IRouteBridge";
+import ISupervision from "../../interfaces/ISupervision";
+import ISupervisor from "../../interfaces/ISupervisor";
 import "./BridgeGrid.css";
 
-const BridgeGrid = (): JSX.Element => {
+interface BridgeGridProps {
+  routeBridges: IRouteBridge[];
+  supervisions: ISupervision[];
+  supervisors: ISupervisor[];
+}
+
+const BridgeGrid = ({ routeBridges = [], supervisions = [], supervisors = [] }: BridgeGridProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const mockData = [
-    {
-      name: "Joutsensalmen I silta, O-1234 Joutsa",
-      supervisorType: "own",
-      supervisor1: "user1",
-      supervisor2: "user2",
-    },
-    {
-      name: "Sillannimi 123 silta, O-1231 Paikkakunta",
-      supervisorType: "contractor",
-    },
-    {
-      name: "Sillannimi 456 silta, O-4567 Paikkakunta",
-      supervisorType: "own",
-    },
-  ];
-
-  const supervisorSelect = (value?: string) => (
-    <IonSelect interface="action-sheet" value={value}>
-      <IonSelectOption value="user1">Saara Sillanvalvoja</IonSelectOption>
-      <IonSelectOption value="user2">Ville Varavalvoja</IonSelectOption>
+  const supervisorSelect = (value?: ISupervisor) => (
+    <IonSelect interface="action-sheet" value={value?.id}>
+      {supervisors.map((supervisor) => {
+        const { id, firstName, lastName } = supervisor;
+        const key = `supervisor_${id}`;
+        return (
+          <IonSelectOption key={key} value={id}>
+            {`${firstName} ${lastName}`}
+          </IonSelectOption>
+        );
+      })}
     </IonSelect>
   );
 
@@ -47,8 +46,15 @@ const BridgeGrid = (): JSX.Element => {
         </IonCol>
       </IonRow>
 
-      {mockData.map((bridge, index) => {
-        const { name, supervisorType, supervisor1, supervisor2 } = bridge;
+      {routeBridges.map((routeBridge, index) => {
+        const { bridge } = routeBridge;
+        const { identifier, name } = bridge;
+        const bridgeName = `${identifier} - ${name}`;
+        const supervision = supervisions.find((s) => s.routeBridgeId);
+        const { plannedTime, supervisorType, supervisors: supervisionSupervisors = [] } = supervision || {};
+        const estimatedCrossingTime = moment(plannedTime);
+        const supervisor1 = supervisionSupervisors.find((s) => s.priority === 1);
+        const supervisor2 = supervisionSupervisors.find((s) => s.priority === 2);
         const key = `bridge_${index}`;
 
         return (
@@ -57,8 +63,8 @@ const BridgeGrid = (): JSX.Element => {
               <IonGrid className="ion-no-padding">
                 <IonRow>
                   <IonCol>
-                    <IonText className="ion-hide-lg-down">{name}</IonText>
-                    <IonText className="headingText ion-hide-lg-up">{name}</IonText>
+                    <IonText className="ion-hide-lg-down">{bridgeName}</IonText>
+                    <IonText className="headingText ion-hide-lg-up">{bridgeName}</IonText>
                   </IonCol>
                 </IonRow>
               </IonGrid>
@@ -73,10 +79,10 @@ const BridgeGrid = (): JSX.Element => {
                 </IonRow>
                 <IonRow>
                   <IonCol>
-                    <DatePicker value={moment().toDate()} />
+                    <DatePicker value={estimatedCrossingTime.toDate()} />
                   </IonCol>
                   <IonCol>
-                    <TimePicker value={moment().toDate()} />
+                    <TimePicker value={estimatedCrossingTime.toDate()} />
                   </IonCol>
                 </IonRow>
 
