@@ -17,6 +17,11 @@ public class SupervisorRepository {
     @Autowired
     private DSLContext dsl;
 
+    public List<SupervisorModel> getSupervisors() {
+        return dsl.select().from(SupervisorMapper.supervisor)
+                .fetch(new SupervisorMapper());
+    }
+
     public List<SupervisorModel> getSupervisorsBySupervisionId(Integer supervisionId) {
         return dsl.select().from(SupervisorMapper.supervisor)
                 .join(SupervisorMapper.supervisionSupervisor)

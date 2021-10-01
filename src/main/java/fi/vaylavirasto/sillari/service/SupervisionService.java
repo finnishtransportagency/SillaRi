@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.service;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
+import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.repositories.FileRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionStatusRepository;
@@ -47,6 +48,11 @@ public class SupervisionService {
             supervisionModel.setStatusTimes(statusHistory);
         }
         return supervisionModel;
+    }
+
+    public List<SupervisorModel> getSupervisors() {
+        // TODO - limit the list of supervisors somehow?
+        return supervisorRepository.getSupervisors();
     }
 
     // Creates new supervision and adds a new status with type PLANNED
