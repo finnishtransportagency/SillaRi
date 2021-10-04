@@ -317,9 +317,7 @@ public class PermitRepository {
             deleteRouteBridgesFromPermit(ctx, permitModel);
 
             // Delete routes not listed in permit anymore
-            ctx.delete(PermitMapper.route)
-                    .where(PermitMapper.route.ID.in(routesToDelete))
-                    .execute();
+            deleteRoutes(routesToDelete, ctx);
 
             // Update or insert routes based on route ID
             for (RouteModel routeModel : permitModel.getRoutes()) {
@@ -333,6 +331,15 @@ public class PermitRepository {
             }
 
         });
+    }
+
+    private void deleteRoutes(List<Integer> routesToDelete, DSLContext ctx) {
+        for(Integer routeID: routesToDelete){
+            deleteAddresses(ctx, routeID);
+        }
+        ctx.delete(PermitMapper.route)
+                .where(PermitMapper.route.ID.in(routesToDelete))
+                .execute();
     }
 
     private void updateTransportDimensions(DSLContext ctx, PermitModel permitModel) {
@@ -413,33 +420,48 @@ public class PermitRepository {
 
 
     private Integer deleteDepartureAddressAndInsertNew(DSLContext ctx, RouteModel routeModel) {
+        deleteDepartureAddress(ctx, routeModel.getId());
+
+        return insertDepartureAddress(ctx, routeModel);
+    }
+
+    private Integer deleteArrivalAddressAndInsertNew(DSLContext ctx, RouteModel routeModel) {
+        deleteArrivalAddress(ctx, routeModel.getId());
+        return insertArrivalAddress(ctx, routeModel);
+    }
+
+    private void deleteDepartureAddress(DSLContext ctx, Integer routeId) {
         Record1<Integer> departureRecord  =  ctx.select(RouteMapper.route.DEPARTURE_ADDRESS_ID).from(RouteMapper.route)
-                .where(RouteMapper.route.ID.eq(routeModel.getId()))
+                .where(RouteMapper.route.ID.eq(routeId))
                 .fetchOne();
         Integer departureID = departureRecord != null ? departureRecord.value1() : null;
         ctx.delete(AddressMapper.address)
                 .where(AddressMapper.address.ID.eq(departureID))
                 .execute();
-
-        return insertDepartureAddress(ctx, routeModel);
-
-
-
     }
 
-    private Integer deleteArrivalAddressAndInsertNew(DSLContext ctx, RouteModel routeModel) {
+
+
+    private void deleteArrivalAddress(DSLContext ctx, Integer routeId) {
         Record1<Integer> arrivalRecord  =  ctx.select(RouteMapper.route.ARRIVAL_ADDRESS_ID).from(RouteMapper.route)
-                .where(RouteMapper.route.ID.eq(routeModel.getId()))
+                .where(RouteMapper.route.ID.eq(routeId))
                 .fetchOne();
         Integer arrivalID = arrivalRecord != null ? arrivalRecord.value1() : null;
         ctx.delete(AddressMapper.address)
                 .where(AddressMapper.address.ID.eq(arrivalID))
                 .execute();
-
-
-        return insertArrivalAddress(ctx, routeModel);
-
     }
 
 
+    private void deleteAddresses(DSLContext ctx, Integer routeId) {
+
+        ctx.update(PermitMapper.route)
+                .set(PermitMapper.route.ARRIVAL_ADDRESS_ID, (Integer) null)
+                .set(PermitMapper.route.DEPARTURE_ADDRESS_ID, (Integer) null)
+                .where(PermitMapper.route.ID.eq(routeId))
+                .execute();
+        deleteArrivalAddress(ctx, routeId);
+        deleteDepartureAddress(ctx, routeId);
+
+    }
 }
