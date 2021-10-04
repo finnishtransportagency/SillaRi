@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.repositories;
 import fi.vaylavirasto.sillari.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.exception.DataAccessException;
@@ -213,26 +214,8 @@ public class PermitRepository {
 
 
     private void insertRouteAndRouteBridges(DSLContext ctx, RouteModel routeModel) {
-        Record1<Integer> departureAddressIdResult = ctx.insertInto(AddressMapper.address,
-                AddressMapper.address.STREETADDRESS
-        ).values(
-                routeModel.getDepartureAddress().getStreetaddress()
-        )
-                .returningResult(AddressMapper.address.ID)
-                .fetchOne();
-        Integer departureAddressId = departureAddressIdResult != null ? departureAddressIdResult.value1() : null;
-        routeModel.getDepartureAddress().setId(departureAddressId);
-
-        Record1<Integer> arrivalAddressIdResult = ctx.insertInto(AddressMapper.address,
-                AddressMapper.address.STREETADDRESS
-        ).values(
-                routeModel.getArrivalAddress().getStreetaddress()
-        )
-                .returningResult(AddressMapper.address.ID)
-                .fetchOne();
-        Integer arrivalAddressId = arrivalAddressIdResult != null ? arrivalAddressIdResult.value1() : null;
-        routeModel.getArrivalAddress().setId(arrivalAddressId);
-
+        Integer departureAddressId = insertDepartureAddress(ctx, routeModel);
+        Integer arrivalAddressId = insertArrivalAddress(ctx, routeModel);
 
         Record1<Integer> routeIdResult = ctx.insertInto(PermitMapper.route,
                 PermitMapper.route.PERMIT_ID,
@@ -258,6 +241,35 @@ public class PermitRepository {
         routeModel.setId(routeID);
 
         insertRouteBridges(ctx, routeModel);
+    }
+
+    @Nullable
+    private Integer insertArrivalAddress(DSLContext ctx, RouteModel routeModel) {
+        Record1<Integer> arrivalAddressIdResult = ctx.insertInto(AddressMapper.address,
+                AddressMapper.address.STREETADDRESS
+        ).values(
+                routeModel.getArrivalAddress().getStreetaddress()
+        )
+                .returningResult(AddressMapper.address.ID)
+                .fetchOne();
+        Integer arrivalAddressId = arrivalAddressIdResult != null ? arrivalAddressIdResult.value1() : null;
+        routeModel.getArrivalAddress().setId(arrivalAddressId);
+        return arrivalAddressId;
+    }
+
+
+    @Nullable
+    private Integer insertDepartureAddress(DSLContext ctx, RouteModel routeModel) {
+        Record1<Integer> departureAddressIdResult = ctx.insertInto(AddressMapper.address,
+                AddressMapper.address.STREETADDRESS
+        ).values(
+                routeModel.getDepartureAddress().getStreetaddress()
+        )
+                .returningResult(AddressMapper.address.ID)
+                .fetchOne();
+        Integer departureAddressId = departureAddressIdResult != null ? departureAddressIdResult.value1() : null;
+        routeModel.getDepartureAddress().setId(departureAddressId);
+        return departureAddressId;
     }
 
     private void insertRouteBridges(DSLContext ctx, RouteModel routeModel) {
@@ -379,27 +391,53 @@ public class PermitRepository {
     private void updateRouteAndInsertRouteBridges(DSLContext ctx, RouteModel routeModel) {
 
         ctx.update(PermitMapper.route)
+                .set(PermitMapper.route.ARRIVAL_ADDRESS_ID, (Integer) null)
+                .set(PermitMapper.route.DEPARTURE_ADDRESS_ID, (Integer) null)
+                .where(PermitMapper.route.ID.eq(routeModel.getId()))
+                .execute();
+
+        Integer departureAddressId = deleteDepartureAddressAndInsertNew(ctx, routeModel);
+        Integer arrivalAddressId = deleteArrivalAddressAndInsertNew(ctx, routeModel);
+        ctx.update(PermitMapper.route)
                 .set(PermitMapper.route.NAME, routeModel.getName())
                 .set(PermitMapper.route.TRANSPORT_COUNT, routeModel.getTransportCount())
                 .set(PermitMapper.route.ALTERNATIVE_ROUTE, routeModel.getAlternativeRoute())
+                .set(PermitMapper.route.ARRIVAL_ADDRESS_ID, arrivalAddressId)
+                .set(PermitMapper.route.DEPARTURE_ADDRESS_ID, departureAddressId)
                 .where(PermitMapper.route.ID.eq(routeModel.getId()))
                 .execute();
-        updateRouteAddresses(ctx, routeModel);
+
 
         insertRouteBridges(ctx, routeModel);
     }
 
-    private void updateRouteAddresses(DSLContext ctx, RouteModel routeModel) {
-        ctx.update(RouteMapper.departureAddress)
-                .set(RouteMapper.departureAddress.STREETADDRESS, routeModel.getDepartureAddress().getStreetaddress())
-                .where(RouteMapper.departureAddress.ID.eq(routeModel.getDepartureAddress().getId()))
+
+    private Integer deleteDepartureAddressAndInsertNew(DSLContext ctx, RouteModel routeModel) {
+        Record1<Integer> departureRecord  =  ctx.select(RouteMapper.route.DEPARTURE_ADDRESS_ID).from(RouteMapper.route)
+                .where(RouteMapper.route.ID.eq(routeModel.getId()))
+                .fetchOne();
+        Integer departureID = departureRecord != null ? departureRecord.value1() : null;
+        ctx.delete(AddressMapper.address)
+                .where(AddressMapper.address.ID.eq(departureID))
                 .execute();
 
-        ctx.update(RouteMapper.arrivalAddress)
-                .set(RouteMapper.arrivalAddress.STREETADDRESS, routeModel.getArrivalAddress().getStreetaddress())
-                .where(RouteMapper.arrivalAddress.ID.eq(routeModel.getArrivalAddress().getId()))
+        return insertDepartureAddress(ctx, routeModel);
+
+
+
+    }
+
+    private Integer deleteArrivalAddressAndInsertNew(DSLContext ctx, RouteModel routeModel) {
+        Record1<Integer> arrivalRecord  =  ctx.select(RouteMapper.route.ARRIVAL_ADDRESS_ID).from(RouteMapper.route)
+                .where(RouteMapper.route.ID.eq(routeModel.getId()))
+                .fetchOne();
+        Integer arrivalID = arrivalRecord != null ? arrivalRecord.value1() : null;
+        ctx.delete(AddressMapper.address)
+                .where(AddressMapper.address.ID.eq(arrivalID))
                 .execute();
 
+
+        return insertArrivalAddress(ctx, routeModel);
 
     }
 
