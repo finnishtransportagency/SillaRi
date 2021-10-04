@@ -140,19 +140,20 @@ public class PermitRepository {
 
     private void insertUnloadedTransportDimensions(DSLContext ctx, PermitModel permitModel) {
         UnloadedTransportDimensionsModel unloadedTransportDimensionsModel = permitModel.getUnloadedTransportDimensions();
-        unloadedTransportDimensionsModel.setPermitId(permitModel.getId());
-
-        ctx.insertInto(PermitMapper.unloadedTransportDimensions,
-                PermitMapper.unloadedTransportDimensions.PERMIT_ID,
-                PermitMapper.unloadedTransportDimensions.HEIGHT,
-                PermitMapper.unloadedTransportDimensions.WIDTH,
-                PermitMapper.unloadedTransportDimensions.LENGTH
-        ).values(
-                unloadedTransportDimensionsModel.getPermitId(),
-                unloadedTransportDimensionsModel.getHeight(),
-                unloadedTransportDimensionsModel.getWidth(),
-                unloadedTransportDimensionsModel.getLength())
-                .execute();
+        if (unloadedTransportDimensionsModel != null) {
+            unloadedTransportDimensionsModel.setPermitId(permitModel.getId());
+            ctx.insertInto(PermitMapper.unloadedTransportDimensions,
+                            PermitMapper.unloadedTransportDimensions.PERMIT_ID,
+                            PermitMapper.unloadedTransportDimensions.HEIGHT,
+                            PermitMapper.unloadedTransportDimensions.WIDTH,
+                            PermitMapper.unloadedTransportDimensions.LENGTH
+                    ).values(
+                            unloadedTransportDimensionsModel.getPermitId(),
+                            unloadedTransportDimensionsModel.getHeight(),
+                            unloadedTransportDimensionsModel.getWidth(),
+                            unloadedTransportDimensionsModel.getLength())
+                    .execute();
+        }
     }
 
     private void insertVehicles(DSLContext ctx, PermitModel permitModel) {
