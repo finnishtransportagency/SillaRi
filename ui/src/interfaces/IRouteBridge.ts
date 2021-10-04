@@ -1,5 +1,6 @@
 import IBridge from "./IBridge";
 import ISupervision from "./ISupervision";
+import IRoute from "./IRoute";
 
 export default interface IRouteBridge {
   id: number;
@@ -7,4 +8,5 @@ export default interface IRouteBridge {
   bridge: IBridge;
   crossingInstruction?: string;
   supervision: ISupervision;
+  route?: IRoute;
 }

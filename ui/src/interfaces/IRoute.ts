@@ -1,5 +1,6 @@
 import IAddress from "./IAddress";
 import IRouteBridge from "./IRouteBridge";
+import IPermit from "./IPermit";
 
 export default interface IRoute {
   id: number;
@@ -9,4 +10,5 @@ export default interface IRoute {
   arrivalAddress: IAddress;
   geojson: string;
   routeBridges: IRouteBridge[];
+  permit?: IPermit;
 }

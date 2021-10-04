@@ -9,6 +9,7 @@ import Header from "../components/Header";
 import CompanyCardList from "../components/CompanyCardList";
 import { useTypedSelector } from "../store/store";
 import { getCompanyList, onRetry } from "../utils/backendData";
+import BridgeSupervisions from "./BridgeSupervisions";
 import "./Home.css";
 
 const Home = (): JSX.Element => {
@@ -58,7 +59,7 @@ const Home = (): JSX.Element => {
             <CompanyCardList companyList={companyList} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
           <IonSlide>
-            <div className="ion-padding">TODO</div>
+            <BridgeSupervisions />
           </IonSlide>
         </IonSlides>
       </IonContent>

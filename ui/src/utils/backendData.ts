@@ -10,6 +10,7 @@ import ISupervision from "../interfaces/ISupervision";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { getOrigin } from "./request";
 import { actions as crossingActions } from "../store/crossingsSlice";
+import IBridge from "../interfaces/IBridge";
 
 const notOkError = "Network response was not ok";
 
@@ -215,6 +216,24 @@ export const getRouteTransportsOfPermit = async (permitId: number, dispatch: Dis
     }
   } catch (err) {
     dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const getBridgesOfSupervisor = async (supervisorId: number, dispatch: Dispatch): Promise<void> => {
+  // TODO not yet resolved how we actually get supervisorId, or should we clear something first
+  try {
+    const bridgesResponse = await fetch(`${getOrigin()}/api/bridge/getbridgesofsupervisor?supervisorId=${supervisorId}`);
+
+    if (bridgesResponse.ok) {
+      const bridges = (await bridgesResponse.json()) as Promise<IBridge[]>;
+      dispatch({ type: crossingActions.GET_BRIDGES_OF_SUPERVISOR, payload: bridges });
+    } else {
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getBridgesOfSupervisor: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getBridgesOfSupervisor: true } });
     throw new Error(err as string);
   }
 };

@@ -237,5 +237,11 @@
       "in_progress": "Liikkeella",
       "arrived": "Päättynyt"
     }
+  },
+  "supervisor": {
+    "bridges": "Sillat",
+    "nextCrossing": "Seuraava ylitys",
+    "numberOfPermits": "Kuljetuslupia",
+    "permits": "Kuljetusluvat"
   }
 }
