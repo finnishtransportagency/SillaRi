@@ -69,7 +69,6 @@ public class LeluRouteUploadUtil {
                         String newFileName = routeUploadPathString+"/"+zipFileName+".zip";
                         logger.debug("newFileName: " + newFileName);
                         String fileString = Files.readString(zipFilePath, StandardCharsets.US_ASCII);
-                        logger.debug("whoel fiel:" + fileString);
                         FileUtils.writeByteArrayToFile(new File(newFileName), MyAwesomeBase64.getDecoder().decode(fileString));
                         zipFileName = newFileName;
                         logger.debug("created fiel in:" + newFileName);
