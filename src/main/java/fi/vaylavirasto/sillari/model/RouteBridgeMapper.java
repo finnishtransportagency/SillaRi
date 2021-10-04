@@ -7,6 +7,7 @@ import org.jooq.RecordMapper;
 
 public class RouteBridgeMapper implements RecordMapper<Record,RouteBridgeModel> {
     public static final Bridge bridge = Tables.BRIDGE.as("br");
+    public static final Route route = Tables.ROUTE.as("ro");
     public static final RouteBridge routebridge = Tables.ROUTE_BRIDGE.as("rbr");
     public static final Supervision supervision = Tables.SUPERVISION.as("sn");
     public static final SupervisionSupervisor supervisionSupervisor = Tables.SUPERVISION_SUPERVISOR.as("ss");

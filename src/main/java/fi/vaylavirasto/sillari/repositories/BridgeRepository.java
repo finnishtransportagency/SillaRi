@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.BridgeMapper;
 import fi.vaylavirasto.sillari.model.BridgeModel;
+import fi.vaylavirasto.sillari.model.RouteBridgeMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -46,6 +47,16 @@ public class BridgeRepository {
         Map<String, Integer> resultMap = result.intoMap(BridgeMapper.bridge.OID, BridgeMapper.bridge.ID);
         logger.debug("Bridge OIDs with corresponding Bridge IDs resultMap={}", resultMap);
         return resultMap;
+    }
+
+    public List<BridgeModel> getBridgesOfSupervisor(Integer supervisorId) {
+        return dsl.select().from(BridgeMapper.bridge)
+                .innerJoin(RouteBridgeMapper.routebridge).on(BridgeMapper.bridge.ID.eq(RouteBridgeMapper.routebridge.BRIDGE_ID))
+                .leftJoin(RouteBridgeMapper.supervision).on(RouteBridgeMapper.routebridge.ID.eq(RouteBridgeMapper.supervision.ROUTE_BRIDGE_ID))
+                .leftJoin(RouteBridgeMapper.supervisionSupervisor).on(RouteBridgeMapper.supervision.ID.eq(RouteBridgeMapper.supervisionSupervisor.SUPERVISION_ID))
+                .where(RouteBridgeMapper.supervisionSupervisor.SUPERVISOR_ID.eq(supervisorId))
+                .orderBy(RouteBridgeMapper.supervision.PLANNED_TIME)
+                .fetch(new BridgeMapper());
     }
 
 }

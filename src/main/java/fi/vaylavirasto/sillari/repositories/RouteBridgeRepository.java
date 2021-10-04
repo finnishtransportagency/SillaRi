@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
+import fi.vaylavirasto.sillari.model.RouteBridgeOfBridgeMapper;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -37,6 +38,16 @@ public class RouteBridgeRepository {
                 .where(RouteBridgeMapper.supervisionSupervisor.SUPERVISOR_ID.eq(supervisorId))
                 .orderBy(RouteBridgeMapper.supervision.PLANNED_TIME)
                 .fetch(new RouteBridgeMapper());
+    }
+
+    public List<RouteBridgeModel> getRouteBridgesOfBridge(Integer bridgeId) {
+        return dsl.select().from(RouteBridgeOfBridgeMapper.routebridge)
+                .leftJoin(RouteBridgeOfBridgeMapper.route).on(RouteBridgeOfBridgeMapper.routebridge.ROUTE_ID.eq(RouteBridgeOfBridgeMapper.route.ID))
+                .leftJoin(RouteBridgeOfBridgeMapper.permit).on(RouteBridgeOfBridgeMapper.route.PERMIT_ID.eq(RouteBridgeOfBridgeMapper.permit.ID))
+                .leftJoin(RouteBridgeOfBridgeMapper.supervision).on(RouteBridgeOfBridgeMapper.routebridge.ID.eq(RouteBridgeOfBridgeMapper.supervision.ROUTE_BRIDGE_ID))
+                .where(RouteBridgeOfBridgeMapper.routebridge.BRIDGE_ID.eq(bridgeId))
+                .orderBy(RouteBridgeOfBridgeMapper.supervision.PLANNED_TIME)
+                .fetch(new RouteBridgeOfBridgeMapper());
     }
 
 }

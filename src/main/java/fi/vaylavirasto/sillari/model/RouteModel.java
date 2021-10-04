@@ -17,4 +17,6 @@ public class RouteModel {
 
     private AddressModel departureAddress;
     private AddressModel arrivalAddress;
+    // Parent
+    private PermitModel permit;
 }
