@@ -1,7 +1,7 @@
 import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonTitle, IonToolbar } from "@ionic/react";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { calendar, home, logOutOutline, settings } from "ionicons/icons";
+import { calendar, car, home, logOutOutline, settings } from "ionicons/icons";
 import { useTranslation } from "react-i18next";
 import Cookies from "js-cookie";
 import { unregister } from "../serviceWorkerRegistration";
@@ -50,6 +50,12 @@ const SidebarMenu: React.FC = () => {
             <IonItem routerLink="/management/1">
               <IonIcon icon={calendar} slot="start" />
               <IonLabel>{t("SidebarMenu.management")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
+            <IonItem routerLink="/transport/1">
+              <IonIcon icon={car} slot="start" />
+              <IonLabel>{t("SidebarMenu.transports")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>

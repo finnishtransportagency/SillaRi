@@ -46,6 +46,7 @@
     "map" : "Map",
     "camera" : "Camera",
     "management" : "Management",
+    "transports" : "Transports",
     "logout": "Logout"
   },
   "company": {
@@ -161,6 +162,20 @@
       "stopped": "Stopped",
       "in_progress": "In progress",
       "arrived": "Arrived"
+    }
+  },
+  "transports": {
+    "transportList": {
+      "header" :
+      {
+        "title" : "Transports"
+      }
+    },
+    "transport": {
+      "header" :
+      {
+        "title" : "Transport"
+      }
     }
   }
 }
