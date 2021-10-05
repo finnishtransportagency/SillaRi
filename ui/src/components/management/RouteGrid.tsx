@@ -70,7 +70,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
       {routeTransportList
         .filter((routeTransport) => {
           const { currentStatus } = routeTransport;
-          const { status } = currentStatus;
+          const { status } = currentStatus || {};
 
           switch (transportFilter) {
             case "planned": {
@@ -95,8 +95,8 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
         .map((routeTransport, index) => {
           const key = `routetransport_${index}`;
           const { id, currentStatus, route, supervisions } = routeTransport;
-          const { name: routeName } = route;
-          const { status } = currentStatus;
+          const { name: routeName } = route || {};
+          const { status } = currentStatus || {};
 
           const statusText = status ? t(`management.transportStatus.${status.toLowerCase()}`) : t("management.transportStatus.unknown");
           const action =
