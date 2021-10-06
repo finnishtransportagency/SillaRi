@@ -45,8 +45,10 @@
     "settings" : "Asetukset",
     "map" : "Kartta",
     "camera" : "Kamera",
-    "crossing" : "Sillan ylitys",
-    "management" : "Kuljetusten hallinta"
+    "supervision": "Sillan ylitys",
+    "management" : "Kuljetusten hallinta",
+    "transports" : "Kuljetukset",
+    "logout": "Kirjaudu ulos"
   },
   "company": {
     "transportPermit": "Kuljetuslupa",
@@ -82,7 +84,8 @@
     "permitNumber" : "LUPANUMERO: ",
     "conformsToPermit" : "Kuljetus on luvanmukainen",
     "startSupervision" : "Aloita valvonta",
-    "denyCrossing" : "Kuljetus ei voi ylittää siltaa"
+    "denyCrossing" : "Kuljetus ei voi ylittää siltaa",
+    "supervisionMissing" : "Sillanvalvontaa ei ole vielä suunniteltu"
   },
   "denyCrossing" :
   {
@@ -91,35 +94,35 @@
     "back" : "Takaisin",
     "send" : "Lähetä"
   },
-  "crossing" :
+  "supervision":
   {
     "title" : "Sillan valvonta",
     "permitNumber" : "LUPANUMERO:",
-    "crossingStarted" : "Valvonta aloitettu:",
-    "crossingInstructions" : "Ylitysohje",
+    "supervisionStarted": "Valvonta aloitettu:",
     "bridgeName": "Silta",
-    "question" :
+    "crossingInstructions" : "Ylitysohje",
+    "photosDrivingLine" : "Valokuvat ja ajolinja",
+    "report":
     {
-      "drivingLine" : "Voitiinko ajolinjaa noudattaa?",
-      "speed" : "Onko ajonopeus hyväksytty?",
-      "exceptions" : "Teitkö poikkeavia havaintoja?",
-      "drivingLineInfo" : "Miksi ajolinjaa ei voitu noudattaa?",
-      "speedInfo" : "Miksi ajonopeus ei ole hyväksytty?",
-      "exceptionsInfo" : "Tarkenna poikkeavia havaintoja"
-    },
-    "exceptions" : {
-      "permanentBendings": "Pysyviä taipumia",
-      "twist": "Kannen kiertymä",
-      "damage": "Päällystevaurioita",
-      "somethingElse": "Jotain muuta, mitä?",
-      "describe": "Kuvaile havaintoja"
+      "observations" : "Havainnot",
+      "drivingLineOk" : "Ajolinjaa on noudatettu",
+      "drivingLineInfo" : "Miksi ajolinjaa ei hyväksytä?",
+      "speedLimitOk" : "Ajonopeus on hyväksytty",
+      "speedLimitInfo": "Miksi ajonopeutta ei hyväksytä?",
+      "anomalies" : "Poikkeavia havaintoja",
+      "anomaliesInfo" : "Tarkenna poikkeavia havaintoja:",
+      "surfaceDamage" : "Päällystevaurio",
+      "jointDamage": "Liikuntasauman rikkoutuminen",
+      "bendOrDisplacement": "Pysyvä taipuma tai muu siirtymä",
+      "otherObservations" : "Jotain muuta, mitä?",
+      "anomaliesDescription" : "Kuvaile poikkeavia havaintoja",
+      "additionalInfo" : "Lisätiedot"
     },
     "answer" :
     {
       "yes" : "Kyllä",
       "no" : "Ei"
     },
-    "extraInfo" : "Lisätiedot",
     "buttons" :
     {
       "takePhotos" : "Ota valokuvia",
@@ -130,15 +133,15 @@
     "summary":
     {
       "title": "Yhteenveto",
-      "speed": "Ajonopeus",
       "bridgeName": "",
+      "speedLimit": "Ajonopeus",
       "drivingLine": "Ajolinja",
       "images": "Kuvat",
       "kpl": "kpl",
-      "crossingStarted": "VALVONTA ALOITETTU:",
-      "exceptions": "Poikkeavat havainnot",
-      "exceptionsDesc": "Poikkeavien havaintojen tarkennus",
-      "extraInfo": "Lisätiedot",
+      "supervisionStarted": "VALVONTA ALOITETTU:",
+      "anomalies": "Poikkeavat havainnot",
+      "anomaliesDescription": "Poikkeavien havaintojen tarkennus",
+      "additionalInfo": "Lisätiedot",
       "buttons": {
         "edit": "Muokkaa",
         "save": "Tallenna"
@@ -146,16 +149,108 @@
       "saved": "Tallennettu"
     }
   },
+  "common": {
+    "buttons": {
+      "done": "Valmis",
+      "back": "Peru",
+      "cancel": "Peruuta",
+      "save": "Tallenna"
+  }
+  },
   "management":
   {
     "companySummary":
     {
-      "permitListTitle": "Kuljetusluvat",
-      "addTransportButtonLabel": "Lisää kuljetus"
+      "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
+      "transports": "Kuljetuksia",
+      "addTransportButtonLabel": "Lisää kuljetus",
+      "filter": {
+        "show": "Näytä",
+        "status": {
+          "all": "Kaikki kuljetukset",
+          "planned": "Suunnitellut",
+          "waiting": "Lähtöä odottavat",
+          "in_progress": "Liikkeella olevat",
+          "completed": "Päättyneet"
+        }
+      },
+      "route": {
+        "id": "ID",
+        "route": "Reitti",
+        "supervision": "Sillanvalvonta",
+        "time": "Ajankohta",
+        "status": "Tila",
+        "action": "Toiminto"
+      },
+      "action": {
+        "details": "Lisätiedot",
+        "modify": "Muokkaa"
+      }
     },
     "addTransport":
     {
-      "headerTitle": "Lisää kuljetus"
+      "headerTitle": "Lisää uusi kuljetus",
+      "transportPermit": "Kuljetuslupa",
+      "validityPeriod": "Voimassaoloaika",
+      "transportId": "Kuljetuksen ID",
+      "transportInformation": "Kuljetuksen tiedot",
+      "bridgesToSupervise": "Valvottavat sillat",
+      "buttons": {
+        "deleteTransport": "Poista kuljetus"
+      },
+      "routeInfo": {
+        "estimatedDepartureDate": "Arvioitu lähtöpäivä",
+        "estimatedDepartureTime": "Arvioitu lähtöaika",
+        "route": "Reitti",
+        "origin": "Lähtöpaikka",
+        "destination": "Määräpaikka",
+        "showRouteOnMap": "Näytä reitti kartalla"
+      },
+      "transportInfo": {
+        "title": "Enimmäismitat ja -massat",
+        "totalMass": "Kokonaismassa",
+        "dimensions": "Kuljetuksen mitat",
+        "height": "Korkeus maasta",
+        "width": "Leveys",
+        "length": "Pituus"
+      },
+      "bridgeInfo": {
+        "bridge": "Silta",
+        "estimatedCrossingTime": "Arvioitu ylitysaika",
+        "bridgeSupervisors": "Sillanvalvojat",
+        "ownSupervisor": "Omat valvojat",
+        "contractor": "Alueurakoitsija",
+        "bridgeSupervisor": "Sillanvalvoja (1.) ja varavalvoja (2.)",
+        "supervisor1": "Sillanvalvoja (1.)",
+        "supervisor2": "Varavalvoja (2.)"
+      }
+    },
+    "supervisionType": {
+      "unknown": "Tietoja puuttuu",
+      "own_supervisor": "Omat valvojat",
+      "area_contractor": "Alueurakoitsija"
+    },
+    "transportStatus": {
+      "unknown": "Tietoja puuttuu",
+      "planned": "Suunniteltu",
+      "departed": "Lähtenyt",
+      "stopped": "Tauolla",
+      "in_progress": "Liikkeella",
+      "arrived": "Päättynyt"
+    }
+  },
+  "transports": {
+    "transportList": {
+      "header" :
+      {
+        "title" : "Kuljetukset"
+      }
+    },
+    "transport": {
+      "header" :
+      {
+        "title" : "Kuljetus"
+      }
     }
   }
 }

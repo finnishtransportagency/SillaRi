@@ -1,15 +1,16 @@
-import { Extent } from "ol/extent";
+import type { Extent } from "ol/extent";
 import Feature from "ol/Feature";
 import { GeoJSON } from "ol/format";
+import { Geometry } from "ol/geom";
 import { Vector as VectorLayer } from "ol/layer";
 import { Vector as VectorSource } from "ol/source";
 import { Stroke, Style } from "ol/style";
 
-export default class RouteVectorLayer extends VectorLayer<VectorSource<any>> {
+export default class RouteVectorLayer extends VectorLayer<VectorSource<Geometry>> {
   routeExtent?: Extent;
 
   constructor(routeGeojson?: string) {
-    let routeSource: VectorSource<any> | undefined;
+    let routeSource: VectorSource<Geometry> | undefined;
     let routeStyle: Style | undefined;
     let routeExtent: Extent | undefined;
 

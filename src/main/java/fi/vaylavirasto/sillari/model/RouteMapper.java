@@ -24,20 +24,15 @@ public class RouteMapper  implements RecordMapper<Record, RouteModel> {
         routeModel.setName(record.get(route.NAME));
         routeModel.setTransportCount(record.get(route.TRANSPORT_COUNT));
         routeModel.setRouteBridges(new ArrayList<>());
-        routeModel.setCrossings(new ArrayList<>());
 
         AddressModel aa = new AddressModel();
         aa.setId(record.get(arrivalAddress.ID));
-        aa.setStreet(record.get(arrivalAddress.STREET));
-        aa.setPostalcode(record.get(arrivalAddress.POSTALCODE));
-        aa.setCity(record.get(arrivalAddress.CITY));
+        aa.setStreetaddress(record.get(arrivalAddress.STREETADDRESS));
         routeModel.setArrivalAddress(aa);
 
         AddressModel da = new AddressModel();
         da.setId(record.get(departureAddress.ID));
-        da.setStreet(record.get(departureAddress.STREET));
-        da.setPostalcode(record.get(departureAddress.POSTALCODE));
-        da.setCity(record.get(departureAddress.CITY));
+        da.setStreetaddress(record.get(departureAddress.STREETADDRESS));
         routeModel.setDepartureAddress(da);
 
         return routeModel;

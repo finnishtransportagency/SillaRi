@@ -4,7 +4,7 @@ import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, 
 import { analyticsOutline } from "ionicons/icons";
 // import Moment from "react-moment";
 import IRoute from "../interfaces/IRoute";
-// import { dateTimeFormat } from "../utils/constants";
+// import { DATE_TIME_FORMAT } from "../utils/constants";
 
 interface RouteCardProps {
   route: IRoute;
@@ -16,8 +16,8 @@ const RouteCard = ({ route }: RouteCardProps): JSX.Element => {
 
   // Route address not yet implemented in LeLu API, might be null
   const { departureAddress, arrivalAddress } = route || {};
-  const { street: departureStreet, postalcode: departurePostalCode, city: departureCity } = departureAddress || {};
-  const { street: arrivalStreet, postalcode: arrivalPostalCode, city: arrivalCity } = arrivalAddress || {};
+  const departureStreetaddress = departureAddress.streetaddress || {};
+  const arrivalStreetaddress = arrivalAddress.streetaddress || {};
 
   return (
     <IonCard button routerLink={`/routeDetail/${routeId}`}>
@@ -35,14 +35,14 @@ const RouteCard = ({ route }: RouteCardProps): JSX.Element => {
           {departureAddress && (
             <IonRow>
               <IonCol>
-                <IonText>{`${departureStreet}, ${departurePostalCode} ${departureCity}`}</IonText>
+                <IonText>{`${departureStreetaddress}`}</IonText>
               </IonCol>
             </IonRow>
           )}
           {arrivalAddress && (
             <IonRow>
               <IonCol>
-                <IonText>{`> ${arrivalStreet}, ${arrivalPostalCode} ${arrivalCity}`}</IonText>
+                <IonText>{`> ${arrivalStreetaddress}`}</IonText>
               </IonCol>
             </IonRow>
           )}
@@ -51,7 +51,7 @@ const RouteCard = ({ route }: RouteCardProps): JSX.Element => {
           {/*
           <IonRow>
             <IonCol>
-              <Moment format={dateTimeFormat}>{departureTime}</Moment>
+              <Moment format={DATE_TIME_FORMAT}>{departureTime}</Moment>
             </IonCol>
           </IonRow>
           */}

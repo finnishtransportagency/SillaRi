@@ -18,11 +18,13 @@ export default class RouteTileLayer extends TileLayer<TileSource> {
       });
       console.log("route wmtsOptions", routeWmtsOptions);
 
-      // Modify the URL to fetch tiles via the backend to avoid authentication issues on mobile
-      // Use the same URL as for the WMTS capabilities but make sure to receive binary images rather than XML
-      routeWmtsOptions.urls = [capabilitiesUrl.substr(0, capabilitiesUrl.indexOf("?")).replace("xml", "img")];
+      if (routeWmtsOptions) {
+        // Modify the URL to fetch tiles via the backend to avoid authentication issues on mobile
+        // Use the same URL as for the WMTS capabilities but make sure to receive binary images rather than XML
+        routeWmtsOptions.urls = [capabilitiesUrl.substr(0, capabilitiesUrl.indexOf("?")).replace("xml", "img")];
 
-      routeSource = new WMTS(routeWmtsOptions);
+        routeSource = new WMTS(routeWmtsOptions);
+      }
     }
 
     // Create a tile layer showing the route

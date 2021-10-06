@@ -3,16 +3,14 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonPage, IonRow, IonText } from "@ionic/react";
-import { add, chevronDown, chevronUp } from "ionicons/icons";
-import Moment from "react-moment";
-import { Accordion, AccordionItem, AccordionItemButton, AccordionItemHeading, AccordionItemPanel } from "react-accessible-accordion";
+import { IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
+import CustomAccordion from "../../components/common/CustomAccordion";
+import PermitAccordionHeading from "../../components/management/PermitAccordionHeading";
+import PermitAccordionPanel from "../../components/management/PermitAccordionPanel";
 import { useTypedSelector } from "../../store/store";
 import { getCompany, onRetry } from "../../utils/backendData";
-import { dateTimeFormat } from "../../utils/constants";
-import "./CompanySummary.css";
 
 interface CompanySummaryProps {
   companyId: string;
@@ -34,69 +32,45 @@ const CompanySummary = (): JSX.Element => {
 
   const noNetworkNoData = isFailed.getCompany && selectedCompanyDetail === undefined;
 
-  let content;
-  if (noNetworkNoData) {
-    content = <NoNetworkNoData />;
-  } else {
-    content = (
-      <Accordion id="CompanySummaryPermitList" allowMultipleExpanded allowZeroExpanded>
-        {permits.map((permit, index) => {
-          const key = `permit_${index}`;
-          const { id, permitNumber, validStartDate, validEndDate } = permit;
-          const addRouteLink = `addTransport/${id}`;
-          return (
-            <AccordionItem key={key}>
-              <AccordionItemHeading>
-                <AccordionItemButton>
-                  <IonItem lines="none" color="secondary">
-                    <IonIcon className="openIcon" icon={chevronDown} slot="end" />
-                    <IonIcon className="closeIcon" icon={chevronUp} slot="end" />
-                    <IonGrid color="secondary">
-                      <IonRow className="ion-align-items-center">
-                        <IonCol>
-                          <IonText className="headingText">{permitNumber}</IonText>
-                        </IonCol>
-                        <IonCol>
-                          <small>
-                            <Moment format={dateTimeFormat}>{validStartDate}</Moment>
-                            <IonText>{" - "}</IonText>
-                            <Moment format={dateTimeFormat}>{validEndDate}</Moment>
-                          </small>
-                        </IonCol>
-                        <IonCol>
-                          <IonButton
-                            routerLink={addRouteLink}
-                            onClick={(evt) => {
-                              evt.stopPropagation();
-                            }}
-                          >
-                            {t("management.companySummary.addTransportButtonLabel")}
-                            <IonIcon icon={add} slot="start" />
-                          </IonButton>
-                        </IonCol>
-                      </IonRow>
-                    </IonGrid>
-                  </IonItem>
-                </AccordionItemButton>
-              </AccordionItemHeading>
-              <AccordionItemPanel>
-                <p>Luvan [{permitNumber}] kuljetusten tiedot tähän...</p>
-              </AccordionItemPanel>
-            </AccordionItem>
-          );
-        })}
-      </Accordion>
-    );
-  }
-
   return (
     <IonPage>
       <Header title={name} somethingFailed={isFailed.getCompany} />
-      <IonContent>
-        <IonItem lines="none">
-          <h2>{t("management.companySummary.permitListTitle")}</h2>
-        </IonItem>
-        {content}
+      <IonContent fullscreen color="light">
+        {noNetworkNoData ? (
+          <NoNetworkNoData />
+        ) : (
+          <IonGrid className="ion-no-padding" fixed>
+            <IonRow>
+              <IonCol className="ion-padding">
+                <IonText className="headingText">{t("management.companySummary.permitListTitle")}</IonText>
+              </IonCol>
+            </IonRow>
+
+            <IonRow>
+              <IonCol className="whiteBackground">
+                <IonGrid className="ion-no-padding">
+                  <IonRow>
+                    <IonCol>
+                      <CustomAccordion
+                        items={permits.map((permit, index) => {
+                          const key = `permit_${index}`;
+
+                          return {
+                            uuid: key,
+                            headingColor: "primary",
+                            heading: <PermitAccordionHeading permit={permit} />,
+                            isPanelOpen: index === 0,
+                            panel: <PermitAccordionPanel permit={permit} />,
+                          };
+                        })}
+                      />
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        )}
       </IonContent>
     </IonPage>
   );

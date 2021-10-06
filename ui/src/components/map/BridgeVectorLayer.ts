@@ -4,14 +4,14 @@ import { Geometry, Point } from "ol/geom";
 import { Vector as VectorLayer } from "ol/layer";
 import { Vector as VectorSource } from "ol/source";
 import { Circle, Fill, Stroke, Style, Text } from "ol/style";
-import { StyleFunction, StyleLike } from "ol/style/Style";
+import type { StyleFunction, StyleLike } from "ol/style/Style";
 import IRouteBridge from "../../interfaces/IRouteBridge";
 
-export default class BridgeVectorLayer extends VectorLayer<VectorSource<any>> {
+export default class BridgeVectorLayer extends VectorLayer<VectorSource<Geometry>> {
   bridgeCoords?: Point;
 
   constructor(routeBridgeIdParam?: string, bridgeGeojson?: string, bridgeIdentifier?: string, routeIdParam?: string, routeBridges?: IRouteBridge[]) {
-    let bridgeSource: VectorSource<any> | undefined;
+    let bridgeSource: VectorSource<Geometry> | undefined;
     let bridgeStyle: StyleLike | undefined;
     let bridgeCoords: Point | undefined;
 

@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { SegmentChangeEventDetail } from "@ionic/core";
+import type { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonIcon, IonLabel, IonPage, IonSegment, IonSegmentButton, IonSlide, IonSlides } from "@ionic/react";
 import { barbellOutline, bus } from "ionicons/icons";
 import Header from "../components/Header";

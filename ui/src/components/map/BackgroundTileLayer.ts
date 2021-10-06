@@ -18,12 +18,14 @@ export default class BackgroundTileLayer extends TileLayer<TileSource> {
       });
       console.log("wmtsOptions", wmtsOptions);
 
-      // Modify the URL to fetch tiles via the backend to avoid authentication issues on mobile
-      // Use the same URL as for the WMTS capabilities but make sure to receive binary images rather than XML
-      wmtsOptions.urls = [capabilitiesUrl.substr(0, capabilitiesUrl.indexOf("?")).replace("xml", "img")];
+      if (wmtsOptions) {
+        // Modify the URL to fetch tiles via the backend to avoid authentication issues on mobile
+        // Use the same URL as for the WMTS capabilities but make sure to receive binary images rather than XML
+        wmtsOptions.urls = [capabilitiesUrl.substr(0, capabilitiesUrl.indexOf("?")).replace("xml", "img")];
 
-      const wmtsSource = new WMTS(wmtsOptions);
-      backgroundSource = wmtsSource;
+        const wmtsSource = new WMTS(wmtsOptions);
+        backgroundSource = wmtsSource;
+      }
     }
 
     if (!backgroundSource) {

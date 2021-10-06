@@ -52,6 +52,7 @@ public class LeluService {
     public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) {
         LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
 
+        logger.debug("Map permit from: " + permitDTO);
         PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
         logger.debug("Permit mapped from LeLu model: {}", permitModel);
 

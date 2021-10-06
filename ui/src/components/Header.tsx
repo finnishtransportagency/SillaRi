@@ -20,23 +20,23 @@ const Header = ({ title, somethingFailed }: HeaderProps): JSX.Element => {
     <IonHeader>
       <IonToolbar color="primary">
         <IonButtons slot="start">
-          <IonMenuButton className={canGoBack ? "hidden" : ""} />
-          <IonButton shape="round" className={canGoBack ? "" : "hidden"} onClick={() => history.goBack()}>
+          <IonMenuButton className={canGoBack ? "ion-hide" : ""} />
+          <IonButton shape="round" className={canGoBack ? "" : "ion-hide"} onClick={() => history.goBack()}>
             <IonIcon slot="icon-only" icon={arrowBackOutline} />
           </IonButton>
         </IonButtons>
         <IonTitle>{title}</IonTitle>
         <IonButtons slot="end">
-          <IonButton shape="round" className={somethingFailed ? "" : "hidden"}>
+          <IonButton shape="round" className={somethingFailed ? "" : "ion-hide"}>
             <IonIcon slot="icon-only" icon={cloudOfflineOutline} />
           </IonButton>
-          <IonButton shape="round" className={isMutating > 0 && !somethingFailed ? "" : "hidden"}>
+          <IonButton shape="round" className={isMutating > 0 && !somethingFailed ? "" : "ion-hide"}>
             <IonIcon slot="icon-only" icon={cloudUploadOutline} />
           </IonButton>
-          <IonButton shape="round" className={isFetching > 0 && isMutating === 0 && !somethingFailed ? "" : "hidden"}>
+          <IonButton shape="round" className={isFetching > 0 && isMutating === 0 && !somethingFailed ? "" : "ion-hide"}>
             <IonIcon slot="icon-only" icon={cloudDownloadOutline} />
           </IonButton>
-          <IonButton shape="round" className={isFetching === 0 && isMutating === 0 && !somethingFailed ? "" : "hidden"}>
+          <IonButton shape="round" className={isFetching === 0 && isMutating === 0 && !somethingFailed ? "" : "ion-hide"}>
             <IonIcon slot="icon-only" icon={cloudOutline} />
           </IonButton>
         </IonButtons>
