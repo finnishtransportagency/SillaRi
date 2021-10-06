@@ -29,4 +29,23 @@ public class SupervisorRepository {
                 .where(SupervisorMapper.supervisionSupervisor.SUPERVISION_ID.eq(supervisionId))
                 .fetch(new SupervisorMapper());
     }
+
+    public void insertSupervisionSupervisor(DSLContext ctx, Integer supervisionId, Integer supervisorId, Integer priority) {
+        ctx.insertInto(SupervisorMapper.supervisionSupervisor,
+                        SupervisorMapper.supervisionSupervisor.SUPERVISION_ID,
+                        SupervisorMapper.supervisionSupervisor.SUPERVISOR_ID,
+                        SupervisorMapper.supervisionSupervisor.PRIORITY
+                ).values(
+                        supervisionId,
+                        supervisorId,
+                        priority
+                )
+                .execute();
+    }
+
+    public void deleteSupervisionSupervisors(DSLContext ctx, Integer supervisionId) {
+        ctx.deleteFrom(SupervisorMapper.supervisionSupervisor)
+                .where(SupervisorMapper.supervisionSupervisor.SUPERVISION_ID.eq(supervisionId))
+                .execute();
+    }
 }

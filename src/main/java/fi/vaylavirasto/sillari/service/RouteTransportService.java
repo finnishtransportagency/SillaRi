@@ -69,4 +69,14 @@ public class RouteTransportService {
 
         return routeTransportModels;
     }
+
+    public RouteTransportModel createRouteTransport(RouteTransportModel routeTransportModel) {
+        Integer routeTransportId = routeTransportRepository.createRouteTransport(routeTransportModel);
+        return getRouteTransport(routeTransportId);
+    }
+
+    public RouteTransportModel updateRouteTransport(RouteTransportModel routeTransportModel) {
+        routeTransportRepository.updateRouteTransport(routeTransportModel);
+        return getRouteTransport(routeTransportModel.getId());
+    }
 }
