@@ -49,14 +49,6 @@ public class PermitService {
     public PermitModel getPermitOfRouteTransport(Integer routeTransportId) {
         PermitModel permitModel = permitRepository.getPermitByRouteTransportId(routeTransportId);
         fillPermitDetails(permitModel);
-
-        if (permitModel.getRoutes() != null) {
-            permitModel.getRoutes().forEach(routeModel -> {
-                List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRoutesBridges(routeModel.getId());
-                routeModel.setRouteBridges(routeBridgeModels);
-            });
-        }
-
         return permitModel;
     }
 
@@ -70,6 +62,15 @@ public class PermitService {
 
             List<RouteModel> routes = routeRepository.getRoutesByPermitId(permitModel.getId());
             permitModel.setRoutes(routes);
+
+            // The transport company UI needs the route bridges for all routes in the permit
+            // TODO - if this returns too much data, add this as a separate method in RouteController
+            if (permitModel.getRoutes() != null) {
+                permitModel.getRoutes().forEach(routeModel -> {
+                    List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRoutesBridges(routeModel.getId());
+                    routeModel.setRouteBridges(routeBridgeModels);
+                });
+            }
         }
     }
 }
