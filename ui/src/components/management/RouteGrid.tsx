@@ -7,7 +7,7 @@ import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import ISupervision from "../../interfaces/ISupervision";
 import { useTypedSelector } from "../../store/store";
-import { getRouteTransportsOfPermit, onRetry } from "../../utils/backendData";
+import { getRouteTransportsOfPermit, onRetry } from "../../utils/managementBackendData";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 import "./RouteGrid.css";
 
@@ -20,8 +20,8 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const { routeTransportList } = crossings;
+  const management = useTypedSelector((state) => state.managementReducer);
+  const { routeTransportList } = management;
 
   const { id: permitId } = permit;
 
@@ -29,19 +29,27 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
     retry: onRetry,
   });
 
-  const supervisionText = (supervisions: ISupervision[]) => {
+  const supervisionText = (supervisions?: ISupervision[]) => {
     // Get the unique non-null supervisor types and map them to translated text
-    const supervisorTypes = supervisions.map((supervision) => supervision.supervisorType).filter((v, i, a) => v && a.indexOf(v) === i);
-    return supervisorTypes.length > 0
-      ? supervisorTypes.map((st) => t(`management.supervisionType.${st.toLowerCase()}`)).join(", ")
-      : t("management.supervisionType.unknown");
+    if (supervisions) {
+      const supervisorTypes = supervisions.map((supervision) => supervision.supervisorType).filter((v, i, a) => v && a.indexOf(v) === i);
+      return supervisorTypes.length > 0
+        ? supervisorTypes.map((st) => t(`management.supervisionType.${st.toLowerCase()}`)).join(", ")
+        : t("management.supervisionType.unknown");
+    } else {
+      return t("management.supervisionType.unknown");
+    }
   };
 
-  const timePeriodText = (supervisions: ISupervision[]) => {
-    const plannedTimes = supervisions.map((supervision) => moment(supervision.plannedTime));
-    const minPlannedTime = moment.min(plannedTimes);
-    const maxPlannedTime = moment.max(plannedTimes);
-    return `${minPlannedTime.format(DATE_TIME_FORMAT_MIN)} - ${maxPlannedTime.format(DATE_TIME_FORMAT_MIN)}`;
+  const timePeriodText = (supervisions?: ISupervision[]) => {
+    if (supervisions) {
+      const plannedTimes = supervisions.map((supervision) => moment(supervision.plannedTime));
+      const minPlannedTime = moment.min(plannedTimes);
+      const maxPlannedTime = moment.max(plannedTimes);
+      return `${minPlannedTime.format(DATE_TIME_FORMAT_MIN)} - ${maxPlannedTime.format(DATE_TIME_FORMAT_MIN)}`;
+    } else {
+      return "";
+    }
   };
 
   return (
@@ -168,7 +176,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                       <IonText className="headingText">{t("management.companySummary.route.action")}</IonText>
                     </IonCol>
                     <IonCol size="7" size-sm="9" size-lg="12">
-                      <IonRouterLink routerLink={`/management/addTransport/${permitId}`}>
+                      <IonRouterLink routerLink={`/management/transportDetail/${routeTransportId}`}>
                         <IonText className="linkText">{action}</IonText>
                       </IonRouterLink>
                     </IonCol>

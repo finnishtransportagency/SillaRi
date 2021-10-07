@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { IonContent, IonPage } from "@ionic/react";
+import { IonContent, IonPage, IonToast } from "@ionic/react";
+import moment from "moment";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
 import RouteTransportInfo from "../../components/management/RouteTransportInfo";
 import IPermit from "../../interfaces/IPermit";
+import IRouteTransport from "../../interfaces/IRouteTransport";
+import { actions as managementActions } from "../../store/managementSlice";
 import { useTypedSelector } from "../../store/store";
-import { getPermit, getSupervisors, onRetry } from "../../utils/backendData";
+import { getPermit, getSupervisors, onRetry } from "../../utils/managementBackendData";
 
 interface AddTransportProps {
   permitId: string;
@@ -18,18 +21,30 @@ interface AddTransportProps {
 const AddTransport = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const [toastMessage, setToastMessage] = useState("");
 
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
+  const management = useTypedSelector((state) => state.managementReducer);
   const {
     selectedPermitDetail,
     supervisorList,
+    isRouteTransportModified,
     networkStatus: { isFailed = {} },
-  } = crossings;
+  } = management;
 
   const { permitId = "0" } = useParams<AddTransportProps>();
 
-  useQuery(["getPermit", permitId], () => getPermit(Number(permitId), dispatch, selectedPermitDetail), { retry: onRetry });
+  const { isLoading: isLoadingPermit } = useQuery(["getPermit", permitId], () => getPermit(Number(permitId), dispatch, selectedPermitDetail), {
+    retry: onRetry,
+  });
   useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry });
+
+  useEffect(() => {
+    // Put empty details into redux for later modifying
+    if (!isLoadingPermit && !isRouteTransportModified) {
+      const newRouteTransport: IRouteTransport = { id: 0, routeId: 0, plannedDepartureTime: moment().toDate() };
+      dispatch({ type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL, payload: newRouteTransport });
+    }
+  }, [isLoadingPermit, isRouteTransportModified, dispatch]);
 
   const noNetworkNoData = (isFailed.getPermit && selectedPermitDetail === undefined) || (isFailed.getSupervisors && supervisorList.length === 0);
 
@@ -40,8 +55,17 @@ const AddTransport = (): JSX.Element => {
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (
-          <RouteTransportInfo permit={selectedPermitDetail as IPermit} routeTransport={undefined} supervisors={supervisorList} />
+          <RouteTransportInfo permit={selectedPermitDetail as IPermit} supervisors={supervisorList} setToastMessage={setToastMessage} />
         )}
+
+        <IonToast
+          isOpen={toastMessage.length > 0}
+          message={toastMessage}
+          onDidDismiss={() => setToastMessage("")}
+          duration={5000}
+          position="top"
+          color="success"
+        />
       </IonContent>
     </IonPage>
   );

@@ -7,31 +7,33 @@ import moment from "moment";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
 import IRoute from "../../interfaces/IRoute";
-import IRouteTransport from "../../interfaces/IRouteTransport";
-import { actions as crossingActions } from "../../store/crossingsSlice";
+import { actions as managementActions } from "../../store/managementSlice";
 import { useTypedSelector } from "../../store/store";
 
 interface RouteInfoGridProps {
   permitRoutes: IRoute[];
-  routeTransport?: IRouteTransport;
 }
 
-const RouteInfoGrid = ({ permitRoutes = [], routeTransport }: RouteInfoGridProps): JSX.Element => {
+const RouteInfoGrid = ({ permitRoutes = [] }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedRouteOption } = crossings;
-  const { id: routeId, departureAddress, arrivalAddress } = selectedRouteOption || {};
+  const management = useTypedSelector((state) => state.managementReducer);
+  const { modifiedRouteTransportDetail, selectedRouteOption } = management;
+  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
+  const { id: selectedRouteId, departureAddress, arrivalAddress } = selectedRouteOption || {};
   const { streetaddress: departureStreetAddress } = departureAddress || {};
   const { streetaddress: arrivalStreetAddress } = arrivalAddress || {};
 
-  const { plannedDepartureTime } = routeTransport || {};
   const estimatedDeparture = moment(plannedDepartureTime);
 
-  const selectRoute = (selectedRouteId: number) => {
-    const selectedRoute = permitRoutes.find((route) => route.id === selectedRouteId);
-    dispatch({ type: crossingActions.SET_SELECTED_ROUTE_OPTION, payload: selectedRoute });
+  const setPlannedDepartureTime = (dateTime: Date) => {
+    dispatch({ type: managementActions.MODIFY_ROUTE_TRANSPORT, payload: { plannedDepartureTime: dateTime } });
+  };
+
+  const selectRoute = (routeId: number) => {
+    const selectedRoute = permitRoutes.find((route) => route.id === routeId);
+    dispatch({ type: managementActions.SET_SELECTED_ROUTE_OPTION, payload: selectedRoute });
   };
 
   return (
@@ -46,7 +48,7 @@ const RouteInfoGrid = ({ permitRoutes = [], routeTransport }: RouteInfoGridProps
             </IonRow>
             <IonRow>
               <IonCol>
-                <DatePicker value={estimatedDeparture.toDate()} />
+                <DatePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -61,7 +63,7 @@ const RouteInfoGrid = ({ permitRoutes = [], routeTransport }: RouteInfoGridProps
             </IonRow>
             <IonRow>
               <IonCol>
-                <TimePicker value={estimatedDeparture.toDate()} />
+                <TimePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -79,7 +81,7 @@ const RouteInfoGrid = ({ permitRoutes = [], routeTransport }: RouteInfoGridProps
                 <IonSelect
                   interface="action-sheet"
                   cancelText={t("common.buttons.back")}
-                  value={routeId}
+                  value={selectedRouteId}
                   onIonChange={(e) => selectRoute(e.detail.value)}
                 >
                   {permitRoutes.map((route, index) => {

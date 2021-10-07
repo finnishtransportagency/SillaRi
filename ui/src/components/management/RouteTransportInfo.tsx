@@ -1,13 +1,14 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
+import { useMutation } from "react-query";
+import { useDispatch } from "react-redux";
 import { IonButton, IonCol, IonGrid, IonItemDivider, IonRow, IonText } from "@ionic/react";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
-import IRouteBridge from "../../interfaces/IRouteBridge";
 import IRouteTransport from "../../interfaces/IRouteTransport";
-import ISupervision from "../../interfaces/ISupervision";
 import ISupervisor from "../../interfaces/ISupervisor";
 import { useTypedSelector } from "../../store/store";
+import { onRetry, sendRouteTransportPlanned, sendRouteTransportUpdate } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
 import BridgeGrid from "./BridgeGrid";
 import RouteInfoGrid from "./RouteInfoGrid";
@@ -15,19 +16,43 @@ import TransportInfoAccordion from "./TransportInfoAccordion";
 
 interface RouteTransportInfoProps {
   permit: IPermit;
-  routeTransport?: IRouteTransport;
   supervisors: ISupervisor[];
+  setToastMessage: Dispatch<SetStateAction<string>>;
 }
 
-const RouteTransportInfo = ({ permit, routeTransport, supervisors }: RouteTransportInfoProps): JSX.Element => {
+const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTransportInfoProps): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedRouteOption } = crossings;
-  const { routeBridges } = selectedRouteOption || {};
+  const management = useTypedSelector((state) => state.managementReducer);
+  const { modifiedRouteTransportDetail, selectedRouteOption, isRouteTransportModified } = management;
 
   const { permitNumber, validStartDate, validEndDate, routes = [] } = permit || {};
-  const { id: routeTransportId, supervisions } = routeTransport || {};
+  const { id: routeTransportId, routeId = 0 } = modifiedRouteTransportDetail || {};
+
+  // Set-up mutations for modifying data later
+  const routeTransportPlannedMutation = useMutation((transport: IRouteTransport) => sendRouteTransportPlanned(transport, dispatch), {
+    retry: onRetry,
+    onSuccess: () => {
+      setToastMessage(t("management.addTransport.saved"));
+    },
+  });
+  const routeTransportUpdateMutation = useMutation((transport: IRouteTransport) => sendRouteTransportUpdate(transport, dispatch), {
+    retry: onRetry,
+    onSuccess: () => {
+      setToastMessage(t("management.addTransport.saved"));
+    },
+  });
+
+  const { isLoading: isSendingTransportUpdate } = routeTransportUpdateMutation;
+
+  const saveRouteTransport = () => {
+    if (routeId > 0) {
+      routeTransportUpdateMutation.mutate(modifiedRouteTransportDetail as IRouteTransport);
+    } else {
+      routeTransportPlannedMutation.mutate(modifiedRouteTransportDetail as IRouteTransport);
+    }
+  };
 
   return (
     <IonGrid className="ion-no-padding" fixed>
@@ -85,11 +110,7 @@ const RouteTransportInfo = ({ permit, routeTransport, supervisors }: RouteTransp
                 </IonRow>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    <BridgeGrid
-                      routeBridges={routeBridges as IRouteBridge[]}
-                      supervisions={supervisions as ISupervision[]}
-                      supervisors={supervisors}
-                    />
+                    <BridgeGrid supervisors={supervisors} />
                   </IonCol>
                 </IonRow>
               </>
@@ -110,7 +131,7 @@ const RouteTransportInfo = ({ permit, routeTransport, supervisors }: RouteTransp
           </IonButton>
         </IonCol>
         <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-          <IonButton color="primary">
+          <IonButton color="primary" disabled={isSendingTransportUpdate || !isRouteTransportModified} onClick={saveRouteTransport}>
             <IonText>{t("common.buttons.save")}</IonText>
           </IonButton>
         </IonCol>

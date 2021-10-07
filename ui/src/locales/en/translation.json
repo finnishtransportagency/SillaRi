@@ -122,6 +122,7 @@
       "buttons": {
         "deleteTransport": "Delete transport"
       },
+      "saved": "Saved",
       "routeInfo": {
         "estimatedDepartureDate": "Estimated departure date",
         "estimatedDepartureTime": "Estimated departure time",

@@ -197,6 +197,7 @@
       "buttons": {
         "deleteTransport": "Poista kuljetus"
       },
+      "saved": "Tallennettu",
       "routeInfo": {
         "estimatedDepartureDate": "Arvioitu lähtöpäivä",
         "estimatedDepartureTime": "Arvioitu lähtöaika",
