@@ -143,8 +143,14 @@ public class LeluController {
     }
 
     @RequestMapping(value = "/getSupervisionStatuses", method = RequestMethod.GET)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get bridge supervision report statuses of a route")
-    public LeluRouteReportsDTO getReports(@RequestParam Long routeId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200 OK", description = "Permit saved/updated"),
+            @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
+    })
+    public LeluRouteReportsDTO getSupervisionStatuses(@RequestParam Long routeId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
         logger.debug("Lelu getSupervisionStatuses " + routeId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
@@ -160,9 +166,9 @@ public class LeluController {
     }
 
 
-    @RequestMapping(value = "/getReport", method = RequestMethod.GET)
+    @RequestMapping(value = "/getSupervisionReport", method = RequestMethod.GET)
     @Operation(summary = "Get bridge supervision report by ")
-    public ResponseEntity<byte[]> getReport(@RequestParam String reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+    public ResponseEntity<byte[]> getSupervisionReport(@RequestParam String reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
         logger.debug("Lelu getRepor " + reportId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
