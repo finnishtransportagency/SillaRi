@@ -9,37 +9,27 @@ import IPermit from "../interfaces/IPermit";
 import IRadioValue from "../interfaces/IRadioValue";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
-import IRouteTransport from "../interfaces/IRouteTransport";
 import ISupervision from "../interfaces/ISupervision";
-import ISupervisor from "../interfaces/ISupervisor";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
 
 interface IStateProps {
   companyList: ICompany[];
-  routeTransportList: IRouteTransport[];
-  supervisorList: ISupervisor[];
   selectedCompanyDetail?: ICompany;
   selectedPermitDetail?: IPermit;
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
-  selectedRouteTransportDetail?: IRouteTransport;
   selectedSupervisionDetail?: ISupervision;
-  selectedRouteOption?: IRoute;
   images: IImageItem[];
   networkStatus: INetworkStatus;
 }
 
 const initialState: IStateProps = {
   companyList: [],
-  routeTransportList: [],
-  supervisorList: [],
   selectedCompanyDetail: undefined,
   selectedPermitDetail: undefined,
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
-  selectedRouteTransportDetail: undefined,
   selectedSupervisionDetail: undefined,
-  selectedRouteOption: undefined,
   images: [],
   networkStatus: {
     isFailed: {},
@@ -47,7 +37,7 @@ const initialState: IStateProps = {
 };
 
 const crossingsSlice = createSlice({
-  name: "selectedCrossing",
+  name: "crossings",
   initialState,
   reducers: {
     GET_COMPANY_LIST: (state, action: PayloadAction<ICompany[]>) => {
@@ -70,21 +60,9 @@ const crossingsSlice = createSlice({
       console.log("GET_ROUTE_BRIDGE", action.payload);
       return { ...state, selectedBridgeDetail: action.payload };
     },
-    GET_ROUTE_TRANSPORT_LIST: (state, action: PayloadAction<IRouteTransport[]>) => {
-      console.log("GET_ROUTE_TRANSPORT_LIST", action.payload);
-      return { ...state, routeTransportList: action.payload };
-    },
-    GET_ROUTE_TRANSPORT: (state, action: PayloadAction<IRouteTransport>) => {
-      console.log("GET_ROUTE_TRANSPORT", action.payload);
-      return { ...state, selectedRouteTransportDetail: action.payload };
-    },
     GET_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
       console.log("GET_SUPERVISION", action.payload);
       return { ...state, selectedSupervisionDetail: action.payload };
-    },
-    GET_SUPERVISOR_LIST: (state, action: PayloadAction<ISupervisor[]>) => {
-      console.log("GET_SUPERVISOR_LIST", action.payload);
-      return { ...state, supervisorList: action.payload };
     },
     CREATE_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
       console.log("CREATE_SUPERVISION", action.payload);
@@ -159,10 +137,6 @@ const crossingsSlice = createSlice({
         return isStateImageInPayload ? acc : [...acc, image];
       }, []);
       return { ...state, images: cameraImages };
-    },
-    SET_SELECTED_ROUTE_OPTION: (state, action: PayloadAction<IRoute>) => {
-      console.log("SET_SELECTED_ROUTE_OPTION", action.payload);
-      return { ...state, selectedRouteOption: action.payload };
     },
     SET_FAILED_QUERY: (state, action: PayloadAction<IFailedQuery>) => {
       // console.log("SET_FAILED_QUERY", action.payload);
