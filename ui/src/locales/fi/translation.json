@@ -47,6 +47,7 @@
     "camera" : "Kamera",
     "supervision": "Sillan ylitys",
     "management" : "Kuljetusten hallinta",
+    "transports" : "Kuljetukset",
     "logout": "Kirjaudu ulos"
   },
   "company": {
@@ -237,6 +238,20 @@
       "stopped": "Tauolla",
       "in_progress": "Liikkeella",
       "arrived": "Päättynyt"
+    }
+  },
+  "transports": {
+    "transportList": {
+      "header" :
+      {
+        "title" : "Kuljetukset"
+      }
+    },
+    "transport": {
+      "header" :
+      {
+        "title" : "Kuljetus"
+      }
     }
   }
 }
