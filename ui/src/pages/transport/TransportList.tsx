@@ -7,18 +7,18 @@ import { caretForward } from "ionicons/icons";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
 import { useTypedSelector } from "../../store/store";
-import { getRouteTransportsOfPermit, onRetry } from "../../utils/backendData";
+import { getRouteTransportsOfPermit, onRetry } from "../../utils/managementBackendData";
 
 const TransportList = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
+  const management = useTypedSelector((state) => state.managementReducer);
 
   const {
     routeTransportList = [],
     networkStatus: { isFailed = {} },
-  } = crossings;
+  } = management;
 
   const permitId = 1;
 
@@ -39,6 +39,11 @@ const TransportList = (): JSX.Element => {
             routeTransportList.map((routeTransport, index) => {
               const key = `rt_${index}`;
               const link = `/transport/${routeTransport.id}`;
+              const { route } = routeTransport;
+              const { departureAddress, arrivalAddress } = route || {};
+              const { streetaddress: departureStreetAddress } = departureAddress || {};
+              const { streetaddress: arrivalStreetAddress } = arrivalAddress || {};
+
               return (
                 <IonItem key={key} routerLink={link}>
                   <IonLabel className="ion-text-wrap">
@@ -49,7 +54,7 @@ const TransportList = (): JSX.Element => {
                       <h3>Kuljetuslupa: 2/2021</h3>
                     </IonText>
                     <p>
-                      Reitti: {routeTransport.route.departureAddress.streetaddress} - {routeTransport.route.arrivalAddress.streetaddress}
+                      Reitti: {departureStreetAddress} - {arrivalStreetAddress}
                     </p>
                   </IonLabel>
                   <IonIcon slot="end" icon={caretForward} />
