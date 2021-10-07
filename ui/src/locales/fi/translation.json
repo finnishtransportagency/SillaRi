@@ -189,7 +189,8 @@
     },
     "addTransport":
     {
-      "headerTitle": "Lisää uusi kuljetus",
+      "headerTitleAdd": "Lisää uusi kuljetus",
+      "headerTitleDetail": "Kuljetuksen tiedot",
       "transportPermit": "Kuljetuslupa",
       "validityPeriod": "Voimassaoloaika",
       "transportId": "Kuljetuksen ID",

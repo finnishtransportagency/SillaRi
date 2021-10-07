@@ -114,7 +114,8 @@
     },
     "addTransport":
     {
-      "headerTitle": "Add new transport",
+      "headerTitleAdd": "Add new transport",
+      "headerTitleDetail": "Transport details",
       "transportPermit": "Transport permit",
       "validityPeriod": "Validity period",
       "transportId": "Transport ID",

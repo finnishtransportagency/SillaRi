@@ -51,7 +51,7 @@ const AddTransport = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("management.addTransport.headerTitle")} somethingFailed={isFailed.getPermit} />
+      <Header title={t("management.addTransport.headerTitleAdd")} somethingFailed={isFailed.getPermit} />
       <IonContent fullscreen color="light">
         {noNetworkNoData ? (
           <NoNetworkNoData />
