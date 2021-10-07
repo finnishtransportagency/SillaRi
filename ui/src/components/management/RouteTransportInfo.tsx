@@ -38,14 +38,14 @@ const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTrans
     retry: onRetry,
     onSuccess: () => {
       setToastMessage(t("management.addTransport.saved"));
-      history.push(`/management/${companyId}`);
+      history.replace(`/management/${companyId}`);
     },
   });
   const routeTransportUpdateMutation = useMutation((transport: IRouteTransport) => sendRouteTransportUpdate(transport, dispatch), {
     retry: onRetry,
     onSuccess: () => {
       setToastMessage(t("management.addTransport.saved"));
-      history.push(`/management/${companyId}`);
+      history.replace(`/management/${companyId}`);
     },
   });
 

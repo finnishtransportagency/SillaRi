@@ -66,11 +66,13 @@ public class SupervisionRepository {
                             SupervisionMapper.supervision.ROUTE_BRIDGE_ID,
                             SupervisionMapper.supervision.ROUTE_TRANSPORT_ID,
                             SupervisionMapper.supervision.PLANNED_TIME,
+                            SupervisionMapper.supervision.SUPERVISOR_TYPE,
                             SupervisionMapper.supervision.CONFORMS_TO_PERMIT
                     ).values(
                             supervisionModel.getRouteBridgeId(),
                             supervisionModel.getRouteTransportId(),
                             supervisionModel.getPlannedTime(),
+                            supervisionModel.getSupervisorType().toString(),
                             false)
                     .returningResult(SupervisionMapper.supervision.ID)
                     .fetchOne(); // Execute and return zero or one record

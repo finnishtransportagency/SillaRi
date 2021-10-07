@@ -42,7 +42,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   };
 
   const timePeriodText = (supervisions?: ISupervision[]) => {
-    if (supervisions) {
+    if (!!supervisions && supervisions.length > 0) {
       const plannedTimes = supervisions.map((supervision) => moment(supervision.plannedTime));
       const minPlannedTime = moment.min(plannedTimes);
       const maxPlannedTime = moment.max(plannedTimes);

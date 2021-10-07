@@ -66,6 +66,8 @@ public class RouteTransportController {
 
             if (routeTransport.getSupervisions() != null) {
                 routeTransport.getSupervisions().forEach(supervisionModel -> {
+                    supervisionModel.setRouteTransportId(insertedRouteTransport.getId());
+
                     if (supervisionModel.getId() != null && supervisionModel.getId() > 0) {
                         supervisionService.updateSupervision(supervisionModel);
                     } else {
