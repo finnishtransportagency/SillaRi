@@ -27,8 +27,8 @@ const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTrans
   const management = useTypedSelector((state) => state.managementReducer);
   const { modifiedRouteTransportDetail, selectedRouteOption, isRouteTransportModified } = management;
 
-  const { permitNumber, validStartDate, validEndDate, routes = [] } = permit || {};
-  const { id: routeTransportId, routeId = 0 } = modifiedRouteTransportDetail || {};
+  const { companyId, permitNumber, validStartDate, validEndDate, routes = [] } = permit || {};
+  const { id: routeTransportId } = modifiedRouteTransportDetail || {};
 
   // Set-up mutations for modifying data later
   const routeTransportPlannedMutation = useMutation((transport: IRouteTransport) => sendRouteTransportPlanned(transport, dispatch), {
@@ -47,7 +47,7 @@ const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTrans
   const { isLoading: isSendingTransportUpdate } = routeTransportUpdateMutation;
 
   const saveRouteTransport = () => {
-    if (routeId > 0) {
+    if (!!routeTransportId && routeTransportId > 0) {
       routeTransportUpdateMutation.mutate(modifiedRouteTransportDetail as IRouteTransport);
     } else {
       routeTransportPlannedMutation.mutate(modifiedRouteTransportDetail as IRouteTransport);
@@ -74,12 +74,16 @@ const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTrans
                 <IonText>{`${moment(validStartDate).format(DATE_FORMAT)} - ${moment(validEndDate).format(DATE_FORMAT)}`}</IonText>
               </IonCol>
 
-              <IonCol size="12" size-sm="4" size-lg="2">
-                <IonText className="headingText">{t("management.addTransport.transportId")}</IonText>
-              </IonCol>
-              <IonCol size="12" size-sm="8" size-lg="1">
-                <IonText>{routeTransportId}</IonText>
-              </IonCol>
+              {!!routeTransportId && routeTransportId > 0 && (
+                <>
+                  <IonCol size="12" size-sm="4" size-lg="2">
+                    <IonText className="headingText">{t("management.addTransport.transportId")}</IonText>
+                  </IonCol>
+                  <IonCol size="12" size-sm="8" size-lg="1">
+                    <IonText>{routeTransportId}</IonText>
+                  </IonCol>
+                </>
+              )}
             </IonRow>
 
             <IonItemDivider />
@@ -120,13 +124,15 @@ const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTrans
       </IonRow>
 
       <IonRow className="ion-margin ion-justify-content-end">
+        {!!routeTransportId && routeTransportId > 0 && (
+          <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
+            <IonButton color="tertiary" disabled>
+              <IonText>{t("management.addTransport.buttons.deleteTransport")}</IonText>
+            </IonButton>
+          </IonCol>
+        )}
         <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-          <IonButton color="tertiary">
-            <IonText>{t("management.addTransport.buttons.deleteTransport")}</IonText>
-          </IonButton>
-        </IonCol>
-        <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-          <IonButton color="secondary">
+          <IonButton color="secondary" routerLink={`/management/${companyId}`}>
             <IonText>{t("common.buttons.cancel")}</IonText>
           </IonButton>
         </IonCol>
