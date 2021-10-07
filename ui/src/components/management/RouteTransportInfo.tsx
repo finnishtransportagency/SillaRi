@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation } from "react-query";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { IonButton, IonCol, IonGrid, IonItemDivider, IonRow, IonText } from "@ionic/react";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
@@ -23,6 +24,7 @@ interface RouteTransportInfoProps {
 const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTransportInfoProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const management = useTypedSelector((state) => state.managementReducer);
   const { modifiedRouteTransportDetail, selectedRouteOption, isRouteTransportModified } = management;
@@ -31,16 +33,19 @@ const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTrans
   const { id: routeTransportId } = modifiedRouteTransportDetail || {};
 
   // Set-up mutations for modifying data later
+  // TODO - handle errors
   const routeTransportPlannedMutation = useMutation((transport: IRouteTransport) => sendRouteTransportPlanned(transport, dispatch), {
     retry: onRetry,
     onSuccess: () => {
       setToastMessage(t("management.addTransport.saved"));
+      history.push(`/management/${companyId}`);
     },
   });
   const routeTransportUpdateMutation = useMutation((transport: IRouteTransport) => sendRouteTransportUpdate(transport, dispatch), {
     retry: onRetry,
     onSuccess: () => {
       setToastMessage(t("management.addTransport.saved"));
+      history.push(`/management/${companyId}`);
     },
   });
 
