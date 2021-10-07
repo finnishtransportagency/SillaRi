@@ -9,6 +9,7 @@ import TimePicker from "../common/TimePicker";
 import IRoute from "../../interfaces/IRoute";
 import { actions as managementActions } from "../../store/managementSlice";
 import { useTypedSelector } from "../../store/store";
+import { SupervisorType } from "../../utils/constants";
 
 interface RouteInfoGridProps {
   permitRoutes: IRoute[];
@@ -34,6 +35,22 @@ const RouteInfoGrid = ({ permitRoutes = [] }: RouteInfoGridProps): JSX.Element =
   const selectRoute = (routeId: number) => {
     const selectedRoute = permitRoutes.find((route) => route.id === routeId);
     dispatch({ type: managementActions.SET_SELECTED_ROUTE_OPTION, payload: selectedRoute });
+
+    // Make sure supervision details are available for BridgeGrid
+    const { routeBridges = [] } = selectedRoute || {};
+    const newSupervisions = routeBridges.map((routeBridge) => {
+      const { id: routeBridgeId } = routeBridge;
+      return {
+        plannedTime: moment().toDate(),
+        routeBridgeId,
+        supervisorType: SupervisorType.OWN_SUPERVISOR,
+        supervisors: [],
+      };
+    });
+    dispatch({
+      type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL,
+      payload: { ...modifiedRouteTransportDetail, routeId, route: selectedRoute, supervisions: newSupervisions },
+    });
   };
 
   return (

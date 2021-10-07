@@ -43,6 +43,7 @@ const AddTransport = (): JSX.Element => {
     if (!isLoadingPermit && !isRouteTransportModified) {
       const newRouteTransport: IRouteTransport = { id: 0, routeId: 0, plannedDepartureTime: moment().toDate() };
       dispatch({ type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL, payload: newRouteTransport });
+      dispatch({ type: managementActions.SET_SELECTED_ROUTE_OPTION, payload: undefined });
     }
   }, [isLoadingPermit, isRouteTransportModified, dispatch]);
 
