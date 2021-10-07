@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.LeluRouteReportsDTO;
 import fi.vaylavirasto.sillari.api.lelu.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -121,7 +123,7 @@ public class LeluController {
     })
     public LeluRouteGeometryResponseDTO uploadRouteGeometry(@RequestParam(required = true) Long routeId,
                                                             @RequestPart("file") MultipartFile file)
-            // @ApiParam(required = true, value = "Geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix compressed to a single zip file")
+        // @ApiParam(required = true, value = "Geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix compressed to a single zip file")
             throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
         logger.debug("Lelu uploadroutegeometry {}", routeId);
         logger.debug("FILE name:" + file.getName());
@@ -134,10 +136,45 @@ public class LeluController {
     @RequestMapping(value = "/uploadroutegeometry2", method = RequestMethod.POST)
     @ResponseBody
     public LeluRouteGeometryResponseDTO uploadRouteGeometry2(@RequestParam Long routeId,
-                                                        @RequestParam("file") MultipartFile file)
+                                                             @RequestParam("file") MultipartFile file)
             throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
         logger.debug("Lelu uploadroutegeometry2 {}", routeId);
         return leluService.uploadRouteGeometry(routeId, file);
     }
 
+    @RequestMapping(value = "/getSupervisionStatuses", method = RequestMethod.GET)
+    @Operation(summary = "Get bridge supervision report statuses of a route")
+    public LeluRouteReportsDTO getReports(@RequestParam Long routeId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+        logger.debug("Lelu getSupervisionStatuses " + routeId);
+
+        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
+            try {
+                return null;
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                return null;
+            }
+        } else {
+            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
+        }
+    }
+
+
+    @RequestMapping(value = "/getReport", method = RequestMethod.GET)
+    @Operation(summary = "Get bridge supervision report by ")
+    public ResponseEntity<byte[]> getReport(@RequestParam String reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+        logger.debug("Lelu getRepor " + reportId);
+
+        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
+            try {
+                return null;
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                return null;
+            }
+        } else {
+            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
+        }
+    }
 }
+
