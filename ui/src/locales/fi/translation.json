@@ -242,11 +242,14 @@
     }
   },
   "transports": {
-    "transportList": {
+    "transportCodeInput": {
       "header" :
       {
         "title" : "Kuljetukset"
-      }
+      },
+      "inputLabel" : "Anna kuljetuksen koodi",
+      "inputPlaceholder" : "Kuljetuksen koodi",
+      "submitButtonLabel" : "Lähetä koodi"
     },
     "transport": {
       "header" :

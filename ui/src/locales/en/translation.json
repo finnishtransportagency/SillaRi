@@ -167,11 +167,14 @@
     }
   },
   "transports": {
-    "transportList": {
+    "transportCodeInput": {
       "header" :
       {
         "title" : "Transports"
-      }
+      },
+      "inputLabel" : "Please enter transport code",
+      "inputPlaceholder" : "Transport code",
+      "submitButtonLabel" : "Submit code"
     },
     "transport": {
       "header" :
