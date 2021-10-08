@@ -1,5 +1,5 @@
 import React from "react";
-import { IonCard, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonRow } from "@ionic/react";
+import { IonItem, IonLabel } from "@ionic/react";
 import IRouteBridge from "../interfaces/IRouteBridge";
 
 interface BridgeCardProps {
@@ -7,21 +7,22 @@ interface BridgeCardProps {
 }
 
 const BridgeCard = ({ routeBridge }: BridgeCardProps): JSX.Element => {
-  const { id, bridge } = routeBridge;
-  const { name } = bridge;
+  const { id: routeBridgeId, bridge } = routeBridge;
+  const { identifier, name } = bridge;
 
+  // TODO - change this to use supervision
   return (
-    <IonCard button routerLink={`/bridgedetail/${id}`}>
-      <IonGrid>
-        <IonRow>
-          <IonCol>
-            <IonCardHeader class="ion-text-left">
-              <IonCardTitle>{name}</IonCardTitle>
-            </IonCardHeader>
-          </IonCol>
-        </IonRow>
-      </IonGrid>
-    </IonCard>
+    <IonItem detail routerLink={`/bridgedetail/${routeBridgeId}`}>
+      <IonLabel>
+        <IonLabel>{name}</IonLabel>
+        <small>
+          <IonLabel>{identifier}</IonLabel>
+        </small>
+        <small>
+          <IonLabel>DATE TIME TODO</IonLabel>
+        </small>
+      </IonLabel>
+    </IonItem>
   );
 };
 

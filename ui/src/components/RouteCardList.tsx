@@ -8,6 +8,7 @@ interface RouteCardListProps {
 }
 
 const RouteCardList = ({ routes }: RouteCardListProps): JSX.Element => {
+  // TODO - change this to a list of route transports
   return (
     <div className="cardListContainer">
       {routes.map((route, index) => {

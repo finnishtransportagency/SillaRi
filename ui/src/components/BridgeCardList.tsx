@@ -1,9 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
+import { IonItem, IonLabel } from "@ionic/react";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import BridgeCard from "./BridgeCard";
-import "./RouteCardList.css";
+import "./BridgeCardList.css";
 
 interface BridgeCardListProps {
   routeBridges: IRouteBridge[];
@@ -14,13 +14,11 @@ const BridgeCardList = ({ routeBridges }: BridgeCardListProps): JSX.Element => {
 
   return (
     <>
-      <IonGrid>
-        <IonRow>
-          <IonCol>
-            <IonText className="headingText">{t("route.bridgesToSupervise")}</IonText>
-          </IonCol>
-        </IonRow>
-      </IonGrid>
+      <IonItem className="bridgeListHeader" lines="none">
+        <IonLabel>
+          <IonLabel className="headingText">{t("route.bridgesToSupervise")}</IonLabel>
+        </IonLabel>
+      </IonItem>
 
       <div className="cardListContainer">
         {routeBridges.map((bridge, index) => {

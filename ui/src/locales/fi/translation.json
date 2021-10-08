@@ -8,7 +8,7 @@
     "content": "Tervetuloa!",
     "tab": {
       "transportCompanies": "Kuljetusyritykset",
-      "upcomingBridges": "Tulevat sillat"
+      "upcomingBridges": "Sillat"
     },
     "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen..."
   },
@@ -56,11 +56,19 @@
     "route": "Reitti"
   },
   "route": {
+    "transportPermit": "Kuljetuslupa",
     "permitInfo": {
       "title": "Luvan tiedot",
       "permitNumber": "Luvan numero",
       "routeDeparturePoint": "Reitin lähtöpiste",
       "routeArrivalPoint": "Reitin päätepiste"
+    },
+    "routeInfo": {
+      "title": "Reitin tiedot",
+      "route": "Reitti",
+      "showWholeRoute": "Näytä koko reitti",
+      "departurePoint": "Lähtöpiste",
+      "arrivalPoint": "Päätepiste"
     },
     "transportInfo": {
       "title": "Kuljetuksen tiedot",

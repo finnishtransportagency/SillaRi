@@ -8,7 +8,7 @@
     "content": "Welcome!",
     "tab": {
       "transportCompanies": "Transport companies",
-      "upcomingBridges": "Upcoming bridges"
+      "upcomingBridges": "Bridges"
     },
     "noNetworkNoData": "Unable to retrieve data, trying again..."
   },
@@ -55,11 +55,19 @@
     "route": "Route"
   },
   "route": {
+    "transportPermit": "Transport permit",
     "permitInfo": {
       "title": "Permit information",
       "permitNumber": "Permit number",
       "routeDeparturePoint": "Route departure point",
       "routeArrivalPoint": "Route arrival point"
+    },
+    "routeInfo": {
+      "title": "Route information",
+      "route": "Route",
+      "showWholeRoute": "Show whole route",
+      "departurePoint": "Departure point",
+      "arrivalPoint": "Arrival point"
     },
     "transportInfo": {
       "title": "Transport information",

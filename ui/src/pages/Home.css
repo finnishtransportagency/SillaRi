@@ -1,1 +1,11 @@
-/**/
+.mainSegment {
+  --background: var(--ion-color-primary);
+}
+
+.mainSegmentButton {
+  --background: var(--ion-color-primary);
+  --background-checked: white;
+  --color: white;
+  --color-checked: var(--ion-color-primary);
+  --indicator-color: var(--ion-color-primary);
+}

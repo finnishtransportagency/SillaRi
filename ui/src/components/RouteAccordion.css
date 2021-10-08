@@ -1,0 +1,9 @@
+.routeLink {
+  --detail-icon-color: var(--ion-color-primary);
+  --detail-icon-opacity: 1;
+}
+
+.routeLinkText {
+  text-decoration: underline;
+  color: var(--ion-color-primary);
+}
