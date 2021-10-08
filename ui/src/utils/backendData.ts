@@ -10,6 +10,7 @@ import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { getOrigin } from "./request";
 import { actions as crossingActions } from "../store/crossingsSlice";
 import IBridge from "../interfaces/IBridge";
+import { groupSupervisionsByDate } from "./supervisionUtil";
 
 const notOkError = "Network response was not ok";
 
@@ -171,20 +172,23 @@ export const getRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, 
   }
 };
 
-export const getBridgesOfSupervisor = async (supervisorId: number, dispatch: Dispatch): Promise<void> => {
-  // TODO not yet resolved how we actually get supervisorId, or should we clear something first
+export const getSupervisionList = async (username: string, dispatch: Dispatch): Promise<void> => {
   try {
-    const bridgesResponse = await fetch(`${getOrigin()}/api/bridge/getbridgesofsupervisor?supervisorId=${supervisorId}`);
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionList: false } });
 
-    if (bridgesResponse.ok) {
-      const bridges = (await bridgesResponse.json()) as Promise<IBridge[]>;
-      dispatch({ type: crossingActions.GET_BRIDGES_OF_SUPERVISOR, payload: bridges });
+    const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsofsupervisor?username=${username}`);
+
+    if (supervisionsResponse.ok) {
+      const supervisionsPromise = (await supervisionsResponse.json()) as Promise<ISupervision[]>;
+      const groupedSupervisions = supervisionsPromise.then((supervisions) => groupSupervisionsByDate(supervisions));
+
+      dispatch({ type: crossingActions.GET_SUPERVISION_LIST, payload: groupedSupervisions });
     } else {
-      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getBridgesOfSupervisor: true } });
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getBridgesOfSupervisor: true } });
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
     throw new Error(err as string);
   }
 };

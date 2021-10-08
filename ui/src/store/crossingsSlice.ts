@@ -1,5 +1,5 @@
-import { createSlice, current } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 import ICompany from "../interfaces/ICompany";
 import IFailedQuery from "../interfaces/IFailedQuery";
 import IFile from "../interfaces/IFile";
@@ -11,7 +11,7 @@ import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
-import IBridge from "../interfaces/IBridge";
+import ISupervisionDay from "../interfaces/ISupervisionDay";
 
 interface IStateProps {
   companyList: ICompany[];
@@ -19,7 +19,7 @@ interface IStateProps {
   selectedPermitDetail?: IPermit;
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
-  selectedSupervisorBridgeList?: IBridge[];
+  supervisorSupervisionList: ISupervisionDay[];
   selectedSupervisionDetail?: ISupervision;
   images: IImageItem[];
   networkStatus: INetworkStatus;
@@ -31,7 +31,7 @@ const initialState: IStateProps = {
   selectedPermitDetail: undefined,
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
-  selectedSupervisorBridgeList: undefined,
+  supervisorSupervisionList: [],
   selectedSupervisionDetail: undefined,
   images: [],
   networkStatus: {
@@ -63,9 +63,9 @@ const crossingsSlice = createSlice({
       console.log("GET_ROUTE_BRIDGE", action.payload);
       return { ...state, selectedBridgeDetail: action.payload };
     },
-    GET_BRIDGES_OF_SUPERVISOR: (state, action: PayloadAction<IBridge[]>) => {
-      console.log("GET_BRIDGES_OF_SUPERVISOR", action.payload);
-      return { ...state, selectedSupervisorBridgeList: action.payload };
+    GET_SUPERVISION_LIST: (state, action: PayloadAction<ISupervisionDay[]>) => {
+      console.log("GET_SUPERVISION_LIST", action.payload);
+      return { ...state, supervisorSupervisionList: action.payload };
     },
     GET_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
       console.log("GET_SUPERVISION", action.payload);
