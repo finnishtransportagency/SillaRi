@@ -11,6 +11,6 @@ import java.util.List;
 @Setter
 @ToString
 public class LeluRouteReportsDTO {
-    @Schema(description = "List of the route's supervision report statuses and links to report pdfs when available", example = "1")
-    List<LeluBridgeSupervisonReportStatusDTO> statuses;
+    @Schema(description = "List of the route's supervision report statuses and links to report pdfs when available")
+    List<LeluBridgeSupervisonReportStatusDTO> bridgeSupervisonReportStatuses;
 }

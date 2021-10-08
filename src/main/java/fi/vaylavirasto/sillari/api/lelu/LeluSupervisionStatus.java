@@ -4,6 +4,6 @@ public enum LeluSupervisionStatus {
     PLANNED,
     IN_PROGRESS,
     CANCELED,
-    READY
-
+    READY,
+    SIGNED
 }
