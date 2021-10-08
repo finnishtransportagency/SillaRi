@@ -1,6 +1,5 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.SupervisionMapper;
 import fi.vaylavirasto.sillari.model.SupervisionReportMapper;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
@@ -19,6 +18,8 @@ public class SupervisionReportRepository {
 
     @Autowired
     private DSLContext dsl;
+    @Autowired
+    SupervisionStatusRepository supervisionStatusRepository;
 
     public SupervisionReportModel getSupervisionReport(Integer supervisionId) {
         return dsl.selectFrom(SupervisionReportMapper.supervisionReport)
@@ -29,6 +30,8 @@ public class SupervisionReportRepository {
     public Integer createSupervisionReport(Integer supervisionId) throws DataAccessException {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
+
+            supervisionStatusRepository.insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.IN_PROGRESS);
 
             Record1<Integer> supervisionReportIdResult = ctx.insertInto(SupervisionReportMapper.supervisionReport,
                             SupervisionReportMapper.supervisionReport.SUPERVISION_ID,

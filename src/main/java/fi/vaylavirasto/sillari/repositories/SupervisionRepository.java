@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.SupervisionMapper;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -21,6 +22,8 @@ public class SupervisionRepository {
     private DSLContext dsl;
     @Autowired
     SupervisorRepository supervisorRepository;
+    @Autowired
+    SupervisionStatusRepository supervisionStatusRepository;
 
     public SupervisionModel getSupervisionById(Integer id) {
         return dsl.selectFrom(SupervisionMapper.supervision)
@@ -65,6 +68,8 @@ public class SupervisionRepository {
             supervisionModel.getSupervisors().forEach(supervisorModel -> {
                 supervisorRepository.insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getId(), supervisorModel.getPriority());
             });
+
+            supervisionStatusRepository.insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.PLANNED);
 
             return supervisionId;
         });

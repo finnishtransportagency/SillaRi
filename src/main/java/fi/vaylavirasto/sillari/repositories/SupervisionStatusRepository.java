@@ -31,18 +31,20 @@ public class SupervisionStatusRepository {
     public void insertSupervisionStatus(Integer supervisionId, SupervisionStatusType statusType) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
-
-            ctx.insertInto(SupervisionMapper.supervisionStatus,
-                            SupervisionMapper.supervisionStatus.SUPERVISION_ID,
-                            SupervisionMapper.supervisionStatus.STATUS,
-                            SupervisionMapper.supervisionStatus.TIME
-                    ).values(
-                            supervisionId,
-                            String.valueOf(statusType),
-                            OffsetDateTime.now())
-                    .execute();
+            insertSupervisionStatus(ctx, supervisionId, statusType);
         });
+    }
 
+    public void insertSupervisionStatus(DSLContext ctx, Integer supervisionId, SupervisionStatusType statusType) {
+        ctx.insertInto(SupervisionMapper.supervisionStatus,
+                        SupervisionMapper.supervisionStatus.SUPERVISION_ID,
+                        SupervisionMapper.supervisionStatus.STATUS,
+                        SupervisionMapper.supervisionStatus.TIME
+                ).values(
+                        supervisionId,
+                        String.valueOf(statusType),
+                        OffsetDateTime.now())
+                .execute();
     }
 
 }

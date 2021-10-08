@@ -3,9 +3,12 @@ package fi.vaylavirasto.sillari.service;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SupervisionService {
@@ -55,7 +58,6 @@ public class SupervisionService {
     // The timestamp in PLANNED is the current time, not planned_time which can be updated later.
     public SupervisionModel createSupervision(SupervisionModel supervisionModel) {
         Integer supervisionId = supervisionRepository.createSupervision(supervisionModel);
-        supervisionStatusRepository.insertSupervisionStatus(supervisionId, SupervisionStatusType.PLANNED);
         return getSupervision(supervisionId);
     }
 
@@ -68,7 +70,6 @@ public class SupervisionService {
 
     // Adds the status IN_PROGRESS and creates a new supervision report
     public SupervisionModel startSupervision(Integer supervisionId) {
-        supervisionStatusRepository.insertSupervisionStatus(supervisionId, SupervisionStatusType.IN_PROGRESS);
         supervisionReportRepository.createSupervisionReport(supervisionId);
         return getSupervision(supervisionId);
     }
