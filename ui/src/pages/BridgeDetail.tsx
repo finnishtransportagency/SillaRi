@@ -43,7 +43,15 @@ const BridgeDetail = (): JSX.Element => {
   const { bridge, crossingInstruction = "" } = selectedBridgeDetail || {};
   const { name = "", identifier = "", municipality = "" } = bridge || {};
   const { permitNumber } = selectedPermitDetail || {};
-  const { id: supervisionId, routeTransportId, plannedTime, conformsToPermit = false, currentStatus } = selectedSupervisionDetail || {};
+  const {
+    id: supervisionId,
+    routeTransportId,
+    plannedTime,
+    conformsToPermit = false,
+    currentStatus,
+    supervisorType,
+    supervisors,
+  } = selectedSupervisionDetail || {};
   const supervisionStarted = currentStatus && currentStatus.status !== SupervisionStatus.PLANNED;
 
   useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
@@ -67,7 +75,8 @@ const BridgeDetail = (): JSX.Element => {
       routeTransportId,
       plannedTime,
       conformsToPermit: conforms,
-      // TODO add supervisorID when available
+      supervisorType,
+      supervisors,
     } as ISupervision;
 
     if (!isLoadingSupervision) {

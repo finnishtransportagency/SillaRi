@@ -47,6 +47,7 @@
     "camera" : "Kamera",
     "supervision": "Sillan ylitys",
     "management" : "Kuljetusten hallinta",
+    "transports" : "Kuljetukset",
     "logout": "Kirjaudu ulos"
   },
   "company": {
@@ -188,7 +189,8 @@
     },
     "addTransport":
     {
-      "headerTitle": "Lisää uusi kuljetus",
+      "headerTitleAdd": "Lisää uusi kuljetus",
+      "headerTitleDetail": "Kuljetuksen tiedot",
       "transportPermit": "Kuljetuslupa",
       "validityPeriod": "Voimassaoloaika",
       "transportId": "Kuljetuksen ID",
@@ -197,6 +199,7 @@
       "buttons": {
         "deleteTransport": "Poista kuljetus"
       },
+      "saved": "Tallennettu",
       "routeInfo": {
         "estimatedDepartureDate": "Arvioitu lähtöpäivä",
         "estimatedDepartureTime": "Arvioitu lähtöaika",
@@ -236,6 +239,20 @@
       "stopped": "Tauolla",
       "in_progress": "Liikkeella",
       "arrived": "Päättynyt"
+    }
+  },
+  "transports": {
+    "transportList": {
+      "header" :
+      {
+        "title" : "Kuljetukset"
+      }
+    },
+    "transport": {
+      "header" :
+      {
+        "title" : "Kuljetus"
+      }
     }
   },
   "supervisor": {

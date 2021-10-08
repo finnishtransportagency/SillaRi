@@ -1,31 +1,56 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { IonCol, IonGrid, IonIcon, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
 import { flagOutline } from "ionicons/icons";
 import moment from "moment";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
+import IRoute from "../../interfaces/IRoute";
+import { actions as managementActions } from "../../store/managementSlice";
+import { useTypedSelector } from "../../store/store";
+import { SupervisorType } from "../../utils/constants";
 
-const RouteInfo = (): JSX.Element => {
+interface RouteInfoGridProps {
+  permitRoutes: IRoute[];
+}
+
+const RouteInfoGrid = ({ permitRoutes = [] }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
-  const mockData = {
-    routes: [
-      {
-        id: 3,
-        route: "Kemi Ajoksen satama - Helsinki Vuosaaren satama",
-      },
-      {
-        id: 2,
-        route: "Helsinki Vuosaaren satama - Tornio",
-      },
-      {
-        id: 1,
-        route: "Helsinki Vuosaaren satama - Tornio",
-      },
-    ],
-    departureAddress: "Mansikkanokankatu 17, 94100 Kemi",
-    arrivalAddress: "Komentosilta 1, 00980 Helsinki",
+  const management = useTypedSelector((state) => state.managementReducer);
+  const { modifiedRouteTransportDetail, selectedRouteOption } = management;
+  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
+  const { id: selectedRouteId, departureAddress, arrivalAddress } = selectedRouteOption || {};
+  const { streetaddress: departureStreetAddress } = departureAddress || {};
+  const { streetaddress: arrivalStreetAddress } = arrivalAddress || {};
+
+  const estimatedDeparture = moment(plannedDepartureTime);
+
+  const setPlannedDepartureTime = (dateTime: Date) => {
+    dispatch({ type: managementActions.MODIFY_ROUTE_TRANSPORT, payload: { plannedDepartureTime: dateTime } });
+  };
+
+  const selectRoute = (routeId: number) => {
+    const selectedRoute = permitRoutes.find((route) => route.id === routeId);
+    dispatch({ type: managementActions.SET_SELECTED_ROUTE_OPTION, payload: selectedRoute });
+
+    // Make sure supervision details are available for BridgeGrid
+    const { routeBridges = [] } = selectedRoute || {};
+    const newSupervisions = routeBridges.map((routeBridge) => {
+      const { id: routeBridgeId } = routeBridge;
+      return {
+        plannedTime: moment().toDate(),
+        routeBridgeId,
+        supervisorType: SupervisorType.OWN_SUPERVISOR,
+        supervisors: [],
+      };
+    });
+    dispatch({
+      type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL,
+      payload: { ...modifiedRouteTransportDetail, routeId, route: selectedRoute, supervisions: newSupervisions },
+    });
   };
 
   return (
@@ -40,7 +65,7 @@ const RouteInfo = (): JSX.Element => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <DatePicker value={moment().toDate()} />
+                <DatePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -55,7 +80,7 @@ const RouteInfo = (): JSX.Element => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <TimePicker value={moment().toDate()} />
+                <TimePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -70,14 +95,19 @@ const RouteInfo = (): JSX.Element => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <IonSelect interface="action-sheet" cancelText={t("common.buttons.back")} value={mockData.routes[0].id}>
-                  {mockData.routes.map((routeData, index) => {
-                    const { id, route } = routeData;
+                <IonSelect
+                  interface="action-sheet"
+                  cancelText={t("common.buttons.back")}
+                  value={selectedRouteId}
+                  onIonChange={(e) => selectRoute(e.detail.value)}
+                >
+                  {permitRoutes.map((route, index) => {
+                    const { id, name } = route;
                     const key = `route_${index}`;
 
                     return (
                       <IonSelectOption key={key} value={id}>
-                        {route}
+                        {name}
                       </IonSelectOption>
                     );
                   })}
@@ -96,7 +126,7 @@ const RouteInfo = (): JSX.Element => {
                 <IonText className="headingText">{t("management.addTransport.routeInfo.origin")}</IonText>
               </IonCol>
               <IonCol size="12" size-sm="8">
-                <IonText>{mockData.departureAddress}</IonText>
+                <IonText>{departureStreetAddress}</IonText>
               </IonCol>
             </IonRow>
             <IonRow className="ion-margin">
@@ -104,7 +134,7 @@ const RouteInfo = (): JSX.Element => {
                 <IonText className="headingText">{t("management.addTransport.routeInfo.destination")}</IonText>
               </IonCol>
               <IonCol size="12" size-sm="8">
-                <IonText>{mockData.arrivalAddress}</IonText>
+                <IonText>{arrivalStreetAddress}</IonText>
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -126,4 +156,4 @@ const RouteInfo = (): JSX.Element => {
   );
 };
 
-export default RouteInfo;
+export default RouteInfoGrid;

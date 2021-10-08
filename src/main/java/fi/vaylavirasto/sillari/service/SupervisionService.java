@@ -46,6 +46,11 @@ public class SupervisionService {
         return supervision;
     }
 
+    public List<SupervisorModel> getSupervisors() {
+        // TODO - limit the list of supervisors somehow?
+        return supervisorRepository.getSupervisors();
+    }
+
     // Creates new supervision and adds a new status with type PLANNED
     // The timestamp in PLANNED is the current time, not planned_time which can be updated later.
     public SupervisionModel createSupervision(SupervisionModel supervisionModel) {

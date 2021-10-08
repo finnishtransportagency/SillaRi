@@ -1,6 +1,8 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.api.rest.LeluRouteUploadResponseWrapper;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +14,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import java.nio.charset.StandardCharsets;
+
 
 
 @Service
@@ -34,7 +36,7 @@ public class LeluRouteUploadUtil {
     ResourceLoader resourceLoader;
 
     @Value("${sillari.lelu.routeuploadpath}")
-    private String routeUploadPath;
+    private String routeUploadPathString;
 
     @Value("${spring.datasource.url}")
     private String datasourceUrl;
@@ -50,16 +52,41 @@ public class LeluRouteUploadUtil {
 
         try {
             String connectionString = constructConnectionString(datasourceUrl, datasourceUsername, datasourcePassword);
-            File routeUploadDirectory = new File(routeUploadPath);
-            logger.debug("routeUploadPath: " + routeUploadPath);
+            File routeUploadDirectory = new File(routeUploadPathString);
+            logger.debug("routeUploadPath: " + routeUploadPathString);
             logger.debug("connectionString: " + connectionString);
             if (routeUploadDirectory.exists() && routeUploadDirectory.isDirectory() && routeUploadDirectory.canWrite()) {
                 if (routeId != null && routeId > 0 && file != null && !file.isEmpty()) {
                     // Save the file to the path specified in the config
-                    logger.debug("zip filename " + file.getOriginalFilename());
-                    Path zipFilePath = Paths.get(routeUploadPath, file.getOriginalFilename());
+                    String zipFileName = file.getOriginalFilename();
+                    logger.debug("zip filename " + zipFileName);
+                    Path zipFilePath = Paths.get(routeUploadPathString, zipFileName);
                     logger.debug("zipFilePath: " + zipFilePath.toString());
                     file.transferTo(zipFilePath);
+
+                    //maybe file is base64; try decode
+                    try {
+                        String newFileName = routeUploadPathString+"/"+zipFileName+".zip";
+                        logger.debug("newFileName: " + newFileName);
+                        String fileString = Files.readString(zipFilePath, StandardCharsets.US_ASCII);
+                        FileUtils.writeByteArrayToFile(new File(newFileName), MyAwesomeBase64.getDecoder().decode(fileString));
+                        zipFileName = newFileName;
+                        logger.debug("created fiel in:" + newFileName);
+
+                    }
+                    catch (Exception e){
+                        logger.debug("couldnt base64 decode, prolly isnt encoded. " + e.getMessage());
+                        //add zip extension if missing
+                        if(!zipFileName.toLowerCase().endsWith(".zip")){
+                            String newZipFileName = zipFileName + ".zip";
+                            Path newZipFilePath = Paths.get(routeUploadPathString, newZipFileName);
+                            Files.move(zipFilePath, newZipFilePath);
+                            zipFilePath = newZipFilePath;
+                            zipFileName = newZipFileName;
+                        }
+                    }
+
+
 
                     Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
                     Files.setPosixFilePermissions(zipFilePath, perms);
@@ -69,7 +96,7 @@ public class LeluRouteUploadUtil {
                     InputStream inputStream = r.getInputStream();
 
 
-                    Path fullScriptPath = Paths.get(routeUploadPath, LELU_IMPORT_ROUTE_SCRIPT_FILENAME);
+                    Path fullScriptPath = Paths.get(routeUploadPathString, LELU_IMPORT_ROUTE_SCRIPT_FILENAME);
                     logger.debug("script path: " + fullScriptPath.toString());
                     Files.write(fullScriptPath, inputStream.readAllBytes());
 
@@ -80,8 +107,8 @@ public class LeluRouteUploadUtil {
 
                     // Define a command line process for running the import script
                     ProcessBuilder ogr2ogr = new ProcessBuilder();
-                    ogr2ogr.command("./"+LELU_IMPORT_ROUTE_SCRIPT_FILENAME, file.getOriginalFilename(), routeId.toString(), connectionString);
-                    ogr2ogr.directory(new File(routeUploadPath));
+                    ogr2ogr.command("./"+LELU_IMPORT_ROUTE_SCRIPT_FILENAME, zipFileName, routeId.toString(), connectionString);
+                    ogr2ogr.directory(new File(routeUploadPathString));
                     ogr2ogr.inheritIO();
 
 
@@ -91,7 +118,7 @@ public class LeluRouteUploadUtil {
                     ogr2ogr.command().forEach((String a) -> logger.debug("Script param: " + a));
 
                     //log script out to a temp file
-                    final String tempLogFileName = routeUploadPath+"/routeImport"+routeId+".log";
+                    final String tempLogFileName = routeUploadPathString +"/routeImport"+routeId+".log";
                     File log = new File(tempLogFileName);
                     ogr2ogr.redirectErrorStream(true);/*from w w w .  j  av a 2  s. c o m*/
                     ogr2ogr.redirectOutput(ProcessBuilder.Redirect.appendTo(log));
@@ -170,3 +197,11 @@ public class LeluRouteUploadUtil {
        return "host=" + host + " port="+port+ " dbname="+ dbName +" user="+datasourceUsername +" password="+datasourcePassword;
     }
 }
+
+
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+

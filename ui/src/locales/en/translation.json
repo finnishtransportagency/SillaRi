@@ -46,6 +46,7 @@
     "map" : "Map",
     "camera" : "Camera",
     "management" : "Management",
+    "transports" : "Transports",
     "logout": "Logout"
   },
   "company": {
@@ -113,7 +114,8 @@
     },
     "addTransport":
     {
-      "headerTitle": "Add new transport",
+      "headerTitleAdd": "Add new transport",
+      "headerTitleDetail": "Transport details",
       "transportPermit": "Transport permit",
       "validityPeriod": "Validity period",
       "transportId": "Transport ID",
@@ -122,6 +124,7 @@
       "buttons": {
         "deleteTransport": "Delete transport"
       },
+      "saved": "Saved",
       "routeInfo": {
         "estimatedDepartureDate": "Estimated departure date",
         "estimatedDepartureTime": "Estimated departure time",
@@ -161,6 +164,20 @@
       "stopped": "Stopped",
       "in_progress": "In progress",
       "arrived": "Arrived"
+    }
+  },
+  "transports": {
+    "transportList": {
+      "header" :
+      {
+        "title" : "Transports"
+      }
+    },
+    "transport": {
+      "header" :
+      {
+        "title" : "Transport"
+      }
     }
   }
 }

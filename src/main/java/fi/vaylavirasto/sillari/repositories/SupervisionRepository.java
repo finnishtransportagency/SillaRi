@@ -2,7 +2,6 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.model.SupervisionMapper;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
-import fi.vaylavirasto.sillari.model.SupervisorMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -20,6 +19,8 @@ public class SupervisionRepository {
 
     @Autowired
     private DSLContext dsl;
+    @Autowired
+    SupervisorRepository supervisorRepository;
 
     public SupervisionModel getSupervisionById(Integer id) {
         return dsl.selectFrom(SupervisionMapper.supervision)
@@ -47,11 +48,13 @@ public class SupervisionRepository {
                             SupervisionMapper.supervision.ROUTE_BRIDGE_ID,
                             SupervisionMapper.supervision.ROUTE_TRANSPORT_ID,
                             SupervisionMapper.supervision.PLANNED_TIME,
+                            SupervisionMapper.supervision.SUPERVISOR_TYPE,
                             SupervisionMapper.supervision.CONFORMS_TO_PERMIT
                     ).values(
                             supervisionModel.getRouteBridgeId(),
                             supervisionModel.getRouteTransportId(),
                             supervisionModel.getPlannedTime(),
+                            supervisionModel.getSupervisorType().toString(),
                             false)
                     .returningResult(SupervisionMapper.supervision.ID)
                     .fetchOne(); // Execute and return zero or one record
@@ -60,24 +63,11 @@ public class SupervisionRepository {
             supervisionModel.setId(supervisionId);
 
             supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getId(), supervisorModel.getPriority());
+                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getId(), supervisorModel.getPriority());
             });
 
             return supervisionId;
         });
-    }
-
-    private void insertSupervisionSupervisor(DSLContext ctx, Integer supervisionId, Integer supervisorId, Integer priority) {
-        ctx.insertInto(SupervisorMapper.supervisionSupervisor,
-                        SupervisorMapper.supervisionSupervisor.SUPERVISION_ID,
-                        SupervisorMapper.supervisionSupervisor.SUPERVISOR_ID,
-                        SupervisorMapper.supervisionSupervisor.PRIORITY
-                ).values(
-                        supervisionId,
-                        supervisorId,
-                        priority
-                )
-                .execute();
     }
 
     public void updateSupervision(SupervisionModel supervisionModel) {
@@ -88,8 +78,14 @@ public class SupervisionRepository {
                     .set(SupervisionMapper.supervision.ROUTE_TRANSPORT_ID, supervisionModel.getRouteTransportId())
                     .set(SupervisionMapper.supervision.PLANNED_TIME, supervisionModel.getPlannedTime())
                     .set(SupervisionMapper.supervision.CONFORMS_TO_PERMIT, supervisionModel.getConformsToPermit())
+                    .set(SupervisionMapper.supervision.SUPERVISOR_TYPE, supervisionModel.getSupervisorType().toString())
                     .where(SupervisionMapper.supervision.ID.eq(supervisionModel.getId()))
                     .execute();
+
+            supervisorRepository.deleteSupervisionSupervisors(ctx, supervisionModel.getId());
+            supervisionModel.getSupervisors().forEach(supervisorModel -> {
+                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisorModel.getId(), supervisorModel.getPriority());
+            });
         });
     }
 

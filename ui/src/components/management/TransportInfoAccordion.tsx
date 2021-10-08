@@ -2,32 +2,17 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import CustomAccordion from "../common/CustomAccordion";
+import IPermit from "../../interfaces/IPermit";
 
-const TransportInfo = (): JSX.Element => {
+interface TransportInfoAccordionProps {
+  permit: IPermit;
+}
+
+const TransportInfoAccordion = ({ permit }: TransportInfoAccordionProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const mockData = {
-    vehicles: [
-      {
-        type: "Kuorma-auto",
-        identifier: "ABC-123",
-      },
-      {
-        type: "Vetoauto",
-        identifier: "DEF-456",
-      },
-      {
-        type: "Perävaunu",
-        identifier: "GHI-789",
-      },
-    ],
-    transportTotalMass: 93,
-    transportDimensions: {
-      height: 4.5,
-      width: 3.48,
-      length: 25,
-    },
-  };
+  const { transportDimensions, transportTotalMass: totalMass = 0 } = permit || {};
+  const { height = 0, width = 0, length = 0 } = transportDimensions || {};
 
   return (
     <CustomAccordion
@@ -56,17 +41,17 @@ const TransportInfo = (): JSX.Element => {
                         <IonGrid className="ion-no-padding">
                           <IonRow>
                             <IonCol>
-                              <IonText>{`${t("management.addTransport.transportInfo.height")} ${mockData.transportDimensions.height} m`}</IonText>
+                              <IonText>{`${t("management.addTransport.transportInfo.height")} ${height} m`}</IonText>
                             </IonCol>
                           </IonRow>
                           <IonRow>
                             <IonCol>
-                              <IonText>{`${t("management.addTransport.transportInfo.width")} ${mockData.transportDimensions.width} m`}</IonText>
+                              <IonText>{`${t("management.addTransport.transportInfo.width")} ${width} m`}</IonText>
                             </IonCol>
                           </IonRow>
                           <IonRow>
                             <IonCol>
-                              <IonText>{`${t("management.addTransport.transportInfo.length")} ${mockData.transportDimensions.length} m`}</IonText>
+                              <IonText>{`${t("management.addTransport.transportInfo.length")} ${length} m`}</IonText>
                             </IonCol>
                           </IonRow>
                         </IonGrid>
@@ -82,7 +67,7 @@ const TransportInfo = (): JSX.Element => {
                         <IonText className="headingText">{t("management.addTransport.transportInfo.totalMass")}</IonText>
                       </IonCol>
                       <IonCol size="12" size-sm="6">
-                        <IonText>{`${mockData.transportTotalMass} t`}</IonText>
+                        <IonText>{`${totalMass} t`}</IonText>
                       </IonCol>
                     </IonRow>
                   </IonGrid>
@@ -96,4 +81,4 @@ const TransportInfo = (): JSX.Element => {
   );
 };
 
-export default TransportInfo;
+export default TransportInfoAccordion;

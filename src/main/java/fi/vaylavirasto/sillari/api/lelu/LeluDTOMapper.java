@@ -15,7 +15,8 @@ public interface LeluDTOMapper {
             @Mapping(target="leluVersion", source="dto.version"),
             @Mapping(target="leluLastModifiedDate", source="dto.lastModifiedDate"),
             @Mapping(target="validStartDate", source="dto.validFrom"),
-            @Mapping(target="validEndDate", source="dto.validTo")
+            @Mapping(target="validEndDate", source="dto.validTo"),
+
     })
     PermitModel fromDTOToModel(LeluPermitDTO dto);
 
@@ -36,30 +37,10 @@ public interface LeluDTOMapper {
             @Mapping(target = "id", ignore = true),
             @Mapping(target = "leluId", source = "dto.id"),
             @Mapping(target = "routeBridges", source = "dto.bridges"),
-            @Mapping(expression = "java(splitAddress1(leluAddressDTO.getAddress()))", target = "departureAddress.street"),
-            @Mapping(expression = "java(splitAddress2(leluAddressDTO.getAddress(),0))", target = "departureAddress.postalcode"),
-            @Mapping(expression = "java(splitAddress2(leluAddressDTO.getAddress(),1))", target = "departureAddress.city"),
-            @Mapping(expression = "java(splitAddress1(leluAddressDTO.getAddress()))", target = "arrivalAddress.street"),
-            @Mapping(expression = "java(splitAddress2(leluAddressDTO.getAddress(),0))", target = "arrivalAddress.postalcode"),
-            @Mapping(expression = "java(splitAddress2(leluAddressDTO.getAddress(),1))", target = "arrivalAddress.city")
     })
+
+
     RouteModel fromDTOToModel(LeluRouteDTO dto);
-
-    default String splitAddress1(String address) {
-        try {
-            return address.split(",")[0];
-        } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
-            return "";
-        }
-    }
-
-    default String splitAddress2(String address, int partNumber) {
-        try {
-            return address.split(",")[1].trim().split(" ")[partNumber];
-        } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
-            return "";
-        }
-    }
 
     @Mappings({
             @Mapping(target = "bridge.oid", source = "dto.oid"),
@@ -69,5 +50,11 @@ public interface LeluDTOMapper {
             @Mapping(target = "crossingInstruction", source = "dto.additionalInfo")
     })
     RouteBridgeModel fromDTOToModel(LeluBridgeDTO dto);
+
+    @Mappings({
+            @Mapping(target = "streetaddress", source = "address")
+    })
+    AddressModel fromDTOToModel(LeluAddressDTO dto);
+
 
 }

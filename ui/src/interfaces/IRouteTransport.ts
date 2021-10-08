@@ -6,8 +6,8 @@ export default interface IRouteTransport {
   id: number;
   routeId: number;
   plannedDepartureTime: Date;
-  currentStatus: IRouteTransportStatus;
-  statusHistory: IRouteTransportStatus[];
-  route: IRoute;
-  supervisions: ISupervision[];
+  currentStatus?: IRouteTransportStatus;
+  statusHistory?: IRouteTransportStatus[];
+  route?: IRoute;
+  supervisions?: ISupervision[];
 }
