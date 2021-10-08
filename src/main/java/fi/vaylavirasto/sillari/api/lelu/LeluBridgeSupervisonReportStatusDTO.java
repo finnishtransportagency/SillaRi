@@ -5,12 +5,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @ToString
 public class LeluBridgeSupervisonReportStatusDTO {
     @Schema(description = "Status of the supervision, those with status 'SIGNED' have report available from /getSupervisionReport ", example = "SINGNED")
     LeluSupervisionStatus status;
+    @Schema(description = "When signed by supervisor", example = "2021-05-26T08:02:36.000Z")
+    private LocalDateTime signedTimeStamp;
     @Schema(description = "Bridge crossing supervisor ")
     LeluSupervisor supervisor;
     @Schema(description = "The supervised bridge")
