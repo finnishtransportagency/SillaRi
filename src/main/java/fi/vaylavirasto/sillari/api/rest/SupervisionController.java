@@ -50,6 +50,19 @@ public class SupervisionController {
         }
     }
 
+    @Operation(summary = "Get supervisions of supervisor")
+    @GetMapping(value = "/getsupervisionsofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getSupervisionsOfSupervisor(@RequestParam String username) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionsOfSupervisor");
+        try {
+            List<SupervisionModel> supervisions = supervisionService.getSupervisionsOfSupervisor(username);
+            return ResponseEntity.ok().body(supervisions != null ? supervisions : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Get supervisors")
     @GetMapping(value = "/getsupervisors", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")

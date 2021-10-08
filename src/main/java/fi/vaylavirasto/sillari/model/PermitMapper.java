@@ -21,26 +21,22 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
     @Nullable
     @Override
     public PermitModel map(Record record) {
-        PermitModel permitModel = new PermitModel();
-        permitModel.setId(record.get(permit.ID));
-        permitModel.setCompanyId(record.get(permit.COMPANY_ID));
-        permitModel.setPermitNumber(record.get(permit.PERMIT_NUMBER));
-        permitModel.setLeluVersion(record.get(permit.LELU_VERSION));
-        permitModel.setLeluLastModifiedDate(record.get(permit.LELU_LAST_MODIFIED_DATE));
-        permitModel.setValidStartDate(record.get(permit.VALID_START_DATE));
-        permitModel.setValidEndDate(record.get(permit.VALID_END_DATE));
-        permitModel.setTransportTotalMass(record.get(permit.TRANSPORT_TOTAL_MASS));
-        permitModel.setAdditionalDetails(record.get(permit.ADDITIONAL_DETAILS));
-        permitModel.setRoutes(new ArrayList<>());
+        SimplePermitMapper simplePermitMapper = new SimplePermitMapper();
+        PermitModel permitModel = simplePermitMapper.map(record);
 
-        TransportDimensionsMapper transportDimensionsMapper = new TransportDimensionsMapper();
-        permitModel.setTransportDimensions(transportDimensionsMapper.map(record));
+        if (permitModel != null) {
+            permitModel.setRoutes(new ArrayList<>());
 
-        UnloadedTransportDimensionsMapper unloadedTransportDimensionsMapper = new UnloadedTransportDimensionsMapper();
-        permitModel.setUnloadedTransportDimensions(unloadedTransportDimensionsMapper.map(record));
+            TransportDimensionsMapper transportDimensionsMapper = new TransportDimensionsMapper();
+            permitModel.setTransportDimensions(transportDimensionsMapper.map(record));
 
-        AxleChartMapper axleChartMapper = new AxleChartMapper();
-        permitModel.setAxleChart(axleChartMapper.map(record));
+            UnloadedTransportDimensionsMapper unloadedTransportDimensionsMapper = new UnloadedTransportDimensionsMapper();
+            permitModel.setUnloadedTransportDimensions(unloadedTransportDimensionsMapper.map(record));
+
+            AxleChartMapper axleChartMapper = new AxleChartMapper();
+            permitModel.setAxleChart(axleChartMapper.map(record));
+        }
+
         return permitModel;
     }
 }

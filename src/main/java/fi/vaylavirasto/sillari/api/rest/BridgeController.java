@@ -37,17 +37,4 @@ public class BridgeController {
         }
     }
 
-    @Operation(summary = "Get bridges of supervisor")
-    @GetMapping(value = "/getbridgesofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getBridgesOfSupervisor(@RequestParam Integer supervisorId) {
-        ServiceMetric serviceMetric = new ServiceMetric("BridgeController", "getBridgesOfSupervisor");
-        try {
-            List<BridgeModel> bridges = bridgeService.getBridgesOfSupervisor(supervisorId);
-            return ResponseEntity.ok().body(bridges != null ? bridges : new EmptyJsonResponse());
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
 }

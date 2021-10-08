@@ -49,6 +49,11 @@ public class SupervisionService {
         return supervision;
     }
 
+
+    public List<SupervisionModel> getSupervisionsOfSupervisor(String username) {
+        return supervisionRepository.getSupervisionsBySupervisorUsername(username);
+    }
+
     public List<SupervisorModel> getSupervisors() {
         // TODO - limit the list of supervisors somehow?
         return supervisorRepository.getSupervisors();

@@ -2,8 +2,10 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.model.SupervisionModel;
-import fi.vaylavirasto.sillari.repositories.*;
+import fi.vaylavirasto.sillari.repositories.BridgeRepository;
+import fi.vaylavirasto.sillari.repositories.RouteBridgeRepository;
+import fi.vaylavirasto.sillari.repositories.RouteRepository;
+import fi.vaylavirasto.sillari.repositories.SupervisionStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,12 +34,6 @@ public class RouteService {
                 routeBridgeModels.forEach(routeBridgeModel -> {
                     String bridgeGeoJson = bridgeRepository.getBridgeGeoJson(routeBridgeModel.getBridge().getId());
                     routeBridgeModel.getBridge().setGeojson(bridgeGeoJson);
-
-                    SupervisionModel supervision = routeBridgeModel.getSupervision();
-                    if (supervision != null) {
-                        // Sets also current status and status timestamps
-                        supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
-                    }
                 });
             }
             routeModel.setRouteBridges(routeBridgeModels);

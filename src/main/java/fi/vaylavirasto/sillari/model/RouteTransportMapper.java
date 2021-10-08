@@ -10,7 +10,7 @@ import org.jooq.RecordMapper;
 import java.util.ArrayList;
 
 public class RouteTransportMapper implements RecordMapper<Record, RouteTransportModel> {
-    public static final RouteTransport transport = Tables.ROUTE_TRANSPORT.as("rt");
+    public static final RouteTransport transport = Tables.ROUTE_TRANSPORT.as("rtr");
     public static final Route route = Tables.ROUTE.as("ro");
     public static final Permit permit = Tables.PERMIT.as("pe");
 

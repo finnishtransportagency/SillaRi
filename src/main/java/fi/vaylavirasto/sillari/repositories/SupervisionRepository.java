@@ -1,8 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.SupervisionMapper;
-import fi.vaylavirasto.sillari.model.SupervisionModel;
-import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -26,20 +24,34 @@ public class SupervisionRepository {
     SupervisionStatusRepository supervisionStatusRepository;
 
     public SupervisionModel getSupervisionById(Integer id) {
-        return dsl.selectFrom(SupervisionMapper.supervision)
-                .where(SupervisionMapper.supervision.ID.eq(id))
-                .fetchOne(new SupervisionMapper());
+        return dsl.selectFrom(SimpleSupervisionMapper.supervision)
+                .where(SimpleSupervisionMapper.supervision.ID.eq(id))
+                .fetchOne(new SimpleSupervisionMapper());
     }
 
+    // FIXME could return list
     public SupervisionModel getSupervisionByRouteBridgeId(Integer routeBridgeId) {
-        return dsl.selectFrom(SupervisionMapper.supervision)
-                .where(SupervisionMapper.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
-                .fetchOne(new SupervisionMapper());
+        return dsl.selectFrom(SimpleSupervisionMapper.supervision)
+                .where(SimpleSupervisionMapper.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
+                .fetchOne(new SimpleSupervisionMapper());
     }
 
     public List<SupervisionModel> getSupervisionsByRouteTransportId(Integer routeTransportId) {
+        return dsl.select().from(SimpleSupervisionMapper.supervision)
+                .where(SimpleSupervisionMapper.supervision.ROUTE_TRANSPORT_ID.eq(routeTransportId))
+                .fetch(new SimpleSupervisionMapper());
+    }
+
+    public List<SupervisionModel> getSupervisionsBySupervisorUsername(String username) {
         return dsl.select().from(SupervisionMapper.supervision)
-                .where(SupervisionMapper.supervision.ROUTE_TRANSPORT_ID.eq(routeTransportId))
+                .innerJoin(SupervisionMapper.supervisionSupervisor).on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionSupervisor.SUPERVISION_ID))
+                .innerJoin(SupervisionMapper.routeTransport).on(SupervisionMapper.supervision.ROUTE_TRANSPORT_ID.eq(SupervisionMapper.routeTransport.ID))
+                .innerJoin(SupervisionMapper.routeBridge).on(SupervisionMapper.supervision.ROUTE_BRIDGE_ID.eq(SupervisionMapper.routeBridge.ID))
+                .innerJoin(SupervisionMapper.bridge).on(SupervisionMapper.routeBridge.BRIDGE_ID.eq(SupervisionMapper.bridge.ID))
+                .innerJoin(SupervisionMapper.route).on(SupervisionMapper.routeBridge.ROUTE_ID.eq(SupervisionMapper.route.ID))
+                .innerJoin(SupervisionMapper.permit).on(SupervisionMapper.route.PERMIT_ID.eq(SupervisionMapper.permit.ID))
+                .where(SupervisionMapper.supervisionSupervisor.USERNAME.eq(username))
+                .orderBy(SupervisionMapper.supervision.PLANNED_TIME)
                 .fetch(new SupervisionMapper());
     }
 
@@ -47,19 +59,19 @@ public class SupervisionRepository {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
-            Record1<Integer> supervisionIdResult = ctx.insertInto(SupervisionMapper.supervision,
-                            SupervisionMapper.supervision.ROUTE_BRIDGE_ID,
-                            SupervisionMapper.supervision.ROUTE_TRANSPORT_ID,
-                            SupervisionMapper.supervision.PLANNED_TIME,
-                            SupervisionMapper.supervision.SUPERVISOR_TYPE,
-                            SupervisionMapper.supervision.CONFORMS_TO_PERMIT
+            Record1<Integer> supervisionIdResult = ctx.insertInto(SimpleSupervisionMapper.supervision,
+                            SimpleSupervisionMapper.supervision.ROUTE_BRIDGE_ID,
+                            SimpleSupervisionMapper.supervision.ROUTE_TRANSPORT_ID,
+                            SimpleSupervisionMapper.supervision.PLANNED_TIME,
+                            SimpleSupervisionMapper.supervision.SUPERVISOR_TYPE,
+                            SimpleSupervisionMapper.supervision.CONFORMS_TO_PERMIT
                     ).values(
                             supervisionModel.getRouteBridgeId(),
                             supervisionModel.getRouteTransportId(),
                             supervisionModel.getPlannedTime(),
                             supervisionModel.getSupervisorType().toString(),
                             false)
-                    .returningResult(SupervisionMapper.supervision.ID)
+                    .returningResult(SimpleSupervisionMapper.supervision.ID)
                     .fetchOne(); // Execute and return zero or one record
 
             Integer supervisionId = supervisionIdResult != null ? supervisionIdResult.value1() : null;
@@ -79,12 +91,12 @@ public class SupervisionRepository {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
-            ctx.update(SupervisionMapper.supervision)
-                    .set(SupervisionMapper.supervision.ROUTE_TRANSPORT_ID, supervisionModel.getRouteTransportId())
-                    .set(SupervisionMapper.supervision.PLANNED_TIME, supervisionModel.getPlannedTime())
-                    .set(SupervisionMapper.supervision.CONFORMS_TO_PERMIT, supervisionModel.getConformsToPermit())
-                    .set(SupervisionMapper.supervision.SUPERVISOR_TYPE, supervisionModel.getSupervisorType().toString())
-                    .where(SupervisionMapper.supervision.ID.eq(supervisionModel.getId()))
+            ctx.update(SimpleSupervisionMapper.supervision)
+                    .set(SimpleSupervisionMapper.supervision.ROUTE_TRANSPORT_ID, supervisionModel.getRouteTransportId())
+                    .set(SimpleSupervisionMapper.supervision.PLANNED_TIME, supervisionModel.getPlannedTime())
+                    .set(SimpleSupervisionMapper.supervision.CONFORMS_TO_PERMIT, supervisionModel.getConformsToPermit())
+                    .set(SimpleSupervisionMapper.supervision.SUPERVISOR_TYPE, supervisionModel.getSupervisorType().toString())
+                    .where(SimpleSupervisionMapper.supervision.ID.eq(supervisionModel.getId()))
                     .execute();
 
             supervisorRepository.deleteSupervisionSupervisors(ctx, supervisionModel.getId());

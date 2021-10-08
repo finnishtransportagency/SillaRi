@@ -25,6 +25,10 @@ public class SupervisionModel {
     private OffsetDateTime cancelledTime; // First CANCELLED in statusHistory
     private OffsetDateTime finishedTime; // First FINISHED in statusHistory
 
+    // Parents
+    private RouteBridgeModel routeBridge;
+    private RouteTransportModel routeTransport;
+
     public void setStatusHistory(List<SupervisionStatusModel> statusHistory) {
         this.statusHistory = statusHistory;
 

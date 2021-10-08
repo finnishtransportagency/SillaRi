@@ -1,31 +1,48 @@
 package fi.vaylavirasto.sillari.model;
 
-import fi.vaylavirasto.sillari.model.tables.Supervision;
-import fi.vaylavirasto.sillari.model.tables.SupervisionStatus;
+import fi.vaylavirasto.sillari.model.tables.*;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
-import java.util.ArrayList;
-
-public class SupervisionMapper implements RecordMapper<Record, SupervisionModel> {
+public class SupervisionMapper implements RecordMapper<Record,SupervisionModel> {
+    public static final Permit permit = Tables.PERMIT.as("pe");
+    public static final Route route = Tables.ROUTE.as("ro");
+    public static final Address arrivalAddress = Tables.ADDRESS.as("aa");
+    public static final Address departureAddress = Tables.ADDRESS.as("da");
+    public static final RouteBridge routeBridge = Tables.ROUTE_BRIDGE.as("rbr");
+    public static final Bridge bridge = Tables.BRIDGE.as("br");
+    public static final RouteTransport routeTransport = Tables.ROUTE_TRANSPORT.as("rtr");
     public static final Supervision supervision = Tables.SUPERVISION.as("sn");
-    public static final SupervisionStatus supervisionStatus = Tables.SUPERVISION_STATUS.as("sns");
+    public static final SupervisionSupervisor supervisionSupervisor = Tables.SUPERVISION_SUPERVISOR.as("ss");
 
     @Nullable
     @Override
     public SupervisionModel map(Record record) {
-        SupervisionModel supervisionModel = new SupervisionModel();
-        supervisionModel.setId(record.get(supervision.ID));
-        supervisionModel.setRouteBridgeId(record.get(supervision.ROUTE_BRIDGE_ID));
-        supervisionModel.setRouteTransportId(record.get(supervision.ROUTE_TRANSPORT_ID));
-        supervisionModel.setPlannedTime(record.get(supervision.PLANNED_TIME));
-        supervisionModel.setConformsToPermit(record.get(supervision.CONFORMS_TO_PERMIT));
-        supervisionModel.setSupervisorType(record.get(supervision.SUPERVISOR_TYPE, new SupervisorTypeConverter(String.class, SupervisorType.class)));
+        SimplePermitMapper permitMapper = new SimplePermitMapper();
+        PermitModel permitModel = permitMapper.map(record);
 
-        supervisionModel.setStatusHistory(new ArrayList<>());
-        supervisionModel.setSupervisors(new ArrayList<>());
-        supervisionModel.setImages(new ArrayList<>());
+        RouteMapper routeMapper = new RouteMapper();
+        RouteModel routeModel = routeMapper.map(record);
+        if (routeModel != null) {
+            routeModel.setPermit(permitModel);
+        }
+
+        RouteBridgeMapper routeBridgeMapper = new RouteBridgeMapper();
+        RouteBridgeModel routeBridgeModel = routeBridgeMapper.map(record);
+        if (routeBridgeModel != null) {
+            routeBridgeModel.setRoute(routeModel);
+        }
+
+        RouteTransportMapper routeTransportMapper = new RouteTransportMapper();
+        RouteTransportModel routeTransportModel = routeTransportMapper.map(record);
+
+        SimpleSupervisionMapper supervisionMapper = new SimpleSupervisionMapper();
+        SupervisionModel supervisionModel = supervisionMapper.map(record);
+        if (supervisionModel != null) {
+            supervisionModel.setRouteBridge(routeBridgeModel);
+            supervisionModel.setRouteTransport(routeTransportModel);
+        }
 
         return supervisionModel;
     }

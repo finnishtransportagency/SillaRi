@@ -29,21 +29,4 @@ public class BridgeService {
         return bridgeModel;
     }
 
-    public List<BridgeModel> getBridgesOfSupervisor(Integer supervisorId) {
-        List<BridgeModel> bridges = bridgeRepository.getBridgesOfSupervisor(supervisorId);
-        for (BridgeModel bridge : bridges) {
-            List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridgesOfBridge(bridge.getId());
-            bridge.setRouteBridges(routeBridges);
-
-            for (RouteBridgeModel routeBridge : routeBridges) {
-                SupervisionModel supervision = routeBridge.getSupervision();
-                if (supervision != null) {
-                    // Sets also current status and main status timestamps
-                    supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
-                }
-            }
-        }
-        return bridges;
-    }
-
 }

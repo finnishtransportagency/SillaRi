@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.SupervisionMapper;
+import fi.vaylavirasto.sillari.model.SimpleSupervisionMapper;
 import fi.vaylavirasto.sillari.model.SupervisionStatusMapper;
 import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
@@ -36,10 +36,10 @@ public class SupervisionStatusRepository {
     }
 
     public void insertSupervisionStatus(DSLContext ctx, Integer supervisionId, SupervisionStatusType statusType) {
-        ctx.insertInto(SupervisionMapper.supervisionStatus,
-                        SupervisionMapper.supervisionStatus.SUPERVISION_ID,
-                        SupervisionMapper.supervisionStatus.STATUS,
-                        SupervisionMapper.supervisionStatus.TIME
+        ctx.insertInto(SimpleSupervisionMapper.supervisionStatus,
+                        SimpleSupervisionMapper.supervisionStatus.SUPERVISION_ID,
+                        SimpleSupervisionMapper.supervisionStatus.STATUS,
+                        SimpleSupervisionMapper.supervisionStatus.TIME
                 ).values(
                         supervisionId,
                         String.valueOf(statusType),

@@ -49,14 +49,4 @@ public class BridgeRepository {
         return resultMap;
     }
 
-    public List<BridgeModel> getBridgesOfSupervisor(Integer supervisorId) {
-        return dsl.select().from(BridgeMapper.bridge)
-                .innerJoin(RouteBridgeMapper.routebridge).on(BridgeMapper.bridge.ID.eq(RouteBridgeMapper.routebridge.BRIDGE_ID))
-                .leftJoin(RouteBridgeMapper.supervision).on(RouteBridgeMapper.routebridge.ID.eq(RouteBridgeMapper.supervision.ROUTE_BRIDGE_ID))
-                .leftJoin(RouteBridgeMapper.supervisionSupervisor).on(RouteBridgeMapper.supervision.ID.eq(RouteBridgeMapper.supervisionSupervisor.SUPERVISION_ID))
-                .where(RouteBridgeMapper.supervisionSupervisor.SUPERVISOR_ID.eq(supervisorId))
-                .orderBy(RouteBridgeMapper.supervision.PLANNED_TIME)
-                .fetch(new BridgeMapper());
-    }
-
 }
