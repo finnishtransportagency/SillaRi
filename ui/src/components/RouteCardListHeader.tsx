@@ -5,7 +5,6 @@ import { IonItem, IonLabel, IonText } from "@ionic/react";
 import { document } from "ionicons/icons";
 import IPermit from "../interfaces/IPermit";
 import { DATE_FORMAT } from "../utils/constants";
-import "./RouteCardListHeader.css";
 
 interface RouteCardListHeaderProps {
   permit: IPermit;
@@ -16,7 +15,7 @@ const RouteCardListHeader = ({ permit }: RouteCardListHeaderProps): JSX.Element 
   const { permitNumber, validStartDate, validEndDate } = permit;
 
   return (
-    <IonItem className="routeListHeader" detail detailIcon={document} lines="none">
+    <IonItem className="header itemIcon" detail detailIcon={document} lines="none">
       <IonLabel>
         <IonLabel className="headingText">{permitNumber}</IonLabel>
         <IonLabel>

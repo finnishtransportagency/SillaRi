@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { IonItem, IonLabel } from "@ionic/react";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import BridgeCard from "./BridgeCard";
-import "./BridgeCardList.css";
 
 interface BridgeCardListProps {
   routeBridges: IRouteBridge[];
@@ -14,7 +13,7 @@ const BridgeCardList = ({ routeBridges }: BridgeCardListProps): JSX.Element => {
 
   return (
     <>
-      <IonItem className="bridgeListHeader" lines="none">
+      <IonItem className="header" lines="none">
         <IonLabel>
           <IonLabel className="headingText">{t("route.bridgesToSupervise")}</IonLabel>
         </IonLabel>

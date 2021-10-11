@@ -1,15 +1,3 @@
-.crossingLabelBold {
-  font-weight: bold;
-}
-
-/*
-.crossingLabel {
-}
-
-.crossingTextArea {
-}
-*/
-
 .crossingHiddenRow {
   visibility: hidden;
   display: none;
@@ -28,8 +16,17 @@
   color: #20c933;
 }
 
+.header {
+  --background: var(--ion-color-light);
+}
+
 .headingText {
   font-weight: bold;
+}
+
+.itemIcon {
+  --detail-icon-color: var(--ion-color-primary);
+  --detail-icon-opacity: 1;
 }
 
 .linkText {

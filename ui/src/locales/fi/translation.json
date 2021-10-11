@@ -1,10 +1,9 @@
 {
   "main": {
-    "header" :
-    {
-      "title" : "SillaRi"
+    "header": {
+      "title": "SillaRi"
     },
-    "title" : "SillaRi",
+    "title": "SillaRi",
     "content": "Tervetuloa!",
     "tab": {
       "transportCompanies": "Kuljetusyritykset",
@@ -15,22 +14,18 @@
   "map": {
     "attribution": "Aineisto"
   },
-  "settings" :
-  {
-    "header" :
-    {
-      "title" : "Asetukset"
+  "settings": {
+    "header": {
+      "title": "Asetukset"
     },
-    "language" :
-    {
-      "label" : "Kieli",
-      "fi" : "Suomi",
-      "sv" : "Svenska",
-      "en" : "English"
+    "language": {
+      "label": "Kieli",
+      "fi": "Suomi",
+      "sv": "Svenska",
+      "en": "English"
     }
   },
-  "camera" :
-  {
+  "camera": {
     "takePhotoButtonLabel": "Ota kuva",
     "listLabel": "Kuvat",
     "listLabelPcs": "kpl",
@@ -38,16 +33,15 @@
       "deleteButtonLabel": "Poista"
     }
   },
-  "SidebarMenu" :
-  {
-    "title" : "SillaRi",
-    "mainPage" : "Pääsivu",
-    "settings" : "Asetukset",
-    "map" : "Kartta",
-    "camera" : "Kamera",
+  "SidebarMenu": {
+    "title": "SillaRi",
+    "mainPage": "Pääsivu",
+    "settings": "Asetukset",
+    "map": "Kartta",
+    "camera": "Kamera",
     "supervision": "Sillan ylitys",
-    "management" : "Kuljetusten hallinta",
-    "transports" : "Kuljetukset",
+    "management": "Kuljetusten hallinta",
+    "transports": "Kuljetukset",
     "logout": "Kirjaudu ulos"
   },
   "company": {
@@ -89,63 +83,58 @@
     "location": "Sijainti",
     "crossingInstructions": {
       "title": "Ylitysohje",
-      "documentingHeader" : "Dokumentointi",
-      "documentingParagraph" : "Valvoja seuraa ... jne todo"
+      "documentingHeader": "Dokumentointi",
+      "documentingParagraph": "Valvoja seuraa ... jne todo"
     },
     "trafficSupervisors": {
       "title": "Liikenteenohjaajat"
     },
     "permitNumber": "Lupanumero",
-    "conformsToPermit" : "Kuljetus on luvanmukainen",
-    "startSupervision" : "Aloita valvonta",
-    "denyCrossing" : "Kuljetus ei voi ylittää siltaa",
-    "supervisionMissing" : "Sillanvalvontaa ei ole vielä suunniteltu"
+    "conformsToPermit": "Kuljetus on luvanmukainen",
+    "startSupervision": "Aloita valvonta",
+    "denyCrossing": "Kuljetus ei voi ylittää siltaa",
+    "supervisionMissing": "Sillanvalvontaa ei ole vielä suunniteltu"
   },
-  "denyCrossing" :
-  {
-    "cantCross" : "Kuljetus ei voi ylittää siltaa",
-    "whyCantCross" : "Miksi kuljetus ei voi ylittää siltaa",
-    "back" : "Takaisin",
-    "send" : "Lähetä"
+  "denyCrossing": {
+    "cantCross": "Kuljetus ei voi ylittää siltaa",
+    "whyCantCross": "Miksi kuljetus ei voi ylittää siltaa",
+    "back": "Takaisin",
+    "send": "Lähetä"
   },
-  "supervision":
-  {
-    "title" : "Sillan valvonta",
-    "permitNumber" : "LUPANUMERO:",
-    "supervisionStarted": "Valvonta aloitettu:",
-    "bridgeName": "Silta",
-    "crossingInstructions" : "Ylitysohje",
-    "photosDrivingLine" : "Valokuvat ja ajolinja",
-    "report":
-    {
-      "observations" : "Havainnot",
-      "drivingLineOk" : "Ajolinjaa on noudatettu",
-      "drivingLineInfo" : "Miksi ajolinjaa ei hyväksytä?",
-      "speedLimitOk" : "Ajonopeus on hyväksytty",
+  "supervision": {
+    "title": "Sillan valvonta",
+    "permitNumber": "Lupanumero",
+    "supervisionStarted": "Valvonta aloitettu",
+    "bridgeName": "Sillan tiedot",
+    "crossingInstructions": "Ylitysohje",
+    "photosDrivingLine": "Valokuvat ja ajolinja",
+    "report": {
+      "observations": "Havainnot",
+      "drivingLineOk": "Ajolinjaa on noudatettu",
+      "drivingLineInfo": "Miksi ajolinjaa ei hyväksytä?",
+      "speedLimitOk": "Ajonopeus on hyväksytty",
       "speedLimitInfo": "Miksi ajonopeutta ei hyväksytä?",
-      "anomalies" : "Poikkeavia havaintoja",
-      "anomaliesInfo" : "Tarkenna poikkeavia havaintoja:",
-      "surfaceDamage" : "Päällystevaurio",
+      "anomalies": "Poikkeavia havaintoja",
+      "anomaliesInfo": "Tarkenna poikkeavia havaintoja:",
+      "surfaceDamage": "Päällystevaurio",
       "jointDamage": "Liikuntasauman rikkoutuminen",
       "bendOrDisplacement": "Pysyvä taipuma tai muu siirtymä",
-      "otherObservations" : "Jotain muuta, mitä?",
-      "anomaliesDescription" : "Kuvaile poikkeavia havaintoja",
-      "additionalInfo" : "Lisätiedot"
+      "otherObservations": "Jotain muuta, mitä?",
+      "anomaliesDescription": "Kuvaile poikkeavia havaintoja",
+      "additionalInfo": "Lisätiedot",
+      "placeholder": "Lisää tekstiä tähän"
     },
-    "answer" :
-    {
-      "yes" : "Kyllä",
-      "no" : "Ei"
+    "answer": {
+      "yes": "Kyllä",
+      "no": "Ei"
     },
-    "buttons" :
-    {
-      "takePhotos" : "Ota valokuvia",
-      "drivingLine" : "Tuo ajolinja",
-      "exit" : "Poistu",
-      "summary" : "Yhteenveto"
+    "buttons": {
+      "takePhotos": "Ota valokuvia",
+      "drivingLine": "Tuo ajolinja",
+      "cancel": "Keskeytä",
+      "summary": "Siirry yhteenvetoon"
     },
-    "summary":
-    {
+    "summary": {
       "title": "Yhteenveto",
       "bridgeName": "",
       "speedLimit": "Ajonopeus",
@@ -169,12 +158,10 @@
       "back": "Peru",
       "cancel": "Peruuta",
       "save": "Tallenna"
-  }
+    }
   },
-  "management":
-  {
-    "companySummary":
-    {
+  "management": {
+    "companySummary": {
       "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
       "transports": "Kuljetuksia",
       "addTransportButtonLabel": "Lisää kuljetus",
@@ -201,8 +188,7 @@
         "modify": "Muokkaa"
       }
     },
-    "addTransport":
-    {
+    "addTransport": {
       "headerTitleAdd": "Lisää uusi kuljetus",
       "headerTitleDetail": "Kuljetuksen tiedot",
       "transportPermit": "Kuljetuslupa",
@@ -257,18 +243,16 @@
   },
   "transports": {
     "transportCodeInput": {
-      "header" :
-      {
-        "title" : "Kuljetukset"
+      "header": {
+        "title": "Kuljetukset"
       },
-      "inputLabel" : "Anna kuljetuksen koodi",
-      "inputPlaceholder" : "Kuljetuksen koodi",
-      "submitButtonLabel" : "Lähetä koodi"
+      "inputLabel": "Anna kuljetuksen koodi",
+      "inputPlaceholder": "Kuljetuksen koodi",
+      "submitButtonLabel": "Lähetä koodi"
     },
     "transport": {
-      "header" :
-      {
-        "title" : "Kuljetus"
+      "header": {
+        "title": "Kuljetus"
       }
     }
   }

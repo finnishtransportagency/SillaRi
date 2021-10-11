@@ -1,33 +1,22 @@
-import {
-  IonButton,
-  IonCard,
-  IonCheckbox,
-  IonCol,
-  IonContent,
-  IonGrid,
-  IonItem,
-  IonLabel,
-  IonPage,
-  IonRadio,
-  IonRadioGroup,
-  IonRouterLink,
-  IonRow,
-  IonText,
-  IonTextarea,
-} from "@ionic/react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
+import { IonContent, IonPage } from "@ionic/react";
 import moment from "moment";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
-import { useTypedSelector } from "../store/store";
-import IRadioValue from "../interfaces/IRadioValue";
-import { actions as crossingActions } from "../store/crossingsSlice";
-import ITextAreaValue from "../interfaces/ITextAreaValue";
+import SupervisionFooter from "../components/SupervisionFooter";
+import SupervisionHeader from "../components/SupervisionHeader";
+import SupervisionObservations from "../components/SupervisionObservations";
+import SupervisionPhotos from "../components/SupervisionPhotos";
 import IFileInput from "../interfaces/IFileInput";
+import IPermit from "../interfaces/IPermit";
+import IRouteBridge from "../interfaces/IRouteBridge";
+import ISupervision from "../interfaces/ISupervision";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
+import { useTypedSelector } from "../store/store";
 import {
   getPermitOfRouteBridge,
   getRouteBridge,
@@ -38,9 +27,6 @@ import {
   sendSupervisionStarted,
 } from "../utils/backendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
-import ISupervisionReport from "../interfaces/ISupervisionReport";
-import ImageThumbnailRow from "../components/ImageThumbnailRow";
-import Moment from "react-moment";
 
 interface SupervisionProps {
   supervisionId: string;
@@ -48,7 +34,7 @@ interface SupervisionProps {
 
 const Supervision = (): JSX.Element => {
   const { t } = useTranslation();
-  const hist = useHistory();
+  const history = useHistory();
   const dispatch = useDispatch();
   const { supervisionId = "0" } = useParams<SupervisionProps>();
 
@@ -59,9 +45,7 @@ const Supervision = (): JSX.Element => {
     images = [],
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.crossingsReducer);
-  const { permitNumber = "" } = selectedPermitDetail || {};
-  const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
-  const { routeBridgeId = "0", startedTime, report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
+  const { routeBridgeId = "0", report } = selectedSupervisionDetail || {};
 
   const {
     id: supervisionReportId = -1,
@@ -142,29 +126,7 @@ const Supervision = (): JSX.Element => {
       imageUploadMutation.mutate(fileUpload);
     });
 
-    console.log("history");
-    hist.push(`/summary/${supervisionId}`);
-  };
-
-  const radioClicked = (radioName: string, radioValue: string) => {
-    const radioPayload = {
-      name: radioName,
-      value: radioValue === "yes",
-    } as IRadioValue;
-    dispatch({ type: crossingActions.REPORT_RADIO_CHANGED, payload: radioPayload });
-  };
-
-  const checkBoxClicked = (checkBoxName: string, checkBoxValue: boolean) => {
-    const radioPayload = {
-      name: checkBoxName,
-      value: checkBoxValue,
-    } as IRadioValue;
-    dispatch({ type: crossingActions.REPORT_RADIO_CHANGED, payload: radioPayload });
-  };
-
-  const textAreaValueChanged = (pname: string, pvalue: string) => {
-    const change = { name: pname, value: pvalue } as ITextAreaValue;
-    dispatch({ type: crossingActions.REPORT_TEXTAREA_CHANGED, payload: change });
+    history.push(`/summary/${supervisionId}`);
   };
 
   const noNetworkNoData =
@@ -182,237 +144,16 @@ const Supervision = (): JSX.Element => {
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (
-          <IonGrid>
-            <IonRow>
-              <IonCol>
-                <IonLabel class="crossingLabel">
-                  {t("supervision.permitNumber")} {permitNumber}
-                </IonLabel>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonLabel class="crossingLabel">
-                  {t("supervision.supervisionStarted")} {startedTime ? <Moment format={DATE_TIME_FORMAT}>{startedTime}</Moment> : ""}
-                </IonLabel>
-              </IonCol>
-            </IonRow>
-
-            <IonRow>
-              <IonCol>
-                <IonLabel class="crossingLabel">
-                  {t("supervision.bridgeName")} {bridgeName} | {bridgeIdentifier}
-                </IonLabel>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                {/* TODO */}
-                <IonRouterLink className="disabledLink">
-                  <IonText className="linkText">{t("supervision.crossingInstructions")}</IonText>
-                </IonRouterLink>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonLabel class="crossingHeader">{t("supervision.photosDrivingLine")}</IonLabel>
-              </IonCol>
-            </IonRow>
-
-            <ImageThumbnailRow images={images} supervisionImages={supervisionImages} />
-
-            <IonRow>
-              <IonCol>
-                <IonButton routerLink={`/takephotos/${supervisionId}`}>{t("supervision.buttons.takePhotos")}</IonButton>
-              </IonCol>
-              <IonCol>
-                <IonButton disabled>{t("supervision.buttons.drivingLine")}</IonButton>
-              </IonCol>
-            </IonRow>
-
-            <IonRow>
-              <IonCol class="crossingHeader">
-                <IonLabel class="crossingLabelBold">{t("supervision.report.observations")}</IonLabel>
-              </IonCol>
-            </IonRow>
-
-            <IonRow>
-              <IonCol class="crossingHeader">
-                <IonLabel class="crossingLabelBold">{t("supervision.report.drivingLineOk")}</IonLabel>
-              </IonCol>
-            </IonRow>
-            <IonRadioGroup value={drivingLineOk ? "yes" : "no"} onIonChange={(e) => radioClicked("drivingLineOk", e.detail.value)}>
-              <IonRow>
-                <IonCol class="crossingRadioCol">
-                  <IonItem>
-                    <IonLabel class="crossingRadioLabel">{t("supervision.answer.yes")}</IonLabel>
-                    <IonRadio slot="start" value="yes" />
-                  </IonItem>
-                </IonCol>
-                <IonCol class="crossingRadioCol">
-                  <IonItem>
-                    <IonLabel class="crossingRadioLabel">{t("supervision.answer.no")}</IonLabel>
-                    <IonRadio slot="start" value="no" />
-                  </IonItem>
-                </IonCol>
-              </IonRow>
-              <IonRow style={!drivingLineOk ? {} : { display: "none" }} class="whyRow">
-                <IonCol class="whyCol">
-                  <IonLabel class="crossingLabelBold">{t("supervision.report.drivingLineInfo")}</IonLabel>
-                  <IonCard>
-                    <IonTextarea
-                      class="crossingTextArea"
-                      value={drivingLineInfo}
-                      onIonChange={(e) => {
-                        return textAreaValueChanged("drivingLineInfo", e.detail.value ?? "");
-                      }}
-                    />
-                  </IonCard>
-                </IonCol>
-              </IonRow>
-            </IonRadioGroup>
-
-            <IonRow class="crossingHeader">
-              <IonCol>
-                <IonLabel class="crossingLabelBold">{t("supervision.report.speedLimitOk")}</IonLabel>
-              </IonCol>
-            </IonRow>
-            <IonRadioGroup value={speedLimitOk ? "yes" : "no"} onIonChange={(e) => radioClicked("speedLimitOk", e.detail.value)}>
-              <IonRow>
-                <IonCol class="crossingRadioCol">
-                  <IonItem>
-                    <IonLabel>{t("supervision.answer.yes")}</IonLabel>
-                    <IonRadio slot="start" value="yes" />
-                  </IonItem>
-                </IonCol>
-                <IonCol class="crossingRadioCol">
-                  <IonItem>
-                    <IonLabel>{t("supervision.answer.no")}</IonLabel>
-                    <IonRadio slot="start" value="no" />
-                  </IonItem>
-                </IonCol>
-              </IonRow>
-              <IonRow style={!speedLimitOk ? {} : { display: "none" }} class="whyRow">
-                <IonCol class="whyCol">
-                  <IonLabel class="crossingLabelBold">{t("supervision.report.speedLimitInfo")}</IonLabel>
-                  <IonCard>
-                    <IonTextarea
-                      class="crossingTextArea"
-                      value={speedLimitInfo}
-                      onIonChange={(e) => {
-                        return textAreaValueChanged("speedLimitInfo", e.detail.value ?? "");
-                      }}
-                    />
-                  </IonCard>
-                </IonCol>
-              </IonRow>
-            </IonRadioGroup>
-
-            <IonRow class="crossingHeader">
-              <IonCol>
-                <IonLabel class="crossingLabelBold">{t("supervision.report.anomalies")}</IonLabel>
-              </IonCol>
-            </IonRow>
-            <IonRadioGroup value={anomalies ? "yes" : "no"} onIonChange={(e) => radioClicked("anomalies", e.detail.value)}>
-              <IonRow>
-                <IonCol class="crossingRadioCol">
-                  <IonItem>
-                    <IonLabel class="whyLabel">{t("supervision.answer.yes")}</IonLabel>
-                    <IonRadio slot="start" value="yes" />
-                  </IonItem>
-                </IonCol>
-                <IonCol class="crossingRadioCol">
-                  <IonItem>
-                    <IonLabel class="whyLabel">{t("supervision.answer.no")}</IonLabel>
-                    <IonRadio slot="start" value="no" />
-                  </IonItem>
-                </IonCol>
-              </IonRow>
-            </IonRadioGroup>
-            <IonRow style={anomalies ? {} : { display: "none" }} class="whyRow">
-              <IonCol class="whyCol">
-                <IonItem key="surfaceDamage">
-                  <IonCheckbox
-                    slot="start"
-                    value="surfaceDamage"
-                    checked={surfaceDamage}
-                    onClick={() => checkBoxClicked("surfaceDamage", !surfaceDamage)}
-                  />
-                  <IonLabel>{t("supervision.report.surfaceDamage")}</IonLabel>
-                </IonItem>
-                <IonItem key="jointDamage">
-                  <IonCheckbox slot="start" value="jointDamage" checked={jointDamage} onClick={() => checkBoxClicked("jointDamage", !jointDamage)} />
-                  <IonLabel>{t("supervision.report.jointDamage")}</IonLabel>
-                </IonItem>
-                <IonItem key="bendOrDisplacement">
-                  <IonCheckbox
-                    slot="start"
-                    value="bendOrDisplacement"
-                    checked={bendOrDisplacement}
-                    onClick={() => checkBoxClicked("bendOrDisplacement", !bendOrDisplacement)}
-                  />
-                  <IonLabel>{t("supervision.report.bendOrDisplacement")}</IonLabel>
-                </IonItem>
-                <IonItem key="otherObservations">
-                  <IonCheckbox
-                    slot="start"
-                    value="otherObservations"
-                    checked={otherObservations}
-                    onClick={() => checkBoxClicked("otherObservations", !otherObservations)}
-                  />
-                  <IonLabel style={!otherObservations ? {} : { display: "none" }}>{t("supervision.report.otherObservations")}</IonLabel>
-                  {otherObservations && (
-                    <IonTextarea
-                      class="crossingTextArea"
-                      placeholder={t("supervision.report.otherObservations")}
-                      value={otherObservationsInfo}
-                      onIonChange={(e) => {
-                        return textAreaValueChanged("otherObservationsInfo", e.detail.value ?? "");
-                      }}
-                    />
-                  )}
-                </IonItem>
-              </IonCol>
-            </IonRow>
-            <IonRow style={anomalies ? {} : { display: "none" }}>
-              <IonCol>
-                <IonLabel class="crossingLabelBold">{t("supervision.report.anomaliesDescription")}</IonLabel>
-                <IonCard>
-                  <IonTextarea
-                    class="crossingTextArea"
-                    value={anomaliesDescription}
-                    onIonChange={(e) => {
-                      return textAreaValueChanged("anomaliesDescription", e.detail.value ?? "");
-                    }}
-                  />
-                </IonCard>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol class="whyCol">
-                <IonLabel class="crossingLabelBold">{t("supervision.report.additionalInfo")}</IonLabel>
-                <IonCard>
-                  <IonTextarea
-                    class="crossingTextArea"
-                    value={additionalInfo}
-                    onIonChange={(e) => {
-                      return textAreaValueChanged("additionalInfo", e.detail.value ?? "");
-                    }}
-                  />
-                </IonCard>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonButton disabled>{t("supervision.buttons.exit")}</IonButton>
-              </IonCol>
-              <IonCol>
-                <IonButton disabled={supervisionReportId <= 0} onClick={() => summaryClicked()}>
-                  {t("supervision.buttons.summary")}
-                </IonButton>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+          <>
+            <SupervisionHeader
+              permit={selectedPermitDetail as IPermit}
+              routeBridge={selectedBridgeDetail as IRouteBridge}
+              supervision={selectedSupervisionDetail as ISupervision}
+            />
+            <SupervisionPhotos supervision={selectedSupervisionDetail as ISupervision} />
+            <SupervisionObservations supervision={selectedSupervisionDetail as ISupervision} />
+            <SupervisionFooter supervision={selectedSupervisionDetail as ISupervision} summaryClicked={summaryClicked} />
+          </>
         )}
       </IonContent>
     </IonPage>

@@ -23,7 +23,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
 
   return (
     <>
-      <IonItem className="bridgeDetailFooter" detail detailIcon={document} lines="none">
+      <IonItem className="itemIcon" detail detailIcon={document} lines="none">
         <IonLabel className="headingText">{t("bridge.permitNumber")}</IonLabel>
         <IonLabel>{permitNumber}</IonLabel>
       </IonItem>

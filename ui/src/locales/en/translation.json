@@ -1,10 +1,9 @@
 {
   "main": {
-    "header" :
-    {
-      "title" : "SillaRi"
+    "header": {
+      "title": "SillaRi"
     },
-    "title" : "SillaRi",
+    "title": "SillaRi",
     "content": "Welcome!",
     "tab": {
       "transportCompanies": "Transport companies",
@@ -15,22 +14,18 @@
   "map": {
     "attribution": "Material"
   },
-  "settings" :
-  {
-    "header" :
-    {
-      "title" : "Settings"
+  "settings": {
+    "header": {
+      "title": "Settings"
     },
-    "language" :
-    {
-      "label" : "Language",
-      "fi" : "Suomi",
-      "sv" : "Svenska",
-      "en" : "English"
+    "language": {
+      "label": "Language",
+      "fi": "Suomi",
+      "sv": "Svenska",
+      "en": "English"
     }
   },
-  "camera" :
-  {
+  "camera": {
     "takePhotoButtonLabel": "Take photo",
     "listLabel": "Images",
     "listLabelPcs": "pcs",
@@ -38,15 +33,14 @@
       "deleteButtonLabel": "Delete"
     }
   },
-  "SidebarMenu" :
-  {
-    "title" : "SillaRi",
-    "mainPage" : "Main page",
-    "settings" : "Settings",
-    "map" : "Map",
-    "camera" : "Camera",
-    "management" : "Management",
-    "transports" : "Transports",
+  "SidebarMenu": {
+    "title": "SillaRi",
+    "mainPage": "Main page",
+    "settings": "Settings",
+    "map": "Map",
+    "camera": "Camera",
+    "management": "Management",
+    "transports": "Transports",
     "logout": "Logout"
   },
   "company": {
@@ -88,17 +82,51 @@
     "location": "Location",
     "crossingInstructions": {
       "title": "Crossing instructions",
-      "documentingHeader" : "Dokumentointi",
-      "documentingParagraph" : "Valvoja seuraa ... jne todo"
+      "documentingHeader": "Dokumentointi",
+      "documentingParagraph": "Valvoja seuraa ... jne todo"
     },
     "trafficSupervisors": {
       "title": "Traffic supervisors"
     },
     "permitNumber": "Lupanumero",
-    "conformsToPermit" : "Transport conforms to permit",
-    "startSupervision" : "Start supervision",
-    "denyCrossing" : "Transport cannot cross bridge",
-    "supervisionMissing" : "Bridge supervision is not yet planned"
+    "conformsToPermit": "Transport conforms to permit",
+    "startSupervision": "Start supervision",
+    "denyCrossing": "Transport cannot cross bridge",
+    "supervisionMissing": "Bridge supervision is not yet planned"
+  },
+  "supervision": {
+    "title": "Bridge supervision",
+    "permitNumber": "Permit number",
+    "supervisionStarted": "Supervision started",
+    "bridgeName": "Bridge details",
+    "crossingInstructions": "Crossing instructions",
+    "photosDrivingLine": "Photos and driving line",
+    "report": {
+      "observations": "Observations",
+      "drivingLineOk": "Driving line complied with",
+      "drivingLineInfo": "Why driving line not accepted?",
+      "speedLimitOk": "Speed limit accepted",
+      "speedLimitInfo": "Why speed limit not accepted?",
+      "anomalies": "Anomalies",
+      "anomaliesInfo": "Specify anomalies",
+      "surfaceDamage": "Surface damage",
+      "jointDamage": "Joint damage",
+      "bendOrDisplacement": "Permanent bend or other displacement",
+      "otherObservations": "Something else, what?",
+      "anomaliesDescription": "Describe anomalies",
+      "additionalInfo": "Additional information",
+      "placeholder": "Add text here"
+    },
+    "answer": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "buttons": {
+      "takePhotos": "Take photos",
+      "drivingLine": "Driving line",
+      "cancel": "Cancel",
+      "summary": "Go to summary"
+    }
   },
   "common": {
     "buttons": {
@@ -108,10 +136,8 @@
       "save": "Save"
     }
   },
-  "management":
-  {
-    "companySummary":
-    {
+  "management": {
+    "companySummary": {
       "permitListTitle": "Transport permits and management",
       "transports": "Transports",
       "addTransportButtonLabel": "Add transport",
@@ -138,8 +164,7 @@
         "modify": "Modify"
       }
     },
-    "addTransport":
-    {
+    "addTransport": {
       "headerTitleAdd": "Add new transport",
       "headerTitleDetail": "Transport details",
       "transportPermit": "Transport permit",
@@ -194,18 +219,16 @@
   },
   "transports": {
     "transportCodeInput": {
-      "header" :
-      {
-        "title" : "Transports"
+      "header": {
+        "title": "Transports"
       },
-      "inputLabel" : "Please enter transport code",
-      "inputPlaceholder" : "Transport code",
-      "submitButtonLabel" : "Submit code"
+      "inputLabel": "Please enter transport code",
+      "inputPlaceholder": "Transport code",
+      "submitButtonLabel": "Submit code"
     },
     "transport": {
-      "header" :
-      {
-        "title" : "Transport"
+      "header": {
+        "title": "Transport"
       }
     }
   }

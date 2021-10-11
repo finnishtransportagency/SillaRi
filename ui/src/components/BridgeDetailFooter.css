@@ -1,8 +1,3 @@
-.bridgeDetailFooter {
-  --detail-icon-color: var(--ion-color-primary);
-  --detail-icon-opacity: 1;
-}
-
 .crossingLabelWarning {
   color: #ec213b !important;
 }
