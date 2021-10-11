@@ -1,6 +1,6 @@
 import React from "react";
-import {useTranslation} from "react-i18next";
-import {IonCol, IonGrid, IonRow, IonText} from "@ionic/react";
+import { useTranslation } from "react-i18next";
+import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import BridgeCard from "./BridgeCard";
 import "./RouteCardList.css";

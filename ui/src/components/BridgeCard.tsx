@@ -1,7 +1,7 @@
 import React from "react";
-import {IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonRow} from "@ionic/react";
+import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonRow } from "@ionic/react";
 import IRouteBridge from "../interfaces/IRouteBridge";
-import {DATE_TIME_FORMAT_MIN} from "../utils/constants";
+import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import Moment from "react-moment";
 import ISupervision from "../interfaces/ISupervision";
 

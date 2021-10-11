@@ -1,16 +1,16 @@
 import React from "react";
-import {useTypedSelector} from "../store/store";
-import {IonCol, IonGrid, IonRow, IonText} from "@ionic/react";
+import { useTypedSelector } from "../store/store";
+import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import NoNetworkNoData from "../components/NoNetworkNoData";
-import {useDispatch} from "react-redux";
-import {useQuery} from "react-query";
-import {getSupervisionList, onRetry} from "../utils/backendData";
+import { useDispatch } from "react-redux";
+import { useQuery } from "react-query";
+import { getSupervisionList, onRetry } from "../utils/backendData";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
-import {DATE_FORMAT} from "../utils/constants";
+import { DATE_FORMAT } from "../utils/constants";
 import Moment from "react-moment";
 import BridgeCard from "../components/BridgeCard";
 import ISupervision from "../interfaces/ISupervision";
-import {groupSupervisionsByDate} from "../utils/supervisionUtil";
+import { groupSupervisionsByDate } from "../utils/supervisionUtil";
 
 const SupervisionList = (): JSX.Element => {
   const dispatch = useDispatch();
