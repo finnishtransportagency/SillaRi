@@ -10,4 +10,5 @@ public class SupervisorModel {
 
     // For supervision supervisor
     private Integer priority;
+    private String username;
 }

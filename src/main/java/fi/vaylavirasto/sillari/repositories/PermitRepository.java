@@ -19,7 +19,7 @@ public class PermitRepository {
     @Autowired
     private DSLContext dsl;
 
-    public List<PermitModel> getCompanysPermits(Integer companyId) {
+    public List<PermitModel> getPermitsByCompanyId(Integer companyId) {
         return dsl.select().from(PermitMapper.permit)
                 .leftJoin(PermitMapper.axleChart)
                 .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
@@ -70,6 +70,22 @@ public class PermitRepository {
                 .leftJoin(PermitMapper.unloadedTransportDimensions)
                 .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
                 .where(PermitMapper.routeBridge.ID.eq(routeBridgeId))
+                .fetchOne(new PermitMapper());
+    }
+
+    public PermitModel getPermitByRouteTransportId(Integer routeTransportId) {
+        return dsl.select().from(PermitMapper.permit)
+                .join(PermitMapper.route)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.route.PERMIT_ID))
+                .join(PermitMapper.routeTransport)
+                .on(PermitMapper.route.ID.eq(PermitMapper.routeTransport.ROUTE_ID))
+                .leftJoin(PermitMapper.axleChart)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
+                .leftJoin(PermitMapper.transportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .leftJoin(PermitMapper.unloadedTransportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
+                .where(PermitMapper.routeTransport.ID.eq(routeTransportId))
                 .fetchOne(new PermitMapper());
     }
 

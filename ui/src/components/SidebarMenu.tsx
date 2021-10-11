@@ -53,7 +53,7 @@ const SidebarMenu: React.FC = () => {
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>
-            <IonItem routerLink="/transport/1">
+            <IonItem routerLink="/transport">
               <IonIcon icon={car} slot="start" />
               <IonLabel>{t("SidebarMenu.transports")}</IonLabel>
             </IonItem>

@@ -189,7 +189,8 @@
     },
     "addTransport":
     {
-      "headerTitle": "Lisää uusi kuljetus",
+      "headerTitleAdd": "Lisää uusi kuljetus",
+      "headerTitleDetail": "Kuljetuksen tiedot",
       "transportPermit": "Kuljetuslupa",
       "validityPeriod": "Voimassaoloaika",
       "transportId": "Kuljetuksen ID",
@@ -198,6 +199,7 @@
       "buttons": {
         "deleteTransport": "Poista kuljetus"
       },
+      "saved": "Tallennettu",
       "routeInfo": {
         "estimatedDepartureDate": "Arvioitu lähtöpäivä",
         "estimatedDepartureTime": "Arvioitu lähtöaika",
@@ -240,11 +242,14 @@
     }
   },
   "transports": {
-    "transportList": {
+    "transportCodeInput": {
       "header" :
       {
         "title" : "Kuljetukset"
-      }
+      },
+      "inputLabel" : "Anna kuljetuksen koodi",
+      "inputPlaceholder" : "Kuljetuksen koodi",
+      "submitButtonLabel" : "Lähetä koodi"
     },
     "transport": {
       "header" :

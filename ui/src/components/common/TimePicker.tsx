@@ -8,9 +8,10 @@ import "./TimePicker.css";
 interface TimePickerProps {
   className?: string;
   value: Date;
+  onChange: (value: Date) => void;
 }
 
-const TimePicker = ({ className, value }: TimePickerProps): JSX.Element => {
+const TimePicker = ({ className, value, onChange }: TimePickerProps): JSX.Element => {
   const { t } = useTranslation();
 
   return (
@@ -20,6 +21,7 @@ const TimePicker = ({ className, value }: TimePickerProps): JSX.Element => {
         doneText={t("common.buttons.done")}
         cancelText={t("common.buttons.back")}
         value={moment(value).toISOString()}
+        onIonChange={(e) => onChange(moment(e.detail.value).toDate())}
       />
       <IonIcon className="openIcon" icon={timeOutline} slot="end" />
     </IonItem>

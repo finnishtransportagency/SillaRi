@@ -16,6 +16,7 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
     public static final Axle axle = Tables.AXLE.as("ax");
     public static final Route route = Tables.ROUTE.as("ro");
     public static final RouteBridge routeBridge = Tables.ROUTE_BRIDGE.as("rbr");
+    public static final RouteTransport routeTransport = Tables.ROUTE_TRANSPORT.as("rtr");
 
     @Nullable
     @Override

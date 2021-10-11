@@ -17,7 +17,11 @@ public class SupervisorMapper implements RecordMapper<Record, SupervisorModel> {
         supervisorModel.setId(record.get(supervisor.ID));
         supervisorModel.setFirstName(record.get(supervisor.FIRSTNAME));
         supervisorModel.setLastName(record.get(supervisor.LASTNAME));
-        supervisorModel.setPriority(record.get(supervisionSupervisor.PRIORITY));
+
+        if (record.field(supervisionSupervisor.PRIORITY) != null) {
+            supervisorModel.setPriority(record.get(supervisionSupervisor.PRIORITY));
+        }
+
         return supervisorModel;
     }
 }

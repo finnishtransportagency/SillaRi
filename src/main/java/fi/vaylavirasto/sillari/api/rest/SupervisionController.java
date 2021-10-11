@@ -4,6 +4,7 @@ import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
+import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Timed
@@ -42,6 +45,19 @@ public class SupervisionController {
         try {
             SupervisionModel supervisionModel = supervisionService.getSupervisionOfRouteBridge(routeBridgeId);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Get supervisors")
+    @GetMapping(value = "/getsupervisors", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getSupervisors() {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisors");
+        try {
+            List<SupervisorModel> supervisors = supervisionService.getSupervisors();
+            return ResponseEntity.ok().body(supervisors != null ? supervisors : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
