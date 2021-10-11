@@ -1,0 +1,14 @@
+.bridgeDetailHeader {
+  --background: var(--ion-color-light);
+  --detail-icon-color: var(--ion-color-primary);
+  --detail-icon-opacity: 1;
+}
+
+.bridgeLink {
+  --detail-icon-color: var(--ion-color-primary);
+  --detail-icon-opacity: 1;
+}
+
+.bridgeImage {
+  height: 200px;
+}

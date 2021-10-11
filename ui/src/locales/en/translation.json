@@ -82,6 +82,24 @@
     "transportValid": "Transport is in accordance with the permit on departure",
     "bridgesToSupervise": "Bridges to supervise"
   },
+  "bridge": {
+    "title": "Bridge information",
+    "identifier": "Identifier",
+    "location": "Location",
+    "crossingInstructions": {
+      "title": "Crossing instructions",
+      "documentingHeader" : "Dokumentointi",
+      "documentingParagraph" : "Valvoja seuraa ... jne todo"
+    },
+    "trafficSupervisors": {
+      "title": "Traffic supervisors"
+    },
+    "permitNumber": "Lupanumero",
+    "conformsToPermit" : "Transport conforms to permit",
+    "startSupervision" : "Start supervision",
+    "denyCrossing" : "Transport cannot cross bridge",
+    "supervisionMissing" : "Bridge supervision is not yet planned"
+  },
   "common": {
     "buttons": {
       "done": "Done",

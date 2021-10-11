@@ -22,7 +22,7 @@ const RouteAccordion = ({ route }: RouteAccordionProps): JSX.Element => {
       items={[
         {
           uuid: "permit",
-          heading: <IonText className="headingText">{t("route.routeInfo.title")}</IonText>,
+          heading: <IonText>{t("route.routeInfo.title")}</IonText>,
           panel: (
             <div>
               <IonItem className="routeLink" detail detailIcon={flag} routerLink={`/routemap/${routeId}`}>
@@ -32,15 +32,19 @@ const RouteAccordion = ({ route }: RouteAccordionProps): JSX.Element => {
               <IonItem lines="none">
                 <IonIcon icon={flag} color="primary" slot="start" />
                 <IonLabel>
-                  <IonLabel className="headingText">{t("route.routeInfo.departurePoint")}</IonLabel>
-                  <IonLabel>{departureStreetaddress}</IonLabel>
+                  <IonLabel>{t("route.routeInfo.departurePoint")}</IonLabel>
+                  <IonLabel>
+                    <small>{departureStreetaddress}</small>
+                  </IonLabel>
                 </IonLabel>
               </IonItem>
               <IonItem>
                 <IonIcon icon={flag} color="primary" slot="start" />
                 <IonLabel>
-                  <IonLabel className="headingText">{t("route.routeInfo.arrivalPoint")}</IonLabel>
-                  <IonLabel>{arrivalStreetaddress}</IonLabel>
+                  <IonLabel>{t("route.routeInfo.arrivalPoint")}</IonLabel>
+                  <IonLabel>
+                    <small>{arrivalStreetaddress}</small>
+                  </IonLabel>
                 </IonLabel>
               </IonItem>
             </div>

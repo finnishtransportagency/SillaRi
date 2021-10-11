@@ -16,9 +16,9 @@ const RouteCard = ({ route }: RouteCardProps): JSX.Element => {
     <IonItem detail routerLink={`/routeDetail/${routeId}`}>
       <IonLabel>
         <IonLabel>{name}</IonLabel>
-        <small>
-          <IonLabel>DATE TIME TODO</IonLabel>
-        </small>
+        <IonLabel>
+          <small>DATE TIME TODO</small>
+        </IonLabel>
       </IonLabel>
     </IonItem>
   );

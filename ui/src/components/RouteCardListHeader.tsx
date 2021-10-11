@@ -19,14 +19,14 @@ const RouteCardListHeader = ({ permit }: RouteCardListHeaderProps): JSX.Element 
     <IonItem className="routeListHeader" detail detailIcon={document} lines="none">
       <IonLabel>
         <IonLabel className="headingText">{permitNumber}</IonLabel>
-        <small>
-          <IonLabel>
+        <IonLabel>
+          <small>
             <IonText>{`${t("company.validityPeriod")} `}</IonText>
             <Moment format={DATE_FORMAT}>{validStartDate}</Moment>
             <IonText>{" - "}</IonText>
             <Moment format={DATE_FORMAT}>{validEndDate}</Moment>
-          </IonLabel>
-        </small>
+          </small>
+        </IonLabel>
       </IonLabel>
     </IonItem>
   );

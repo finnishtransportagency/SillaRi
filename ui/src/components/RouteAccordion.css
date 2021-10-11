@@ -6,4 +6,5 @@
 .routeLinkText {
   text-decoration: underline;
   color: var(--ion-color-primary);
+  margin-right: 8px;
 }

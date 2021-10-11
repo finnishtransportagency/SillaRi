@@ -19,7 +19,7 @@ const TransportAccordion = ({ permit }: TransportAccordionProps): JSX.Element =>
       items={[
         {
           uuid: "transport",
-          heading: <IonText className="headingText">{t("route.transportInfo.title")}</IonText>,
+          heading: <IonText>{t("route.transportInfo.title")}</IonText>,
           panel: (
             <div>
               <IonItem>

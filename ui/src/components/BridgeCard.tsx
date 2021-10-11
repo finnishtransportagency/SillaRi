@@ -15,12 +15,12 @@ const BridgeCard = ({ routeBridge }: BridgeCardProps): JSX.Element => {
     <IonItem detail routerLink={`/bridgedetail/${routeBridgeId}`}>
       <IonLabel>
         <IonLabel>{name}</IonLabel>
-        <small>
-          <IonLabel>{identifier}</IonLabel>
-        </small>
-        <small>
-          <IonLabel>DATE TIME TODO</IonLabel>
-        </small>
+        <IonLabel>
+          <small>{identifier}</small>
+        </IonLabel>
+        <IonLabel>
+          <small>DATE TIME TODO</small>
+        </IonLabel>
       </IonLabel>
     </IonItem>
   );
