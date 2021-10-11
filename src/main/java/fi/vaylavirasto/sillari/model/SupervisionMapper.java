@@ -8,8 +8,6 @@ import org.jooq.RecordMapper;
 public class SupervisionMapper implements RecordMapper<Record,SupervisionModel> {
     public static final Permit permit = Tables.PERMIT.as("pe");
     public static final Route route = Tables.ROUTE.as("ro");
-    public static final Address arrivalAddress = Tables.ADDRESS.as("aa");
-    public static final Address departureAddress = Tables.ADDRESS.as("da");
     public static final RouteBridge routeBridge = Tables.ROUTE_BRIDGE.as("rbr");
     public static final Bridge bridge = Tables.BRIDGE.as("br");
     public static final RouteTransport routeTransport = Tables.ROUTE_TRANSPORT.as("rtr");
@@ -22,7 +20,7 @@ public class SupervisionMapper implements RecordMapper<Record,SupervisionModel> 
         SimplePermitMapper permitMapper = new SimplePermitMapper();
         PermitModel permitModel = permitMapper.map(record);
 
-        RouteMapper routeMapper = new RouteMapper();
+        SimpleRouteMapper routeMapper = new SimpleRouteMapper();
         RouteModel routeModel = routeMapper.map(record);
         if (routeModel != null) {
             routeModel.setPermit(permitModel);

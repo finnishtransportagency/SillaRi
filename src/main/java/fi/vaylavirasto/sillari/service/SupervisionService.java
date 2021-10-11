@@ -51,7 +51,12 @@ public class SupervisionService {
 
 
     public List<SupervisionModel> getSupervisionsOfSupervisor(String username) {
-        return supervisionRepository.getSupervisionsBySupervisorUsername(username);
+        List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsBySupervisorUsername(username);
+        for (SupervisionModel supervision : supervisions) {
+            // Sets also current status and status timestamps
+            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+        }
+        return supervisions;
     }
 
     public List<SupervisorModel> getSupervisors() {

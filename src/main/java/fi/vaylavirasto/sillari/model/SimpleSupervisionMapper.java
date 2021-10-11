@@ -1,7 +1,6 @@
 package fi.vaylavirasto.sillari.model;
 
 import fi.vaylavirasto.sillari.model.tables.Supervision;
-import fi.vaylavirasto.sillari.model.tables.SupervisionStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -10,7 +9,6 @@ import java.util.ArrayList;
 
 public class SimpleSupervisionMapper implements RecordMapper<Record, SupervisionModel> {
     public static final Supervision supervision = Tables.SUPERVISION.as("sn");
-    public static final SupervisionStatus supervisionStatus = Tables.SUPERVISION_STATUS.as("sns");
 
     @Nullable
     @Override

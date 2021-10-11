@@ -6,9 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
-import java.util.ArrayList;
-
-public class RouteMapper  implements RecordMapper<Record, RouteModel> {
+public class RouteMapper implements RecordMapper<Record, RouteModel> {
     // Table aliases
     public static final Route route = Tables.ROUTE.as("ro");
     public static final Address arrivalAddress = Tables.ADDRESS.as("aa");
@@ -17,23 +15,20 @@ public class RouteMapper  implements RecordMapper<Record, RouteModel> {
     @Nullable
     @Override
     public RouteModel map(Record record) {
-        RouteModel routeModel = new RouteModel();
-        routeModel.setId(record.get(route.ID));
-        routeModel.setPermitId(record.get(route.PERMIT_ID));
-        routeModel.setLeluId(record.get(route.LELU_ID));
-        routeModel.setName(record.get(route.NAME));
-        routeModel.setTransportCount(record.get(route.TRANSPORT_COUNT));
-        routeModel.setRouteBridges(new ArrayList<>());
+        SimpleRouteMapper simpleRouteMapper = new SimpleRouteMapper();
+        RouteModel routeModel = simpleRouteMapper.map(record);
 
-        AddressModel aa = new AddressModel();
-        aa.setId(record.get(arrivalAddress.ID));
-        aa.setStreetaddress(record.get(arrivalAddress.STREETADDRESS));
-        routeModel.setArrivalAddress(aa);
+        if (routeModel != null) {
+            AddressModel aa = new AddressModel();
+            aa.setId(record.get(arrivalAddress.ID));
+            aa.setStreetaddress(record.get(arrivalAddress.STREETADDRESS));
+            routeModel.setArrivalAddress(aa);
 
-        AddressModel da = new AddressModel();
-        da.setId(record.get(departureAddress.ID));
-        da.setStreetaddress(record.get(departureAddress.STREETADDRESS));
-        routeModel.setDepartureAddress(da);
+            AddressModel da = new AddressModel();
+            da.setId(record.get(departureAddress.ID));
+            da.setStreetaddress(record.get(departureAddress.STREETADDRESS));
+            routeModel.setDepartureAddress(da);
+        }
 
         return routeModel;
     }

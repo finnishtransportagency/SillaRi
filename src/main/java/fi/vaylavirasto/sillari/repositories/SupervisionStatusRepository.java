@@ -36,10 +36,10 @@ public class SupervisionStatusRepository {
     }
 
     public void insertSupervisionStatus(DSLContext ctx, Integer supervisionId, SupervisionStatusType statusType) {
-        ctx.insertInto(SimpleSupervisionMapper.supervisionStatus,
-                        SimpleSupervisionMapper.supervisionStatus.SUPERVISION_ID,
-                        SimpleSupervisionMapper.supervisionStatus.STATUS,
-                        SimpleSupervisionMapper.supervisionStatus.TIME
+        ctx.insertInto(SupervisionStatusMapper.supervisionStatus,
+                        SupervisionStatusMapper.supervisionStatus.SUPERVISION_ID,
+                        SupervisionStatusMapper.supervisionStatus.STATUS,
+                        SupervisionStatusMapper.supervisionStatus.TIME
                 ).values(
                         supervisionId,
                         String.valueOf(statusType),

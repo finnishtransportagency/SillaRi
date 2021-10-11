@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
+import java.util.ArrayList;
+
 public class SimplePermitMapper implements RecordMapper<Record, PermitModel> {
     public static final Permit permit = Tables.PERMIT.as("pe");
 
@@ -21,6 +23,7 @@ public class SimplePermitMapper implements RecordMapper<Record, PermitModel> {
         permitModel.setValidEndDate(record.get(permit.VALID_END_DATE));
         permitModel.setTransportTotalMass(record.get(permit.TRANSPORT_TOTAL_MASS));
         permitModel.setAdditionalDetails(record.get(permit.ADDITIONAL_DETAILS));
+        permitModel.setRoutes(new ArrayList<>());
         return permitModel;
     }
 }

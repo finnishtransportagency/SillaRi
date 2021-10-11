@@ -25,8 +25,6 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         PermitModel permitModel = simplePermitMapper.map(record);
 
         if (permitModel != null) {
-            permitModel.setRoutes(new ArrayList<>());
-
             TransportDimensionsMapper transportDimensionsMapper = new TransportDimensionsMapper();
             permitModel.setTransportDimensions(transportDimensionsMapper.map(record));
 
