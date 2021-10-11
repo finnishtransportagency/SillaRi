@@ -1,11 +1,11 @@
-package fi.vaylavirasto.sillari.model;
+package fi.vaylavirasto.sillari.mapper;
 
+import fi.vaylavirasto.sillari.model.Tables;
+import fi.vaylavirasto.sillari.model.TransportDimensionsModel;
 import fi.vaylavirasto.sillari.model.tables.TransportDimensions;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
-
-import java.math.BigDecimal;
 
 public class TransportDimensionsMapper implements RecordMapper<Record, TransportDimensionsModel> {
     public static final TransportDimensions transportDimensions = Tables.TRANSPORT_DIMENSIONS.as("td");

@@ -1,5 +1,7 @@
-package fi.vaylavirasto.sillari.model;
+package fi.vaylavirasto.sillari.mapper;
 
+import fi.vaylavirasto.sillari.model.SupervisorModel;
+import fi.vaylavirasto.sillari.model.Tables;
 import fi.vaylavirasto.sillari.model.tables.SupervisionSupervisor;
 import fi.vaylavirasto.sillari.model.tables.Supervisor;
 import org.jetbrains.annotations.Nullable;

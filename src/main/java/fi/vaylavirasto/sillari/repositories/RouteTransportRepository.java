@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.RouteTransportMapper;
+import fi.vaylavirasto.sillari.mapper.RouteTransportMapper;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.model.TransportStatusType;
 import org.apache.logging.log4j.LogManager;

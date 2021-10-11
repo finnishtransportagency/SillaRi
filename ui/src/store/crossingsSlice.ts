@@ -1,5 +1,5 @@
-import { createSlice, current } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 import ICompany from "../interfaces/ICompany";
 import IFailedQuery from "../interfaces/IFailedQuery";
 import IFile from "../interfaces/IFile";
@@ -18,6 +18,7 @@ interface IStateProps {
   selectedPermitDetail?: IPermit;
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
+  supervisionList: ISupervision[];
   selectedSupervisionDetail?: ISupervision;
   images: IImageItem[];
   networkStatus: INetworkStatus;
@@ -29,6 +30,7 @@ const initialState: IStateProps = {
   selectedPermitDetail: undefined,
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
+  supervisionList: [],
   selectedSupervisionDetail: undefined,
   images: [],
   networkStatus: {
@@ -59,6 +61,10 @@ const crossingsSlice = createSlice({
     GET_ROUTE_BRIDGE: (state, action: PayloadAction<IRouteBridge>) => {
       console.log("GET_ROUTE_BRIDGE", action.payload);
       return { ...state, selectedBridgeDetail: action.payload };
+    },
+    GET_SUPERVISION_LIST: (state, action: PayloadAction<ISupervision[]>) => {
+      console.log("GET_SUPERVISION_LIST", action.payload);
+      return { ...state, supervisionList: action.payload };
     },
     GET_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
       console.log("GET_SUPERVISION", action.payload);

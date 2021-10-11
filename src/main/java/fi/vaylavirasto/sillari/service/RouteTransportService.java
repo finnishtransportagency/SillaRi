@@ -1,7 +1,6 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
-import fi.vaylavirasto.sillari.model.RouteTransportStatusModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.repositories.RouteRepository;
 import fi.vaylavirasto.sillari.repositories.RouteTransportRepository;
@@ -30,10 +29,9 @@ public class RouteTransportService {
         RouteTransportModel routeTransportModel = routeTransportRepository.getRouteTransportById(routeTransportId);
 
         if (routeTransportModel != null) {
-            List<RouteTransportStatusModel> statusHistory = routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId());
-            routeTransportModel.setStatusHistory(statusHistory);
-            routeTransportModel.setCurrentStatus(statusHistory);
             routeTransportModel.setRoute(routeRepository.getRoute(routeTransportModel.getRouteId()));
+            // Sets also current status
+            routeTransportModel.setStatusHistory(routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId()));
 
             List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportId);
             if (supervisions != null) {
@@ -52,10 +50,9 @@ public class RouteTransportService {
 
         if (routeTransportModels != null) {
             routeTransportModels.forEach(routeTransportModel -> {
-                List<RouteTransportStatusModel> statusHistory = routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId());
-                routeTransportModel.setStatusHistory(statusHistory);
-                routeTransportModel.setCurrentStatus(statusHistory);
                 routeTransportModel.setRoute(routeRepository.getRoute(routeTransportModel.getRouteId()));
+                // Sets also current status
+                routeTransportModel.setStatusHistory(routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId()));
 
                 List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportModel.getId());
                 if (supervisions != null) {

@@ -1,5 +1,8 @@
 package fi.vaylavirasto.sillari.repositories;
 
+import fi.vaylavirasto.sillari.mapper.AddressMapper;
+import fi.vaylavirasto.sillari.mapper.PermitMapper;
+import fi.vaylavirasto.sillari.mapper.RouteMapper;
 import fi.vaylavirasto.sillari.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
