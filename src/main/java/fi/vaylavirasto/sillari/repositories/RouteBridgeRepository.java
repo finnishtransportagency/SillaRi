@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.RouteBridgeMapper;
+import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;

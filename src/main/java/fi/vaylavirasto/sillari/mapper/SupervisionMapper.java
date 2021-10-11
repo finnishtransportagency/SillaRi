@@ -1,11 +1,12 @@
-package fi.vaylavirasto.sillari.model;
+package fi.vaylavirasto.sillari.mapper;
 
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.model.tables.*;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
-public class SupervisionMapper implements RecordMapper<Record,SupervisionModel> {
+public class SupervisionMapper implements RecordMapper<Record, SupervisionModel> {
     public static final Permit permit = Tables.PERMIT.as("pe");
     public static final Route route = Tables.ROUTE.as("ro");
     public static final RouteBridge routeBridge = Tables.ROUTE_BRIDGE.as("rbr");

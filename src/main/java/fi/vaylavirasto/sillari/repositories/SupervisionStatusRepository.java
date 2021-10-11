@@ -1,7 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.SimpleSupervisionMapper;
-import fi.vaylavirasto.sillari.model.SupervisionStatusMapper;
+import fi.vaylavirasto.sillari.mapper.SupervisionStatusMapper;
 import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import org.apache.logging.log4j.LogManager;

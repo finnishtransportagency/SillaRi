@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.VehicleMapper;
+import fi.vaylavirasto.sillari.mapper.VehicleMapper;
 import fi.vaylavirasto.sillari.model.VehicleModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

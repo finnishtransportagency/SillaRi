@@ -1,5 +1,7 @@
-package fi.vaylavirasto.sillari.model;
+package fi.vaylavirasto.sillari.mapper;
 
+import fi.vaylavirasto.sillari.model.RouteTransportModel;
+import fi.vaylavirasto.sillari.model.Tables;
 import fi.vaylavirasto.sillari.model.tables.Permit;
 import fi.vaylavirasto.sillari.model.tables.Route;
 import fi.vaylavirasto.sillari.model.tables.RouteTransport;

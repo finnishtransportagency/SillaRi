@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.TransportDimensionsMapper;
+import fi.vaylavirasto.sillari.mapper.TransportDimensionsMapper;
 import fi.vaylavirasto.sillari.model.TransportDimensionsModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

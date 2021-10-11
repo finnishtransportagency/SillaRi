@@ -1,11 +1,11 @@
-package fi.vaylavirasto.sillari.model;
+package fi.vaylavirasto.sillari.mapper;
 
+import fi.vaylavirasto.sillari.model.PermitModel;
+import fi.vaylavirasto.sillari.model.Tables;
 import fi.vaylavirasto.sillari.model.tables.*;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
-
-import java.util.ArrayList;
 
 public class PermitMapper implements RecordMapper<Record, PermitModel> {
     public static final Permit permit = Tables.PERMIT.as("pe");
