@@ -41,6 +41,7 @@ public class RouteService {
                         List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId());
                         supervision.setStatusHistory(statusHistory);
                     }
+                    routeBridge.setSupervision(supervision);
                 });
             }
             route.setRouteBridges(routeBridges);
