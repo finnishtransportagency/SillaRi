@@ -2,7 +2,6 @@ import React from "react";
 import { useTypedSelector } from "../store/store";
 import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import NoNetworkNoData from "../components/NoNetworkNoData";
-import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useQuery } from "react-query";
 import { getSupervisionList, onRetry } from "../utils/backendData";
@@ -14,7 +13,6 @@ import ISupervision from "../interfaces/ISupervision";
 import { groupSupervisionsByDate } from "../utils/supervisionUtil";
 
 const SupervisionList = (): JSX.Element => {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const {
