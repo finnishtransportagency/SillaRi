@@ -32,7 +32,7 @@ public class SupervisionRepository {
                 .fetchOne(new SimpleSupervisionMapper());
     }
 
-    // FIXME could return list
+    // FIXME could return list, route bridge can have multiple supervisions if route is driven multiple times
     public SupervisionModel getSupervisionByRouteBridgeId(Integer routeBridgeId) {
         return dsl.selectFrom(SimpleSupervisionMapper.supervision)
                 .where(SimpleSupervisionMapper.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
