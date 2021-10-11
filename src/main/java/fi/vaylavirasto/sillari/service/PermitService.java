@@ -67,7 +67,7 @@ public class PermitService {
             // TODO - if this returns too much data, add this as a separate method in RouteController
             if (permitModel.getRoutes() != null) {
                 permitModel.getRoutes().forEach(routeModel -> {
-                    List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRoutesBridges(routeModel.getId());
+                    List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRouteBridges(routeModel.getId());
                     routeModel.setRouteBridges(routeBridgeModels);
                 });
             }

@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.FileMapper;
+import fi.vaylavirasto.sillari.mapper.FileMapper;
 import fi.vaylavirasto.sillari.model.FileModel;
 import fi.vaylavirasto.sillari.model.Sequences;
 import org.apache.logging.log4j.LogManager;
