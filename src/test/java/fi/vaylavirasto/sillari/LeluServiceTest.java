@@ -1,6 +1,7 @@
 package fi.vaylavirasto.sillari;
 
 import fi.vaylavirasto.sillari.api.lelu.*;
+import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.BridgeRepository;
 import fi.vaylavirasto.sillari.repositories.CompanyRepository;
@@ -72,7 +73,12 @@ public class LeluServiceTest {
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(1);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
-        LeluPermitResponseDTO response = leluService.createOrUpdatePermit(getPermitDTO());
+        LeluPermitResponseDTO response = null;
+        try {
+            response = leluService.createOrUpdatePermit(getPermitDTO());
+        } catch (LeluDeleteRouteWithSupervisionsException e) {
+            e.printStackTrace();
+        }
 
         // Verify that permitRepository.createPermit is called and capture parameters
         Mockito.verify(permitRepository).createPermit(permitModelCaptor.capture());
@@ -105,7 +111,12 @@ public class LeluServiceTest {
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(2);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
-        LeluPermitResponseDTO response = leluService.createOrUpdatePermit(getPermitDTO());
+        LeluPermitResponseDTO response = null;
+        try {
+            response = leluService.createOrUpdatePermit(getPermitDTO());
+        } catch (LeluDeleteRouteWithSupervisionsException e) {
+            e.printStackTrace();
+        }
 
         // Verify that permitRepository.createPermit is called and capture parameters
         Mockito.verify(permitRepository).createPermit(permitModelCaptor.capture());
@@ -136,7 +147,12 @@ public class LeluServiceTest {
         Mockito.when(routeRepository.getRouteIdsWithLeluIds(Mockito.anyInt())).thenReturn(getRouteLeluIdAndIdMap());
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
-        LeluPermitResponseDTO response = leluService.createOrUpdatePermit(getPermitDTO());
+        LeluPermitResponseDTO response = null;
+        try {
+            response = leluService.createOrUpdatePermit(getPermitDTO());
+        } catch (LeluDeleteRouteWithSupervisionsException e) {
+            e.printStackTrace();
+        }
 
         // Verify that permitRepository.updatePermit is called and capture parameters
         Mockito.verify(permitRepository).updatePermit(permitModelCaptor.capture(), routeIdsToDeleteCaptor.capture());

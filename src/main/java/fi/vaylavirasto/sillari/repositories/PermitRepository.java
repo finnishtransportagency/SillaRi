@@ -80,6 +80,13 @@ public class PermitRepository {
         return record != null ? record.value1() : null;
     }
 
+    public Integer getPermitIdByPermitNumber(String permitNumber, int permitVersion) {
+        Record1<Integer> record = dsl.select(PermitMapper.permit.ID).from(PermitMapper.permit)
+                .where(PermitMapper.permit.PERMIT_NUMBER.eq(permitNumber).and(PermitMapper.permit.LELU_VERSION.eq(permitVersion)))
+                .fetchOne();
+        return record != null ? record.value1() : null;
+    }
+
     public Integer createPermit(PermitModel permitModel) throws DataAccessException {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
@@ -317,6 +324,7 @@ public class PermitRepository {
 
             deleteRouteBridgesFromPermit(ctx, permitModel);
 
+            
             // Delete routes not listed in permit anymore
             deleteRoutes(routesToDelete, ctx);
 
@@ -464,5 +472,15 @@ public class PermitRepository {
         deleteArrivalAddress(ctx, routeId);
         deleteDepartureAddress(ctx, routeId);
 
+    }
+
+    public boolean isSupervisions(PermitModel permitModel, List<Integer> routeIdsToRemove) {
+    /*    Record1<Integer> record = dsl.select(SupervisionMapper.supervision.ID).from(SupervisionMapper.supervision)
+                .where(SupervisionMapper.ID.in(routeIdsToRemove))
+        RouteTransportMapper.transport.ROUTE_ID
+                .fetchOne();
+        return record != null ? true : false;
+      */
+      return false;
     }
 }

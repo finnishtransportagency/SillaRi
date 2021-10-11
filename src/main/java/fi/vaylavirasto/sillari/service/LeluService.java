@@ -1,6 +1,7 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.api.lelu.*;
+import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
 import fi.vaylavirasto.sillari.model.CompanyModel;
@@ -49,7 +50,7 @@ public class LeluService {
         this.leluRouteUploadUtil = leluRouteUploadUtil;
     }
 
-    public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) {
+    public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) throws LeluDeleteRouteWithSupervisionsException {
         LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
 
         logger.debug("Map permit from: " + permitDTO);
@@ -63,7 +64,7 @@ public class LeluService {
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
         setBridgeIdsToRouteBridges(permitModel);
 
-        Integer permitId = permitRepository.getPermitIdByPermitNumber(permitModel.getPermitNumber());
+        Integer permitId = permitRepository.getPermitIdByPermitNumber(permitModel.getPermitNumber(), permitModel.getLeluVersion());
 
         if (permitId != null) {
             logger.debug("Permit with id {} found, update", permitId);
@@ -75,7 +76,7 @@ public class LeluService {
             response.setStatus(LeluPermitStatus.UPDATED);
             return response;
         } else {
-            logger.debug("Permit not found with id {}, create new", permitId);
+            logger.debug("Permit not found with id {} and version {}, create new", permitModel.getPermitNumber(), permitModel.getLeluVersion());
 
             // Insert new permit and all child records
             // Missing route addresses (not yet in lelu model)
@@ -146,7 +147,7 @@ public class LeluService {
         return bridgeRepository.getBridgeIdsWithOIDs(uniqueOIDs);
     }
 
-    private void updatePermit(PermitModel permitModel) {
+    private void updatePermit(PermitModel permitModel) throws LeluDeleteRouteWithSupervisionsException {
         // Check if old routes are all included in permit, routes not included anymore should be deleted
         // Routes with same lelu ID should be updated and not inserted as new, set existing sillari ID to those route models
         Map<Long, Integer> oldRouteIdLeluIdMap = routeRepository.getRouteIdsWithLeluIds(permitModel.getId());
@@ -166,7 +167,13 @@ public class LeluService {
             }
         }
 
-        permitRepository.updatePermit(permitModel, routeIdsToRemove);
+        //check if there exists supervisions for petmits's routes, then update is not allowed, need to create a new version
+        if(permitRepository.isSupervisions(permitModel, routeIdsToRemove)){
+            throw new LeluDeleteRouteWithSupervisionsException((messageSource.getMessage("lelu.permit.save.failed", null, Locale.ROOT)));
+        }
+        else {
+            permitRepository.updatePermit(permitModel, routeIdsToRemove);
+        }
     }
 
 }
