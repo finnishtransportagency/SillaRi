@@ -6,5 +6,5 @@ export default interface IBridge {
   identifier: string;
   municipality: string;
   geojson: string;
-  routeBridges?: IRouteBridge[];
+  routeBridges: IRouteBridge[];
 }

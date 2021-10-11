@@ -11,7 +11,6 @@ import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
-import ISupervisionDay from "../interfaces/ISupervisionDay";
 
 interface IStateProps {
   companyList: ICompany[];
@@ -19,7 +18,7 @@ interface IStateProps {
   selectedPermitDetail?: IPermit;
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
-  supervisorSupervisionList: ISupervisionDay[];
+  supervisionList: ISupervision[];
   selectedSupervisionDetail?: ISupervision;
   images: IImageItem[];
   networkStatus: INetworkStatus;
@@ -31,7 +30,7 @@ const initialState: IStateProps = {
   selectedPermitDetail: undefined,
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
-  supervisorSupervisionList: [],
+  supervisionList: [],
   selectedSupervisionDetail: undefined,
   images: [],
   networkStatus: {
@@ -63,9 +62,9 @@ const crossingsSlice = createSlice({
       console.log("GET_ROUTE_BRIDGE", action.payload);
       return { ...state, selectedBridgeDetail: action.payload };
     },
-    GET_SUPERVISION_LIST: (state, action: PayloadAction<ISupervisionDay[]>) => {
+    GET_SUPERVISION_LIST: (state, action: PayloadAction<ISupervision[]>) => {
       console.log("GET_SUPERVISION_LIST", action.payload);
-      return { ...state, supervisorSupervisionList: action.payload };
+      return { ...state, supervisionList: action.payload };
     },
     GET_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
       console.log("GET_SUPERVISION", action.payload);

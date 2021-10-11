@@ -9,8 +9,6 @@ import ISupervision from "../interfaces/ISupervision";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { getOrigin } from "./request";
 import { actions as crossingActions } from "../store/crossingsSlice";
-import IBridge from "../interfaces/IBridge";
-import { groupSupervisionsByDate } from "./supervisionUtil";
 
 const notOkError = "Network response was not ok";
 
@@ -179,10 +177,9 @@ export const getSupervisionList = async (username: string, dispatch: Dispatch): 
     const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsofsupervisor?username=${username}`);
 
     if (supervisionsResponse.ok) {
-      const supervisionsPromise = (await supervisionsResponse.json()) as Promise<ISupervision[]>;
-      const groupedSupervisions = supervisionsPromise.then((supervisions) => groupSupervisionsByDate(supervisions));
+      const supervisions = (await supervisionsResponse.json()) as Promise<ISupervision[]>;
 
-      dispatch({ type: crossingActions.GET_SUPERVISION_LIST, payload: groupedSupervisions });
+      dispatch({ type: crossingActions.GET_SUPERVISION_LIST, payload: supervisions });
     } else {
       dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
       throw new Error(notOkError);

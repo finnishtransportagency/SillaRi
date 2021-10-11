@@ -5,10 +5,10 @@ import IPermit from "./IPermit";
 export default interface IRoute {
   id: number;
   permitId: number;
+  permit: IPermit;
   name: string;
   departureAddress: IAddress;
   arrivalAddress: IAddress;
   geojson: string;
   routeBridges: IRouteBridge[];
-  permit?: IPermit;
 }

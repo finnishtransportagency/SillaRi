@@ -5,8 +5,8 @@ import IRoute from "./IRoute";
 export default interface IRouteBridge {
   id: number;
   routeId: number;
+  route: IRoute;
   bridge: IBridge;
   crossingInstruction?: string;
   supervision: ISupervision;
-  route?: IRoute;
 }
