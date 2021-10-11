@@ -36,22 +36,22 @@ const SupervisionList = (): JSX.Element => {
         <NoNetworkNoData />
       ) : (
         <IonGrid className="ion-no-padding" fixed>
-          {groupedSupervisions.map((supervisionDay: ISupervisionDay, index) => {
-            const key = `supervisionDay_${index}`;
+          {groupedSupervisions.map((supervisionDay: ISupervisionDay, dIndex) => {
+            const dayKey = `day${dIndex}`;
 
             return (
-              <IonRow key={key}>
+              <IonRow key={dayKey}>
                 <IonCol className="ion-text-left">
                   <IonText className="headingText">
                     <Moment format={DATE_TIME_FORMAT}>{supervisionDay.date}</Moment>
                   </IonText>
+                  <div className="cardListContainer">
+                    {supervisionDay.supervisions.map((supervision: ISupervision, bIndex) => {
+                      const bridgeKey = `bridge_${bIndex}`;
+                      return <BridgeCard key={bridgeKey} routeBridge={supervision.routeBridge} />;
+                    })}
+                  </div>
                 </IonCol>
-                <div className="cardListContainer">
-                  {supervisionDay.supervisions.map((supervision: ISupervision, idx) => {
-                    const bridgeKey = `bridge_${idx}`;
-                    return <BridgeCard key={bridgeKey} routeBridge={supervision.routeBridge} />;
-                  })}
-                </div>
               </IonRow>
             );
           })}
