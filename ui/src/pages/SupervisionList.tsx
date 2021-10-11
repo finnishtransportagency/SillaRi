@@ -46,7 +46,7 @@ const SupervisionList = (): JSX.Element => {
                   <div className="cardListContainer">
                     {supervisionDay.supervisions.map((supervision: ISupervision, bIndex) => {
                       const bridgeKey = `bridge_${bIndex}`;
-                      return <BridgeCard key={bridgeKey} routeBridge={supervision.routeBridge} />;
+                      return <BridgeCard key={bridgeKey} routeBridge={supervision.routeBridge} supervision={supervision} />;
                     })}
                   </div>
                 </IonCol>

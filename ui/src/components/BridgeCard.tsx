@@ -3,13 +3,15 @@ import {IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, I
 import IRouteBridge from "../interfaces/IRouteBridge";
 import {DATE_TIME_FORMAT_MIN} from "../utils/constants";
 import Moment from "react-moment";
+import ISupervision from "../interfaces/ISupervision";
 
 interface BridgeCardProps {
   routeBridge: IRouteBridge;
+  supervision?: ISupervision;
 }
 
-const BridgeCard = ({ routeBridge }: BridgeCardProps): JSX.Element => {
-  const { id, bridge, supervision } = routeBridge || {};
+const BridgeCard = ({ routeBridge, supervision }: BridgeCardProps): JSX.Element => {
+  const { id, bridge } = routeBridge || {};
   const { name, identifier, municipality } = bridge || {};
   const { plannedTime } = supervision || {};
 
