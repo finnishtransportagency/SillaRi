@@ -7,7 +7,7 @@ import { add } from "ionicons/icons";
 import Moment from "react-moment";
 import IPermit from "../../interfaces/IPermit";
 import { useTypedSelector } from "../../store/store";
-import { getRouteTransportsOfPermit, onRetry } from "../../utils/backendData";
+import { getRouteTransportsOfPermit, onRetry } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
 
 interface PermitAccordionHeadingProps {
@@ -20,8 +20,8 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps): JSX.El
 
   const { id: permitId, permitNumber, validStartDate, validEndDate } = permit;
 
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const { routeTransportList = [] } = crossings;
+  const management = useTypedSelector((state) => state.managementReducer);
+  const { routeTransportList = [] } = management;
 
   useQuery(["getRouteTransportsOfPermit", permitId], () => getRouteTransportsOfPermit(Number(permitId), dispatch), {
     retry: onRetry,

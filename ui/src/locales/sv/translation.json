@@ -56,11 +56,14 @@
     }
   },
   "transports": {
-    "transportList": {
+    "transportCodeInput": {
       "header" :
       {
         "title" : "(SV) Transports"
-      }
+      },
+      "inputLabel" : "(SV) Please enter transport code",
+      "inputPlaceholder" : "(SV) Transport code",
+      "submitButtonLabel" : "(SV) Submit code"
     },
     "transport": {
       "header" :

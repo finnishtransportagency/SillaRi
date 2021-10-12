@@ -1,5 +1,9 @@
-package fi.vaylavirasto.sillari.model;
+package fi.vaylavirasto.sillari.mapper;
 
+import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
+import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.model.SupervisionStatusTypeConverter;
+import fi.vaylavirasto.sillari.model.Tables;
 import fi.vaylavirasto.sillari.model.tables.SupervisionStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;

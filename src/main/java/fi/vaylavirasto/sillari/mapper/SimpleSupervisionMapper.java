@@ -1,18 +1,18 @@
-package fi.vaylavirasto.sillari.model;
+package fi.vaylavirasto.sillari.mapper;
 
+import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.model.SupervisorType;
+import fi.vaylavirasto.sillari.model.SupervisorTypeConverter;
+import fi.vaylavirasto.sillari.model.Tables;
 import fi.vaylavirasto.sillari.model.tables.Supervision;
-import fi.vaylavirasto.sillari.model.tables.SupervisionReport;
-import fi.vaylavirasto.sillari.model.tables.SupervisionStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 import java.util.ArrayList;
 
-public class SupervisionMapper implements RecordMapper<Record, SupervisionModel> {
+public class SimpleSupervisionMapper implements RecordMapper<Record, SupervisionModel> {
     public static final Supervision supervision = Tables.SUPERVISION.as("sn");
-    public static final SupervisionStatus supervisionStatus = Tables.SUPERVISION_STATUS.as("sns");
-    public static final SupervisionReport supervisionReport = Tables.SUPERVISION_REPORT.as("snr");
 
     @Nullable
     @Override
@@ -25,21 +25,8 @@ public class SupervisionMapper implements RecordMapper<Record, SupervisionModel>
         supervisionModel.setConformsToPermit(record.get(supervision.CONFORMS_TO_PERMIT));
         supervisionModel.setSupervisorType(record.get(supervision.SUPERVISOR_TYPE, new SupervisorTypeConverter(String.class, SupervisorType.class)));
 
-        SupervisionStatusMapper statusMapper = new SupervisionStatusMapper();
-        SupervisionStatusModel statusModel = statusMapper.map(record);
-        if (statusModel != null && statusModel.getId() != null) {
-            supervisionModel.setCurrentStatus(statusModel);
-        }
         supervisionModel.setStatusHistory(new ArrayList<>());
-
         supervisionModel.setSupervisors(new ArrayList<>());
-
-        SupervisionReportMapper reportMapper = new SupervisionReportMapper();
-        SupervisionReportModel reportModel = reportMapper.map(record);
-        if (reportModel != null && reportModel.getId() != null) {
-            supervisionModel.setReport(reportModel);
-        }
-
         supervisionModel.setImages(new ArrayList<>());
 
         return supervisionModel;

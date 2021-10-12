@@ -114,7 +114,8 @@
     },
     "addTransport":
     {
-      "headerTitle": "Add new transport",
+      "headerTitleAdd": "Add new transport",
+      "headerTitleDetail": "Transport details",
       "transportPermit": "Transport permit",
       "validityPeriod": "Validity period",
       "transportId": "Transport ID",
@@ -123,6 +124,7 @@
       "buttons": {
         "deleteTransport": "Delete transport"
       },
+      "saved": "Saved",
       "routeInfo": {
         "estimatedDepartureDate": "Estimated departure date",
         "estimatedDepartureTime": "Estimated departure time",
@@ -165,11 +167,14 @@
     }
   },
   "transports": {
-    "transportList": {
+    "transportCodeInput": {
       "header" :
       {
         "title" : "Transports"
-      }
+      },
+      "inputLabel" : "Please enter transport code",
+      "inputPlaceholder" : "Transport code",
+      "submitButtonLabel" : "Submit code"
     },
     "transport": {
       "header" :

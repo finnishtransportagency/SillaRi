@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.RouteMapper;
+import fi.vaylavirasto.sillari.mapper.RouteMapper;
 import fi.vaylavirasto.sillari.model.RouteModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +22,7 @@ public class RouteRepository {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public List<RouteModel> getRoutes(Integer permitId) {
+    public List<RouteModel> getRoutesByPermitId(Integer permitId) {
         return dsl.select().from(RouteMapper.route)
                 .leftJoin(RouteMapper.arrivalAddress).on(RouteMapper.route.ARRIVAL_ADDRESS_ID.eq(RouteMapper.arrivalAddress.ID))
                 .leftJoin(RouteMapper.departureAddress).on(RouteMapper.route.DEPARTURE_ADDRESS_ID.eq(RouteMapper.departureAddress.ID))

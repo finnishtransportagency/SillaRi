@@ -1,5 +1,9 @@
-package fi.vaylavirasto.sillari.model;
+package fi.vaylavirasto.sillari.mapper;
 
+import fi.vaylavirasto.sillari.model.RouteTransportStatusModel;
+import fi.vaylavirasto.sillari.model.Tables;
+import fi.vaylavirasto.sillari.model.TransportStatusType;
+import fi.vaylavirasto.sillari.model.TransportStatusTypeConverter;
 import fi.vaylavirasto.sillari.model.tables.RouteTransportStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;

@@ -25,11 +25,11 @@ public class CompanyService {
     public List<CompanyModel> getCompanies(Integer limit) {
         List<CompanyModel> companies = companyRepository.getAllCompanies(limit);
         for(CompanyModel companyModel : companies) {
-            companyModel.setPermits(permitRepository.getCompanysPermits(companyModel.getId()));
+            companyModel.setPermits(permitRepository.getPermitsByCompanyId(companyModel.getId()));
             for(PermitModel permitModel : companyModel.getPermits()) {
-                permitModel.setRoutes(routeRepository.getRoutes(permitModel.getId()));
+                permitModel.setRoutes(routeRepository.getRoutesByPermitId(permitModel.getId()));
                 for(RouteModel routeModel : permitModel.getRoutes()) {
-                    List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRoutesBridges(routeModel.getId());
+                    List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRouteBridges(routeModel.getId());
                     routeModel.setRouteBridges(routeBridgeModels);
                 }
             }
@@ -41,7 +41,7 @@ public class CompanyService {
         if (limit >= 0) {
             List<CompanyModel> companyList = companyRepository.getAllCompanies(limit);
             for (CompanyModel companyModel : companyList) {
-                companyModel.setPermits(permitRepository.getCompanysPermits(companyModel.getId()));
+                companyModel.setPermits(permitRepository.getPermitsByCompanyId(companyModel.getId()));
             }
             return companyList;
         } else {
@@ -51,9 +51,9 @@ public class CompanyService {
 
     public CompanyModel getCompany(Integer id) {
         CompanyModel company = companyRepository.getCompanyById(id);
-        company.setPermits(permitRepository.getCompanysPermits(id));
+        company.setPermits(permitRepository.getPermitsByCompanyId(id));
         for (PermitModel permitModel : company.getPermits()) {
-            permitModel.setRoutes(routeRepository.getRoutes(permitModel.getId()));
+            permitModel.setRoutes(routeRepository.getRoutesByPermitId(permitModel.getId()));
         }
         return company;
     }

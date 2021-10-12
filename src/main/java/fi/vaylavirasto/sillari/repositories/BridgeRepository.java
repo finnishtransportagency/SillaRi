@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.BridgeMapper;
+import fi.vaylavirasto.sillari.mapper.BridgeMapper;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
