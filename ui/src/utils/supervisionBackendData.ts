@@ -41,11 +41,11 @@ export const getCompany = async (companyId: number, dispatch: Dispatch, selected
   }
 };
 
-export const getCompanyList = async (dispatch: Dispatch): Promise<void> => {
+export const getCompanyList = async (username: string, dispatch: Dispatch): Promise<void> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyList: false } });
 
-    const companyListResponse = await fetch(`${getOrigin()}/api/company/getcompanylist?limit=10`);
+    const companyListResponse = await fetch(`${getOrigin()}/api/company/getcompanylist?username=${username}`);
 
     if (companyListResponse.ok) {
       const companyList = (await companyListResponse.json()) as Promise<ICompany[]>;

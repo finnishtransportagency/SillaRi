@@ -28,26 +28,13 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
-    @Operation(summary = "Get companies")
-    @GetMapping(value = "/getcompanies", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getCompanies(@RequestParam(defaultValue = "10") Integer limit) {
-        ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getAllCompanies");
-        try {
-            List<CompanyModel> companies = companyService.getCompanies(limit);
-            return ResponseEntity.ok().body(companies != null ? companies : new EmptyJsonResponse());
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
     @Operation(summary = "Get company list")
     @GetMapping(value = "/getcompanylist", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getCompanyList(@RequestParam(defaultValue = "10") Integer limit) {
+    public ResponseEntity<?> getCompanyList(@RequestParam String username) {
         ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getCompanyList");
         try {
-            List<CompanyModel> companyList = companyService.getCompanyList(limit);
+            List<CompanyModel> companyList = companyService.getCompaniesOfSupervisor(username);
             return ResponseEntity.ok().body(companyList != null ? companyList : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

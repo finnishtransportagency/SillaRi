@@ -24,7 +24,10 @@ const Home = (): JSX.Element => {
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
 
-  useQuery(["getCompanyList"], () => getCompanyList(dispatch), { retry: onRetry });
+  // TODO use logged in user
+  const supervisorUser = "USER1";
+
+  useQuery(["getCompanyList"], () => getCompanyList(supervisorUser, dispatch), { retry: onRetry });
 
   const changeSlide = (evt: CustomEvent<SegmentChangeEventDetail>) => {
     if (slidesRef.current) {
