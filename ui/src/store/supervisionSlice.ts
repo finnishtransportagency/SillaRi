@@ -39,7 +39,7 @@ const initialState: IStateProps = {
 };
 
 const supervisionSlice = createSlice({
-  name: "crossings",
+  name: "supervision",
   initialState,
   reducers: {
     GET_COMPANY_LIST: (state, action: PayloadAction<ICompany[]>) => {
