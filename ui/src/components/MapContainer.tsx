@@ -52,8 +52,7 @@ const MapContainer = (): JSX.Element => {
   const [routeExtent, setRouteExtent] = useState<Extent>();
   const [mapInitialised, setMapInitialised] = useState<boolean>(false);
 
-  const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedBridgeDetail, selectedRouteDetail } = crossingsState;
+  const { selectedBridgeDetail, selectedRouteDetail } = useTypedSelector((state) => state.supervisionReducer);
   const { bridge, routeId = 0 } = selectedBridgeDetail || {};
   const { identifier: bridgeIdentifier, geojson: bridgeGeojson } = bridge || {};
   const { geojson: routeGeojson, routeBridges = [] } = selectedRouteDetail || {};

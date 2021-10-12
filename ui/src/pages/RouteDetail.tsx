@@ -24,12 +24,11 @@ const RouteDetail = (): JSX.Element => {
 
   const [transportValid, setTransportValid] = useState(false);
 
-  const crossingsState = useTypedSelector((state) => state.crossingsReducer);
   const {
     selectedPermitDetail,
     selectedRouteDetail,
     networkStatus: { isFailed = {} },
-  } = crossingsState;
+  } = useTypedSelector((state) => state.supervisionReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name = "", routeBridges = [] } = selectedRouteDetail || {};
 

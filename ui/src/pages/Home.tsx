@@ -14,14 +14,15 @@ import "./Home.css";
 
 const Home = (): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
   const [currentSegment, setCurrentSegment] = useState<string>("0");
   const slidesRef = useRef<HTMLIonSlidesElement>(null);
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
+
   const {
     companyList = [],
     networkStatus: { isFailed = {} },
-  } = crossings;
-  const dispatch = useDispatch();
+  } = useTypedSelector((state) => state.supervisionReducer);
 
   useQuery(["getCompanyList"], () => getCompanyList(dispatch), { retry: onRetry });
 

@@ -21,7 +21,7 @@ const DenyCrossing = (): JSX.Element => {
   const {
     selectedBridgeDetail,
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.crossingsReducer);
+  } = useTypedSelector((state) => state.supervisionReducer);
   const { bridge } = selectedBridgeDetail || {};
   const { name = "" } = bridge || {};
 

@@ -12,7 +12,7 @@ import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import IFileInput from "../interfaces/IFileInput";
 import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry, sendImageUpload, sendSupervisionReportUpdate } from "../utils/backendData";
-import { actions as crossingActions } from "../store/crossingsSlice";
+import { actions as supervisionActions } from "../store/supervisionSlice";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import ImageThumbnailRow from "../components/ImageThumbnailRow";
@@ -35,7 +35,7 @@ const SupervisionSummary = (): JSX.Element => {
     selectedSupervisionDetail,
     images = [],
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.crossingsReducer);
+  } = useTypedSelector((state) => state.supervisionReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
   const { routeBridgeId = "0", startedTime, report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
@@ -86,7 +86,7 @@ const SupervisionSummary = (): JSX.Element => {
   useEffect(() => {
     if (!isLoadingSupervision) {
       // Remove any uploaded images from the camera images stored in redux
-      dispatch({ type: crossingActions.UPDATE_IMAGES, payload: supervisionImages });
+      dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: supervisionImages });
     }
   }, [isLoadingSupervision, supervisionImages, dispatch]);
 

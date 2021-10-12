@@ -18,7 +18,7 @@ const SupervisionList = (): JSX.Element => {
   const {
     supervisionList,
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.crossingsReducer);
+  } = useTypedSelector((state) => state.supervisionReducer);
 
   // TODO use logged in user
   const username = "USER1";

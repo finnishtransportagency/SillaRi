@@ -25,7 +25,7 @@ import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import { useTypedSelector } from "../store/store";
 import IRadioValue from "../interfaces/IRadioValue";
-import { actions as crossingActions } from "../store/crossingsSlice";
+import { actions as supervisionActions } from "../store/supervisionSlice";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
 import IFileInput from "../interfaces/IFileInput";
 import {
@@ -58,7 +58,7 @@ const Supervision = (): JSX.Element => {
     selectedSupervisionDetail,
     images = [],
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.crossingsReducer);
+  } = useTypedSelector((state) => state.supervisionReducer);
   const { permitNumber = "" } = selectedPermitDetail || {};
   const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
   const { routeBridgeId = "0", startedTime, report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
@@ -151,7 +151,7 @@ const Supervision = (): JSX.Element => {
       name: radioName,
       value: radioValue === "yes",
     } as IRadioValue;
-    dispatch({ type: crossingActions.REPORT_RADIO_CHANGED, payload: radioPayload });
+    dispatch({ type: supervisionActions.REPORT_RADIO_CHANGED, payload: radioPayload });
   };
 
   const checkBoxClicked = (checkBoxName: string, checkBoxValue: boolean) => {
@@ -159,12 +159,12 @@ const Supervision = (): JSX.Element => {
       name: checkBoxName,
       value: checkBoxValue,
     } as IRadioValue;
-    dispatch({ type: crossingActions.REPORT_RADIO_CHANGED, payload: radioPayload });
+    dispatch({ type: supervisionActions.REPORT_RADIO_CHANGED, payload: radioPayload });
   };
 
   const textAreaValueChanged = (pname: string, pvalue: string) => {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
-    dispatch({ type: crossingActions.REPORT_TEXTAREA_CHANGED, payload: change });
+    dispatch({ type: supervisionActions.REPORT_TEXTAREA_CHANGED, payload: change });
   };
 
   const noNetworkNoData =

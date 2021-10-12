@@ -21,13 +21,12 @@ const CompanyDetail = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
+  const { id: companyId = "0" } = useParams<CompanyDetailProps>();
   const {
     selectedCompanyDetail,
     networkStatus: { isFailed = {} },
-  } = crossings;
+  } = useTypedSelector((state) => state.supervisionReducer);
   const { name = "", permits = [] } = selectedCompanyDetail || {};
-  const { id: companyId = "0" } = useParams<CompanyDetailProps>();
 
   useQuery(["getCompany", companyId], () => getCompany(Number(companyId), dispatch, selectedCompanyDetail), { retry: onRetry });
 

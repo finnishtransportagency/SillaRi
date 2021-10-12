@@ -39,7 +39,7 @@ const BridgeDetail = (): JSX.Element => {
     selectedPermitDetail,
     selectedSupervisionDetail,
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.crossingsReducer);
+  } = useTypedSelector((state) => state.supervisionReducer);
   const { bridge, crossingInstruction = "" } = selectedBridgeDetail || {};
   const { name = "", identifier = "", municipality = "" } = bridge || {};
   const { permitNumber } = selectedPermitDetail || {};

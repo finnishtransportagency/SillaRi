@@ -38,7 +38,7 @@ const initialState: IStateProps = {
   },
 };
 
-const crossingsSlice = createSlice({
+const supervisionSlice = createSlice({
   name: "crossings",
   initialState,
   reducers: {
@@ -151,5 +151,5 @@ const crossingsSlice = createSlice({
   },
 });
 
-export const { actions } = crossingsSlice;
-export default crossingsSlice;
+export const { actions } = supervisionSlice;
+export default supervisionSlice;
