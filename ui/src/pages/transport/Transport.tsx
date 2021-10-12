@@ -7,7 +7,7 @@ import { IonContent, IonPage } from "@ionic/react";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
 import { useTypedSelector } from "../../store/store";
-import { getRouteTransport, onRetry } from "../../utils/backendData";
+import { getRouteTransport, onRetry } from "../../utils/managementBackendData";
 
 interface TransportProps {
   routeTransportId: string;
@@ -17,12 +17,12 @@ const Transport = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
+  const management = useTypedSelector((state) => state.managementReducer);
 
   const {
     selectedRouteTransportDetail,
     networkStatus: { isFailed = {} },
-  } = crossings;
+  } = management;
 
   const { routeTransportId = "3" } = useParams<TransportProps>();
 

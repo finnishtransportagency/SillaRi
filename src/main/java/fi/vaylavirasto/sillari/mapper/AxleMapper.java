@@ -1,11 +1,11 @@
-package fi.vaylavirasto.sillari.model;
+package fi.vaylavirasto.sillari.mapper;
 
+import fi.vaylavirasto.sillari.model.AxleModel;
+import fi.vaylavirasto.sillari.model.Tables;
 import fi.vaylavirasto.sillari.model.tables.Axle;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
-
-import java.math.BigDecimal;
 
 public class AxleMapper implements RecordMapper<Record, AxleModel> {
     public static final Axle axle = Tables.AXLE.as("ax");

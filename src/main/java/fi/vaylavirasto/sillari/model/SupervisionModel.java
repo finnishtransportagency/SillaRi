@@ -25,7 +25,24 @@ public class SupervisionModel {
     private OffsetDateTime cancelledTime; // First CANCELLED in statusHistory
     private OffsetDateTime finishedTime; // First FINISHED in statusHistory
 
-    public void setStatusTimes(List<SupervisionStatusModel> statusHistory) {
+    // Parents
+    private RouteBridgeModel routeBridge;
+    private RouteTransportModel routeTransport;
+
+    public void setStatusHistory(List<SupervisionStatusModel> statusHistory) {
+        this.statusHistory = statusHistory;
+
+        if (statusHistory != null && !statusHistory.isEmpty()) {
+            this.setCurrentStatus(statusHistory);
+            this.setStatusTimes(statusHistory);
+        }
+    }
+
+    private void setCurrentStatus(List<SupervisionStatusModel> statusHistory) {
+        this.currentStatus = statusHistory.stream().max(Comparator.comparing(SupervisionStatusModel::getTime)).orElse(null);
+    }
+
+    private void setStatusTimes(List<SupervisionStatusModel> statusHistory) {
         OffsetDateTime createdTime = statusHistory.stream()
                 .filter(model -> SupervisionStatusType.PLANNED.equals(model.getStatus()))
                 .min(Comparator.comparing(SupervisionStatusModel::getTime))

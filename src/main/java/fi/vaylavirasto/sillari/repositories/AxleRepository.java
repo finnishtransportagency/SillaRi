@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.AxleMapper;
+import fi.vaylavirasto.sillari.mapper.AxleMapper;
 import fi.vaylavirasto.sillari.model.AxleModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

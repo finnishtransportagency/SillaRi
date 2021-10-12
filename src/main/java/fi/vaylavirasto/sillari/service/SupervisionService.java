@@ -2,11 +2,9 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
-import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
-import fi.vaylavirasto.sillari.repositories.FileRepository;
-import fi.vaylavirasto.sillari.repositories.SupervisionRepository;
-import fi.vaylavirasto.sillari.repositories.SupervisionStatusRepository;
-import fi.vaylavirasto.sillari.repositories.SupervisorRepository;
+import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.model.SupervisorModel;
+import fi.vaylavirasto.sillari.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,34 +17,51 @@ public class SupervisionService {
     @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
     @Autowired
+    SupervisionReportRepository supervisionReportRepository;
+    @Autowired
     SupervisorRepository supervisorRepository;
     @Autowired
     FileRepository fileRepository;
 
     public SupervisionModel getSupervision(Integer supervisionId) {
-        SupervisionModel supervisionModel = supervisionRepository.getSupervisionById(supervisionId);
-        if (supervisionModel != null) {
-            supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
-            supervisionModel.setImages(fileRepository.getFiles(supervisionId));
+        SupervisionModel supervision = supervisionRepository.getSupervisionById(supervisionId);
+        if (supervision != null) {
+            supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
+            supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
+            supervision.setImages(fileRepository.getFiles(supervisionId));
 
-            List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervisionId);
-            supervisionModel.setStatusHistory(statusHistory);
-            supervisionModel.setStatusTimes(statusHistory);
+            // Sets also current status and status timestamps
+            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
         }
-        return supervisionModel;
+        return supervision;
     }
 
     public SupervisionModel getSupervisionOfRouteBridge(Integer routeBridgeId) {
-        SupervisionModel supervisionModel = supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeId);
-        if (supervisionModel != null && supervisionModel.getId() != null) {
-            supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionModel.getId()));
-            supervisionModel.setImages(fileRepository.getFiles(supervisionModel.getId()));
+        SupervisionModel supervision = supervisionRepository.getSupervisionByRouteBridgeId(routeBridgeId);
+        if (supervision != null && supervision.getId() != null) {
+            supervision.setReport(supervisionReportRepository.getSupervisionReport(supervision.getId()));
+            supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+            supervision.setImages(fileRepository.getFiles(supervision.getId()));
 
-            List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervisionModel.getId());
-            supervisionModel.setStatusHistory(statusHistory);
-            supervisionModel.setStatusTimes(statusHistory);
+            // Sets also current status and status timestamps
+            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
         }
-        return supervisionModel;
+        return supervision;
+    }
+
+
+    public List<SupervisionModel> getSupervisionsOfSupervisor(String username) {
+        List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsBySupervisorUsername(username);
+        for (SupervisionModel supervision : supervisions) {
+            // Sets also current status and status timestamps
+            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+        }
+        return supervisions;
+    }
+
+    public List<SupervisorModel> getSupervisors() {
+        // TODO - limit the list of supervisors somehow?
+        return supervisorRepository.getSupervisors();
     }
 
     // Creates new supervision and adds a new status with type PLANNED
@@ -65,26 +80,26 @@ public class SupervisionService {
 
     // Adds the status IN_PROGRESS and creates a new supervision report
     public SupervisionModel startSupervision(Integer supervisionId) {
-        supervisionRepository.createSupervisionReport(supervisionId);
+        supervisionReportRepository.createSupervisionReport(supervisionId);
         return getSupervision(supervisionId);
     }
 
     // Cancels the supervision by adding the status CANCELLED
     public SupervisionModel cancelSupervision(SupervisionModel supervisionModel) {
-        supervisionRepository.cancelSupervision(supervisionModel);
+        supervisionStatusRepository.insertSupervisionStatus(supervisionModel.getId(), SupervisionStatusType.CANCELLED);
         return getSupervision(supervisionModel.getId());
     }
 
     // Ends the supervision by adding the status FINISHED
     public SupervisionModel finishSupervision(SupervisionModel supervisionModel) {
-        supervisionRepository.finishSupervision(supervisionModel);
+        supervisionStatusRepository.insertSupervisionStatus(supervisionModel.getId(), SupervisionStatusType.FINISHED);
         return getSupervision(supervisionModel.getId());
     }
 
     // Updates the report fields
     // TODO do we need to add a new status row?
     public SupervisionModel updateSupervisionReport(SupervisionReportModel supervisionReportModel) {
-        supervisionRepository.updateSupervisionReport(supervisionReportModel);
+        supervisionReportRepository.updateSupervisionReport(supervisionReportModel);
         return getSupervision(supervisionReportModel.getSupervisionId());
     }
 

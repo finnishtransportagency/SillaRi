@@ -3,11 +3,15 @@ import ISupervisionStatus from "./ISupervisionStatus";
 import ISupervisionReport from "./ISupervisionReport";
 import ISupervisor from "./ISupervisor";
 import { SupervisorType } from "../utils/constants";
+import IRouteBridge from "./IRouteBridge";
+import IRouteTransport from "./IRouteTransport";
 
 export default interface ISupervision {
   id: number;
   routeBridgeId: number;
+  routeBridge: IRouteBridge;
   routeTransportId: number;
+  routeTransport: IRouteTransport;
   plannedTime: Date;
   conformsToPermit: boolean;
   statusHistory: ISupervisionStatus[];

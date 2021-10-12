@@ -1,5 +1,7 @@
-package fi.vaylavirasto.sillari.model;
+package fi.vaylavirasto.sillari.mapper;
 
+import fi.vaylavirasto.sillari.model.SupervisorModel;
+import fi.vaylavirasto.sillari.model.Tables;
 import fi.vaylavirasto.sillari.model.tables.SupervisionSupervisor;
 import fi.vaylavirasto.sillari.model.tables.Supervisor;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +19,11 @@ public class SupervisorMapper implements RecordMapper<Record, SupervisorModel> {
         supervisorModel.setId(record.get(supervisor.ID));
         supervisorModel.setFirstName(record.get(supervisor.FIRSTNAME));
         supervisorModel.setLastName(record.get(supervisor.LASTNAME));
-        supervisorModel.setPriority(record.get(supervisionSupervisor.PRIORITY));
+
+        if (record.field(supervisionSupervisor.PRIORITY) != null) {
+            supervisorModel.setPriority(record.get(supervisionSupervisor.PRIORITY));
+        }
+
         return supervisorModel;
     }
 }

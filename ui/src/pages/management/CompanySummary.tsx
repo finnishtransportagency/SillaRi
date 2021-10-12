@@ -10,7 +10,7 @@ import CustomAccordion from "../../components/common/CustomAccordion";
 import PermitAccordionHeading from "../../components/management/PermitAccordionHeading";
 import PermitAccordionPanel from "../../components/management/PermitAccordionPanel";
 import { useTypedSelector } from "../../store/store";
-import { getCompany, onRetry } from "../../utils/backendData";
+import { getCompany, onRetry } from "../../utils/managementBackendData";
 
 interface CompanySummaryProps {
   companyId: string;
@@ -20,11 +20,11 @@ const CompanySummary = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
+  const management = useTypedSelector((state) => state.managementReducer);
   const {
     selectedCompanyDetail,
     networkStatus: { isFailed = {} },
-  } = crossings;
+  } = management;
   const { name = "", permits = [] } = selectedCompanyDetail || {};
   const { companyId = "0" } = useParams<CompanySummaryProps>();
 

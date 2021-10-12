@@ -5,7 +5,6 @@ import IFileInput from "../interfaces/IFileInput";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
-import IRouteTransport from "../interfaces/IRouteTransport";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { getOrigin } from "./request";
@@ -171,50 +170,22 @@ export const getRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, 
   }
 };
 
-export const getRouteTransport = async (
-  routeTransportId: number,
-  dispatch: Dispatch,
-  selectedRouteTransportDetail?: IRouteTransport
-): Promise<void> => {
+export const getSupervisionList = async (username: string, dispatch: Dispatch): Promise<void> => {
   try {
-    if (selectedRouteTransportDetail && selectedRouteTransportDetail.id !== routeTransportId) {
-      dispatch({ type: crossingActions.GET_ROUTE_TRANSPORT, payload: undefined });
-    }
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionList: false } });
 
-    const routeTransportResponse = await fetch(`${getOrigin()}/api/routetransport/getroutetransport?routeTransportId=${routeTransportId}`);
+    const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsofsupervisor?username=${username}`);
 
-    if (routeTransportResponse.ok) {
-      const routeTransport = (await routeTransportResponse.json()) as Promise<IRouteTransport>;
-      dispatch({ type: crossingActions.GET_ROUTE_TRANSPORT, payload: routeTransport });
+    if (supervisionsResponse.ok) {
+      const supervisions = (await supervisionsResponse.json()) as Promise<ISupervision[]>;
+
+      dispatch({ type: crossingActions.GET_SUPERVISION_LIST, payload: supervisions });
     } else {
-      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
-    throw new Error(err as string);
-  }
-};
-
-export const getRouteTransportsOfPermit = async (permitId: number, dispatch: Dispatch, selectedPermitDetail?: IPermit): Promise<void> => {
-  try {
-    if (selectedPermitDetail && selectedPermitDetail.id !== permitId) {
-      dispatch({ type: crossingActions.GET_ROUTE_TRANSPORT_LIST, payload: undefined });
-    }
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: false } });
-
-    const routeTransportListResponse = await fetch(`${getOrigin()}/api/routetransport/getroutetransportsofpermit?permitId=${permitId}`);
-
-    if (routeTransportListResponse.ok) {
-      const routeTransportList = (await routeTransportListResponse.json()) as Promise<IRouteTransport[]>;
-      dispatch({ type: crossingActions.GET_ROUTE_TRANSPORT_LIST, payload: routeTransportList });
-    } else {
-      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: true } });
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
     throw new Error(err as string);
   }
 };
