@@ -13,5 +13,7 @@ public class LeluSupervisor {
     private String firstName;
     @Schema(description = "Supervisor last name")
     private String lastName;
+    @Schema(description = "Supervisor user name")
+    private String username;
 
 }
