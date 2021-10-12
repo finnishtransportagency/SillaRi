@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
-import { getRouteBridge, onRetry } from "../utils/backendData";
+import { getRouteBridge, onRetry } from "../utils/supervisionBackendData";
 
 interface DenyCrossingProps {
   routeBridgeId: string;

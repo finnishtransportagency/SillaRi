@@ -12,7 +12,7 @@ import RouteTransport from "../components/RouteTransport";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import { useTypedSelector } from "../store/store";
-import { getPermitOfRoute, getRoute, onRetry } from "../utils/backendData";
+import { getPermitOfRoute, getRoute, onRetry } from "../utils/supervisionBackendData";
 
 interface RouteDetailProps {
   routeId: string;

@@ -10,7 +10,7 @@ import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import RouteCardList from "../components/RouteCardList";
 import { useTypedSelector } from "../store/store";
-import { getCompany, onRetry } from "../utils/backendData";
+import { getCompany, onRetry } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 
 interface CompanyDetailProps {

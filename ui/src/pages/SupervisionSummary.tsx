@@ -11,7 +11,7 @@ import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import IFileInput from "../interfaces/IFileInput";
-import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry, sendImageUpload, sendSupervisionReportUpdate } from "../utils/backendData";
+import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry, sendImageUpload, sendSupervisionReportUpdate } from "../utils/supervisionBackendData";
 import { actions as supervisionActions } from "../store/supervisionSlice";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import ISupervisionReport from "../interfaces/ISupervisionReport";

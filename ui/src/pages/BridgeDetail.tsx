@@ -21,7 +21,7 @@ import { location } from "ionicons/icons";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
-import { getPermitOfRouteBridge, getRouteBridge, getSupervisionOfRouteBridge, onRetry, sendSupervisionUpdate } from "../utils/backendData";
+import { getPermitOfRouteBridge, getRouteBridge, getSupervisionOfRouteBridge, onRetry, sendSupervisionUpdate } from "../utils/supervisionBackendData";
 import ISupervision from "../interfaces/ISupervision";
 import { SupervisionStatus } from "../utils/constants";
 

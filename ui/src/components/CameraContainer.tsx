@@ -11,7 +11,7 @@ import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import { RootState, useTypedSelector } from "../store/store";
 import { actions as supervisionActions } from "../store/supervisionSlice";
-import { deleteImage, getSupervision, onRetry } from "../utils/backendData";
+import { deleteImage, getSupervision, onRetry } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import { getOrigin } from "../utils/request";
 import ImagePreview from "./ImagePreview";

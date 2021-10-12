@@ -4,7 +4,7 @@ import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import { useDispatch } from "react-redux";
 import { useQuery } from "react-query";
-import { getSupervisionList, onRetry } from "../utils/backendData";
+import { getSupervisionList, onRetry } from "../utils/supervisionBackendData";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import { DATE_FORMAT } from "../utils/constants";
 import Moment from "react-moment";

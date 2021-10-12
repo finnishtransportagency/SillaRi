@@ -36,7 +36,7 @@ import {
   sendImageUpload,
   sendSupervisionReportUpdate,
   sendSupervisionStarted,
-} from "../utils/backendData";
+} from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import ImageThumbnailRow from "../components/ImageThumbnailRow";

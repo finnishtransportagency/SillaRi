@@ -8,7 +8,7 @@ import { barbellOutline, bus } from "ionicons/icons";
 import Header from "../components/Header";
 import CompanyCardList from "../components/CompanyCardList";
 import { useTypedSelector } from "../store/store";
-import { getCompanyList, onRetry } from "../utils/backendData";
+import { getCompanyList, onRetry } from "../utils/supervisionBackendData";
 import SupervisionList from "./SupervisionList";
 import "./Home.css";
 

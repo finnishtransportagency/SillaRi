@@ -27,7 +27,7 @@ import RouteVectorLayer from "./map/RouteVectorLayer";
 import UserVectorLayer from "./map/UserVectorLayer";
 import { getOrigin } from "../utils/request";
 import { useTypedSelector } from "../store/store";
-import { getRoute, getRouteBridge, onRetry } from "../utils/backendData";
+import { getRoute, getRouteBridge, onRetry } from "../utils/supervisionBackendData";
 import "./MapContainer.scss";
 
 interface MapContainerProps {
