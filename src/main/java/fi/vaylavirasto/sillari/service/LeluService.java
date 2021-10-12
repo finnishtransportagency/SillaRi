@@ -1,6 +1,10 @@
 package fi.vaylavirasto.sillari.service;
 
-import fi.vaylavirasto.sillari.api.lelu.*;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
+import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
 import fi.vaylavirasto.sillari.model.CompanyModel;

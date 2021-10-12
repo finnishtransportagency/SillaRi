@@ -1,9 +1,9 @@
 package fi.vaylavirasto.sillari.api.rest;
 
-import fi.vaylavirasto.sillari.api.lelu.LeluPermitDTO;
-import fi.vaylavirasto.sillari.api.lelu.LeluPermitResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.LeluRouteReportsDTO;
-import fi.vaylavirasto.sillari.api.lelu.LeluRouteGeometryResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluRouteReportsDTO;
+import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluPermitSaveException;
@@ -142,7 +142,7 @@ public class LeluController {
         return leluService.uploadRouteGeometry(routeId, file);
     }
 
-    @RequestMapping(value = "/getSupervisionStatuses", method = RequestMethod.GET)
+    @RequestMapping(value = "/supervisions", method = RequestMethod.GET)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get bridge supervision report statuses of a route")
@@ -166,7 +166,7 @@ public class LeluController {
     }
 
 
-    @RequestMapping(value = "/getSupervisionReport", method = RequestMethod.GET)
+    @RequestMapping(value = "/supervisionReport", method = RequestMethod.GET)
     @Operation(summary = "Get bridge supervision report pdf by report id aquired from /getSupervisionStatuses ")
     public ResponseEntity<byte[]> getSupervisionReport(@RequestParam String reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
         logger.debug("Lelu getReport " + reportId);

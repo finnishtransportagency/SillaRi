@@ -1,4 +1,4 @@
-package fi.vaylavirasto.sillari.api.lelu;
+package fi.vaylavirasto.sillari.api.lelu.permit;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -12,5 +12,5 @@ import java.util.List;
 @ToString
 public class LeluRouteReportsDTO {
     @Schema(description = "List of the route's supervision report statuses and links to report pdfs when available")
-    List<LeluBridgeSupervisonReportStatusDTO> bridgeSupervisonReportStatuses;
+    List<LeluBridgeDTO> bridges;
 }
