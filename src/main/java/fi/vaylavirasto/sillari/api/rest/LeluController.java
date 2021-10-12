@@ -100,7 +100,11 @@ public class LeluController {
             logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             try {
                 return leluService.createOrUpdatePermit(permitDTO);
-            } catch (Exception e) {
+            } catch (LeluPermitSaveException leluPermitSaveException) {
+                logger.error(leluPermitSaveException.getMessage());
+                throw leluPermitSaveException;
+            }
+            catch (Exception e){
                 logger.error(e.getMessage());
                 throw new LeluPermitSaveException(messageSource.getMessage("lelu.permit.save.failed", null, Locale.ROOT) + " " + e.getClass().getName() + " " + e.getMessage());
             }

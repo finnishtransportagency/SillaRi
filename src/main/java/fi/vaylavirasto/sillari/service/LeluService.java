@@ -167,9 +167,9 @@ public class LeluService {
             }
         }
 
-        //check if there exists supervisions for petmits's routes, then update is not allowed, need to create a new version
-        if(permitRepository.isSupervisions(permitModel, routeIdsToRemove)){
-            throw new LeluDeleteRouteWithSupervisionsException((messageSource.getMessage("lelu.permit.save.failed", null, Locale.ROOT)));
+        //check if there exists supervisions for permits's routes, then update is not allowed, need to create a new version
+        if(permitRepository.isSupervisions(routeIdsToRemove)){
+            throw new LeluDeleteRouteWithSupervisionsException((messageSource.getMessage("lelu.route.has.supervisions", null, Locale.ROOT)));
         }
         else {
             permitRepository.updatePermit(permitModel, routeIdsToRemove);

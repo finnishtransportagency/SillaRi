@@ -1,13 +1,12 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.mapper.AddressMapper;
-import fi.vaylavirasto.sillari.mapper.PermitMapper;
-import fi.vaylavirasto.sillari.mapper.RouteMapper;
+import fi.vaylavirasto.sillari.mapper.*;
 import fi.vaylavirasto.sillari.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
@@ -31,6 +30,7 @@ public class PermitRepository {
                 .leftJoin(PermitMapper.unloadedTransportDimensions)
                 .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
                 .where(PermitMapper.permit.COMPANY_ID.eq(companyId))
+
                 .fetch(new PermitMapper());
     }
 
@@ -111,23 +111,23 @@ public class PermitRepository {
             DSLContext ctx = DSL.using(configuration);
 
             Record1<Integer> permitIdResult = ctx.insertInto(PermitMapper.permit,
-                    PermitMapper.permit.COMPANY_ID,
-                    PermitMapper.permit.PERMIT_NUMBER,
-                    PermitMapper.permit.LELU_VERSION,
-                    PermitMapper.permit.LELU_LAST_MODIFIED_DATE,
-                    PermitMapper.permit.VALID_START_DATE,
-                    PermitMapper.permit.VALID_END_DATE,
-                    PermitMapper.permit.TRANSPORT_TOTAL_MASS,
-                    PermitMapper.permit.ADDITIONAL_DETAILS
-            ).values(
-                    permitModel.getCompanyId(),
-                    permitModel.getPermitNumber(),
-                    permitModel.getLeluVersion(),
-                    permitModel.getLeluLastModifiedDate(),
-                    permitModel.getValidStartDate(),
-                    permitModel.getValidEndDate(),
-                    permitModel.getTransportTotalMass(),
-                    permitModel.getAdditionalDetails())
+                            PermitMapper.permit.COMPANY_ID,
+                            PermitMapper.permit.PERMIT_NUMBER,
+                            PermitMapper.permit.LELU_VERSION,
+                            PermitMapper.permit.LELU_LAST_MODIFIED_DATE,
+                            PermitMapper.permit.VALID_START_DATE,
+                            PermitMapper.permit.VALID_END_DATE,
+                            PermitMapper.permit.TRANSPORT_TOTAL_MASS,
+                            PermitMapper.permit.ADDITIONAL_DETAILS
+                    ).values(
+                            permitModel.getCompanyId(),
+                            permitModel.getPermitNumber(),
+                            permitModel.getLeluVersion(),
+                            permitModel.getLeluLastModifiedDate(),
+                            permitModel.getValidStartDate(),
+                            permitModel.getValidEndDate(),
+                            permitModel.getTransportTotalMass(),
+                            permitModel.getAdditionalDetails())
                     .returningResult(PermitMapper.permit.ID)
                     .fetchOne(); // Execute and return zero or one record
 
@@ -153,15 +153,15 @@ public class PermitRepository {
         transportDimensionsModel.setPermitId(permitModel.getId());
 
         ctx.insertInto(PermitMapper.transportDimensions,
-                PermitMapper.transportDimensions.PERMIT_ID,
-                PermitMapper.transportDimensions.HEIGHT,
-                PermitMapper.transportDimensions.WIDTH,
-                PermitMapper.transportDimensions.LENGTH
-        ).values(
-                transportDimensionsModel.getPermitId(),
-                transportDimensionsModel.getHeight(),
-                transportDimensionsModel.getWidth(),
-                transportDimensionsModel.getLength())
+                        PermitMapper.transportDimensions.PERMIT_ID,
+                        PermitMapper.transportDimensions.HEIGHT,
+                        PermitMapper.transportDimensions.WIDTH,
+                        PermitMapper.transportDimensions.LENGTH
+                ).values(
+                        transportDimensionsModel.getPermitId(),
+                        transportDimensionsModel.getHeight(),
+                        transportDimensionsModel.getWidth(),
+                        transportDimensionsModel.getLength())
                 .execute();
     }
 
@@ -190,13 +190,13 @@ public class PermitRepository {
             vehicleModel.setPermitId(permitModel.getId());
 
             ctx.insertInto(PermitMapper.vehicle,
-                    PermitMapper.vehicle.PERMIT_ID,
-                    PermitMapper.vehicle.TYPE,
-                    PermitMapper.vehicle.IDENTIFIER
-            ).values(
-                    vehicleModel.getPermitId(),
-                    vehicleModel.getType(),
-                    vehicleModel.getIdentifier())
+                            PermitMapper.vehicle.PERMIT_ID,
+                            PermitMapper.vehicle.TYPE,
+                            PermitMapper.vehicle.IDENTIFIER
+                    ).values(
+                            vehicleModel.getPermitId(),
+                            vehicleModel.getType(),
+                            vehicleModel.getIdentifier())
                     .execute();
         }
     }
@@ -206,7 +206,7 @@ public class PermitRepository {
         axleChartModel.setPermitId(permitModel.getId());
 
         Record1<Integer> axleChartIdResult = ctx.insertInto(PermitMapper.axleChart,
-                PermitMapper.axleChart.PERMIT_ID)
+                        PermitMapper.axleChart.PERMIT_ID)
                 .values(axleChartModel.getPermitId())
                 .returningResult(PermitMapper.axleChart.ID)
                 .fetchOne();
@@ -224,11 +224,11 @@ public class PermitRepository {
             axleModel.setAxleChartId(axleChartModel.getId());
 
             ctx.insertInto(PermitMapper.axle,
-                    PermitMapper.axle.AXLE_CHART_ID,
-                    PermitMapper.axle.AXLE_NUMBER,
-                    PermitMapper.axle.WEIGHT,
-                    PermitMapper.axle.DISTANCE_TO_NEXT,
-                    PermitMapper.axle.MAX_DISTANCE_TO_NEXT)
+                            PermitMapper.axle.AXLE_CHART_ID,
+                            PermitMapper.axle.AXLE_NUMBER,
+                            PermitMapper.axle.WEIGHT,
+                            PermitMapper.axle.DISTANCE_TO_NEXT,
+                            PermitMapper.axle.MAX_DISTANCE_TO_NEXT)
                     .values(
                             axleModel.getAxleChartId(),
                             axleModel.getAxleNumber(),
@@ -245,22 +245,22 @@ public class PermitRepository {
         Integer arrivalAddressId = insertArrivalAddress(ctx, routeModel);
 
         Record1<Integer> routeIdResult = ctx.insertInto(PermitMapper.route,
-                PermitMapper.route.PERMIT_ID,
-                PermitMapper.route.LELU_ID,
-                PermitMapper.route.NAME,
-                PermitMapper.route.TRANSPORT_COUNT,
-                PermitMapper.route.ALTERNATIVE_ROUTE,
-                PermitMapper.route.DEPARTURE_ADDRESS_ID,
-                PermitMapper.route.ARRIVAL_ADDRESS_ID
+                        PermitMapper.route.PERMIT_ID,
+                        PermitMapper.route.LELU_ID,
+                        PermitMapper.route.NAME,
+                        PermitMapper.route.TRANSPORT_COUNT,
+                        PermitMapper.route.ALTERNATIVE_ROUTE,
+                        PermitMapper.route.DEPARTURE_ADDRESS_ID,
+                        PermitMapper.route.ARRIVAL_ADDRESS_ID
 
-        ).values(
-                routeModel.getPermitId(),
-                routeModel.getLeluId(),
-                routeModel.getName(),
-                routeModel.getTransportCount(),
-                routeModel.getAlternativeRoute(),
-                departureAddressId,
-                arrivalAddressId)
+                ).values(
+                        routeModel.getPermitId(),
+                        routeModel.getLeluId(),
+                        routeModel.getName(),
+                        routeModel.getTransportCount(),
+                        routeModel.getAlternativeRoute(),
+                        departureAddressId,
+                        arrivalAddressId)
                 .returningResult(PermitMapper.route.ID)
                 .fetchOne();
 
@@ -273,10 +273,10 @@ public class PermitRepository {
     @Nullable
     private Integer insertArrivalAddress(DSLContext ctx, RouteModel routeModel) {
         Record1<Integer> arrivalAddressIdResult = ctx.insertInto(AddressMapper.address,
-                AddressMapper.address.STREETADDRESS
-        ).values(
-                routeModel.getArrivalAddress().getStreetaddress()
-        )
+                        AddressMapper.address.STREETADDRESS
+                ).values(
+                        routeModel.getArrivalAddress().getStreetaddress()
+                )
                 .returningResult(AddressMapper.address.ID)
                 .fetchOne();
         Integer arrivalAddressId = arrivalAddressIdResult != null ? arrivalAddressIdResult.value1() : null;
@@ -288,10 +288,10 @@ public class PermitRepository {
     @Nullable
     private Integer insertDepartureAddress(DSLContext ctx, RouteModel routeModel) {
         Record1<Integer> departureAddressIdResult = ctx.insertInto(AddressMapper.address,
-                AddressMapper.address.STREETADDRESS
-        ).values(
-                routeModel.getDepartureAddress().getStreetaddress()
-        )
+                        AddressMapper.address.STREETADDRESS
+                ).values(
+                        routeModel.getDepartureAddress().getStreetaddress()
+                )
                 .returningResult(AddressMapper.address.ID)
                 .fetchOne();
         Integer departureAddressId = departureAddressIdResult != null ? departureAddressIdResult.value1() : null;
@@ -307,13 +307,13 @@ public class PermitRepository {
                 routeBridgeModel.setRouteId(routeModel.getId());
 
                 ctx.insertInto(PermitMapper.routeBridge,
-                        PermitMapper.routeBridge.ROUTE_ID,
-                        PermitMapper.routeBridge.BRIDGE_ID,
-                        PermitMapper.routeBridge.CROSSING_INSTRUCTION
-                ).values(
-                        routeBridgeModel.getRouteId(),
-                        routeBridgeModel.getBridgeId(),
-                        routeBridgeModel.getCrossingInstruction())
+                                PermitMapper.routeBridge.ROUTE_ID,
+                                PermitMapper.routeBridge.BRIDGE_ID,
+                                PermitMapper.routeBridge.CROSSING_INSTRUCTION
+                        ).values(
+                                routeBridgeModel.getRouteId(),
+                                routeBridgeModel.getBridgeId(),
+                                routeBridgeModel.getCrossingInstruction())
                         .execute();
             } else {
                 logger.warn("BridgeId missing for routeBridge, cannot insert");
@@ -343,7 +343,7 @@ public class PermitRepository {
 
             deleteRouteBridgesFromPermit(ctx, permitModel);
 
-            
+
             // Delete routes not listed in permit anymore
             deleteRoutes(routesToDelete, ctx);
 
@@ -362,7 +362,7 @@ public class PermitRepository {
     }
 
     private void deleteRoutes(List<Integer> routesToDelete, DSLContext ctx) {
-        for(Integer routeID: routesToDelete){
+        for (Integer routeID : routesToDelete) {
             deleteAddresses(ctx, routeID);
         }
         ctx.delete(PermitMapper.route)
@@ -459,7 +459,7 @@ public class PermitRepository {
     }
 
     private void deleteDepartureAddress(DSLContext ctx, Integer routeId) {
-        Record1<Integer> departureRecord  =  ctx.select(RouteMapper.route.DEPARTURE_ADDRESS_ID).from(RouteMapper.route)
+        Record1<Integer> departureRecord = ctx.select(RouteMapper.route.DEPARTURE_ADDRESS_ID).from(RouteMapper.route)
                 .where(RouteMapper.route.ID.eq(routeId))
                 .fetchOne();
         Integer departureID = departureRecord != null ? departureRecord.value1() : null;
@@ -469,9 +469,8 @@ public class PermitRepository {
     }
 
 
-
     private void deleteArrivalAddress(DSLContext ctx, Integer routeId) {
-        Record1<Integer> arrivalRecord  =  ctx.select(RouteMapper.route.ARRIVAL_ADDRESS_ID).from(RouteMapper.route)
+        Record1<Integer> arrivalRecord = ctx.select(RouteMapper.route.ARRIVAL_ADDRESS_ID).from(RouteMapper.route)
                 .where(RouteMapper.route.ID.eq(routeId))
                 .fetchOne();
         Integer arrivalID = arrivalRecord != null ? arrivalRecord.value1() : null;
@@ -493,13 +492,12 @@ public class PermitRepository {
 
     }
 
-    public boolean isSupervisions(PermitModel permitModel, List<Integer> routeIdsToRemove) {
-    /*    Record1<Integer> record = dsl.select(SupervisionMapper.supervision.ID).from(SupervisionMapper.supervision)
-                .where(SupervisionMapper.ID.in(routeIdsToRemove))
-        RouteTransportMapper.transport.ROUTE_ID
-                .fetchOne();
+    public boolean isSupervisions(List<Integer> routeIds) {
+        Record record = dsl.select().from(SupervisionMapper.supervision)
+                .leftJoin(RouteBridgeMapper.routebridge)
+                .on(RouteBridgeMapper.routebridge.ID.eq(SupervisionMapper.supervision.ROUTE_BRIDGE_ID))
+                .where(RouteBridgeMapper.routebridge.ROUTE_ID.in(routeIds))
+                .fetchAny();
         return record != null ? true : false;
-      */
-      return false;
     }
 }
