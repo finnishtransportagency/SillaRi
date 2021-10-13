@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.model.RouteBridgeMapper;
+import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class RouteBridgeRepository {
                 .fetchOne(new RouteBridgeMapper());
     }
 
-    public List<RouteBridgeModel> getRoutesBridges(Integer routeId) {
+    public List<RouteBridgeModel> getRouteBridges(Integer routeId) {
         return dsl.select().from(RouteBridgeMapper.routebridge)
                 .leftJoin(RouteBridgeMapper.bridge).on(RouteBridgeMapper.bridge.ID.eq(RouteBridgeMapper.routebridge.BRIDGE_ID))
                 .where(RouteBridgeMapper.routebridge.ROUTE_ID.eq(routeId))

@@ -2,9 +2,9 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.repositories.BridgeRepository;
-import fi.vaylavirasto.sillari.repositories.RouteBridgeRepository;
-import fi.vaylavirasto.sillari.repositories.RouteRepository;
+import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
+import fi.vaylavirasto.sillari.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,23 +18,34 @@ public class RouteService {
     RouteBridgeRepository routeBridgeRepository;
     @Autowired
     BridgeRepository bridgeRepository;
+    @Autowired
+    SupervisionRepository supervisionRepository;
+    @Autowired
+    SupervisionStatusRepository supervisionStatusRepository;
 
     public RouteModel getRoute(Integer routeId) {
-        RouteModel routeModel = routeRepository.getRoute(routeId);
+        RouteModel route = routeRepository.getRoute(routeId);
 
-        if (routeModel != null) {
+        if (route != null) {
             String routeGeoJson = routeRepository.getRouteGeoJson(routeId);
-            routeModel.setGeojson(routeGeoJson);
+            route.setGeojson(routeGeoJson);
 
-            List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRoutesBridges(routeId);
-            if (routeBridgeModels != null) {
-                routeBridgeModels.forEach(routeBridgeModel -> {
-                    String bridgeGeoJson = bridgeRepository.getBridgeGeoJson(routeBridgeModel.getBridge().getId());
-                    routeBridgeModel.getBridge().setGeojson(bridgeGeoJson);
+            List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(routeId);
+            if (routeBridges != null) {
+                routeBridges.forEach(routeBridge -> {
+                    String bridgeGeoJson = bridgeRepository.getBridgeGeoJson(routeBridge.getBridge().getId());
+                    routeBridge.getBridge().setGeojson(bridgeGeoJson);
+
+                    SupervisionModel supervision = supervisionRepository.getSupervisionByRouteBridgeId(routeBridge.getId());
+                    if (supervision != null) {
+                        List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId());
+                        supervision.setStatusHistory(statusHistory);
+                    }
+                    routeBridge.setSupervision(supervision);
                 });
             }
-            routeModel.setRouteBridges(routeBridgeModels);
+            route.setRouteBridges(routeBridges);
         }
-        return routeModel;
+        return route;
     }
 }

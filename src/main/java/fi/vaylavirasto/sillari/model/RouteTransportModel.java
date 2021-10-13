@@ -17,9 +17,15 @@ public class RouteTransportModel {
     private RouteModel route;
     private List<SupervisionModel> supervisions;
 
-    public void setCurrentStatus(List<RouteTransportStatusModel> statusHistory) {
-        if (statusHistory != null) {
-            this.currentStatus = statusHistory.stream().max(Comparator.comparing(RouteTransportStatusModel::getTime)).orElse(null);
+    public void setStatusHistory(List<RouteTransportStatusModel> statusHistory) {
+        this.statusHistory = statusHistory;
+
+        if (statusHistory != null && !statusHistory.isEmpty()) {
+            this.setCurrentStatus(statusHistory);
         }
+    }
+
+    private void setCurrentStatus(List<RouteTransportStatusModel> statusHistory) {
+        this.currentStatus = statusHistory.stream().max(Comparator.comparing(RouteTransportStatusModel::getTime)).orElse(null);
     }
 }

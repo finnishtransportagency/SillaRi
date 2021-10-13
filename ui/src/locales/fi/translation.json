@@ -250,5 +250,11 @@
         "title": "Kuljetus"
       }
     }
+  },
+  "supervisor": {
+    "bridges": "Sillat",
+    "nextCrossing": "Seuraava ylitys",
+    "numberOfPermits": "Kuljetuslupia",
+    "permits": "Kuljetusluvat"
   }
 }

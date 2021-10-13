@@ -8,6 +8,7 @@ import Header from "../components/Header";
 import CompanyCardList from "../components/CompanyCardList";
 import { useTypedSelector } from "../store/store";
 import { getCompanyList, onRetry } from "../utils/backendData";
+import SupervisionList from "./SupervisionList";
 import "./Home.css";
 
 const Home = (): JSX.Element => {
@@ -55,7 +56,7 @@ const Home = (): JSX.Element => {
             <CompanyCardList companyList={companyList} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
           <IonSlide>
-            <div className="ion-padding">TODO</div>
+            <SupervisionList />
           </IonSlide>
         </IonSlides>
       </IonContent>

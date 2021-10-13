@@ -170,6 +170,26 @@ export const getRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, 
   }
 };
 
+export const getSupervisionList = async (username: string, dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionList: false } });
+
+    const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsofsupervisor?username=${username}`);
+
+    if (supervisionsResponse.ok) {
+      const supervisions = (await supervisionsResponse.json()) as Promise<ISupervision[]>;
+
+      dispatch({ type: crossingActions.GET_SUPERVISION_LIST, payload: supervisions });
+    } else {
+      dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: crossingActions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
+    throw new Error(err as string);
+  }
+};
+
 export const getSupervision = async (supervisionId: number, dispatch: Dispatch, selectedSupervisionDetail?: ISupervision): Promise<void> => {
   try {
     if (selectedSupervisionDetail && selectedSupervisionDetail.id !== supervisionId) {
