@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.service;
 
-import fi.vaylavirasto.sillari.api.lelu.*;
+
 import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
@@ -72,14 +72,13 @@ public class LeluService {
 
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
         setBridgeIdsToRouteBridges(permitModel);
+        var oldPermitModel = permitRepository.getPermitByPermitNumber(permitModel.getPermitNumber());
 
-        Integer permitId = permitRepository.getPermitIdByPermitNumber(permitModel.getPermitNumber());
+        if (oldPermitModel != null) {
+            logger.debug("Permit with id {} found, delete and create new", oldPermitModel);
 
-        if (permitId != null) {
-            logger.debug("Permit with id {} found, delete and create new", permitId);
 
-            permitModel.setId(permitId);
-            deletePermit(permitModel);
+            deletePermit(oldPermitModel);
 
             Integer permitModelId = permitRepository.createPermit(permitModel);
 

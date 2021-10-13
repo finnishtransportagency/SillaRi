@@ -1,6 +1,5 @@
 package fi.vaylavirasto.sillari;
 
-import fi.vaylavirasto.sillari.api.lelu.*;
 import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.lelu.permit.*;
 import fi.vaylavirasto.sillari.model.*;

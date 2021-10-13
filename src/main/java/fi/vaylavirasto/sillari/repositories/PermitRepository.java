@@ -99,6 +99,20 @@ public class PermitRepository {
         return record != null ? record.value1() : null;
     }
 
+
+
+    public PermitModel getPermitByPermitNumber(String permitNumber) {
+        return dsl.select().from(PermitMapper.permit)
+                .leftJoin(PermitMapper.axleChart)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.axleChart.PERMIT_ID))
+                .leftJoin(PermitMapper.transportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.transportDimensions.PERMIT_ID))
+                .leftJoin(PermitMapper.unloadedTransportDimensions)
+                .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
+                .where(PermitMapper.permit.PERMIT_NUMBER.eq(permitNumber))
+                .fetchAny(new PermitMapper());
+    }
+
     public Integer getPermitIdByPermitNumberAndVersion(String permitNumber, int permitVersion) {
         Record1<Integer> record = dsl.select(PermitMapper.permit.ID).from(PermitMapper.permit)
                 .where(PermitMapper.permit.PERMIT_NUMBER.eq(permitNumber).and(PermitMapper.permit.LELU_VERSION.eq(permitVersion)))
@@ -398,19 +412,15 @@ public class PermitRepository {
     }
 
     private void deleteRoutes(DSLContext ctx, PermitModel permitModel) {
-
-
-
         for (RouteModel routeModel : permitModel.getRoutes()) {
+            logger.debug("HEllo route: " + routeModel.getId());
             deleteRouteBridges(ctx, routeModel);
             deleteAddresses(ctx, routeModel.getId());
 
         }
         ctx.delete(RouteMapper.route)
-                .where(RouteMapper.route.permit().eq(permitModel.getId()))
+                .where(RouteMapper.route.PERMIT_ID.eq(permitModel.getId()))
                 .execute();
-
-
     }
 
     private void updateTransportDimensions(DSLContext ctx, PermitModel permitModel) {
