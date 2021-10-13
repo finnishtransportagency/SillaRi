@@ -1,11 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import Moment from "react-moment";
 import { IonButton, IonCheckbox, IonCol, IonGrid, IonItem, IonLabel, IonRow } from "@ionic/react";
 import { document } from "ionicons/icons";
 import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
-import { SupervisionStatus } from "../utils/constants";
-import "./BridgeDetailFooter.css";
+import { DATE_TIME_FORMAT_MIN, SupervisionStatus } from "../utils/constants";
 
 interface BridgeDetailFooterProps {
   permit: IPermit;
@@ -18,7 +18,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   const { t } = useTranslation();
 
   const { permitNumber } = permit || {};
-  const { id: supervisionId, routeBridgeId, conformsToPermit = false, currentStatus } = supervision || {};
+  const { id: supervisionId, routeBridgeId, conformsToPermit = false, currentStatus, startedTime } = supervision || {};
   const supervisionStarted = currentStatus && currentStatus.status !== SupervisionStatus.PLANNED;
 
   return (
@@ -29,10 +29,17 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
       </IonItem>
 
       {!isLoadingSupervision && !supervisionId && (
-        <IonItem lines="none">
-          <IonLabel class="crossingLabelWarning">{t("bridge.supervisionMissing")}</IonLabel>
+        <IonItem color="danger" lines="none">
+          <IonLabel>{t("bridge.supervisionMissing")}</IonLabel>
         </IonItem>
       )}
+      {!isLoadingSupervision && supervisionStarted && (
+        <IonItem color="success" lines="none">
+          <IonLabel>{t("bridge.supervisionStarted")}</IonLabel>
+          <IonLabel>{startedTime ? <Moment format={DATE_TIME_FORMAT_MIN}>{startedTime}</Moment> : ""}</IonLabel>
+        </IonItem>
+      )}
+
       <IonItem lines="none">
         <IonCheckbox
           slot="start"
@@ -58,7 +65,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
         </IonRow>
         <IonRow>
           <IonCol className="ion-text-center">
-            <IonButton disabled={!supervisionId || supervisionStarted} color="primary" routerLink={`/denyCrossing/${routeBridgeId}`}>
+            <IonButton disabled={!supervisionId || supervisionStarted} color="secondary" routerLink={`/denyCrossing/${routeBridgeId}`}>
               {t("bridge.denyCrossing")}
             </IonButton>
           </IonCol>

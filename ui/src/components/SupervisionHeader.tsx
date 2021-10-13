@@ -13,9 +13,11 @@ interface SupervisionHeaderProps {
   permit: IPermit;
   routeBridge: IRouteBridge;
   supervision: ISupervision;
+  className?: string;
+  isCrossingInstructionsIncluded?: boolean;
 }
 
-const SupervisionHeader = ({ permit, routeBridge, supervision }: SupervisionHeaderProps): JSX.Element => {
+const SupervisionHeader = ({ permit, routeBridge, supervision, className, isCrossingInstructionsIncluded }: SupervisionHeaderProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { permitNumber = "" } = permit || {};
@@ -26,26 +28,33 @@ const SupervisionHeader = ({ permit, routeBridge, supervision }: SupervisionHead
   // TODO - add crossing instructions link
   return (
     <>
-      <IonItem className="header" detailIcon={document} lines="none">
+      <IonItem className={className} detailIcon={document} lines="none">
         <IonLabel className="headingText">{t("supervision.permitNumber")}</IonLabel>
         <IonLabel>{permitNumber}</IonLabel>
       </IonItem>
-      <IonItem className="header" lines="none">
+      <IonItem className={className} lines="none">
         <IonLabel>{t("supervision.supervisionStarted")}</IonLabel>
         <IonLabel>{startedTime ? <Moment format={DATE_TIME_FORMAT_MIN}>{startedTime}</Moment> : ""}</IonLabel>
       </IonItem>
-      <IonItem className="header" lines="none">
+      <IonItem className={className} lines="none">
         <IonLabel>{t("supervision.bridgeName")}</IonLabel>
         <IonLabel>
           {name} | {identifier}
         </IonLabel>
       </IonItem>
-      <IonItem className="header itemIcon" detail detailIcon={document} lines="none">
-        <IonLabel>{t("supervision.crossingInstructions")}</IonLabel>
-        <IonLabel className="crossingInstructionsLink">TODO</IonLabel>
-      </IonItem>
+      {isCrossingInstructionsIncluded && (
+        <IonItem className={`${className} itemIcon`} detail detailIcon={document} lines="none">
+          <IonLabel>{t("supervision.crossingInstructions")}</IonLabel>
+          <IonLabel className="crossingInstructionsLink">TODO</IonLabel>
+        </IonItem>
+      )}
     </>
   );
+};
+
+SupervisionHeader.defaultProps = {
+  className: "",
+  isCrossingInstructionsIncluded: false,
 };
 
 export default SupervisionHeader;

@@ -1,4 +1,14 @@
 {
+  "common": {
+    "buttons": {
+      "done": "Done",
+      "back": "Back",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "save": "Save",
+      "send": "Send"
+    }
+  },
   "main": {
     "header": {
       "title": "SillaRi"
@@ -81,7 +91,7 @@
     "identifier": "Identifier",
     "location": "Location",
     "crossingInstructions": {
-      "title": "Crossing instructions",
+      "title": "Instructions",
       "documentingHeader": "Dokumentointi",
       "documentingParagraph": "Valvoja seuraa ... jne todo"
     },
@@ -92,7 +102,12 @@
     "conformsToPermit": "Transport conforms to permit",
     "startSupervision": "Start supervision",
     "denyCrossing": "Transport cannot cross bridge",
-    "supervisionMissing": "Bridge supervision is not yet planned"
+    "supervisionMissing": "Bridge supervision is not yet planned",
+    "supervisionStarted": "Supervision started"
+  },
+  "denyCrossing": {
+    "cantCross": "Transport cannot cross bridge",
+    "whyCantCross": "Why can't transport cross bridge?"
   },
   "supervision": {
     "title": "Bridge supervision",
@@ -100,6 +115,7 @@
     "supervisionStarted": "Supervision started",
     "bridgeName": "Bridge details",
     "crossingInstructions": "Crossing instructions",
+    "photos": "Photos",
     "photosDrivingLine": "Photos and driving line",
     "report": {
       "observations": "Observations",
@@ -124,16 +140,19 @@
     "buttons": {
       "takePhotos": "Take photos",
       "drivingLine": "Driving line",
-      "cancel": "Cancel",
-      "summary": "Go to summary"
-    }
-  },
-  "common": {
-    "buttons": {
-      "done": "Done",
-      "back": "Back",
-      "cancel": "Cancel",
-      "save": "Save"
+      "summary": "Go to summary",
+      "saveToSendList": "Save (to the send list)"
+    },
+    "summary": {
+      "title": "Summary",
+      "observations": "Observations",
+      "speedLimit": "Speed limit",
+      "drivingLine": "Driving line",
+      "anomalies": "Anomalies",
+      "noAnomalies": "None",
+      "additionalInfo": "Additional information",
+      "approved": "Approved",
+      "saved": "Supervision has been saved (to the send list)"
     }
   },
   "management": {

@@ -1,21 +1,3 @@
-.crossingHiddenRow {
-  visibility: hidden;
-  display: none;
-}
-
-.crossingVisibleRow {
-  visibility: visible;
-  display: block;
-}
-
-.checkMarkRed {
-  color: #ec213b;
-}
-
-.checkMarkGreen {
-  color: #20c933;
-}
-
 .header {
   --background: var(--ion-color-light);
 }

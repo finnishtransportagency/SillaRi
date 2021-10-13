@@ -1,4 +1,14 @@
 {
+  "common": {
+    "buttons": {
+      "done": "Valmis",
+      "back": "Peru",
+      "cancel": "Keskeytä",
+      "edit": "Muokkaa",
+      "save": "Tallenna",
+      "send": "Lähetä"
+    }
+  },
   "main": {
     "header": {
       "title": "SillaRi"
@@ -39,7 +49,6 @@
     "settings": "Asetukset",
     "map": "Kartta",
     "camera": "Kamera",
-    "supervision": "Sillan ylitys",
     "management": "Kuljetusten hallinta",
     "transports": "Kuljetukset",
     "logout": "Kirjaudu ulos"
@@ -82,7 +91,7 @@
     "identifier": "Tunnus",
     "location": "Sijainti",
     "crossingInstructions": {
-      "title": "Ylitysohje",
+      "title": "Ohjeet",
       "documentingHeader": "Dokumentointi",
       "documentingParagraph": "Valvoja seuraa ... jne todo"
     },
@@ -93,13 +102,12 @@
     "conformsToPermit": "Kuljetus on luvanmukainen",
     "startSupervision": "Aloita valvonta",
     "denyCrossing": "Kuljetus ei voi ylittää siltaa",
-    "supervisionMissing": "Sillanvalvontaa ei ole vielä suunniteltu"
+    "supervisionMissing": "Sillanvalvontaa ei ole vielä suunniteltu",
+    "supervisionStarted": "Valvonta aloitettu"
   },
   "denyCrossing": {
     "cantCross": "Kuljetus ei voi ylittää siltaa",
-    "whyCantCross": "Miksi kuljetus ei voi ylittää siltaa",
-    "back": "Takaisin",
-    "send": "Lähetä"
+    "whyCantCross": "Miksi kuljetus ei voi ylittää siltaa?"
   },
   "supervision": {
     "title": "Sillan valvonta",
@@ -107,6 +115,7 @@
     "supervisionStarted": "Valvonta aloitettu",
     "bridgeName": "Sillan tiedot",
     "crossingInstructions": "Ylitysohje",
+    "photos": "Valokuvat",
     "photosDrivingLine": "Valokuvat ja ajolinja",
     "report": {
       "observations": "Havainnot",
@@ -131,33 +140,19 @@
     "buttons": {
       "takePhotos": "Ota valokuvia",
       "drivingLine": "Tuo ajolinja",
-      "cancel": "Keskeytä",
-      "summary": "Siirry yhteenvetoon"
+      "summary": "Siirry yhteenvetoon",
+      "saveToSendList": "Tallenna (lähetyslistalle)"
     },
     "summary": {
       "title": "Yhteenveto",
-      "bridgeName": "",
+      "observations": "Havainnot",
       "speedLimit": "Ajonopeus",
       "drivingLine": "Ajolinja",
-      "images": "Kuvat",
-      "kpl": "kpl",
-      "supervisionStarted": "VALVONTA ALOITETTU:",
       "anomalies": "Poikkeavat havainnot",
-      "anomaliesDescription": "Poikkeavien havaintojen tarkennus",
+      "noAnomalies": "Ei ole",
       "additionalInfo": "Lisätiedot",
-      "buttons": {
-        "edit": "Muokkaa",
-        "save": "Tallenna"
-      },
-      "saved": "Tallennettu"
-    }
-  },
-  "common": {
-    "buttons": {
-      "done": "Valmis",
-      "back": "Peru",
-      "cancel": "Peruuta",
-      "save": "Tallenna"
+      "approved": "Hyväksytty",
+      "saved": "Valvonta on tallennettu (lähetyslistalle)"
     }
   },
   "management": {

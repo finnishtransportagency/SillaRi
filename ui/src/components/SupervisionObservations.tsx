@@ -1,8 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { IonCheckbox, IonIcon, IonItem, IonLabel, IonRadio, IonRadioGroup, IonTextarea } from "@ionic/react";
-import { help } from "ionicons/icons";
+import { IonCheckbox, IonItem, IonLabel, IonRadio, IonRadioGroup, IonTextarea } from "@ionic/react";
 import IRadioValue from "../interfaces/IRadioValue";
 import ISupervision from "../interfaces/ISupervision";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
@@ -29,7 +28,7 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
     jointDamage = false,
     bendOrDisplacement = false,
     otherObservations = false,
-    otherObservationsInfo = "",
+    // otherObservationsInfo = "",
     additionalInfo = "",
   } = report || {};
 
@@ -175,7 +174,8 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
             />
             <IonLabel>{t("supervision.report.otherObservations")}</IonLabel>
           </IonItem>
-          {otherObservations && (
+          {/* TODO - check if other observations needs its own text area, or if anomaliesDescription below is enough
+            otherObservations && (
             <IonItem lines="none">
               <IonIcon slot="start" icon={help} />
               <IonTextarea
@@ -186,7 +186,7 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
                 }}
               />
             </IonItem>
-          )}
+          )*/}
 
           <IonItem lines="none">
             <IonLabel>{t("supervision.report.anomaliesDescription")}</IonLabel>
