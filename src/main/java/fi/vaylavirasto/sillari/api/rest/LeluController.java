@@ -99,7 +99,8 @@ public class LeluController {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             try {
-                return leluService.createOrUpdatePermit(permitDTO);
+                //TODO call non ddev version when time
+                return leluService.createOrUpdatePermitDevVersion(permitDTO);
             } catch (LeluPermitSaveException leluPermitSaveException) {
                 logger.error(leluPermitSaveException.getMessage());
                 throw leluPermitSaveException;

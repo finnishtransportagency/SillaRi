@@ -95,11 +95,11 @@ public class PermitRepository {
     public Integer getPermitIdByPermitNumber(String permitNumber) {
         Record1<Integer> record = dsl.select(PermitMapper.permit.ID).from(PermitMapper.permit)
                 .where(PermitMapper.permit.PERMIT_NUMBER.eq(permitNumber))
-                .fetchOne();
+                .fetchAny();
         return record != null ? record.value1() : null;
     }
 
-    public Integer getPermitIdByPermitNumber(String permitNumber, int permitVersion) {
+    public Integer getPermitIdByPermitNumberAndVersion(String permitNumber, int permitVersion) {
         Record1<Integer> record = dsl.select(PermitMapper.permit.ID).from(PermitMapper.permit)
                 .where(PermitMapper.permit.PERMIT_NUMBER.eq(permitNumber).and(PermitMapper.permit.LELU_VERSION.eq(permitVersion)))
                 .fetchOne();
@@ -321,6 +321,33 @@ public class PermitRepository {
         }
     }
 
+    public void deletePermit(PermitModel permitModel) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+            deleteVehicles(ctx, permitModel);
+            deleteAxles(ctx, permitModel);
+            deleteRoutes(ctx, permitModel);
+
+            ctx.delete(PermitMapper.permit)
+                    .where(PermitMapper.permit.ID.eq(permitModel.getId()))
+                    .execute();
+
+        });
+    }
+
+
+
+    private void deleteSupervisions(DSLContext ctx, RouteModel routeModel) {
+            for (var routeBridge : routeModel.getRouteBridges()) {
+                ctx.delete(SupervisionMapper.supervision)
+                        .where(SupervisionMapper.supervision.ROUTE_BRIDGE_ID.eq(routeBridge.getId()))
+                        .execute();
+            }
+
+    }
+
+
+
     public void updatePermit(PermitModel permitModel, List<Integer> routesToDelete) throws DataAccessException {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
@@ -370,6 +397,22 @@ public class PermitRepository {
                 .execute();
     }
 
+    private void deleteRoutes(DSLContext ctx, PermitModel permitModel) {
+
+
+
+        for (RouteModel routeModel : permitModel.getRoutes()) {
+            deleteRouteBridges(ctx, routeModel);
+            deleteAddresses(ctx, routeModel.getId());
+
+        }
+        ctx.delete(RouteMapper.route)
+                .where(RouteMapper.route.permit().eq(permitModel.getId()))
+                .execute();
+
+
+    }
+
     private void updateTransportDimensions(DSLContext ctx, PermitModel permitModel) {
         ctx.update(PermitMapper.transportDimensions)
                 .set(PermitMapper.transportDimensions.HEIGHT, permitModel.getTransportDimensions().getHeight())
@@ -390,15 +433,20 @@ public class PermitRepository {
         }
     }
 
-    private void deleteVehiclesAndInsertNew(DSLContext ctx, PermitModel permitModel) {
+    private void deleteVehicles(DSLContext ctx, PermitModel permitModel) {
         ctx.delete(PermitMapper.vehicle)
                 .where(PermitMapper.vehicle.PERMIT_ID.eq(permitModel.getId()))
                 .execute();
 
+    }
+
+
+    private void deleteVehiclesAndInsertNew(DSLContext ctx, PermitModel permitModel) {
+        deleteVehicles(ctx, permitModel);
         insertVehicles(ctx, permitModel);
     }
 
-    private void deleteAxlesAndInsertNew(DSLContext ctx, PermitModel permitModel) {
+    private void deleteAxles(DSLContext ctx, PermitModel permitModel) {
         // Get axle chart ID which we need for inserting new axles
         Record1<Integer> axleChartIdResult = ctx.select(PermitMapper.axleChart.ID).from(PermitMapper.axleChart)
                 .where(PermitMapper.axleChart.PERMIT_ID.eq(permitModel.getId()))
@@ -410,16 +458,29 @@ public class PermitRepository {
         ctx.delete(PermitMapper.axle)
                 .where(PermitMapper.axle.AXLE_CHART_ID.eq(axleChartId))
                 .execute();
+    }
 
+    private void deleteAxlesAndInsertNew(DSLContext ctx, PermitModel permitModel) {
+        deleteAxles(ctx, permitModel);
         insertAxles(ctx, permitModel.getAxleChart());
     }
 
     private void deleteRouteBridgesFromPermit(DSLContext ctx, PermitModel permitModel) {
+
         ctx.delete(PermitMapper.routeBridge)
                 .where(PermitMapper.routeBridge.ROUTE_ID.in(
                         ctx.select(PermitMapper.route.ID).from(PermitMapper.route)
                                 .where(PermitMapper.route.PERMIT_ID.eq(permitModel.getId()))
                                 .fetch()))
+                .execute();
+    }
+
+    private void deleteRouteBridges(DSLContext ctx, RouteModel routeModel) {
+
+        deleteSupervisions(ctx, routeModel);
+
+        ctx.delete(PermitMapper.routeBridge)
+                .where(PermitMapper.routeBridge.ROUTE_ID.eq(routeModel.getId()))
                 .execute();
     }
 
@@ -500,4 +561,6 @@ public class PermitRepository {
                 .fetchAny();
         return record != null ? true : false;
     }
+
+
 }
