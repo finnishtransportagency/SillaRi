@@ -1,7 +1,13 @@
 package fi.vaylavirasto.sillari.api.lelu.supervision;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@ToString
 public class LeluSupervisionDTO {
     @Schema(description = "Bridge crossing supervisor ")
     private LeluSupervisor supervisor;
