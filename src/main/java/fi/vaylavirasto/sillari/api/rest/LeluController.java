@@ -3,7 +3,7 @@ package fi.vaylavirasto.sillari.api.rest;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluPermitSaveException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
@@ -145,12 +145,12 @@ public class LeluController {
     @RequestMapping(value = "/supervisions", method = RequestMethod.GET)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get bridge supervision report statuses of a route")
+    @Operation(summary = "Get bridge supervisions of a route")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200 OK", description = ""),
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
     })
-    public LeluRouteDTO getSupervisions(@RequestParam Long routeId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+    public LeluRouteResponseDTO getSupervisions(@RequestParam Long routeId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
         logger.debug("Lelu getSupervisionStatuses " + routeId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
@@ -167,7 +167,7 @@ public class LeluController {
 
 
     @RequestMapping(value = "/supervisionReport", method = RequestMethod.GET)
-    @Operation(summary = "Get bridge supervision report pdf by report id aquired from /getSupervisionStatuses ")
+    @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
     public ResponseEntity<byte[]> getSupervisionReport(@RequestParam String reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
         logger.debug("Lelu getReport " + reportId);
 
