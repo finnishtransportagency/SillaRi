@@ -2,6 +2,11 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.api.lelu.*;
 import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
+import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
 import fi.vaylavirasto.sillari.model.CompanyModel;
@@ -124,7 +129,7 @@ public class LeluService {
             response.setStatus(LeluPermitStatus.UPDATED);
             return response;
         } else {
-            logger.debug("Permit not found with id {} and version {}, create new", permitModel.getPermitNumber(), permitModel.getLeluVersion());
+            logger.debug("Permit not found with id {}, create new", permitId);
 
             // Insert new permit and all child records
             // Missing route addresses (not yet in lelu model)
