@@ -110,6 +110,7 @@ public class PermitRepository {
                 .leftJoin(PermitMapper.unloadedTransportDimensions)
                 .on(PermitMapper.permit.ID.eq(PermitMapper.unloadedTransportDimensions.PERMIT_ID))
                 .where(PermitMapper.permit.PERMIT_NUMBER.eq(permitNumber))
+
                 .fetchAny(new PermitMapper());
     }
 
@@ -340,7 +341,19 @@ public class PermitRepository {
             DSLContext ctx = DSL.using(configuration);
             deleteVehicles(ctx, permitModel);
             deleteAxles(ctx, permitModel);
+            ctx.delete(AxleChartMapper.axleChart)
+                    .where(AxleChartMapper.axleChart.PERMIT_ID.eq(permitModel.getId()))
+                    .execute();
+
             deleteRoutes(ctx, permitModel);
+
+            ctx.delete(UnloadedTransportDimensionsMapper.unloadedTransportDimensions)
+                    .where(UnloadedTransportDimensionsMapper.unloadedTransportDimensions.PERMIT_ID.eq(permitModel.getId()))
+                    .execute();
+
+            ctx.delete(TransportDimensionsMapper.transportDimensions)
+                    .where(TransportDimensionsMapper.transportDimensions.PERMIT_ID.eq(permitModel.getId()))
+                    .execute();
 
             ctx.delete(PermitMapper.permit)
                     .where(PermitMapper.permit.ID.eq(permitModel.getId()))
@@ -349,15 +362,21 @@ public class PermitRepository {
         });
     }
 
-
-
     private void deleteSupervisions(DSLContext ctx, RouteModel routeModel) {
             for (var routeBridge : routeModel.getRouteBridges()) {
-                ctx.delete(SupervisionMapper.supervision)
-                        .where(SupervisionMapper.supervision.ROUTE_BRIDGE_ID.eq(routeBridge.getId()))
-                        .execute();
-            }
+                if(routeBridge.getSupervision()!=null) {
+                    ctx.delete(SupervisionStatusMapper.supervisionStatus)
+                            .where(SupervisionStatusMapper.supervisionStatus.SUPERVISION_ID.eq(routeBridge.getSupervision().getId()))
+                            .execute();
 
+                    ctx.delete(SupervisionReportMapper.supervisionReport)
+                            .where(SupervisionReportMapper.supervisionReport.SUPERVISION_ID.eq(routeBridge.getSupervision().getId()))
+                            .execute();
+                    ctx.delete(SupervisionMapper.supervision)
+                            .where(SupervisionMapper.supervision.ROUTE_BRIDGE_ID.eq(routeBridge.getId()))
+                            .execute();
+                }
+            }
     }
 
 
@@ -413,10 +432,10 @@ public class PermitRepository {
 
     private void deleteRoutes(DSLContext ctx, PermitModel permitModel) {
         for (RouteModel routeModel : permitModel.getRoutes()) {
-            logger.debug("HEllo route: " + routeModel.getId());
+            deleteSupervisions(ctx, routeModel);
+            deleteRouteTransports(ctx, routeModel);
             deleteRouteBridges(ctx, routeModel);
             deleteAddresses(ctx, routeModel.getId());
-
         }
         ctx.delete(RouteMapper.route)
                 .where(RouteMapper.route.PERMIT_ID.eq(permitModel.getId()))
@@ -486,11 +505,14 @@ public class PermitRepository {
     }
 
     private void deleteRouteBridges(DSLContext ctx, RouteModel routeModel) {
-
-        deleteSupervisions(ctx, routeModel);
-
         ctx.delete(PermitMapper.routeBridge)
                 .where(PermitMapper.routeBridge.ROUTE_ID.eq(routeModel.getId()))
+                .execute();
+    }
+
+    private void deleteRouteTransports(DSLContext ctx, RouteModel routeModel) {
+        ctx.delete(PermitMapper.routeTransport)
+                .where(PermitMapper.routeTransport.ROUTE_ID.eq(routeModel.getId()))
                 .execute();
     }
 

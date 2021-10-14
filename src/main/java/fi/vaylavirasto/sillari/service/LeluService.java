@@ -13,12 +13,10 @@ import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.PermitModel;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.repositories.BridgeRepository;
-import fi.vaylavirasto.sillari.repositories.CompanyRepository;
-import fi.vaylavirasto.sillari.repositories.PermitRepository;
-import fi.vaylavirasto.sillari.repositories.RouteRepository;
+import fi.vaylavirasto.sillari.repositories.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -40,19 +38,23 @@ public class LeluService {
     private PermitRepository permitRepository;
     private CompanyRepository companyRepository;
     private RouteRepository routeRepository;
+    private RouteBridgeRepository routeBridgeRepository;
     private BridgeRepository bridgeRepository;
+    private SupervisionRepository supervisionRepository;
     private final MessageSource messageSource;
     private LeluRouteUploadUtil leluRouteUploadUtil;
 
     @Autowired
-    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, BridgeRepository bridgeRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil
     ) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
         this.routeRepository = routeRepository;
+        this.routeBridgeRepository = routeBridgeRepository;
         this.bridgeRepository = bridgeRepository;
         this.messageSource = messageSource;
         this.leluRouteUploadUtil = leluRouteUploadUtil;
+        this.supervisionRepository = supervisionRepository;
     }
 
     // TODO
@@ -72,7 +74,7 @@ public class LeluService {
 
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
         setBridgeIdsToRouteBridges(permitModel);
-        var oldPermitModel = permitRepository.getPermitByPermitNumber(permitModel.getPermitNumber());
+        PermitModel oldPermitModel = getWholePermitModel(permitModel.getPermitNumber());
 
         if (oldPermitModel != null) {
             logger.debug("Permit with id {} found, delete and create new", oldPermitModel);
@@ -98,7 +100,18 @@ public class LeluService {
         }
     }
 
-
+    @NotNull
+    private PermitModel getWholePermitModel(String permitNumber) {
+        var oldPermitModel = permitRepository.getPermitByPermitNumber(permitNumber);
+        oldPermitModel.setRoutes(routeRepository.getRoutesByPermitId(oldPermitModel.getId()));
+        for(var r: oldPermitModel.getRoutes()){
+            r.setRouteBridges(routeBridgeRepository.getWholeRouteBridges(r.getId()));
+            for(var rb : r.getRouteBridges()){
+                rb.setSupervision(supervisionRepository.getSupervisionByRouteBridgeId(rb.getId()));
+            }
+        }
+        return oldPermitModel;
+    }
 
 
     //TODO Will eplace createOrUpdatePermitDevVersion eventually.
@@ -201,7 +214,6 @@ public class LeluService {
 
 
     private void deletePermit(PermitModel permitModel) {
-
         permitRepository.deletePermit(permitModel);
     }
 
