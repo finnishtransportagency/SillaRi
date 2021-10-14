@@ -1,4 +1,4 @@
-package fi.vaylavirasto.sillari.api.lelu;
+package fi.vaylavirasto.sillari.api.lelu.permit;
 
 public enum LeluPermitStatus {
     CREATED,
