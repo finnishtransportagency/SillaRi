@@ -19,10 +19,10 @@ const BridgeCardList = ({ routeBridges }: BridgeCardListProps): JSX.Element => {
         </IonLabel>
       </IonItem>
 
-      <div className="cardListContainer">
+      <div className="listContainer">
         {routeBridges.map((routeBridge, index) => {
           const key = `bridge_${index}`;
-          return <BridgeCard key={key} routeBridge={routeBridge} supervision={routeBridge.supervision} />;
+          return <BridgeCard key={key} routeBridge={routeBridge} />;
         })}
       </div>
     </>

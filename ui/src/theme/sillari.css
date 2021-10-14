@@ -1,3 +1,7 @@
+.listContainer {
+  width: 100%;
+}
+
 .header {
   --background: var(--ion-color-light);
 }

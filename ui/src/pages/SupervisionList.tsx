@@ -1,6 +1,6 @@
 import React from "react";
 import { useTypedSelector } from "../store/store";
-import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
+import { IonItem, IonLabel } from "@ionic/react";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import { useDispatch } from "react-redux";
 import { useQuery } from "react-query";
@@ -29,31 +29,29 @@ const SupervisionList = (): JSX.Element => {
   const noNetworkNoData = isFailed.getSupervisionList && supervisionList === undefined;
 
   return (
-    <div>
+    <div className="listContainer">
       {noNetworkNoData ? (
         <NoNetworkNoData />
       ) : (
-        <IonGrid className="ion-no-padding" fixed>
-          {groupedSupervisions.map((supervisionDay: ISupervisionDay, dIndex) => {
-            const dayKey = `day${dIndex}`;
+        groupedSupervisions.map((supervisionDay: ISupervisionDay, dIndex) => {
+          const dayKey = `day${dIndex}`;
 
-            return (
-              <IonRow key={dayKey}>
-                <IonCol className="ion-text-left">
-                  <IonText className="headingText">
-                    <Moment format={DATE_FORMAT}>{supervisionDay.date}</Moment>
-                  </IonText>
-                  <div className="cardListContainer">
-                    {supervisionDay.supervisions.map((supervision: ISupervision, bIndex) => {
-                      const bridgeKey = `bridge_${bIndex}`;
-                      return <BridgeCard key={bridgeKey} routeBridge={supervision.routeBridge} supervision={supervision} />;
-                    })}
-                  </div>
-                </IonCol>
-              </IonRow>
-            );
-          })}
-        </IonGrid>
+          return (
+            <IonItem key={dayKey} lines="none">
+              <IonLabel>
+                <IonLabel className="headingText">
+                  <Moment format={DATE_FORMAT}>{supervisionDay.date}</Moment>
+                </IonLabel>
+                <div className="listContainer">
+                  {supervisionDay.supervisions.map((supervision: ISupervision, bIndex) => {
+                    const bridgeKey = `bridge_${bIndex}`;
+                    return <BridgeCard key={bridgeKey} routeBridge={supervision.routeBridge} />;
+                  })}
+                </div>
+              </IonLabel>
+            </IonItem>
+          );
+        })
       )}
     </div>
   );

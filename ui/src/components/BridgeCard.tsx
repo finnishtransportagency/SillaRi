@@ -1,21 +1,18 @@
 import React from "react";
+import Moment from "react-moment";
 import { IonItem, IonLabel } from "@ionic/react";
 import IRouteBridge from "../interfaces/IRouteBridge";
-import ISupervision from "../interfaces/ISupervision";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
-import Moment from "react-moment";
 
 interface BridgeCardProps {
   routeBridge: IRouteBridge;
-  supervision?: ISupervision;
 }
 
-const BridgeCard = ({ routeBridge, supervision }: BridgeCardProps): JSX.Element => {
-  const { id: routeBridgeId, bridge } = routeBridge;
+const BridgeCard = ({ routeBridge }: BridgeCardProps): JSX.Element => {
+  const { id: routeBridgeId, bridge, supervision } = routeBridge;
   const { identifier, name } = bridge;
   const { plannedTime } = supervision || {};
 
-  // TODO - change this to use supervision
   return (
     <IonItem detail routerLink={`/bridgedetail/${routeBridgeId}`}>
       <IonLabel>
