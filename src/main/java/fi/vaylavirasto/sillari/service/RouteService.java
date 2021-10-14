@@ -36,12 +36,15 @@ public class RouteService {
                     String bridgeGeoJson = bridgeRepository.getBridgeGeoJson(routeBridge.getBridge().getId());
                     routeBridge.getBridge().setGeojson(bridgeGeoJson);
 
-                    SupervisionModel supervision = supervisionRepository.getSupervisionByRouteBridgeId(routeBridge.getId());
-                    if (supervision != null) {
+                    List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
+                    if (supervisions != null) {
+                        // TODO this is a quick fix to solve TooManyRowsException, to be refactored later
+                        SupervisionModel supervision = supervisions.get(0);
                         List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId());
                         supervision.setStatusHistory(statusHistory);
+                        routeBridge.setSupervision(supervision);
                     }
-                    routeBridge.setSupervision(supervision);
+
                 });
             }
             route.setRouteBridges(routeBridges);
