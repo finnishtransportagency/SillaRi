@@ -3,8 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import type { SegmentChangeEventDetail } from "@ionic/core";
-import { IonContent, IonIcon, IonLabel, IonPage, IonSegment, IonSegmentButton, IonSlide, IonSlides } from "@ionic/react";
-import { barbellOutline, bus } from "ionicons/icons";
+import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton, IonSlide, IonSlides } from "@ionic/react";
 import Header from "../components/Header";
 import CompanyCardList from "../components/CompanyCardList";
 import { useTypedSelector } from "../store/store";
@@ -47,14 +46,12 @@ const Home = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={t("main.header.title")} somethingFailed={isFailed.getCompanyList} />
-      <IonSegment value={currentSegment} onIonChange={changeSlide}>
-        <IonSegmentButton value="0">
-          <IonIcon icon={bus} />
-          <IonLabel>{t("main.tab.transportCompanies")}</IonLabel>
+      <IonSegment className="mainSegment" value={currentSegment} onIonChange={changeSlide}>
+        <IonSegmentButton className="mainSegmentButton" value="0">
+          <IonLabel>{`${t("main.tab.transportCompanies")} (${companyList.length})`}</IonLabel>
         </IonSegmentButton>
-        <IonSegmentButton value="1">
-          <IonIcon icon={barbellOutline} />
-          <IonLabel>{t("main.tab.upcomingBridges")}</IonLabel>
+        <IonSegmentButton className="mainSegmentButton" value="1">
+          <IonLabel>{`${t("main.tab.upcomingBridges")} (0)`}</IonLabel>
         </IonSegmentButton>
       </IonSegment>
       <IonContent>

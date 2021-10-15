@@ -1,31 +1,41 @@
 {
+  "common": {
+    "buttons": {
+      "done": "(SV) Done",
+      "back": "(SV) Back",
+      "cancel": "(SV) Cancel",
+      "edit": "(SV) Edit",
+      "save": "(SV) Save",
+      "send": "(SV) Send"
+    }
+  },
   "main": {
-    "header" :
-    {
-      "title" : "SillaRi"
+    "header": {
+      "title": "SillaRi"
     },
-    "title" : "SillaRi",
-    "content": "Välkommen!"
+    "title": "SillaRi",
+    "content": "Välkommen!",
+    "tab": {
+      "transportCompanies": "(SV) Transport companies",
+      "upcomingBridges": "(SV) Bridges"
+    },
+    "noNetworkNoData": "(SV) Unable to retrieve data, trying again..."
   },
   "map": {
     "attribution": "Material"
   },
-  "settings" :
-  {
-    "header" :
-    {
-      "title" : "Inställningar"
+  "settings": {
+    "header": {
+      "title": "Inställningar"
     },
-    "language" :
-    {
-      "label" : "Språk",
-      "fi" : "Suomi",
-      "sv" : "Svenska",
-      "en" : "English"
+    "language": {
+      "label": "Språk",
+      "fi": "Suomi",
+      "sv": "Svenska",
+      "en": "English"
     }
   },
-  "camera" :
-  {
+  "camera": {
     "takePhotoButtonLabel": "Ta bild",
     "listLabel": "Bilderna",
     "listLabelPcs": "st",
@@ -33,42 +43,211 @@
       "deleteButtonLabel": "Ta bort"
     }
   },
-  "SidebarMenu" :
-  {
-    "title" : "SillaRi",
-    "mainPage" : "Huvudsida",
-    "settings" : "Inställningar",
-    "map" : "Karta",
-    "camera" : "Kamera",
-    "management" : "(SV) Management",
-    "transports" : "(SV) Transports"
+  "SidebarMenu": {
+    "title": "SillaRi",
+    "mainPage": "Huvudsida",
+    "settings": "Inställningar",
+    "map": "Karta",
+    "camera": "Kamera",
+    "management": "(SV) Management",
+    "transports": "(SV) Transports",
+    "logout": "(SV) Logout"
   },
-  "management":
-  {
-    "companySummary":
-    {
-      "permitListTitle": "(SV) Transport permits",
-      "addTransportButtonLabel": "(SV) Add transport"
+  "company": {
+    "transportPermit": "(SV) Transport permit",
+    "validityPeriod": "(SV) Validity period",
+    "route": "(SV) Route"
+  },
+  "route": {
+    "transportPermit": "(SV) Transport permit",
+    "permitInfo": {
+      "title": "(SV) Permit information",
+      "permitNumber": "(SV) Permit number",
+      "routeDeparturePoint": "(SV) Route departure point",
+      "routeArrivalPoint": "(SV) Route arrival point"
     },
-    "addTransport":
-    {
-      "headerTitle": "(SV) Add transport"
+    "routeInfo": {
+      "title": "(SV) Route information",
+      "route": "(SV) Route",
+      "showWholeRoute": "(SV) Show whole route",
+      "departurePoint": "(SV) Departure point",
+      "arrivalPoint": "(SV) Arrival point"
+    },
+    "transportInfo": {
+      "title": "(SV) Transport information",
+      "registrationNumbers": "(SV) Registration numbers",
+      "dimensions": "(SV) Transport dimensions",
+      "height": "(SV) Height from the ground",
+      "width": "(SV) Width",
+      "length": "(SV) Length",
+      "transportTotalMass": "(SV) Total mass",
+      "axleWeightsDistances": "(SV) Axle weights and distances"
+    },
+    "transportValid": "(SV) Transport is in accordance with the permit on departure",
+    "bridgesToSupervise": "(SV) Bridges to supervise"
+  },
+  "bridge": {
+    "title": "(SV) Bridge information",
+    "identifier": "(SV) Identifier",
+    "location": "(SV) Location",
+    "crossingInstructions": {
+      "title": "(SV) Instructions",
+      "documentingHeader": "(SV) Dokumentointi",
+      "documentingParagraph": "(SV) Valvoja seuraa ... jne todo"
+    },
+    "trafficSupervisors": {
+      "title": "(SV) Traffic supervisors"
+    },
+    "permitNumber": "(SV) Lupanumero",
+    "conformsToPermit": "(SV) Transport conforms to permit",
+    "startSupervision": "(SV) Start supervision",
+    "denyCrossing": "(SV) Transport cannot cross bridge",
+    "supervisionMissing": "(SV) Bridge supervision is not yet planned",
+    "supervisionStarted": "(SV) Supervision started"
+  },
+  "denyCrossing": {
+    "cantCross": "(SV) Transport cannot cross bridge",
+    "whyCantCross": "(SV) Why can't transport cross bridge?"
+  },
+  "supervision": {
+    "title": "(SV) Bridge supervision",
+    "permitNumber": "(SV) Permit number",
+    "supervisionStarted": "(SV) Supervision started",
+    "bridgeName": "(SV) Bridge details",
+    "crossingInstructions": "(SV) Crossing instructions",
+    "photos": "(SV) Photos",
+    "photosDrivingLine": "(SV) Photos and driving line",
+    "report": {
+      "observations": "(SV) Observations",
+      "drivingLineOk": "(SV) Driving line complied with",
+      "drivingLineInfo": "(SV) Why driving line not accepted?",
+      "speedLimitOk": "(SV) Speed limit accepted",
+      "speedLimitInfo": "(SV) Why speed limit not accepted?",
+      "anomalies": "(SV) Anomalies",
+      "anomaliesInfo": "(SV) Specify anomalies",
+      "surfaceDamage": "(SV) Surface damage",
+      "jointDamage": "(SV) Joint damage",
+      "bendOrDisplacement": "(SV) Permanent bend or other displacement",
+      "otherObservations": "(SV) Something else, what?",
+      "anomaliesDescription": "(SV) Describe anomalies",
+      "additionalInfo": "(SV) Additional information",
+      "placeholder": "(SV) Add text here"
+    },
+    "answer": {
+      "yes": "(SV) Yes",
+      "no": "(SV) No"
+    },
+    "buttons": {
+      "takePhotos": "(SV) Take photos",
+      "drivingLine": "(SV) Driving line",
+      "summary": "(SV) Go to summary",
+      "saveToSendList": "(SV) Save (to the send list)"
+    },
+    "summary": {
+      "title": "(SV) Summary",
+      "observations": "(SV) Observations",
+      "speedLimit": "(SV) Speed limit",
+      "drivingLine": "(SV) Driving line",
+      "anomalies": "(SV) Anomalies",
+      "noAnomalies": "(SV) None",
+      "additionalInfo": "(SV) Additional information",
+      "approved": "(SV) Approved",
+      "saved": "(SV) Supervision has been saved (to the send list)"
+    }
+  },
+  "management": {
+    "companySummary": {
+      "permitListTitle": "(SV) Transport permits and management",
+      "transports": "(SV) Transports",
+      "addTransportButtonLabel": "(SV) Add transport",
+      "filter": {
+        "show": "(SV) Show",
+        "status": {
+          "all": "(SV) All transports",
+          "planned": "(SV) Planned",
+          "waiting": "(SV) Waiting to leave",
+          "in_progress": "(SV) In progress",
+          "completed": "(SV) Completed"
+        }
+      },
+      "route": {
+        "id": "(SV) ID",
+        "route": "(SV) Route",
+        "supervision": "(SV) Supervision",
+        "time": "(SV) Time",
+        "status": "(SV) Status",
+        "action": "(SV) Action"
+      },
+      "action": {
+        "details": "(SV) Details",
+        "modify": "(SV) Modify"
+      }
+    },
+    "addTransport": {
+      "headerTitleAdd": "(SV) Add new transport",
+      "headerTitleDetail": "(SV) Transport details",
+      "transportPermit": "(SV) Transport permit",
+      "validityPeriod": "(SV) Validity period",
+      "transportId": "(SV) Transport ID",
+      "transportInformation": "(SV) Transport information",
+      "bridgesToSupervise": "(SV) Bridges to supervise",
+      "buttons": {
+        "deleteTransport": "(SV) Delete transport"
+      },
+      "saved": "(SV) Saved",
+      "routeInfo": {
+        "estimatedDepartureDate": "(SV) Estimated departure date",
+        "estimatedDepartureTime": "(SV) Estimated departure time",
+        "route": "(SV) Route",
+        "origin": "(SV) Origin",
+        "destination": "(SV) Destination",
+        "showRouteOnMap": "(SV) Show route on map"
+      },
+      "transportInfo": {
+        "title": "(SV) Maximum dimensions and mass",
+        "totalMass": "(SV) Total mass",
+        "dimensions": "(SV) Transport dimensions",
+        "height": "(SV) Height from the ground",
+        "width": "(SV) Width",
+        "length": "(SV) Length"
+      },
+      "bridgeInfo": {
+        "bridge": "(SV) Bridge",
+        "estimatedCrossingTime": "(SV) Estimated crossing time",
+        "bridgeSupervisors": "(SV) Bridge supervisors",
+        "ownSupervisor": "(SV) Own supervisors",
+        "contractor": "(SV) Area contractor",
+        "bridgeSupervisor": "(SV) Bridge supervisor (1.) and backup supervisor (2.)",
+        "supervisor1": "(SV) Bridge supervisor (1.)",
+        "supervisor2": "(SV) Backup supervisor (2.)"
+      }
+    },
+    "supervisionType": {
+      "unknown": "(SV) Information unknown",
+      "own_supervisor": "(SV) Own supervisors",
+      "area_contractor": "(SV) Area contractor"
+    },
+    "transportStatus": {
+      "unknown": "(SV) Information unknown",
+      "planned": "(SV) Planned",
+      "departed": "(SV) Departed",
+      "stopped": "(SV) Stopped",
+      "in_progress": "(SV) In progress",
+      "arrived": "(SV) Arrived"
     }
   },
   "transports": {
     "transportCodeInput": {
-      "header" :
-      {
-        "title" : "(SV) Transports"
+      "header": {
+        "title": "(SV) Transports"
       },
-      "inputLabel" : "(SV) Please enter transport code",
-      "inputPlaceholder" : "(SV) Transport code",
-      "submitButtonLabel" : "(SV) Submit code"
+      "inputLabel": "(SV) Please enter transport code",
+      "inputPlaceholder": "(SV) Transport code",
+      "submitButtonLabel": "(SV) Submit code"
     },
     "transport": {
-      "header" :
-      {
-        "title" : "(SV) Transport"
+      "header": {
+        "title": "(SV) Transport"
       }
     }
   }

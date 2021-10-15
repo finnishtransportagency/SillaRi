@@ -1,6 +1,5 @@
 import React from "react";
-import { IonCard, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonIcon, IonItem, IonRow } from "@ionic/react";
-import { bus } from "ionicons/icons";
+import { IonItem, IonLabel } from "@ionic/react";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
 
 interface CompanyCardProps {
@@ -17,25 +16,14 @@ const CompanyCard = ({ company }: CompanyCardProps): JSX.Element => {
   }, moment());*/
 
   return (
-    <IonCard button routerLink={`/companydetail/${id}`}>
-      <IonGrid>
-        <IonRow>
-          <IonCol size="auto">
-            <IonItem lines="none">
-              <IonIcon icon={bus} />
-            </IonItem>
-          </IonCol>
-          <IonCol>
-            <IonCardHeader className="ion-text-left">
-              <IonCardTitle>{name}</IonCardTitle>
-            </IonCardHeader>
-            {/*<IonCardContent className="ion-text-left">
-              <Moment format={DATE_TIME_FORMAT}>{minStartDate}</Moment>
-            </IonCardContent>*/}
-          </IonCol>
-        </IonRow>
-      </IonGrid>
-    </IonCard>
+    <IonItem detail routerLink={`/companydetail/${id}`}>
+      <IonLabel>
+        <IonLabel>{name}</IonLabel>
+        {/*<small>
+          <Moment format={DATE_TIME_FORMAT_MIN}>{minStartDate}</Moment>
+        </small>*/}
+      </IonLabel>
+    </IonItem>
   );
 };
 
