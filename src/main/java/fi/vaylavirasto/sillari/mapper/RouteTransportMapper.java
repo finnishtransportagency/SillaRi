@@ -1,31 +1,40 @@
 package fi.vaylavirasto.sillari.mapper;
 
+import fi.vaylavirasto.sillari.model.CompanyModel;
+import fi.vaylavirasto.sillari.model.PermitModel;
+import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
-import fi.vaylavirasto.sillari.model.Tables;
-import fi.vaylavirasto.sillari.model.tables.Permit;
-import fi.vaylavirasto.sillari.model.tables.Route;
-import fi.vaylavirasto.sillari.model.tables.RouteTransport;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
-import java.util.ArrayList;
-
 public class RouteTransportMapper implements RecordMapper<Record, RouteTransportModel> {
-    public static final RouteTransport transport = Tables.ROUTE_TRANSPORT.as("rtr");
-    public static final Route route = Tables.ROUTE.as("ro");
-    public static final Permit permit = Tables.PERMIT.as("pe");
 
     @Nullable
     @Override
     public RouteTransportModel map(Record record) {
-        RouteTransportModel routeTransportModel = new RouteTransportModel();
-        routeTransportModel.setId(record.get(transport.ID));
-        routeTransportModel.setRouteId(record.get(transport.ROUTE_ID));
-        routeTransportModel.setPlannedDepartureTime(record.get(transport.PLANNED_DEPARTURE_TIME));
+        SimpleRouteTransportMapper simpleRouteTransportMapper = new SimpleRouteTransportMapper();
+        RouteTransportModel routeTransportModel = simpleRouteTransportMapper.map(record);
 
-        routeTransportModel.setStatusHistory(new ArrayList<>());
-        routeTransportModel.setSupervisions(new ArrayList<>());
+        if (routeTransportModel != null) {
+            RouteMapper routeMapper = new RouteMapper();
+            RouteModel routeModel = routeMapper.map(record);
+            routeTransportModel.setRoute(routeModel);
+
+            SimplePermitMapper permitMapper = new SimplePermitMapper();
+            PermitModel permitModel = permitMapper.map(record);
+
+            if (routeModel != null) {
+                routeModel.setPermit(permitModel);
+            }
+
+            CompanyMapper companyMapper = new CompanyMapper();
+            CompanyModel companyModel = companyMapper.map(record);
+
+            if (permitModel != null) {
+                permitModel.setCompany(companyModel);
+            }
+        }
         return routeTransportModel;
     }
 }

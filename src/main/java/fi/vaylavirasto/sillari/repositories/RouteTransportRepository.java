@@ -1,8 +1,10 @@
 package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.RouteTransportMapper;
+import fi.vaylavirasto.sillari.mapper.SimpleRouteTransportMapper;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.model.TransportStatusType;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -24,25 +26,37 @@ public class RouteTransportRepository {
     RouteTransportStatusRepository routeTransportStatusRepository;
 
     public RouteTransportModel getRouteTransportById(Integer id) {
-        return dsl.select().from(RouteTransportMapper.transport)
-                .where(RouteTransportMapper.transport.ID.eq(id))
-                .fetchOne(new RouteTransportMapper());
+        return dsl.select().from(TableAlias.routeTransport)
+                .where(TableAlias.routeTransport.ID.eq(id))
+                .fetchOne(new SimpleRouteTransportMapper());
     }
 
-    public RouteTransportModel getRouteTransportByRouteId(Integer routeId) {
-        // TODO route can have multiple transport instances, how do we specify this instance?
-        return dsl.select().from(RouteTransportMapper.transport)
-                .where(RouteTransportMapper.transport.ROUTE_ID.eq(routeId))
-                .fetchOne(new RouteTransportMapper());
+    public List<RouteTransportModel> getRouteTransportsByRouteId(Integer routeId) {
+        return dsl.selectFrom(TableAlias.routeTransport)
+                .where(TableAlias.routeTransport.ROUTE_ID.eq(routeId))
+                .fetch(new SimpleRouteTransportMapper());
     }
 
     public List<RouteTransportModel> getRouteTransportsByPermitId(Integer permitId) {
-        return dsl.select().from(RouteTransportMapper.transport)
-                .join(RouteTransportMapper.route)
-                .on(RouteTransportMapper.route.ID.eq(RouteTransportMapper.transport.ROUTE_ID))
-                .join(RouteTransportMapper.permit)
-                .on(RouteTransportMapper.permit.ID.eq(RouteTransportMapper.route.PERMIT_ID))
-                .where(RouteTransportMapper.permit.ID.eq(permitId))
+        return dsl.select().from(TableAlias.routeTransport)
+                .join(TableAlias.route)
+                .on(TableAlias.route.ID.eq(TableAlias.routeTransport.ROUTE_ID))
+                .join(TableAlias.permit)
+                .on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
+                .where(TableAlias.permit.ID.eq(permitId))
+                .fetch(new SimpleRouteTransportMapper());
+    }
+
+    public List<RouteTransportModel> getRouteTransportsOfSupervisor(String username) {
+        return dsl.select().from(TableAlias.routeTransport)
+                .innerJoin(TableAlias.route).on(TableAlias.routeTransport.ROUTE_ID.eq(TableAlias.route.ID))
+                .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
+                .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
+                .innerJoin(TableAlias.permit).on(TableAlias.route.PERMIT_ID.eq(TableAlias.permit.ID))
+                .innerJoin(TableAlias.company).on(TableAlias.permit.COMPANY_ID.eq(TableAlias.company.ID))
+                .innerJoin(TableAlias.supervision).on(TableAlias.routeTransport.ID.eq(TableAlias.supervision.ROUTE_TRANSPORT_ID))
+                .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
+                .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
                 .fetch(new RouteTransportMapper());
     }
 
@@ -50,14 +64,14 @@ public class RouteTransportRepository {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
-            Record1<Integer> routeTransportIdResult = ctx.insertInto(RouteTransportMapper.transport,
-                            RouteTransportMapper.transport.ROUTE_ID,
-                            RouteTransportMapper.transport.PLANNED_DEPARTURE_TIME
+            Record1<Integer> routeTransportIdResult = ctx.insertInto(TableAlias.routeTransport,
+                            TableAlias.routeTransport.ROUTE_ID,
+                            TableAlias.routeTransport.PLANNED_DEPARTURE_TIME
                     ).values(
                             routeTransportModel.getRouteId(),
                             routeTransportModel.getPlannedDepartureTime()
                     )
-                    .returningResult(RouteTransportMapper.transport.ID)
+                    .returningResult(TableAlias.routeTransport.ID)
                     .fetchOne(); // Execute and return zero or one record
 
             Integer routeTransportId = routeTransportIdResult != null ? routeTransportIdResult.value1() : null;
@@ -73,10 +87,10 @@ public class RouteTransportRepository {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
-            ctx.update(RouteTransportMapper.transport)
-                    .set(RouteTransportMapper.transport.ROUTE_ID, routeTransportModel.getRouteId())
-                    .set(RouteTransportMapper.transport.PLANNED_DEPARTURE_TIME, routeTransportModel.getPlannedDepartureTime())
-                    .where(RouteTransportMapper.transport.ID.eq(routeTransportModel.getId()))
+            ctx.update(TableAlias.routeTransport)
+                    .set(TableAlias.routeTransport.ROUTE_ID, routeTransportModel.getRouteId())
+                    .set(TableAlias.routeTransport.PLANNED_DEPARTURE_TIME, routeTransportModel.getPlannedDepartureTime())
+                    .where(TableAlias.routeTransport.ID.eq(routeTransportModel.getId()))
                     .execute();
         });
     }
