@@ -45,6 +45,7 @@ public class CompanyService {
                 transport.setStatusHistory(transportStatusRepository.getTransportStatusHistory(transport.getId()));
 
                 // Set routes, permits and companies
+                transport.setRoute(routeRepository.getRouteWithPermitAndCompanyData(transport.getRouteId()));
             }
 
             // Group transports by company (compares only the business_id of the company)
