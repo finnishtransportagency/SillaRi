@@ -26,7 +26,7 @@ const Home = (): JSX.Element => {
   // TODO use logged in user
   const supervisorUser = "USER1";
 
-  useQuery(["getCompanyList"], () => getCompanyTransportsList(supervisorUser, dispatch), { retry: onRetry });
+  useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(supervisorUser, dispatch), { retry: onRetry });
 
   const changeSlide = (evt: CustomEvent<SegmentChangeEventDetail>) => {
     if (slidesRef.current) {
@@ -41,14 +41,14 @@ const Home = (): JSX.Element => {
     }
   };
 
-  const noNetworkNoData = isFailed.getCompanyList && companyTransportsList.length === 0;
+  const noNetworkNoData = isFailed.getCompanyTransportsList && companyTransportsList.length === 0;
 
   return (
     <IonPage>
-      <Header title={t("main.header.title")} somethingFailed={isFailed.getCompanyList} />
+      <Header title={t("main.header.title")} somethingFailed={isFailed.getCompanyTransportsList} />
       <IonSegment className="mainSegment" value={currentSegment} onIonChange={changeSlide}>
         <IonSegmentButton className="mainSegmentButton" value="0">
-          <IonLabel>{`${t("main.tab.transportCompanies")} (${companyList.length})`}</IonLabel>
+          <IonLabel>{`${t("main.tab.transportCompanies")} (${companyTransportsList.length})`}</IonLabel>
         </IonSegmentButton>
         <IonSegmentButton className="mainSegmentButton" value="1">
           <IonLabel>{`${t("main.tab.upcomingBridges")} (0)`}</IonLabel>

@@ -1,7 +1,7 @@
 import IRouteTransport from "./IRouteTransport";
 
 export default interface ICompanyTransports {
-  id: number;
+  companyId: number;
   name: string;
   businessId: string;
   lastTransportDepartureTime: Date;

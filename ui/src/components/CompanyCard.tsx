@@ -7,7 +7,7 @@ interface CompanyCardProps {
 }
 
 const CompanyCard = ({ company }: CompanyCardProps): JSX.Element => {
-  const { id, name } = company;
+  const { companyId, name } = company;
 
   // TODO - check if min validStartDate is the correct date to show
   /*const minStartDate = permits.reduce((minDate, auth) => {
@@ -16,7 +16,7 @@ const CompanyCard = ({ company }: CompanyCardProps): JSX.Element => {
   }, moment());*/
 
   return (
-    <IonItem detail routerLink={`/companydetail/${id}`}>
+    <IonItem detail routerLink={`/companydetail/${companyId}`}>
       <IonLabel>
         <IonLabel>{name}</IonLabel>
         {/*<small>

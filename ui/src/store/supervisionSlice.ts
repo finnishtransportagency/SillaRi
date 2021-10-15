@@ -45,7 +45,7 @@ const supervisionSlice = createSlice({
   reducers: {
     GET_COMPANY_TRANSPORTS_LIST: (state, action: PayloadAction<ICompanyTransports[]>) => {
       console.log("GET_COMPANY_TRANSPORTS_LIST", action.payload);
-      return { ...state, companyList: action.payload };
+      return { ...state, companyTransportsList: action.payload };
     },
     GET_COMPANY: (state, action: PayloadAction<ICompany>) => {
       console.log("GET_COMPANY", action.payload);
