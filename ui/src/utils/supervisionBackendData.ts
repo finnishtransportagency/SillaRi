@@ -9,6 +9,7 @@ import ISupervision from "../interfaces/ISupervision";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { getOrigin } from "./request";
 import { actions as supervisionActions } from "../store/supervisionSlice";
+import ICompanyTransports from "../interfaces/ICompanyTransports";
 
 const notOkError = "Network response was not ok";
 
@@ -41,21 +42,21 @@ export const getCompany = async (companyId: number, dispatch: Dispatch, selected
   }
 };
 
-export const getCompanyList = async (username: string, dispatch: Dispatch): Promise<void> => {
+export const getCompanyTransportsList = async (username: string, dispatch: Dispatch): Promise<void> => {
   try {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyList: false } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyTransportsList: false } });
 
-    const companyListResponse = await fetch(`${getOrigin()}/api/company/getcompanylist?username=${username}`);
+    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor?username=${username}`);
 
-    if (companyListResponse.ok) {
-      const companyList = (await companyListResponse.json()) as Promise<ICompany[]>;
-      dispatch({ type: supervisionActions.GET_COMPANY_LIST, payload: companyList });
+    if (companyTransportsResponse.ok) {
+      const companyTransportsList = (await companyTransportsResponse.json()) as Promise<ICompanyTransports[]>;
+      dispatch({ type: supervisionActions.GET_COMPANY_TRANSPORTS_LIST, payload: companyTransportsList });
     } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyList: true } });
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyTransportsList: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyList: true } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyTransportsList: true } });
     throw new Error(err as string);
   }
 };

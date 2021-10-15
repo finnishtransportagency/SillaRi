@@ -1,11 +1,11 @@
 import React from "react";
-import ICompany from "../interfaces/ICompany";
 import CompanyCard from "./CompanyCard";
 import NoNetworkNoData from "./NoNetworkNoData";
 import "./CompanyCardList.css";
+import ICompanyTransports from "../interfaces/ICompanyTransports";
 
 interface CompanyCardListProps {
-  companyList: ICompany[];
+  companyList: ICompanyTransports[];
   noNetworkNoData: boolean;
 }
 

@@ -1,23 +1,20 @@
 import React from "react";
-import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonIcon, IonItem, IonRow } from "@ionic/react";
+import { IonCard, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonIcon, IonItem, IonRow } from "@ionic/react";
 import { bus } from "ionicons/icons";
-import Moment from "react-moment";
-import moment from "moment";
-import ICompany from "../interfaces/ICompany";
-import { DATE_TIME_FORMAT } from "../utils/constants";
+import ICompanyTransports from "../interfaces/ICompanyTransports";
 
 interface CompanyCardProps {
-  company: ICompany;
+  company: ICompanyTransports;
 }
 
 const CompanyCard = ({ company }: CompanyCardProps): JSX.Element => {
-  const { id, name, permits } = company;
+  const { id, name } = company;
 
   // TODO - check if min validStartDate is the correct date to show
-  const minStartDate = permits.reduce((minDate, auth) => {
+  /*const minStartDate = permits.reduce((minDate, auth) => {
     const authStartDate = moment(auth.validStartDate);
     return authStartDate.isBefore(minDate) ? authStartDate : minDate;
-  }, moment());
+  }, moment());*/
 
   return (
     <IonCard button routerLink={`/companydetail/${id}`}>
@@ -32,9 +29,9 @@ const CompanyCard = ({ company }: CompanyCardProps): JSX.Element => {
             <IonCardHeader className="ion-text-left">
               <IonCardTitle>{name}</IonCardTitle>
             </IonCardHeader>
-            <IonCardContent className="ion-text-left">
+            {/*<IonCardContent className="ion-text-left">
               <Moment format={DATE_TIME_FORMAT}>{minStartDate}</Moment>
-            </IonCardContent>
+            </IonCardContent>*/}
           </IonCol>
         </IonRow>
       </IonGrid>

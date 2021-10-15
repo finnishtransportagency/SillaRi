@@ -8,7 +8,7 @@ import { barbellOutline, bus } from "ionicons/icons";
 import Header from "../components/Header";
 import CompanyCardList from "../components/CompanyCardList";
 import { useTypedSelector } from "../store/store";
-import { getCompanyList, onRetry } from "../utils/supervisionBackendData";
+import { getCompanyTransportsList, onRetry } from "../utils/supervisionBackendData";
 import SupervisionList from "./SupervisionList";
 import "./Home.css";
 
@@ -20,14 +20,14 @@ const Home = (): JSX.Element => {
   const slidesRef = useRef<HTMLIonSlidesElement>(null);
 
   const {
-    companyList = [],
+    companyTransportsList = [],
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
 
   // TODO use logged in user
   const supervisorUser = "USER1";
 
-  useQuery(["getCompanyList"], () => getCompanyList(supervisorUser, dispatch), { retry: onRetry });
+  useQuery(["getCompanyList"], () => getCompanyTransportsList(supervisorUser, dispatch), { retry: onRetry });
 
   const changeSlide = (evt: CustomEvent<SegmentChangeEventDetail>) => {
     if (slidesRef.current) {
@@ -42,7 +42,7 @@ const Home = (): JSX.Element => {
     }
   };
 
-  const noNetworkNoData = isFailed.getCompanyList && companyList.length === 0;
+  const noNetworkNoData = isFailed.getCompanyList && companyTransportsList.length === 0;
 
   return (
     <IonPage>
@@ -60,7 +60,7 @@ const Home = (): JSX.Element => {
       <IonContent>
         <IonSlides ref={slidesRef} onIonSlideDidChange={changeSegment}>
           <IonSlide>
-            <CompanyCardList companyList={companyList} noNetworkNoData={noNetworkNoData} />
+            <CompanyCardList companyList={companyTransportsList} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
           <IonSlide>
             <SupervisionList />
