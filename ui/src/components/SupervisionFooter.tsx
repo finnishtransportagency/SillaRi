@@ -9,7 +9,7 @@ import IFileInput from "../interfaces/IFileInput";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { useTypedSelector } from "../store/store";
-import { onRetry, sendImageUpload, sendSupervisionReportUpdate } from "../utils/backendData";
+import { onRetry, sendImageUpload, sendSupervisionReportUpdate } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 
 interface SupervisionFooterProps {
@@ -23,7 +23,7 @@ const SupervisionFooter = ({ supervision, draft, setToastMessage }: SupervisionF
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const { images = [] } = useTypedSelector((state) => state.crossingsReducer);
+  const { images = [] } = useTypedSelector((state) => state.supervisionReducer);
   const { id: supervisionId, report } = supervision || {};
   const {
     id: supervisionReportId = -1,
