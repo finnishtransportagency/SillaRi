@@ -1,40 +1,25 @@
 package fi.vaylavirasto.sillari.mapper;
 
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
+
+import java.util.ArrayList;
 
 public class RouteTransportMapper implements RecordMapper<Record, RouteTransportModel> {
 
     @Nullable
     @Override
     public RouteTransportModel map(Record record) {
-        SimpleRouteTransportMapper simpleRouteTransportMapper = new SimpleRouteTransportMapper();
-        RouteTransportModel routeTransportModel = simpleRouteTransportMapper.map(record);
+        RouteTransportModel routeTransportModel = new RouteTransportModel();
+        routeTransportModel.setId(record.get(TableAlias.routeTransport.ID));
+        routeTransportModel.setRouteId(record.get(TableAlias.routeTransport.ROUTE_ID));
+        routeTransportModel.setPlannedDepartureTime(record.get(TableAlias.routeTransport.PLANNED_DEPARTURE_TIME));
 
-        if (routeTransportModel != null) {
-            RouteMapper routeMapper = new RouteMapper();
-            RouteModel routeModel = routeMapper.map(record);
-            routeTransportModel.setRoute(routeModel);
-
-            SimplePermitMapper permitMapper = new SimplePermitMapper();
-            PermitModel permitModel = permitMapper.map(record);
-
-            if (routeModel != null) {
-                routeModel.setPermit(permitModel);
-            }
-
-            CompanyMapper companyMapper = new CompanyMapper();
-            CompanyModel companyModel = companyMapper.map(record);
-
-            if (permitModel != null) {
-                permitModel.setCompany(companyModel);
-            }
-        }
+        routeTransportModel.setStatusHistory(new ArrayList<>());
+        routeTransportModel.setSupervisions(new ArrayList<>());
         return routeTransportModel;
     }
 }

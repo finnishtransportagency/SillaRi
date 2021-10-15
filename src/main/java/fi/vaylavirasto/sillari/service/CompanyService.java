@@ -5,10 +5,7 @@ import fi.vaylavirasto.sillari.dto.DTOMapper;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.PermitModel;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
-import fi.vaylavirasto.sillari.repositories.CompanyRepository;
-import fi.vaylavirasto.sillari.repositories.PermitRepository;
-import fi.vaylavirasto.sillari.repositories.RouteRepository;
-import fi.vaylavirasto.sillari.repositories.RouteTransportRepository;
+import fi.vaylavirasto.sillari.repositories.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
@@ -31,6 +28,8 @@ public class CompanyService {
     RouteRepository routeRepository;
     @Autowired
     RouteTransportRepository transportRepository;
+    @Autowired
+    RouteTransportStatusRepository transportStatusRepository;
 
     private final DTOMapper dtoMapper = Mappers.getMapper(DTOMapper.class);
 
@@ -41,8 +40,16 @@ public class CompanyService {
         List<RouteTransportModel> routeTransports = transportRepository.getRouteTransportsOfSupervisor(username);
 
         if (routeTransports != null && !routeTransports.isEmpty()) {
+            for (RouteTransportModel transport : routeTransports) {
+                // Set current transport status and departure times
+                transport.setStatusHistory(transportStatusRepository.getTransportStatusHistory(transport.getId()));
+
+                // Set routes, permits and companies
+            }
+
             // Group transports by company (compares only the business_id of the company)
-            Map<CompanyModel, List<RouteTransportModel>> companyTransportMap = routeTransports.stream().collect(Collectors.groupingBy(transport -> transport.getRoute().getPermit().getCompany()));
+            Map<CompanyModel, List<RouteTransportModel>> companyTransportMap = routeTransports.stream()
+                    .collect(Collectors.groupingBy(transport -> transport.getRoute().getPermit().getCompany()));
 
             companyTransportMap.forEach((companyModel, transports) -> {
                 CompanyTransportsDTO companyTransportsDTO = dtoMapper.fromModelToDTO(companyModel);

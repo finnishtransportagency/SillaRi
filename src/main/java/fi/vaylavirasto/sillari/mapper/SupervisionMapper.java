@@ -33,7 +33,7 @@ public class SupervisionMapper implements RecordMapper<Record, SupervisionModel>
             routeBridgeModel.setRoute(routeModel);
         }
 
-        SimpleRouteTransportMapper routeTransportMapper = new SimpleRouteTransportMapper();
+        RouteTransportMapper routeTransportMapper = new RouteTransportMapper();
         RouteTransportModel routeTransportModel = routeTransportMapper.map(record);
 
         SimpleSupervisionMapper supervisionMapper = new SimpleSupervisionMapper();

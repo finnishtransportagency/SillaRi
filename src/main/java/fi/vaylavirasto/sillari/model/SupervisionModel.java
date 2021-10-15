@@ -20,7 +20,6 @@ public class SupervisionModel {
     private SupervisionReportModel report;
     private List<FileModel> images;
 
-    private OffsetDateTime createdTime; // First PLANNED in statusHistory
     private OffsetDateTime startedTime; // First IN_PROGRESS in statusHistory
     private OffsetDateTime cancelledTime; // First CANCELLED in statusHistory
     private OffsetDateTime finishedTime; // First FINISHED in statusHistory
@@ -43,11 +42,6 @@ public class SupervisionModel {
     }
 
     private void setStatusTimes(List<SupervisionStatusModel> statusHistory) {
-        OffsetDateTime createdTime = statusHistory.stream()
-                .filter(model -> SupervisionStatusType.PLANNED.equals(model.getStatus()))
-                .min(Comparator.comparing(SupervisionStatusModel::getTime))
-                .map(SupervisionStatusModel::getTime).orElse(null);
-
         OffsetDateTime startedTime = statusHistory.stream()
                 .filter(model -> SupervisionStatusType.IN_PROGRESS.equals(model.getStatus()))
                 .min(Comparator.comparing(SupervisionStatusModel::getTime))
@@ -63,7 +57,6 @@ public class SupervisionModel {
                 .min(Comparator.comparing(SupervisionStatusModel::getTime))
                 .map(SupervisionStatusModel::getTime).orElse(null);
 
-        this.createdTime = createdTime;
         this.startedTime = startedTime;
         this.cancelledTime = cancelledTime;
         this.finishedTime = finishedTime;

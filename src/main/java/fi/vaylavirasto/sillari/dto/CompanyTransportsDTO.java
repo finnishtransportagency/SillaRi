@@ -19,7 +19,7 @@ public class CompanyTransportsDTO {
 
     public void setTransportDepartureTimes(List<RouteTransportModel> transports) {
         OffsetDateTime nextPlannedTime = transports.stream()
-                .filter(transport -> TransportStatusType.PLANNED.equals(transport.getCurrentStatus().getStatus()))
+                .filter(transport -> transport.getCurrentStatus() != null && TransportStatusType.PLANNED.equals(transport.getCurrentStatus().getStatus()))
                 .min(Comparator.comparing(RouteTransportModel::getPlannedDepartureTime))
                 .map(RouteTransportModel::getPlannedDepartureTime).orElse(null);
         this.nextPlannedTransportDepartureTime = nextPlannedTime;

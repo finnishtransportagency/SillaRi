@@ -21,6 +21,7 @@ public class SimpleRouteMapper implements RecordMapper<Record, RouteModel> {
         routeModel.setLeluId(record.get(route.LELU_ID));
         routeModel.setName(record.get(route.NAME));
         routeModel.setTransportCount(record.get(route.TRANSPORT_COUNT));
+        routeModel.setAlternativeRoute(record.get(route.ALTERNATIVE_ROUTE));
         routeModel.setRouteBridges(new ArrayList<>());
         return routeModel;
     }

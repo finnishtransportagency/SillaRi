@@ -1,13 +1,13 @@
 package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.RouteTransportMapper;
-import fi.vaylavirasto.sillari.mapper.SimpleRouteTransportMapper;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.model.TransportStatusType;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
@@ -26,15 +26,16 @@ public class RouteTransportRepository {
     RouteTransportStatusRepository routeTransportStatusRepository;
 
     public RouteTransportModel getRouteTransportById(Integer id) {
-        return dsl.select().from(TableAlias.routeTransport)
+        Record record = dsl.select().from(TableAlias.routeTransport)
                 .where(TableAlias.routeTransport.ID.eq(id))
-                .fetchOne(new SimpleRouteTransportMapper());
+                .fetchOne();
+        return record != null ? record.into(RouteTransportModel.class) : null;
     }
 
     public List<RouteTransportModel> getRouteTransportsByRouteId(Integer routeId) {
         return dsl.selectFrom(TableAlias.routeTransport)
                 .where(TableAlias.routeTransport.ROUTE_ID.eq(routeId))
-                .fetch(new SimpleRouteTransportMapper());
+                .fetch().into(RouteTransportModel.class);
     }
 
     public List<RouteTransportModel> getRouteTransportsByPermitId(Integer permitId) {
@@ -44,20 +45,17 @@ public class RouteTransportRepository {
                 .join(TableAlias.permit)
                 .on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
                 .where(TableAlias.permit.ID.eq(permitId))
-                .fetch(new SimpleRouteTransportMapper());
+                .fetch().into(RouteTransportModel.class);
     }
 
     public List<RouteTransportModel> getRouteTransportsOfSupervisor(String username) {
-        return dsl.select().from(TableAlias.routeTransport)
-                .innerJoin(TableAlias.route).on(TableAlias.routeTransport.ROUTE_ID.eq(TableAlias.route.ID))
-                .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
-                .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
-                .innerJoin(TableAlias.permit).on(TableAlias.route.PERMIT_ID.eq(TableAlias.permit.ID))
-                .innerJoin(TableAlias.company).on(TableAlias.permit.COMPANY_ID.eq(TableAlias.company.ID))
+        return dsl.select(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME)
+                .from(TableAlias.routeTransport)
                 .innerJoin(TableAlias.supervision).on(TableAlias.routeTransport.ID.eq(TableAlias.supervision.ROUTE_TRANSPORT_ID))
                 .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
                 .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
-                .fetch(new RouteTransportMapper());
+                .groupBy(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME)
+                .fetch().into(RouteTransportModel.class);
     }
 
     public Integer createRouteTransport(RouteTransportModel routeTransportModel) throws DataAccessException {
