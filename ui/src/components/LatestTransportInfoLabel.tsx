@@ -1,5 +1,5 @@
 import IDateLabel from "../interfaces/IDateLabel";
-import { IonLabel } from "@ionic/react";
+import { IonLabel, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import React from "react";
@@ -12,7 +12,7 @@ const LatestTransportInfoLabel = ({ info }: LatestTransportInfoLabelProps): JSX.
   return (
     <IonLabel>
       <small>
-        {`${info.label}: `}
+        <IonText>{`${info.label}: `}</IonText>
         <Moment format={DATE_TIME_FORMAT_MIN}>{info.date}</Moment>
       </small>
     </IonLabel>

@@ -15,11 +15,11 @@ import IRoute from "../interfaces/IRoute";
 import { useTypedSelector } from "../store/store";
 import { getPermitOfRoute, getRoute, onRetry } from "../utils/supervisionBackendData";
 
-interface RouteDetailProps {
-  routeId: string;
+interface RouteTransportDetailProps {
+  routeTransportId: string;
 }
 
-const RouteDetail = (): JSX.Element => {
+const RouteTransportDetail = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -32,10 +32,12 @@ const RouteDetail = (): JSX.Element => {
   } = useTypedSelector((state) => state.supervisionReducer);
   const { name = "", routeBridges = [] } = selectedRouteDetail || {};
 
-  const { routeId = "0" } = useParams<RouteDetailProps>();
+  const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
 
-  useQuery(["getRoute", routeId], () => getRoute(Number(routeId), dispatch, selectedRouteDetail), { retry: onRetry });
-  useQuery(["getPermitOfRoute", routeId], () => getPermitOfRoute(Number(routeId), dispatch, selectedRouteDetail), { retry: onRetry });
+  useQuery(["getRoute", routeTransportId], () => getRoute(Number(routeTransportId), dispatch, selectedRouteDetail), { retry: onRetry });
+  useQuery(["getPermitOfRoute", routeTransportId], () => getPermitOfRoute(Number(routeTransportId), dispatch, selectedRouteDetail), {
+    retry: onRetry,
+  });
 
   const noNetworkNoData =
     (isFailed.getRoute && selectedRouteDetail === undefined) || (isFailed.getPermitOfRoute && selectedPermitDetail === undefined);
@@ -66,4 +68,4 @@ const RouteDetail = (): JSX.Element => {
   );
 };
 
-export default RouteDetail;
+export default RouteTransportDetail;

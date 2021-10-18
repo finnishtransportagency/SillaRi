@@ -5,11 +5,11 @@ import { useDispatch } from "react-redux";
 import type { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton, IonSlide, IonSlides } from "@ionic/react";
 import Header from "../components/Header";
-import CompanyTransportsList from "../components/CompanyTransportsList";
 import { useTypedSelector } from "../store/store";
 import { getCompanyTransportsList, getSupervisionList, onRetry } from "../utils/supervisionBackendData";
 import SupervisionList from "../components/SupervisionList";
 import "./Home.css";
+import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion";
 
 const Home = (): JSX.Element => {
   const { t } = useTranslation();
@@ -60,7 +60,7 @@ const Home = (): JSX.Element => {
       <IonContent>
         <IonSlides ref={slidesRef} onIonSlideDidChange={changeSegment}>
           <IonSlide>
-            <CompanyTransportsList companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />
+            <CompanyTransportsAccordion companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
           <IonSlide>
             <SupervisionList supervisionList={supervisionList} noNetworkNoData={noNetworkNoData} />
