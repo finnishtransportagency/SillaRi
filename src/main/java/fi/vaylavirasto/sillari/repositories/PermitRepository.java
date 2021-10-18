@@ -268,7 +268,7 @@ public class PermitRepository {
         Record1<Integer> arrivalAddressIdResult = ctx.insertInto(AddressMapper.address,
                 AddressMapper.address.STREETADDRESS
         ).values(
-                routeModel.getArrivalAddress().getStreetaddress()
+                routeModel.getArrivalAddress().getStreetAddress()
         )
                 .returningResult(AddressMapper.address.ID)
                 .fetchOne();
@@ -283,7 +283,7 @@ public class PermitRepository {
         Record1<Integer> departureAddressIdResult = ctx.insertInto(AddressMapper.address,
                 AddressMapper.address.STREETADDRESS
         ).values(
-                routeModel.getDepartureAddress().getStreetaddress()
+                routeModel.getDepartureAddress().getStreetAddress()
         )
                 .returningResult(AddressMapper.address.ID)
                 .fetchOne();

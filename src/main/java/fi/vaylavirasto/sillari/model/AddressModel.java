@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class AddressModel {
     private Integer id;
-    private String streetaddress;
+    private String streetAddress;
 }

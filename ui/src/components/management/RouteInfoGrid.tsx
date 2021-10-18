@@ -23,8 +23,8 @@ const RouteInfoGrid = ({ permitRoutes = [] }: RouteInfoGridProps): JSX.Element =
   const { modifiedRouteTransportDetail, selectedRouteOption } = management;
   const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
   const { id: selectedRouteId, departureAddress, arrivalAddress } = selectedRouteOption || {};
-  const { streetaddress: departureStreetAddress } = departureAddress || {};
-  const { streetaddress: arrivalStreetAddress } = arrivalAddress || {};
+  const { streetAddress: departureStreetAddress } = departureAddress || {};
+  const { streetAddress: arrivalStreetAddress } = arrivalAddress || {};
 
   const estimatedDeparture = moment(plannedDepartureTime);
 

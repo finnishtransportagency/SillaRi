@@ -15,7 +15,7 @@ public class AddressMapper implements RecordMapper<Record, AddressModel> {
     public AddressModel map(Record record) {
         AddressModel model = new AddressModel();
         model.setId(record.get(address.ID));
-        model.setStreetaddress(record.get(address.STREETADDRESS));
+        model.setStreetAddress(record.get(address.STREETADDRESS));
         return model;
     }
 }

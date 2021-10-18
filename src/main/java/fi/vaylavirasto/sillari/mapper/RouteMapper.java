@@ -24,12 +24,12 @@ public class RouteMapper implements RecordMapper<Record, RouteModel> {
         if (routeModel != null) {
             AddressModel aa = new AddressModel();
             aa.setId(record.get(arrivalAddress.ID));
-            aa.setStreetaddress(record.get(arrivalAddress.STREETADDRESS));
+            aa.setStreetAddress(record.get(arrivalAddress.STREETADDRESS));
             routeModel.setArrivalAddress(aa);
 
             AddressModel da = new AddressModel();
             da.setId(record.get(departureAddress.ID));
-            da.setStreetaddress(record.get(departureAddress.STREETADDRESS));
+            da.setStreetAddress(record.get(departureAddress.STREETADDRESS));
             routeModel.setDepartureAddress(da);
         }
 
