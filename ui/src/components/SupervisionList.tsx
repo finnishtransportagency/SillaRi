@@ -1,32 +1,20 @@
 import React from "react";
-import { useTypedSelector } from "../store/store";
 import { IonItem, IonLabel } from "@ionic/react";
-import NoNetworkNoData from "../components/NoNetworkNoData";
-import { useDispatch } from "react-redux";
-import { useQuery } from "react-query";
-import { getSupervisionList, onRetry } from "../utils/supervisionBackendData";
+import NoNetworkNoData from "./NoNetworkNoData";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import { DATE_FORMAT } from "../utils/constants";
 import Moment from "react-moment";
-import BridgeCard from "../components/BridgeCard";
+import BridgeCard from "./BridgeCard";
 import ISupervision from "../interfaces/ISupervision";
 import { groupSupervisionsByDate } from "../utils/supervisionUtil";
 
-const SupervisionList = (): JSX.Element => {
-  const dispatch = useDispatch();
+interface SupervisionListProps {
+  supervisionList: ISupervision[];
+  noNetworkNoData: boolean;
+}
 
-  const {
-    supervisionList,
-    networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.supervisionReducer);
-
-  // TODO use logged in user
-  const username = "USER1";
-
-  useQuery(["getSupervisionList", username], () => getSupervisionList(username, dispatch), { retry: onRetry });
+const SupervisionList = ({ supervisionList, noNetworkNoData }: SupervisionListProps): JSX.Element => {
   const groupedSupervisions = groupSupervisionsByDate(supervisionList);
-
-  const noNetworkNoData = isFailed.getSupervisionList && supervisionList === undefined;
 
   return (
     <div className="listContainer">

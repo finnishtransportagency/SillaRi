@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.dto;
 
+import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.model.TransportStatusType;
 import lombok.Data;
@@ -10,18 +11,22 @@ import java.util.List;
 
 @Data
 public class CompanyTransportsDTO {
-    private Integer companyId;
-    private String name;
-    private String businessId;
-    private OffsetDateTime lastTransportDepartureTime;
-    private OffsetDateTime lastTransportArrivalTime;
-    private OffsetDateTime nextPlannedTransportDepartureTime;
+    private CompanyModel company;
     private List<RouteTransportModel> transports;
+    private OffsetDateTime lastOngoingTransportDepartureTime;
+    private OffsetDateTime lastFinishedTransportDepartureTime;
+    private OffsetDateTime lastFinishedTransportArrivalTime;
+    private OffsetDateTime nextPlannedTransportDepartureTime;
 
     public void setTransportDepartureTimes(List<RouteTransportModel> transports) {
         // Take only ongoing transports into account, effectively all other status types than ARRIVED (PLANNED don't have departureTime)
-        OffsetDateTime lastDepartureTime = transports.stream()
+        OffsetDateTime lastOngoingDepartureTime = transports.stream()
                 .filter(transport -> transport.getDepartureTime() != null && transport.getCurrentStatus() != null && !TransportStatusType.ARRIVED.equals(transport.getCurrentStatus().getStatus()))
+                .max(Comparator.comparing(RouteTransportModel::getDepartureTime))
+                .map(RouteTransportModel::getDepartureTime).orElse(null);
+
+        OffsetDateTime lastFinishedDepartureTime = transports.stream()
+                .filter(transport -> transport.getDepartureTime() != null && transport.getCurrentStatus() != null && TransportStatusType.ARRIVED.equals(transport.getCurrentStatus().getStatus()))
                 .max(Comparator.comparing(RouteTransportModel::getDepartureTime))
                 .map(RouteTransportModel::getDepartureTime).orElse(null);
 
@@ -35,8 +40,9 @@ public class CompanyTransportsDTO {
                 .min(Comparator.comparing(RouteTransportModel::getPlannedDepartureTime))
                 .map(RouteTransportModel::getPlannedDepartureTime).orElse(null);
 
-        this.lastTransportDepartureTime = lastDepartureTime;
-        this.lastTransportArrivalTime = lastArrivalTime;
+        this.lastOngoingTransportDepartureTime = lastOngoingDepartureTime;
+        this.lastFinishedTransportDepartureTime = lastFinishedDepartureTime;
+        this.lastFinishedTransportArrivalTime = lastArrivalTime;
         this.nextPlannedTransportDepartureTime = nextPlannedTime;
     }
 

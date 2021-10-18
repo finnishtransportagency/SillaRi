@@ -5,10 +5,10 @@ import { useDispatch } from "react-redux";
 import type { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton, IonSlide, IonSlides } from "@ionic/react";
 import Header from "../components/Header";
-import CompanyCardList from "../components/CompanyCardList";
+import CompanyTransportsList from "../components/CompanyTransportsList";
 import { useTypedSelector } from "../store/store";
-import { getCompanyTransportsList, onRetry } from "../utils/supervisionBackendData";
-import SupervisionList from "./SupervisionList";
+import { getCompanyTransportsList, getSupervisionList, onRetry } from "../utils/supervisionBackendData";
+import SupervisionList from "../components/SupervisionList";
 import "./Home.css";
 
 const Home = (): JSX.Element => {
@@ -20,6 +20,7 @@ const Home = (): JSX.Element => {
 
   const {
     companyTransportsList = [],
+    supervisionList = [],
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
 
@@ -27,6 +28,7 @@ const Home = (): JSX.Element => {
   const supervisorUser = "USER1";
 
   useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(supervisorUser, dispatch), { retry: onRetry });
+  useQuery(["getSupervisionList"], () => getSupervisionList(supervisorUser, dispatch), { retry: onRetry });
 
   const changeSlide = (evt: CustomEvent<SegmentChangeEventDetail>) => {
     if (slidesRef.current) {
@@ -41,7 +43,8 @@ const Home = (): JSX.Element => {
     }
   };
 
-  const noNetworkNoData = isFailed.getCompanyTransportsList && companyTransportsList.length === 0;
+  const noNetworkNoData =
+    (isFailed.getCompanyTransportsList && companyTransportsList.length === 0) || (isFailed.getSupervisionList && supervisionList.length === 0);
 
   return (
     <IonPage>
@@ -57,10 +60,10 @@ const Home = (): JSX.Element => {
       <IonContent>
         <IonSlides ref={slidesRef} onIonSlideDidChange={changeSegment}>
           <IonSlide>
-            <CompanyCardList companyList={companyTransportsList} noNetworkNoData={noNetworkNoData} />
+            <CompanyTransportsList companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
           <IonSlide>
-            <SupervisionList />
+            <SupervisionList supervisionList={supervisionList} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
         </IonSlides>
       </IonContent>

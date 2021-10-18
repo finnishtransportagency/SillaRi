@@ -1,14 +1,12 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.dto.CompanyTransportsDTO;
-import fi.vaylavirasto.sillari.dto.DTOMapper;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.PermitModel;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +29,14 @@ public class CompanyService {
     @Autowired
     RouteTransportStatusRepository transportStatusRepository;
 
-    private final DTOMapper dtoMapper = Mappers.getMapper(DTOMapper.class);
+    public CompanyModel getCompany(Integer id) {
+        CompanyModel company = companyRepository.getCompanyById(id);
+        company.setPermits(permitRepository.getPermitsByCompanyId(id));
+        for (PermitModel permitModel : company.getPermits()) {
+            permitModel.setRoutes(routeRepository.getRoutesByPermitId(permitModel.getId()));
+        }
+        return company;
+    }
 
     public List<CompanyTransportsDTO> getCompanyTransportListOfSupervisor(String username) {
         List<CompanyTransportsDTO> companyTransports = new ArrayList<>();
@@ -53,7 +58,8 @@ public class CompanyService {
                     .collect(Collectors.groupingBy(transport -> transport.getRoute().getPermit().getCompany()));
 
             companyTransportMap.forEach((companyModel, transports) -> {
-                CompanyTransportsDTO companyTransportsDTO = dtoMapper.fromModelToDTO(companyModel);
+                CompanyTransportsDTO companyTransportsDTO = new CompanyTransportsDTO();
+                companyTransportsDTO.setCompany(companyModel);
                 companyTransportsDTO.setTransports(transports);
                 companyTransportsDTO.setTransportDepartureTimes(transports);
 
@@ -64,12 +70,4 @@ public class CompanyService {
         return companyTransports;
     }
 
-    public CompanyModel getCompany(Integer id) {
-        CompanyModel company = companyRepository.getCompanyById(id);
-        company.setPermits(permitRepository.getPermitsByCompanyId(id));
-        for (PermitModel permitModel : company.getPermits()) {
-            permitModel.setRoutes(routeRepository.getRoutesByPermitId(permitModel.getId()));
-        }
-        return company;
-    }
 }

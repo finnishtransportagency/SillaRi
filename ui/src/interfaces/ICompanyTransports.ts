@@ -1,11 +1,11 @@
 import IRouteTransport from "./IRouteTransport";
+import ICompany from "./ICompany";
 
 export default interface ICompanyTransports {
-  companyId: number;
-  name: string;
-  businessId: string;
-  lastTransportDepartureTime: Date;
-  lastTransportArrivalTime: Date;
-  nextPlannedTransportDepartureTime: Date;
+  company: ICompany;
   transports: IRouteTransport[];
+  lastOngoingTransportDepartureTime: Date;
+  lastFinishedTransportDepartureTime: Date;
+  lastFinishedTransportArrivalTime: Date;
+  nextPlannedTransportDepartureTime: Date;
 }

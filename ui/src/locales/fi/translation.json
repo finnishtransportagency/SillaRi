@@ -56,6 +56,12 @@
   "company": {
     "transportPermit": "Kuljetuslupa",
     "validityPeriod": "Voimassaoloaika",
+    "transport": {
+      "transportDeparted": "Kuljetus lähtenyt",
+      "transportArrived": "Kuljetus päättynyt",
+      "nextTransport": "Seuraava kuljetus",
+      "estimatedDepartureTime": "arvioitu lähtöaika"
+    },
     "route": "Reitti"
   },
   "route": {
