@@ -25,10 +25,18 @@ public class SupervisorRepository {
 
     public List<SupervisorModel> getSupervisorsBySupervisionId(Integer supervisionId) {
         return dsl.select().from(TableAlias.supervisor)
-                .join(TableAlias.supervisionSupervisor)
+                .innerJoin(TableAlias.supervisionSupervisor)
                 .on(TableAlias.supervisionSupervisor.SUPERVISOR_ID.eq(TableAlias.supervisor.ID))
                 .where(TableAlias.supervisionSupervisor.SUPERVISION_ID.eq(supervisionId))
-                .fetch(new SupervisorMapper());
+                .fetch(record -> {
+                    SupervisorMapper supervisorMapper = new SupervisorMapper();
+                    SupervisorModel supervisor = supervisorMapper.map(record);
+                    if (supervisor != null) {
+                        supervisor.setPriority(record.get(TableAlias.supervisionSupervisor.PRIORITY));
+                        supervisor.setUsername(record.get(TableAlias.supervisionSupervisor.USERNAME));
+                    }
+                    return supervisor;
+                });
     }
 
     public void insertSupervisionSupervisor(DSLContext ctx, Integer supervisionId, Integer supervisorId, Integer priority) {

@@ -1,7 +1,10 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.mapper.SimpleSupervisionMapper;
+import fi.vaylavirasto.sillari.mapper.BridgeMapper;
+import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.mapper.SupervisionMapper;
+import fi.vaylavirasto.sillari.model.BridgeModel;
+import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import fi.vaylavirasto.sillari.util.TableAlias;
@@ -30,18 +33,18 @@ public class SupervisionRepository {
     public SupervisionModel getSupervisionById(Integer id) {
         return dsl.selectFrom(TableAlias.supervision)
                 .where(TableAlias.supervision.ID.eq(id))
-                .fetchOne(new SimpleSupervisionMapper());
+                .fetchOne(new SupervisionMapper());
     }
     public List<SupervisionModel> getSupervisionsByRouteBridgeId(Integer routeBridgeId) {
         return dsl.selectFrom(TableAlias.supervision)
                 .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
-                .fetch(new SimpleSupervisionMapper());
+                .fetch(new SupervisionMapper());
     }
 
     public List<SupervisionModel> getSupervisionsByRouteTransportId(Integer routeTransportId) {
         return dsl.select().from(TableAlias.supervision)
                 .where(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(routeTransportId))
-                .fetch(new SimpleSupervisionMapper());
+                .fetch(new SupervisionMapper());
     }
 
     public List<SupervisionModel> getSupervisionsBySupervisorUsername(String username) {
@@ -51,7 +54,6 @@ public class SupervisionRepository {
                 .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
                 .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
                 .innerJoin(TableAlias.route).on(TableAlias.routeBridge.ROUTE_ID.eq(TableAlias.route.ID))
-                .innerJoin(TableAlias.permit).on(TableAlias.route.PERMIT_ID.eq(TableAlias.permit.ID))
                 .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
                 .orderBy(TableAlias.supervision.PLANNED_TIME)
                 .fetch(new SupervisionMapper());

@@ -8,6 +8,8 @@ import java.util.List;
 public class RouteModel {
     private Integer id;
     private Integer permitId;
+    private Integer departureAddressId;
+    private Integer arrivalAddressId;
     private Long leluId;
     private String name;
     private Integer transportCount;
@@ -15,8 +17,8 @@ public class RouteModel {
     private String geojson;
     private List<RouteBridgeModel> routeBridges;
 
+    // Parents
     private AddressModel departureAddress;
     private AddressModel arrivalAddress;
-    // Parent
     private PermitModel permit;
 }

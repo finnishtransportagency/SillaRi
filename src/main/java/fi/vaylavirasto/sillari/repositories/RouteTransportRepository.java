@@ -40,9 +40,9 @@ public class RouteTransportRepository {
 
     public List<RouteTransportModel> getRouteTransportsByPermitId(Integer permitId) {
         return dsl.select().from(TableAlias.routeTransport)
-                .join(TableAlias.route)
+                .innerJoin(TableAlias.route)
                 .on(TableAlias.route.ID.eq(TableAlias.routeTransport.ROUTE_ID))
-                .join(TableAlias.permit)
+                .innerJoin(TableAlias.permit)
                 .on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
                 .where(TableAlias.permit.ID.eq(permitId))
                 .fetch().into(RouteTransportModel.class);
