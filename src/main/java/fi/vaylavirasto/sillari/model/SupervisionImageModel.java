@@ -3,7 +3,7 @@ package fi.vaylavirasto.sillari.model;
 import lombok.Data;
 
 @Data
-public class FileModel {
+public class SupervisionImageModel {
     private Integer id;
     private Integer supervisionId;
     private String taken;

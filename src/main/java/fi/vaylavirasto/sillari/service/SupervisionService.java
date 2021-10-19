@@ -21,14 +21,14 @@ public class SupervisionService {
     @Autowired
     SupervisorRepository supervisorRepository;
     @Autowired
-    FileRepository fileRepository;
+    SupervisionImageRepository supervisionImageRepository;
 
     public SupervisionModel getSupervision(Integer supervisionId) {
         SupervisionModel supervision = supervisionRepository.getSupervisionById(supervisionId);
         if (supervision != null) {
             supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
             supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
-            supervision.setImages(fileRepository.getFiles(supervisionId));
+            supervision.setImages(supervisionImageRepository.getFiles(supervisionId));
 
             // Sets also current status and status timestamps
             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
@@ -44,7 +44,7 @@ public class SupervisionService {
             supervision = supervisions.get(0);
             supervision.setReport(supervisionReportRepository.getSupervisionReport(supervision.getId()));
             supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
-            supervision.setImages(fileRepository.getFiles(supervision.getId()));
+            supervision.setImages(supervisionImageRepository.getFiles(supervision.getId()));
 
             // Sets also current status and status timestamps
             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));

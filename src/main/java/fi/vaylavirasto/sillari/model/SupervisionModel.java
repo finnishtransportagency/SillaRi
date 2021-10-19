@@ -18,7 +18,7 @@ public class SupervisionModel {
     private SupervisorType supervisorType;
     private List<SupervisorModel> supervisors;
     private SupervisionReportModel report;
-    private List<FileModel> images;
+    private List<SupervisionImageModel> images;
 
     private OffsetDateTime startedTime; // First IN_PROGRESS in statusHistory
     private OffsetDateTime cancelledTime; // First CANCELLED in statusHistory
