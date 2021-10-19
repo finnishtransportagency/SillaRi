@@ -12,10 +12,11 @@ import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
+import IRouteTransport from "../interfaces/IRouteTransport";
 
 interface IStateProps {
   companyTransportsList: ICompanyTransports[];
-  selectedCompanyDetail?: ICompany;
+  selectedRouteTransport?: IRouteTransport;
   selectedPermitDetail?: IPermit;
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
@@ -27,7 +28,7 @@ interface IStateProps {
 
 const initialState: IStateProps = {
   companyTransportsList: [],
-  selectedCompanyDetail: undefined,
+  selectedRouteTransport: undefined,
   selectedPermitDetail: undefined,
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
@@ -47,9 +48,9 @@ const supervisionSlice = createSlice({
       console.log("GET_COMPANY_TRANSPORTS_LIST", action.payload);
       return { ...state, companyTransportsList: action.payload };
     },
-    GET_COMPANY: (state, action: PayloadAction<ICompany>) => {
-      console.log("GET_COMPANY", action.payload);
-      return { ...state, selectedCompanyDetail: action.payload };
+    GET_ROUTE_TRANSPORT: (state, action: PayloadAction<IRouteTransport>) => {
+      console.log("GET_ROUTE_TRANSPORT", action.payload);
+      return { ...state, selectedRouteTransport: action.payload };
     },
     GET_PERMIT: (state, action: PayloadAction<IPermit>) => {
       console.log("GET_PERMIT", action.payload);

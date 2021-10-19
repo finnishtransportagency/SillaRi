@@ -89,7 +89,6 @@
       "transportTotalMass": "Kokonaismassa",
       "axleWeightsDistances": "Akselipainot ja -välit"
     },
-    "transportValid": "Kuljetus on luvanmukainen lähtiessä",
     "bridgesToSupervise": "Valvottavat sillat"
   },
   "bridge": {

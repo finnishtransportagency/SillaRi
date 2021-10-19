@@ -83,7 +83,6 @@
       "transportTotalMass": "Total mass",
       "axleWeightsDistances": "Axle weights and distances"
     },
-    "transportValid": "Transport is in accordance with the permit on departure",
     "bridgesToSupervise": "Bridges to supervise"
   },
   "bridge": {

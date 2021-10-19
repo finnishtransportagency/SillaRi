@@ -8,7 +8,7 @@ interface TransportAccordionProps {
   permit: IPermit;
 }
 
-const TransportAccordion = ({ permit }: TransportAccordionProps): JSX.Element => {
+const PermitTransportAccordion = ({ permit }: TransportAccordionProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { transportDimensions, transportTotalMass = 0, vehicles = [], axles = [] } = permit || {};
@@ -81,4 +81,4 @@ const TransportAccordion = ({ permit }: TransportAccordionProps): JSX.Element =>
   );
 };
 
-export default TransportAccordion;
+export default PermitTransportAccordion;

@@ -1,5 +1,4 @@
 import type { Dispatch } from "redux";
-import ICompany from "../interfaces/ICompany";
 import IFile from "../interfaces/IFile";
 import IFileInput from "../interfaces/IFileInput";
 import IPermit from "../interfaces/IPermit";
@@ -10,6 +9,7 @@ import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { getOrigin } from "./request";
 import { actions as supervisionActions } from "../store/supervisionSlice";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
+import IRouteTransport from "../interfaces/IRouteTransport";
 
 const notOkError = "Network response was not ok";
 
@@ -17,29 +17,6 @@ export const onRetry = (failureCount: number, error: string): boolean => {
   // Retry forever by returning true
   console.error("ERROR", failureCount, error);
   return true;
-};
-
-export const getCompany = async (companyId: number, dispatch: Dispatch, selectedCompanyDetail?: ICompany): Promise<void> => {
-  try {
-    // Clear the details in the state if the requested id doesn't match to avoid showing incorrect data
-    if (selectedCompanyDetail && selectedCompanyDetail.id !== companyId) {
-      dispatch({ type: supervisionActions.GET_COMPANY, payload: undefined });
-    }
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompany: false } });
-
-    const companyResponse = await fetch(`${getOrigin()}/api/company/getcompany?companyId=${companyId}`);
-
-    if (companyResponse.ok) {
-      const company = (await companyResponse.json()) as Promise<ICompany>;
-      dispatch({ type: supervisionActions.GET_COMPANY, payload: company });
-    } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompany: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompany: true } });
-    throw new Error(err as string);
-  }
 };
 
 export const getCompanyTransportsList = async (username: string, dispatch: Dispatch): Promise<void> => {
@@ -145,6 +122,35 @@ export const getRoute = async (routeId: number, dispatch: Dispatch, selectedRout
     }
   } catch (err) {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const getRouteTransportOfSupervisor = async (
+  routeTransportId: number,
+  username: string,
+  dispatch: Dispatch,
+  selectedRouteTransportDetail?: IRouteTransport
+): Promise<void> => {
+  try {
+    if (selectedRouteTransportDetail && selectedRouteTransportDetail.id !== routeTransportId) {
+      dispatch({ type: supervisionActions.GET_ROUTE_TRANSPORT, payload: undefined });
+    }
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
+
+    const routeTransportResponse = await fetch(
+      `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}&username=${username}`
+    );
+
+    if (routeTransportResponse.ok) {
+      const routeTransport = (await routeTransportResponse.json()) as Promise<IRouteTransport>;
+      dispatch({ type: supervisionActions.GET_ROUTE_TRANSPORT, payload: routeTransport });
+    } else {
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
     throw new Error(err as string);
   }
 };
