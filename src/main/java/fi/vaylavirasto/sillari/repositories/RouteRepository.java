@@ -41,33 +41,6 @@ public class RouteRepository {
                 .fetchOne(this::mapRouteRecordWithAddresses);
     }
 
-    // TODO remove
-    public RouteModel getRouteWithPermitAndCompanyData(Integer id) {
-        RouteMapper routeMapper = new RouteMapper();
-        PermitMapper permitMapper = new PermitMapper();
-        CompanyMapper companyMapper = new CompanyMapper();
-
-        return dsl.select().from(TableAlias.route)
-                .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
-                .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
-                .innerJoin(TableAlias.permit).on(TableAlias.route.PERMIT_ID.eq(TableAlias.permit.ID))
-                .innerJoin(TableAlias.company).on(TableAlias.permit.COMPANY_ID.eq(TableAlias.company.ID))
-                .where(TableAlias.route.ID.eq(id))
-                .fetchOne(record -> {
-                    RouteModel route = routeMapper.map(record);
-                    PermitModel permit = permitMapper.map(record);
-                    CompanyModel company = companyMapper.map(record);
-
-                    if (route != null) {
-                        route.setPermit(permit);
-                    }
-                    if (permit != null) {
-                        permit.setCompany(company);
-                    }
-                    return route;
-                });
-    }
-
     public RouteModel getRouteByRouteTransportId(Integer routeTransportId) {
         return dsl.select().from(TableAlias.route)
                 .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))

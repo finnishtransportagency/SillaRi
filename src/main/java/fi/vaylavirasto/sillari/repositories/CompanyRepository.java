@@ -24,19 +24,6 @@ public class CompanyRepository {
     @Autowired
     private DSLContext dsl;
 
-    public List<CompanyModel> getCompaniesOfSupervisor(String username) {
-        return dsl.select(TableAlias.company.ID, TableAlias.company.NAME, TableAlias.company.BUSINESS_ID)
-                .from(TableAlias.company)
-                .innerJoin(TableAlias.permit).on(TableAlias.company.ID.eq(TableAlias.permit.COMPANY_ID))
-                .innerJoin(TableAlias.route).on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
-                .innerJoin(TableAlias.routeTransport).on(TableAlias.route.ID.eq(TableAlias.routeTransport.ROUTE_ID))
-                .innerJoin(TableAlias.supervision).on(TableAlias.routeTransport.ID.eq(TableAlias.supervision.ROUTE_TRANSPORT_ID))
-                .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
-                .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
-                .groupBy(TableAlias.company.ID, TableAlias.company.NAME, TableAlias.company.BUSINESS_ID)
-                .fetch(new CompanyMapper());
-    }
-
     public CompanyModel getCompanyById(Integer id) {
         return dsl.select().from(TableAlias.company)
                 .where(TableAlias.company.ID.eq(id))

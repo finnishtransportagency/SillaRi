@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.service;
 import fi.vaylavirasto.sillari.dto.CompanyTransportsDTO;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.PermitModel;
+import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.apache.logging.log4j.LogManager;
@@ -50,7 +51,18 @@ public class CompanyService {
                 transport.setStatusHistory(transportStatusRepository.getTransportStatusHistory(transport.getId()));
 
                 // Set routes, permits and companies
-                transport.setRoute(routeRepository.getRouteWithPermitAndCompanyData(transport.getRouteId()));
+                RouteModel route = routeRepository.getRoute(transport.getRouteId());
+                transport.setRoute(route);
+
+                if (route != null) {
+                    PermitModel permit = permitRepository.getPermit(route.getPermitId());
+                    route.setPermit(permit);
+
+                    if (permit != null) {
+                        CompanyModel company = companyRepository.getCompanyById(permit.getCompanyId());
+                        permit.setCompany(company);
+                    }
+                }
             }
 
             // Group transports by company (compares only the business_id of the company)
