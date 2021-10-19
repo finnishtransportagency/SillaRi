@@ -70,7 +70,7 @@ public class LeluServiceTest {
     @Test
     public void testCreatePermitWithExistingCompany() {
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
-        Mockito.when(permitRepository.getPermitIdByPermitNumber(Mockito.anyString())).thenReturn(null);
+        Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(1);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
@@ -105,17 +105,22 @@ public class LeluServiceTest {
 
     @Test
     public void testCreatePermitWithNewCompany() {
+        System.out.println("TESTIOUS");
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(null);
         Mockito.when(companyRepository.createCompany(Mockito.any(CompanyModel.class))).thenReturn(2);
 
-        Mockito.when(permitRepository.getPermitIdByPermitNumber(Mockito.anyString())).thenReturn(null);
+        Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(2);
+        Mockito.when(permitRepository.isSupervisions(Mockito.any(List.class))).thenReturn(false);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
         LeluPermitResponseDTO response = null;
         try {
+            System.out.println("TESTIOUS");
             response = leluService.createOrUpdatePermit(getPermitDTO());
+            System.out.println("TESTIOUS");
         } catch (LeluDeleteRouteWithSupervisionsException e) {
+            System.out.println("TESTIOUS");
             e.printStackTrace();
         }
 
@@ -144,7 +149,7 @@ public class LeluServiceTest {
     @Test
     public void testUpdatePermit() {
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
-        Mockito.when(permitRepository.getPermitIdByPermitNumber(Mockito.anyString())).thenReturn(2);
+        Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(2);
         Mockito.when(routeRepository.getRouteIdsWithLeluIds(Mockito.anyInt())).thenReturn(getRouteLeluIdAndIdMap());
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
