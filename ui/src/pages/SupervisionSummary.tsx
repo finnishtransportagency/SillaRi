@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { checkmarkCircleOutline, closeCircleOutline } from "ionicons/icons";
-import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonPage, IonRow, IonText, IonToast } from "@ionic/react";
-import { useHistory, useParams } from "react-router-dom";
-import moment from "moment";
-
-import { useTypedSelector } from "../store/store";
+import { IonContent, IonPage, IonToast } from "@ionic/react";
+import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
-import IFileInput from "../interfaces/IFileInput";
-import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry, sendImageUpload, sendSupervisionReportUpdate } from "../utils/backendData";
+import SupervisionHeader from "../components/SupervisionHeader";
+import SupervisionFooter from "../components/SupervisionFooter";
+import SupervisionObservationsSummary from "../components/SupervisionObservationsSummary";
+import SupervisionPhotos from "../components/SupervisionPhotos";
+import IPermit from "../interfaces/IPermit";
+import IRouteBridge from "../interfaces/IRouteBridge";
+import ISupervision from "../interfaces/ISupervision";
 import { actions as crossingActions } from "../store/crossingsSlice";
-import { DATE_TIME_FORMAT } from "../utils/constants";
-import ISupervisionReport from "../interfaces/ISupervisionReport";
-import ImageThumbnailRow from "../components/ImageThumbnailRow";
-import Moment from "react-moment";
+import { useTypedSelector } from "../store/store";
+import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry } from "../utils/backendData";
 
 interface SummaryProps {
   supervisionId: string;
@@ -24,7 +23,6 @@ interface SummaryProps {
 
 const SupervisionSummary = (): JSX.Element => {
   const { t } = useTranslation();
-  const history = useHistory();
   const dispatch = useDispatch();
   const { supervisionId = "0" } = useParams<SummaryProps>();
   const [toastMessage, setToastMessage] = useState("");
@@ -33,28 +31,9 @@ const SupervisionSummary = (): JSX.Element => {
     selectedPermitDetail,
     selectedBridgeDetail,
     selectedSupervisionDetail,
-    images = [],
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.crossingsReducer);
-  const { permitNumber = "" } = selectedPermitDetail || {};
-  const { name: bridgeName = "", identifier: bridgeIdentifier } = selectedBridgeDetail?.bridge || {};
-  const { routeBridgeId = "0", startedTime, report, images: supervisionImages = [] } = selectedSupervisionDetail || {};
-
-  const {
-    id: supervisionReportId,
-    drivingLineOk,
-    drivingLineInfo,
-    speedLimitOk,
-    speedLimitInfo,
-    anomalies,
-    anomaliesDescription,
-    surfaceDamage,
-    jointDamage,
-    bendOrDisplacement,
-    otherObservations,
-    otherObservationsInfo,
-    additionalInfo,
-  } = report || {};
+  const { routeBridgeId = "0", images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
   const { isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
@@ -72,17 +51,6 @@ const SupervisionSummary = (): JSX.Element => {
     enabled: Number(routeBridgeId) > 0,
   });
 
-  // Set-up mutations for modifying data later
-  const reportUpdateMutation = useMutation((updateRequest: ISupervisionReport) => sendSupervisionReportUpdate(updateRequest, dispatch), {
-    retry: onRetry,
-    onSuccess: () => {
-      setToastMessage(t("supervision.summary.saved"));
-    },
-  });
-  const imageUploadMutation = useMutation((fileUpload: IFileInput) => sendImageUpload(fileUpload, dispatch), { retry: onRetry });
-
-  const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
-
   useEffect(() => {
     if (!isLoadingSupervision) {
       // Remove any uploaded images from the camera images stored in redux
@@ -90,72 +58,10 @@ const SupervisionSummary = (): JSX.Element => {
     }
   }, [isLoadingSupervision, supervisionImages, dispatch]);
 
-  const save = () => {
-    if (report !== undefined) {
-      const updateRequest = {
-        id: supervisionReportId,
-        supervisionId: Number(supervisionId),
-        drivingLineOk,
-        drivingLineInfo,
-        speedLimitOk,
-        speedLimitInfo,
-        anomalies,
-        anomaliesDescription,
-        surfaceDamage,
-        jointDamage,
-        bendOrDisplacement,
-        otherObservations,
-        otherObservationsInfo,
-        additionalInfo,
-        draft: false,
-      } as ISupervisionReport;
-
-      reportUpdateMutation.mutate(updateRequest);
-
-      images.forEach((image) => {
-        const fileUpload = {
-          supervisionId: supervisionId.toString(),
-          filename: image.filename,
-          base64: image.dataUrl,
-          taken: moment(image.date).format(DATE_TIME_FORMAT),
-        } as IFileInput;
-
-        imageUploadMutation.mutate(fileUpload);
-      });
-    }
-  };
-
-  let anomaliesSummary = "";
-  if (anomalies) {
-    if (surfaceDamage) {
-      anomaliesSummary = t("supervision.report.surfaceDamage");
-    }
-    if (jointDamage) {
-      if (anomaliesSummary.length > 0) {
-        anomaliesSummary += ", ";
-      }
-      anomaliesSummary += t("supervision.report.jointDamage");
-    }
-    if (bendOrDisplacement) {
-      if (anomaliesSummary.length > 0) {
-        anomaliesSummary += ", ";
-      }
-      anomaliesSummary += t("supervision.report.bendOrDisplacement");
-    }
-    if (otherObservations && otherObservationsInfo) {
-      if (anomaliesSummary.length > 0) {
-        anomaliesSummary += ", ";
-      }
-      anomaliesSummary += otherObservationsInfo;
-    }
-  }
-
   const noNetworkNoData =
     (isFailed.getSupervision && selectedSupervisionDetail === undefined) ||
     (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
     (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);
-
-  const allImagesAmount = (images ? images.length : 0) + (supervisionImages ? supervisionImages.length : 0);
 
   return (
     <IonPage>
@@ -167,108 +73,16 @@ const SupervisionSummary = (): JSX.Element => {
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (
-          <IonGrid>
-            <IonRow>
-              <IonCol>
-                <IonLabel class="crossingLabel">
-                  {t("supervision.permitNumber")} {permitNumber}
-                </IonLabel>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonLabel class="crossingLabel">
-                  {t("supervision.summary.supervisionStarted")} {startedTime ? <Moment format={DATE_TIME_FORMAT}>{startedTime}</Moment> : ""}
-                </IonLabel>
-              </IonCol>
-            </IonRow>
-
-            <IonRow>
-              <IonCol>
-                <IonLabel class="crossingLabel">
-                  {t("supervision.summary.bridgeName")} {bridgeName} | {bridgeIdentifier}
-                </IonLabel>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonLabel class="crossingLabelBold">
-                  {t("supervision.summary.images")} ({allImagesAmount} {t("supervision.summary.kpl")})
-                </IonLabel>
-              </IonCol>
-            </IonRow>
-
-            <ImageThumbnailRow images={images} supervisionImages={supervisionImages} />
-
-            <IonRow>
-              <IonCol size="auto">
-                <IonItem>
-                  <IonIcon
-                    icon={!drivingLineOk ? closeCircleOutline : checkmarkCircleOutline}
-                    class={!drivingLineOk ? "checkMarkRed" : "checkMarkGreen"}
-                  />
-                  <IonLabel class="crossingCheckedLabel">{t("supervision.summary.drivingLine")}</IonLabel>
-                </IonItem>
-              </IonCol>
-              {!drivingLineOk && (
-                <IonCol size="auto">
-                  <IonItem>
-                    <IonText>{drivingLineInfo}</IonText>
-                  </IonItem>
-                </IonCol>
-              )}
-              <IonCol size="auto">
-                <IonItem>
-                  <IonIcon
-                    icon={!speedLimitOk ? closeCircleOutline : checkmarkCircleOutline}
-                    class={!speedLimitOk ? "checkMarkRed" : "checkMarkGreen"}
-                  />
-                  <IonLabel class="crossingCheckedLabel">{t("supervision.summary.speedLimit")}</IonLabel>
-                </IonItem>
-              </IonCol>
-              {!speedLimitOk && (
-                <IonCol size="auto">
-                  <IonItem>
-                    <IonText>{speedLimitInfo}</IonText>
-                  </IonItem>
-                </IonCol>
-              )}
-            </IonRow>
-
-            <IonRow class={anomalies ? "crossingVisibleRow" : "crossingHiddenRow"}>
-              <IonCol>
-                <IonLabel class="crossingLabelBold">{t("supervision.summary.anomalies")}:</IonLabel>
-                <IonItem>{anomaliesSummary}</IonItem>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonLabel class="crossingLabelBold">{t("supervision.summary.anomaliesDescription")}:</IonLabel>
-                <IonItem>{anomaliesDescription}</IonItem>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonLabel class="crossingLabelBold">{t("supervision.summary.additionalInfo")}:</IonLabel>
-                <IonItem>{additionalInfo}</IonItem>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonButton onClick={() => history.goBack()}>{t("supervision.summary.buttons.edit")}</IonButton>
-              </IonCol>
-              <IonCol>
-                <IonButton
-                  disabled={isSendingReportUpdate}
-                  onClick={() => {
-                    save();
-                  }}
-                >
-                  {t("supervision.summary.buttons.save")}
-                </IonButton>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+          <>
+            <SupervisionHeader
+              permit={selectedPermitDetail as IPermit}
+              routeBridge={selectedBridgeDetail as IRouteBridge}
+              supervision={selectedSupervisionDetail as ISupervision}
+            />
+            <SupervisionPhotos supervision={selectedSupervisionDetail as ISupervision} headingKey="supervision.photos" />
+            <SupervisionObservationsSummary supervision={selectedSupervisionDetail as ISupervision} />
+            <SupervisionFooter supervision={selectedSupervisionDetail as ISupervision} draft={false} setToastMessage={setToastMessage} />
+          </>
         )}
 
         <IonToast

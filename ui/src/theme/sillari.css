@@ -1,39 +1,18 @@
-.crossingLabelBold {
-  font-weight: bold;
+.listContainer {
+  width: 100%;
 }
 
-/*
-.crossingLabel {
-}
-
-.crossingTextArea {
-}
-*/
-
-.crossingLabelWarning {
-  color: #ec213b;
-}
-
-.crossingHiddenRow {
-  visibility: hidden;
-  display: none;
-}
-
-.crossingVisibleRow {
-  visibility: visible;
-  display: block;
-}
-
-.checkMarkRed {
-  color: #ec213b;
-}
-
-.checkMarkGreen {
-  color: #20c933;
+.header {
+  --background: var(--ion-color-light);
 }
 
 .headingText {
   font-weight: bold;
+}
+
+.itemIcon {
+  --detail-icon-color: var(--ion-color-primary);
+  --detail-icon-opacity: 1;
 }
 
 .linkText {
