@@ -9,10 +9,7 @@ import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.RouteBridgeModel;
-import fi.vaylavirasto.sillari.model.RouteModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -103,11 +100,21 @@ public class LeluService {
     @NotNull
     private PermitModel getWholePermitModel(String permitNumber) {
         var oldPermitModel = permitRepository.getPermitByPermitNumber(permitNumber);
+        if(oldPermitModel == null){
+            return null;
+        }
+        var a=routeRepository.getRoutesByPermitId(oldPermitModel.getId());
+
         oldPermitModel.setRoutes(routeRepository.getRoutesByPermitId(oldPermitModel.getId()));
         for(var r: oldPermitModel.getRoutes()){
+
             r.setRouteBridges(routeBridgeRepository.getWholeRouteBridges(r.getId()));
-            for(var rb : r.getRouteBridges()){
-                rb.setSupervision(supervisionRepository.getSupervisionByRouteBridgeId(rb.getId()));
+            for(RouteBridgeModel rb : r.getRouteBridges()){
+                List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(rb.getId());
+                if(supervisions!=null &&!supervisions.isEmpty()){
+
+                    rb.setSupervision(supervisions.get(0));
+                }
             }
         }
         return oldPermitModel;
