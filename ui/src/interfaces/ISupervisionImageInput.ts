@@ -1,4 +1,4 @@
-export default interface IFileInput {
+export default interface ISupervisionImageInput {
   supervisionId: string;
   filename: string;
   base64: string;

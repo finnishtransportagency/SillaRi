@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { IonCol, IonImg, IonRow, IonThumbnail } from "@ionic/react";
 import moment from "moment";
-import IFile from "../interfaces/IFile";
+import ISupervisionImage from "../interfaces/ISupervisionImage";
 import IImageItem from "../interfaces/IImageItem";
 import { getOrigin } from "../utils/request";
 import ImagePreview from "./ImagePreview";
 
 interface ImageThumbnailRowProps {
   images: IImageItem[];
-  supervisionImages: IFile[];
+  supervisionImages: ISupervisionImage[];
 }
 
 const ImageThumbnailRow = ({ images, supervisionImages }: ImageThumbnailRowProps): JSX.Element => {

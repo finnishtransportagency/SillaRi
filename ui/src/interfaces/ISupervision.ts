@@ -1,4 +1,4 @@
-import IFile from "./IFile";
+import ISupervisionImage from "./ISupervisionImage";
 import ISupervisionStatus from "./ISupervisionStatus";
 import ISupervisionReport from "./ISupervisionReport";
 import ISupervisor from "./ISupervisor";
@@ -22,5 +22,5 @@ export default interface ISupervision {
   supervisorType: SupervisorType;
   supervisors: ISupervisor[];
   report: ISupervisionReport;
-  images: IFile[];
+  images: ISupervisionImage[];
 }

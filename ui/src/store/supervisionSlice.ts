@@ -1,8 +1,7 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice, current } from "@reduxjs/toolkit";
-import ICompany from "../interfaces/ICompany";
 import IFailedQuery from "../interfaces/IFailedQuery";
-import IFile from "../interfaces/IFile";
+import ISupervisionImage from "../interfaces/ISupervisionImage";
 import IImageItem from "../interfaces/IImageItem";
 import INetworkStatus from "../interfaces/INetworkStatus";
 import IPermit from "../interfaces/IPermit";
@@ -136,7 +135,7 @@ const supervisionSlice = createSlice({
       console.log("SAVE_IMAGES", action.payload);
       return { ...state, images: action.payload };
     },
-    UPDATE_IMAGES: (state, action: PayloadAction<IFile[]>) => {
+    UPDATE_IMAGES: (state, action: PayloadAction<ISupervisionImage[]>) => {
       // Remove any camera images from the state that have been uploaded, and so are now in the supervision images
       console.log("UPDATE_IMAGES", action.payload);
       const supervisionImages = action.payload || [];

@@ -1,6 +1,6 @@
 import type { Dispatch } from "redux";
-import IFile from "../interfaces/IFile";
-import IFileInput from "../interfaces/IFileInput";
+import ISupervisionImage from "../interfaces/ISupervisionImage";
+import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
@@ -387,7 +387,7 @@ export const sendSupervisionReportUpdate = async (updateRequest: ISupervisionRep
   }
 };
 
-export const sendImageUpload = async (fileUpload: IFileInput, dispatch: Dispatch): Promise<void> => {
+export const sendImageUpload = async (fileUpload: ISupervisionImageInput, dispatch: Dispatch): Promise<void> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendImageUpload: false } });
 
@@ -400,7 +400,7 @@ export const sendImageUpload = async (fileUpload: IFileInput, dispatch: Dispatch
     });
 
     if (imageUploadResponse.ok) {
-      const imageUpload = (await imageUploadResponse.json()) as Promise<IFile>;
+      const imageUpload = (await imageUploadResponse.json()) as Promise<ISupervisionImage>;
       console.log("imageUpload response", imageUpload);
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendImageUpload: true } });
@@ -424,7 +424,7 @@ export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promis
     });
 
     if (imageDeleteResponse.ok) {
-      const imageDelete = (await imageDeleteResponse.json()) as Promise<IFile>;
+      const imageDelete = (await imageDeleteResponse.json()) as Promise<ISupervisionImage>;
       console.log("deleteImage response", imageDelete);
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteImage: true } });
