@@ -2,19 +2,12 @@ package fi.vaylavirasto.sillari.mapper;
 
 import fi.vaylavirasto.sillari.model.AddressModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.model.Tables;
-import fi.vaylavirasto.sillari.model.tables.Address;
-import fi.vaylavirasto.sillari.model.tables.Route;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 public class RouteMapper implements RecordMapper<Record, RouteModel> {
-    // Table aliases
-    public static final Route route = Tables.ROUTE.as("ro");
-    public static final Address arrivalAddress = Tables.ADDRESS.as("aa");
-    public static final Address departureAddress = Tables.ADDRESS.as("da");
-
     @Nullable
     @Override
     public RouteModel map(Record record) {
@@ -23,13 +16,13 @@ public class RouteMapper implements RecordMapper<Record, RouteModel> {
 
         if (routeModel != null) {
             AddressModel aa = new AddressModel();
-            aa.setId(record.get(arrivalAddress.ID));
-            aa.setStreetAddress(record.get(arrivalAddress.STREETADDRESS));
+            aa.setId(record.get(TableAlias.arrivalAddress.ID));
+            aa.setStreetAddress(record.get(TableAlias.arrivalAddress.STREETADDRESS));
             routeModel.setArrivalAddress(aa);
 
             AddressModel da = new AddressModel();
-            da.setId(record.get(departureAddress.ID));
-            da.setStreetAddress(record.get(departureAddress.STREETADDRESS));
+            da.setId(record.get(TableAlias.departureAddress.ID));
+            da.setStreetAddress(record.get(TableAlias.departureAddress.STREETADDRESS));
             routeModel.setDepartureAddress(da);
         }
 

@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.VehicleMapper;
 import fi.vaylavirasto.sillari.model.VehicleModel;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -19,8 +20,8 @@ public class VehicleRepository {
 
     
     public List<VehicleModel> getVehiclesOfPermit(Integer permitID) {
-        return dsl.select().from(VehicleMapper.vehicle)
-                .where(VehicleMapper.vehicle.PERMIT_ID.eq(permitID))
+        return dsl.select().from(TableAlias.vehicle)
+                .where(TableAlias.vehicle.PERMIT_ID.eq(permitID))
                 .fetch(new VehicleMapper());
     }
 }

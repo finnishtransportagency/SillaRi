@@ -9,7 +9,6 @@ import org.jooq.RecordMapper;
 import java.util.ArrayList;
 
 public class RouteTransportMapper implements RecordMapper<Record, RouteTransportModel> {
-
     @Nullable
     @Override
     public RouteTransportModel map(Record record) {

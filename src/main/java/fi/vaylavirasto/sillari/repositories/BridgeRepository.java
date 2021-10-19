@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.BridgeMapper;
 import fi.vaylavirasto.sillari.model.BridgeModel;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -23,27 +24,27 @@ public class BridgeRepository {
     private static final Logger logger = LogManager.getLogger();
 
     public BridgeModel getBridge(Integer id) {
-        return dsl.select().from(BridgeMapper.bridge)
-                .where(BridgeMapper.bridge.ID.eq(id))
+        return dsl.select().from(TableAlias.bridge)
+                .where(TableAlias.bridge.ID.eq(id))
                 .fetchOne(new BridgeMapper());
     }
 
     public String getBridgeGeoJson(Integer id) {
         // In ST_AsGeoJSON(geom, 0, 2), the '0' means decimal places, the '2' means the option to include the short CRS (EPSG:3067)
         Field<String> geojsonField = DSL.field("ST_AsGeoJSON(geom, 0, 2)", String.class);
-        return dsl.select(geojsonField).from(BridgeMapper.bridge)
-                .where(BridgeMapper.bridge.ID.eq(id))
+        return dsl.select(geojsonField).from(TableAlias.bridge)
+                .where(TableAlias.bridge.ID.eq(id))
                 .fetchOne(geojsonField);
     }
 
     public Map<String, Integer> getBridgeIdsWithOIDs(List<String> oids) {
-        Result<Record2<String, Integer>> result = dsl.select(BridgeMapper.bridge.OID, BridgeMapper.bridge.ID)
-                .from(BridgeMapper.bridge)
-                .where(BridgeMapper.bridge.OID.in(oids))
-                .orderBy(BridgeMapper.bridge.OID)
+        Result<Record2<String, Integer>> result = dsl.select(TableAlias.bridge.OID, TableAlias.bridge.ID)
+                .from(TableAlias.bridge)
+                .where(TableAlias.bridge.OID.in(oids))
+                .orderBy(TableAlias.bridge.OID)
                 .fetch();
 
-        Map<String, Integer> resultMap = result.intoMap(BridgeMapper.bridge.OID, BridgeMapper.bridge.ID);
+        Map<String, Integer> resultMap = result.intoMap(TableAlias.bridge.OID, TableAlias.bridge.ID);
         logger.debug("Bridge OIDs with corresponding Bridge IDs resultMap={}", resultMap);
         return resultMap;
     }

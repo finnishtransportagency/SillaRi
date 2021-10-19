@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.SupervisorMapper;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -18,23 +19,23 @@ public class SupervisorRepository {
     private DSLContext dsl;
 
     public List<SupervisorModel> getSupervisors() {
-        return dsl.select().from(SupervisorMapper.supervisor)
+        return dsl.select().from(TableAlias.supervisor)
                 .fetch(new SupervisorMapper());
     }
 
     public List<SupervisorModel> getSupervisorsBySupervisionId(Integer supervisionId) {
-        return dsl.select().from(SupervisorMapper.supervisor)
-                .join(SupervisorMapper.supervisionSupervisor)
-                .on(SupervisorMapper.supervisionSupervisor.SUPERVISOR_ID.eq(SupervisorMapper.supervisor.ID))
-                .where(SupervisorMapper.supervisionSupervisor.SUPERVISION_ID.eq(supervisionId))
+        return dsl.select().from(TableAlias.supervisor)
+                .join(TableAlias.supervisionSupervisor)
+                .on(TableAlias.supervisionSupervisor.SUPERVISOR_ID.eq(TableAlias.supervisor.ID))
+                .where(TableAlias.supervisionSupervisor.SUPERVISION_ID.eq(supervisionId))
                 .fetch(new SupervisorMapper());
     }
 
     public void insertSupervisionSupervisor(DSLContext ctx, Integer supervisionId, Integer supervisorId, Integer priority) {
-        ctx.insertInto(SupervisorMapper.supervisionSupervisor,
-                        SupervisorMapper.supervisionSupervisor.SUPERVISION_ID,
-                        SupervisorMapper.supervisionSupervisor.SUPERVISOR_ID,
-                        SupervisorMapper.supervisionSupervisor.PRIORITY
+        ctx.insertInto(TableAlias.supervisionSupervisor,
+                        TableAlias.supervisionSupervisor.SUPERVISION_ID,
+                        TableAlias.supervisionSupervisor.SUPERVISOR_ID,
+                        TableAlias.supervisionSupervisor.PRIORITY
                 ).values(
                         supervisionId,
                         supervisorId,
@@ -44,8 +45,8 @@ public class SupervisorRepository {
     }
 
     public void deleteSupervisionSupervisors(DSLContext ctx, Integer supervisionId) {
-        ctx.deleteFrom(SupervisorMapper.supervisionSupervisor)
-                .where(SupervisorMapper.supervisionSupervisor.SUPERVISION_ID.eq(supervisionId))
+        ctx.deleteFrom(TableAlias.supervisionSupervisor)
+                .where(TableAlias.supervisionSupervisor.SUPERVISION_ID.eq(supervisionId))
                 .execute();
     }
 }

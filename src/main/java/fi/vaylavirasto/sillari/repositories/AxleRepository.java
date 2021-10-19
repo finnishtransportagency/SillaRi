@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.AxleMapper;
 import fi.vaylavirasto.sillari.model.AxleModel;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -18,14 +19,14 @@ public class AxleRepository {
     private DSLContext dsl;
 
     public AxleModel getAxleById(int id) {
-        return dsl.selectFrom(AxleMapper.axle)
-                .where(AxleMapper.axle.ID.eq(id))
+        return dsl.selectFrom(TableAlias.axle)
+                .where(TableAlias.axle.ID.eq(id))
                 .fetchOne(new AxleMapper());
     }
 
     public List<AxleModel> getAxlesOfChart(Integer axleChartID) {
-        return dsl.select().from(AxleMapper.axle)
-                .where(AxleMapper.axle.AXLE_CHART_ID.eq(axleChartID))
+        return dsl.select().from(TableAlias.axle)
+                .where(TableAlias.axle.AXLE_CHART_ID.eq(axleChartID))
                 .fetch(new AxleMapper());
     }
 }

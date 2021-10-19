@@ -28,18 +28,18 @@ public class RouteRepository {
     private static final Logger logger = LogManager.getLogger();
 
     public List<RouteModel> getRoutesByPermitId(Integer permitId) {
-        return dsl.select().from(RouteMapper.route)
-                .leftJoin(RouteMapper.arrivalAddress).on(RouteMapper.route.ARRIVAL_ADDRESS_ID.eq(RouteMapper.arrivalAddress.ID))
-                .leftJoin(RouteMapper.departureAddress).on(RouteMapper.route.DEPARTURE_ADDRESS_ID.eq(RouteMapper.departureAddress.ID))
-                .where(RouteMapper.route.PERMIT_ID.eq(permitId))
+        return dsl.select().from(TableAlias.route)
+                .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
+                .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
+                .where(TableAlias.route.PERMIT_ID.eq(permitId))
                 .fetch(new RouteMapper());
     }
 
     public RouteModel getRoute(Integer id) {
-        return dsl.select().from(RouteMapper.route)
-                .leftJoin(RouteMapper.arrivalAddress).on(RouteMapper.route.ARRIVAL_ADDRESS_ID.eq(RouteMapper.arrivalAddress.ID))
-                .leftJoin(RouteMapper.departureAddress).on(RouteMapper.route.DEPARTURE_ADDRESS_ID.eq(RouteMapper.departureAddress.ID))
-                .where(RouteMapper.route.ID.eq(id))
+        return dsl.select().from(TableAlias.route)
+                .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
+                .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
+                .where(TableAlias.route.ID.eq(id))
                 .fetchOne(new RouteMapper());
     }
 
@@ -69,31 +69,40 @@ public class RouteRepository {
                 });
     }
 
+    public RouteModel getRouteByRouteTransportId(Integer routeTransportId) {
+        return dsl.select().from(TableAlias.route)
+                .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
+                .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
+                .innerJoin(TableAlias.routeTransport).on(TableAlias.route.ID.eq(TableAlias.routeTransport.ROUTE_ID))
+                .where(TableAlias.routeTransport.ROUTE_ID.eq(routeTransportId))
+                .fetchOne(new RouteMapper());
+    }
+
     public String getRouteGeoJson(Integer id) {
         // In ST_AsGeoJSON(geom, 0, 2), the '0' means decimal places, the '2' means the option to include the short CRS (EPSG:3067)
         Field<String> geojsonField = DSL.field("ST_AsGeoJSON(geom, 0, 2)", String.class);
-        return dsl.select(geojsonField).from(RouteMapper.route)
-                .where(RouteMapper.route.ID.eq(id))
+        return dsl.select(geojsonField).from(TableAlias.route)
+                .where(TableAlias.route.ID.eq(id))
                 .fetchOne(geojsonField);
     }
 
     public Map<Long, Integer> getRouteIdsWithLeluIds(Integer permitId) {
-        Result<Record2<Long, Integer>> result = dsl.select(RouteMapper.route.LELU_ID, RouteMapper.route.ID)
-                .from(RouteMapper.route)
-                .where(RouteMapper.route.PERMIT_ID.eq(permitId))
-                .orderBy(RouteMapper.route.LELU_ID)
+        Result<Record2<Long, Integer>> result = dsl.select(TableAlias.route.LELU_ID, TableAlias.route.ID)
+                .from(TableAlias.route)
+                .where(TableAlias.route.PERMIT_ID.eq(permitId))
+                .orderBy(TableAlias.route.LELU_ID)
                 .fetch();
 
-        Map<Long, Integer> resultMap = result.intoMap(RouteMapper.route.LELU_ID, RouteMapper.route.ID);
+        Map<Long, Integer> resultMap = result.intoMap(TableAlias.route.LELU_ID, TableAlias.route.ID);
         logger.debug("Route LeLu IDs with corresponding Route IDs resultMap={}", resultMap);
         return resultMap;
     }
 
     public List<RouteModel> getRoutesWithLeluId(Long id) {
-        return dsl.select().from(RouteMapper.route)
-                .leftJoin(RouteMapper.arrivalAddress).on(RouteMapper.route.ARRIVAL_ADDRESS_ID.eq(RouteMapper.arrivalAddress.ID))
-                .leftJoin(RouteMapper.departureAddress).on(RouteMapper.route.DEPARTURE_ADDRESS_ID.eq(RouteMapper.departureAddress.ID))
-                .where(RouteMapper.route.LELU_ID.eq(id))
+        return dsl.select().from(TableAlias.route)
+                .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
+                .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
+                .where(TableAlias.route.LELU_ID.eq(id))
                 .fetch(new RouteMapper());
     }
 

@@ -9,7 +9,6 @@ import org.jooq.RecordMapper;
 import java.util.ArrayList;
 
 public class CompanyMapper implements RecordMapper<Record, CompanyModel> {
-
     @Nullable
     @Override
     public CompanyModel map(Record record) {

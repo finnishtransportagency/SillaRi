@@ -1,25 +1,22 @@
 package fi.vaylavirasto.sillari.mapper;
 
 import fi.vaylavirasto.sillari.model.AxleModel;
-import fi.vaylavirasto.sillari.model.Tables;
-import fi.vaylavirasto.sillari.model.tables.Axle;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 public class AxleMapper implements RecordMapper<Record, AxleModel> {
-    public static final Axle axle = Tables.AXLE.as("ax");
-
     @Nullable
     @Override
     public AxleModel map(Record record) {
         AxleModel axleModel = new AxleModel();
-        axleModel.setId(record.get(axle.ID));
-        axleModel.setAxleChartId(record.get(axle.AXLE_CHART_ID));
-        axleModel.setAxleNumber(record.get(axle.AXLE_NUMBER));
-        axleModel.setWeight(record.get(axle.WEIGHT));
-        axleModel.setDistanceToNext(record.get(axle.DISTANCE_TO_NEXT));
-        axleModel.setMaxDistanceToNext(record.get(axle.MAX_DISTANCE_TO_NEXT));
+        axleModel.setId(record.get(TableAlias.axle.ID));
+        axleModel.setAxleChartId(record.get(TableAlias.axle.AXLE_CHART_ID));
+        axleModel.setAxleNumber(record.get(TableAlias.axle.AXLE_NUMBER));
+        axleModel.setWeight(record.get(TableAlias.axle.WEIGHT));
+        axleModel.setDistanceToNext(record.get(TableAlias.axle.DISTANCE_TO_NEXT));
+        axleModel.setMaxDistanceToNext(record.get(TableAlias.axle.MAX_DISTANCE_TO_NEXT));
         return axleModel;
     }
 }
