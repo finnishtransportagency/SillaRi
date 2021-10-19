@@ -16,21 +16,21 @@ import RouteInfoGrid from "./RouteInfoGrid";
 import TransportInfoAccordion from "./TransportInfoAccordion";
 
 interface RouteTransportInfoProps {
+  routeTransportId: number;
   permit: IPermit;
   supervisors: ISupervisor[];
   setToastMessage: Dispatch<SetStateAction<string>>;
 }
 
-const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTransportInfoProps): JSX.Element => {
+const RouteTransportInfo = ({ routeTransportId, permit, supervisors, setToastMessage }: RouteTransportInfoProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
 
   const management = useTypedSelector((state) => state.managementReducer);
-  const { modifiedRouteTransportDetail, selectedRouteOption, isRouteTransportModified } = management;
+  const { modifiedRouteTransportDetail, selectedRouteOption } = management;
 
   const { companyId, permitNumber, validStartDate, validEndDate, routes = [] } = permit || {};
-  const { id: routeTransportId } = modifiedRouteTransportDetail || {};
 
   // Set-up mutations for modifying data later
   // TODO - handle errors
@@ -53,9 +53,9 @@ const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTrans
 
   const saveRouteTransport = () => {
     if (!!routeTransportId && routeTransportId > 0) {
-      routeTransportUpdateMutation.mutate(modifiedRouteTransportDetail as IRouteTransport);
+      routeTransportUpdateMutation.mutate(modifiedRouteTransportDetail[routeTransportId] as IRouteTransport);
     } else {
-      routeTransportPlannedMutation.mutate(modifiedRouteTransportDetail as IRouteTransport);
+      routeTransportPlannedMutation.mutate(modifiedRouteTransportDetail[routeTransportId] as IRouteTransport);
     }
   };
 
@@ -100,7 +100,7 @@ const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTrans
             </IonRow>
             <IonRow className="ion-margin">
               <IonCol>
-                <RouteInfoGrid permitRoutes={routes} />
+                <RouteInfoGrid routeTransportId={routeTransportId} permitRoutes={routes} />
               </IonCol>
             </IonRow>
 
@@ -119,7 +119,7 @@ const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTrans
                 </IonRow>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    <BridgeGrid supervisors={supervisors} />
+                    <BridgeGrid routeTransportId={routeTransportId} supervisors={supervisors} />
                   </IonCol>
                 </IonRow>
               </>
@@ -142,7 +142,7 @@ const RouteTransportInfo = ({ permit, supervisors, setToastMessage }: RouteTrans
           </IonButton>
         </IonCol>
         <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-          <IonButton color="primary" disabled={isSendingTransportUpdate || !isRouteTransportModified} onClick={saveRouteTransport}>
+          <IonButton color="primary" disabled={isSendingTransportUpdate} onClick={saveRouteTransport}>
             <IonText>{t("common.buttons.save")}</IonText>
           </IonButton>
         </IonCol>

@@ -2,7 +2,6 @@ import React from "react";
 import ICompany from "../interfaces/ICompany";
 import CompanyCard from "./CompanyCard";
 import NoNetworkNoData from "./NoNetworkNoData";
-import "./CompanyCardList.css";
 
 interface CompanyCardListProps {
   companyList: ICompany[];
@@ -11,7 +10,7 @@ interface CompanyCardListProps {
 
 const CompanyCardList = ({ companyList, noNetworkNoData }: CompanyCardListProps): JSX.Element => {
   return (
-    <div className="cardListContainer">
+    <div className="listContainer">
       {noNetworkNoData ? (
         <NoNetworkNoData />
       ) : (

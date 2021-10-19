@@ -1,36 +1,41 @@
 {
+  "common": {
+    "buttons": {
+      "done": "Valmis",
+      "back": "Peru",
+      "cancel": "Keskeytä",
+      "edit": "Muokkaa",
+      "save": "Tallenna",
+      "send": "Lähetä"
+    }
+  },
   "main": {
-    "header" :
-    {
-      "title" : "SillaRi"
+    "header": {
+      "title": "SillaRi"
     },
-    "title" : "SillaRi",
+    "title": "SillaRi",
     "content": "Tervetuloa!",
     "tab": {
       "transportCompanies": "Kuljetusyritykset",
-      "upcomingBridges": "Tulevat sillat"
+      "upcomingBridges": "Sillat"
     },
     "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen..."
   },
   "map": {
     "attribution": "Aineisto"
   },
-  "settings" :
-  {
-    "header" :
-    {
-      "title" : "Asetukset"
+  "settings": {
+    "header": {
+      "title": "Asetukset"
     },
-    "language" :
-    {
-      "label" : "Kieli",
-      "fi" : "Suomi",
-      "sv" : "Svenska",
-      "en" : "English"
+    "language": {
+      "label": "Kieli",
+      "fi": "Suomi",
+      "sv": "Svenska",
+      "en": "English"
     }
   },
-  "camera" :
-  {
+  "camera": {
     "takePhotoButtonLabel": "Ota kuva",
     "listLabel": "Kuvat",
     "listLabelPcs": "kpl",
@@ -38,16 +43,14 @@
       "deleteButtonLabel": "Poista"
     }
   },
-  "SidebarMenu" :
-  {
-    "title" : "SillaRi",
-    "mainPage" : "Pääsivu",
-    "settings" : "Asetukset",
-    "map" : "Kartta",
-    "camera" : "Kamera",
-    "supervision": "Sillan ylitys",
-    "management" : "Kuljetusten hallinta",
-    "transports" : "Kuljetukset",
+  "SidebarMenu": {
+    "title": "SillaRi",
+    "mainPage": "Pääsivu",
+    "settings": "Asetukset",
+    "map": "Kartta",
+    "camera": "Kamera",
+    "management": "Kuljetusten hallinta",
+    "transports": "Kuljetukset",
     "logout": "Kirjaudu ulos"
   },
   "company": {
@@ -56,11 +59,19 @@
     "route": "Reitti"
   },
   "route": {
+    "transportPermit": "Kuljetuslupa",
     "permitInfo": {
       "title": "Luvan tiedot",
       "permitNumber": "Luvan numero",
       "routeDeparturePoint": "Reitin lähtöpiste",
       "routeArrivalPoint": "Reitin päätepiste"
+    },
+    "routeInfo": {
+      "title": "Reitin tiedot",
+      "route": "Reitti",
+      "showWholeRoute": "Näytä koko reitti",
+      "departurePoint": "Lähtöpiste",
+      "arrivalPoint": "Päätepiste"
     },
     "transportInfo": {
       "title": "Kuljetuksen tiedot",
@@ -75,92 +86,77 @@
     "transportValid": "Kuljetus on luvanmukainen lähtiessä",
     "bridgesToSupervise": "Valvottavat sillat"
   },
-  "bridgeDetail" :
-  {
-    "crossingInstructions" : "Ylitysohje",
-    "documentingHeader" : "Dokumentointi",
-    "documentingParagraph" : "Valvoja seuraa ... jne todo",
-    "trafficSupervisors" : "Liikenteenohjaajat",
-    "permitNumber" : "LUPANUMERO: ",
-    "conformsToPermit" : "Kuljetus on luvanmukainen",
-    "startSupervision" : "Aloita valvonta",
-    "denyCrossing" : "Kuljetus ei voi ylittää siltaa",
-    "supervisionMissing" : "Sillanvalvontaa ei ole vielä suunniteltu"
+  "bridge": {
+    "title": "Sillan tiedot",
+    "identifier": "Tunnus",
+    "location": "Sijainti",
+    "crossingInstructions": {
+      "title": "Ohjeet",
+      "documentingHeader": "Dokumentointi",
+      "documentingParagraph": "Valvoja seuraa ... jne todo"
+    },
+    "trafficSupervisors": {
+      "title": "Liikenteenohjaajat"
+    },
+    "permitNumber": "Lupanumero",
+    "conformsToPermit": "Kuljetus on luvanmukainen",
+    "startSupervision": "Aloita valvonta",
+    "denyCrossing": "Kuljetus ei voi ylittää siltaa",
+    "supervisionMissing": "Sillanvalvontaa ei ole vielä suunniteltu",
+    "supervisionStarted": "Valvonta aloitettu"
   },
-  "denyCrossing" :
-  {
-    "cantCross" : "Kuljetus ei voi ylittää siltaa",
-    "whyCantCross" : "Miksi kuljetus ei voi ylittää siltaa",
-    "back" : "Takaisin",
-    "send" : "Lähetä"
+  "denyCrossing": {
+    "cantCross": "Kuljetus ei voi ylittää siltaa",
+    "whyCantCross": "Miksi kuljetus ei voi ylittää siltaa?"
   },
-  "supervision":
-  {
-    "title" : "Sillan valvonta",
-    "permitNumber" : "LUPANUMERO:",
-    "supervisionStarted": "Valvonta aloitettu:",
-    "bridgeName": "Silta",
-    "crossingInstructions" : "Ylitysohje",
-    "photosDrivingLine" : "Valokuvat ja ajolinja",
-    "report":
-    {
-      "observations" : "Havainnot",
-      "drivingLineOk" : "Ajolinjaa on noudatettu",
-      "drivingLineInfo" : "Miksi ajolinjaa ei hyväksytä?",
-      "speedLimitOk" : "Ajonopeus on hyväksytty",
+  "supervision": {
+    "title": "Sillan valvonta",
+    "permitNumber": "Lupanumero",
+    "supervisionStarted": "Valvonta aloitettu",
+    "bridgeName": "Sillan tiedot",
+    "crossingInstructions": "Ylitysohje",
+    "photos": "Valokuvat",
+    "photosDrivingLine": "Valokuvat ja ajolinja",
+    "report": {
+      "observations": "Havainnot",
+      "drivingLineOk": "Ajolinjaa on noudatettu",
+      "drivingLineInfo": "Miksi ajolinjaa ei hyväksytä?",
+      "speedLimitOk": "Ajonopeus on hyväksytty",
       "speedLimitInfo": "Miksi ajonopeutta ei hyväksytä?",
-      "anomalies" : "Poikkeavia havaintoja",
-      "anomaliesInfo" : "Tarkenna poikkeavia havaintoja:",
-      "surfaceDamage" : "Päällystevaurio",
+      "anomalies": "Poikkeavia havaintoja",
+      "anomaliesInfo": "Tarkenna poikkeavia havaintoja:",
+      "surfaceDamage": "Päällystevaurio",
       "jointDamage": "Liikuntasauman rikkoutuminen",
       "bendOrDisplacement": "Pysyvä taipuma tai muu siirtymä",
-      "otherObservations" : "Jotain muuta, mitä?",
-      "anomaliesDescription" : "Kuvaile poikkeavia havaintoja",
-      "additionalInfo" : "Lisätiedot"
+      "otherObservations": "Jotain muuta, mitä?",
+      "anomaliesDescription": "Kuvaile poikkeavia havaintoja",
+      "additionalInfo": "Lisätiedot",
+      "placeholder": "Lisää tekstiä tähän"
     },
-    "answer" :
-    {
-      "yes" : "Kyllä",
-      "no" : "Ei"
+    "answer": {
+      "yes": "Kyllä",
+      "no": "Ei"
     },
-    "buttons" :
-    {
-      "takePhotos" : "Ota valokuvia",
-      "drivingLine" : "Tuo ajolinja",
-      "exit" : "Poistu",
-      "summary" : "Yhteenveto"
+    "buttons": {
+      "takePhotos": "Ota valokuvia",
+      "drivingLine": "Tuo ajolinja",
+      "summary": "Siirry yhteenvetoon",
+      "saveToSendList": "Tallenna (lähetyslistalle)"
     },
-    "summary":
-    {
+    "summary": {
       "title": "Yhteenveto",
-      "bridgeName": "",
+      "observations": "Havainnot",
       "speedLimit": "Ajonopeus",
       "drivingLine": "Ajolinja",
-      "images": "Kuvat",
-      "kpl": "kpl",
-      "supervisionStarted": "VALVONTA ALOITETTU:",
       "anomalies": "Poikkeavat havainnot",
-      "anomaliesDescription": "Poikkeavien havaintojen tarkennus",
+      "noAnomalies": "Ei ole",
       "additionalInfo": "Lisätiedot",
-      "buttons": {
-        "edit": "Muokkaa",
-        "save": "Tallenna"
-      },
-      "saved": "Tallennettu"
+      "approved": "Hyväksytty",
+      "saved": "Valvonta on tallennettu (lähetyslistalle)"
     }
   },
-  "common": {
-    "buttons": {
-      "done": "Valmis",
-      "back": "Peru",
-      "cancel": "Peruuta",
-      "save": "Tallenna"
-  }
-  },
-  "management":
-  {
-    "companySummary":
-    {
+  "management": {
+    "companySummary": {
       "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
       "transports": "Kuljetuksia",
       "addTransportButtonLabel": "Lisää kuljetus",
@@ -187,8 +183,7 @@
         "modify": "Muokkaa"
       }
     },
-    "addTransport":
-    {
+    "addTransport": {
       "headerTitleAdd": "Lisää uusi kuljetus",
       "headerTitleDetail": "Kuljetuksen tiedot",
       "transportPermit": "Kuljetuslupa",
@@ -243,18 +238,16 @@
   },
   "transports": {
     "transportCodeInput": {
-      "header" :
-      {
-        "title" : "Kuljetukset"
+      "header": {
+        "title": "Kuljetukset"
       },
-      "inputLabel" : "Anna kuljetuksen koodi",
-      "inputPlaceholder" : "Kuljetuksen koodi",
-      "submitButtonLabel" : "Lähetä koodi"
+      "inputLabel": "Anna kuljetuksen koodi",
+      "inputPlaceholder": "Kuljetuksen koodi",
+      "submitButtonLabel": "Lähetä koodi"
     },
     "transport": {
-      "header" :
-      {
-        "title" : "Kuljetus"
+      "header": {
+        "title": "Kuljetus"
       }
     }
   },

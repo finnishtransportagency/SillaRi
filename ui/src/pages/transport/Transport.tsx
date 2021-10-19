@@ -40,7 +40,7 @@ const Transport = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <div>
-            <h3>{selectedRouteTransportDetail.id}</h3>
+            <h3>{selectedRouteTransportDetail[Number(routeTransportId)].id}</h3>
             <div>Reitin tiedot tähän...</div>
           </div>
         )}

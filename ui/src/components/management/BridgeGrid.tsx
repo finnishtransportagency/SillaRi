@@ -13,17 +13,18 @@ import { SupervisorType } from "../../utils/constants";
 import "./BridgeGrid.css";
 
 interface BridgeGridProps {
+  routeTransportId: number;
   supervisors: ISupervisor[];
 }
 
-const BridgeGrid = ({ supervisors = [] }: BridgeGridProps): JSX.Element => {
+const BridgeGrid = ({ routeTransportId, supervisors = [] }: BridgeGridProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const management = useTypedSelector((state) => state.managementReducer);
   const { modifiedRouteTransportDetail, selectedRouteOption } = management;
-  const { supervisions = [] } = modifiedRouteTransportDetail || {};
-  const { routeBridges = [] } = selectedRouteOption || {};
+  const { supervisions = [] } = modifiedRouteTransportDetail[routeTransportId] || {};
+  const { routeBridges = [] } = selectedRouteOption[routeTransportId] || {};
 
   const modifySupervisions = (routeBridgeId: number, modifiedSupervision: ISupervision) => {
     // Add the modified supervision for this route bridge id to the supervisions array in place of the existing one
@@ -38,13 +39,19 @@ const BridgeGrid = ({ supervisors = [] }: BridgeGridProps): JSX.Element => {
   const setEstimatedCrossingTime = (supervision: ISupervision, dateTime: Date) => {
     const modifiedSupervision: ISupervision = { ...supervision, plannedTime: dateTime };
     const modifiedSupervisions = modifySupervisions(supervision.routeBridgeId, modifiedSupervision);
-    dispatch({ type: managementActions.MODIFY_ROUTE_TRANSPORT, payload: { supervisions: modifiedSupervisions } });
+
+    // dispatch({ type: managementActions.MODIFY_ROUTE_TRANSPORT, payload: { supervisions: modifiedSupervisions } });
+    const newDetail = { ...modifiedRouteTransportDetail[routeTransportId], supervisions: modifiedSupervisions };
+    dispatch({ type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL, payload: newDetail });
   };
 
   const setSupervisorType = (supervision: ISupervision, supervisorType: SupervisorType) => {
     const modifiedSupervision: ISupervision = { ...supervision, supervisorType };
     const modifiedSupervisions = modifySupervisions(supervision.routeBridgeId, modifiedSupervision);
-    dispatch({ type: managementActions.MODIFY_ROUTE_TRANSPORT, payload: { supervisions: modifiedSupervisions } });
+
+    // dispatch({ type: managementActions.MODIFY_ROUTE_TRANSPORT, payload: { supervisions: modifiedSupervisions } });
+    const newDetail = { ...modifiedRouteTransportDetail[routeTransportId], supervisions: modifiedSupervisions };
+    dispatch({ type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL, payload: newDetail });
   };
 
   const setSupervisor = (supervision: ISupervision, priority: number, supervisorId: number) => {
@@ -61,7 +68,10 @@ const BridgeGrid = ({ supervisors = [] }: BridgeGridProps): JSX.Element => {
 
     const modifiedSupervision: ISupervision = { ...supervision, supervisors: modifiedSupervisionSupervisors };
     const modifiedSupervisions = modifySupervisions(supervision.routeBridgeId, modifiedSupervision);
-    dispatch({ type: managementActions.MODIFY_ROUTE_TRANSPORT, payload: { supervisions: modifiedSupervisions } });
+
+    // dispatch({ type: managementActions.MODIFY_ROUTE_TRANSPORT, payload: { supervisions: modifiedSupervisions } });
+    const newDetail = { ...modifiedRouteTransportDetail[routeTransportId], supervisions: modifiedSupervisions };
+    dispatch({ type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL, payload: newDetail });
   };
 
   const supervisorSelect = (supervision: ISupervision, priority: number, value?: ISupervisor) => (

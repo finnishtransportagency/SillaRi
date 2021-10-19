@@ -27,7 +27,6 @@ const TransportDetail = (): JSX.Element => {
     selectedPermitDetail,
     selectedRouteTransportDetail,
     supervisorList,
-    isRouteTransportModified,
     networkStatus: { isFailed = {} },
   } = management;
 
@@ -35,43 +34,53 @@ const TransportDetail = (): JSX.Element => {
 
   const { isLoading: isLoadingTransport } = useQuery(
     ["getRouteTransport", routeTransportId],
-    () => getRouteTransport(Number(routeTransportId), dispatch, selectedRouteTransportDetail),
+    () => getRouteTransport(Number(routeTransportId), dispatch, selectedRouteTransportDetail[Number(routeTransportId)]),
     {
       retry: onRetry,
+      refetchOnWindowFocus: false,
     }
   );
   const { isLoading: isLoadingPermit } = useQuery(
     ["getPermitOfRouteTransport", routeTransportId],
-    () => getPermitOfRouteTransport(Number(routeTransportId), dispatch, selectedRouteTransportDetail),
+    () => getPermitOfRouteTransport(Number(routeTransportId), dispatch, selectedRouteTransportDetail[Number(routeTransportId)]),
     {
       retry: onRetry,
+      refetchOnWindowFocus: false,
     }
   );
   useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry });
 
+  const { routeId } = selectedRouteTransportDetail[Number(routeTransportId)] || {};
+
   useEffect(() => {
     // Copy the saved details into redux for later modifying
-    if (!isLoadingTransport && !isLoadingPermit && !isRouteTransportModified) {
+    if (!isLoadingTransport) {
       // Make sure the dates are objects not strings, otherwise the backend may throw a 400 Bad Request error on save
       // The backend updateRouteTransport method does not update the status values, so these can be left undefined here
-      const { routeId, plannedDepartureTime, supervisions = [] } = selectedRouteTransportDetail || {};
+      const { plannedDepartureTime, supervisions = [] } = selectedRouteTransportDetail[Number(routeTransportId)] || {};
       const modifiedSupervisions = supervisions.map((supervision) => {
         return { ...supervision, plannedTime: moment(supervision.plannedTime).toDate() };
       });
       const modifiedRouteTransportDetail = {
-        ...selectedRouteTransportDetail,
+        ...selectedRouteTransportDetail[Number(routeTransportId)],
         plannedDepartureTime: moment(plannedDepartureTime).toDate(),
         supervisions: modifiedSupervisions,
         currentStatus: undefined,
         statusHistory: undefined,
       };
       dispatch({ type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL, payload: modifiedRouteTransportDetail });
+    }
+  }, [isLoadingTransport, selectedRouteTransportDetail, routeTransportId, dispatch]);
 
+  useEffect(() => {
+    if (!isLoadingPermit && !!routeId && routeId > 0) {
       const { routes = [] } = selectedPermitDetail || {};
       const selectedRoute = routes.find((route) => route.id === routeId);
-      dispatch({ type: managementActions.SET_SELECTED_ROUTE_OPTION, payload: selectedRoute });
+      if (selectedRoute) {
+        dispatch({ type: managementActions.SET_SELECTED_ROUTE_OPTION, payload: { routeTransportId, route: selectedRoute } });
+      }
     }
-  }, [isLoadingTransport, isLoadingPermit, isRouteTransportModified, selectedRouteTransportDetail, selectedPermitDetail, dispatch]);
+  }, [isLoadingPermit, selectedPermitDetail, routeId, routeTransportId, dispatch]);
 
   const noNetworkNoData =
     (isFailed.getRouteTransport && selectedRouteTransportDetail === undefined) ||
@@ -85,7 +94,12 @@ const TransportDetail = (): JSX.Element => {
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (
-          <RouteTransportInfo permit={selectedPermitDetail as IPermit} supervisors={supervisorList} setToastMessage={setToastMessage} />
+          <RouteTransportInfo
+            routeTransportId={Number(routeTransportId)}
+            permit={selectedPermitDetail as IPermit}
+            supervisors={supervisorList}
+            setToastMessage={setToastMessage}
+          />
         )}
 
         <IonToast

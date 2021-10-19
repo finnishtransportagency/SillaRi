@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IonCol, IonImg, IonItem, IonRow, IonThumbnail } from "@ionic/react";
+import { IonCol, IonImg, IonRow, IonThumbnail } from "@ionic/react";
 import moment from "moment";
 import IFile from "../interfaces/IFile";
 import IImageItem from "../interfaces/IImageItem";
@@ -35,13 +35,11 @@ const ImageThumbnailRow = ({ images, supervisionImages }: ImageThumbnailRowProps
             const imageUrl = imageItem.dataUrl;
 
             return (
-              <IonItem key={imageItem.id}>
-                <IonCol>
-                  <IonThumbnail onClick={() => showImage(true, imageUrl as string)}>
-                    <IonImg src={imageUrl} />
-                  </IonThumbnail>
-                </IonCol>
-              </IonItem>
+              <IonCol key={imageItem.id} size="3">
+                <IonThumbnail onClick={() => showImage(true, imageUrl as string)}>
+                  <IonImg src={imageUrl} />
+                </IonThumbnail>
+              </IonCol>
             );
           })}
 
@@ -57,13 +55,11 @@ const ImageThumbnailRow = ({ images, supervisionImages }: ImageThumbnailRowProps
             const imageUrl = `${getOrigin()}/api/images/get?objectKey=${supervisionImage.objectKey}`;
 
             return (
-              <IonItem key={supervisionImage.id}>
-                <IonCol>
-                  <IonThumbnail onClick={() => showImage(true, imageUrl)}>
-                    <IonImg src={imageUrl} />
-                  </IonThumbnail>
-                </IonCol>
-              </IonItem>
+              <IonCol key={supervisionImage.id} size="3">
+                <IonThumbnail onClick={() => showImage(true, imageUrl)}>
+                  <IonImg src={imageUrl} />
+                </IonThumbnail>
+              </IonCol>
             );
           })}
 

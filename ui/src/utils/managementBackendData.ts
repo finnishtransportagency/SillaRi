@@ -149,7 +149,6 @@ export const sendRouteTransportPlanned = async (routeTransport: IRouteTransport,
       const plannedRouteTransport = (await createRouteTransportResponse.json()) as Promise<IRouteTransport>;
       dispatch({ type: managementActions.GET_ROUTE_TRANSPORT, payload: plannedRouteTransport });
       dispatch({ type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL, payload: plannedRouteTransport });
-      dispatch({ type: managementActions.SET_ROUTE_TRANSPORT_MODIFIED, payload: false });
     } else {
       dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { sendRouteTransportPlanned: true } });
       throw new Error(notOkError);
@@ -176,7 +175,6 @@ export const sendRouteTransportUpdate = async (routeTransport: IRouteTransport, 
       const updatedRouteTransport = (await updateRouteTransportResponse.json()) as Promise<IRouteTransport>;
       dispatch({ type: managementActions.GET_ROUTE_TRANSPORT, payload: updatedRouteTransport });
       dispatch({ type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL, payload: updatedRouteTransport });
-      dispatch({ type: managementActions.SET_ROUTE_TRANSPORT_MODIFIED, payload: false });
     } else {
       dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { sendRouteTransportUpdate: true } });
       throw new Error(notOkError);
