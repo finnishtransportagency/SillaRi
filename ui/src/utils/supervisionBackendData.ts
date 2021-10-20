@@ -266,11 +266,11 @@ export const sendSupervisionPlanned = async (createRequest: ISupervision, dispat
   }
 };
 
-export const sendSupervisionUpdate = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+export const sendConformsToPermitUpdate = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionUpdate: false } });
 
-    const updateSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/updatesupervision`, {
+    const updateSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/updateconformstopermit`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

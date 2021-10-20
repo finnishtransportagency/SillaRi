@@ -79,6 +79,11 @@ public class SupervisionService {
         supervisionRepository.updateSupervision(supervisionModel);
         return getSupervision(supervisionModel.getId());
     }
+    
+    public SupervisionModel updateConformsToPermit(Integer supervisionId, Boolean conformsToPermit) {
+        supervisionRepository.updateSupervision(supervisionId, conformsToPermit);
+        return getSupervision(supervisionId);
+    }
 
     // Adds the status IN_PROGRESS and creates a new supervision report
     public SupervisionModel startSupervision(Integer supervisionId) {

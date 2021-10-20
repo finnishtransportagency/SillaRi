@@ -1,20 +1,20 @@
 import React from "react";
 import Moment from "react-moment";
 import { IonItem, IonLabel } from "@ionic/react";
-import IRouteBridge from "../interfaces/IRouteBridge";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
+import ISupervision from "../interfaces/ISupervision";
 
 interface BridgeCardProps {
-  routeBridge: IRouteBridge;
+  supervision: ISupervision;
 }
 
-const BridgeCard = ({ routeBridge }: BridgeCardProps): JSX.Element => {
-  const { id: routeBridgeId, bridge, supervision } = routeBridge;
-  const { identifier, name } = bridge;
-  const { plannedTime } = supervision || {};
+const BridgeCard = ({ supervision }: BridgeCardProps): JSX.Element => {
+  const { id: supervisionId, plannedTime, routeBridge } = supervision || {};
+  const { bridge } = routeBridge || {};
+  const { identifier, name } = bridge || {};
 
   return (
-    <IonItem detail routerLink={`/bridgedetail/${routeBridgeId}`}>
+    <IonItem detail routerLink={`/bridgedetail/${supervisionId}`}>
       <IonLabel>
         <IonLabel>{name}</IonLabel>
         <IonLabel>

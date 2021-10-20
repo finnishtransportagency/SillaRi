@@ -13,6 +13,7 @@ import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import { useTypedSelector } from "../store/store";
 import { getRouteTransportOfSupervisor, onRetry } from "../utils/supervisionBackendData";
+import BridgeCardList from "../components/BridgeCardList";
 
 interface RouteTransportDetailProps {
   routeTransportId: string;
@@ -26,7 +27,7 @@ const RouteTransportDetail = (): JSX.Element => {
     selectedRouteTransport,
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
-  const { route, supervisions } = selectedRouteTransport || {};
+  const { route, supervisions = [] } = selectedRouteTransport || {};
   const { name = "", permit } = route || {};
 
   const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
@@ -42,7 +43,6 @@ const RouteTransportDetail = (): JSX.Element => {
 
   const noNetworkNoData = isFailed.getRouteTransportOfSupervisor && selectedRouteTransport === undefined;
 
-  // TODO - check if the transportValid checkbox is still needed
   return (
     <IonPage>
       <Header title={name} somethingFailed={isFailed.getRouteTransportOfSupervisor} />
@@ -55,7 +55,7 @@ const RouteTransportDetail = (): JSX.Element => {
             <RouteAccordion route={route as IRoute} />
             <PermitTransportAccordion permit={permit as IPermit} />
 
-            {/*<BridgeCardList routeBridges={routeBridges} />*/}
+            <BridgeCardList supervisions={supervisions} />
           </>
         )}
       </IonContent>

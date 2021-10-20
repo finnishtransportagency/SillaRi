@@ -102,6 +102,19 @@ public class SupervisionController {
         }
     }
 
+    @Operation(summary = "Update conforms to permit attribute in supervision")
+    @PutMapping(value = "/updateconformstopermit", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> updateConformsToPermit(@RequestBody SupervisionModel supervision) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateConformsToPermit");
+        try {
+            SupervisionModel supervisionModel = supervisionService.updateConformsToPermit(supervision.getId(), supervision.getConformsToPermit());
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Start supervision, create empty supervision report")
     @PostMapping(value = "/startsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")

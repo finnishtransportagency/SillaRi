@@ -13,49 +13,43 @@ import TrafficSupervisorsAccordion from "../components/TrafficSupervisorsAccordi
 import IPermit from "../interfaces/IPermit";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
-import { getPermitOfRouteBridge, getRouteBridge, getSupervisionOfRouteBridge, onRetry, sendSupervisionUpdate } from "../utils/supervisionBackendData";
+import { getSupervision, onRetry, sendConformsToPermitUpdate } from "../utils/supervisionBackendData";
 
 interface BridgeDetailProps {
-  routeBridgeId: string;
+  supervisionId: string;
 }
 
 const BridgeDetail = (): JSX.Element => {
   const dispatch = useDispatch();
-  const { routeBridgeId = "0" } = useParams<BridgeDetailProps>();
+  const { supervisionId = "0" } = useParams<BridgeDetailProps>();
 
   const {
-    selectedBridgeDetail,
-    selectedPermitDetail,
     selectedSupervisionDetail,
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
-  const { bridge } = selectedBridgeDetail || {};
+  const { id, routeBridgeId, routeTransportId, plannedTime, supervisorType, routeBridge } = selectedSupervisionDetail || {};
+  const { bridge, route } = routeBridge || {};
   const { name = "" } = bridge || {};
-  const { id: supervisionId, routeTransportId, plannedTime, supervisorType, supervisors } = selectedSupervisionDetail || {};
+  const { permit } = route || {};
 
-  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
-  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
-    retry: onRetry,
-  });
   const { isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervisionOfRouteBridge", routeBridgeId],
-    () => getSupervisionOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail),
+    ["getSupervision", supervisionId],
+    () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail),
     {
       retry: onRetry,
     }
   );
 
-  const supervisionUpdateMutation = useMutation((supervision: ISupervision) => sendSupervisionUpdate(supervision, dispatch), { retry: onRetry });
+  const supervisionUpdateMutation = useMutation((supervision: ISupervision) => sendConformsToPermitUpdate(supervision, dispatch), { retry: onRetry });
 
   const setConformsToPermit = (conforms: boolean) => {
     const updatedSupervision = {
-      id: supervisionId,
-      routeBridgeId: Number(routeBridgeId),
+      id,
+      routeBridgeId,
       routeTransportId,
       plannedTime,
-      conformsToPermit: conforms,
       supervisorType,
-      supervisors,
+      conformsToPermit: conforms,
     } as ISupervision;
 
     if (!isLoadingSupervision) {
@@ -63,10 +57,7 @@ const BridgeDetail = (): JSX.Element => {
     }
   };
 
-  const noNetworkNoData =
-    (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
-    (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined) ||
-    (isFailed.getSupervision && selectedSupervisionDetail === undefined);
+  const noNetworkNoData = isFailed.getSupervision && selectedSupervisionDetail === undefined;
 
   return (
     <IonPage>
@@ -76,11 +67,11 @@ const BridgeDetail = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <>
-            <BridgeDetailHeader routeBridge={selectedBridgeDetail as IRouteBridge} />
-            <CrossingInstructionsAccordion routeBridge={selectedBridgeDetail as IRouteBridge} />
+            <BridgeDetailHeader routeBridge={routeBridge as IRouteBridge} />
+            <CrossingInstructionsAccordion routeBridge={routeBridge as IRouteBridge} />
             <TrafficSupervisorsAccordion />
             <BridgeDetailFooter
-              permit={selectedPermitDetail as IPermit}
+              permit={permit as IPermit}
               supervision={selectedSupervisionDetail as ISupervision}
               isLoadingSupervision={isLoadingSupervision}
               setConformsToPermit={setConformsToPermit}

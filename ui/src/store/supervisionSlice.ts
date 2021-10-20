@@ -97,7 +97,7 @@ const supervisionSlice = createSlice({
     },
     REPORT_RADIO_CHANGED: (state, action: PayloadAction<IRadioValue>) => {
       const { selectedSupervisionDetail } = state;
-      if (selectedSupervisionDetail) {
+      if (selectedSupervisionDetail && selectedSupervisionDetail.report) {
         if (action.payload.name === "drivingLineOk") {
           selectedSupervisionDetail.report.drivingLineOk = action.payload.value;
         } else if (action.payload.name === "speedLimitOk") {
@@ -117,7 +117,7 @@ const supervisionSlice = createSlice({
     },
     REPORT_TEXTAREA_CHANGED: (state, action: PayloadAction<ITextAreaValue>) => {
       const { selectedSupervisionDetail } = state;
-      if (selectedSupervisionDetail) {
+      if (selectedSupervisionDetail && selectedSupervisionDetail.report) {
         if (action.payload.name === "drivingLineInfo") {
           selectedSupervisionDetail.report.drivingLineInfo = action.payload.value;
         } else if (action.payload.name === "speedLimitInfo") {

@@ -136,4 +136,15 @@ public class SupervisionRepository {
         });
     }
 
+    public void updateSupervision(Integer supervisionId, Boolean conformsToPermit) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            ctx.update(TableAlias.supervision)
+                    .set(TableAlias.supervision.CONFORMS_TO_PERMIT, conformsToPermit)
+                    .where(TableAlias.supervision.ID.eq(supervisionId))
+                    .execute();
+        });
+    }
+
 }
