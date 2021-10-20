@@ -9,7 +9,7 @@ import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { useTypedSelector } from "../store/store";
-import { onRetry, sendImageUpload, sendSupervisionReportUpdate } from "../utils/supervisionBackendData";
+import { onRetry, sendImageUpload, updateSupervisionReport } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 
 interface SupervisionFooterProps {
@@ -42,7 +42,7 @@ const SupervisionFooter = ({ supervision, draft, setToastMessage }: SupervisionF
   } = report || {};
 
   // Set-up mutations for modifying data later
-  const supervisionReportMutation = useMutation((updateRequest: ISupervisionReport) => sendSupervisionReportUpdate(updateRequest, dispatch), {
+  const supervisionReportMutation = useMutation((updateRequest: ISupervisionReport) => updateSupervisionReport(updateRequest, dispatch), {
     retry: onRetry,
     onSuccess: () => {
       if (!draft && !!setToastMessage) {

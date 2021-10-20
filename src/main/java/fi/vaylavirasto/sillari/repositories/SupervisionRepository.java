@@ -31,10 +31,13 @@ public class SupervisionRepository {
     SupervisionStatusRepository supervisionStatusRepository;
 
     public SupervisionModel getSupervisionById(Integer id) {
-        return dsl.selectFrom(TableAlias.supervision)
+        return dsl.select().from(TableAlias.supervision)
+                .leftJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
+                .leftJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
                 .where(TableAlias.supervision.ID.eq(id))
-                .fetchOne(new SupervisionMapper());
+                .fetchOne(this::mapSupervisionWithRouteBridgeAndBridge);
     }
+
     public List<SupervisionModel> getSupervisionsByRouteBridgeId(Integer routeBridgeId) {
         return dsl.selectFrom(TableAlias.supervision)
                 .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))

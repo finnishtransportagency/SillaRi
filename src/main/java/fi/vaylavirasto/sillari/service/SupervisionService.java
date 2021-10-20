@@ -1,9 +1,6 @@
 package fi.vaylavirasto.sillari.service;
 
-import fi.vaylavirasto.sillari.model.SupervisionModel;
-import fi.vaylavirasto.sillari.model.SupervisionReportModel;
-import fi.vaylavirasto.sillari.model.SupervisionStatusType;
-import fi.vaylavirasto.sillari.model.SupervisorModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,18 +19,38 @@ public class SupervisionService {
     SupervisorRepository supervisorRepository;
     @Autowired
     SupervisionImageRepository supervisionImageRepository;
+    @Autowired
+    RouteRepository routeRepository;
+    @Autowired
+    PermitRepository permitRepository;
 
     public SupervisionModel getSupervision(Integer supervisionId) {
         SupervisionModel supervision = supervisionRepository.getSupervisionById(supervisionId);
         if (supervision != null) {
-            supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
-            supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
-            supervision.setImages(supervisionImageRepository.getFiles(supervisionId));
-
-            // Sets also current status and status timestamps
-            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
+            fillSupervisionDetails(supervision);
+            fillPermitDetails(supervision);
         }
         return supervision;
+    }
+
+    private void fillSupervisionDetails(SupervisionModel supervision) {
+        Integer supervisionId = supervision.getId();
+        supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
+        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
+        supervision.setImages(supervisionImageRepository.getFiles(supervisionId));
+        // Sets also current status and status timestamps
+        supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
+    }
+
+    private void fillPermitDetails(SupervisionModel supervision) {
+        RouteBridgeModel routeBridge = supervision.getRouteBridge();
+        if (routeBridge != null) {
+            RouteModel route = routeRepository.getRoute(supervision.getRouteBridge().getRouteId());
+            routeBridge.setRoute(route);
+            if (route != null) {
+                route.setPermit(permitRepository.getPermit(route.getPermitId()));
+            }
+        }
     }
 
     public SupervisionModel getSupervisionOfRouteBridge(Integer routeBridgeId) {
@@ -68,16 +85,14 @@ public class SupervisionService {
 
     // Creates new supervision and adds a new status with type PLANNED
     // The timestamp in PLANNED is the current time, not planned_time which can be updated later.
-    public SupervisionModel createSupervision(SupervisionModel supervisionModel) {
-        Integer supervisionId = supervisionRepository.createSupervision(supervisionModel);
-        return getSupervision(supervisionId);
+    public void createSupervision(SupervisionModel supervisionModel) {
+        supervisionRepository.createSupervision(supervisionModel);
     }
 
     // Updates supervision fields (transport, supervisor, planned time, conforms_to_permit)
     // TODO do we need to add a new status row?
-    public SupervisionModel updateSupervision(SupervisionModel supervisionModel) {
+    public void updateSupervision(SupervisionModel supervisionModel) {
         supervisionRepository.updateSupervision(supervisionModel);
-        return getSupervision(supervisionModel.getId());
     }
     
     public SupervisionModel updateConformsToPermit(Integer supervisionId, Boolean conformsToPermit) {
@@ -92,7 +107,7 @@ public class SupervisionService {
     }
 
     // Cancels the supervision by adding the status CANCELLED
-    public SupervisionModel cancelSupervision(SupervisionModel supervisionModel) {
+    public SupervisionModel cancelCrossing(SupervisionModel supervisionModel) {
         supervisionStatusRepository.insertSupervisionStatus(supervisionModel.getId(), SupervisionStatusType.CANCELLED);
         return getSupervision(supervisionModel.getId());
     }

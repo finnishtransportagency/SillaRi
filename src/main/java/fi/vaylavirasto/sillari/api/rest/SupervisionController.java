@@ -76,32 +76,6 @@ public class SupervisionController {
         }
     }
 
-    @Operation(summary = "Create planned supervision")
-    @PostMapping(value = "/createsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> createSupervision(@RequestBody SupervisionModel supervision) {
-        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "createSupervision");
-        try {
-            SupervisionModel supervisionModel = supervisionService.createSupervision(supervision);
-            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
-    @Operation(summary = "Update supervision")
-    @PutMapping(value = "/updatesupervision", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> updateSupervision(@RequestBody SupervisionModel supervision) {
-        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateSupervision");
-        try {
-            SupervisionModel supervisionModel = supervisionService.updateSupervision(supervision);
-            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
     @Operation(summary = "Update conforms to permit attribute in supervision")
     @PutMapping(value = "/updateconformstopermit", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
@@ -128,13 +102,13 @@ public class SupervisionController {
         }
     }
 
-    @Operation(summary = "Cancel supervision")
-    @PostMapping(value = "/cancelsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Cancel crossing")
+    @PostMapping(value = "/cancelcrossing", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> cancelSupervision(@RequestBody SupervisionModel supervision) {
-        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "cancelSupervision");
+    public ResponseEntity<?> cancelCrossing(@RequestBody SupervisionModel supervision) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "cancelCrossing");
         try {
-            SupervisionModel supervisionModel = supervisionService.cancelSupervision(supervision);
+            SupervisionModel supervisionModel = supervisionService.cancelCrossing(supervision);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

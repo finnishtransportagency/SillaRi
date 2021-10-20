@@ -13,7 +13,7 @@ import TrafficSupervisorsAccordion from "../components/TrafficSupervisorsAccordi
 import IPermit from "../interfaces/IPermit";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
-import { getSupervision, onRetry, sendConformsToPermitUpdate } from "../utils/supervisionBackendData";
+import { getSupervision, onRetry, updateConformsToPermit } from "../utils/supervisionBackendData";
 
 interface BridgeDetailProps {
   supervisionId: string;
@@ -40,7 +40,7 @@ const BridgeDetail = (): JSX.Element => {
     }
   );
 
-  const supervisionUpdateMutation = useMutation((supervision: ISupervision) => sendConformsToPermitUpdate(supervision, dispatch), { retry: onRetry });
+  const supervisionUpdateMutation = useMutation((supervision: ISupervision) => updateConformsToPermit(supervision, dispatch), { retry: onRetry });
 
   const setConformsToPermit = (conforms: boolean) => {
     const updatedSupervision = {

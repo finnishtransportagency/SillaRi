@@ -241,34 +241,9 @@ export const getSupervisionOfRouteBridge = async (routeBridgeId: number, dispatc
   }
 };
 
-export const sendSupervisionPlanned = async (createRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+export const updateConformsToPermit = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
   try {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionPlanned: false } });
-
-    const createSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/createSupervision`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(createRequest),
-    });
-
-    if (createSupervisionResponse.ok) {
-      const plannedSupervision = (await createSupervisionResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.CREATE_SUPERVISION, payload: plannedSupervision });
-    } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionPlanned: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionPlanned: true } });
-    throw new Error(err as string);
-  }
-};
-
-export const sendConformsToPermitUpdate = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
-  try {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionUpdate: false } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateConformsToPermit: false } });
 
     const updateSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/updateconformstopermit`, {
       method: "PUT",
@@ -282,18 +257,18 @@ export const sendConformsToPermitUpdate = async (updateRequest: ISupervision, di
       const updatedSupervision = (await updateSupervisionResponse.json()) as Promise<ISupervision>;
       dispatch({ type: supervisionActions.UPDATE_SUPERVISION, payload: updatedSupervision });
     } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionUpdate: true } });
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateConformsToPermit: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionUpdate: true } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateConformsToPermit: true } });
     throw new Error(err as string);
   }
 };
 
-export const sendSupervisionStarted = async (supervisionId: number, dispatch: Dispatch): Promise<void> => {
+export const startSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<void> => {
   try {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionStarted: false } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { startSupervision: false } });
 
     const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision?supervisionId=${supervisionId}`, {
       method: "POST",
@@ -303,20 +278,20 @@ export const sendSupervisionStarted = async (supervisionId: number, dispatch: Di
       const startedSupervision = (await startSupervisionResponse.json()) as Promise<ISupervision>;
       dispatch({ type: supervisionActions.START_SUPERVISION, payload: startedSupervision });
     } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionStarted: true } });
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { startSupervision: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionStarted: true } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { startSupervision: true } });
     throw new Error(err as string);
   }
 };
 
-export const sendSupervisionCancelled = async (cancelRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+export const cancelCrossing = async (cancelRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
   try {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionCancelled: false } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { cancelCrossing: false } });
 
-    const cancelSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/cancelsupervision`, {
+    const cancelSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/cancelcrossing`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -328,18 +303,18 @@ export const sendSupervisionCancelled = async (cancelRequest: ISupervision, disp
       const cancelledSupervision = (await cancelSupervisionResponse.json()) as Promise<ISupervision>;
       dispatch({ type: supervisionActions.CANCEL_SUPERVISION, payload: cancelledSupervision });
     } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionCancelled: true } });
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { cancelCrossing: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionCancelled: true } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { cancelCrossing: true } });
     throw new Error(err as string);
   }
 };
 
-export const sendSupervisionFinished = async (finishRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+export const finishSupervision = async (finishRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
   try {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionFinished: false } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { finishSupervision: false } });
 
     const finishSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/finishsupervision`, {
       method: "POST",
@@ -353,18 +328,18 @@ export const sendSupervisionFinished = async (finishRequest: ISupervision, dispa
       const finishedSupervision = (await finishSupervisionResponse.json()) as Promise<ISupervision>;
       dispatch({ type: supervisionActions.FINISH_SUPERVISION, payload: finishedSupervision });
     } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionFinished: true } });
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { finishSupervision: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionFinished: true } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { finishSupervision: true } });
     throw new Error(err as string);
   }
 };
 
-export const sendSupervisionReportUpdate = async (updateRequest: ISupervisionReport, dispatch: Dispatch): Promise<void> => {
+export const updateSupervisionReport = async (updateRequest: ISupervisionReport, dispatch: Dispatch): Promise<void> => {
   try {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionReportUpdate: false } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateSupervisionReport: false } });
 
     const updateReportResponse = await fetch(`${getOrigin()}/api/supervision/updatesupervisionreport`, {
       method: "PUT",
@@ -378,11 +353,11 @@ export const sendSupervisionReportUpdate = async (updateRequest: ISupervisionRep
       const updatedSupervision = (await updateReportResponse.json()) as Promise<ISupervision>;
       dispatch({ type: supervisionActions.SUPERVISION_SUMMARY, payload: updatedSupervision });
     } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionReportUpdate: true } });
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateSupervisionReport: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendSupervisionReportUpdate: true } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateSupervisionReport: true } });
     throw new Error(err as string);
   }
 };

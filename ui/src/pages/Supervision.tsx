@@ -14,7 +14,7 @@ import IPermit from "../interfaces/IPermit";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector } from "../store/store";
-import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry, sendSupervisionStarted } from "../utils/supervisionBackendData";
+import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry, startSupervision } from "../utils/supervisionBackendData";
 
 interface SupervisionProps {
   supervisionId: string;
@@ -52,7 +52,7 @@ const Supervision = (): JSX.Element => {
   });
 
   // Set-up mutations for modifying data later
-  const supervisionStartMutation = useMutation((superId: number) => sendSupervisionStarted(superId, dispatch), { retry: onRetry });
+  const supervisionStartMutation = useMutation((superId: number) => startSupervision(superId, dispatch), { retry: onRetry });
 
   // Start the supervision if not already done
   const { isLoading: isSendingSupervisionStart } = supervisionStartMutation;
