@@ -37,7 +37,7 @@ public class RouteService {
                     routeBridge.getBridge().setGeojson(bridgeGeoJson);
 
                     List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
-                    if (supervisions != null) {
+                    if (supervisions != null && !supervisions.isEmpty()) {
                         // TODO this is a quick fix to solve TooManyRowsException, to be refactored later
                         SupervisionModel supervision = supervisions.get(0);
                         List<SupervisionStatusModel> statusHistory = supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId());
