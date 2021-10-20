@@ -54,8 +54,10 @@ public class PermitService {
 
     private void fillPermitDetails(PermitModel permitModel) {
         if (permitModel != null) {
-            List<AxleModel> axles = axleRepository.getAxlesOfChart(permitModel.getAxleChart().getId());
-            permitModel.setAxles(axles);
+            if (permitModel.getAxleChart() != null) {
+                List<AxleModel> axles = axleRepository.getAxlesOfChart(permitModel.getAxleChart().getId());
+                permitModel.getAxleChart().setAxles(axles);
+            }
 
             List<VehicleModel> vehicles = vehicleRepository.getVehiclesOfPermit(permitModel.getId());
             permitModel.setVehicles(vehicles);

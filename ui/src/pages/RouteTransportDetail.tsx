@@ -7,7 +7,7 @@ import { IonContent, IonPage } from "@ionic/react";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import RouteAccordion from "../components/RouteAccordion";
-import RouteDetailHeader from "../components/RouteDetailHeader";
+import PermitDetailHeader from "../components/PermitDetailHeader";
 import PermitTransportAccordion from "../components/PermitTransportAccordion";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
@@ -51,7 +51,7 @@ const RouteTransportDetail = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <>
-            <RouteDetailHeader permit={permit as IPermit} />
+            <PermitDetailHeader permit={permit as IPermit} />
             <RouteAccordion route={route as IRoute} />
             <PermitTransportAccordion permit={permit as IPermit} />
 

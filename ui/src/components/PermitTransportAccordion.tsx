@@ -11,7 +11,8 @@ interface TransportAccordionProps {
 const PermitTransportAccordion = ({ permit }: TransportAccordionProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { transportDimensions, transportTotalMass = 0, vehicles = [], axles = [] } = permit || {};
+  const { transportDimensions, transportTotalMass = 0, vehicles = [], axleChart } = permit || {};
+  const { axles = [] } = axleChart || {};
   const { height = 0, width = 0, length = 0 } = transportDimensions || {};
 
   return (
