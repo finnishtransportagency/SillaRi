@@ -39,7 +39,7 @@ public class SupervisionService {
     public SupervisionModel getSupervisionOfRouteBridge(Integer routeBridgeId) {
         List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridgeId);
         SupervisionModel supervision = null;
-        if (supervisions != null) {
+        if (supervisions != null && !supervisions.isEmpty()) {
             // TODO this is a quick fix to solve TooManyRowsException, to be refactored later
             supervision = supervisions.get(0);
             supervision.setReport(supervisionReportRepository.getSupervisionReport(supervision.getId()));
