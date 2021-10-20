@@ -1,11 +1,7 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.mapper.CompanyMapper;
-import fi.vaylavirasto.sillari.mapper.PermitMapper;
+import fi.vaylavirasto.sillari.mapper.AddressMapper;
 import fi.vaylavirasto.sillari.mapper.RouteMapper;
-import fi.vaylavirasto.sillari.model.AddressModel;
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.PermitModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
@@ -55,15 +51,11 @@ public class RouteRepository {
         RouteModel route = routeMapper.map(record);
 
         if (route != null) {
-            AddressModel departureAddress = new AddressModel();
-            departureAddress.setId(record.get(TableAlias.departureAddress.ID));
-            departureAddress.setStreetAddress(record.get(TableAlias.departureAddress.STREETADDRESS));
-            route.setDepartureAddress(departureAddress);
+            AddressMapper departureAddressMapper = new AddressMapper(TableAlias.departureAddress);
+            route.setDepartureAddress(departureAddressMapper.map(record));
 
-            AddressModel arrivalAddress = new AddressModel();
-            arrivalAddress.setId(record.get(TableAlias.arrivalAddress.ID));
-            arrivalAddress.setStreetAddress(record.get(TableAlias.arrivalAddress.STREETADDRESS));
-            route.setArrivalAddress(arrivalAddress);
+            AddressMapper arrivalAddressMapper = new AddressMapper(TableAlias.arrivalAddress);
+            route.setArrivalAddress(arrivalAddressMapper.map(record));
         }
         return route;
     }

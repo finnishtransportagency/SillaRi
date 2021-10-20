@@ -52,7 +52,6 @@ public class SupervisionService {
         return supervision;
     }
 
-
     public List<SupervisionModel> getSupervisionsOfSupervisor(String username) {
         List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsBySupervisorUsername(username);
         for (SupervisionModel supervision : supervisions) {
