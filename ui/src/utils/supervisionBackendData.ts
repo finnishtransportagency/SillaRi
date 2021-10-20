@@ -1,7 +1,6 @@
 import type { Dispatch } from "redux";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
-import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
@@ -34,72 +33,6 @@ export const getCompanyTransportsList = async (username: string, dispatch: Dispa
     }
   } catch (err) {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyTransportsList: true } });
-    throw new Error(err as string);
-  }
-};
-
-export const getPermit = async (permitId: number, dispatch: Dispatch, selectedPermitDetail?: IPermit): Promise<void> => {
-  try {
-    if (selectedPermitDetail && selectedPermitDetail.id !== permitId) {
-      dispatch({ type: supervisionActions.GET_PERMIT, payload: undefined });
-    }
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getPermit: false } });
-
-    const permitResponse = await fetch(`${getOrigin()}/api/permit/getpermit?permitId=${permitId}`);
-
-    if (permitResponse.ok) {
-      const permit = (await permitResponse.json()) as Promise<IPermit>;
-      dispatch({ type: supervisionActions.GET_PERMIT, payload: permit });
-    } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getPermit: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getPermit: true } });
-    throw new Error(err as string);
-  }
-};
-
-export const getPermitOfRoute = async (routeId: number, dispatch: Dispatch, selectedRouteDetail?: IRoute): Promise<void> => {
-  try {
-    if (selectedRouteDetail && selectedRouteDetail.id !== routeId) {
-      dispatch({ type: supervisionActions.GET_PERMIT, payload: undefined });
-    }
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getPermitOfRoute: false } });
-
-    const permitOfRouteResponse = await fetch(`${getOrigin()}/api/permit/getpermitofroute?routeId=${routeId}`);
-
-    if (permitOfRouteResponse.ok) {
-      const permitOfRoute = (await permitOfRouteResponse.json()) as Promise<IPermit>;
-      dispatch({ type: supervisionActions.GET_PERMIT, payload: permitOfRoute });
-    } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getPermitOfRoute: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getPermitOfRoute: true } });
-    throw new Error(err as string);
-  }
-};
-
-export const getPermitOfRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, selectedBridgeDetail?: IRouteBridge): Promise<void> => {
-  try {
-    if (selectedBridgeDetail && selectedBridgeDetail.id !== routeBridgeId) {
-      dispatch({ type: supervisionActions.GET_PERMIT, payload: undefined });
-    }
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getPermitOfRouteBridge: false } });
-
-    const permitOfRouteBridgeResponse = await fetch(`${getOrigin()}/api/permit/getpermitofroutebridge?routeBridgeId=${routeBridgeId}`);
-
-    if (permitOfRouteBridgeResponse.ok) {
-      const permitOfRouteBridge = (await permitOfRouteBridgeResponse.json()) as Promise<IPermit>;
-      dispatch({ type: supervisionActions.GET_PERMIT, payload: permitOfRouteBridge });
-    } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getPermitOfRouteBridge: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getPermitOfRouteBridge: true } });
     throw new Error(err as string);
   }
 };
@@ -219,28 +152,6 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch, 
   }
 };
 
-export const getSupervisionOfRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, selectedBridgeDetail?: IRouteBridge): Promise<void> => {
-  try {
-    if (selectedBridgeDetail && selectedBridgeDetail.id !== routeBridgeId) {
-      dispatch({ type: supervisionActions.GET_SUPERVISION, payload: undefined });
-    }
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionOfRouteBridge: false } });
-
-    const supervisionOfRouteBridgeResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionofroutebridge?routeBridgeId=${routeBridgeId}`);
-
-    if (supervisionOfRouteBridgeResponse.ok) {
-      const supervisionOfRouteBridge = (await supervisionOfRouteBridgeResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.GET_SUPERVISION, payload: supervisionOfRouteBridge });
-    } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionOfRouteBridge: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionOfRouteBridge: true } });
-    throw new Error(err as string);
-  }
-};
-
 export const updateConformsToPermit = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateConformsToPermit: false } });
@@ -287,27 +198,27 @@ export const startSupervision = async (supervisionId: number, dispatch: Dispatch
   }
 };
 
-export const cancelCrossing = async (cancelRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+export const denyCrossing = async (denyRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
   try {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { cancelCrossing: false } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { denyCrossing: false } });
 
-    const cancelSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/cancelcrossing`, {
+    const denyCrossingResponse = await fetch(`${getOrigin()}/api/supervision/denycrossing`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(cancelRequest),
+      body: JSON.stringify(denyRequest),
     });
 
-    if (cancelSupervisionResponse.ok) {
-      const cancelledSupervision = (await cancelSupervisionResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.CANCEL_SUPERVISION, payload: cancelledSupervision });
+    if (denyCrossingResponse.ok) {
+      const supervision = (await denyCrossingResponse.json()) as Promise<ISupervision>;
+      dispatch({ type: supervisionActions.DENY_CROSSING, payload: supervision });
     } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { cancelCrossing: true } });
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { denyCrossing: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { cancelCrossing: true } });
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { denyCrossing: true } });
     throw new Error(err as string);
   }
 };

@@ -8,40 +8,41 @@ import { document } from "ionicons/icons";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
-import { getPermitOfRouteBridge, getRouteBridge, onRetry } from "../utils/supervisionBackendData";
+import { getSupervision, denyCrossing, onRetry } from "../utils/supervisionBackendData";
 
 interface DenyCrossingProps {
-  routeBridgeId: string;
+  supervisionId: string;
 }
 
 const DenyCrossing = (): JSX.Element => {
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { routeBridgeId = "0" } = useParams<DenyCrossingProps>();
+  const { supervisionId = "0" } = useParams<DenyCrossingProps>();
 
   const {
-    selectedPermitDetail,
-    selectedBridgeDetail,
+    selectedSupervisionDetail,
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
 
-  const { permitNumber = "" } = selectedPermitDetail || {};
-  const { bridge } = selectedBridgeDetail || {};
+  const { routeBridge } = selectedSupervisionDetail || {};
+  const { route, bridge } = routeBridge || {};
   const { name = "", identifier = "" } = bridge || {};
+  const { permit } = route || {};
+  const { permitNumber = "" } = permit || {};
 
-  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), { retry: onRetry });
-  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
-    retry: onRetry,
-  });
+  const { isLoading: isLoadingSupervision } = useQuery(
+    ["getSupervision", supervisionId],
+    () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail),
+    { retry: onRetry }
+  );
 
-  const noNetworkNoData =
-    (isFailed.getRouteBridge && selectedBridgeDetail === undefined) || (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);
+  const noNetworkNoData = isFailed.getSupervision && selectedSupervisionDetail === undefined;
 
-  // TODO - send deny reason to backend
+  // TODO - send "denyCrossing" and deny reason to backend
   return (
     <IonPage>
-      <Header title={t("supervision.title")} somethingFailed={isFailed.getRouteBridge} />
+      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

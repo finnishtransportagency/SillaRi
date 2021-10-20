@@ -48,7 +48,7 @@ const Home = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("main.header.title")} somethingFailed={isFailed.getCompanyTransportsList} />
+      <Header title={t("main.header.title")} somethingFailed={isFailed.getCompanyTransportsList || isFailed.getSupervisionList} />
       <IonSegment className="mainSegment" value={currentSegment} onIonChange={changeSlide}>
         <IonSegmentButton className="mainSegmentButton" value="0">
           <IonLabel>{`${t("main.tab.transportCompanies")} (${companyTransportsList.length})`}</IonLabel>

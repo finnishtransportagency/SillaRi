@@ -107,7 +107,8 @@ public class SupervisionService {
     }
 
     // Cancels the supervision by adding the status CANCELLED
-    public SupervisionModel cancelCrossing(SupervisionModel supervisionModel) {
+    // TODO change CANCELLED to CROSSING_DENIED and save deny reason somewhere (to supervision?)
+    public SupervisionModel denyCrossing(SupervisionModel supervisionModel) {
         supervisionStatusRepository.insertSupervisionStatus(supervisionModel.getId(), SupervisionStatusType.CANCELLED);
         return getSupervision(supervisionModel.getId());
     }

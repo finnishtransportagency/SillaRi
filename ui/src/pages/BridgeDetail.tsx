@@ -61,7 +61,7 @@ const BridgeDetail = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={name} somethingFailed={isFailed.getRouteBridge || isFailed.getPermitOfRouteBridge || isFailed.getSupervisionOfRouteBridge} />
+      <Header title={name} somethingFailed={isFailed.getSupervision} />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

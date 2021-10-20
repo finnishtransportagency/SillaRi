@@ -102,13 +102,13 @@ public class SupervisionController {
         }
     }
 
-    @Operation(summary = "Cancel crossing")
-    @PostMapping(value = "/cancelcrossing", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Deny crossing")
+    @PostMapping(value = "/denycrossing", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> cancelCrossing(@RequestBody SupervisionModel supervision) {
-        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "cancelCrossing");
+    public ResponseEntity<?> denyCrossing(@RequestBody SupervisionModel supervision) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "denyCrossing");
         try {
-            SupervisionModel supervisionModel = supervisionService.cancelCrossing(supervision);
+            SupervisionModel supervisionModel = supervisionService.denyCrossing(supervision);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

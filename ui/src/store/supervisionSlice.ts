@@ -83,8 +83,8 @@ const supervisionSlice = createSlice({
       console.log("START_SUPERVISION", action.payload);
       return { ...state, selectedSupervisionDetail: action.payload };
     },
-    CANCEL_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
-      console.log("CANCEL_SUPERVISION", action.payload);
+    DENY_CROSSING: (state, action: PayloadAction<ISupervision>) => {
+      console.log("DENY_CROSSING", action.payload);
       return { ...state, selectedSupervisionDetail: action.payload };
     },
     FINISH_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
