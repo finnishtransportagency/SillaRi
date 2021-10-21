@@ -64,7 +64,7 @@ public class RouteTransportController {
         try {
             RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
-            if (routeTransport.getSupervisions() != null) {
+            if (routeTransport.getSupervisions() != null && insertedRouteTransport != null) {
                 routeTransport.getSupervisions().forEach(supervisionModel -> {
                     supervisionModel.setRouteTransportId(insertedRouteTransport.getId());
 
@@ -76,8 +76,12 @@ public class RouteTransportController {
                 });
             }
 
-            RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(insertedRouteTransport.getId());
-            return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            if (insertedRouteTransport != null) {
+                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(insertedRouteTransport.getId());
+                return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            } else {
+                return ResponseEntity.ok().body(new EmptyJsonResponse());
+            }
         } finally {
             serviceMetric.end();
         }
@@ -101,8 +105,12 @@ public class RouteTransportController {
                 });
             }
 
-            RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(updatedTransportModel.getId());
-            return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            if (updatedTransportModel != null) {
+                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(updatedTransportModel.getId());
+                return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            } else {
+                return ResponseEntity.ok().body(new EmptyJsonResponse());
+            }
         } finally {
             serviceMetric.end();
         }
