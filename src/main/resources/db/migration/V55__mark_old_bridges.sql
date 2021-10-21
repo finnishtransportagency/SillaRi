@@ -1,0 +1,1 @@
+UPDATE sillari.bridge SET GEOM = null;
