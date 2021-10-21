@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class PermitRepository {
@@ -339,20 +340,27 @@ public class PermitRepository {
     }
 
     private void deleteSupervisions(DSLContext ctx, RouteModel routeModel) {
-            for (RouteBridgeModel routeBridge : routeModel.getRouteBridges()) {
-                if(routeBridge.getSupervision()!=null) {
-                    ctx.delete(TableAlias.supervisionStatus)
-                            .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(routeBridge.getSupervision().getId()))
-                            .execute();
+        for (RouteBridgeModel routeBridge : routeModel.getRouteBridges()) {
+            if (routeBridge.getSupervisions() != null) {
+                List<Integer> supervisionIds = routeBridge.getSupervisions().stream().map(SupervisionModel::getId).collect(Collectors.toList());
 
-                    ctx.delete(TableAlias.supervisionReport)
-                            .where(TableAlias.supervisionReport.SUPERVISION_ID.eq(routeBridge.getSupervision().getId()))
-                            .execute();
-                    ctx.delete(TableAlias.supervision)
-                            .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridge.getId()))
-                            .execute();
-                }
+                ctx.delete(TableAlias.supervisionStatus)
+                        .where(TableAlias.supervisionStatus.SUPERVISION_ID.in(supervisionIds))
+                        .execute();
+                ctx.delete(TableAlias.supervisionReport)
+                        .where(TableAlias.supervisionReport.SUPERVISION_ID.in(supervisionIds))
+                        .execute();
+                ctx.delete(TableAlias.supervisionImage)
+                        .where(TableAlias.supervisionReport.SUPERVISION_ID.in(supervisionIds))
+                        .execute();
+                ctx.delete(TableAlias.supervisionSupervisor)
+                        .where(TableAlias.supervisionReport.SUPERVISION_ID.in(supervisionIds))
+                        .execute();
+                ctx.delete(TableAlias.supervision)
+                        .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridge.getId()))
+                        .execute();
             }
+        }
     }
 
     public void updatePermit(PermitModel permitModel, List<Integer> routesToDelete) throws DataAccessException {
@@ -403,6 +411,8 @@ public class PermitRepository {
                 .execute();
     }
 
+    // TODO FIXME we cannot delete routes with existing supervisions!
+    // This should only be possible in testing phase.
     private void deleteRoutes(DSLContext ctx, PermitModel permitModel) {
         for (RouteModel routeModel : permitModel.getRoutes()) {
             deleteSupervisions(ctx, routeModel);
@@ -551,14 +561,13 @@ public class PermitRepository {
         deleteDepartureAddress(ctx, routeId);
     }
 
-    public boolean isSupervisions(List<Integer> routeIds) {
+    public boolean hasSupervisions(List<Integer> routeIds) {
         Record record = dsl.select().from(TableAlias.supervision)
                 .leftJoin(TableAlias.routeBridge)
                 .on(TableAlias.routeBridge.ID.eq(TableAlias.supervision.ROUTE_BRIDGE_ID))
                 .where(TableAlias.routeBridge.ROUTE_ID.in(routeIds))
                 .fetchAny();
-        return record != null ? true : false;
+        return record != null;
     }
-
 
 }

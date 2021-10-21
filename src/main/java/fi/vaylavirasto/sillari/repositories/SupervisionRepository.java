@@ -44,6 +44,12 @@ public class SupervisionRepository {
                 .fetch(new SupervisionMapper());
     }
 
+    public List<SupervisionModel> getSupervisionsByRouteBridgeId(Integer routeBridgeId) {
+        return dsl.select().from(TableAlias.supervision)
+                .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
+                .fetch(new SupervisionMapper());
+    }
+
     public List<SupervisionModel> getSupervisionsBySupervisorUsername(String username) {
         return dsl.select().from(TableAlias.supervision)
                 .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))

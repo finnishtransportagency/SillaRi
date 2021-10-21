@@ -111,7 +111,7 @@ public class LeluServiceTest {
 
         Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(2);
-        Mockito.when(permitRepository.isSupervisions(Mockito.any(List.class))).thenReturn(false);
+        Mockito.when(permitRepository.hasSupervisions(Mockito.any(List.class))).thenReturn(false);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
         LeluPermitResponseDTO response = null;
