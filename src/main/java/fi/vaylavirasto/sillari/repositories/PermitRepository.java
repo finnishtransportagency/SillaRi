@@ -59,6 +59,18 @@ public class PermitRepository {
                 .fetchOne(this::mapPermitRecordWithAxleChartAndDimensions);
     }
 
+    public PermitModel getPermitByPermitNumber(String permitNumber) {
+        return dsl.select().from(TableAlias.permit)
+                .leftJoin(TableAlias.axleChart)
+                .on(TableAlias.permit.ID.eq(TableAlias.axleChart.PERMIT_ID))
+                .leftJoin(TableAlias.transportDimensions)
+                .on(TableAlias.permit.ID.eq(TableAlias.transportDimensions.PERMIT_ID))
+                .leftJoin(TableAlias.unloadedTransportDimensions)
+                .on(TableAlias.permit.ID.eq(TableAlias.unloadedTransportDimensions.PERMIT_ID))
+                .where(TableAlias.permit.PERMIT_NUMBER.eq(permitNumber))
+                .fetchAny(this::mapPermitRecordWithAxleChartAndDimensions);
+    }
+
     private PermitModel mapPermitRecordWithAxleChartAndDimensions(Record record) {
         PermitMapper permitMapper = new PermitMapper();
         PermitModel permit = permitMapper.map(record);
@@ -80,18 +92,6 @@ public class PermitRepository {
                 .where(TableAlias.permit.PERMIT_NUMBER.eq(permitNumber))
                 .fetchAny();
         return record != null ? record.value1() : null;
-    }
-
-    public PermitModel getPermitByPermitNumber(String permitNumber) {
-        return dsl.select().from(TableAlias.permit)
-                .leftJoin(TableAlias.axleChart)
-                .on(TableAlias.permit.ID.eq(TableAlias.axleChart.PERMIT_ID))
-                .leftJoin(TableAlias.transportDimensions)
-                .on(TableAlias.permit.ID.eq(TableAlias.transportDimensions.PERMIT_ID))
-                .leftJoin(TableAlias.unloadedTransportDimensions)
-                .on(TableAlias.permit.ID.eq(TableAlias.unloadedTransportDimensions.PERMIT_ID))
-                .where(TableAlias.permit.PERMIT_NUMBER.eq(permitNumber))
-                .fetchAny(new PermitMapper());
     }
 
     public Integer getPermitIdByPermitNumberAndVersion(String permitNumber, int permitVersion) {
