@@ -24,8 +24,7 @@ const Home = (): JSX.Element => {
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
 
-  const transportsCountList = companyTransportsList.map((ct) => (ct.transports ? ct.transports.length : 0));
-  const transportsCount = transportsCountList.length > 1 ? transportsCountList.reduce((prev, next) => prev + next) : transportsCountList[0];
+  const transportsCount = companyTransportsList.map((ct) => (ct.transports ? ct.transports.length : 0)).reduce((prev, next) => prev + next, 0);
 
   // TODO use logged in user
   const supervisorUser = "USER1";
