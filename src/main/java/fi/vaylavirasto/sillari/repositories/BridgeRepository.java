@@ -1,7 +1,5 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.mapper.BridgeMapper;
-import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,12 +20,6 @@ public class BridgeRepository {
     private DSLContext dsl;
 
     private static final Logger logger = LogManager.getLogger();
-
-    public BridgeModel getBridge(Integer id) {
-        return dsl.select().from(TableAlias.bridge)
-                .where(TableAlias.bridge.ID.eq(id))
-                .fetchOne(new BridgeMapper());
-    }
 
     public String getBridgeGeoJson(Integer id) {
         // In ST_AsGeoJSON(geom, 0, 2), the '0' means decimal places, the '2' means the option to include the short CRS (EPSG:3067)

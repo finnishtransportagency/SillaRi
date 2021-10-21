@@ -38,12 +38,6 @@ public class SupervisionRepository {
                 .fetchOne(this::mapSupervisionWithRouteBridgeAndBridge);
     }
 
-    public List<SupervisionModel> getSupervisionsByRouteBridgeId(Integer routeBridgeId) {
-        return dsl.selectFrom(TableAlias.supervision)
-                .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
-                .fetch(new SupervisionMapper());
-    }
-
     public List<SupervisionModel> getSupervisionsByRouteTransportId(Integer routeTransportId) {
         return dsl.select().from(TableAlias.supervision)
                 .where(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(routeTransportId))
@@ -125,9 +119,7 @@ public class SupervisionRepository {
             DSLContext ctx = DSL.using(configuration);
 
             ctx.update(TableAlias.supervision)
-                    .set(TableAlias.supervision.ROUTE_TRANSPORT_ID, supervisionModel.getRouteTransportId())
                     .set(TableAlias.supervision.PLANNED_TIME, supervisionModel.getPlannedTime())
-                    .set(TableAlias.supervision.CONFORMS_TO_PERMIT, supervisionModel.getConformsToPermit())
                     .set(TableAlias.supervision.SUPERVISOR_TYPE, supervisionModel.getSupervisorType().toString())
                     .where(TableAlias.supervision.ID.eq(supervisionModel.getId()))
                     .execute();

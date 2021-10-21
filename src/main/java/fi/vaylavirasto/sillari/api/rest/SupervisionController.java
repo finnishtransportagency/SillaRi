@@ -37,19 +37,6 @@ public class SupervisionController {
         }
     }
 
-    @Operation(summary = "Get supervision of route bridge")
-    @GetMapping(value = "/getsupervisionofroutebridge", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getSupervisionOfRouteBridge(@RequestParam Integer routeBridgeId) {
-        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionOfRouteBridge");
-        try {
-            SupervisionModel supervisionModel = supervisionService.getSupervisionOfRouteBridge(routeBridgeId);
-            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
     @Operation(summary = "Get supervisions of supervisor")
     @GetMapping(value = "/getsupervisionsofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")

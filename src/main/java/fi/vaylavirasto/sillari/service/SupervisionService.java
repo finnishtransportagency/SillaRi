@@ -53,22 +53,6 @@ public class SupervisionService {
         }
     }
 
-    public SupervisionModel getSupervisionOfRouteBridge(Integer routeBridgeId) {
-        List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridgeId);
-        SupervisionModel supervision = null;
-        if (supervisions != null) {
-            // TODO this is a quick fix to solve TooManyRowsException, to be refactored later
-            supervision = supervisions.get(0);
-            supervision.setReport(supervisionReportRepository.getSupervisionReport(supervision.getId()));
-            supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
-            supervision.setImages(supervisionImageRepository.getFiles(supervision.getId()));
-
-            // Sets also current status and status timestamps
-            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
-        }
-        return supervision;
-    }
-
     public List<SupervisionModel> getSupervisionsOfSupervisor(String username) {
         List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsBySupervisorUsername(username);
         for (SupervisionModel supervision : supervisions) {
@@ -89,7 +73,7 @@ public class SupervisionService {
         supervisionRepository.createSupervision(supervisionModel);
     }
 
-    // Updates supervision fields (transport, supervisor, planned time, conforms_to_permit)
+    // Updates supervision fields (transport, supervisor, planned time)
     // TODO do we need to add a new status row?
     public void updateSupervision(SupervisionModel supervisionModel) {
         supervisionRepository.updateSupervision(supervisionModel);

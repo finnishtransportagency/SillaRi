@@ -12,7 +12,6 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Locale;
 
 import static org.jooq.impl.DSL.lower;

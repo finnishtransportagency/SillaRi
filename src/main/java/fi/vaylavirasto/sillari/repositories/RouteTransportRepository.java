@@ -7,7 +7,6 @@ import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
@@ -26,16 +25,9 @@ public class RouteTransportRepository {
     RouteTransportStatusRepository routeTransportStatusRepository;
 
     public RouteTransportModel getRouteTransportById(Integer id) {
-        Record record = dsl.select().from(TableAlias.routeTransport)
+        return dsl.select().from(TableAlias.routeTransport)
                 .where(TableAlias.routeTransport.ID.eq(id))
-                .fetchOne();
-        return record != null ? record.into(RouteTransportModel.class) : null;
-    }
-
-    public List<RouteTransportModel> getRouteTransportsByRouteId(Integer routeId) {
-        return dsl.selectFrom(TableAlias.routeTransport)
-                .where(TableAlias.routeTransport.ROUTE_ID.eq(routeId))
-                .fetch().into(RouteTransportModel.class);
+                .fetchOne(new RouteTransportMapper());
     }
 
     public List<RouteTransportModel> getRouteTransportsByPermitId(Integer permitId) {
@@ -45,7 +37,7 @@ public class RouteTransportRepository {
                 .innerJoin(TableAlias.permit)
                 .on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
                 .where(TableAlias.permit.ID.eq(permitId))
-                .fetch().into(RouteTransportModel.class);
+                .fetch(new RouteTransportMapper());
     }
 
     public List<RouteTransportModel> getRouteTransportsOfSupervisor(String username) {
@@ -55,7 +47,7 @@ public class RouteTransportRepository {
                 .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
                 .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
                 .groupBy(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME)
-                .fetch().into(RouteTransportModel.class);
+                .fetch(new RouteTransportMapper());
     }
 
     public Integer createRouteTransport(RouteTransportModel routeTransportModel) throws DataAccessException {

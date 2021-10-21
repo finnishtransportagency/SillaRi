@@ -37,15 +37,6 @@ public class RouteRepository {
                 .fetchOne(this::mapRouteRecordWithAddresses);
     }
 
-    public RouteModel getRouteByRouteTransportId(Integer routeTransportId) {
-        return dsl.select().from(TableAlias.route)
-                .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
-                .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
-                .innerJoin(TableAlias.routeTransport).on(TableAlias.route.ID.eq(TableAlias.routeTransport.ROUTE_ID))
-                .where(TableAlias.routeTransport.ROUTE_ID.eq(routeTransportId))
-                .fetchOne(this::mapRouteRecordWithAddresses);
-    }
-
     private RouteModel mapRouteRecordWithAddresses(Record record) {
         RouteMapper routeMapper = new RouteMapper();
         RouteModel route = routeMapper.map(record);

@@ -34,18 +34,6 @@ public class PermitService {
         return permitModel;
     }
 
-    public PermitModel getPermitOfRoute(Integer routeId) {
-        PermitModel permitModel = permitRepository.getPermitByRouteId(routeId);
-        fillPermitDetails(permitModel);
-        return permitModel;
-    }
-
-    public PermitModel getPermitOfRouteBridge(Integer routeBridgeId) {
-        PermitModel permitModel = permitRepository.getPermitByRouteBridgeId(routeBridgeId);
-        fillPermitDetails(permitModel);
-        return permitModel;
-    }
-
     public PermitModel getPermitOfRouteTransport(Integer routeTransportId) {
         PermitModel permitModel = permitRepository.getPermitByRouteTransportId(routeTransportId);
         fillPermitDetails(permitModel);

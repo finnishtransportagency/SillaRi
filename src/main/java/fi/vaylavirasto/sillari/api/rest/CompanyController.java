@@ -29,19 +29,6 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
-    @Operation(summary = "Get supervisor transports grouped by company")
-    @GetMapping(value = "/getcompanytransportlistofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getCompanyTransportListOfSupervisor(@RequestParam String username) {
-        ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getCompanyTransportListOfSupervisor");
-        try {
-            List<CompanyTransportsDTO> companyList = companyService.getCompanyTransportListOfSupervisor(username);
-            return ResponseEntity.ok().body(companyList != null ? companyList : new EmptyJsonResponse());
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
     @Operation(summary = "Get company")
     @GetMapping(value = "/getcompany", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
@@ -50,6 +37,19 @@ public class CompanyController {
         try {
             CompanyModel company = companyService.getCompany(companyId);
             return ResponseEntity.ok().body(company != null ? company : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Get supervisor transports grouped by company")
+    @GetMapping(value = "/getcompanytransportlistofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getCompanyTransportListOfSupervisor(@RequestParam String username) {
+        ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getCompanyTransportListOfSupervisor");
+        try {
+            List<CompanyTransportsDTO> companyList = companyService.getCompanyTransportListOfSupervisor(username);
+            return ResponseEntity.ok().body(companyList != null ? companyList : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }

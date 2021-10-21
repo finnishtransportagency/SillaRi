@@ -41,8 +41,9 @@ public class RouteTransportService {
 
             List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportId);
             if (supervisions != null) {
-                supervisions.forEach(supervisionModel -> {
-                    supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionModel.getId()));
+                supervisions.forEach(supervision -> {
+                    supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                    supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });
             }
             routeTransportModel.setSupervisions(supervisions);
@@ -62,8 +63,9 @@ public class RouteTransportService {
 
                 List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportModel.getId());
                 if (supervisions != null) {
-                    supervisions.forEach(supervisionModel -> {
-                        supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionModel.getId()));
+                    supervisions.forEach(supervision -> {
+                        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                        supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                     });
                 }
                 routeTransportModel.setSupervisions(supervisions);
@@ -101,6 +103,7 @@ public class RouteTransportService {
             List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportAndSupervisorUsername(routeTransportId, username);
             if (supervisions != null) {
                 supervisions.forEach(supervision -> {
+                    supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
                     // Sets also current status and status timestamps
                     supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });

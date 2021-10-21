@@ -4,7 +4,6 @@ import fi.vaylavirasto.sillari.mapper.BridgeMapper;
 import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
-import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ public class RouteBridgeRepository {
                 .fetch(this::mapRouteBridgeRecordWithBridge);
     }
 
-    @Nullable
     private RouteBridgeModel mapRouteBridgeRecordWithBridge(Record record) {
         RouteBridgeMapper routeBridgeMapper = new RouteBridgeMapper();
         RouteBridgeModel routeBridge = routeBridgeMapper.map(record);

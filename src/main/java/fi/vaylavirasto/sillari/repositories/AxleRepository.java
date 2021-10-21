@@ -18,12 +18,6 @@ public class AxleRepository {
     @Autowired
     private DSLContext dsl;
 
-    public AxleModel getAxleById(int id) {
-        return dsl.selectFrom(TableAlias.axle)
-                .where(TableAlias.axle.ID.eq(id))
-                .fetchOne(new AxleMapper());
-    }
-
     public List<AxleModel> getAxlesOfChart(Integer axleChartID) {
         return dsl.select().from(TableAlias.axle)
                 .where(TableAlias.axle.AXLE_CHART_ID.eq(axleChartID))

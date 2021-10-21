@@ -78,7 +78,6 @@ public class CompanyService {
                 companyTransports.add(companyTransportsDTO);
             });
         }
-        logger.debug("companies with transports: " + companyTransports);
         return companyTransports;
     }
 

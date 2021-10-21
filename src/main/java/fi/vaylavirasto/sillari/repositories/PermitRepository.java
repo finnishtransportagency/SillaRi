@@ -8,7 +8,6 @@ import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -40,37 +39,7 @@ public class PermitRepository {
                 .leftJoin(TableAlias.unloadedTransportDimensions)
                 .on(TableAlias.permit.ID.eq(TableAlias.unloadedTransportDimensions.PERMIT_ID))
                 .where(TableAlias.permit.ID.eq(id))
-                .fetchOne(this::mapPermitRecordWithChartAndDimensions);
-    }
-
-    public PermitModel getPermitByRouteId(Integer routeId) {
-        return dsl.select().from(TableAlias.permit)
-                .innerJoin(TableAlias.route)
-                .on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
-                .leftJoin(TableAlias.axleChart)
-                .on(TableAlias.permit.ID.eq(TableAlias.axleChart.PERMIT_ID))
-                .leftJoin(TableAlias.transportDimensions)
-                .on(TableAlias.permit.ID.eq(TableAlias.transportDimensions.PERMIT_ID))
-                .leftJoin(TableAlias.unloadedTransportDimensions)
-                .on(TableAlias.permit.ID.eq(TableAlias.unloadedTransportDimensions.PERMIT_ID))
-                .where(TableAlias.route.ID.eq(routeId))
-                .fetchOne(this::mapPermitRecordWithChartAndDimensions);
-    }
-
-    public PermitModel getPermitByRouteBridgeId(Integer routeBridgeId) {
-        return dsl.select().from(TableAlias.permit)
-                .innerJoin(TableAlias.route)
-                .on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
-                .innerJoin(TableAlias.routeBridge)
-                .on(TableAlias.route.ID.eq(TableAlias.routeBridge.ROUTE_ID))
-                .leftJoin(TableAlias.axleChart)
-                .on(TableAlias.permit.ID.eq(TableAlias.axleChart.PERMIT_ID))
-                .leftJoin(TableAlias.transportDimensions)
-                .on(TableAlias.permit.ID.eq(TableAlias.transportDimensions.PERMIT_ID))
-                .leftJoin(TableAlias.unloadedTransportDimensions)
-                .on(TableAlias.permit.ID.eq(TableAlias.unloadedTransportDimensions.PERMIT_ID))
-                .where(TableAlias.routeBridge.ID.eq(routeBridgeId))
-                .fetchOne(this::mapPermitRecordWithChartAndDimensions);
+                .fetchOne(this::mapPermitRecordWithAxleChartAndDimensions);
     }
 
     public PermitModel getPermitByRouteTransportId(Integer routeTransportId) {
@@ -86,10 +55,10 @@ public class PermitRepository {
                 .leftJoin(TableAlias.unloadedTransportDimensions)
                 .on(TableAlias.permit.ID.eq(TableAlias.unloadedTransportDimensions.PERMIT_ID))
                 .where(TableAlias.routeTransport.ID.eq(routeTransportId))
-                .fetchOne(this::mapPermitRecordWithChartAndDimensions);
+                .fetchOne(this::mapPermitRecordWithAxleChartAndDimensions);
     }
 
-    private PermitModel mapPermitRecordWithChartAndDimensions(Record record) {
+    private PermitModel mapPermitRecordWithAxleChartAndDimensions(Record record) {
         PermitMapper permitMapper = new PermitMapper();
         PermitModel permit = permitMapper.map(record);
         if (permit != null) {
@@ -276,7 +245,6 @@ public class PermitRepository {
         insertRouteBridges(ctx, routeModel);
     }
 
-    @Nullable
     private Integer insertArrivalAddress(DSLContext ctx, RouteModel routeModel) {
         Record1<Integer> arrivalAddressIdResult = ctx.insertInto(TableAlias.arrivalAddress,
                         TableAlias.arrivalAddress.STREETADDRESS
@@ -290,8 +258,6 @@ public class PermitRepository {
         return arrivalAddressId;
     }
 
-
-    @Nullable
     private Integer insertDepartureAddress(DSLContext ctx, RouteModel routeModel) {
         Record1<Integer> departureAddressIdResult = ctx.insertInto(TableAlias.departureAddress,
                         TableAlias.departureAddress.STREETADDRESS

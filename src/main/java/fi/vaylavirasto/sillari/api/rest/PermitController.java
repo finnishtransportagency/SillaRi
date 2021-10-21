@@ -35,19 +35,6 @@ public class PermitController {
         }
     }
 
-    @Operation(summary = "Get permit of route bridge")
-    @GetMapping(value = "/getpermitofroutebridge", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getPermitOfRouteBridge(@RequestParam Integer routeBridgeId) {
-        ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitOfRouteBridge");
-        try {
-            PermitModel permit = permitService.getPermitOfRouteBridge(routeBridgeId);
-            return ResponseEntity.ok().body(permit != null ? permit : new EmptyJsonResponse());
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
     @Operation(summary = "Get permit of route transport")
     @GetMapping(value = "/getpermitofroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
