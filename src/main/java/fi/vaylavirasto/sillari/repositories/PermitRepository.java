@@ -351,10 +351,10 @@ public class PermitRepository {
                         .where(TableAlias.supervisionReport.SUPERVISION_ID.in(supervisionIds))
                         .execute();
                 ctx.delete(TableAlias.supervisionImage)
-                        .where(TableAlias.supervisionReport.SUPERVISION_ID.in(supervisionIds))
+                        .where(TableAlias.supervisionImage.SUPERVISION_ID.in(supervisionIds))
                         .execute();
                 ctx.delete(TableAlias.supervisionSupervisor)
-                        .where(TableAlias.supervisionReport.SUPERVISION_ID.in(supervisionIds))
+                        .where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(supervisionIds))
                         .execute();
                 ctx.delete(TableAlias.supervision)
                         .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridge.getId()))
