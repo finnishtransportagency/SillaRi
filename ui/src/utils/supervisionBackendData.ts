@@ -166,7 +166,7 @@ export const updateConformsToPermit = async (updateRequest: ISupervision, dispat
 
     if (updateSupervisionResponse.ok) {
       const updatedSupervision = (await updateSupervisionResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.UPDATE_SUPERVISION, payload: updatedSupervision });
+      dispatch({ type: supervisionActions.UPDATE_CONFORMS_TO_PERMIT, payload: updatedSupervision });
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateConformsToPermit: true } });
       throw new Error(notOkError);

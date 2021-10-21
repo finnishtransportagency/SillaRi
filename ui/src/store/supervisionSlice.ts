@@ -4,7 +4,6 @@ import IFailedQuery from "../interfaces/IFailedQuery";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import IImageItem from "../interfaces/IImageItem";
 import INetworkStatus from "../interfaces/INetworkStatus";
-import IPermit from "../interfaces/IPermit";
 import IRadioValue from "../interfaces/IRadioValue";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
@@ -16,7 +15,6 @@ import IRouteTransport from "../interfaces/IRouteTransport";
 interface IStateProps {
   companyTransportsList: ICompanyTransports[];
   selectedRouteTransport?: IRouteTransport;
-  selectedPermitDetail?: IPermit;
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
   supervisionList: ISupervision[];
@@ -28,7 +26,6 @@ interface IStateProps {
 const initialState: IStateProps = {
   companyTransportsList: [],
   selectedRouteTransport: undefined,
-  selectedPermitDetail: undefined,
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
   supervisionList: [],
@@ -51,10 +48,6 @@ const supervisionSlice = createSlice({
       console.log("GET_ROUTE_TRANSPORT", action.payload);
       return { ...state, selectedRouteTransport: action.payload };
     },
-    GET_PERMIT: (state, action: PayloadAction<IPermit>) => {
-      console.log("GET_PERMIT", action.payload);
-      return { ...state, selectedPermitDetail: action.payload };
-    },
     GET_ROUTE: (state, action: PayloadAction<IRoute>) => {
       console.log("GET_ROUTE", action.payload);
       return { ...state, selectedRouteDetail: action.payload };
@@ -71,12 +64,8 @@ const supervisionSlice = createSlice({
       console.log("GET_SUPERVISION", action.payload);
       return { ...state, selectedSupervisionDetail: action.payload };
     },
-    CREATE_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
-      console.log("CREATE_SUPERVISION", action.payload);
-      return { ...state, selectedSupervisionDetail: action.payload };
-    },
-    UPDATE_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
-      console.log("UPDATE_SUPERVISION", action.payload);
+    UPDATE_CONFORMS_TO_PERMIT: (state, action: PayloadAction<ISupervision>) => {
+      console.log("UPDATE_CONFORMS_TO_PERMIT", action.payload);
       return { ...state, selectedSupervisionDetail: action.payload };
     },
     START_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
