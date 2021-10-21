@@ -16,8 +16,8 @@
     "title": "SillaRi",
     "content": "Tervetuloa!",
     "tab": {
-      "transportCompanies": "Kuljetusyritykset",
-      "upcomingBridges": "Sillat"
+      "transports": "Kuljetukset",
+      "bridges": "Sillat"
     },
     "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen..."
   },

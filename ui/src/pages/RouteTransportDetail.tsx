@@ -1,6 +1,5 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonContent, IonPage } from "@ionic/react";
@@ -20,7 +19,6 @@ interface RouteTransportDetailProps {
 }
 
 const RouteTransportDetail = (): JSX.Element => {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const {

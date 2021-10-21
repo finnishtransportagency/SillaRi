@@ -16,8 +16,8 @@
     "title": "SillaRi",
     "content": "Welcome!",
     "tab": {
-      "transportCompanies": "Transport companies",
-      "upcomingBridges": "Bridges"
+      "transports": "Transports",
+      "bridges": "Bridges"
     },
     "noNetworkNoData": "Unable to retrieve data, trying again..."
   },
