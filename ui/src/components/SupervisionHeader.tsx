@@ -3,27 +3,24 @@ import { useTranslation } from "react-i18next";
 import Moment from "react-moment";
 import { IonItem, IonLabel } from "@ionic/react";
 import { document } from "ionicons/icons";
-import IPermit from "../interfaces/IPermit";
-import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import "./SupervisionHeader.css";
 
 interface SupervisionHeaderProps {
-  permit: IPermit;
-  routeBridge: IRouteBridge;
   supervision: ISupervision;
   className?: string;
   isCrossingInstructionsIncluded?: boolean;
 }
 
-const SupervisionHeader = ({ permit, routeBridge, supervision, className, isCrossingInstructionsIncluded }: SupervisionHeaderProps): JSX.Element => {
+const SupervisionHeader = ({ supervision, className, isCrossingInstructionsIncluded }: SupervisionHeaderProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { permitNumber = "" } = permit || {};
-  const { bridge } = routeBridge || {};
-  const { startedTime } = supervision || {};
+  const { routeBridge, startedTime } = supervision || {};
+  const { bridge, route } = routeBridge || {};
   const { name = "", identifier = "" } = bridge || {};
+  const { permit } = route || {};
+  const { permitNumber = "" } = permit || {};
 
   // TODO - add crossing instructions link
   return (

@@ -24,8 +24,8 @@ const RouteInfoGrid = ({ routeTransportId, permitRoutes = [] }: RouteInfoGridPro
   const { modifiedRouteTransportDetail, selectedRouteOption } = management;
   const { plannedDepartureTime } = modifiedRouteTransportDetail[routeTransportId] || {};
   const { id: selectedRouteId, departureAddress, arrivalAddress } = selectedRouteOption[routeTransportId] || {};
-  const { streetaddress: departureStreetAddress } = departureAddress || {};
-  const { streetaddress: arrivalStreetAddress } = arrivalAddress || {};
+  const { streetAddress: departureStreetAddress } = departureAddress || {};
+  const { streetAddress: arrivalStreetAddress } = arrivalAddress || {};
 
   const estimatedDeparture = moment(plannedDepartureTime);
 

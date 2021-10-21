@@ -5,11 +5,11 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
 import moment from "moment";
-import IFileInput from "../interfaces/IFileInput";
+import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { useTypedSelector } from "../store/store";
-import { onRetry, sendImageUpload, sendSupervisionReportUpdate } from "../utils/backendData";
+import { onRetry, sendImageUpload, updateSupervisionReport } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 
 interface SupervisionFooterProps {
@@ -23,7 +23,7 @@ const SupervisionFooter = ({ supervision, draft, setToastMessage }: SupervisionF
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const { images = [] } = useTypedSelector((state) => state.crossingsReducer);
+  const { images = [] } = useTypedSelector((state) => state.supervisionReducer);
   const { id: supervisionId, report } = supervision || {};
   const {
     id: supervisionReportId = -1,
@@ -42,7 +42,7 @@ const SupervisionFooter = ({ supervision, draft, setToastMessage }: SupervisionF
   } = report || {};
 
   // Set-up mutations for modifying data later
-  const supervisionReportMutation = useMutation((updateRequest: ISupervisionReport) => sendSupervisionReportUpdate(updateRequest, dispatch), {
+  const supervisionReportMutation = useMutation((updateRequest: ISupervisionReport) => updateSupervisionReport(updateRequest, dispatch), {
     retry: onRetry,
     onSuccess: () => {
       if (!draft && !!setToastMessage) {
@@ -50,7 +50,7 @@ const SupervisionFooter = ({ supervision, draft, setToastMessage }: SupervisionF
       }
     },
   });
-  const imageUploadMutation = useMutation((fileUpload: IFileInput) => sendImageUpload(fileUpload, dispatch), { retry: onRetry });
+  const imageUploadMutation = useMutation((fileUpload: ISupervisionImageInput) => sendImageUpload(fileUpload, dispatch), { retry: onRetry });
 
   // Note that if summary has been saved before (not draft), it's reset here as draft until summary is saved again.
   // Should we disable all changes to report when it is not draft anymore, so this does not happen?
@@ -83,7 +83,7 @@ const SupervisionFooter = ({ supervision, draft, setToastMessage }: SupervisionF
           filename: image.filename,
           base64: image.dataUrl,
           taken: moment(image.date).format(DATE_TIME_FORMAT),
-        } as IFileInput;
+        } as ISupervisionImageInput;
 
         imageUploadMutation.mutate(fileUpload);
       });

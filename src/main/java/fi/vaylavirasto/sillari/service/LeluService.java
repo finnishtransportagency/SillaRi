@@ -13,7 +13,6 @@ import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -97,23 +96,22 @@ public class LeluService {
         }
     }
 
-    @NotNull
     private PermitModel getWholePermitModel(String permitNumber) {
-        var oldPermitModel = permitRepository.getPermitByPermitNumber(permitNumber);
-        if(oldPermitModel == null){
-            return null;
-        }
-        var a=routeRepository.getRoutesByPermitId(oldPermitModel.getId());
+        PermitModel oldPermitModel = permitRepository.getPermitByPermitNumber(permitNumber);
+        if (oldPermitModel != null) {
+            List<RouteModel> routes = routeRepository.getRoutesByPermitId(oldPermitModel.getId());
+            oldPermitModel.setRoutes(routes);
 
-        oldPermitModel.setRoutes(routeRepository.getRoutesByPermitId(oldPermitModel.getId()));
-        for(var r: oldPermitModel.getRoutes()){
+            if (routes != null) {
+                for (RouteModel route : oldPermitModel.getRoutes()) {
+                    List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(route.getId());
+                    route.setRouteBridges(routeBridges);
 
-            r.setRouteBridges(routeBridgeRepository.getWholeRouteBridges(r.getId()));
-            for(RouteBridgeModel rb : r.getRouteBridges()){
-                List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(rb.getId());
-                if(supervisions!=null &&!supervisions.isEmpty()){
-
-                    rb.setSupervision(supervisions.get(0));
+                    if (routeBridges != null) {
+                        for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
+                            routeBridge.setSupervisions(supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId()));
+                        }
+                    }
                 }
             }
         }
@@ -245,7 +243,7 @@ public class LeluService {
         }
 
         //check if there exists supervisions for permits's routes, then update is not allowed, need to create a new version
-        if(permitRepository.isSupervisions(routeIdsToRemove)){
+        if(permitRepository.hasSupervisions(routeIdsToRemove)){
             throw new LeluDeleteRouteWithSupervisionsException((messageSource.getMessage("lelu.route.has.supervisions", null, Locale.ROOT)));
         }
         else {

@@ -16,8 +16,8 @@
     "title": "SillaRi",
     "content": "Välkommen!",
     "tab": {
-      "transportCompanies": "(SV) Transport companies",
-      "upcomingBridges": "(SV) Bridges"
+      "transports": "(SV) Transports",
+      "bridges": "(SV) Bridges"
     },
     "noNetworkNoData": "(SV) Unable to retrieve data, trying again..."
   },
@@ -56,7 +56,12 @@
   "company": {
     "transportPermit": "(SV) Transport permit",
     "validityPeriod": "(SV) Validity period",
-    "route": "(SV) Route"
+    "transport": {
+      "transportDeparted": "(SV) Transport departed",
+      "transportArrived": "(SV) Transport arrived",
+      "nextTransport": "(SV) Next transport",
+      "estimatedDepartureTime": "(SV) estimated departure"
+    }
   },
   "route": {
     "transportPermit": "(SV) Transport permit",
@@ -83,7 +88,6 @@
       "transportTotalMass": "(SV) Total mass",
       "axleWeightsDistances": "(SV) Axle weights and distances"
     },
-    "transportValid": "(SV) Transport is in accordance with the permit on departure",
     "bridgesToSupervise": "(SV) Bridges to supervise"
   },
   "bridge": {

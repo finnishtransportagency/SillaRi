@@ -1,4 +1,4 @@
-export default interface IFile {
+export default interface ISupervisionImage {
   id: number;
   supervisionId: number;
   objectKey: string;

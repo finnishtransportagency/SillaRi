@@ -15,7 +15,7 @@ interface SupervisionPhotosProps {
 const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: SupervisionPhotosProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { images = [] } = useTypedSelector((state) => state.crossingsReducer);
+  const { images = [] } = useTypedSelector((state) => state.supervisionReducer);
   const { id: supervisionId, images: supervisionImages = [] } = supervision || {};
 
   return (

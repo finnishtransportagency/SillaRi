@@ -4,11 +4,11 @@ import { IonItem, IonLabel } from "@ionic/react";
 import { document } from "ionicons/icons";
 import IPermit from "../interfaces/IPermit";
 
-interface RouteDetailHeaderProps {
+interface PermitDetailHeaderProps {
   permit: IPermit;
 }
 
-const RouteDetailHeader = ({ permit }: RouteDetailHeaderProps): JSX.Element => {
+const PermitDetailHeader = ({ permit }: PermitDetailHeaderProps): JSX.Element => {
   const { t } = useTranslation();
   const { permitNumber } = permit || {};
 
@@ -20,4 +20,4 @@ const RouteDetailHeader = ({ permit }: RouteDetailHeaderProps): JSX.Element => {
   );
 };
 
-export default RouteDetailHeader;
+export default PermitDetailHeader;

@@ -4,7 +4,6 @@ import { IonIcon, IonItem, IonLabel, IonText } from "@ionic/react";
 import { flag } from "ionicons/icons";
 import CustomAccordion from "./common/CustomAccordion";
 import IRoute from "../interfaces/IRoute";
-import "./RouteAccordion.css";
 
 interface RouteAccordionProps {
   route: IRoute;
@@ -14,8 +13,8 @@ const RouteAccordion = ({ route }: RouteAccordionProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { id: routeId, departureAddress, arrivalAddress } = route || {};
-  const { streetaddress: departureStreetaddress } = departureAddress || {};
-  const { streetaddress: arrivalStreetaddress } = arrivalAddress || {};
+  const { streetAddress: departureStreetAddress } = departureAddress || {};
+  const { streetAddress: arrivalStreetAddress } = arrivalAddress || {};
 
   return (
     <CustomAccordion
@@ -34,7 +33,7 @@ const RouteAccordion = ({ route }: RouteAccordionProps): JSX.Element => {
                 <IonLabel>
                   <IonLabel>{t("route.routeInfo.departurePoint")}</IonLabel>
                   <IonLabel>
-                    <small>{departureStreetaddress}</small>
+                    <small>{departureStreetAddress}</small>
                   </IonLabel>
                 </IonLabel>
               </IonItem>
@@ -43,7 +42,7 @@ const RouteAccordion = ({ route }: RouteAccordionProps): JSX.Element => {
                 <IonLabel>
                   <IonLabel>{t("route.routeInfo.arrivalPoint")}</IonLabel>
                   <IonLabel>
-                    <small>{arrivalStreetaddress}</small>
+                    <small>{arrivalStreetAddress}</small>
                   </IonLabel>
                 </IonLabel>
               </IonItem>
