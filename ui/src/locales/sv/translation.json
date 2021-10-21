@@ -56,7 +56,12 @@
   "company": {
     "transportPermit": "(SV) Transport permit",
     "validityPeriod": "(SV) Validity period",
-    "route": "(SV) Route"
+    "transport": {
+      "transportDeparted": "(SV) Transport departed",
+      "transportArrived": "(SV) Transport arrived",
+      "nextTransport": "(SV) Next transport",
+      "estimatedDepartureTime": "(SV) estimated departure"
+    }
   },
   "route": {
     "transportPermit": "(SV) Transport permit",
