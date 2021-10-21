@@ -1,5 +1,7 @@
 package fi.vaylavirasto.sillari.service;
 
+
+import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
@@ -7,16 +9,11 @@ import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.RouteBridgeModel;
-import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.repositories.BridgeRepository;
-import fi.vaylavirasto.sillari.repositories.CompanyRepository;
-import fi.vaylavirasto.sillari.repositories.PermitRepository;
-import fi.vaylavirasto.sillari.repositories.RouteRepository;
+import fi.vaylavirasto.sillari.model.*;
+import fi.vaylavirasto.sillari.repositories.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -38,22 +35,94 @@ public class LeluService {
     private PermitRepository permitRepository;
     private CompanyRepository companyRepository;
     private RouteRepository routeRepository;
+    private RouteBridgeRepository routeBridgeRepository;
     private BridgeRepository bridgeRepository;
+    private SupervisionRepository supervisionRepository;
     private final MessageSource messageSource;
     private LeluRouteUploadUtil leluRouteUploadUtil;
 
     @Autowired
-    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, BridgeRepository bridgeRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil
     ) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
         this.routeRepository = routeRepository;
+        this.routeBridgeRepository = routeBridgeRepository;
         this.bridgeRepository = bridgeRepository;
         this.messageSource = messageSource;
         this.leluRouteUploadUtil = leluRouteUploadUtil;
+        this.supervisionRepository = supervisionRepository;
     }
 
-    public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) {
+    // TODO
+    //this used currently to ease lelu testing.
+    //Deletes everything under the permit with lelu permit id if given.
+    //Will be rreplaced by createOrUpdatePermit eventually.
+    public LeluPermitResponseDTO createOrUpdatePermitDevVersion(LeluPermitDTO permitDTO) throws LeluDeleteRouteWithSupervisionsException {
+        LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
+
+        logger.debug("Map permit from: " + permitDTO);
+        PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
+        logger.debug("Permit mapped from LeLu model: {}", permitModel);
+
+        // Fetch company from DB with business ID. If not found, insert new company.
+        Integer companyId = getCompanyIdByBusinessId(permitModel.getCompany());
+        permitModel.setCompanyId(companyId);
+
+        // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
+        setBridgeIdsToRouteBridges(permitModel);
+        PermitModel oldPermitModel = getWholePermitModel(permitModel.getPermitNumber());
+
+        if (oldPermitModel != null) {
+            logger.debug("Permit with id {} found, delete and create new", oldPermitModel);
+
+
+            deletePermit(oldPermitModel);
+
+            Integer permitModelId = permitRepository.createPermit(permitModel);
+
+            response.setPermitId(permitModelId);
+            response.setStatus(LeluPermitStatus.CREATED);
+            return response;
+        } else {
+            logger.debug("Permit not found with id create new", permitModel.getPermitNumber());
+
+            // Insert new permit and all child records
+            // Missing route addresses (not yet in lelu model)
+            Integer permitModelId = permitRepository.createPermit(permitModel);
+
+            response.setPermitId(permitModelId);
+            response.setStatus(LeluPermitStatus.CREATED);
+            return response;
+        }
+    }
+
+    @NotNull
+    private PermitModel getWholePermitModel(String permitNumber) {
+        var oldPermitModel = permitRepository.getPermitByPermitNumber(permitNumber);
+        if(oldPermitModel == null){
+            return null;
+        }
+        var a=routeRepository.getRoutesByPermitId(oldPermitModel.getId());
+
+        oldPermitModel.setRoutes(routeRepository.getRoutesByPermitId(oldPermitModel.getId()));
+        for(var r: oldPermitModel.getRoutes()){
+
+            r.setRouteBridges(routeBridgeRepository.getWholeRouteBridges(r.getId()));
+            for(RouteBridgeModel rb : r.getRouteBridges()){
+                List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(rb.getId());
+                if(supervisions!=null &&!supervisions.isEmpty()){
+
+                    rb.setSupervision(supervisions.get(0));
+                }
+            }
+        }
+        return oldPermitModel;
+    }
+
+
+    //TODO Will eplace createOrUpdatePermitDevVersion eventually.
+    public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) throws LeluDeleteRouteWithSupervisionsException {
         LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
 
         logger.debug("Map permit from: " + permitDTO);
@@ -67,7 +136,7 @@ public class LeluService {
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
         setBridgeIdsToRouteBridges(permitModel);
 
-        Integer permitId = permitRepository.getPermitIdByPermitNumber(permitModel.getPermitNumber());
+        Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitModel.getPermitNumber(), permitModel.getLeluVersion());
 
         if (permitId != null) {
             logger.debug("Permit with id {} found, update", permitId);
@@ -150,7 +219,12 @@ public class LeluService {
         return bridgeRepository.getBridgeIdsWithOIDs(uniqueOIDs);
     }
 
-    private void updatePermit(PermitModel permitModel) {
+
+    private void deletePermit(PermitModel permitModel) {
+        permitRepository.deletePermit(permitModel);
+    }
+
+    private void updatePermit(PermitModel permitModel) throws LeluDeleteRouteWithSupervisionsException {
         // Check if old routes are all included in permit, routes not included anymore should be deleted
         // Routes with same lelu ID should be updated and not inserted as new, set existing sillari ID to those route models
         Map<Long, Integer> oldRouteIdLeluIdMap = routeRepository.getRouteIdsWithLeluIds(permitModel.getId());
@@ -170,7 +244,13 @@ public class LeluService {
             }
         }
 
-        permitRepository.updatePermit(permitModel, routeIdsToRemove);
+        //check if there exists supervisions for permits's routes, then update is not allowed, need to create a new version
+        if(permitRepository.isSupervisions(routeIdsToRemove)){
+            throw new LeluDeleteRouteWithSupervisionsException((messageSource.getMessage("lelu.route.has.supervisions", null, Locale.ROOT)));
+        }
+        else {
+            permitRepository.updatePermit(permitModel, routeIdsToRemove);
+        }
     }
 
 }

@@ -73,12 +73,12 @@ public class SupervisionService {
         supervisionRepository.createSupervision(supervisionModel);
     }
 
-    // Updates supervision fields (transport, supervisor, planned time)
+    // Updates supervision fields (supervisors, planned time)
     // TODO do we need to add a new status row?
     public void updateSupervision(SupervisionModel supervisionModel) {
         supervisionRepository.updateSupervision(supervisionModel);
     }
-    
+
     public SupervisionModel updateConformsToPermit(Integer supervisionId, Boolean conformsToPermit) {
         supervisionRepository.updateSupervision(supervisionId, conformsToPermit);
         return getSupervision(supervisionId);

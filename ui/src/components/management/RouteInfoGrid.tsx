@@ -12,45 +12,50 @@ import { useTypedSelector } from "../../store/store";
 import { SupervisorType } from "../../utils/constants";
 
 interface RouteInfoGridProps {
+  routeTransportId: number;
   permitRoutes: IRoute[];
 }
 
-const RouteInfoGrid = ({ permitRoutes = [] }: RouteInfoGridProps): JSX.Element => {
+const RouteInfoGrid = ({ routeTransportId, permitRoutes = [] }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const management = useTypedSelector((state) => state.managementReducer);
   const { modifiedRouteTransportDetail, selectedRouteOption } = management;
-  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
-  const { id: selectedRouteId, departureAddress, arrivalAddress } = selectedRouteOption || {};
+  const { plannedDepartureTime } = modifiedRouteTransportDetail[routeTransportId] || {};
+  const { id: selectedRouteId, departureAddress, arrivalAddress } = selectedRouteOption[routeTransportId] || {};
   const { streetAddress: departureStreetAddress } = departureAddress || {};
   const { streetAddress: arrivalStreetAddress } = arrivalAddress || {};
 
   const estimatedDeparture = moment(plannedDepartureTime);
 
   const setPlannedDepartureTime = (dateTime: Date) => {
-    dispatch({ type: managementActions.MODIFY_ROUTE_TRANSPORT, payload: { plannedDepartureTime: dateTime } });
+    // dispatch({ type: managementActions.MODIFY_ROUTE_TRANSPORT, payload: { plannedDepartureTime: dateTime } });
+    const newDetail = { ...modifiedRouteTransportDetail[routeTransportId], plannedDepartureTime: dateTime };
+    dispatch({ type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL, payload: newDetail });
   };
 
   const selectRoute = (routeId: number) => {
     const selectedRoute = permitRoutes.find((route) => route.id === routeId);
-    dispatch({ type: managementActions.SET_SELECTED_ROUTE_OPTION, payload: selectedRoute });
+    if (selectedRoute) {
+      dispatch({ type: managementActions.SET_SELECTED_ROUTE_OPTION, payload: { routeTransportId, route: selectedRoute } });
 
-    // Make sure supervision details are available for BridgeGrid
-    const { routeBridges = [] } = selectedRoute || {};
-    const newSupervisions = routeBridges.map((routeBridge) => {
-      const { id: routeBridgeId } = routeBridge;
-      return {
-        plannedTime: moment().toDate(),
-        routeBridgeId,
-        supervisorType: SupervisorType.OWN_SUPERVISOR,
-        supervisors: [],
-      };
-    });
-    dispatch({
-      type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL,
-      payload: { ...modifiedRouteTransportDetail, routeId, route: selectedRoute, supervisions: newSupervisions },
-    });
+      // Make sure supervision details are available for BridgeGrid
+      const { routeBridges = [] } = selectedRoute || {};
+      const newSupervisions = routeBridges.map((routeBridge) => {
+        const { id: routeBridgeId } = routeBridge;
+        return {
+          plannedTime: moment().toDate(),
+          routeBridgeId,
+          supervisorType: SupervisorType.OWN_SUPERVISOR,
+          supervisors: [],
+        };
+      });
+      dispatch({
+        type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL,
+        payload: { ...modifiedRouteTransportDetail[routeTransportId], routeId, route: selectedRoute, supervisions: newSupervisions },
+      });
+    }
   };
 
   return (

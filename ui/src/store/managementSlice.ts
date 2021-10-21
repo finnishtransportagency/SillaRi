@@ -13,10 +13,9 @@ interface IStateProps {
   supervisorList: ISupervisor[];
   selectedCompanyDetail?: ICompany;
   selectedPermitDetail?: IPermit;
-  selectedRouteTransportDetail?: IRouteTransport;
-  modifiedRouteTransportDetail?: IRouteTransport;
-  selectedRouteOption?: IRoute;
-  isRouteTransportModified: boolean;
+  selectedRouteTransportDetail: { [routeTransportId: number]: IRouteTransport };
+  modifiedRouteTransportDetail: { [routeTransportId: number]: IRouteTransport };
+  selectedRouteOption: { [routeTransportId: number]: IRoute };
   networkStatus: INetworkStatus;
 }
 
@@ -25,10 +24,9 @@ const initialState: IStateProps = {
   supervisorList: [],
   selectedCompanyDetail: undefined,
   selectedPermitDetail: undefined,
-  selectedRouteTransportDetail: undefined,
-  modifiedRouteTransportDetail: undefined,
-  selectedRouteOption: undefined,
-  isRouteTransportModified: false,
+  selectedRouteTransportDetail: {},
+  modifiedRouteTransportDetail: {},
+  selectedRouteOption: {},
   networkStatus: {
     isFailed: {},
   },
@@ -52,35 +50,42 @@ const managementSlice = createSlice({
     },
     GET_ROUTE_TRANSPORT: (state, action: PayloadAction<IRouteTransport>) => {
       console.log("GET_ROUTE_TRANSPORT", action.payload);
-      return { ...state, selectedRouteTransportDetail: action.payload };
+      if (action.payload.id) {
+        return { ...state, selectedRouteTransportDetail: { ...state.selectedRouteTransportDetail, [action.payload.id]: action.payload } };
+      } else {
+        return state;
+      }
     },
     SET_MODIFIED_ROUTE_TRANSPORT_DETAIL: (state, action: PayloadAction<IRouteTransport>) => {
       console.log("SET_MODIFIED_ROUTE_TRANSPORT_DETAIL", action.payload);
-      return { ...state, modifiedRouteTransportDetail: action.payload };
+      if (action.payload.id) {
+        return { ...state, modifiedRouteTransportDetail: { ...state.modifiedRouteTransportDetail, [action.payload.id]: action.payload } };
+      } else {
+        return state;
+      }
     },
     MODIFY_ROUTE_TRANSPORT: (state, action: PayloadAction<IRouteTransport>) => {
-      console.log("MODIFY_ROUTE_TRANSPORT", action.payload);
+      // console.log("MODIFY_ROUTE_TRANSPORT", action.payload);
       if (state.modifiedRouteTransportDetail) {
         return {
           ...state,
           modifiedRouteTransportDetail: { ...state.modifiedRouteTransportDetail, ...action.payload },
-          isRouteTransportModified: true,
         };
       } else {
         return state;
       }
     },
-    SET_ROUTE_TRANSPORT_MODIFIED: (state, action: PayloadAction<boolean>) => {
-      console.log("SET_ROUTE_TRANSPORT_MODIFIED", action.payload);
-      return { ...state, isRouteTransportModified: action.payload };
-    },
     GET_SUPERVISOR_LIST: (state, action: PayloadAction<ISupervisor[]>) => {
       console.log("GET_SUPERVISOR_LIST", action.payload);
       return { ...state, supervisorList: action.payload };
     },
-    SET_SELECTED_ROUTE_OPTION: (state, action: PayloadAction<IRoute>) => {
+    SET_SELECTED_ROUTE_OPTION: (state, action: PayloadAction<{ routeTransportId: number; route: IRoute }>) => {
       console.log("SET_SELECTED_ROUTE_OPTION", action.payload);
-      return { ...state, selectedRouteOption: action.payload };
+      if (action.payload.routeTransportId) {
+        return { ...state, selectedRouteOption: { ...state.selectedRouteOption, [action.payload.routeTransportId]: action.payload.route } };
+      } else {
+        return state;
+      }
     },
     SET_FAILED_QUERY: (state, action: PayloadAction<IFailedQuery>) => {
       // console.log("SET_FAILED_QUERY", action.payload);

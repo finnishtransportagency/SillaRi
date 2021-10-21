@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 public class LeluBridgeSupervisonReportStatusDTO {
-    @Schema(description = "Status of the supervision, those with status 'SIGNED' have report available from /getSupervisionReport ", example = "SINGNED")
+    @Schema(description = "Status of the supervision, those with status 'SIGNED' have report available from /getSupervisionReport ", example = "SIGNED")
     LeluSupervisionStatus status;
     @Schema(description = "When signed by supervisor", example = "2021-05-26T08:02:36.000Z")
     private LocalDateTime signedTimeStamp;

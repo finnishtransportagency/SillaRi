@@ -70,6 +70,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handleCustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(LeluDeleteRouteWithSupervisionsException.class)
+    public ResponseEntity<Object> leluDeleteRouteWithSupervisionsException(LeluDeleteRouteWithSupervisionsException ex) {
+        logger.error("LeluDeleteRouteWithSupervisionsException 'reason':'{}'", ex.getMessage());
+        return handleCustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(APIVersionException.class)
     public ResponseEntity<Object> apiVersionException(APIVersionException ex) {
         logger.error("apiVersionException 'reason':'{}'", ex.getMessage());

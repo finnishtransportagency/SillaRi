@@ -40,4 +40,12 @@ public class RouteBridgeRepository {
         return routeBridge;
     }
 
+    public List<RouteBridgeModel> getWholeRouteBridges(Integer routeId) {
+        return dsl.select().from(RouteBridgeMapper.routebridge)
+                .leftJoin(RouteBridgeMapper.bridge).on(RouteBridgeMapper.bridge.ID.eq(RouteBridgeMapper.routebridge.BRIDGE_ID))
+                .leftJoin(RouteBridgeMapper.supervision).on(RouteBridgeMapper.supervision.ROUTE_BRIDGE_ID.eq(RouteBridgeMapper.routebridge.ID))
+                .where(RouteBridgeMapper.routebridge.ROUTE_ID.eq(routeId))
+                .fetch(new RouteBridgeMapper());
+    }
+
 }

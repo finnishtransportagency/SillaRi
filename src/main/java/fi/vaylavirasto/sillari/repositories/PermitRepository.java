@@ -77,6 +77,25 @@ public class PermitRepository {
     public Integer getPermitIdByPermitNumber(String permitNumber) {
         Record1<Integer> record = dsl.select(TableAlias.permit.ID).from(TableAlias.permit)
                 .where(TableAlias.permit.PERMIT_NUMBER.eq(permitNumber))
+                .fetchAny();
+        return record != null ? record.value1() : null;
+    }
+
+    public PermitModel getPermitByPermitNumber(String permitNumber) {
+        return dsl.select().from(TableAlias.permit)
+                .leftJoin(TableAlias.axleChart)
+                .on(TableAlias.permit.ID.eq(TableAlias.axleChart.PERMIT_ID))
+                .leftJoin(TableAlias.transportDimensions)
+                .on(TableAlias.permit.ID.eq(TableAlias.transportDimensions.PERMIT_ID))
+                .leftJoin(TableAlias.unloadedTransportDimensions)
+                .on(TableAlias.permit.ID.eq(TableAlias.unloadedTransportDimensions.PERMIT_ID))
+                .where(TableAlias.permit.PERMIT_NUMBER.eq(permitNumber))
+                .fetchAny(new PermitMapper());
+    }
+
+    public Integer getPermitIdByPermitNumberAndVersion(String permitNumber, int permitVersion) {
+        Record1<Integer> record = dsl.select(TableAlias.permit.ID).from(TableAlias.permit)
+                .where(TableAlias.permit.PERMIT_NUMBER.eq(permitNumber).and(TableAlias.permit.LELU_VERSION.eq(permitVersion)))
                 .fetchOne();
         return record != null ? record.value1() : null;
     }
@@ -293,6 +312,49 @@ public class PermitRepository {
         }
     }
 
+    public void deletePermit(PermitModel permitModel) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+            deleteVehicles(ctx, permitModel);
+            deleteAxles(ctx, permitModel);
+            ctx.delete(TableAlias.axleChart)
+                    .where(TableAlias.axleChart.PERMIT_ID.eq(permitModel.getId()))
+                    .execute();
+
+            deleteRoutes(ctx, permitModel);
+
+            ctx.delete(TableAlias.unloadedTransportDimensions)
+                    .where(TableAlias.unloadedTransportDimensions.PERMIT_ID.eq(permitModel.getId()))
+                    .execute();
+
+            ctx.delete(TableAlias.transportDimensions)
+                    .where(TableAlias.transportDimensions.PERMIT_ID.eq(permitModel.getId()))
+                    .execute();
+
+            ctx.delete(TableAlias.permit)
+                    .where(TableAlias.permit.ID.eq(permitModel.getId()))
+                    .execute();
+
+        });
+    }
+
+    private void deleteSupervisions(DSLContext ctx, RouteModel routeModel) {
+            for (RouteBridgeModel routeBridge : routeModel.getRouteBridges()) {
+                if(routeBridge.getSupervision()!=null) {
+                    ctx.delete(TableAlias.supervisionStatus)
+                            .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(routeBridge.getSupervision().getId()))
+                            .execute();
+
+                    ctx.delete(TableAlias.supervisionReport)
+                            .where(TableAlias.supervisionReport.SUPERVISION_ID.eq(routeBridge.getSupervision().getId()))
+                            .execute();
+                    ctx.delete(TableAlias.supervision)
+                            .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridge.getId()))
+                            .execute();
+                }
+            }
+    }
+
     public void updatePermit(PermitModel permitModel, List<Integer> routesToDelete) throws DataAccessException {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
@@ -341,6 +403,18 @@ public class PermitRepository {
                 .execute();
     }
 
+    private void deleteRoutes(DSLContext ctx, PermitModel permitModel) {
+        for (RouteModel routeModel : permitModel.getRoutes()) {
+            deleteSupervisions(ctx, routeModel);
+            deleteRouteTransports(ctx, routeModel);
+            deleteRouteBridges(ctx, routeModel);
+            deleteAddresses(ctx, routeModel.getId());
+        }
+        ctx.delete(TableAlias.route)
+                .where(TableAlias.route.PERMIT_ID.eq(permitModel.getId()))
+                .execute();
+    }
+
     private void updateTransportDimensions(DSLContext ctx, PermitModel permitModel) {
         ctx.update(TableAlias.transportDimensions)
                 .set(TableAlias.transportDimensions.HEIGHT, permitModel.getTransportDimensions().getHeight())
@@ -361,15 +435,18 @@ public class PermitRepository {
         }
     }
 
-    private void deleteVehiclesAndInsertNew(DSLContext ctx, PermitModel permitModel) {
+    private void deleteVehicles(DSLContext ctx, PermitModel permitModel) {
         ctx.delete(TableAlias.vehicle)
                 .where(TableAlias.vehicle.PERMIT_ID.eq(permitModel.getId()))
                 .execute();
+    }
 
+    private void deleteVehiclesAndInsertNew(DSLContext ctx, PermitModel permitModel) {
+        deleteVehicles(ctx, permitModel);
         insertVehicles(ctx, permitModel);
     }
 
-    private void deleteAxlesAndInsertNew(DSLContext ctx, PermitModel permitModel) {
+    private void deleteAxles(DSLContext ctx, PermitModel permitModel) {
         // Get axle chart ID which we need for inserting new axles
         Record1<Integer> axleChartIdResult = ctx.select(TableAlias.axleChart.ID)
                 .from(TableAlias.axleChart)
@@ -382,7 +459,10 @@ public class PermitRepository {
         ctx.delete(TableAlias.axle)
                 .where(TableAlias.axle.AXLE_CHART_ID.eq(axleChartId))
                 .execute();
+    }
 
+    private void deleteAxlesAndInsertNew(DSLContext ctx, PermitModel permitModel) {
+        deleteAxles(ctx, permitModel);
         insertAxles(ctx, permitModel.getAxleChart());
     }
 
@@ -392,6 +472,18 @@ public class PermitRepository {
                         ctx.select(TableAlias.route.ID).from(TableAlias.route)
                                 .where(TableAlias.route.PERMIT_ID.eq(permitModel.getId()))
                                 .fetch()))
+                .execute();
+    }
+
+    private void deleteRouteBridges(DSLContext ctx, RouteModel routeModel) {
+        ctx.delete(TableAlias.routeBridge)
+                .where(TableAlias.routeBridge.ROUTE_ID.eq(routeModel.getId()))
+                .execute();
+    }
+
+    private void deleteRouteTransports(DSLContext ctx, RouteModel routeModel) {
+        ctx.delete(TableAlias.routeTransport)
+                .where(TableAlias.routeTransport.ROUTE_ID.eq(routeModel.getId()))
                 .execute();
     }
 
@@ -458,4 +550,15 @@ public class PermitRepository {
         deleteArrivalAddress(ctx, routeId);
         deleteDepartureAddress(ctx, routeId);
     }
+
+    public boolean isSupervisions(List<Integer> routeIds) {
+        Record record = dsl.select().from(TableAlias.supervision)
+                .leftJoin(TableAlias.routeBridge)
+                .on(TableAlias.routeBridge.ID.eq(TableAlias.supervision.ROUTE_BRIDGE_ID))
+                .where(TableAlias.routeBridge.ROUTE_ID.in(routeIds))
+                .fetchAny();
+        return record != null ? true : false;
+    }
+
+
 }

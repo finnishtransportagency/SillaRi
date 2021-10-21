@@ -27,7 +27,6 @@ const AddTransport = (): JSX.Element => {
   const {
     selectedPermitDetail,
     supervisorList,
-    isRouteTransportModified,
     networkStatus: { isFailed = {} },
   } = management;
 
@@ -35,17 +34,18 @@ const AddTransport = (): JSX.Element => {
 
   const { isLoading: isLoadingPermit } = useQuery(["getPermit", permitId], () => getPermit(Number(permitId), dispatch, selectedPermitDetail), {
     retry: onRetry,
+    refetchOnWindowFocus: false,
   });
   useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry });
 
   useEffect(() => {
     // Put empty details into redux for later modifying
-    if (!isLoadingPermit && !isRouteTransportModified) {
+    if (!isLoadingPermit) {
       const newRouteTransport: IRouteTransport = { id: 0, routeId: 0, plannedDepartureTime: moment().toDate() };
       dispatch({ type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL, payload: newRouteTransport });
       dispatch({ type: managementActions.SET_SELECTED_ROUTE_OPTION, payload: undefined });
     }
-  }, [isLoadingPermit, isRouteTransportModified, dispatch]);
+  }, [isLoadingPermit, dispatch]);
 
   const noNetworkNoData = (isFailed.getPermit && selectedPermitDetail === undefined) || (isFailed.getSupervisors && supervisorList.length === 0);
 
@@ -56,7 +56,12 @@ const AddTransport = (): JSX.Element => {
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (
-          <RouteTransportInfo permit={selectedPermitDetail as IPermit} supervisors={supervisorList} setToastMessage={setToastMessage} />
+          <RouteTransportInfo
+            routeTransportId={0}
+            permit={selectedPermitDetail as IPermit}
+            supervisors={supervisorList}
+            setToastMessage={setToastMessage}
+          />
         )}
 
         <IonToast
