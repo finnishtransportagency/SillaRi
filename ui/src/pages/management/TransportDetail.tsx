@@ -55,13 +55,13 @@ const TransportDetail = (): JSX.Element => {
   const { routeId } = selectedRouteTransportDetail || {};
 
   useEffect(() => {
-    // Copy the saved details into redux for later modifying
+    // Copy the saved details for later modifying
     if (!isLoadingTransport && !!selectedRouteTransportDetail) {
       // Make sure the dates are objects not strings, otherwise the backend may throw a 400 Bad Request error on save
       // The backend updateRouteTransport method does not update the status values, so these can be left undefined here
       const { plannedDepartureTime, supervisions = [] } = selectedRouteTransportDetail || {};
       const modifiedSupervisions = supervisions.map((supervision) => {
-        return { ...supervision, plannedTime: moment(supervision.plannedTime).toDate() };
+        return { ...supervision, plannedTime: moment(supervision.plannedTime).toDate(), currentStatus: undefined, statusHistory: undefined };
       });
       const modifiedRouteTransport = {
         ...selectedRouteTransportDetail,
