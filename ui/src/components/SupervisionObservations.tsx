@@ -5,7 +5,7 @@ import { IonCheckbox, IonItem, IonLabel, IonRadio, IonRadioGroup, IonTextarea } 
 import IRadioValue from "../interfaces/IRadioValue";
 import ISupervision from "../interfaces/ISupervision";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
-import { actions as crossingActions } from "../store/crossingsSlice";
+import { actions as supervisionActions } from "../store/supervisionSlice";
 
 interface SupervisionObservationsProps {
   supervision: ISupervision;
@@ -37,7 +37,7 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
       name: radioName,
       value: radioValue === "yes",
     } as IRadioValue;
-    dispatch({ type: crossingActions.REPORT_RADIO_CHANGED, payload: radioPayload });
+    dispatch({ type: supervisionActions.REPORT_RADIO_CHANGED, payload: radioPayload });
   };
 
   const checkBoxClicked = (checkBoxName: string, checkBoxValue: boolean) => {
@@ -45,12 +45,12 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
       name: checkBoxName,
       value: checkBoxValue,
     } as IRadioValue;
-    dispatch({ type: crossingActions.REPORT_RADIO_CHANGED, payload: radioPayload });
+    dispatch({ type: supervisionActions.REPORT_RADIO_CHANGED, payload: radioPayload });
   };
 
   const textAreaValueChanged = (pname: string, pvalue: string) => {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
-    dispatch({ type: crossingActions.REPORT_TEXTAREA_CHANGED, payload: change });
+    dispatch({ type: supervisionActions.REPORT_TEXTAREA_CHANGED, payload: change });
   };
 
   return (

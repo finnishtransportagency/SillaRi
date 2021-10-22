@@ -9,8 +9,7 @@ import Settings from "./pages/Settings";
 import Map from "./pages/Map";
 import Supervision from "./pages/Supervision";
 import Camera from "./pages/Camera";
-import CompanyDetail from "./pages/CompanyDetail";
-import RouteDetail from "./pages/RouteDetail";
+import RouteTransportDetail from "./pages/RouteTransportDetail";
 import DenyCrossing from "./pages/DenyCrossing";
 import BridgeDetail from "./pages/BridgeDetail";
 import SupervisionSummary from "./pages/SupervisionSummary";
@@ -63,11 +62,10 @@ const App: React.FC = () => (
           <Route path="/settings" component={Settings} exact />
           <Route path="/bridgemap/:routeBridgeId" component={Map} exact />
           <Route path="/routemap/:routeId" component={Map} exact />
-          <Route path="/companydetail/:id" component={CompanyDetail} exact />
-          <Route path="/routeDetail/:routeId" component={RouteDetail} exact />
-          <Route path="/bridgeDetail/:routeBridgeId" component={BridgeDetail} exact />
+          <Route path="/routeTransportDetail/:routeTransportId" component={RouteTransportDetail} exact />
+          <Route path="/bridgeDetail/:supervisionId" component={BridgeDetail} exact />
           <Route path="/supervision/:supervisionId" component={Supervision} exact />
-          <Route path="/denyCrossing/:routeBridgeId" component={DenyCrossing} exact />
+          <Route path="/denyCrossing/:supervisionId" component={DenyCrossing} exact />
           <Route path="/summary/:supervisionId" component={SupervisionSummary} exact />
           <Route path="/takePhotos/:supervisionId" component={Camera} exact />
           <Route path="/management/:companyId" component={CompanySummary} exact />

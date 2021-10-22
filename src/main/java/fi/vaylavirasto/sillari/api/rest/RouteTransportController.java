@@ -56,6 +56,19 @@ public class RouteTransportController {
         }
     }
 
+    @Operation(summary = "Get route transport of supervisor, with supervisions and route data")
+    @GetMapping(value = "/getroutetransportofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getRouteTransportOfSupervisor(@RequestParam Integer routeTransportId, String username) {
+        ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportOfSupervisor");
+        try {
+            RouteTransportModel routeTransport = routeTransportService.getRouteTransportOfSupervisor(routeTransportId, username);
+            return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Create route transport")
     @PostMapping(value = "/createroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")

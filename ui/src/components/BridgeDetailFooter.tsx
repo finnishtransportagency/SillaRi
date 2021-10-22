@@ -18,7 +18,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   const { t } = useTranslation();
 
   const { permitNumber } = permit || {};
-  const { id: supervisionId, routeBridgeId, conformsToPermit = false, currentStatus, startedTime } = supervision || {};
+  const { id: supervisionId, conformsToPermit = false, currentStatus, startedTime } = supervision || {};
   const supervisionStarted = currentStatus && currentStatus.status !== SupervisionStatus.PLANNED;
 
   return (
@@ -65,7 +65,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
         </IonRow>
         <IonRow>
           <IonCol className="ion-text-center">
-            <IonButton disabled={!supervisionId || supervisionStarted} color="secondary" routerLink={`/denyCrossing/${routeBridgeId}`}>
+            <IonButton disabled={!supervisionId || supervisionStarted} color="secondary" routerLink={`/denyCrossing/${supervisionId}`}>
               {t("bridge.denyCrossing")}
             </IonButton>
           </IonCol>

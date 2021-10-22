@@ -27,7 +27,7 @@ import RouteVectorLayer from "./map/RouteVectorLayer";
 import UserVectorLayer from "./map/UserVectorLayer";
 import { getOrigin } from "../utils/request";
 import { useTypedSelector } from "../store/store";
-import { getRoute, getRouteBridge, onRetry } from "../utils/backendData";
+import { getRoute, getRouteBridge, onRetry } from "../utils/supervisionBackendData";
 import "./MapContainer.scss";
 
 interface MapContainerProps {
@@ -52,8 +52,7 @@ const MapContainer = (): JSX.Element => {
   const [routeExtent, setRouteExtent] = useState<Extent>();
   const [mapInitialised, setMapInitialised] = useState<boolean>(false);
 
-  const crossingsState = useTypedSelector((state) => state.crossingsReducer);
-  const { selectedBridgeDetail, selectedRouteDetail } = crossingsState;
+  const { selectedBridgeDetail, selectedRouteDetail } = useTypedSelector((state) => state.supervisionReducer);
   const { bridge, routeId = 0 } = selectedBridgeDetail || {};
   const { identifier: bridgeIdentifier, geojson: bridgeGeojson } = bridge || {};
   const { geojson: routeGeojson, routeBridges = [] } = selectedRouteDetail || {};

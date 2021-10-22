@@ -1,29 +1,19 @@
 package fi.vaylavirasto.sillari.mapper;
 
 import fi.vaylavirasto.sillari.model.SupervisorModel;
-import fi.vaylavirasto.sillari.model.Tables;
-import fi.vaylavirasto.sillari.model.tables.SupervisionSupervisor;
-import fi.vaylavirasto.sillari.model.tables.Supervisor;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 public class SupervisorMapper implements RecordMapper<Record, SupervisorModel> {
-    public static final Supervisor supervisor = Tables.SUPERVISOR.as("sr");
-    public static final SupervisionSupervisor supervisionSupervisor = Tables.SUPERVISION_SUPERVISOR.as("ss");
-
     @Nullable
     @Override
     public SupervisorModel map(Record record) {
         SupervisorModel supervisorModel = new SupervisorModel();
-        supervisorModel.setId(record.get(supervisor.ID));
-        supervisorModel.setFirstName(record.get(supervisor.FIRSTNAME));
-        supervisorModel.setLastName(record.get(supervisor.LASTNAME));
-
-        if (record.field(supervisionSupervisor.PRIORITY) != null) {
-            supervisorModel.setPriority(record.get(supervisionSupervisor.PRIORITY));
-        }
-
+        supervisorModel.setId(record.get(TableAlias.supervisor.ID));
+        supervisorModel.setFirstName(record.get(TableAlias.supervisor.FIRSTNAME));
+        supervisorModel.setLastName(record.get(TableAlias.supervisor.LASTNAME));
         return supervisorModel;
     }
 }

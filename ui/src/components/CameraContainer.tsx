@@ -10,8 +10,8 @@ import { useParams } from "react-router-dom";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import { RootState, useTypedSelector } from "../store/store";
-import { actions as crossingActions } from "../store/crossingsSlice";
-import { deleteImage, getSupervision, onRetry } from "../utils/backendData";
+import { actions as supervisionActions } from "../store/supervisionSlice";
+import { deleteImage, getSupervision, onRetry } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import { getOrigin } from "../utils/request";
 import ImagePreview from "./ImagePreview";
@@ -22,10 +22,11 @@ interface CameraContainerProps {
 
 const CameraContainer = (): JSX.Element => {
   const { t } = useTranslation();
-  const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+
   const { supervisionId = "0" } = useParams<CameraContainerProps>();
+  const { selectedSupervisionDetail, images = [] } = useTypedSelector((state: RootState) => state.supervisionReducer);
 
   const [isImagePreviewOpen, setImagePreviewOpen] = useState<boolean>(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
@@ -34,8 +35,6 @@ const CameraContainer = (): JSX.Element => {
     setImagePreviewOpen(isOpen);
     setImagePreviewUrl(imageUrl || imagePreviewUrl);
   };
-
-  const { selectedSupervisionDetail, images = [] } = crossingProps;
 
   const { images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
@@ -61,7 +60,7 @@ const CameraContainer = (): JSX.Element => {
       const uuid = uuidv4();
       const fname = `image_${uuid}.jpg`;
       dispatch({
-        type: crossingActions.SAVE_IMAGES,
+        type: supervisionActions.SAVE_IMAGES,
         payload: [...images, { id: uuid, filename: fname, dataUrl: image.dataUrl, date: now }],
       });
     } catch (err) {
@@ -72,7 +71,7 @@ const CameraContainer = (): JSX.Element => {
 
   const removeImageItem = (uuid: string) => {
     const imagesToEdit = images.filter((image) => image.id !== uuid);
-    dispatch({ type: crossingActions.SAVE_IMAGES, payload: imagesToEdit });
+    dispatch({ type: supervisionActions.SAVE_IMAGES, payload: imagesToEdit });
   };
 
   const deleteImageObject = (objectKey: string) => {

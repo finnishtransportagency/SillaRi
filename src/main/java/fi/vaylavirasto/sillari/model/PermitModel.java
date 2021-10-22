@@ -23,7 +23,6 @@ public class PermitModel {
     private AxleChartModel axleChart;
     private List<RouteModel> routes;
 
-    // For mapping purposes only
+    // Parent
     private CompanyModel company;
-    private List<AxleModel> axles;
 }
