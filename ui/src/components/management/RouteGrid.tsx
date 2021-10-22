@@ -96,11 +96,14 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
               }
             }
           })
+          /*
           .sort((a, b) => {
             const am = moment(a.plannedDepartureTime);
             const bm = moment(b.plannedDepartureTime);
             return bm.diff(am, "seconds");
           })
+          */
+          .sort((a, b) => b.id - a.id)
           .map((routeTransport, index) => {
             const key = `routetransport_${index}`;
             const { id: routeTransportId, currentStatus, route, supervisions } = routeTransport;
