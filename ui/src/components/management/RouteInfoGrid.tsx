@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
-import { IonCol, IonGrid, IonIcon, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
-import { flagOutline } from "ionicons/icons";
+import { IonCol, IonGrid, IonIcon, IonRouterLink, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
+import { flag } from "ionicons/icons";
 import moment from "moment";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
@@ -166,8 +166,10 @@ const RouteInfoGrid = ({
             <IonRow className="ion-margin">
               <IonCol size="12" size-lg="5" />
               <IonCol size="12" size-lg="7">
-                <IonText>{`${t("management.addTransport.routeInfo.showRouteOnMap")} `}</IonText>
-                <IonIcon icon={flagOutline} />
+                <IonRouterLink routerLink={`/routemap/${selectedRouteId}`}>
+                  <IonText>{`${t("management.addTransport.routeInfo.showRouteOnMap")} `}</IonText>
+                  <IonIcon icon={flag} />
+                </IonRouterLink>
               </IonCol>
             </IonRow>
           </IonGrid>
