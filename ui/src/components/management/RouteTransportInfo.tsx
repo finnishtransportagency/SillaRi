@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { IonButton, IonCol, IonGrid, IonItemDivider, IonRow, IonText } from "@ionic/react";
@@ -39,6 +39,7 @@ const RouteTransportInfo = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
+  const queryClient = useQueryClient();
 
   const { companyId, permitNumber, validStartDate, validEndDate, routes = [] } = permit || {};
 
@@ -49,7 +50,9 @@ const RouteTransportInfo = ({
     onSuccess: () => {
       // TODO - move toast to avoid error?
       setToastMessage(t("management.addTransport.saved"));
-      // TODO - refresh main page
+
+      // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
+      queryClient.invalidateQueries("getRouteTransportsOfPermit");
       history.replace(`/management/${companyId}`);
     },
   });
@@ -58,7 +61,9 @@ const RouteTransportInfo = ({
     onSuccess: () => {
       // TODO - move toast to avoid error?
       setToastMessage(t("management.addTransport.saved"));
-      // TODO - refresh main page
+
+      // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
+      queryClient.invalidateQueries("getRouteTransportsOfPermit");
       history.replace(`/management/${companyId}`);
     },
   });
@@ -168,7 +173,7 @@ const RouteTransportInfo = ({
           </IonButton>
         </IonCol>
         <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-          <IonButton color="primary" disabled={isSendingTransportUpdate} onClick={saveRouteTransport}>
+          <IonButton color="primary" disabled={isSendingTransportUpdate || !selectedRouteOption} onClick={saveRouteTransport}>
             <IonText>{t("common.buttons.save")}</IonText>
           </IonButton>
         </IonCol>
