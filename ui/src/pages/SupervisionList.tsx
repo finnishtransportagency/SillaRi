@@ -9,6 +9,7 @@ import ISupervisionDay from "../interfaces/ISupervisionDay";
 import { DATE_FORMAT } from "../utils/constants";
 import Moment from "react-moment";
 import BridgeCard from "../components/BridgeCard";
+import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
 import { groupSupervisionsByDate } from "../utils/supervisionUtil";
 
@@ -45,7 +46,7 @@ const SupervisionList = (): JSX.Element => {
                 <div className="listContainer">
                   {supervisionDay.supervisions.map((supervision: ISupervision, bIndex) => {
                     const bridgeKey = `bridge_${bIndex}`;
-                    return <BridgeCard key={bridgeKey} routeBridge={supervision.routeBridge} />;
+                    return <BridgeCard key={bridgeKey} routeBridge={supervision.routeBridge as IRouteBridge} />;
                   })}
                 </div>
               </IonLabel>

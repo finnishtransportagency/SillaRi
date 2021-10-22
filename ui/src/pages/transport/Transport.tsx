@@ -20,15 +20,18 @@ const Transport = (): JSX.Element => {
   const management = useTypedSelector((state) => state.managementReducer);
 
   const {
-    selectedRouteTransportDetail,
     networkStatus: { isFailed = {} },
   } = management;
 
   const { routeTransportId = "3" } = useParams<TransportProps>();
 
-  useQuery(["getRouteTransport", routeTransportId], () => getRouteTransport(Number(routeTransportId), dispatch), {
-    retry: onRetry,
-  });
+  const { data: selectedRouteTransportDetail } = useQuery(
+    ["getRouteTransport", routeTransportId],
+    () => getRouteTransport(Number(routeTransportId), dispatch),
+    {
+      retry: onRetry,
+    }
+  );
 
   const noNetworkNoData = isFailed.getRouteTransport && selectedRouteTransportDetail === undefined;
 
@@ -36,11 +39,11 @@ const Transport = (): JSX.Element => {
     <IonPage>
       <Header title={t("transports.transport.header.title")} somethingFailed={isFailed.getCompany} />
       <IonContent color="light">
-        {noNetworkNoData || !selectedRouteTransportDetail ? (
+        {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (
           <div>
-            <h3>{selectedRouteTransportDetail[Number(routeTransportId)].id}</h3>
+            <h3>{selectedRouteTransportDetail ? selectedRouteTransportDetail.id : ""}</h3>
             <div>Reitin tiedot tähän...</div>
           </div>
         )}

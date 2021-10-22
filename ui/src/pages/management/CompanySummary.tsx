@@ -22,13 +22,15 @@ const CompanySummary = (): JSX.Element => {
 
   const management = useTypedSelector((state) => state.managementReducer);
   const {
-    selectedCompanyDetail,
     networkStatus: { isFailed = {} },
   } = management;
-  const { name = "", permits = [] } = selectedCompanyDetail || {};
   const { companyId = "0" } = useParams<CompanySummaryProps>();
 
-  useQuery(["getCompany", companyId], () => getCompany(Number(companyId), dispatch, selectedCompanyDetail), { retry: onRetry });
+  const { data: selectedCompanyDetail } = useQuery(["getCompany", companyId], () => getCompany(Number(companyId), dispatch), {
+    retry: onRetry,
+  });
+
+  const { name = "", permits = [] } = selectedCompanyDetail || {};
 
   const noNetworkNoData = isFailed.getCompany && selectedCompanyDetail === undefined;
 
