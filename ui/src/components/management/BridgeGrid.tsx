@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { IonCol, IonGrid, IonItem, IonLabel, IonRadio, IonRadioGroup, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
+import Moment from "react-moment";
 import moment from "moment";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
@@ -8,7 +9,7 @@ import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import ISupervisor from "../../interfaces/ISupervisor";
-import { SupervisorType } from "../../utils/constants";
+import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 import "./BridgeGrid.css";
 
 interface BridgeGridProps {
@@ -26,7 +27,8 @@ const BridgeGrid = ({
 }: BridgeGridProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { supervisions = [] } = modifiedRouteTransportDetail || {};
+  const { supervisions = [], currentStatus } = modifiedRouteTransportDetail || {};
+  const { status } = currentStatus || {};
   const { routeBridges = [] } = selectedRouteOption || {};
 
   const modifySupervisions = (routeBridgeId: number, modifiedSupervision: ISupervision) => {
@@ -126,6 +128,8 @@ const BridgeGrid = ({
           const estimatedCrossingTime = moment(plannedTime);
           const supervisor1 = supervisionSupervisors.find((s) => s.priority === 1);
           const supervisor2 = supervisionSupervisors.find((s) => s.priority === 2);
+          const { firstName: firstName1 = "", lastName: lastName1 = "" } = supervisor1 || {};
+          const { firstName: firstName2 = "", lastName: lastName2 = "" } = supervisor2 || {};
           const key = `bridge_${index}`;
 
           return (
@@ -150,10 +154,16 @@ const BridgeGrid = ({
                   </IonRow>
                   <IonRow>
                     <IonCol>
-                      <DatePicker value={estimatedCrossingTime.toDate()} onChange={(value) => setEstimatedCrossingTime(supervision, value)} />
+                      {status === TransportStatus.PLANNED && (
+                        <DatePicker value={estimatedCrossingTime.toDate()} onChange={(value) => setEstimatedCrossingTime(supervision, value)} />
+                      )}
+                      {status !== TransportStatus.PLANNED && <Moment format={DATE_FORMAT}>{estimatedCrossingTime}</Moment>}
                     </IonCol>
                     <IonCol>
-                      <TimePicker value={estimatedCrossingTime.toDate()} onChange={(value) => setEstimatedCrossingTime(supervision, value)} />
+                      {status === TransportStatus.PLANNED && (
+                        <TimePicker value={estimatedCrossingTime.toDate()} onChange={(value) => setEstimatedCrossingTime(supervision, value)} />
+                      )}
+                      {status !== TransportStatus.PLANNED && <Moment format={TIME_FORMAT_MIN}>{estimatedCrossingTime}</Moment>}
                     </IonCol>
                   </IonRow>
 
@@ -164,16 +174,28 @@ const BridgeGrid = ({
                   </IonRow>
                   <IonRow>
                     <IonCol size="12">
-                      <IonRadioGroup name="supervisorType" value={supervisorType} onIonChange={(e) => setSupervisorType(supervision, e.detail.value)}>
-                        <IonItem lines="none">
-                          <IonRadio slot="start" value={SupervisorType.OWN_SUPERVISOR} />
-                          <IonLabel>{t("management.addTransport.bridgeInfo.ownSupervisor")}</IonLabel>
-                        </IonItem>
-                        <IonItem lines="none">
-                          <IonRadio slot="start" value={SupervisorType.AREA_CONTRACTOR} />
-                          <IonLabel>{t("management.addTransport.bridgeInfo.contractor")}</IonLabel>
-                        </IonItem>
-                      </IonRadioGroup>
+                      {status === TransportStatus.PLANNED && (
+                        <IonRadioGroup
+                          name="supervisorType"
+                          value={supervisorType}
+                          onIonChange={(e) => setSupervisorType(supervision, e.detail.value)}
+                        >
+                          <IonItem lines="none">
+                            <IonRadio slot="start" value={SupervisorType.OWN_SUPERVISOR} />
+                            <IonLabel>{t("management.addTransport.bridgeInfo.ownSupervisor")}</IonLabel>
+                          </IonItem>
+                          <IonItem lines="none">
+                            <IonRadio slot="start" value={SupervisorType.AREA_CONTRACTOR} />
+                            <IonLabel>{t("management.addTransport.bridgeInfo.contractor")}</IonLabel>
+                          </IonItem>
+                        </IonRadioGroup>
+                      )}
+                      {status !== TransportStatus.PLANNED && (
+                        <IonText>
+                          {supervisorType === SupervisorType.OWN_SUPERVISOR && t("management.addTransport.bridgeInfo.ownSupervisor")}
+                          {supervisorType === SupervisorType.AREA_CONTRACTOR && t("management.addTransport.bridgeInfo.contractor")}
+                        </IonText>
+                      )}
                     </IonCol>
                   </IonRow>
                 </IonGrid>
@@ -190,7 +212,10 @@ const BridgeGrid = ({
                     <IonCol size="1" className="ion-hide-lg-down">
                       <IonText>1.</IonText>
                     </IonCol>
-                    <IonCol>{supervisorSelect(supervision, 1, supervisor1)}</IonCol>
+                    <IonCol>
+                      {status === TransportStatus.PLANNED && supervisorSelect(supervision, 1, supervisor1)}
+                      {status !== TransportStatus.PLANNED && <IonText>{`${firstName1} ${lastName1}`}</IonText>}
+                    </IonCol>
                   </IonRow>
 
                   <IonRow className="ion-margin-top">
@@ -202,7 +227,10 @@ const BridgeGrid = ({
                     <IonCol size="1" className="ion-hide-lg-down">
                       <IonText>2.</IonText>
                     </IonCol>
-                    <IonCol>{supervisorSelect(supervision, 2, supervisor2)}</IonCol>
+                    <IonCol>
+                      {status === TransportStatus.PLANNED && supervisorSelect(supervision, 2, supervisor1)}
+                      {status !== TransportStatus.PLANNED && <IonText>{`${firstName2} ${lastName2}`}</IonText>}
+                    </IonCol>
                   </IonRow>
                 </IonGrid>
               </IonCol>
