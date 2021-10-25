@@ -122,4 +122,8 @@ public class RouteTransportService {
         routeTransportRepository.updateRouteTransport(routeTransportModel);
         return getRouteTransport(routeTransportModel.getId());
     }
+
+    public void deleteRouteTransport(RouteTransportModel routeTransportModel) {
+        routeTransportRepository.deleteRouteTransport(routeTransportModel);
+    }
 }

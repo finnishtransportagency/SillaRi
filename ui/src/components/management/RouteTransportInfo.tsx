@@ -9,7 +9,7 @@ import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervisor from "../../interfaces/ISupervisor";
-import { onRetry, sendRouteTransportPlanned, sendRouteTransportUpdate } from "../../utils/managementBackendData";
+import { createRouteTransport, deleteRouteTransport, onRetry, updateRouteTransport } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
 import BridgeGrid from "./BridgeGrid";
 import RouteInfoGrid from "./RouteInfoGrid";
@@ -45,7 +45,7 @@ const RouteTransportInfo = ({
 
   // Set-up mutations for modifying data later
   // TODO - handle errors
-  const routeTransportPlannedMutation = useMutation((transport: IRouteTransport) => sendRouteTransportPlanned(transport, dispatch), {
+  const routeTransportPlannedMutation = useMutation((transport: IRouteTransport) => createRouteTransport(transport, dispatch), {
     retry: onRetry,
     onSuccess: () => {
       // TODO - move toast to avoid error?
@@ -56,11 +56,22 @@ const RouteTransportInfo = ({
       history.replace(`/management/${companyId}`);
     },
   });
-  const routeTransportUpdateMutation = useMutation((transport: IRouteTransport) => sendRouteTransportUpdate(transport, dispatch), {
+  const routeTransportUpdateMutation = useMutation((transport: IRouteTransport) => updateRouteTransport(transport, dispatch), {
     retry: onRetry,
     onSuccess: () => {
       // TODO - move toast to avoid error?
       setToastMessage(t("management.addTransport.saved"));
+
+      // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
+      queryClient.invalidateQueries("getRouteTransportsOfPermit");
+      history.replace(`/management/${companyId}`);
+    },
+  });
+  const routeTransportDeleteMutation = useMutation((routeTransportIdToDelete: number) => deleteRouteTransport(routeTransportIdToDelete, dispatch), {
+    retry: onRetry,
+    onSuccess: () => {
+      // TODO - move toast to avoid error?
+      setToastMessage(t("management.addTransport.deleted"));
 
       // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
       queryClient.invalidateQueries("getRouteTransportsOfPermit");
@@ -69,12 +80,19 @@ const RouteTransportInfo = ({
   });
 
   const { isLoading: isSendingTransportUpdate } = routeTransportUpdateMutation;
+  const { isLoading: isDeletingTransport } = routeTransportDeleteMutation;
 
-  const saveRouteTransport = () => {
+  const saveRouteTransportDetail = () => {
     if (!!routeTransportId && routeTransportId > 0) {
       routeTransportUpdateMutation.mutate(modifiedRouteTransportDetail);
     } else {
       routeTransportPlannedMutation.mutate(modifiedRouteTransportDetail);
+    }
+  };
+
+  const deleteRouteTransportDetail = () => {
+    if (!!routeTransportId && routeTransportId > 0) {
+      routeTransportDeleteMutation.mutate(routeTransportId);
     }
   };
 
@@ -162,18 +180,26 @@ const RouteTransportInfo = ({
       <IonRow className="ion-margin ion-justify-content-end">
         {!!routeTransportId && routeTransportId > 0 && (
           <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-            <IonButton color="tertiary" disabled>
+            <IonButton
+              color="tertiary"
+              disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption}
+              onClick={deleteRouteTransportDetail}
+            >
               <IonText>{t("management.addTransport.buttons.deleteTransport")}</IonText>
             </IonButton>
           </IonCol>
         )}
         <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-          <IonButton color="secondary" onClick={() => history.goBack()}>
+          <IonButton color="secondary" disabled={isSendingTransportUpdate || isDeletingTransport} onClick={() => history.goBack()}>
             <IonText>{t("common.buttons.cancel")}</IonText>
           </IonButton>
         </IonCol>
         <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-          <IonButton color="primary" disabled={isSendingTransportUpdate || !selectedRouteOption} onClick={saveRouteTransport}>
+          <IonButton
+            color="primary"
+            disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption}
+            onClick={saveRouteTransportDetail}
+          >
             <IonText>{t("common.buttons.save")}</IonText>
           </IonButton>
         </IonCol>

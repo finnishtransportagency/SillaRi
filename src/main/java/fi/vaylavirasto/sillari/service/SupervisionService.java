@@ -84,6 +84,10 @@ public class SupervisionService {
         return getSupervision(supervisionId);
     }
 
+    public void deleteSupervision(SupervisionModel supervisionModel) {
+        supervisionRepository.deleteSupervision(supervisionModel);
+    }
+
     // Adds the status IN_PROGRESS and creates a new supervision report
     public SupervisionModel startSupervision(Integer supervisionId) {
         supervisionReportRepository.createSupervisionReport(supervisionId);

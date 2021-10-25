@@ -199,6 +199,7 @@
         "deleteTransport": "(SV) Delete transport"
       },
       "saved": "(SV) Saved",
+      "deleted": "(SV) Deleted",
       "routeInfo": {
         "estimatedDepartureDate": "(SV) Estimated departure date",
         "estimatedDepartureTime": "(SV) Estimated departure time",

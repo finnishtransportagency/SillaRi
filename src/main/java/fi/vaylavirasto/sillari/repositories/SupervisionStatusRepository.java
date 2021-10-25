@@ -47,4 +47,9 @@ public class SupervisionStatusRepository {
                 .execute();
     }
 
+    public void deleteSupervisionStatuses(DSLContext ctx, Integer supervisionId) {
+        ctx.deleteFrom(TableAlias.supervisionStatus)
+                .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(supervisionId))
+                .execute();
+    }
 }

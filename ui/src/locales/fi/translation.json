@@ -200,6 +200,7 @@
         "deleteTransport": "Poista kuljetus"
       },
       "saved": "Tallennettu",
+      "deleted": "Poistettu",
       "routeInfo": {
         "estimatedDepartureDate": "Arvioitu lähtöpäivä",
         "estimatedDepartureTime": "Arvioitu lähtöaika",
