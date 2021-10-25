@@ -10,11 +10,9 @@ import SupervisionFooter from "../components/SupervisionFooter";
 import SupervisionHeader from "../components/SupervisionHeader";
 import SupervisionObservations from "../components/SupervisionObservations";
 import SupervisionPhotos from "../components/SupervisionPhotos";
-import IPermit from "../interfaces/IPermit";
-import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector } from "../store/store";
-import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry, sendSupervisionStarted } from "../utils/backendData";
+import { getSupervision, onRetry, startSupervision } from "../utils/supervisionBackendData";
 
 interface SupervisionProps {
   supervisionId: string;
@@ -26,13 +24,11 @@ const Supervision = (): JSX.Element => {
   const { supervisionId = "0" } = useParams<SupervisionProps>();
 
   const {
-    selectedPermitDetail,
-    selectedBridgeDetail,
     selectedSupervisionDetail,
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.crossingsReducer);
-  const { routeBridgeId = "0", report } = selectedSupervisionDetail || {};
+  } = useTypedSelector((state) => state.supervisionReducer);
 
+  const { report } = selectedSupervisionDetail || {};
   const { id: supervisionReportId = -1 } = report || {};
 
   // Added query to clear previous supervision from Redux store, otherwise that one is used
@@ -42,17 +38,8 @@ const Supervision = (): JSX.Element => {
     { retry: onRetry }
   );
 
-  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
-    retry: onRetry,
-    enabled: Number(routeBridgeId) > 0,
-  });
-  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
-    retry: onRetry,
-    enabled: Number(routeBridgeId) > 0,
-  });
-
   // Set-up mutations for modifying data later
-  const supervisionStartMutation = useMutation((superId: number) => sendSupervisionStarted(superId, dispatch), { retry: onRetry });
+  const supervisionStartMutation = useMutation((superId: number) => startSupervision(superId, dispatch), { retry: onRetry });
 
   // Start the supervision if not already done
   const { isLoading: isSendingSupervisionStart } = supervisionStartMutation;
@@ -60,29 +47,17 @@ const Supervision = (): JSX.Element => {
     supervisionStartMutation.mutate(Number(supervisionId));
   }
 
-  const noNetworkNoData =
-    (isFailed.getSupervision && selectedSupervisionDetail === undefined) ||
-    (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
-    (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);
+  const noNetworkNoData = isFailed.getSupervision && selectedSupervisionDetail === undefined;
 
   return (
     <IonPage>
-      <Header
-        title={t("supervision.title")}
-        somethingFailed={isFailed.getSupervision || isFailed.getRouteBridge || isFailed.getPermitOfRouteBridge}
-      />
+      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} />
       <IonContent fullscreen>
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (
           <>
-            <SupervisionHeader
-              permit={selectedPermitDetail as IPermit}
-              routeBridge={selectedBridgeDetail as IRouteBridge}
-              supervision={selectedSupervisionDetail as ISupervision}
-              className="header"
-              isCrossingInstructionsIncluded
-            />
+            <SupervisionHeader supervision={selectedSupervisionDetail as ISupervision} className="header" isCrossingInstructionsIncluded />
             <SupervisionPhotos supervision={selectedSupervisionDetail as ISupervision} headingKey="supervision.photosDrivingLine" isButtonsIncluded />
             <SupervisionObservations supervision={selectedSupervisionDetail as ISupervision} />
             <SupervisionFooter supervision={selectedSupervisionDetail as ISupervision} draft />

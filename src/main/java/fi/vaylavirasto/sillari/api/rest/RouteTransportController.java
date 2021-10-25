@@ -56,6 +56,19 @@ public class RouteTransportController {
         }
     }
 
+    @Operation(summary = "Get route transport of supervisor, with supervisions and route data")
+    @GetMapping(value = "/getroutetransportofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getRouteTransportOfSupervisor(@RequestParam Integer routeTransportId, String username) {
+        ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportOfSupervisor");
+        try {
+            RouteTransportModel routeTransport = routeTransportService.getRouteTransportOfSupervisor(routeTransportId, username);
+            return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Create route transport")
     @PostMapping(value = "/createroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
@@ -64,7 +77,7 @@ public class RouteTransportController {
         try {
             RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
-            if (routeTransport.getSupervisions() != null) {
+            if (routeTransport.getSupervisions() != null && insertedRouteTransport != null) {
                 routeTransport.getSupervisions().forEach(supervisionModel -> {
                     supervisionModel.setRouteTransportId(insertedRouteTransport.getId());
 
@@ -76,8 +89,12 @@ public class RouteTransportController {
                 });
             }
 
-            RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(insertedRouteTransport.getId());
-            return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            if (insertedRouteTransport != null) {
+                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(insertedRouteTransport.getId());
+                return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            } else {
+                return ResponseEntity.ok().body(new EmptyJsonResponse());
+            }
         } finally {
             serviceMetric.end();
         }
@@ -101,8 +118,12 @@ public class RouteTransportController {
                 });
             }
 
-            RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(updatedTransportModel.getId());
-            return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            if (updatedTransportModel != null) {
+                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(updatedTransportModel.getId());
+                return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            } else {
+                return ResponseEntity.ok().body(new EmptyJsonResponse());
+            }
         } finally {
             serviceMetric.end();
         }

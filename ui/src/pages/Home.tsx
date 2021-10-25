@@ -5,24 +5,32 @@ import { useDispatch } from "react-redux";
 import type { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton, IonSlide, IonSlides } from "@ionic/react";
 import Header from "../components/Header";
-import CompanyCardList from "../components/CompanyCardList";
 import { useTypedSelector } from "../store/store";
-import { getCompanyList, onRetry } from "../utils/backendData";
-import SupervisionList from "./SupervisionList";
+import { getCompanyTransportsList, getSupervisionList, onRetry } from "../utils/supervisionBackendData";
+import SupervisionList from "../components/SupervisionList";
 import "./Home.css";
+import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion";
 
 const Home = (): JSX.Element => {
   const { t } = useTranslation();
-  const [currentSegment, setCurrentSegment] = useState<string>("0");
-  const slidesRef = useRef<HTMLIonSlidesElement>(null);
-  const crossings = useTypedSelector((state) => state.crossingsReducer);
-  const {
-    companyList = [],
-    networkStatus: { isFailed = {} },
-  } = crossings;
   const dispatch = useDispatch();
 
-  useQuery(["getCompanyList"], () => getCompanyList(dispatch), { retry: onRetry });
+  const [currentSegment, setCurrentSegment] = useState<string>("0");
+  const slidesRef = useRef<HTMLIonSlidesElement>(null);
+
+  const {
+    companyTransportsList = [],
+    supervisionList = [],
+    networkStatus: { isFailed = {} },
+  } = useTypedSelector((state) => state.supervisionReducer);
+
+  const transportsCount = companyTransportsList.map((ct) => (ct.transports ? ct.transports.length : 0)).reduce((prev, next) => prev + next, 0);
+
+  // TODO use logged in user
+  const supervisorUser = "USER1";
+
+  useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(supervisorUser, dispatch), { retry: onRetry });
+  useQuery(["getSupervisionList"], () => getSupervisionList(supervisorUser, dispatch), { retry: onRetry });
 
   const changeSlide = (evt: CustomEvent<SegmentChangeEventDetail>) => {
     if (slidesRef.current) {
@@ -37,26 +45,27 @@ const Home = (): JSX.Element => {
     }
   };
 
-  const noNetworkNoData = isFailed.getCompanyList && companyList.length === 0;
+  const noNetworkNoData =
+    (isFailed.getCompanyTransportsList && companyTransportsList.length === 0) || (isFailed.getSupervisionList && supervisionList.length === 0);
 
   return (
     <IonPage>
-      <Header title={t("main.header.title")} somethingFailed={isFailed.getCompanyList} />
+      <Header title={t("main.header.title")} somethingFailed={isFailed.getCompanyTransportsList || isFailed.getSupervisionList} />
       <IonSegment className="mainSegment" value={currentSegment} onIonChange={changeSlide}>
         <IonSegmentButton className="mainSegmentButton" value="0">
-          <IonLabel>{`${t("main.tab.transportCompanies")} (${companyList.length})`}</IonLabel>
+          <IonLabel>{`${t("main.tab.transports")} (${transportsCount})`}</IonLabel>
         </IonSegmentButton>
         <IonSegmentButton className="mainSegmentButton" value="1">
-          <IonLabel>{`${t("main.tab.upcomingBridges")} (0)`}</IonLabel>
+          <IonLabel>{`${t("main.tab.bridges")} (${supervisionList.length})`}</IonLabel>
         </IonSegmentButton>
       </IonSegment>
       <IonContent>
         <IonSlides ref={slidesRef} onIonSlideDidChange={changeSegment}>
           <IonSlide>
-            <CompanyCardList companyList={companyList} noNetworkNoData={noNetworkNoData} />
+            <CompanyTransportsAccordion companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
           <IonSlide>
-            <SupervisionList />
+            <SupervisionList supervisionList={supervisionList} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
         </IonSlides>
       </IonContent>

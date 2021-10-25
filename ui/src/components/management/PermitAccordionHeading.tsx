@@ -6,7 +6,6 @@ import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/rea
 import { add } from "ionicons/icons";
 import Moment from "react-moment";
 import IPermit from "../../interfaces/IPermit";
-import { useTypedSelector } from "../../store/store";
 import { getRouteTransportsOfPermit, onRetry } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
 
@@ -20,12 +19,13 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps): JSX.El
 
   const { id: permitId, permitNumber, validStartDate, validEndDate } = permit;
 
-  const management = useTypedSelector((state) => state.managementReducer);
-  const { routeTransportList = [] } = management;
-
-  useQuery(["getRouteTransportsOfPermit", permitId], () => getRouteTransportsOfPermit(Number(permitId), dispatch), {
-    retry: onRetry,
-  });
+  const { data: routeTransportList } = useQuery(
+    ["getRouteTransportsOfPermit", permitId],
+    () => getRouteTransportsOfPermit(Number(permitId), dispatch),
+    {
+      retry: onRetry,
+    }
+  );
 
   return (
     <IonGrid className="ion-no-padding">
@@ -49,7 +49,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps): JSX.El
           </IonGrid>
         </IonCol>
         <IonCol>
-          <IonText>{`${t("management.companySummary.transports")}: ${routeTransportList.length}`}</IonText>
+          <IonText>{`${t("management.companySummary.transports")}: ${routeTransportList ? routeTransportList.length : 0}`}</IonText>
         </IonCol>
         <IonCol className="ion-hide-md-down">
           <IonButton

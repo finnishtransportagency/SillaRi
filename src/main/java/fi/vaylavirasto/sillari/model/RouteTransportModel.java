@@ -17,15 +17,35 @@ public class RouteTransportModel {
     private RouteModel route;
     private List<SupervisionModel> supervisions;
 
+    private OffsetDateTime departureTime; // First DEPARTED in statusHistory
+    private OffsetDateTime arrivalTime; // First ARRIVED in statusHistory
+
     public void setStatusHistory(List<RouteTransportStatusModel> statusHistory) {
         this.statusHistory = statusHistory;
 
         if (statusHistory != null && !statusHistory.isEmpty()) {
             this.setCurrentStatus(statusHistory);
+            this.setStatusTimes(statusHistory);
         }
     }
 
     private void setCurrentStatus(List<RouteTransportStatusModel> statusHistory) {
         this.currentStatus = statusHistory.stream().max(Comparator.comparing(RouteTransportStatusModel::getTime)).orElse(null);
     }
+
+    private void setStatusTimes(List<RouteTransportStatusModel> statusHistory) {
+        OffsetDateTime departureTime = statusHistory.stream()
+                .filter(model -> TransportStatusType.DEPARTED.equals(model.getStatus()))
+                .min(Comparator.comparing(RouteTransportStatusModel::getTime))
+                .map(RouteTransportStatusModel::getTime).orElse(null);
+
+        OffsetDateTime arrivalTime = statusHistory.stream()
+                .filter(model -> TransportStatusType.ARRIVED.equals(model.getStatus()))
+                .min(Comparator.comparing(RouteTransportStatusModel::getTime))
+                .map(RouteTransportStatusModel::getTime).orElse(null);
+
+        this.departureTime = departureTime;
+        this.arrivalTime = arrivalTime;
+    }
+
 }

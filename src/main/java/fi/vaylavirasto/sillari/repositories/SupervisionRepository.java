@@ -1,12 +1,16 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.mapper.SimpleSupervisionMapper;
+import fi.vaylavirasto.sillari.mapper.BridgeMapper;
+import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.mapper.SupervisionMapper;
+import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
@@ -27,52 +31,80 @@ public class SupervisionRepository {
     SupervisionStatusRepository supervisionStatusRepository;
 
     public SupervisionModel getSupervisionById(Integer id) {
-        return dsl.selectFrom(SimpleSupervisionMapper.supervision)
-                .where(SimpleSupervisionMapper.supervision.ID.eq(id))
-                .fetchOne(new SimpleSupervisionMapper());
-    }
-    public List<SupervisionModel> getSupervisionsByRouteBridgeId(Integer routeBridgeId) {
-        return dsl.selectFrom(SimpleSupervisionMapper.supervision)
-                .where(SimpleSupervisionMapper.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
-                .fetch(new SimpleSupervisionMapper());
+        return dsl.select().from(TableAlias.supervision)
+                .leftJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
+                .leftJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
+                .where(TableAlias.supervision.ID.eq(id))
+                .fetchOne(this::mapSupervisionWithRouteBridgeAndBridge);
     }
 
     public List<SupervisionModel> getSupervisionsByRouteTransportId(Integer routeTransportId) {
-        return dsl.select().from(SimpleSupervisionMapper.supervision)
-                .where(SimpleSupervisionMapper.supervision.ROUTE_TRANSPORT_ID.eq(routeTransportId))
-                .fetch(new SimpleSupervisionMapper());
+        return dsl.select().from(TableAlias.supervision)
+                .where(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(routeTransportId))
+                .fetch(new SupervisionMapper());
+    }
+
+    public List<SupervisionModel> getSupervisionsByRouteBridgeId(Integer routeBridgeId) {
+        return dsl.select().from(TableAlias.supervision)
+                .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
+                .fetch(new SupervisionMapper());
     }
 
     public List<SupervisionModel> getSupervisionsBySupervisorUsername(String username) {
-        return dsl.select().from(SupervisionMapper.supervision)
-                .innerJoin(SupervisionMapper.supervisionSupervisor).on(SupervisionMapper.supervision.ID.eq(SupervisionMapper.supervisionSupervisor.SUPERVISION_ID))
-                .innerJoin(SupervisionMapper.routeTransport).on(SupervisionMapper.supervision.ROUTE_TRANSPORT_ID.eq(SupervisionMapper.routeTransport.ID))
-                .innerJoin(SupervisionMapper.routeBridge).on(SupervisionMapper.supervision.ROUTE_BRIDGE_ID.eq(SupervisionMapper.routeBridge.ID))
-                .innerJoin(SupervisionMapper.bridge).on(SupervisionMapper.routeBridge.BRIDGE_ID.eq(SupervisionMapper.bridge.ID))
-                .innerJoin(SupervisionMapper.route).on(SupervisionMapper.routeBridge.ROUTE_ID.eq(SupervisionMapper.route.ID))
-                .innerJoin(SupervisionMapper.permit).on(SupervisionMapper.route.PERMIT_ID.eq(SupervisionMapper.permit.ID))
-                .where(SupervisionMapper.supervisionSupervisor.USERNAME.eq(username))
-                .orderBy(SupervisionMapper.supervision.PLANNED_TIME)
-                .fetch(new SupervisionMapper());
+        return dsl.select().from(TableAlias.supervision)
+                .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
+                .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
+                .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
+                .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
+                .orderBy(TableAlias.supervision.PLANNED_TIME)
+                .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
+    }
+
+    public List<SupervisionModel> getSupervisionsByRouteTransportAndSupervisorUsername(Integer routeTransportId, String username) {
+        return dsl.select().from(TableAlias.supervision)
+                .innerJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))
+                .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
+                .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
+                .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
+                .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
+                .and(TableAlias.routeTransport.ID.eq(routeTransportId))
+                .orderBy(TableAlias.supervision.PLANNED_TIME) // TODO change to routeBridge.bridgeOrder when it's added to Lelu API
+                .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
+    }
+
+    private SupervisionModel mapSupervisionWithRouteBridgeAndBridge(Record record) {
+        SupervisionMapper supervisionMapper = new SupervisionMapper();
+        SupervisionModel supervision = supervisionMapper.map(record);
+        if (supervision != null) {
+            RouteBridgeMapper routeBridgeMapper = new RouteBridgeMapper();
+            RouteBridgeModel routeBridge = routeBridgeMapper.map(record);
+            supervision.setRouteBridge(routeBridge);
+
+            if (routeBridge != null) {
+                BridgeMapper bridgeMapper = new BridgeMapper();
+                routeBridge.setBridge(bridgeMapper.map(record));
+            }
+        }
+        return supervision;
     }
 
     public Integer createSupervision(SupervisionModel supervisionModel) throws DataAccessException {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
-            Record1<Integer> supervisionIdResult = ctx.insertInto(SimpleSupervisionMapper.supervision,
-                            SimpleSupervisionMapper.supervision.ROUTE_BRIDGE_ID,
-                            SimpleSupervisionMapper.supervision.ROUTE_TRANSPORT_ID,
-                            SimpleSupervisionMapper.supervision.PLANNED_TIME,
-                            SimpleSupervisionMapper.supervision.SUPERVISOR_TYPE,
-                            SimpleSupervisionMapper.supervision.CONFORMS_TO_PERMIT
+            Record1<Integer> supervisionIdResult = ctx.insertInto(TableAlias.supervision,
+                            TableAlias.supervision.ROUTE_BRIDGE_ID,
+                            TableAlias.supervision.ROUTE_TRANSPORT_ID,
+                            TableAlias.supervision.PLANNED_TIME,
+                            TableAlias.supervision.SUPERVISOR_TYPE,
+                            TableAlias.supervision.CONFORMS_TO_PERMIT
                     ).values(
                             supervisionModel.getRouteBridgeId(),
                             supervisionModel.getRouteTransportId(),
                             supervisionModel.getPlannedTime(),
                             supervisionModel.getSupervisorType().toString(),
                             false)
-                    .returningResult(SimpleSupervisionMapper.supervision.ID)
+                    .returningResult(TableAlias.supervision.ID)
                     .fetchOne(); // Execute and return zero or one record
 
             Integer supervisionId = supervisionIdResult != null ? supervisionIdResult.value1() : null;
@@ -92,18 +124,27 @@ public class SupervisionRepository {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
-            ctx.update(SimpleSupervisionMapper.supervision)
-                    .set(SimpleSupervisionMapper.supervision.ROUTE_TRANSPORT_ID, supervisionModel.getRouteTransportId())
-                    .set(SimpleSupervisionMapper.supervision.PLANNED_TIME, supervisionModel.getPlannedTime())
-                    .set(SimpleSupervisionMapper.supervision.CONFORMS_TO_PERMIT, supervisionModel.getConformsToPermit())
-                    .set(SimpleSupervisionMapper.supervision.SUPERVISOR_TYPE, supervisionModel.getSupervisorType().toString())
-                    .where(SimpleSupervisionMapper.supervision.ID.eq(supervisionModel.getId()))
+            ctx.update(TableAlias.supervision)
+                    .set(TableAlias.supervision.PLANNED_TIME, supervisionModel.getPlannedTime())
+                    .set(TableAlias.supervision.SUPERVISOR_TYPE, supervisionModel.getSupervisorType().toString())
+                    .where(TableAlias.supervision.ID.eq(supervisionModel.getId()))
                     .execute();
 
             supervisorRepository.deleteSupervisionSupervisors(ctx, supervisionModel.getId());
             supervisionModel.getSupervisors().forEach(supervisorModel -> {
                 supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisorModel.getId(), supervisorModel.getPriority());
             });
+        });
+    }
+
+    public void updateSupervision(Integer supervisionId, Boolean conformsToPermit) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            ctx.update(TableAlias.supervision)
+                    .set(TableAlias.supervision.CONFORMS_TO_PERMIT, conformsToPermit)
+                    .where(TableAlias.supervision.ID.eq(supervisionId))
+                    .execute();
         });
     }
 

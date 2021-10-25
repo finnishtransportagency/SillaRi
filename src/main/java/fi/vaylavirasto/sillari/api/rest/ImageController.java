@@ -4,8 +4,8 @@ import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.FileInputModel;
-import fi.vaylavirasto.sillari.model.FileModel;
-import fi.vaylavirasto.sillari.service.FileService;
+import fi.vaylavirasto.sillari.model.SupervisionImageModel;
+import fi.vaylavirasto.sillari.service.SupervisionImageService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.tika.Tika;
@@ -30,7 +30,7 @@ public class ImageController {
     @Autowired
     AWSS3Client awss3Client;
     @Autowired
-    FileService fileService;
+    SupervisionImageService supervisionImageService;
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
@@ -76,9 +76,9 @@ public class ImageController {
     @Operation(summary = "Upload image")
     @PostMapping("/upload")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public FileModel uploadImage(@RequestBody FileInputModel fileInputModel) {
+    public SupervisionImageModel uploadImage(@RequestBody FileInputModel fileInputModel) {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "uploadImage");
-        FileModel model = new FileModel();
+        SupervisionImageModel model = new SupervisionImageModel();
         try {
             model.setObjectKey("supervision/" + fileInputModel.getSupervisionId() + "/" + fileInputModel.getFilename());
             model.setFilename(fileInputModel.getFilename());
@@ -86,7 +86,7 @@ public class ImageController {
             model.setEncoding("");
             model.setTaken(fileInputModel.getTaken());
             model.setSupervisionId(Integer.parseInt(fileInputModel.getSupervisionId()));
-            model = fileService.createFile(model);
+            model = supervisionImageService.createFile(model);
 
             Tika tika = new Tika();
             int dataStart = fileInputModel.getBase64().indexOf(",") + 1;
@@ -134,7 +134,7 @@ public class ImageController {
             }
 
             // Delete the image row from the database
-            fileService.deleteFile(decodedKey);
+            supervisionImageService.deleteFile(decodedKey);
         } finally {
             serviceMetric.end();
         }

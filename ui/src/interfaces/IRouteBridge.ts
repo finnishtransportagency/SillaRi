@@ -8,5 +8,5 @@ export default interface IRouteBridge {
   route: IRoute;
   bridge: IBridge;
   crossingInstruction?: string;
-  supervision: ISupervision;
+  supervisions: ISupervision[];
 }

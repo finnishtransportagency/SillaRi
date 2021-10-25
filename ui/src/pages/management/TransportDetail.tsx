@@ -9,7 +9,9 @@ import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
 import RouteTransportInfo from "../../components/management/RouteTransportInfo";
 import IPermit from "../../interfaces/IPermit";
-import { actions as managementActions } from "../../store/managementSlice";
+import IRoute from "../../interfaces/IRoute";
+import IRouteTransport from "../../interfaces/IRouteTransport";
+import ISupervisor from "../../interfaces/ISupervisor";
 import { useTypedSelector } from "../../store/store";
 import { getPermitOfRouteTransport, getRouteTransport, getSupervisors, onRetry } from "../../utils/managementBackendData";
 
@@ -20,55 +22,55 @@ interface TransportDetailProps {
 const TransportDetail = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [toastMessage, setToastMessage] = useState("");
+  const [toastMessage, setToastMessage] = useState<string>("");
+
+  const [modifiedRouteTransportDetail, setModifiedRouteTransportDetail] = useState<IRouteTransport | undefined>(undefined);
+  const [selectedRouteOption, setSelectedRouteOption] = useState<IRoute | undefined>(undefined);
 
   const management = useTypedSelector((state) => state.managementReducer);
   const {
-    selectedPermitDetail,
-    selectedRouteTransportDetail,
-    supervisorList,
     networkStatus: { isFailed = {} },
   } = management;
 
   const { routeTransportId = "0" } = useParams<TransportDetailProps>();
 
-  const { isLoading: isLoadingTransport } = useQuery(
+  const { isLoading: isLoadingTransport, data: selectedRouteTransportDetail } = useQuery(
     ["getRouteTransport", routeTransportId],
-    () => getRouteTransport(Number(routeTransportId), dispatch, selectedRouteTransportDetail[Number(routeTransportId)]),
+    () => getRouteTransport(Number(routeTransportId), dispatch),
     {
       retry: onRetry,
       refetchOnWindowFocus: false,
     }
   );
-  const { isLoading: isLoadingPermit } = useQuery(
+  const { isLoading: isLoadingPermit, data: selectedPermitDetail } = useQuery(
     ["getPermitOfRouteTransport", routeTransportId],
-    () => getPermitOfRouteTransport(Number(routeTransportId), dispatch, selectedRouteTransportDetail[Number(routeTransportId)]),
+    () => getPermitOfRouteTransport(Number(routeTransportId), dispatch),
     {
       retry: onRetry,
       refetchOnWindowFocus: false,
     }
   );
-  useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry });
+  const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry });
 
-  const { routeId } = selectedRouteTransportDetail[Number(routeTransportId)] || {};
+  const { routeId } = selectedRouteTransportDetail || {};
 
   useEffect(() => {
-    // Copy the saved details into redux for later modifying
-    if (!isLoadingTransport) {
+    // Copy the saved details for later modifying
+    if (!isLoadingTransport && !!selectedRouteTransportDetail) {
       // Make sure the dates are objects not strings, otherwise the backend may throw a 400 Bad Request error on save
       // The backend updateRouteTransport method does not update the status values, so these can be left undefined here
-      const { plannedDepartureTime, supervisions = [] } = selectedRouteTransportDetail[Number(routeTransportId)] || {};
+      const { plannedDepartureTime, supervisions = [] } = selectedRouteTransportDetail || {};
       const modifiedSupervisions = supervisions.map((supervision) => {
-        return { ...supervision, plannedTime: moment(supervision.plannedTime).toDate() };
+        return { ...supervision, plannedTime: moment(supervision.plannedTime).toDate(), currentStatus: undefined, statusHistory: undefined };
       });
-      const modifiedRouteTransportDetail = {
-        ...selectedRouteTransportDetail[Number(routeTransportId)],
+      const modifiedRouteTransport = {
+        ...selectedRouteTransportDetail,
         plannedDepartureTime: moment(plannedDepartureTime).toDate(),
         supervisions: modifiedSupervisions,
         currentStatus: undefined,
         statusHistory: undefined,
       };
-      dispatch({ type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL, payload: modifiedRouteTransportDetail });
+      setModifiedRouteTransportDetail(modifiedRouteTransport);
     }
   }, [isLoadingTransport, selectedRouteTransportDetail, routeTransportId, dispatch]);
 
@@ -77,7 +79,7 @@ const TransportDetail = (): JSX.Element => {
       const { routes = [] } = selectedPermitDetail || {};
       const selectedRoute = routes.find((route) => route.id === routeId);
       if (selectedRoute) {
-        dispatch({ type: managementActions.SET_SELECTED_ROUTE_OPTION, payload: { routeTransportId, route: selectedRoute } });
+        setSelectedRouteOption(selectedRoute);
       }
     }
   }, [isLoadingPermit, selectedPermitDetail, routeId, routeTransportId, dispatch]);
@@ -85,7 +87,7 @@ const TransportDetail = (): JSX.Element => {
   const noNetworkNoData =
     (isFailed.getRouteTransport && selectedRouteTransportDetail === undefined) ||
     (isFailed.getPermitOfRouteTransport && selectedPermitDetail === undefined) ||
-    (isFailed.getSupervisors && supervisorList.length === 0);
+    (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
 
   return (
     <IonPage>
@@ -97,7 +99,11 @@ const TransportDetail = (): JSX.Element => {
           <RouteTransportInfo
             routeTransportId={Number(routeTransportId)}
             permit={selectedPermitDetail as IPermit}
-            supervisors={supervisorList}
+            supervisors={supervisorList as ISupervisor[]}
+            modifiedRouteTransportDetail={modifiedRouteTransportDetail as IRouteTransport}
+            setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+            selectedRouteOption={selectedRouteOption as IRoute}
+            setSelectedRouteOption={setSelectedRouteOption}
             setToastMessage={setToastMessage}
           />
         )}
