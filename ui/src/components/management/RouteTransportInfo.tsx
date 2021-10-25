@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { IonButton, IonCol, IonGrid, IonItemDivider, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonItemDivider, IonRow, IonText, useIonAlert } from "@ionic/react";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
@@ -40,6 +40,7 @@ const RouteTransportInfo = ({
   const dispatch = useDispatch();
   const history = useHistory();
   const queryClient = useQueryClient();
+  const [present] = useIonAlert();
 
   const { companyId, permitNumber, validStartDate, validEndDate, routes = [] } = permit || {};
   const { currentStatus } = modifiedRouteTransportDetail || {};
@@ -95,7 +96,12 @@ const RouteTransportInfo = ({
 
   const deleteRouteTransportDetail = () => {
     if (!!routeTransportId && routeTransportId > 0) {
-      routeTransportDeleteMutation.mutate(routeTransportId);
+      // Ask the user to confirm the delete
+      present({
+        header: t("management.addTransport.buttons.deleteTransport"),
+        message: t("management.addTransport.alert.deleteTransport"),
+        buttons: [{ text: t("common.answer.yes"), handler: () => routeTransportDeleteMutation.mutate(routeTransportId) }, t("common.answer.no")],
+      });
     }
   };
 

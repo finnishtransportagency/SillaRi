@@ -65,11 +65,11 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
       <IonRadioGroup value={drivingLineOk ? "yes" : "no"} onIonChange={(e) => radioClicked("drivingLineOk", e.detail.value)}>
         <IonItem lines="none">
           <IonItem lines="none">
-            <IonLabel>{t("supervision.answer.yes")}</IonLabel>
+            <IonLabel>{t("common.answer.yes")}</IonLabel>
             <IonRadio slot="start" value="yes" />
           </IonItem>
           <IonItem lines="none">
-            <IonLabel>{t("supervision.answer.no")}</IonLabel>
+            <IonLabel>{t("common.answer.no")}</IonLabel>
             <IonRadio slot="start" value="no" />
           </IonItem>
         </IonItem>
@@ -97,11 +97,11 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
       <IonRadioGroup value={speedLimitOk ? "yes" : "no"} onIonChange={(e) => radioClicked("speedLimitOk", e.detail.value)}>
         <IonItem lines="none">
           <IonItem lines="none">
-            <IonLabel>{t("supervision.answer.yes")}</IonLabel>
+            <IonLabel>{t("common.answer.yes")}</IonLabel>
             <IonRadio slot="start" value="yes" />
           </IonItem>
           <IonItem lines="none">
-            <IonLabel>{t("supervision.answer.no")}</IonLabel>
+            <IonLabel>{t("common.answer.no")}</IonLabel>
             <IonRadio slot="start" value="no" />
           </IonItem>
         </IonItem>
@@ -129,11 +129,11 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
       <IonRadioGroup value={anomalies ? "yes" : "no"} onIonChange={(e) => radioClicked("anomalies", e.detail.value)}>
         <IonItem lines="none">
           <IonItem lines="none">
-            <IonLabel>{t("supervision.answer.yes")}</IonLabel>
+            <IonLabel>{t("common.answer.yes")}</IonLabel>
             <IonRadio slot="start" value="yes" />
           </IonItem>
           <IonItem lines="none">
-            <IonLabel>{t("supervision.answer.no")}</IonLabel>
+            <IonLabel>{t("common.answer.no")}</IonLabel>
             <IonRadio slot="start" value="no" />
           </IonItem>
         </IonItem>

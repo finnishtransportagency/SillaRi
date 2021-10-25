@@ -8,6 +8,10 @@
       "edit": "Muokkaa",
       "save": "Tallenna",
       "send": "Lähetä"
+    },
+    "answer": {
+      "yes": "Kyllä",
+      "no": "Ei"
     }
   },
   "main": {
@@ -139,10 +143,6 @@
       "additionalInfo": "Lisätiedot",
       "placeholder": "Lisää tekstiä tähän"
     },
-    "answer": {
-      "yes": "Kyllä",
-      "no": "Ei"
-    },
     "buttons": {
       "takePhotos": "Ota valokuvia",
       "drivingLine": "Tuo ajolinja",
@@ -199,6 +199,9 @@
       "bridgesToSupervise": "Valvottavat sillat",
       "buttons": {
         "deleteTransport": "Poista kuljetus"
+      },
+      "alert": {
+        "deleteTransport": "Oletko varma, että haluat poistaa kuljetuksen?"
       },
       "saved": "Tallennettu",
       "deleted": "Poistettu",

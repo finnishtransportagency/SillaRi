@@ -8,6 +8,10 @@
       "edit": "(SV) Edit",
       "save": "(SV) Save",
       "send": "(SV) Send"
+    },
+    "answer": {
+      "yes": "Ja",
+      "no": "Nej"
     }
   },
   "main": {
@@ -138,10 +142,6 @@
       "additionalInfo": "(SV) Additional information",
       "placeholder": "(SV) Add text here"
     },
-    "answer": {
-      "yes": "(SV) Yes",
-      "no": "(SV) No"
-    },
     "buttons": {
       "takePhotos": "(SV) Take photos",
       "drivingLine": "(SV) Driving line",
@@ -198,6 +198,9 @@
       "bridgesToSupervise": "(SV) Bridges to supervise",
       "buttons": {
         "deleteTransport": "(SV) Delete transport"
+      },
+      "alert": {
+        "deleteTransport": "(SV) Are you sure you want to delete the transport?"
       },
       "saved": "(SV) Saved",
       "deleted": "(SV) Deleted",
