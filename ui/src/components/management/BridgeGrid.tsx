@@ -228,7 +228,7 @@ const BridgeGrid = ({
                       <IonText>2.</IonText>
                     </IonCol>
                     <IonCol>
-                      {status === TransportStatus.PLANNED && supervisorSelect(supervision, 2, supervisor1)}
+                      {status === TransportStatus.PLANNED && supervisorSelect(supervision, 2, supervisor2)}
                       {status !== TransportStatus.PLANNED && <IonText>{`${firstName2} ${lastName2}`}</IonText>}
                     </IonCol>
                   </IonRow>
