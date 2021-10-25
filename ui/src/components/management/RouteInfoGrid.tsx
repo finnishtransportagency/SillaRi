@@ -83,7 +83,7 @@ const RouteInfoGrid = ({
           <IonGrid className="ion-no-padding">
             <IonRow className="ion-margin-start ion-margin-top">
               <IonCol>
-                <IonText className="headingText">{t("management.addTransport.routeInfo.estimatedDepartureDate")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.routeInfo.estimatedDepartureDate")}</IonText>
               </IonCol>
             </IonRow>
             <IonRow className="ion-margin-start">
@@ -99,7 +99,7 @@ const RouteInfoGrid = ({
           <IonGrid className="ion-no-padding">
             <IonRow className="ion-margin-start ion-margin-top">
               <IonCol>
-                <IonText className="headingText">{t("management.addTransport.routeInfo.estimatedDepartureTime")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.routeInfo.estimatedDepartureTime")}</IonText>
               </IonCol>
             </IonRow>
             <IonRow className="ion-margin-start">
@@ -115,7 +115,7 @@ const RouteInfoGrid = ({
           <IonGrid className="ion-no-padding">
             <IonRow className="ion-margin-start ion-margin-top">
               <IonCol>
-                <IonText className="headingText">{t("management.addTransport.routeInfo.route")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.routeInfo.route")}</IonText>
               </IonCol>
             </IonRow>
             <IonRow className="ion-margin-start">
@@ -151,7 +151,7 @@ const RouteInfoGrid = ({
           <IonGrid className="ion-no-padding">
             <IonRow className="ion-margin">
               <IonCol size="12" size-sm="4">
-                <IonText className="headingText">{t("management.addTransport.routeInfo.origin")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.routeInfo.origin")}</IonText>
               </IonCol>
               <IonCol size="12" size-sm="8">
                 <IonText>{departureStreetAddress}</IonText>
@@ -159,7 +159,7 @@ const RouteInfoGrid = ({
             </IonRow>
             <IonRow className="ion-margin">
               <IonCol size="12" size-sm="4">
-                <IonText className="headingText">{t("management.addTransport.routeInfo.destination")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.routeInfo.destination")}</IonText>
               </IonCol>
               <IonCol size="12" size-sm="8">
                 <IonText>{arrivalStreetAddress}</IonText>
@@ -174,7 +174,7 @@ const RouteInfoGrid = ({
               <IonCol size="12" size-lg="5" />
               <IonCol size="12" size-lg="7">
                 <IonRouterLink routerLink={`/routemap/${selectedRouteId}`}>
-                  <IonText>{`${t("management.addTransport.routeInfo.showRouteOnMap")} `}</IonText>
+                  <IonText>{`${t("management.transportDetail.routeInfo.showRouteOnMap")} `}</IonText>
                   <IonIcon icon={flag} />
                 </IonRouterLink>
               </IonCol>

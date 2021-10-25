@@ -188,7 +188,7 @@
         "modify": "(SV) Modify"
       }
     },
-    "addTransport": {
+    "transportDetail": {
       "headerTitleAdd": "(SV) Add new transport",
       "headerTitleDetail": "(SV) Transport details",
       "transportPermit": "(SV) Transport permit",

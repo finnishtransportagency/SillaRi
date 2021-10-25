@@ -188,7 +188,7 @@
         "modify": "Modify"
       }
     },
-    "addTransport": {
+    "transportDetail": {
       "headerTitleAdd": "Add new transport",
       "headerTitleDetail": "Transport details",
       "transportPermit": "Transport permit",

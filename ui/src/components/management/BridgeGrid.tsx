@@ -106,13 +106,13 @@ const BridgeGrid = ({
     <IonGrid className="bridgeGrid ion-no-padding">
       <IonRow className="lightBackground ion-hide-lg-down">
         <IonCol size="12" size-lg="4" className="ion-padding">
-          <IonText>{t("management.addTransport.bridgeInfo.bridge").toUpperCase()}</IonText>
+          <IonText>{t("management.transportDetail.bridgeInfo.bridge").toUpperCase()}</IonText>
         </IonCol>
         <IonCol size="12" size-lg="4" className="ion-padding">
-          <IonText>{t("management.addTransport.bridgeInfo.estimatedCrossingTime").toUpperCase()}</IonText>
+          <IonText>{t("management.transportDetail.bridgeInfo.estimatedCrossingTime").toUpperCase()}</IonText>
         </IonCol>
         <IonCol size="12" size-lg="4" className="ion-padding">
-          <IonText>{t("management.addTransport.bridgeInfo.bridgeSupervisor").toUpperCase()}</IonText>
+          <IonText>{t("management.transportDetail.bridgeInfo.bridgeSupervisor").toUpperCase()}</IonText>
         </IonCol>
       </IonRow>
 
@@ -149,7 +149,7 @@ const BridgeGrid = ({
                 <IonGrid className="ion-no-padding">
                   <IonRow>
                     <IonCol size="12" className="ion-hide-lg-up">
-                      <IonText className="headingText">{t("management.addTransport.bridgeInfo.estimatedCrossingTime")}</IonText>
+                      <IonText className="headingText">{t("management.transportDetail.bridgeInfo.estimatedCrossingTime")}</IonText>
                     </IonCol>
                   </IonRow>
                   <IonRow>
@@ -169,7 +169,7 @@ const BridgeGrid = ({
 
                   <IonRow className="ion-margin-top">
                     <IonCol size="12" className="ion-hide-lg-up">
-                      <IonText className="headingText">{t("management.addTransport.bridgeInfo.bridgeSupervisors")}</IonText>
+                      <IonText className="headingText">{t("management.transportDetail.bridgeInfo.bridgeSupervisors")}</IonText>
                     </IonCol>
                   </IonRow>
                   <IonRow>
@@ -182,18 +182,18 @@ const BridgeGrid = ({
                         >
                           <IonItem lines="none">
                             <IonRadio slot="start" value={SupervisorType.OWN_SUPERVISOR} />
-                            <IonLabel>{t("management.addTransport.bridgeInfo.ownSupervisor")}</IonLabel>
+                            <IonLabel>{t("management.transportDetail.bridgeInfo.ownSupervisor")}</IonLabel>
                           </IonItem>
                           <IonItem lines="none">
                             <IonRadio slot="start" value={SupervisorType.AREA_CONTRACTOR} />
-                            <IonLabel>{t("management.addTransport.bridgeInfo.contractor")}</IonLabel>
+                            <IonLabel>{t("management.transportDetail.bridgeInfo.contractor")}</IonLabel>
                           </IonItem>
                         </IonRadioGroup>
                       )}
                       {status !== TransportStatus.PLANNED && (
                         <IonText>
-                          {supervisorType === SupervisorType.OWN_SUPERVISOR && t("management.addTransport.bridgeInfo.ownSupervisor")}
-                          {supervisorType === SupervisorType.AREA_CONTRACTOR && t("management.addTransport.bridgeInfo.contractor")}
+                          {supervisorType === SupervisorType.OWN_SUPERVISOR && t("management.transportDetail.bridgeInfo.ownSupervisor")}
+                          {supervisorType === SupervisorType.AREA_CONTRACTOR && t("management.transportDetail.bridgeInfo.contractor")}
                         </IonText>
                       )}
                     </IonCol>
@@ -205,7 +205,7 @@ const BridgeGrid = ({
                 <IonGrid className="ion-no-padding">
                   <IonRow>
                     <IonCol size="12" className="ion-hide-lg-up">
-                      <IonText className="headingText">{t("management.addTransport.bridgeInfo.supervisor1")}</IonText>
+                      <IonText className="headingText">{t("management.transportDetail.bridgeInfo.supervisor1")}</IonText>
                     </IonCol>
                   </IonRow>
                   <IonRow className="ion-align-items-center">
@@ -220,7 +220,7 @@ const BridgeGrid = ({
 
                   <IonRow className="ion-margin-top">
                     <IonCol size="12" className="ion-hide-lg-up">
-                      <IonText className="headingText">{t("management.addTransport.bridgeInfo.supervisor2")}</IonText>
+                      <IonText className="headingText">{t("management.transportDetail.bridgeInfo.supervisor2")}</IonText>
                     </IonCol>
                   </IonRow>
                   <IonRow className="ion-align-items-center">

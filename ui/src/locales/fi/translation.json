@@ -189,7 +189,7 @@
         "modify": "Muokkaa"
       }
     },
-    "addTransport": {
+    "transportDetail": {
       "headerTitleAdd": "Lisää uusi kuljetus",
       "headerTitleDetail": "Kuljetuksen tiedot",
       "transportPermit": "Kuljetuslupa",

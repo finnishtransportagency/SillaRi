@@ -52,7 +52,7 @@ const RouteTransportInfo = ({
     retry: onRetry,
     onSuccess: () => {
       // TODO - move toast to avoid error?
-      setToastMessage(t("management.addTransport.saved"));
+      setToastMessage(t("management.transportDetail.saved"));
 
       // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
       queryClient.invalidateQueries("getRouteTransportsOfPermit");
@@ -63,7 +63,7 @@ const RouteTransportInfo = ({
     retry: onRetry,
     onSuccess: () => {
       // TODO - move toast to avoid error?
-      setToastMessage(t("management.addTransport.saved"));
+      setToastMessage(t("management.transportDetail.saved"));
 
       // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
       queryClient.invalidateQueries("getRouteTransportsOfPermit");
@@ -74,7 +74,7 @@ const RouteTransportInfo = ({
     retry: onRetry,
     onSuccess: () => {
       // TODO - move toast to avoid error?
-      setToastMessage(t("management.addTransport.deleted"));
+      setToastMessage(t("management.transportDetail.deleted"));
 
       // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
       queryClient.invalidateQueries("getRouteTransportsOfPermit");
@@ -98,8 +98,8 @@ const RouteTransportInfo = ({
     if (!!routeTransportId && routeTransportId > 0) {
       // Ask the user to confirm the delete
       present({
-        header: t("management.addTransport.buttons.deleteTransport"),
-        message: t("management.addTransport.alert.deleteTransport"),
+        header: t("management.transportDetail.buttons.deleteTransport"),
+        message: t("management.transportDetail.alert.deleteTransport"),
         buttons: [{ text: t("common.answer.yes"), handler: () => routeTransportDeleteMutation.mutate(routeTransportId) }, t("common.answer.no")],
       });
     }
@@ -112,7 +112,7 @@ const RouteTransportInfo = ({
           <IonGrid className="ion-no-padding">
             <IonRow className="ion-margin-top ion-margin-start ion-margin-end">
               <IonCol size="12" size-sm="4" size-lg="5">
-                <IonText className="headingText">{t("management.addTransport.transportPermit")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.transportPermit")}</IonText>
               </IonCol>
               <IonCol size="12" size-sm="8" size-lg="7">
                 <IonText>{permitNumber}</IonText>
@@ -125,7 +125,7 @@ const RouteTransportInfo = ({
           <IonGrid className="ion-no-padding">
             <IonRow className="ion-margin-top ion-margin-start ion-margin-end">
               <IonCol size="12" size-sm="4" size-lg="5">
-                <IonText className="headingText">{t("management.addTransport.validityPeriod")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.validityPeriod")}</IonText>
               </IonCol>
               <IonCol size="12" size-sm="8" size-lg="7">
                 <IonText>{`${moment(validStartDate).format(DATE_FORMAT)} - ${moment(validEndDate).format(DATE_FORMAT)}`}</IonText>
@@ -139,7 +139,7 @@ const RouteTransportInfo = ({
             <IonGrid className="ion-no-padding">
               <IonRow className="ion-margin-top ion-margin-start ion-margin-end">
                 <IonCol size="12" size-sm="4" size-lg="7">
-                  <IonText className="headingText">{t("management.addTransport.transportId")}</IonText>
+                  <IonText className="headingText">{t("management.transportDetail.transportId")}</IonText>
                 </IonCol>
                 <IonCol size="12" size-sm="8" size-lg="5">
                   <IonText>{routeTransportId}</IonText>
@@ -157,7 +157,7 @@ const RouteTransportInfo = ({
 
             <IonRow className="ion-margin">
               <IonCol>
-                <IonText className="headingText">{t("management.addTransport.transportInformation")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.transportInformation")}</IonText>
               </IonCol>
             </IonRow>
             <IonRow className="ion-margin">
@@ -183,7 +183,7 @@ const RouteTransportInfo = ({
               <>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    <IonText className="headingText">{t("management.addTransport.bridgesToSupervise")}</IonText>
+                    <IonText className="headingText">{t("management.transportDetail.bridgesToSupervise")}</IonText>
                   </IonCol>
                 </IonRow>
                 <IonRow className="ion-margin">
@@ -211,7 +211,7 @@ const RouteTransportInfo = ({
                 disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption}
                 onClick={deleteRouteTransportDetail}
               >
-                <IonText>{t("management.addTransport.buttons.deleteTransport")}</IonText>
+                <IonText>{t("management.transportDetail.buttons.deleteTransport")}</IonText>
               </IonButton>
             </IonCol>
           )}
