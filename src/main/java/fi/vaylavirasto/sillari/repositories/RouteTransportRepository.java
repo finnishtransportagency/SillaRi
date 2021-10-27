@@ -84,4 +84,16 @@ public class RouteTransportRepository {
                     .execute();
         });
     }
+
+    public void deleteRouteTransport(RouteTransportModel routeTransportModel) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            routeTransportStatusRepository.deleteSupervisionStatuses(ctx, routeTransportModel.getId());
+
+            ctx.delete(TableAlias.routeTransport)
+                    .where(TableAlias.routeTransport.ID.eq(routeTransportModel.getId()))
+                    .execute();
+        });
+    }
 }

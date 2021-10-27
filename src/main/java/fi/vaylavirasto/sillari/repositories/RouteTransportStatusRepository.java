@@ -38,4 +38,10 @@ public class RouteTransportStatusRepository {
                         OffsetDateTime.now())
                 .execute();
     }
+
+    public void deleteSupervisionStatuses(DSLContext ctx, Integer routeTransportId) {
+        ctx.deleteFrom(TableAlias.transportStatus)
+                .where(TableAlias.transportStatus.ROUTE_TRANSPORT_ID.eq(routeTransportId))
+                .execute();
+    }
 }

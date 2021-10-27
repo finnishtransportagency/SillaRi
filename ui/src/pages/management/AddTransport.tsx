@@ -11,8 +11,10 @@ import RouteTransportInfo from "../../components/management/RouteTransportInfo";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
+import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
 import ISupervisor from "../../interfaces/ISupervisor";
 import { useTypedSelector } from "../../store/store";
+import { TransportStatus } from "../../utils/constants";
 import { getPermit, getSupervisors, onRetry } from "../../utils/managementBackendData";
 
 interface AddTransportProps {
@@ -43,7 +45,13 @@ const AddTransport = (): JSX.Element => {
   useEffect(() => {
     // Put empty details into redux for later modifying
     if (!isLoadingPermit) {
-      const newRouteTransport: IRouteTransport = { id: 0, routeId: 0, plannedDepartureTime: moment().toDate() };
+      // The route transport currentStatus is needed by some components, but is set to undefined before saving
+      const newRouteTransport: IRouteTransport = {
+        id: 0,
+        routeId: 0,
+        plannedDepartureTime: moment().toDate(),
+        currentStatus: { status: TransportStatus.PLANNED } as IRouteTransportStatus,
+      };
       setModifiedRouteTransportDetail(newRouteTransport);
       setSelectedRouteOption(undefined);
     }
@@ -54,7 +62,7 @@ const AddTransport = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("management.addTransport.headerTitleAdd")} somethingFailed={isFailed.getPermit} />
+      <Header title={t("management.transportDetail.headerTitleAdd")} somethingFailed={isFailed.getPermit} />
       <IonContent fullscreen color="light">
         {noNetworkNoData ? (
           <NoNetworkNoData />

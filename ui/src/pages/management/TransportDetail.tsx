@@ -59,6 +59,7 @@ const TransportDetail = (): JSX.Element => {
     if (!isLoadingTransport && !!selectedRouteTransportDetail) {
       // Make sure the dates are objects not strings, otherwise the backend may throw a 400 Bad Request error on save
       // The backend updateRouteTransport method does not update the status values, so these can be left undefined here
+      // The route transport currentStatus is needed by some components, but is set to undefined before saving
       const { plannedDepartureTime, supervisions = [] } = selectedRouteTransportDetail || {};
       const modifiedSupervisions = supervisions.map((supervision) => {
         return { ...supervision, plannedTime: moment(supervision.plannedTime).toDate(), currentStatus: undefined, statusHistory: undefined };
@@ -67,7 +68,7 @@ const TransportDetail = (): JSX.Element => {
         ...selectedRouteTransportDetail,
         plannedDepartureTime: moment(plannedDepartureTime).toDate(),
         supervisions: modifiedSupervisions,
-        currentStatus: undefined,
+        // currentStatus: undefined,
         statusHistory: undefined,
       };
       setModifiedRouteTransportDetail(modifiedRouteTransport);
@@ -91,7 +92,7 @@ const TransportDetail = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("management.addTransport.headerTitleDetail")} somethingFailed={isFailed.getPermit} />
+      <Header title={t("management.transportDetail.headerTitleDetail")} somethingFailed={isFailed.getPermit} />
       <IonContent fullscreen color="light">
         {noNetworkNoData ? (
           <NoNetworkNoData />

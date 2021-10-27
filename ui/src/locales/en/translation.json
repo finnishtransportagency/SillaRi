@@ -3,10 +3,15 @@
     "buttons": {
       "done": "Done",
       "back": "Back",
+      "back2": "Back",
       "cancel": "Cancel",
       "edit": "Edit",
       "save": "Save",
       "send": "Send"
+    },
+    "answer": {
+      "yes": "Yes",
+      "no": "No"
     }
   },
   "main": {
@@ -137,10 +142,6 @@
       "additionalInfo": "Additional information",
       "placeholder": "Add text here"
     },
-    "answer": {
-      "yes": "Yes",
-      "no": "No"
-    },
     "buttons": {
       "takePhotos": "Take photos",
       "drivingLine": "Driving line",
@@ -187,7 +188,7 @@
         "modify": "Modify"
       }
     },
-    "addTransport": {
+    "transportDetail": {
       "headerTitleAdd": "Add new transport",
       "headerTitleDetail": "Transport details",
       "transportPermit": "Transport permit",
@@ -198,7 +199,11 @@
       "buttons": {
         "deleteTransport": "Delete transport"
       },
+      "alert": {
+        "deleteTransport": "Are you sure you want to delete the transport?"
+      },
       "saved": "Saved",
+      "deleted": "Deleted",
       "routeInfo": {
         "estimatedDepartureDate": "Estimated departure date",
         "estimatedDepartureTime": "Estimated departure time",
