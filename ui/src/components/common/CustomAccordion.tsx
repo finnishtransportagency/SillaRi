@@ -2,7 +2,8 @@ import React, { ReactNode } from "react";
 import { Accordion, AccordionItem, AccordionItemButton, AccordionItemHeading, AccordionItemPanel } from "react-accessible-accordion";
 import { UUID } from "react-accessible-accordion/dist/types/components/ItemContext";
 import { IonIcon, IonItem } from "@ionic/react";
-import { chevronDown, chevronUp } from "ionicons/icons";
+import arrowClose from "../../theme/icons/arrow-close.svg";
+import arrowOpen from "../../theme/icons/arrow-open.svg";
 import "./CustomAccordion.css";
 
 interface CustomAccordionProps {
@@ -32,8 +33,8 @@ const CustomAccordion = ({ className, items }: CustomAccordionProps): JSX.Elemen
               <AccordionItemButton>
                 <IonItem lines="none" color={headingColor} className="accordionHeaderItem">
                   {heading}
-                  <IonIcon className="openIcon" icon={chevronDown} slot="end" />
-                  <IonIcon className="closeIcon" icon={chevronUp} slot="end" />
+                  <IonIcon className="otherIcon openIcon" icon={arrowOpen} slot="end" />
+                  <IonIcon className="otherIcon closeIcon" icon={arrowClose} slot="end" />
                 </IonItem>
               </AccordionItemButton>
             </AccordionItemHeading>

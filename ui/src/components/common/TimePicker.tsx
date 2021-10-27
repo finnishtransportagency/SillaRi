@@ -23,7 +23,7 @@ const TimePicker = ({ className, value, onChange }: TimePickerProps): JSX.Elemen
         value={moment(value).toISOString()}
         onIonChange={(e) => onChange(moment(e.detail.value).toDate())}
       />
-      <IonIcon className="openIcon" icon={timeOutline} slot="end" />
+      <IonIcon className="otherIcon openIcon" icon={timeOutline} slot="end" />
     </IonItem>
   );
 };

@@ -2,9 +2,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import Moment from "react-moment";
 import { IonButton, IonCheckbox, IonCol, IonGrid, IonItem, IonLabel, IonRow } from "@ionic/react";
-import { document } from "ionicons/icons";
 import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
+import file from "../theme/icons/file.svg";
 import { DATE_TIME_FORMAT_MIN, SupervisionStatus } from "../utils/constants";
 
 interface BridgeDetailFooterProps {
@@ -23,7 +23,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
 
   return (
     <>
-      <IonItem className="itemIcon" detail detailIcon={document} lines="none">
+      <IonItem className="itemIcon" detail detailIcon={file} lines="none">
         <IonLabel className="headingText">{t("bridge.transportPermit")}</IonLabel>
         <IonLabel>{permitNumber}</IonLabel>
       </IonItem>

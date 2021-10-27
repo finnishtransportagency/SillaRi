@@ -50,7 +50,7 @@
   },
   "SidebarMenu": {
     "title": "SillaRi",
-    "mainPage": "Main page",
+    "mainPage": "Transports and bridges",
     "settings": "Settings",
     "map": "Map",
     "camera": "Camera",
@@ -79,7 +79,7 @@
     "routeInfo": {
       "title": "Route information",
       "route": "Route",
-      "showWholeRoute": "Show whole route",
+      "showRouteOnMap": "Show route on map",
       "departurePoint": "Departure point",
       "arrivalPoint": "Arrival point"
     },

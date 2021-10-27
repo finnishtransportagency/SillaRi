@@ -50,7 +50,7 @@
   },
   "SidebarMenu": {
     "title": "SillaRi",
-    "mainPage": "Pääsivu",
+    "mainPage": "Kuljetukset ja sillat",
     "settings": "Asetukset",
     "map": "Kartta",
     "camera": "Kamera",
@@ -80,7 +80,7 @@
     "routeInfo": {
       "title": "Reitin tiedot",
       "route": "Reitti",
-      "showWholeRoute": "Näytä koko reitti",
+      "showRouteOnMap": "Reitti kartalla",
       "departurePoint": "Lähtöpiste",
       "arrivalPoint": "Päätepiste"
     },

@@ -1,6 +1,7 @@
 import React from "react";
 import Moment from "react-moment";
 import { IonItem, IonLabel } from "@ionic/react";
+import arrowRight from "../theme/icons/arrow-right.svg";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import ISupervision from "../interfaces/ISupervision";
 
@@ -14,7 +15,7 @@ const BridgeCard = ({ supervision }: BridgeCardProps): JSX.Element => {
   const { identifier, name } = bridge || {};
 
   return (
-    <IonItem detail routerLink={`/bridgedetail/${supervisionId}`}>
+    <IonItem className="itemIcon" detail detailIcon={arrowRight} routerLink={`/bridgedetail/${supervisionId}`}>
       <IonLabel>
         <IonLabel className="headingText">{name}</IonLabel>
         <IonLabel>

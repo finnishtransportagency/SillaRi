@@ -4,13 +4,14 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Camera, CameraSource, CameraResultType } from "@capacitor/camera";
 import Moment from "react-moment";
-import { camera, trash } from "ionicons/icons";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import { RootState, useTypedSelector } from "../store/store";
 import { actions as supervisionActions } from "../store/supervisionSlice";
+import camera from "../theme/icons/camera_white.svg";
+import erase from "../theme/icons/erase_white.svg";
 import { deleteImage, getSupervision, onRetry } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import { getOrigin } from "../utils/request";
@@ -111,8 +112,8 @@ const CameraContainer = (): JSX.Element => {
                   <IonLabel>
                     <Moment format={DATE_TIME_FORMAT}>{imageItem.date}</Moment>
                   </IonLabel>
-                  <IonButton slot="end" onClick={() => removeImageItem(imageItem.id)}>
-                    <IonIcon icon={trash} slot="start" />
+                  <IonButton slot="end" expand="block" size="default" onClick={() => removeImageItem(imageItem.id)}>
+                    <IonIcon className="otherIcon" icon={erase} slot="start" />
                     {t("camera.item.deleteButtonLabel")}
                   </IonButton>
                 </IonItem>
@@ -136,8 +137,8 @@ const CameraContainer = (): JSX.Element => {
                     <IonImg src={imageUrl} />
                   </IonThumbnail>
                   <IonLabel>{supervisionImage.taken}</IonLabel>
-                  <IonButton slot="end" onClick={() => deleteImageObject(supervisionImage.objectKey)}>
-                    <IonIcon icon={trash} slot="start" />
+                  <IonButton slot="end" expand="block" size="default" onClick={() => deleteImageObject(supervisionImage.objectKey)}>
+                    <IonIcon className="otherIcon" icon={erase} slot="start" />
                     {t("camera.item.deleteButtonLabel")}
                   </IonButton>
                 </IonItem>
@@ -149,7 +150,7 @@ const CameraContainer = (): JSX.Element => {
 
       <IonFab slot="fixed" horizontal="end" vertical="bottom">
         <IonButton expand="block" size="large" onClick={() => takePicture()}>
-          <IonIcon icon={camera} slot="start" />
+          <IonIcon className="otherIcon" icon={camera} slot="start" />
           {t("camera.takePhotoButtonLabel")}
         </IonButton>
       </IonFab>

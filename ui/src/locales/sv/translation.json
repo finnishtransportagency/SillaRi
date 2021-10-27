@@ -50,7 +50,7 @@
   },
   "SidebarMenu": {
     "title": "SillaRi",
-    "mainPage": "Huvudsida",
+    "mainPage": "(SV) Transports and bridges",
     "settings": "Inställningar",
     "map": "Karta",
     "camera": "Kamera",
@@ -79,7 +79,7 @@
     "routeInfo": {
       "title": "(SV) Route information",
       "route": "(SV) Route",
-      "showWholeRoute": "(SV) Show whole route",
+      "showRouteOnMap": "(SV) Show route on map",
       "departurePoint": "(SV) Departure point",
       "arrivalPoint": "(SV) Arrival point"
     },

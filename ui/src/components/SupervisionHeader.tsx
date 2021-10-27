@@ -2,8 +2,8 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import Moment from "react-moment";
 import { IonItem, IonLabel } from "@ionic/react";
-import { document } from "ionicons/icons";
 import ISupervision from "../interfaces/ISupervision";
+import file from "../theme/icons/file.svg";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import "./SupervisionHeader.css";
 
@@ -24,7 +24,7 @@ const SupervisionHeader = ({ supervision, isCrossingInstructionsIncluded }: Supe
   // TODO - add crossing instructions link
   return (
     <>
-      <IonItem className="header itemIcon" detail detailIcon={document} lines="none">
+      <IonItem className="header itemIcon" detail detailIcon={file} lines="none">
         <IonLabel className="headingText">{t("supervision.transportPermit")}</IonLabel>
         <IonLabel className="iconText">{permitNumber}</IonLabel>
       </IonItem>
@@ -39,7 +39,7 @@ const SupervisionHeader = ({ supervision, isCrossingInstructionsIncluded }: Supe
         </IonLabel>
       </IonItem>
       {isCrossingInstructionsIncluded && (
-        <IonItem className="header itemIcon" detail detailIcon={document} lines="none">
+        <IonItem className="header itemIcon" detail detailIcon={file} lines="none">
           <IonLabel className="headingText">{t("supervision.crossingInstructions")}</IonLabel>
           <IonLabel className="iconText">TODO</IonLabel>
         </IonItem>

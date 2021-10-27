@@ -2,6 +2,7 @@ import React from "react";
 import { IonItem, IonLabel, IonText } from "@ionic/react";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import Moment from "react-moment";
+import arrowRight from "../theme/icons/arrow-right.svg";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../utils/constants";
 import { useTranslation } from "react-i18next";
 
@@ -23,7 +24,7 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
   const transportDeparted = status && status !== TransportStatus.PLANNED;
 
   return (
-    <IonItem detail routerLink={`/routetransportdetail/${routeTransportId}`}>
+    <IonItem className="itemIcon" detail detailIcon={arrowRight} routerLink={`/routetransportdetail/${routeTransportId}`}>
       <IonLabel>
         <IonLabel className="headingText">
           <Moment format={DATE_TIME_FORMAT_MIN}>{transportDeparted ? departureTime : plannedDepartureTime}</Moment>

@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { IonCol, IonGrid, IonIcon, IonRouterLink, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
-import { flag } from "ionicons/icons";
 import Moment from "react-moment";
 import moment from "moment";
 import DatePicker from "../common/DatePicker";
@@ -9,6 +8,7 @@ import TimePicker from "../common/TimePicker";
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
+import mapPoint from "../../theme/icons/map-point.svg";
 import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 
 interface RouteInfoGridProps {
@@ -171,11 +171,11 @@ const RouteInfoGrid = ({
         <IonCol size="12" size-lg="4">
           <IonGrid className="ion-no-padding">
             <IonRow className="ion-margin">
-              <IonCol size="12" size-lg="5" />
-              <IonCol size="12" size-lg="7">
+              <IonCol size="12" size-lg="4" />
+              <IonCol size="12" size-lg="8">
                 <IonRouterLink routerLink={`/routemap/${selectedRouteId}`}>
-                  <IonText>{`${t("management.transportDetail.routeInfo.showRouteOnMap")} `}</IonText>
-                  <IonIcon icon={flag} />
+                  <IonText className="linkText">{t("management.transportDetail.routeInfo.showRouteOnMap")}</IonText>
+                  <IonIcon className="otherIcon" icon={mapPoint} />
                 </IonRouterLink>
               </IonCol>
             </IonRow>

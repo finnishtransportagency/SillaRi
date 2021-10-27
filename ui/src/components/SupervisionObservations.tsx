@@ -2,11 +2,11 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { IonCheckbox, IonIcon, IonItem, IonLabel, IonRadio, IonRadioGroup, IonTextarea } from "@ionic/react";
-import { help } from "ionicons/icons";
 import IRadioValue from "../interfaces/IRadioValue";
 import ISupervision from "../interfaces/ISupervision";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
 import { actions as supervisionActions } from "../store/supervisionSlice";
+import empty from "../theme/icons/empty.svg";
 
 interface SupervisionObservationsProps {
   supervision: ISupervision;
@@ -177,7 +177,7 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
           </IonItem>
           {otherObservations && (
             <IonItem lines="none">
-              <IonIcon slot="start" icon={help} />
+              <IonIcon className="otherIcon" slot="start" icon={empty} />
               <IonTextarea
                 placeholder={t("supervision.report.placeholder")}
                 value={otherObservationsInfo}
