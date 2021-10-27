@@ -260,7 +260,15 @@
     "transport": {
       "header": {
         "title": "(SV) Transport"
-      }
+      },
+      "permitLabel": "(SV) Permit:",
+      "routeLabel": "(SV) Route:",
+      "mapButtonLabel": "(SV) Map",
+      "transportStatusLabel": "(SV) Transport status",
+      "transportStatusBoxLabel": {
+        "notStarted": "(SV) Not started"
+      },
+      "startDrivingButtonLabel": "(SV) START DRIVING"
     }
   }
 }
