@@ -257,7 +257,15 @@
     "transport": {
       "header": {
         "title": "Transport"
-      }
+      },
+      "permitLabel": "Permit:",
+      "routeLabel": "Route:",
+      "mapButtonLabel": "Map",
+      "transportStatusLabel": "Transport status",
+      "transportStatusBoxLabel": {
+        "notStarted": "Not started"
+      },
+      "startDrivingButtonLabel": "START DRIVING"
     }
   }
 }

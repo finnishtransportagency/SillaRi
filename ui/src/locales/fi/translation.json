@@ -258,7 +258,15 @@
     "transport": {
       "header": {
         "title": "Kuljetus"
-      }
+      },
+      "permitLabel": "Kuljetuslupa:",
+      "routeLabel": "Reitti:",
+      "mapButtonLabel": "Kartta",
+      "transportStatusLabel": "Kuljetuksen status",
+      "transportStatusBoxLabel": {
+        "notStarted": "Ajo ei ole vielä alkanut"
+      },
+      "startDrivingButtonLabel": "ALOITA AJAMINEN"
     }
   },
   "supervisor": {
