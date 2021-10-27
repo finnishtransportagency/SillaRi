@@ -148,7 +148,7 @@ const CameraContainer = (): JSX.Element => {
       <ImagePreview imageUrl={imagePreviewUrl} isOpen={isImagePreviewOpen} setIsOpen={() => showImage(false)} />
 
       <IonFab slot="fixed" horizontal="end" vertical="bottom">
-        <IonButton expand="block" shape="round" size="large" onClick={() => takePicture()}>
+        <IonButton expand="block" size="large" onClick={() => takePicture()}>
           <IonIcon icon={camera} slot="start" />
           {t("camera.takePhotoButtonLabel")}
         </IonButton>

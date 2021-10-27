@@ -19,19 +19,15 @@ const BridgeDetailHeader = ({ routeBridge }: BridgeDetailHeaderProps): JSX.Eleme
     <>
       <IonImg className="bridgeImage" src="assets/bridge.jpg" />
       <IonItem className="header" lines="none">
-        <IonLabel className="headingText">{t("bridge.title")}</IonLabel>
+        <IonLabel>{t("bridge.title").toUpperCase()}</IonLabel>
       </IonItem>
       <IonItem>
-        <IonLabel>{t("bridge.identifier")}</IonLabel>
+        <IonLabel className="headingText">{t("bridge.identifier")}</IonLabel>
         <IonLabel>{identifier}</IonLabel>
       </IonItem>
       <IonItem className="itemIcon" detail detailIcon={flag} routerLink={`/bridgemap/${routeBridgeId}`}>
-        <IonLabel>
-          <IonLabel>{t("bridge.location")}</IonLabel>
-          <IonLabel>
-            <small>{municipality}</small>
-          </IonLabel>
-        </IonLabel>
+        <IonLabel className="headingText">{t("bridge.location")}</IonLabel>
+        <IonLabel>{municipality}</IonLabel>
       </IonItem>
     </>
   );

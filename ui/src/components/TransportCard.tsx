@@ -1,5 +1,5 @@
 import React from "react";
-import { IonGrid, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
+import { IonItem, IonLabel, IonText } from "@ionic/react";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import Moment from "react-moment";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../utils/constants";
@@ -24,29 +24,21 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
 
   return (
     <IonItem detail routerLink={`/routetransportdetail/${routeTransportId}`}>
-      <IonGrid className="ion-no-padding">
-        <IonRow>
-          <IonLabel>
-            <Moment format={DATE_TIME_FORMAT_MIN}>{transportDeparted ? departureTime : plannedDepartureTime}</Moment>
-            {!transportDeparted && <IonText>{` (${t("company.transport.estimatedDepartureTime")})`}</IonText>}
-          </IonLabel>
-        </IonRow>
-        <IonRow>
-          <IonLabel>
-            <small>{departureStreetAddress}</small>
-          </IonLabel>
-        </IonRow>
-        <IonRow>
-          <IonLabel>
-            <small>{arrivalStreetAddress}</small>
-          </IonLabel>
-        </IonRow>
-        <IonRow>
-          <IonLabel>
-            <small>{`${t("company.transportPermit")} ${permitNumber}`}</small>
-          </IonLabel>
-        </IonRow>
-      </IonGrid>
+      <IonLabel>
+        <IonLabel className="headingText">
+          <Moment format={DATE_TIME_FORMAT_MIN}>{transportDeparted ? departureTime : plannedDepartureTime}</Moment>
+          {!transportDeparted && <IonText>{` (${t("company.transport.estimatedDepartureTime")})`}</IonText>}
+        </IonLabel>
+        <IonLabel>
+          <small>{departureStreetAddress}</small>
+        </IonLabel>
+        <IonLabel>
+          <small>{arrivalStreetAddress}</small>
+        </IonLabel>
+        <IonLabel>
+          <small>{`${t("company.transportPermit")} ${permitNumber}`}</small>
+        </IonLabel>
+      </IonLabel>
     </IonItem>
   );
 };

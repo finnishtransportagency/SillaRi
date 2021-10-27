@@ -61,6 +61,22 @@ ion-select {
   border: 2px solid var(--ion-color-base);
 }
 
+ion-button,
+ion-segment-button {
+  text-transform: none;
+}
+
+ion-button {
+  --box-shadow: none;
+  --border-radius: 12px;
+}
+
+ion-button.ion-color-tertiary {
+  --border-color: #49c2f1;
+  --border-width: 1px;
+  --border-style: solid;
+}
+
 /** Additional Vayla colors **/
 .ion-color-teal {
   --ion-color-base: var(--ion-color-teal);

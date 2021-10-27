@@ -25,19 +25,19 @@ const SupervisionList = ({ supervisionList, noNetworkNoData }: SupervisionListPr
           const dayKey = `day${dIndex}`;
 
           return (
-            <IonItem key={dayKey} lines="none">
-              <IonLabel>
+            <>
+              <IonItem key={dayKey} className="header" lines="none">
                 <IonLabel className="headingText">
                   <Moment format={DATE_FORMAT}>{supervisionDay.date}</Moment>
                 </IonLabel>
-                <div className="listContainer">
-                  {supervisionDay.supervisions.map((supervision: ISupervision, bIndex) => {
-                    const bridgeKey = `bridge_${bIndex}`;
-                    return <BridgeCard key={bridgeKey} supervision={supervision} />;
-                  })}
-                </div>
-              </IonLabel>
-            </IonItem>
+              </IonItem>
+              <div className="listContainer">
+                {supervisionDay.supervisions.map((supervision: ISupervision, bIndex) => {
+                  const bridgeKey = `bridge_${bIndex}`;
+                  return <BridgeCard key={bridgeKey} supervision={supervision} />;
+                })}
+              </div>
+            </>
           );
         })
       )}

@@ -16,7 +16,7 @@ const BridgeCard = ({ supervision }: BridgeCardProps): JSX.Element => {
   return (
     <IonItem detail routerLink={`/bridgedetail/${supervisionId}`}>
       <IonLabel>
-        <IonLabel>{name}</IonLabel>
+        <IonLabel className="headingText">{name}</IonLabel>
         <IonLabel>
           <small>{identifier}</small>
         </IonLabel>

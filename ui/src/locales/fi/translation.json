@@ -4,7 +4,7 @@
       "done": "Valmis",
       "back": "Peru",
       "back2": "Takaisin",
-      "cancel": "Keskeytä",
+      "cancel": "Peruuta",
       "edit": "Muokkaa",
       "save": "Tallenna",
       "send": "Lähetä"
@@ -108,6 +108,7 @@
     "trafficSupervisors": {
       "title": "Liikenteenohjaajat"
     },
+    "transportPermit": "Kuljetuslupa",
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Kuljetus on luvanmukainen",
     "startSupervision": "Aloita valvonta",
@@ -121,6 +122,7 @@
   },
   "supervision": {
     "title": "Sillan valvonta",
+    "transportPermit": "Kuljetuslupa",
     "permitNumber": "Lupanumero",
     "supervisionStarted": "Valvonta aloitettu",
     "bridgeName": "Sillan tiedot",
@@ -144,8 +146,8 @@
       "placeholder": "Lisää tekstiä tähän"
     },
     "buttons": {
-      "takePhotos": "Ota valokuvia",
-      "drivingLine": "Tuo ajolinja",
+      "takePhotos": "Valokuvat",
+      "drivingLine": "Ajolinja",
       "summary": "Siirry yhteenvetoon",
       "saveToSendList": "Tallenna (lähetyslistalle)"
     },
@@ -158,6 +160,7 @@
       "noAnomalies": "Ei ole",
       "additionalInfo": "Lisätiedot",
       "approved": "Hyväksytty",
+      "notApproved": "Ei hyväksytty",
       "saved": "Valvonta on tallennettu (lähetyslistalle)"
     }
   },

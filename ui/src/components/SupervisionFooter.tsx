@@ -100,14 +100,20 @@ const SupervisionFooter = ({ supervision, draft, setToastMessage }: SupervisionF
     <IonGrid>
       <IonRow>
         <IonCol className="ion-text-center">
-          <IonButton color="primary" disabled={supervisionReportId <= 0 || isSendingReportUpdate} onClick={() => saveReport()}>
+          <IonButton
+            color="primary"
+            expand="block"
+            size="large"
+            disabled={supervisionReportId <= 0 || isSendingReportUpdate}
+            onClick={() => saveReport()}
+          >
             {draft ? t("supervision.buttons.summary") : t("supervision.buttons.saveToSendList")}
           </IonButton>
         </IonCol>
       </IonRow>
       <IonRow>
         <IonCol className="ion-text-center">
-          <IonButton color="secondary" onClick={() => history.goBack()}>
+          <IonButton color="tertiary" expand="block" size="large" onClick={() => history.goBack()}>
             {draft ? t("common.buttons.cancel") : t("common.buttons.edit")}
           </IonButton>
         </IonCol>

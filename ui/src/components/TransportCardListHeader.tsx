@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { IonGrid, IonLabel, IonRow } from "@ionic/react";
+import { IonLabel } from "@ionic/react";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
 import IDateLabel from "../interfaces/IDateLabel";
 import LatestTransportInfoLabel from "./LatestTransportInfoLabel";
@@ -31,14 +31,10 @@ const TransportCardListHeader = ({ companyTransports }: TransportCardListHeaderP
   };
 
   return (
-    <IonGrid className="ion-no-padding">
-      <IonRow>
-        <IonLabel className="headingText">{`${name} (${transportCount})`}</IonLabel>
-      </IonRow>
-      <IonRow>
-        <LatestTransportInfoLabel info={getLatestTransportInfo()} />
-      </IonRow>
-    </IonGrid>
+    <IonLabel>
+      <IonLabel className="headingText">{`${name} (${transportCount})`}</IonLabel>
+      <LatestTransportInfoLabel info={getLatestTransportInfo()} />
+    </IonLabel>
   );
 };
 

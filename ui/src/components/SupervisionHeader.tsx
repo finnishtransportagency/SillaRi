@@ -9,11 +9,10 @@ import "./SupervisionHeader.css";
 
 interface SupervisionHeaderProps {
   supervision: ISupervision;
-  className?: string;
   isCrossingInstructionsIncluded?: boolean;
 }
 
-const SupervisionHeader = ({ supervision, className, isCrossingInstructionsIncluded }: SupervisionHeaderProps): JSX.Element => {
+const SupervisionHeader = ({ supervision, isCrossingInstructionsIncluded }: SupervisionHeaderProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { routeBridge, startedTime } = supervision || {};
@@ -25,24 +24,24 @@ const SupervisionHeader = ({ supervision, className, isCrossingInstructionsInclu
   // TODO - add crossing instructions link
   return (
     <>
-      <IonItem className={className} detailIcon={document} lines="none">
-        <IonLabel className="headingText">{t("supervision.permitNumber")}</IonLabel>
-        <IonLabel>{permitNumber}</IonLabel>
+      <IonItem className="header itemIcon" detail detailIcon={document} lines="none">
+        <IonLabel className="headingText">{t("supervision.transportPermit")}</IonLabel>
+        <IonLabel className="iconText">{permitNumber}</IonLabel>
       </IonItem>
-      <IonItem className={className} lines="none">
-        <IonLabel>{t("supervision.supervisionStarted")}</IonLabel>
+      <IonItem className="header" lines="none">
+        <IonLabel className="headingText">{t("supervision.supervisionStarted")}</IonLabel>
         <IonLabel>{startedTime ? <Moment format={DATE_TIME_FORMAT_MIN}>{startedTime}</Moment> : ""}</IonLabel>
       </IonItem>
-      <IonItem className={className} lines="none">
-        <IonLabel>{t("supervision.bridgeName")}</IonLabel>
+      <IonItem className="header" lines="none">
+        <IonLabel className="headingText">{t("supervision.bridgeName")}</IonLabel>
         <IonLabel>
           {name} | {identifier}
         </IonLabel>
       </IonItem>
       {isCrossingInstructionsIncluded && (
-        <IonItem className={`${className} itemIcon`} detail detailIcon={document} lines="none">
-          <IonLabel>{t("supervision.crossingInstructions")}</IonLabel>
-          <IonLabel className="crossingInstructionsLink">TODO</IonLabel>
+        <IonItem className="header itemIcon" detail detailIcon={document} lines="none">
+          <IonLabel className="headingText">{t("supervision.crossingInstructions")}</IonLabel>
+          <IonLabel className="iconText">TODO</IonLabel>
         </IonItem>
       )}
     </>

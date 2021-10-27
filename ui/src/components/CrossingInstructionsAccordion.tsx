@@ -19,7 +19,7 @@ const CrossingInstructionsAccordion = ({ routeBridge }: CrossingInstructionsAcco
       items={[
         {
           uuid: "crossingInstructions",
-          heading: <IonText>{t("bridge.crossingInstructions.title")}</IonText>,
+          heading: <IonText className="headingText">{t("bridge.crossingInstructions.title")}</IonText>,
           panel: (
             <div>
               <IonItem>

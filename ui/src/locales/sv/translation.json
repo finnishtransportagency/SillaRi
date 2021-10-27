@@ -107,6 +107,7 @@
     "trafficSupervisors": {
       "title": "(SV) Traffic supervisors"
     },
+    "transportPermit": "(SV) Transport permit",
     "permitNumber": "(SV) Lupanumero",
     "conformsToPermit": "(SV) Transport conforms to permit",
     "startSupervision": "(SV) Start supervision",
@@ -120,6 +121,7 @@
   },
   "supervision": {
     "title": "(SV) Bridge supervision",
+    "transportPermit": "(SV) Transport permit",
     "permitNumber": "(SV) Permit number",
     "supervisionStarted": "(SV) Supervision started",
     "bridgeName": "(SV) Bridge details",
@@ -143,7 +145,7 @@
       "placeholder": "(SV) Add text here"
     },
     "buttons": {
-      "takePhotos": "(SV) Take photos",
+      "takePhotos": "(SV) Photos",
       "drivingLine": "(SV) Driving line",
       "summary": "(SV) Go to summary",
       "saveToSendList": "(SV) Save (to the send list)"
@@ -157,6 +159,7 @@
       "noAnomalies": "(SV) None",
       "additionalInfo": "(SV) Additional information",
       "approved": "(SV) Approved",
+      "notApproved": "(SV) Not approved",
       "saved": "(SV) Supervision has been saved (to the send list)"
     }
   },

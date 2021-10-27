@@ -30,7 +30,7 @@ const CustomAccordion = ({ className, items }: CustomAccordionProps): JSX.Elemen
           <AccordionItem key={uuid} uuid={uuid}>
             <AccordionItemHeading>
               <AccordionItemButton>
-                <IonItem lines="none" color={headingColor}>
+                <IonItem lines="none" color={headingColor} className="accordionHeaderItem">
                   {heading}
                   <IonIcon className="openIcon" icon={chevronDown} slot="end" />
                   <IonIcon className="closeIcon" icon={chevronUp} slot="end" />

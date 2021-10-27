@@ -21,7 +21,7 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: Super
   return (
     <>
       <IonItem className="header" detailIcon={document} lines="none">
-        <IonLabel className="headingText">{t(headingKey)}</IonLabel>
+        <IonLabel>{t(headingKey).toUpperCase()}</IonLabel>
       </IonItem>
 
       <IonGrid>
@@ -32,14 +32,14 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: Super
         <IonGrid>
           <IonRow>
             <IonCol className="ion-text-center">
-              <IonButton color="tertiary" routerLink={`/takephotos/${supervisionId}`}>
+              <IonButton color="secondary" expand="block" size="large" routerLink={`/takephotos/${supervisionId}`}>
                 {t("supervision.buttons.takePhotos")}
               </IonButton>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol className="ion-text-center">
-              <IonButton color="tertiary" disabled>
+              <IonButton color="secondary" expand="block" size="large" disabled>
                 {t("supervision.buttons.drivingLine")}
               </IonButton>
             </IonCol>

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
-import { add } from "ionicons/icons";
+import { IonButton, IonCol, IonGrid, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
 import RouteGrid from "./RouteGrid";
 import IPermit from "../../interfaces/IPermit";
 
@@ -23,13 +22,14 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
           <IonButton
             className="ion-hide-md-up"
             color="secondary"
+            expand="block"
+            size="large"
             routerLink={`/management/addTransport/${permitId}`}
             onClick={(evt) => {
               evt.stopPropagation();
             }}
           >
             {t("management.companySummary.addTransportButtonLabel")}
-            <IonIcon icon={add} slot="start" />
           </IonButton>
         </IonCol>
         <IonCol size="12" size-sm="6">

@@ -157,7 +157,7 @@ const RouteTransportInfo = ({
 
             <IonRow className="ion-margin">
               <IonCol>
-                <IonText className="headingText">{t("management.transportDetail.transportInformation")}</IonText>
+                <IonText className="headingBoldText">{t("management.transportDetail.transportInformation")}</IonText>
               </IonCol>
             </IonRow>
             <IonRow className="ion-margin">
@@ -183,7 +183,7 @@ const RouteTransportInfo = ({
               <>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    <IonText className="headingText">{t("management.transportDetail.bridgesToSupervise")}</IonText>
+                    <IonText className="headingBoldText">{t("management.transportDetail.bridgesToSupervise")}</IonText>
                   </IonCol>
                 </IonRow>
                 <IonRow className="ion-margin">
@@ -208,6 +208,8 @@ const RouteTransportInfo = ({
             <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
               <IonButton
                 color="tertiary"
+                expand="block"
+                size="large"
                 disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption}
                 onClick={deleteRouteTransportDetail}
               >
@@ -216,13 +218,21 @@ const RouteTransportInfo = ({
             </IonCol>
           )}
           <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-            <IonButton color="secondary" disabled={isSendingTransportUpdate || isDeletingTransport} onClick={() => history.goBack()}>
+            <IonButton
+              color="secondary"
+              expand="block"
+              size="large"
+              disabled={isSendingTransportUpdate || isDeletingTransport}
+              onClick={() => history.goBack()}
+            >
               <IonText>{t("common.buttons.cancel")}</IonText>
             </IonButton>
           </IonCol>
           <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
             <IonButton
               color="primary"
+              expand="block"
+              size="large"
               disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption}
               onClick={saveRouteTransportDetail}
             >

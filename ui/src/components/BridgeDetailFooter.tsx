@@ -24,18 +24,18 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   return (
     <>
       <IonItem className="itemIcon" detail detailIcon={document} lines="none">
-        <IonLabel className="headingText">{t("bridge.permitNumber")}</IonLabel>
+        <IonLabel className="headingText">{t("bridge.transportPermit")}</IonLabel>
         <IonLabel>{permitNumber}</IonLabel>
       </IonItem>
 
       {!isLoadingSupervision && !supervisionId && (
         <IonItem color="danger" lines="none">
-          <IonLabel>{t("bridge.supervisionMissing")}</IonLabel>
+          <IonLabel className="headingText">{t("bridge.supervisionMissing")}</IonLabel>
         </IonItem>
       )}
       {!isLoadingSupervision && supervisionStarted && (
         <IonItem color="success" lines="none">
-          <IonLabel>{t("bridge.supervisionStarted")}</IonLabel>
+          <IonLabel className="headingText">{t("bridge.supervisionStarted")}</IonLabel>
           <IonLabel>{startedTime ? <Moment format={DATE_TIME_FORMAT_MIN}>{startedTime}</Moment> : ""}</IonLabel>
         </IonItem>
       )}
@@ -57,6 +57,8 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
             <IonButton
               disabled={!supervisionId || !conformsToPermit || supervisionStarted}
               color="primary"
+              expand="block"
+              size="large"
               routerLink={`/supervision/${supervisionId}`}
             >
               {t("bridge.startSupervision")}
@@ -65,7 +67,13 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
         </IonRow>
         <IonRow>
           <IonCol className="ion-text-center">
-            <IonButton disabled={!supervisionId || supervisionStarted} color="secondary" routerLink={`/denyCrossing/${supervisionId}`}>
+            <IonButton
+              disabled={!supervisionId || supervisionStarted}
+              color="tertiary"
+              expand="block"
+              size="large"
+              routerLink={`/denyCrossing/${supervisionId}`}
+            >
               {t("bridge.denyCrossing")}
             </IonButton>
           </IonCol>
