@@ -5,7 +5,6 @@ import { IonItem, IonLabel } from "@ionic/react";
 import ISupervision from "../interfaces/ISupervision";
 import file from "../theme/icons/file.svg";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
-import "./SupervisionHeader.css";
 
 interface SupervisionHeaderProps {
   supervision: ISupervision;
@@ -26,13 +25,13 @@ const SupervisionHeader = ({ supervision, isCrossingInstructionsIncluded }: Supe
     <>
       <IonItem className="header itemIcon" detail detailIcon={file} lines="none">
         <IonLabel className="headingText">{t("supervision.transportPermit")}</IonLabel>
-        <IonLabel className="iconText">{permitNumber}</IonLabel>
+        <IonLabel>{permitNumber}</IonLabel>
       </IonItem>
-      <IonItem className="header" lines="none">
+      <IonItem className="header itemIcon" detail detailIcon="" lines="none">
         <IonLabel className="headingText">{t("supervision.supervisionStarted")}</IonLabel>
         <IonLabel>{startedTime ? <Moment format={DATE_TIME_FORMAT_MIN}>{startedTime}</Moment> : ""}</IonLabel>
       </IonItem>
-      <IonItem className="header" lines="none">
+      <IonItem className="header itemIcon" detail detailIcon="" lines="none">
         <IonLabel className="headingText">{t("supervision.bridgeName")}</IonLabel>
         <IonLabel>
           {name} | {identifier}
@@ -41,7 +40,7 @@ const SupervisionHeader = ({ supervision, isCrossingInstructionsIncluded }: Supe
       {isCrossingInstructionsIncluded && (
         <IonItem className="header itemIcon" detail detailIcon={file} lines="none">
           <IonLabel className="headingText">{t("supervision.crossingInstructions")}</IonLabel>
-          <IonLabel className="iconText">TODO</IonLabel>
+          <IonLabel>TODO</IonLabel>
         </IonItem>
       )}
     </>
