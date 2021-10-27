@@ -76,13 +76,13 @@ public class SupervisionController {
         }
     }
 
-    @Operation(summary = "Start supervision, create empty supervision report")
+    @Operation(summary = "Start supervision, create supervision report")
     @PostMapping(value = "/startsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> startSupervision(@RequestParam Integer supervisionId) {
+    public ResponseEntity<?> startSupervision(@RequestBody SupervisionReportModel report) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "startSupervision");
         try {
-            SupervisionModel supervisionModel = supervisionService.startSupervision(supervisionId);
+            SupervisionModel supervisionModel = supervisionService.startSupervision(report);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

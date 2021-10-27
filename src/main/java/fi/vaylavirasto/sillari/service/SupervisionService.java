@@ -89,9 +89,9 @@ public class SupervisionService {
     }
 
     // Adds the status IN_PROGRESS and creates a new supervision report
-    public SupervisionModel startSupervision(Integer supervisionId) {
-        supervisionReportRepository.createSupervisionReport(supervisionId);
-        return getSupervision(supervisionId);
+    public SupervisionModel startSupervision(SupervisionReportModel report) {
+        supervisionReportRepository.createSupervisionReport(report);
+        return getSupervision(report.getSupervisionId());
     }
 
     // Cancels the supervision by adding the status CANCELLED
