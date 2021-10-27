@@ -1,3 +1,24 @@
+@font-face {
+  font-family: "Exo2";
+  font-weight: 400;
+  font-style: normal;
+  src: url("./font/static/Exo2-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Exo2";
+  font-weight: 600;
+  font-style: normal;
+  src: url("./font/static/Exo2-SemiBold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Exo2";
+  font-weight: 700;
+  font-style: normal;
+  src: url("./font/static/Exo2-Bold.ttf") format("truetype");
+}
+
 .listContainer {
   width: 100%;
 }
@@ -7,7 +28,11 @@
 }
 
 .headingText {
-  font-weight: bold;
+  font-weight: 600; /* semi-bold */
+}
+
+.headingBoldText {
+  font-weight: 700; /* bold */
 }
 
 .itemIcon {

@@ -3,6 +3,8 @@ http://ionicframework.com/docs/theming/ */
 
 /** Ionic CSS Variables **/
 :root {
+  --ion-font-family: "Exo2";
+
   /** primary (Vayla dark blue) **/
   --ion-color-primary: #0064af;
   --ion-color-primary-rgb: 0, 100, 175;
