@@ -46,9 +46,9 @@ const Supervision = (): JSX.Element => {
   // Set-up mutations for modifying data later
   const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(initialReport, dispatch), {
     retry: onRetry,
-    onSuccess: () => {
-      // Invalidate "getSupervision" query to fetch the updated data again
-      queryClient.invalidateQueries(["getSupervision", supervisionId]);
+    onSuccess: (data) => {
+      console.log("STARTED AND GOT NEW DATA", data);
+      queryClient.setQueryData(["getSupervision", supervisionId], data);
     },
   });
 
