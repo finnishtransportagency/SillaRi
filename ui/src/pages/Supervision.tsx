@@ -36,10 +36,6 @@ const Supervision = (): JSX.Element => {
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
-      onSuccess: (data) => {
-        console.log("getSupervision setting report", data.report);
-        setModifiedSupervisionReport(data.report);
-      },
     }
   );
 
@@ -48,43 +44,50 @@ const Supervision = (): JSX.Element => {
     retry: onRetry,
     onSuccess: (data) => {
       console.log("STARTED AND GOT NEW DATA", data);
+      // Update "getSupervision" query to return the updated data
       queryClient.setQueryData(["getSupervision", supervisionId], data);
+      setModifiedSupervisionReport(data.report);
     },
   });
 
   console.log("Supervision", supervision);
   console.log("ModifiedReport", modifiedSupervisionReport);
 
-  // Start the supervision if supervision has loaded but report is null or undefined
   const { isLoading: isSendingSupervisionStart } = supervisionStartMutation;
 
   useEffect(() => {
     const { report: savedReport } = supervision || {};
     const { id: supervisionReportId = -1 } = savedReport || {};
 
-    if (!isLoadingSupervision && !isSendingSupervisionStart && supervision && supervisionReportId < 0) {
-      console.log("HELLO supervisionStart");
+    if (!isLoadingSupervision && !isSendingSupervisionStart && supervision) {
+      if (supervisionReportId <= 0) {
+        // No report created for this supervision, create new with default values and modify that
+        console.log("HELLO supervisionStart");
 
-      const defaultReport: ISupervisionReport = {
-        id: -1,
-        supervisionId: Number(supervisionId),
-        drivingLineOk: false,
-        drivingLineInfo: "",
-        speedLimitOk: false,
-        speedLimitInfo: "",
-        anomalies: true,
-        anomaliesDescription: "",
-        surfaceDamage: false,
-        jointDamage: false,
-        bendOrDisplacement: false,
-        otherObservations: false,
-        otherObservationsInfo: "",
-        additionalInfo: "",
-        draft: true,
-      };
-      supervisionStartMutation.mutate(defaultReport);
+        const defaultReport: ISupervisionReport = {
+          id: -1,
+          supervisionId: Number(supervisionId),
+          drivingLineOk: false,
+          drivingLineInfo: "",
+          speedLimitOk: false,
+          speedLimitInfo: "",
+          anomalies: true,
+          anomaliesDescription: "",
+          surfaceDamage: false,
+          jointDamage: false,
+          bendOrDisplacement: false,
+          otherObservations: false,
+          otherObservationsInfo: "",
+          additionalInfo: "",
+          draft: true,
+        };
+        supervisionStartMutation.mutate(defaultReport);
+      } else if (modifiedSupervisionReport === undefined) {
+        // If the report is already created, modify the saved report
+        setModifiedSupervisionReport(savedReport);
+      }
     }
-  }, [isLoadingSupervision, isSendingSupervisionStart, supervisionStartMutation, supervisionId, supervision]);
+  }, [isLoadingSupervision, isSendingSupervisionStart, supervisionStartMutation, supervisionId, supervision, modifiedSupervisionReport]);
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
