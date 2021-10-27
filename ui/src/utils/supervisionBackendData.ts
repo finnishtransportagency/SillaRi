@@ -130,18 +130,16 @@ export const getSupervisionList = async (username: string, dispatch: Dispatch): 
   }
 };
 
-export const getSupervision = async (supervisionId: number, dispatch: Dispatch, selectedSupervisionDetail?: ISupervision): Promise<void> => {
+export const getSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
-    if (selectedSupervisionDetail && selectedSupervisionDetail.id !== supervisionId) {
-      dispatch({ type: supervisionActions.GET_SUPERVISION, payload: undefined });
-    }
+    console.log("GetSupervision", supervisionId);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervision: false } });
 
     const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}`);
 
     if (supervisionResponse.ok) {
       const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.GET_SUPERVISION, payload: supervision });
+      return await supervision;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervision: true } });
       throw new Error(notOkError);
@@ -152,8 +150,9 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch, 
   }
 };
 
-export const updateConformsToPermit = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+export const updateConformsToPermit = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
   try {
+    console.log("UpdateConformsToPermit", updateRequest);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateConformsToPermit: false } });
 
     const updateSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/updateconformstopermit`, {
@@ -166,7 +165,7 @@ export const updateConformsToPermit = async (updateRequest: ISupervision, dispat
 
     if (updateSupervisionResponse.ok) {
       const updatedSupervision = (await updateSupervisionResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.UPDATE_CONFORMS_TO_PERMIT, payload: updatedSupervision });
+      return await updatedSupervision;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateConformsToPermit: true } });
       throw new Error(notOkError);
@@ -177,17 +176,22 @@ export const updateConformsToPermit = async (updateRequest: ISupervision, dispat
   }
 };
 
-export const startSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<void> => {
+export const startSupervision = async (report: ISupervisionReport, dispatch: Dispatch): Promise<ISupervision> => {
   try {
+    console.log("StartSupervision", report);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { startSupervision: false } });
 
-    const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision?supervisionId=${supervisionId}`, {
+    const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(report),
     });
 
     if (startSupervisionResponse.ok) {
       const startedSupervision = (await startSupervisionResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.START_SUPERVISION, payload: startedSupervision });
+      return await startedSupervision;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { startSupervision: true } });
       throw new Error(notOkError);

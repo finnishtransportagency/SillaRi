@@ -14,6 +14,7 @@ import ISupervision from "../interfaces/ISupervision";
 import { actions as supervisionActions } from "../store/supervisionSlice";
 import { useTypedSelector } from "../store/store";
 import { getSupervision, onRetry } from "../utils/supervisionBackendData";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 interface SummaryProps {
   supervisionId: string;
@@ -26,25 +27,24 @@ const SupervisionSummary = (): JSX.Element => {
   const [toastMessage, setToastMessage] = useState("");
 
   const {
-    selectedSupervisionDetail,
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
-  const { images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
-  const { isLoading: isLoadingSupervision } = useQuery(
+  const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
-    () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail),
+    () => getSupervision(Number(supervisionId), dispatch),
     { retry: onRetry }
   );
+  const { images: savedImages = [], report } = supervision || {};
 
   useEffect(() => {
     if (!isLoadingSupervision) {
       // Remove any uploaded images from the camera images stored in redux
-      dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: supervisionImages });
+      dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: savedImages });
     }
-  }, [isLoadingSupervision, supervisionImages, dispatch]);
+  }, [isLoadingSupervision, savedImages, dispatch]);
 
-  const noNetworkNoData = isFailed.getSupervision && selectedSupervisionDetail === undefined;
+  const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
   return (
     <IonPage>
@@ -54,10 +54,10 @@ const SupervisionSummary = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <>
-            <SupervisionHeader supervision={selectedSupervisionDetail as ISupervision} />
-            <SupervisionPhotos supervision={selectedSupervisionDetail as ISupervision} headingKey="supervision.photos" />
-            <SupervisionObservationsSummary supervision={selectedSupervisionDetail as ISupervision} />
-            <SupervisionFooter supervision={selectedSupervisionDetail as ISupervision} draft={false} setToastMessage={setToastMessage} />
+            <SupervisionHeader supervision={supervision as ISupervision} />
+            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" />
+            <SupervisionObservationsSummary supervision={supervision as ISupervision} />
+            <SupervisionFooter supervision={supervision as ISupervision} report={report as ISupervisionReport} setToastMessage={setToastMessage} />
           </>
         )}
 

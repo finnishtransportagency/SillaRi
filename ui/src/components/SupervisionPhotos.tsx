@@ -16,7 +16,7 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: Super
   const { t } = useTranslation();
 
   const { images = [] } = useTypedSelector((state) => state.supervisionReducer);
-  const { id: supervisionId, images: supervisionImages = [] } = supervision || {};
+  const { id: supervisionId, images: savedImages = [] } = supervision || {};
 
   return (
     <>
@@ -25,7 +25,7 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: Super
       </IonItem>
 
       <IonGrid>
-        <ImageThumbnailRow images={images} supervisionImages={supervisionImages} />
+        <ImageThumbnailRow images={images} savedImages={savedImages} />
       </IonGrid>
 
       {isButtonsIncluded && (

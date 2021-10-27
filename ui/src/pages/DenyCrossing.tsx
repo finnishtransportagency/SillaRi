@@ -21,25 +21,26 @@ const DenyCrossing = (): JSX.Element => {
   const { supervisionId = "0" } = useParams<DenyCrossingProps>();
 
   const {
-    selectedSupervisionDetail,
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
 
-  const { routeBridge } = selectedSupervisionDetail || {};
+  const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
+    ["getSupervision", supervisionId],
+    () => getSupervision(Number(supervisionId), dispatch),
+    { retry: onRetry }
+  );
+
+  const { routeBridge } = supervision || {};
   const { route, bridge } = routeBridge || {};
   const { name = "", identifier = "" } = bridge || {};
   const { permit } = route || {};
   const { permitNumber = "" } = permit || {};
 
-  const { isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", supervisionId],
-    () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail),
-    { retry: onRetry }
-  );
-
-  const noNetworkNoData = isFailed.getSupervision && selectedSupervisionDetail === undefined;
+  const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
   // TODO - send "denyCrossing" and deny reason to backend
+  // and use the response from the mutation to update ["getSupervision", supervisionId] query
+
   return (
     <IonPage>
       <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} />

@@ -157,6 +157,7 @@
       "noAnomalies": "(SV) None",
       "additionalInfo": "(SV) Additional information",
       "approved": "(SV) Approved",
+      "notApproved": "(SV) Not approved",
       "saved": "(SV) Supervision has been saved (to the send list)"
     }
   },

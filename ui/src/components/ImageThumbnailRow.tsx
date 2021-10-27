@@ -8,10 +8,10 @@ import ImagePreview from "./ImagePreview";
 
 interface ImageThumbnailRowProps {
   images: IImageItem[];
-  supervisionImages: ISupervisionImage[];
+  savedImages: ISupervisionImage[];
 }
 
-const ImageThumbnailRow = ({ images, supervisionImages }: ImageThumbnailRowProps): JSX.Element => {
+const ImageThumbnailRow = ({ images, savedImages }: ImageThumbnailRowProps): JSX.Element => {
   const [isImagePreviewOpen, setImagePreviewOpen] = useState<boolean>(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
 
@@ -43,19 +43,19 @@ const ImageThumbnailRow = ({ images, supervisionImages }: ImageThumbnailRowProps
             );
           })}
 
-      {supervisionImages &&
-        supervisionImages.length > 0 &&
-        [...supervisionImages]
+      {savedImages &&
+        savedImages.length > 0 &&
+        [...savedImages]
           .sort((a, b) => {
             const am = moment(a.taken);
             const bm = moment(b.taken);
             return bm.diff(am, "seconds");
           })
-          .map((supervisionImage) => {
-            const imageUrl = `${getOrigin()}/api/images/get?objectKey=${supervisionImage.objectKey}`;
+          .map((image) => {
+            const imageUrl = `${getOrigin()}/api/images/get?objectKey=${image.objectKey}`;
 
             return (
-              <IonCol key={supervisionImage.id} size="3">
+              <IonCol key={image.id} size="3">
                 <IonThumbnail onClick={() => showImage(true, imageUrl)}>
                   <IonImg src={imageUrl} />
                 </IonThumbnail>

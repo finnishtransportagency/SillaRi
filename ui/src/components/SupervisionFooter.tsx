@@ -14,31 +14,32 @@ import { DATE_TIME_FORMAT } from "../utils/constants";
 
 interface SupervisionFooterProps {
   supervision: ISupervision;
-  draft: boolean;
+  report: ISupervisionReport;
   setToastMessage?: Dispatch<SetStateAction<string>>;
 }
 
-const SupervisionFooter = ({ supervision, draft, setToastMessage }: SupervisionFooterProps): JSX.Element => {
+const SupervisionFooter = ({ supervision, report, setToastMessage }: SupervisionFooterProps): JSX.Element => {
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
 
   const { images = [] } = useTypedSelector((state) => state.supervisionReducer);
-  const { id: supervisionId, report } = supervision || {};
+  const { id: supervisionId } = supervision || {};
   const {
-    id: supervisionReportId = -1,
-    drivingLineOk = true,
-    drivingLineInfo = "",
-    speedLimitOk = true,
-    speedLimitInfo = "",
-    anomalies = false,
-    anomaliesDescription = "",
-    surfaceDamage = false,
-    jointDamage = false,
-    bendOrDisplacement = false,
-    otherObservations = false,
-    otherObservationsInfo = "",
-    additionalInfo = "",
+    id: supervisionReportId,
+    drivingLineOk,
+    drivingLineInfo,
+    speedLimitOk,
+    speedLimitInfo,
+    anomalies,
+    anomaliesDescription,
+    surfaceDamage,
+    jointDamage,
+    bendOrDisplacement,
+    otherObservations,
+    otherObservationsInfo,
+    additionalInfo,
+    draft,
   } = report || {};
 
   // Set-up mutations for modifying data later
@@ -55,9 +56,9 @@ const SupervisionFooter = ({ supervision, draft, setToastMessage }: SupervisionF
   // Note that if summary has been saved before (not draft), it's reset here as draft until summary is saved again.
   // Should we disable all changes to report when it is not draft anymore, so this does not happen?
   const saveReport = () => {
-    const updatedReport = {
+    const updatedReport: ISupervisionReport = {
       id: supervisionReportId,
-      supervisionId: supervisionId,
+      supervisionId,
       drivingLineOk,
       drivingLineInfo: !drivingLineOk ? drivingLineInfo : "",
       speedLimitOk,
@@ -71,7 +72,7 @@ const SupervisionFooter = ({ supervision, draft, setToastMessage }: SupervisionF
       otherObservationsInfo: anomalies && otherObservations ? otherObservationsInfo : "",
       additionalInfo,
       draft,
-    } as ISupervisionReport;
+    };
 
     supervisionReportMutation.mutate(updatedReport);
 

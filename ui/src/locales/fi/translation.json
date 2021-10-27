@@ -158,6 +158,7 @@
       "noAnomalies": "Ei ole",
       "additionalInfo": "Lisätiedot",
       "approved": "Hyväksytty",
+      "notApproved": "Ei hyväksytty",
       "saved": "Valvonta on tallennettu (lähetyslistalle)"
     }
   },

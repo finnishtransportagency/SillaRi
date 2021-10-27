@@ -13,17 +13,17 @@ const SupervisionObservationsSummary = ({ supervision }: SupervisionObservations
   const { report } = supervision || {};
 
   const {
-    drivingLineOk = true,
+    drivingLineOk = false,
     drivingLineInfo = "",
-    speedLimitOk = true,
+    speedLimitOk = false,
     speedLimitInfo = "",
-    anomalies = false,
+    anomalies = true,
     anomaliesDescription = "",
     surfaceDamage = false,
     jointDamage = false,
     bendOrDisplacement = false,
-    // otherObservations = false,
-    // otherObservationsInfo = "",
+    otherObservations = false,
+    otherObservationsInfo = "",
     additionalInfo = "",
   } = report || {};
 
@@ -51,7 +51,7 @@ const SupervisionObservationsSummary = ({ supervision }: SupervisionObservations
               {surfaceDamage && <IonLabel>{t("supervision.report.surfaceDamage")}</IonLabel>}
               {jointDamage && <IonLabel>{t("supervision.report.jointDamage")}</IonLabel>}
               {bendOrDisplacement && <IonLabel>{t("supervision.report.bendOrDisplacement")}</IonLabel>}
-              {/*{otherObservations && otherObservationsInfo && <IonLabel>{otherObservationsInfo}</IonLabel>}*/}
+              {otherObservations && otherObservationsInfo && <IonLabel>{otherObservationsInfo}</IonLabel>}
               <IonLabel>{anomaliesDescription}</IonLabel>
             </>
           )}

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { IonContent, IonPage } from "@ionic/react";
@@ -13,6 +13,7 @@ import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector } from "../store/store";
 import { getSupervision, onRetry, startSupervision } from "../utils/supervisionBackendData";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 interface SupervisionProps {
   supervisionId: string;
@@ -21,33 +22,71 @@ interface SupervisionProps {
 const Supervision = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+  const [modifiedSupervisionReport, setModifiedSupervisionReport] = useState<ISupervisionReport | undefined>(undefined);
+
   const { supervisionId = "0" } = useParams<SupervisionProps>();
 
   const {
-    selectedSupervisionDetail,
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
 
-  const { report } = selectedSupervisionDetail || {};
-  const { id: supervisionReportId = -1 } = report || {};
-
-  // Added query to clear previous supervision from Redux store, otherwise that one is used
-  const { isLoading: isLoadingSupervision } = useQuery(
+  const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
-    () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail),
-    { retry: onRetry }
+    () => getSupervision(Number(supervisionId), dispatch),
+    {
+      retry: onRetry,
+      onSuccess: (data) => {
+        console.log("getSupervision setting report", data.report);
+        setModifiedSupervisionReport(data.report);
+      },
+    }
   );
 
   // Set-up mutations for modifying data later
-  const supervisionStartMutation = useMutation((superId: number) => startSupervision(superId, dispatch), { retry: onRetry });
+  const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(initialReport, dispatch), {
+    retry: onRetry,
+    onSuccess: () => {
+      // Invalidate "getSupervision" query to fetch the updated data again
+      queryClient.invalidateQueries(["getSupervision", supervisionId]);
+    },
+  });
 
-  // Start the supervision if not already done
+  console.log("Supervision", supervision);
+  console.log("ModifiedReport", modifiedSupervisionReport);
+
+  // Start the supervision if supervision has loaded but report is null or undefined
   const { isLoading: isSendingSupervisionStart } = supervisionStartMutation;
-  if (!isLoadingSupervision && !isSendingSupervisionStart && supervisionReportId <= 0) {
-    supervisionStartMutation.mutate(Number(supervisionId));
-  }
 
-  const noNetworkNoData = isFailed.getSupervision && selectedSupervisionDetail === undefined;
+  useEffect(() => {
+    const { report: savedReport } = supervision || {};
+    const { id: supervisionReportId = -1 } = savedReport || {};
+
+    if (!isLoadingSupervision && !isSendingSupervisionStart && supervision && supervisionReportId < 0) {
+      console.log("HELLO supervisionStart");
+
+      const defaultReport: ISupervisionReport = {
+        id: -1,
+        supervisionId: Number(supervisionId),
+        drivingLineOk: false,
+        drivingLineInfo: "",
+        speedLimitOk: false,
+        speedLimitInfo: "",
+        anomalies: true,
+        anomaliesDescription: "",
+        surfaceDamage: false,
+        jointDamage: false,
+        bendOrDisplacement: false,
+        otherObservations: false,
+        otherObservationsInfo: "",
+        additionalInfo: "",
+        draft: true,
+      };
+      supervisionStartMutation.mutate(defaultReport);
+    }
+  }, [isLoadingSupervision, isSendingSupervisionStart, supervisionStartMutation, supervisionId, supervision]);
+
+  const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
   return (
     <IonPage>
@@ -57,14 +96,18 @@ const Supervision = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <>
-            <SupervisionHeader supervision={selectedSupervisionDetail as ISupervision} className="header" isCrossingInstructionsIncluded />
-            <SupervisionPhotos supervision={selectedSupervisionDetail as ISupervision} headingKey="supervision.photosDrivingLine" isButtonsIncluded />
-            <SupervisionObservations supervision={selectedSupervisionDetail as ISupervision} />
-            <SupervisionFooter supervision={selectedSupervisionDetail as ISupervision} draft />
+            <SupervisionHeader supervision={supervision as ISupervision} className="header" isCrossingInstructionsIncluded />
+            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photosDrivingLine" isButtonsIncluded />
+            <SupervisionObservations
+              modifiedSupervisionReport={modifiedSupervisionReport as ISupervisionReport}
+              setModifiedSupervisionReport={setModifiedSupervisionReport}
+            />
+            {/*<SupervisionFooter supervision={supervision as ISupervision} report={modifiedSupervisionReport as ISupervisionReport} />*/}
           </>
         )}
       </IonContent>
     </IonPage>
   );
 };
+
 export default Supervision;
