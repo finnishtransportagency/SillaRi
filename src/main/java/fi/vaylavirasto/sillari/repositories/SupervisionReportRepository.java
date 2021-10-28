@@ -67,7 +67,7 @@ public class SupervisionReportRepository {
                                 report.getOtherObservations(),
                                 report.getOtherObservationsInfo(),
                                 report.getAdditionalInfo(),
-                                true
+                                report.getDraft()
                         )
                         .returningResult(TableAlias.supervisionReport.ID)
                         .fetchOne(); // Execute and return zero or one record

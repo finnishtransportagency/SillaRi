@@ -4,11 +4,9 @@ import IFailedQuery from "../interfaces/IFailedQuery";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import IImageItem from "../interfaces/IImageItem";
 import INetworkStatus from "../interfaces/INetworkStatus";
-import IRadioValue from "../interfaces/IRadioValue";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
-import ITextAreaValue from "../interfaces/ITextAreaValue";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
 import IRouteTransport from "../interfaces/IRouteTransport";
 
@@ -18,7 +16,6 @@ interface IStateProps {
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
   supervisionList: ISupervision[];
-  selectedSupervisionDetail?: ISupervision;
   images: IImageItem[];
   networkStatus: INetworkStatus;
 }
@@ -29,7 +26,6 @@ const initialState: IStateProps = {
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
   supervisionList: [],
-  selectedSupervisionDetail: undefined,
   images: [],
   networkStatus: {
     isFailed: {},
@@ -59,66 +55,6 @@ const supervisionSlice = createSlice({
     GET_SUPERVISION_LIST: (state, action: PayloadAction<ISupervision[]>) => {
       console.log("GET_SUPERVISION_LIST", action.payload);
       return { ...state, supervisionList: action.payload };
-    },
-    GET_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
-      console.log("GET_SUPERVISION", action.payload);
-      return { ...state, selectedSupervisionDetail: action.payload };
-    },
-    UPDATE_CONFORMS_TO_PERMIT: (state, action: PayloadAction<ISupervision>) => {
-      console.log("UPDATE_CONFORMS_TO_PERMIT", action.payload);
-      return { ...state, selectedSupervisionDetail: action.payload };
-    },
-    START_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
-      console.log("START_SUPERVISION", action.payload);
-      return { ...state, selectedSupervisionDetail: action.payload };
-    },
-    DENY_CROSSING: (state, action: PayloadAction<ISupervision>) => {
-      console.log("DENY_CROSSING", action.payload);
-      return { ...state, selectedSupervisionDetail: action.payload };
-    },
-    FINISH_SUPERVISION: (state, action: PayloadAction<ISupervision>) => {
-      console.log("FINISH_SUPERVISION", action.payload);
-      return { ...state, selectedSupervisionDetail: action.payload };
-    },
-    SUPERVISION_SUMMARY: (state, action: PayloadAction<ISupervision>) => {
-      console.log("SUPERVISION_SUMMARY", action.payload);
-      return { ...state, loading: false, selectedSupervisionDetail: action.payload };
-    },
-    REPORT_RADIO_CHANGED: (state, action: PayloadAction<IRadioValue>) => {
-      const { selectedSupervisionDetail } = state;
-      if (selectedSupervisionDetail && selectedSupervisionDetail.report) {
-        if (action.payload.name === "drivingLineOk") {
-          selectedSupervisionDetail.report.drivingLineOk = action.payload.value;
-        } else if (action.payload.name === "speedLimitOk") {
-          selectedSupervisionDetail.report.speedLimitOk = action.payload.value;
-        } else if (action.payload.name === "anomalies") {
-          selectedSupervisionDetail.report.anomalies = action.payload.value;
-        } else if (action.payload.name === "surfaceDamage") {
-          selectedSupervisionDetail.report.surfaceDamage = action.payload.value;
-        } else if (action.payload.name === "jointDamage") {
-          selectedSupervisionDetail.report.jointDamage = action.payload.value;
-        } else if (action.payload.name === "bendOrDisplacement") {
-          selectedSupervisionDetail.report.bendOrDisplacement = action.payload.value;
-        } else if (action.payload.name === "otherObservations") {
-          selectedSupervisionDetail.report.otherObservations = action.payload.value;
-        }
-      }
-    },
-    REPORT_TEXTAREA_CHANGED: (state, action: PayloadAction<ITextAreaValue>) => {
-      const { selectedSupervisionDetail } = state;
-      if (selectedSupervisionDetail && selectedSupervisionDetail.report) {
-        if (action.payload.name === "drivingLineInfo") {
-          selectedSupervisionDetail.report.drivingLineInfo = action.payload.value;
-        } else if (action.payload.name === "speedLimitInfo") {
-          selectedSupervisionDetail.report.speedLimitInfo = action.payload.value;
-        } else if (action.payload.name === "otherObservationsInfo") {
-          selectedSupervisionDetail.report.otherObservationsInfo = action.payload.value;
-        } else if (action.payload.name === "anomaliesDescription") {
-          selectedSupervisionDetail.report.anomaliesDescription = action.payload.value;
-        } else if (action.payload.name === "additionalInfo") {
-          selectedSupervisionDetail.report.additionalInfo = action.payload.value;
-        }
-      }
     },
     SAVE_IMAGES: (state, action: PayloadAction<IImageItem[]>) => {
       console.log("SAVE_IMAGES", action.payload);

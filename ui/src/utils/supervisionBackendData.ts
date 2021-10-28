@@ -202,7 +202,7 @@ export const startSupervision = async (report: ISupervisionReport, dispatch: Dis
   }
 };
 
-export const denyCrossing = async (denyRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+export const denyCrossing = async (denyRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { denyCrossing: false } });
 
@@ -216,7 +216,7 @@ export const denyCrossing = async (denyRequest: ISupervision, dispatch: Dispatch
 
     if (denyCrossingResponse.ok) {
       const supervision = (await denyCrossingResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.DENY_CROSSING, payload: supervision });
+      return await supervision;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { denyCrossing: true } });
       throw new Error(notOkError);
@@ -227,7 +227,7 @@ export const denyCrossing = async (denyRequest: ISupervision, dispatch: Dispatch
   }
 };
 
-export const finishSupervision = async (finishRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+export const finishSupervision = async (finishRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { finishSupervision: false } });
 
@@ -241,7 +241,7 @@ export const finishSupervision = async (finishRequest: ISupervision, dispatch: D
 
     if (finishSupervisionResponse.ok) {
       const finishedSupervision = (await finishSupervisionResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.FINISH_SUPERVISION, payload: finishedSupervision });
+      return await finishedSupervision;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { finishSupervision: true } });
       throw new Error(notOkError);
@@ -252,7 +252,7 @@ export const finishSupervision = async (finishRequest: ISupervision, dispatch: D
   }
 };
 
-export const updateSupervisionReport = async (updateRequest: ISupervisionReport, dispatch: Dispatch): Promise<void> => {
+export const updateSupervisionReport = async (updateRequest: ISupervisionReport, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateSupervisionReport: false } });
 
@@ -266,7 +266,7 @@ export const updateSupervisionReport = async (updateRequest: ISupervisionReport,
 
     if (updateReportResponse.ok) {
       const updatedSupervision = (await updateReportResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.SUPERVISION_SUMMARY, payload: updatedSupervision });
+      return await updatedSupervision;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateSupervisionReport: true } });
       throw new Error(notOkError);
