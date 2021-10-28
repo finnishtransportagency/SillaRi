@@ -24,6 +24,8 @@ export const getCompanyTransportsList = async (username: string, dispatch: Dispa
 
     const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor?username=${username}`);
 
+    console.log("companyTransportsResponse debug - ", companyTransportsResponse);
+
     if (companyTransportsResponse.ok) {
       const companyTransportsList = (await companyTransportsResponse.json()) as Promise<ICompanyTransports[]>;
       dispatch({ type: supervisionActions.GET_COMPANY_TRANSPORTS_LIST, payload: companyTransportsList });
