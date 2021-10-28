@@ -209,7 +209,7 @@
       "deleted": "(SV) Deleted",
       "routeInfo": {
         "estimatedDepartureDate": "(SV) Estimated departure date",
-        "estimatedDepartureTime": "(SV) Estimated departure time",
+        "estimatedDepartureTime": "(SV) time",
         "route": "(SV) Route",
         "origin": "(SV) Origin",
         "destination": "(SV) Destination",

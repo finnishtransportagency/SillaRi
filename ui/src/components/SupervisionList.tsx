@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { IonItem, IonLabel } from "@ionic/react";
 import NoNetworkNoData from "./NoNetworkNoData";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
@@ -25,8 +25,8 @@ const SupervisionList = ({ supervisionList, noNetworkNoData }: SupervisionListPr
           const dayKey = `day${dIndex}`;
 
           return (
-            <>
-              <IonItem key={dayKey} className="header" lines="none">
+            <Fragment key={dayKey}>
+              <IonItem className="header" lines="none">
                 <IonLabel className="headingText">
                   <Moment format={DATE_FORMAT}>{supervisionDay.date}</Moment>
                 </IonLabel>
@@ -37,7 +37,7 @@ const SupervisionList = ({ supervisionList, noNetworkNoData }: SupervisionListPr
                   return <BridgeCard key={bridgeKey} supervision={supervision} />;
                 })}
               </div>
-            </>
+            </Fragment>
           );
         })
       )}

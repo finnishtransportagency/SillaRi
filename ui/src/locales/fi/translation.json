@@ -210,7 +210,7 @@
       "deleted": "Poistettu",
       "routeInfo": {
         "estimatedDepartureDate": "Arvioitu lähtöpäivä",
-        "estimatedDepartureTime": "Arvioitu lähtöaika",
+        "estimatedDepartureTime": "klo",
         "route": "Reitti",
         "origin": "Lähtöpaikka",
         "destination": "Määräpaikka",

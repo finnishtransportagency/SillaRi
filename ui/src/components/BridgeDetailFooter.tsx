@@ -29,12 +29,12 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
       </IonItem>
 
       {!isLoadingSupervision && !supervisionId && (
-        <IonItem color="danger" lines="none">
+        <IonItem color="danger" className="itemIcon" detail detailIcon="" lines="none">
           <IonLabel className="headingText">{t("bridge.supervisionMissing")}</IonLabel>
         </IonItem>
       )}
       {!isLoadingSupervision && supervisionStarted && (
-        <IonItem color="success" lines="none">
+        <IonItem color="success" className="itemIcon" detail detailIcon="" lines="none">
           <IonLabel className="headingText">{t("bridge.supervisionStarted")}</IonLabel>
           <IonLabel>{startedTime ? <Moment format={DATE_TIME_FORMAT_MIN}>{startedTime}</Moment> : ""}</IonLabel>
         </IonItem>

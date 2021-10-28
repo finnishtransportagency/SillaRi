@@ -209,7 +209,7 @@
       "deleted": "Deleted",
       "routeInfo": {
         "estimatedDepartureDate": "Estimated departure date",
-        "estimatedDepartureTime": "Estimated departure time",
+        "estimatedDepartureTime": "time",
         "route": "Route",
         "origin": "Origin",
         "destination": "Destination",

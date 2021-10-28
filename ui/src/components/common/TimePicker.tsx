@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { IonDatetime, IonIcon, IonItem } from "@ionic/react";
-import { timeOutline } from "ionicons/icons";
+import { IonDatetime, IonItem } from "@ionic/react";
 import moment from "moment";
 import "./TimePicker.css";
 
@@ -23,7 +22,6 @@ const TimePicker = ({ className, value, onChange }: TimePickerProps): JSX.Elemen
         value={moment(value).toISOString()}
         onIonChange={(e) => onChange(moment(e.detail.value).toDate())}
       />
-      <IonIcon className="otherIcon openIcon" icon={timeOutline} slot="end" />
     </IonItem>
   );
 };

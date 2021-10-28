@@ -84,6 +84,12 @@ ion-button.ion-color-tertiary {
   --border-style: solid;
 }
 
+ion-label {
+  /* wrap text instead of using ellipsis */
+  text-overflow: clip !important;
+  white-space: normal !important;
+}
+
 /** Additional Vayla colors **/
 .ion-color-teal {
   --ion-color-base: var(--ion-color-teal);
