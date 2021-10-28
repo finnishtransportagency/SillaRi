@@ -5,7 +5,7 @@
   "dependencies": {
     "@capacitor/android": "^3.2.3",
     "@capacitor/camera": "^1.1.0",
-    "@capacitor/core": "3.2.4",
+    "@capacitor/core": "3.2.5",
     "@capacitor/geolocation": "^1.1.0",
     "@ionic/core": "^5.8.0",
     "@ionic/pwa-elements": "^3.0.2",
@@ -21,7 +21,7 @@
     "ionicons": "^5.5.3",
     "js-cookie": "^3.0.1",
     "moment": "^2.29.1",
-    "ol": "6.7.0",
+    "ol": "6.9.0",
     "proj4": "^2.7.5",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
@@ -35,7 +35,7 @@
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "redux": "^4.1.1",
-    "typescript": "4.4.3",
+    "typescript": "4.4.4",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.0"
   },
@@ -64,7 +64,7 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/cli": "3.2.4",
+    "@capacitor/cli": "3.2.5",
     "@types/js-cookie": "^3.0.0",
     "@types/node": "^16.9.4",
     "@types/proj4": "^2.5.2",
@@ -74,15 +74,14 @@
     "@types/react-router": "^5.1.16",
     "@types/react-router-dom": "^5.1.9",
     "@types/uuid": "^8.3.1",
-    "@typescript-eslint/eslint-plugin": "^4.31.1",
-    "@typescript-eslint/parser": "^4.31.1",
+    "@typescript-eslint/eslint-plugin": "^5.2.0",
+    "@typescript-eslint/parser": "^5.2.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-typescript": "^14.0.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-react-app": "^6.0.0",
-    "eslint-plugin-flowtype": "^6.0.1",
+    "eslint-plugin-flowtype": "^8.0.2",
     "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^4.0.0",
@@ -90,11 +89,11 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-react-redux": "^3.3.2",
     "prettier": "^2.4.1",
-    "sass": "^1.41.1",
-    "stylelint": "^13.13.1",
-    "stylelint-config-prettier": "^8.0.2",
+    "sass": "^1.43.4",
+    "stylelint": "^14.0.1",
+    "stylelint-config-prettier": "^9.0.3",
     "stylelint-prettier": "^1.2.0",
-    "typescript": "4.4.3"
+    "typescript": "4.4.4"
   },
   "description": "An Ionic project"
 }
