@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonContent, IonPage, IonToast } from "@ionic/react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import SupervisionHeader from "../components/SupervisionHeader";
-import SupervisionFooter from "../components/SupervisionFooter";
 import SupervisionObservationsSummary from "../components/SupervisionObservationsSummary";
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
-import { actions as supervisionActions } from "../store/supervisionSlice";
 import { useTypedSelector } from "../store/store";
-import { getSupervision, onRetry } from "../utils/supervisionBackendData";
+import { finishSupervision, getSupervision, onRetry } from "../utils/supervisionBackendData";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
+import SupervisionFooter from "../components/SupervisionFooter";
 
 interface SummaryProps {
   supervisionId: string;
@@ -23,6 +22,9 @@ interface SummaryProps {
 const SupervisionSummary = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const history = useHistory();
+  const queryClient = useQueryClient();
+
   const { supervisionId = "0" } = useParams<SummaryProps>();
   const [toastMessage, setToastMessage] = useState("");
 
@@ -35,14 +37,36 @@ const SupervisionSummary = (): JSX.Element => {
     () => getSupervision(Number(supervisionId), dispatch),
     { retry: onRetry }
   );
-  const { images: savedImages = [], report } = supervision || {};
 
-  useEffect(() => {
+  const finishSupervisionMutation = useMutation((finishRequest: ISupervision) => finishSupervision(finishRequest, dispatch), {
+    retry: onRetry,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      setToastMessage(t("supervision.summary.saved"));
+    },
+  });
+  const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
+
+  const { report } = supervision || {};
+
+  /*useEffect(() => {
     if (!isLoadingSupervision) {
       // Remove any uploaded images from the camera images stored in redux
       dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: savedImages });
     }
-  }, [isLoadingSupervision, savedImages, dispatch]);
+  }, [isLoadingSupervision, savedImages, dispatch]);*/
+
+  const saveReport = (): void => {
+    if (supervision) {
+      finishSupervisionMutation.mutate(supervision);
+    }
+  };
+
+  const editReport = (): void => {
+    // TODO confirm that all changes are lost and supervision status reset
+    // Set supervision status back to 'PLANNED' and delete report
+    history.push(`/supervision/${supervisionId}`);
+  };
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
@@ -56,8 +80,13 @@ const SupervisionSummary = (): JSX.Element => {
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
             <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" />
-            <SupervisionObservationsSummary supervision={supervision as ISupervision} />
-            <SupervisionFooter supervision={supervision as ISupervision} report={report as ISupervisionReport} setToastMessage={setToastMessage} />
+            <SupervisionObservationsSummary report={report as ISupervisionReport} />
+            <SupervisionFooter
+              report={report as ISupervisionReport}
+              isLoading={isLoadingSupervision || isSendingFinishSupervision}
+              saveChanges={saveReport}
+              cancelChanges={editReport}
+            />
           </>
         )}
 

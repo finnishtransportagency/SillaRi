@@ -1,30 +1,28 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonItem, IonLabel } from "@ionic/react";
-import ISupervision from "../interfaces/ISupervision";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 interface SupervisionObservationsSummaryProps {
-  supervision: ISupervision;
+  report: ISupervisionReport;
 }
 
-const SupervisionObservationsSummary = ({ supervision }: SupervisionObservationsSummaryProps): JSX.Element => {
+const SupervisionObservationsSummary = ({ report }: SupervisionObservationsSummaryProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { report } = supervision || {};
-
   const {
-    drivingLineOk = false,
-    drivingLineInfo = "",
-    speedLimitOk = false,
-    speedLimitInfo = "",
-    anomalies = true,
-    anomaliesDescription = "",
-    surfaceDamage = false,
-    jointDamage = false,
-    bendOrDisplacement = false,
-    otherObservations = false,
-    otherObservationsInfo = "",
-    additionalInfo = "",
+    drivingLineOk,
+    drivingLineInfo,
+    speedLimitOk,
+    speedLimitInfo,
+    anomalies,
+    anomaliesDescription,
+    surfaceDamage,
+    jointDamage,
+    bendOrDisplacement,
+    otherObservations,
+    otherObservationsInfo,
+    additionalInfo,
   } = report || {};
 
   return (
@@ -35,11 +33,11 @@ const SupervisionObservationsSummary = ({ supervision }: SupervisionObservations
 
       <IonItem lines="none">
         <IonLabel>{t("supervision.summary.drivingLine")}</IonLabel>
-        <IonLabel>{drivingLineOk ? t("supervision.summary.approved") : drivingLineInfo}</IonLabel>
+        <IonLabel>{drivingLineOk ? t("supervision.summary.approved") : `${t("supervision.summary.notApproved")} ${drivingLineInfo}`}</IonLabel>
       </IonItem>
       <IonItem lines="none">
         <IonLabel>{t("supervision.summary.speedLimit")}</IonLabel>
-        <IonLabel>{speedLimitOk ? t("supervision.summary.approved") : speedLimitInfo}</IonLabel>
+        <IonLabel>{speedLimitOk ? t("supervision.summary.approved") : `${t("supervision.summary.notApproved")} ${speedLimitInfo}`}</IonLabel>
       </IonItem>
       <IonItem lines="none">
         <IonLabel>{t("supervision.summary.anomalies")}</IonLabel>
