@@ -7,7 +7,7 @@ import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 interface SupervisionObservationsProps {
   modifiedSupervisionReport: ISupervisionReport;
-  setModifiedSupervisionReport: Dispatch<SetStateAction<ISupervisionReport | undefined>>;
+  setModifiedSupervisionReport: Dispatch<SetStateAction<ISupervisionReport>>;
 }
 
 const SupervisionObservations = ({ modifiedSupervisionReport, setModifiedSupervisionReport }: SupervisionObservationsProps): JSX.Element => {
@@ -26,7 +26,7 @@ const SupervisionObservations = ({ modifiedSupervisionReport, setModifiedSupervi
     otherObservations,
     otherObservationsInfo,
     additionalInfo,
-  } = modifiedSupervisionReport || {};
+  } = modifiedSupervisionReport;
 
   const updateRadioOrCheckboxValue = (payload: IRadioValue) => {
     if (modifiedSupervisionReport) {

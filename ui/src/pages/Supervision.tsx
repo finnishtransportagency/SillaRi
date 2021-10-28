@@ -23,9 +23,28 @@ const Supervision = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const [modifiedSupervisionReport, setModifiedSupervisionReport] = useState<ISupervisionReport | undefined>(undefined);
 
   const { supervisionId = "0" } = useParams<SupervisionProps>();
+
+  const defaultReport: ISupervisionReport = {
+    id: -1,
+    supervisionId: Number(supervisionId),
+    drivingLineOk: false,
+    drivingLineInfo: "",
+    speedLimitOk: false,
+    speedLimitInfo: "",
+    anomalies: true,
+    anomaliesDescription: "",
+    surfaceDamage: false,
+    jointDamage: false,
+    bendOrDisplacement: false,
+    otherObservations: false,
+    otherObservationsInfo: "",
+    additionalInfo: "",
+    draft: true,
+  };
+
+  const [modifiedSupervisionReport, setModifiedSupervisionReport] = useState<ISupervisionReport>(defaultReport);
 
   const {
     networkStatus: { isFailed = {} },
@@ -46,7 +65,7 @@ const Supervision = (): JSX.Element => {
       console.log("STARTED AND GOT NEW DATA", data);
       // Update "getSupervision" query to return the updated data
       queryClient.setQueryData(["getSupervision", supervisionId], data);
-      setModifiedSupervisionReport(data.report);
+      setModifiedSupervisionReport(data.report || defaultReport);
     },
   });
 
@@ -57,37 +76,21 @@ const Supervision = (): JSX.Element => {
 
   useEffect(() => {
     const { report: savedReport } = supervision || {};
-    const { id: supervisionReportId = -1 } = savedReport || {};
+    console.log("HELLO useEFFECT");
 
     if (!isLoadingSupervision && !isSendingSupervisionStart && supervision) {
-      if (supervisionReportId <= 0) {
-        // No report created for this supervision, create new with default values and modify that
+      if (!savedReport) {
+        // No report created for this supervision, create new with default values and set that to modified
         console.log("HELLO supervisionStart");
 
-        const defaultReport: ISupervisionReport = {
-          id: -1,
-          supervisionId: Number(supervisionId),
-          drivingLineOk: false,
-          drivingLineInfo: "",
-          speedLimitOk: false,
-          speedLimitInfo: "",
-          anomalies: true,
-          anomaliesDescription: "",
-          surfaceDamage: false,
-          jointDamage: false,
-          bendOrDisplacement: false,
-          otherObservations: false,
-          otherObservationsInfo: "",
-          additionalInfo: "",
-          draft: true,
-        };
-        supervisionStartMutation.mutate(defaultReport);
-      } else if (modifiedSupervisionReport === undefined) {
-        // If the report is already created, modify the saved report
+        supervisionStartMutation.mutate(modifiedSupervisionReport);
+      } else if (savedReport && modifiedSupervisionReport.id <= 0) {
+        // Report has been saved before, but modified report has default values - set saved to modified
+        console.log("HELLO modified not set");
         setModifiedSupervisionReport(savedReport);
       }
     }
-  }, [isLoadingSupervision, isSendingSupervisionStart, supervisionStartMutation, supervisionId, supervision, modifiedSupervisionReport]);
+  }, [isLoadingSupervision, isSendingSupervisionStart, supervisionStartMutation, supervision, modifiedSupervisionReport]);
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
