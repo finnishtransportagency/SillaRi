@@ -52,7 +52,7 @@ public interface LeluDTOMapper {
     RouteBridgeModel fromDTOToModel(LeluBridgeDTO dto);
 
     @Mappings({
-            @Mapping(target = "streetaddress", source = "address")
+            @Mapping(target = "streetAddress", source = "address")
     })
     AddressModel fromDTOToModel(LeluAddressDTO dto);
 

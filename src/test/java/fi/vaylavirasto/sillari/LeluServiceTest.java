@@ -1,11 +1,9 @@
 package fi.vaylavirasto.sillari;
 
+import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.lelu.permit.*;
 import fi.vaylavirasto.sillari.model.*;
-import fi.vaylavirasto.sillari.repositories.BridgeRepository;
-import fi.vaylavirasto.sillari.repositories.CompanyRepository;
-import fi.vaylavirasto.sillari.repositories.PermitRepository;
-import fi.vaylavirasto.sillari.repositories.RouteRepository;
+import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.LeluRouteUploadUtil;
 import fi.vaylavirasto.sillari.service.LeluService;
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +43,11 @@ public class LeluServiceTest {
     @Mock
     private RouteRepository routeRepository;
     @Mock
+    private RouteBridgeRepository routeBridgeRepository;
+    @Mock
     private BridgeRepository bridgeRepository;
+    @Mock
+    private SupervisionRepository supervisionRepository;
 
     @Autowired
     private MessageSource messageSource;
@@ -63,16 +65,21 @@ public class LeluServiceTest {
     ArgumentCaptor<List<Integer>> routeIdsToDeleteCaptor;
 
     @InjectMocks
-    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, bridgeRepository, messageSource, leluRouteUploadUtil);
+    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository, messageSource, leluRouteUploadUtil);
 
     @Test
     public void testCreatePermitWithExistingCompany() {
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
-        Mockito.when(permitRepository.getPermitIdByPermitNumber(Mockito.anyString())).thenReturn(null);
+        Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(1);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
-        LeluPermitResponseDTO response = leluService.createOrUpdatePermit(getPermitDTO());
+        LeluPermitResponseDTO response = null;
+        try {
+            response = leluService.createOrUpdatePermit(getPermitDTO());
+        } catch (LeluDeleteRouteWithSupervisionsException e) {
+            e.printStackTrace();
+        }
 
         // Verify that permitRepository.createPermit is called and capture parameters
         Mockito.verify(permitRepository).createPermit(permitModelCaptor.capture());
@@ -98,14 +105,24 @@ public class LeluServiceTest {
 
     @Test
     public void testCreatePermitWithNewCompany() {
+        System.out.println("TESTIOUS");
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(null);
         Mockito.when(companyRepository.createCompany(Mockito.any(CompanyModel.class))).thenReturn(2);
 
-        Mockito.when(permitRepository.getPermitIdByPermitNumber(Mockito.anyString())).thenReturn(null);
+        Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(2);
+        Mockito.when(permitRepository.hasSupervisions(Mockito.any(List.class))).thenReturn(false);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
-        LeluPermitResponseDTO response = leluService.createOrUpdatePermit(getPermitDTO());
+        LeluPermitResponseDTO response = null;
+        try {
+            System.out.println("TESTIOUS");
+            response = leluService.createOrUpdatePermit(getPermitDTO());
+            System.out.println("TESTIOUS");
+        } catch (LeluDeleteRouteWithSupervisionsException e) {
+            System.out.println("TESTIOUS");
+            e.printStackTrace();
+        }
 
         // Verify that permitRepository.createPermit is called and capture parameters
         Mockito.verify(permitRepository).createPermit(permitModelCaptor.capture());
@@ -132,11 +149,16 @@ public class LeluServiceTest {
     @Test
     public void testUpdatePermit() {
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
-        Mockito.when(permitRepository.getPermitIdByPermitNumber(Mockito.anyString())).thenReturn(2);
+        Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(2);
         Mockito.when(routeRepository.getRouteIdsWithLeluIds(Mockito.anyInt())).thenReturn(getRouteLeluIdAndIdMap());
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
-        LeluPermitResponseDTO response = leluService.createOrUpdatePermit(getPermitDTO());
+        LeluPermitResponseDTO response = null;
+        try {
+            response = leluService.createOrUpdatePermit(getPermitDTO());
+        } catch (LeluDeleteRouteWithSupervisionsException e) {
+            e.printStackTrace();
+        }
 
         // Verify that permitRepository.updatePermit is called and capture parameters
         Mockito.verify(permitRepository).updatePermit(permitModelCaptor.capture(), routeIdsToDeleteCaptor.capture());

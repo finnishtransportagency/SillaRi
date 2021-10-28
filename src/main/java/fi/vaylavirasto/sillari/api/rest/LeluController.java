@@ -101,8 +101,13 @@ public class LeluController {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             try {
-                return leluService.createOrUpdatePermit(permitDTO);
-            } catch (Exception e) {
+                //TODO call non ddev version when time
+                return leluService.createOrUpdatePermitDevVersion(permitDTO);
+            } catch (LeluPermitSaveException leluPermitSaveException) {
+                logger.error(leluPermitSaveException.getMessage());
+                throw leluPermitSaveException;
+            }
+            catch (Exception e){
                 logger.error(e.getMessage());
                 throw new LeluPermitSaveException(messageSource.getMessage("lelu.permit.save.failed", null, Locale.ROOT) + " " + e.getClass().getName() + " " + e.getMessage());
             }

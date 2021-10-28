@@ -22,27 +22,33 @@ const SupervisionObservationsSummary = ({ supervision }: SupervisionObservations
     surfaceDamage = false,
     jointDamage = false,
     bendOrDisplacement = false,
-    // otherObservations = false,
-    // otherObservationsInfo = "",
+    otherObservations = false,
+    otherObservationsInfo = "",
     additionalInfo = "",
   } = report || {};
 
   return (
     <>
       <IonItem className="header" lines="none">
-        <IonLabel className="headingText">{t("supervision.summary.observations")}</IonLabel>
+        <IonLabel>{t("supervision.summary.observations").toUpperCase()}</IonLabel>
       </IonItem>
 
-      <IonItem lines="none">
-        <IonLabel>{t("supervision.summary.drivingLine")}</IonLabel>
-        <IonLabel>{drivingLineOk ? t("supervision.summary.approved") : drivingLineInfo}</IonLabel>
+      <IonItem>
+        <IonLabel className="headingText">{t("supervision.summary.drivingLine")}</IonLabel>
+        <IonLabel>
+          <IonLabel>{drivingLineOk ? t("supervision.summary.approved") : t("supervision.summary.notApproved")}</IonLabel>
+          <IonLabel>{drivingLineOk ? "" : drivingLineInfo}</IonLabel>
+        </IonLabel>
       </IonItem>
-      <IonItem lines="none">
-        <IonLabel>{t("supervision.summary.speedLimit")}</IonLabel>
-        <IonLabel>{speedLimitOk ? t("supervision.summary.approved") : speedLimitInfo}</IonLabel>
+      <IonItem>
+        <IonLabel className="headingText">{t("supervision.summary.speedLimit")}</IonLabel>
+        <IonLabel>
+          <IonLabel>{speedLimitOk ? t("supervision.summary.approved") : t("supervision.summary.notApproved")}</IonLabel>
+          <IonLabel>{speedLimitOk ? "" : speedLimitInfo}</IonLabel>
+        </IonLabel>
       </IonItem>
-      <IonItem lines="none">
-        <IonLabel>{t("supervision.summary.anomalies")}</IonLabel>
+      <IonItem>
+        <IonLabel className="headingText">{t("supervision.summary.anomalies")}</IonLabel>
         <IonLabel>
           {!anomalies ? (
             t("supervision.summary.noAnomalies")
@@ -51,15 +57,15 @@ const SupervisionObservationsSummary = ({ supervision }: SupervisionObservations
               {surfaceDamage && <IonLabel>{t("supervision.report.surfaceDamage")}</IonLabel>}
               {jointDamage && <IonLabel>{t("supervision.report.jointDamage")}</IonLabel>}
               {bendOrDisplacement && <IonLabel>{t("supervision.report.bendOrDisplacement")}</IonLabel>}
-              {/*{otherObservations && otherObservationsInfo && <IonLabel>{otherObservationsInfo}</IonLabel>}*/}
+              {otherObservations && otherObservationsInfo && <IonLabel>{otherObservationsInfo}</IonLabel>}
               <IonLabel>{anomaliesDescription}</IonLabel>
             </>
           )}
         </IonLabel>
       </IonItem>
 
-      <IonItem lines="none">
-        <IonLabel>{t("supervision.summary.additionalInfo")}</IonLabel>
+      <IonItem>
+        <IonLabel className="headingText">{t("supervision.summary.additionalInfo")}</IonLabel>
         <IonLabel>{additionalInfo}</IonLabel>
       </IonItem>
     </>

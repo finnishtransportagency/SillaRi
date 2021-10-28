@@ -1,6 +1,7 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
+import fi.vaylavirasto.sillari.dto.CompanyTransportsDTO;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.service.CompanyService;
@@ -28,32 +29,6 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
-    @Operation(summary = "Get companies")
-    @GetMapping(value = "/getcompanies", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getCompanies(@RequestParam(defaultValue = "10") Integer limit) {
-        ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getAllCompanies");
-        try {
-            List<CompanyModel> companies = companyService.getCompanies(limit);
-            return ResponseEntity.ok().body(companies != null ? companies : new EmptyJsonResponse());
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
-    @Operation(summary = "Get company list")
-    @GetMapping(value = "/getcompanylist", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getCompanyList(@RequestParam(defaultValue = "10") Integer limit) {
-        ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getCompanyList");
-        try {
-            List<CompanyModel> companyList = companyService.getCompanyList(limit);
-            return ResponseEntity.ok().body(companyList != null ? companyList : new EmptyJsonResponse());
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
     @Operation(summary = "Get company")
     @GetMapping(value = "/getcompany", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
@@ -62,6 +37,19 @@ public class CompanyController {
         try {
             CompanyModel company = companyService.getCompany(companyId);
             return ResponseEntity.ok().body(company != null ? company : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Get supervisor transports grouped by company")
+    @GetMapping(value = "/getcompanytransportlistofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getCompanyTransportListOfSupervisor(@RequestParam String username) {
+        ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getCompanyTransportListOfSupervisor");
+        try {
+            List<CompanyTransportsDTO> companyList = companyService.getCompanyTransportListOfSupervisor(username);
+            return ResponseEntity.ok().body(companyList != null ? companyList : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }

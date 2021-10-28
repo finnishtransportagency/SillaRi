@@ -1,21 +1,21 @@
 package fi.vaylavirasto.sillari.mapper;
 
 import fi.vaylavirasto.sillari.model.AxleChartModel;
-import fi.vaylavirasto.sillari.model.Tables;
-import fi.vaylavirasto.sillari.model.tables.AxleChart;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
-public class AxleChartMapper implements RecordMapper<Record, AxleChartModel> {
-    public static final AxleChart axleChart = Tables.AXLE_CHART.as("ac");
+import java.util.ArrayList;
 
+public class AxleChartMapper implements RecordMapper<Record, AxleChartModel> {
     @Nullable
     @Override
     public AxleChartModel map(Record record) {
         AxleChartModel axleChartModel = new AxleChartModel();
-        axleChartModel.setId(record.get(axleChart.ID));
-        axleChartModel.setPermitId(record.get(axleChart.PERMIT_ID));
+        axleChartModel.setId(record.get(TableAlias.axleChart.ID));
+        axleChartModel.setPermitId(record.get(TableAlias.axleChart.PERMIT_ID));
+        axleChartModel.setAxles(new ArrayList<>());
         return axleChartModel;
     }
 }

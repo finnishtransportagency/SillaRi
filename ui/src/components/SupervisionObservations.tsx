@@ -1,11 +1,12 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { IonCheckbox, IonItem, IonLabel, IonRadio, IonRadioGroup, IonTextarea } from "@ionic/react";
+import { IonCheckbox, IonIcon, IonItem, IonLabel, IonRadio, IonRadioGroup, IonTextarea } from "@ionic/react";
 import IRadioValue from "../interfaces/IRadioValue";
 import ISupervision from "../interfaces/ISupervision";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
-import { actions as crossingActions } from "../store/crossingsSlice";
+import { actions as supervisionActions } from "../store/supervisionSlice";
+import empty from "../theme/icons/empty.svg";
 
 interface SupervisionObservationsProps {
   supervision: ISupervision;
@@ -28,7 +29,7 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
     jointDamage = false,
     bendOrDisplacement = false,
     otherObservations = false,
-    // otherObservationsInfo = "",
+    otherObservationsInfo = "",
     additionalInfo = "",
   } = report || {};
 
@@ -37,7 +38,7 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
       name: radioName,
       value: radioValue === "yes",
     } as IRadioValue;
-    dispatch({ type: crossingActions.REPORT_RADIO_CHANGED, payload: radioPayload });
+    dispatch({ type: supervisionActions.REPORT_RADIO_CHANGED, payload: radioPayload });
   };
 
   const checkBoxClicked = (checkBoxName: string, checkBoxValue: boolean) => {
@@ -45,18 +46,18 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
       name: checkBoxName,
       value: checkBoxValue,
     } as IRadioValue;
-    dispatch({ type: crossingActions.REPORT_RADIO_CHANGED, payload: radioPayload });
+    dispatch({ type: supervisionActions.REPORT_RADIO_CHANGED, payload: radioPayload });
   };
 
   const textAreaValueChanged = (pname: string, pvalue: string) => {
     const change = { name: pname, value: pvalue } as ITextAreaValue;
-    dispatch({ type: crossingActions.REPORT_TEXTAREA_CHANGED, payload: change });
+    dispatch({ type: supervisionActions.REPORT_TEXTAREA_CHANGED, payload: change });
   };
 
   return (
     <>
       <IonItem className="header" lines="none">
-        <IonLabel className="headingText">{t("supervision.report.observations")}</IonLabel>
+        <IonLabel>{t("supervision.report.observations").toUpperCase()}</IonLabel>
       </IonItem>
 
       <IonItem lines="none">
@@ -65,11 +66,11 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
       <IonRadioGroup value={drivingLineOk ? "yes" : "no"} onIonChange={(e) => radioClicked("drivingLineOk", e.detail.value)}>
         <IonItem lines="none">
           <IonItem lines="none">
-            <IonLabel>{t("supervision.answer.yes")}</IonLabel>
+            <IonLabel>{t("common.answer.yes")}</IonLabel>
             <IonRadio slot="start" value="yes" />
           </IonItem>
           <IonItem lines="none">
-            <IonLabel>{t("supervision.answer.no")}</IonLabel>
+            <IonLabel>{t("common.answer.no")}</IonLabel>
             <IonRadio slot="start" value="no" />
           </IonItem>
         </IonItem>
@@ -97,11 +98,11 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
       <IonRadioGroup value={speedLimitOk ? "yes" : "no"} onIonChange={(e) => radioClicked("speedLimitOk", e.detail.value)}>
         <IonItem lines="none">
           <IonItem lines="none">
-            <IonLabel>{t("supervision.answer.yes")}</IonLabel>
+            <IonLabel>{t("common.answer.yes")}</IonLabel>
             <IonRadio slot="start" value="yes" />
           </IonItem>
           <IonItem lines="none">
-            <IonLabel>{t("supervision.answer.no")}</IonLabel>
+            <IonLabel>{t("common.answer.no")}</IonLabel>
             <IonRadio slot="start" value="no" />
           </IonItem>
         </IonItem>
@@ -129,11 +130,11 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
       <IonRadioGroup value={anomalies ? "yes" : "no"} onIonChange={(e) => radioClicked("anomalies", e.detail.value)}>
         <IonItem lines="none">
           <IonItem lines="none">
-            <IonLabel>{t("supervision.answer.yes")}</IonLabel>
+            <IonLabel>{t("common.answer.yes")}</IonLabel>
             <IonRadio slot="start" value="yes" />
           </IonItem>
           <IonItem lines="none">
-            <IonLabel>{t("supervision.answer.no")}</IonLabel>
+            <IonLabel>{t("common.answer.no")}</IonLabel>
             <IonRadio slot="start" value="no" />
           </IonItem>
         </IonItem>
@@ -174,10 +175,9 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
             />
             <IonLabel>{t("supervision.report.otherObservations")}</IonLabel>
           </IonItem>
-          {/* TODO - check if other observations needs its own text area, or if anomaliesDescription below is enough
-            otherObservations && (
+          {otherObservations && (
             <IonItem lines="none">
-              <IonIcon slot="start" icon={help} />
+              <IonIcon className="otherIcon" slot="start" icon={empty} />
               <IonTextarea
                 placeholder={t("supervision.report.placeholder")}
                 value={otherObservationsInfo}
@@ -186,7 +186,7 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
                 }}
               />
             </IonItem>
-          )*/}
+          )}
 
           <IonItem lines="none">
             <IonLabel>{t("supervision.report.anomaliesDescription")}</IonLabel>

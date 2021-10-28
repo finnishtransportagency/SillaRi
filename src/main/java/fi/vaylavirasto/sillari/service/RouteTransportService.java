@@ -1,12 +1,10 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.model.PermitModel;
+import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
-import fi.vaylavirasto.sillari.repositories.RouteRepository;
-import fi.vaylavirasto.sillari.repositories.RouteTransportRepository;
-import fi.vaylavirasto.sillari.repositories.RouteTransportStatusRepository;
-import fi.vaylavirasto.sillari.repositories.SupervisionRepository;
-import fi.vaylavirasto.sillari.repositories.SupervisorRepository;
+import fi.vaylavirasto.sillari.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +19,15 @@ public class RouteTransportService {
     @Autowired
     RouteRepository routeRepository;
     @Autowired
+    PermitRepository permitRepository;
+    @Autowired
+    AxleRepository axleRepository;
+    @Autowired
+    VehicleRepository vehicleRepository;
+    @Autowired
     SupervisionRepository supervisionRepository;
+    @Autowired
+    SupervisionStatusRepository supervisionStatusRepository;
     @Autowired
     SupervisorRepository supervisorRepository;
 
@@ -35,8 +41,9 @@ public class RouteTransportService {
 
             List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportId);
             if (supervisions != null) {
-                supervisions.forEach(supervisionModel -> {
-                    supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionModel.getId()));
+                supervisions.forEach(supervision -> {
+                    supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                    supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });
             }
             routeTransportModel.setSupervisions(supervisions);
@@ -56,8 +63,9 @@ public class RouteTransportService {
 
                 List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportModel.getId());
                 if (supervisions != null) {
-                    supervisions.forEach(supervisionModel -> {
-                        supervisionModel.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionModel.getId()));
+                    supervisions.forEach(supervision -> {
+                        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                        supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                     });
                 }
                 routeTransportModel.setSupervisions(supervisions);
@@ -65,6 +73,44 @@ public class RouteTransportService {
         }
 
         return routeTransportModels;
+    }
+
+    public RouteTransportModel getRouteTransportOfSupervisor(Integer routeTransportId, String username) {
+        RouteTransportModel routeTransport = routeTransportRepository.getRouteTransportById(routeTransportId);
+
+        if (routeTransport != null) {
+            // Sets also current status and status timestamps
+            routeTransport.setStatusHistory(routeTransportStatusRepository.getTransportStatusHistory(routeTransport.getId()));
+
+            // Set route details to route transport
+            RouteModel route = routeRepository.getRoute(routeTransport.getRouteId());
+            routeTransport.setRoute(route);
+
+            // Set permit details to route
+            if (route != null) {
+                PermitModel permit = permitRepository.getPermit(route.getPermitId());
+                route.setPermit(permit);
+                if (permit != null) {
+                    permit.setVehicles(vehicleRepository.getVehiclesOfPermit(permit.getId()));
+                    if (permit.getAxleChart() != null) {
+                        permit.getAxleChart().setAxles(axleRepository.getAxlesOfChart(permit.getAxleChart().getId()));
+                    }
+                }
+            }
+
+            // Set supervisions with bridge data to route transport.
+            // Not all bridges from route are added, only those where the supervisor has supervisions.
+            List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportAndSupervisorUsername(routeTransportId, username);
+            if (supervisions != null) {
+                supervisions.forEach(supervision -> {
+                    supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                    // Sets also current status and status timestamps
+                    supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+                });
+            }
+            routeTransport.setSupervisions(supervisions);
+        }
+        return routeTransport;
     }
 
     public RouteTransportModel createRouteTransport(RouteTransportModel routeTransportModel) {
@@ -75,5 +121,9 @@ public class RouteTransportService {
     public RouteTransportModel updateRouteTransport(RouteTransportModel routeTransportModel) {
         routeTransportRepository.updateRouteTransport(routeTransportModel);
         return getRouteTransport(routeTransportModel.getId());
+    }
+
+    public void deleteRouteTransport(RouteTransportModel routeTransportModel) {
+        routeTransportRepository.deleteRouteTransport(routeTransportModel);
     }
 }

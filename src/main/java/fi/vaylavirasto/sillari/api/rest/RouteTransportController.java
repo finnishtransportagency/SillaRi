@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.api.rest;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
+import fi.vaylavirasto.sillari.model.TransportStatusType;
 import fi.vaylavirasto.sillari.service.RouteTransportService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import io.micrometer.core.annotation.Timed;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -56,6 +58,19 @@ public class RouteTransportController {
         }
     }
 
+    @Operation(summary = "Get route transport of supervisor, with supervisions and route data")
+    @GetMapping(value = "/getroutetransportofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getRouteTransportOfSupervisor(@RequestParam Integer routeTransportId, String username) {
+        ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportOfSupervisor");
+        try {
+            RouteTransportModel routeTransport = routeTransportService.getRouteTransportOfSupervisor(routeTransportId, username);
+            return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Create route transport")
     @PostMapping(value = "/createroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
@@ -64,7 +79,7 @@ public class RouteTransportController {
         try {
             RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
-            if (routeTransport.getSupervisions() != null) {
+            if (routeTransport.getSupervisions() != null && insertedRouteTransport != null) {
                 routeTransport.getSupervisions().forEach(supervisionModel -> {
                     supervisionModel.setRouteTransportId(insertedRouteTransport.getId());
 
@@ -76,8 +91,12 @@ public class RouteTransportController {
                 });
             }
 
-            RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(insertedRouteTransport.getId());
-            return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            if (insertedRouteTransport != null) {
+                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(insertedRouteTransport.getId());
+                return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            } else {
+                return ResponseEntity.ok().body(new EmptyJsonResponse());
+            }
         } finally {
             serviceMetric.end();
         }
@@ -101,8 +120,46 @@ public class RouteTransportController {
                 });
             }
 
-            RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(updatedTransportModel.getId());
-            return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            if (updatedTransportModel != null) {
+                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(updatedTransportModel.getId());
+                return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            } else {
+                return ResponseEntity.ok().body(new EmptyJsonResponse());
+            }
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Delete route transport")
+    @DeleteMapping(value = "/deleteroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public boolean deleteRouteTransport(@RequestParam Integer routeTransportId) {
+        ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "updateRouteTransport");
+        try {
+            // Fetch all the route transport details including the status which is not sent
+            RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId);
+
+            // Only route transports with planned status can be deleted
+            if (routeTransport != null && routeTransport.getCurrentStatus() != null &&
+                    routeTransport.getCurrentStatus().getStatus() == TransportStatusType.PLANNED) {
+
+                // Delete the supervision related data
+                if (routeTransport.getSupervisions() != null) {
+                    routeTransport.getSupervisions().forEach(supervisionModel -> {
+                        if (supervisionModel.getId() != null && supervisionModel.getId() > 0) {
+                            supervisionService.deleteSupervision(supervisionModel);
+                        }
+                    });
+                }
+
+                // Delete the route transport related data
+                routeTransportService.deleteRouteTransport(routeTransport);
+
+                return true;
+            } else {
+                return false;
+            }
         } finally {
             serviceMetric.end();
         }

@@ -4,14 +4,15 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Camera, CameraSource, CameraResultType } from "@capacitor/camera";
 import Moment from "react-moment";
-import { camera, trash } from "ionicons/icons";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import { RootState, useTypedSelector } from "../store/store";
-import { actions as crossingActions } from "../store/crossingsSlice";
-import { deleteImage, getSupervision, onRetry } from "../utils/backendData";
+import { actions as supervisionActions } from "../store/supervisionSlice";
+import camera from "../theme/icons/camera_white.svg";
+import erase from "../theme/icons/erase_white.svg";
+import { deleteImage, getSupervision, onRetry } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import { getOrigin } from "../utils/request";
 import ImagePreview from "./ImagePreview";
@@ -22,10 +23,11 @@ interface CameraContainerProps {
 
 const CameraContainer = (): JSX.Element => {
   const { t } = useTranslation();
-  const crossingProps = useTypedSelector((state: RootState) => state.crossingsReducer);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+
   const { supervisionId = "0" } = useParams<CameraContainerProps>();
+  const { selectedSupervisionDetail, images = [] } = useTypedSelector((state: RootState) => state.supervisionReducer);
 
   const [isImagePreviewOpen, setImagePreviewOpen] = useState<boolean>(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
@@ -34,8 +36,6 @@ const CameraContainer = (): JSX.Element => {
     setImagePreviewOpen(isOpen);
     setImagePreviewUrl(imageUrl || imagePreviewUrl);
   };
-
-  const { selectedSupervisionDetail, images = [] } = crossingProps;
 
   const { images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
@@ -61,7 +61,7 @@ const CameraContainer = (): JSX.Element => {
       const uuid = uuidv4();
       const fname = `image_${uuid}.jpg`;
       dispatch({
-        type: crossingActions.SAVE_IMAGES,
+        type: supervisionActions.SAVE_IMAGES,
         payload: [...images, { id: uuid, filename: fname, dataUrl: image.dataUrl, date: now }],
       });
     } catch (err) {
@@ -72,7 +72,7 @@ const CameraContainer = (): JSX.Element => {
 
   const removeImageItem = (uuid: string) => {
     const imagesToEdit = images.filter((image) => image.id !== uuid);
-    dispatch({ type: crossingActions.SAVE_IMAGES, payload: imagesToEdit });
+    dispatch({ type: supervisionActions.SAVE_IMAGES, payload: imagesToEdit });
   };
 
   const deleteImageObject = (objectKey: string) => {
@@ -112,8 +112,8 @@ const CameraContainer = (): JSX.Element => {
                   <IonLabel>
                     <Moment format={DATE_TIME_FORMAT}>{imageItem.date}</Moment>
                   </IonLabel>
-                  <IonButton slot="end" onClick={() => removeImageItem(imageItem.id)}>
-                    <IonIcon icon={trash} slot="start" />
+                  <IonButton slot="end" expand="block" size="default" onClick={() => removeImageItem(imageItem.id)}>
+                    <IonIcon className="otherIcon" icon={erase} slot="start" />
                     {t("camera.item.deleteButtonLabel")}
                   </IonButton>
                 </IonItem>
@@ -137,8 +137,8 @@ const CameraContainer = (): JSX.Element => {
                     <IonImg src={imageUrl} />
                   </IonThumbnail>
                   <IonLabel>{supervisionImage.taken}</IonLabel>
-                  <IonButton slot="end" onClick={() => deleteImageObject(supervisionImage.objectKey)}>
-                    <IonIcon icon={trash} slot="start" />
+                  <IonButton slot="end" expand="block" size="default" onClick={() => deleteImageObject(supervisionImage.objectKey)}>
+                    <IonIcon className="otherIcon" icon={erase} slot="start" />
                     {t("camera.item.deleteButtonLabel")}
                   </IonButton>
                 </IonItem>
@@ -149,8 +149,8 @@ const CameraContainer = (): JSX.Element => {
       <ImagePreview imageUrl={imagePreviewUrl} isOpen={isImagePreviewOpen} setIsOpen={() => showImage(false)} />
 
       <IonFab slot="fixed" horizontal="end" vertical="bottom">
-        <IonButton expand="block" shape="round" size="large" onClick={() => takePicture()}>
-          <IonIcon icon={camera} slot="start" />
+        <IonButton expand="block" size="large" onClick={() => takePicture()}>
+          <IonIcon className="otherIcon" icon={camera} slot="start" />
           {t("camera.takePhotoButtonLabel")}
         </IonButton>
       </IonFab>

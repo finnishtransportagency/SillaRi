@@ -1,23 +1,20 @@
 package fi.vaylavirasto.sillari.mapper;
 
-import fi.vaylavirasto.sillari.model.Tables;
 import fi.vaylavirasto.sillari.model.VehicleModel;
-import fi.vaylavirasto.sillari.model.tables.Vehicle;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 public class VehicleMapper implements RecordMapper<Record, VehicleModel> {
-    public static final Vehicle vehicle = Tables.VEHICLE.as("ve");
-
     @Nullable
     @Override
     public VehicleModel map(Record record) {
         VehicleModel vehicleModel = new VehicleModel();
-        vehicleModel.setId(record.get(vehicle.ID));
-        vehicleModel.setType(record.get(vehicle.TYPE));
-        vehicleModel.setIdentifier(record.get(vehicle.IDENTIFIER));
-        vehicleModel.setPermitId(record.get(vehicle.PERMIT_ID));
+        vehicleModel.setId(record.get(TableAlias.vehicle.ID));
+        vehicleModel.setPermitId(record.get(TableAlias.vehicle.PERMIT_ID));
+        vehicleModel.setType(record.get(TableAlias.vehicle.TYPE));
+        vehicleModel.setIdentifier(record.get(TableAlias.vehicle.IDENTIFIER));
         return vehicleModel;
     }
 }

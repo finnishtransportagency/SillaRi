@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.repositories;
 import fi.vaylavirasto.sillari.mapper.RouteTransportStatusMapper;
 import fi.vaylavirasto.sillari.model.RouteTransportStatusModel;
 import fi.vaylavirasto.sillari.model.TransportStatusType;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -20,21 +21,27 @@ public class RouteTransportStatusRepository {
     private DSLContext dsl;
 
     public List<RouteTransportStatusModel> getTransportStatusHistory(Integer routeTransportId) {
-        return dsl.selectFrom(RouteTransportStatusMapper.transportStatus)
-                .where(RouteTransportStatusMapper.transportStatus.ROUTE_TRANSPORT_ID.eq(routeTransportId))
-                .orderBy(RouteTransportStatusMapper.transportStatus.TIME.desc())
+        return dsl.selectFrom(TableAlias.transportStatus)
+                .where(TableAlias.transportStatus.ROUTE_TRANSPORT_ID.eq(routeTransportId))
+                .orderBy(TableAlias.transportStatus.TIME.desc())
                 .fetch(new RouteTransportStatusMapper());
     }
 
     public void insertTransportStatus(DSLContext ctx, Integer routeTransportId, TransportStatusType statusType) {
-        ctx.insertInto(RouteTransportStatusMapper.transportStatus,
-                        RouteTransportStatusMapper.transportStatus.ROUTE_TRANSPORT_ID,
-                        RouteTransportStatusMapper.transportStatus.STATUS,
-                        RouteTransportStatusMapper.transportStatus.TIME
+        ctx.insertInto(TableAlias.transportStatus,
+                        TableAlias.transportStatus.ROUTE_TRANSPORT_ID,
+                        TableAlias.transportStatus.STATUS,
+                        TableAlias.transportStatus.TIME
                 ).values(
                         routeTransportId,
                         String.valueOf(statusType),
                         OffsetDateTime.now())
+                .execute();
+    }
+
+    public void deleteSupervisionStatuses(DSLContext ctx, Integer routeTransportId) {
+        ctx.deleteFrom(TableAlias.transportStatus)
+                .where(TableAlias.transportStatus.ROUTE_TRANSPORT_ID.eq(routeTransportId))
                 .execute();
     }
 }

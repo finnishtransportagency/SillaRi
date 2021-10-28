@@ -1,6 +1,10 @@
 package fi.vaylavirasto.sillari.service;
 
-import fi.vaylavirasto.sillari.model.*;
+import fi.vaylavirasto.sillari.dto.CompanyTransportsDTO;
+import fi.vaylavirasto.sillari.model.CompanyModel;
+import fi.vaylavirasto.sillari.model.PermitModel;
+import fi.vaylavirasto.sillari.model.RouteModel;
+import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyService {
@@ -20,34 +26,9 @@ public class CompanyService {
     @Autowired
     RouteRepository routeRepository;
     @Autowired
-    RouteBridgeRepository routeBridgeRepository;
-
-    public List<CompanyModel> getCompanies(Integer limit) {
-        List<CompanyModel> companies = companyRepository.getAllCompanies(limit);
-        for(CompanyModel companyModel : companies) {
-            companyModel.setPermits(permitRepository.getPermitsByCompanyId(companyModel.getId()));
-            for(PermitModel permitModel : companyModel.getPermits()) {
-                permitModel.setRoutes(routeRepository.getRoutesByPermitId(permitModel.getId()));
-                for(RouteModel routeModel : permitModel.getRoutes()) {
-                    List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRouteBridges(routeModel.getId());
-                    routeModel.setRouteBridges(routeBridgeModels);
-                }
-            }
-        }
-        return companies;
-    }
-
-    public List<CompanyModel> getCompanyList(Integer limit) {
-        if (limit >= 0) {
-            List<CompanyModel> companyList = companyRepository.getAllCompanies(limit);
-            for (CompanyModel companyModel : companyList) {
-                companyModel.setPermits(permitRepository.getPermitsByCompanyId(companyModel.getId()));
-            }
-            return companyList;
-        } else {
-            return new ArrayList<>();
-        }
-    }
+    RouteTransportRepository transportRepository;
+    @Autowired
+    RouteTransportStatusRepository transportStatusRepository;
 
     public CompanyModel getCompany(Integer id) {
         CompanyModel company = companyRepository.getCompanyById(id);
@@ -57,4 +38,47 @@ public class CompanyService {
         }
         return company;
     }
+
+    public List<CompanyTransportsDTO> getCompanyTransportListOfSupervisor(String username) {
+        List<CompanyTransportsDTO> companyTransports = new ArrayList<>();
+
+        // Get route transports where the supervisor has supervisions
+        List<RouteTransportModel> routeTransports = transportRepository.getRouteTransportsOfSupervisor(username);
+
+        if (routeTransports != null && !routeTransports.isEmpty()) {
+            for (RouteTransportModel transport : routeTransports) {
+                // Set current transport status and departure times
+                transport.setStatusHistory(transportStatusRepository.getTransportStatusHistory(transport.getId()));
+
+                // Set routes, permits and companies
+                RouteModel route = routeRepository.getRoute(transport.getRouteId());
+                transport.setRoute(route);
+
+                if (route != null) {
+                    PermitModel permit = permitRepository.getPermit(route.getPermitId());
+                    route.setPermit(permit);
+
+                    if (permit != null) {
+                        CompanyModel company = companyRepository.getCompanyById(permit.getCompanyId());
+                        permit.setCompany(company);
+                    }
+                }
+            }
+
+            // Group transports by company (compares only the business_id of the company)
+            Map<CompanyModel, List<RouteTransportModel>> companyTransportMap = routeTransports.stream()
+                    .collect(Collectors.groupingBy(transport -> transport.getRoute().getPermit().getCompany()));
+
+            companyTransportMap.forEach((companyModel, transports) -> {
+                CompanyTransportsDTO companyTransportsDTO = new CompanyTransportsDTO();
+                companyTransportsDTO.setCompany(companyModel);
+                companyTransportsDTO.setTransports(transports);
+                companyTransportsDTO.setTransportDepartureTimes(transports);
+
+                companyTransports.add(companyTransportsDTO);
+            });
+        }
+        return companyTransports;
+    }
+
 }

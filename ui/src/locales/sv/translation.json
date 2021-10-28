@@ -3,10 +3,15 @@
     "buttons": {
       "done": "(SV) Done",
       "back": "(SV) Back",
+      "back2": "(SV) Back",
       "cancel": "(SV) Cancel",
       "edit": "(SV) Edit",
       "save": "(SV) Save",
       "send": "(SV) Send"
+    },
+    "answer": {
+      "yes": "Ja",
+      "no": "Nej"
     }
   },
   "main": {
@@ -16,8 +21,8 @@
     "title": "SillaRi",
     "content": "Välkommen!",
     "tab": {
-      "transportCompanies": "(SV) Transport companies",
-      "upcomingBridges": "(SV) Bridges"
+      "transports": "(SV) Transports",
+      "bridges": "(SV) Bridges"
     },
     "noNetworkNoData": "(SV) Unable to retrieve data, trying again..."
   },
@@ -45,7 +50,7 @@
   },
   "SidebarMenu": {
     "title": "SillaRi",
-    "mainPage": "Huvudsida",
+    "mainPage": "(SV) Transports and bridges",
     "settings": "Inställningar",
     "map": "Karta",
     "camera": "Kamera",
@@ -56,7 +61,12 @@
   "company": {
     "transportPermit": "(SV) Transport permit",
     "validityPeriod": "(SV) Validity period",
-    "route": "(SV) Route"
+    "transport": {
+      "transportDeparted": "(SV) Transport departed",
+      "transportArrived": "(SV) Transport arrived",
+      "nextTransport": "(SV) Next transport",
+      "estimatedDepartureTime": "(SV) estimated departure"
+    }
   },
   "route": {
     "transportPermit": "(SV) Transport permit",
@@ -69,7 +79,7 @@
     "routeInfo": {
       "title": "(SV) Route information",
       "route": "(SV) Route",
-      "showWholeRoute": "(SV) Show whole route",
+      "showRouteOnMap": "(SV) Show route on map",
       "departurePoint": "(SV) Departure point",
       "arrivalPoint": "(SV) Arrival point"
     },
@@ -83,7 +93,6 @@
       "transportTotalMass": "(SV) Total mass",
       "axleWeightsDistances": "(SV) Axle weights and distances"
     },
-    "transportValid": "(SV) Transport is in accordance with the permit on departure",
     "bridgesToSupervise": "(SV) Bridges to supervise"
   },
   "bridge": {
@@ -98,6 +107,7 @@
     "trafficSupervisors": {
       "title": "(SV) Traffic supervisors"
     },
+    "transportPermit": "(SV) Transport permit",
     "permitNumber": "(SV) Lupanumero",
     "conformsToPermit": "(SV) Transport conforms to permit",
     "startSupervision": "(SV) Start supervision",
@@ -111,6 +121,7 @@
   },
   "supervision": {
     "title": "(SV) Bridge supervision",
+    "transportPermit": "(SV) Transport permit",
     "permitNumber": "(SV) Permit number",
     "supervisionStarted": "(SV) Supervision started",
     "bridgeName": "(SV) Bridge details",
@@ -133,12 +144,8 @@
       "additionalInfo": "(SV) Additional information",
       "placeholder": "(SV) Add text here"
     },
-    "answer": {
-      "yes": "(SV) Yes",
-      "no": "(SV) No"
-    },
     "buttons": {
-      "takePhotos": "(SV) Take photos",
+      "takePhotos": "(SV) Photos",
       "drivingLine": "(SV) Driving line",
       "summary": "(SV) Go to summary",
       "saveToSendList": "(SV) Save (to the send list)"
@@ -152,6 +159,7 @@
       "noAnomalies": "(SV) None",
       "additionalInfo": "(SV) Additional information",
       "approved": "(SV) Approved",
+      "notApproved": "(SV) Not approved",
       "saved": "(SV) Supervision has been saved (to the send list)"
     }
   },
@@ -183,7 +191,7 @@
         "modify": "(SV) Modify"
       }
     },
-    "addTransport": {
+    "transportDetail": {
       "headerTitleAdd": "(SV) Add new transport",
       "headerTitleDetail": "(SV) Transport details",
       "transportPermit": "(SV) Transport permit",
@@ -194,10 +202,14 @@
       "buttons": {
         "deleteTransport": "(SV) Delete transport"
       },
+      "alert": {
+        "deleteTransport": "(SV) Are you sure you want to delete the transport?"
+      },
       "saved": "(SV) Saved",
+      "deleted": "(SV) Deleted",
       "routeInfo": {
         "estimatedDepartureDate": "(SV) Estimated departure date",
-        "estimatedDepartureTime": "(SV) Estimated departure time",
+        "estimatedDepartureTime": "(SV) time",
         "route": "(SV) Route",
         "origin": "(SV) Origin",
         "destination": "(SV) Destination",
@@ -248,7 +260,15 @@
     "transport": {
       "header": {
         "title": "(SV) Transport"
-      }
+      },
+      "permitLabel": "(SV) Permit:",
+      "routeLabel": "(SV) Route:",
+      "mapButtonLabel": "(SV) Map",
+      "transportStatusLabel": "(SV) Transport status",
+      "transportStatusBoxLabel": {
+        "notStarted": "(SV) Not started"
+      },
+      "startDrivingButtonLabel": "(SV) START DRIVING"
     }
   }
 }

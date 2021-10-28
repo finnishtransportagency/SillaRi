@@ -1,4 +1,5 @@
 export const DATE_FORMAT = "DD.MM.YYYY";
+export const TIME_FORMAT_MIN = "HH:mm";
 export const DATE_TIME_FORMAT = "DD.MM.YYYY HH:mm:ss";
 export const DATE_TIME_FORMAT_MIN = "DD.MM.YYYY HH:mm";
 

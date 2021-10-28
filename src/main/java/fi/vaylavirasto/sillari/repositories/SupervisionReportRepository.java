@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.repositories;
 import fi.vaylavirasto.sillari.mapper.SupervisionReportMapper;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -22,8 +23,8 @@ public class SupervisionReportRepository {
     SupervisionStatusRepository supervisionStatusRepository;
 
     public SupervisionReportModel getSupervisionReport(Integer supervisionId) {
-        return dsl.selectFrom(SupervisionReportMapper.supervisionReport)
-                .where(SupervisionReportMapper.supervisionReport.SUPERVISION_ID.eq(supervisionId))
+        return dsl.selectFrom(TableAlias.supervisionReport)
+                .where(TableAlias.supervisionReport.SUPERVISION_ID.eq(supervisionId))
                 .fetchOne(new SupervisionReportMapper());
     }
 
@@ -33,21 +34,21 @@ public class SupervisionReportRepository {
 
             supervisionStatusRepository.insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.IN_PROGRESS);
 
-            Record1<Integer> supervisionReportIdResult = ctx.insertInto(SupervisionReportMapper.supervisionReport,
-                            SupervisionReportMapper.supervisionReport.SUPERVISION_ID,
-                            SupervisionReportMapper.supervisionReport.DRIVING_LINE_OK,
-                            SupervisionReportMapper.supervisionReport.DRIVING_LINE_INFO,
-                            SupervisionReportMapper.supervisionReport.SPEED_LIMIT_OK,
-                            SupervisionReportMapper.supervisionReport.SPEED_LIMIT_INFO,
-                            SupervisionReportMapper.supervisionReport.ANOMALIES,
-                            SupervisionReportMapper.supervisionReport.ANOMALIES_DESCRIPTION,
-                            SupervisionReportMapper.supervisionReport.SURFACE_DAMAGE,
-                            SupervisionReportMapper.supervisionReport.JOINT_DAMAGE,
-                            SupervisionReportMapper.supervisionReport.BEND_OR_DISPLACEMENT,
-                            SupervisionReportMapper.supervisionReport.OTHER_OBSERVATIONS,
-                            SupervisionReportMapper.supervisionReport.OTHER_OBSERVATIONS_INFO,
-                            SupervisionReportMapper.supervisionReport.ADDITIONAL_INFO,
-                            SupervisionReportMapper.supervisionReport.DRAFT
+            Record1<Integer> supervisionReportIdResult = ctx.insertInto(TableAlias.supervisionReport,
+                            TableAlias.supervisionReport.SUPERVISION_ID,
+                            TableAlias.supervisionReport.DRIVING_LINE_OK,
+                            TableAlias.supervisionReport.DRIVING_LINE_INFO,
+                            TableAlias.supervisionReport.SPEED_LIMIT_OK,
+                            TableAlias.supervisionReport.SPEED_LIMIT_INFO,
+                            TableAlias.supervisionReport.ANOMALIES,
+                            TableAlias.supervisionReport.ANOMALIES_DESCRIPTION,
+                            TableAlias.supervisionReport.SURFACE_DAMAGE,
+                            TableAlias.supervisionReport.JOINT_DAMAGE,
+                            TableAlias.supervisionReport.BEND_OR_DISPLACEMENT,
+                            TableAlias.supervisionReport.OTHER_OBSERVATIONS,
+                            TableAlias.supervisionReport.OTHER_OBSERVATIONS_INFO,
+                            TableAlias.supervisionReport.ADDITIONAL_INFO,
+                            TableAlias.supervisionReport.DRAFT
                     ).values(
                             supervisionId,
                             true, "", // driving line
@@ -60,7 +61,7 @@ public class SupervisionReportRepository {
                             "", // additional info
                             true // draft
                     )
-                    .returningResult(SupervisionReportMapper.supervisionReport.ID)
+                    .returningResult(TableAlias.supervisionReport.ID)
                     .fetchOne(); // Execute and return zero or one record
 
             return supervisionReportIdResult != null ? supervisionReportIdResult.value1() : null;
@@ -71,21 +72,21 @@ public class SupervisionReportRepository {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
-            ctx.update(SupervisionReportMapper.supervisionReport)
-                    .set(SupervisionReportMapper.supervisionReport.DRIVING_LINE_OK, supervisionReport.getDrivingLineOk())
-                    .set(SupervisionReportMapper.supervisionReport.DRIVING_LINE_INFO, supervisionReport.getDrivingLineInfo())
-                    .set(SupervisionReportMapper.supervisionReport.SPEED_LIMIT_OK, supervisionReport.getSpeedLimitOk())
-                    .set(SupervisionReportMapper.supervisionReport.SPEED_LIMIT_INFO, supervisionReport.getSpeedLimitInfo())
-                    .set(SupervisionReportMapper.supervisionReport.ANOMALIES, supervisionReport.getAnomalies())
-                    .set(SupervisionReportMapper.supervisionReport.ANOMALIES_DESCRIPTION, supervisionReport.getAnomaliesDescription())
-                    .set(SupervisionReportMapper.supervisionReport.SURFACE_DAMAGE, supervisionReport.getSurfaceDamage())
-                    .set(SupervisionReportMapper.supervisionReport.JOINT_DAMAGE, supervisionReport.getJointDamage())
-                    .set(SupervisionReportMapper.supervisionReport.BEND_OR_DISPLACEMENT, supervisionReport.getBendOrDisplacement())
-                    .set(SupervisionReportMapper.supervisionReport.OTHER_OBSERVATIONS, supervisionReport.getOtherObservations())
-                    .set(SupervisionReportMapper.supervisionReport.OTHER_OBSERVATIONS_INFO, supervisionReport.getOtherObservationsInfo())
-                    .set(SupervisionReportMapper.supervisionReport.ADDITIONAL_INFO, supervisionReport.getAdditionalInfo())
-                    .set(SupervisionReportMapper.supervisionReport.DRAFT, supervisionReport.getDraft())
-                    .where(SupervisionReportMapper.supervisionReport.ID.eq(supervisionReport.getId()))
+            ctx.update(TableAlias.supervisionReport)
+                    .set(TableAlias.supervisionReport.DRIVING_LINE_OK, supervisionReport.getDrivingLineOk())
+                    .set(TableAlias.supervisionReport.DRIVING_LINE_INFO, supervisionReport.getDrivingLineInfo())
+                    .set(TableAlias.supervisionReport.SPEED_LIMIT_OK, supervisionReport.getSpeedLimitOk())
+                    .set(TableAlias.supervisionReport.SPEED_LIMIT_INFO, supervisionReport.getSpeedLimitInfo())
+                    .set(TableAlias.supervisionReport.ANOMALIES, supervisionReport.getAnomalies())
+                    .set(TableAlias.supervisionReport.ANOMALIES_DESCRIPTION, supervisionReport.getAnomaliesDescription())
+                    .set(TableAlias.supervisionReport.SURFACE_DAMAGE, supervisionReport.getSurfaceDamage())
+                    .set(TableAlias.supervisionReport.JOINT_DAMAGE, supervisionReport.getJointDamage())
+                    .set(TableAlias.supervisionReport.BEND_OR_DISPLACEMENT, supervisionReport.getBendOrDisplacement())
+                    .set(TableAlias.supervisionReport.OTHER_OBSERVATIONS, supervisionReport.getOtherObservations())
+                    .set(TableAlias.supervisionReport.OTHER_OBSERVATIONS_INFO, supervisionReport.getOtherObservationsInfo())
+                    .set(TableAlias.supervisionReport.ADDITIONAL_INFO, supervisionReport.getAdditionalInfo())
+                    .set(TableAlias.supervisionReport.DRAFT, supervisionReport.getDraft())
+                    .where(TableAlias.supervisionReport.ID.eq(supervisionReport.getId()))
                     .execute();
         });
     }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>2BB756C4-F7B6-4919-AD38-6EE7A9D8544B</title>
+    <g id="UI-Style-Guide" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Style-Guideline" transform="translate(-135.000000, -4836.000000)">
+            <g id="static/icon/24x24/file" transform="translate(135.000000, 4836.000000)">
+                <polygon id="hit-area" points="0 0 24 0 24 24 0 24"></polygon>
+                <path d="M13,4.0002 L13,10.0002 L19,10.0002 L19,19.0002 C19,19.6002 18.6,20.0002 18,20.0002 L6,20.0002 C5.4,20.0002 5,19.6002 5,19.0002 L5,5.0002 C5,4.4002 5.4,4.0002 6,4.0002 L13,4.0002 Z M14.9999,4 L19.0009,8.001 L14.9999,8.001 L14.9999,4 Z" id="Combined-Shape" fill="#0064AF"></path>
+            </g>
+        </g>
+    </g>
+</svg>

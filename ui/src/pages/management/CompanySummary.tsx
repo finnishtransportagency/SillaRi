@@ -22,13 +22,15 @@ const CompanySummary = (): JSX.Element => {
 
   const management = useTypedSelector((state) => state.managementReducer);
   const {
-    selectedCompanyDetail,
     networkStatus: { isFailed = {} },
   } = management;
-  const { name = "", permits = [] } = selectedCompanyDetail || {};
   const { companyId = "0" } = useParams<CompanySummaryProps>();
 
-  useQuery(["getCompany", companyId], () => getCompany(Number(companyId), dispatch, selectedCompanyDetail), { retry: onRetry });
+  const { data: selectedCompanyDetail } = useQuery(["getCompany", companyId], () => getCompany(Number(companyId), dispatch), {
+    retry: onRetry,
+  });
+
+  const { name = "", permits = [] } = selectedCompanyDetail || {};
 
   const noNetworkNoData = isFailed.getCompany && selectedCompanyDetail === undefined;
 
@@ -42,7 +44,7 @@ const CompanySummary = (): JSX.Element => {
           <IonGrid className="ion-no-padding" fixed>
             <IonRow>
               <IonCol className="ion-padding">
-                <IonText className="headingText">{t("management.companySummary.permitListTitle")}</IonText>
+                <IonText className="headingBoldText">{t("management.companySummary.permitListTitle")}</IonText>
               </IonCol>
             </IonRow>
 
@@ -57,7 +59,7 @@ const CompanySummary = (): JSX.Element => {
 
                           return {
                             uuid: key,
-                            headingColor: "primary",
+                            // headingColor: "primary",
                             heading: <PermitAccordionHeading permit={permit} />,
                             isPanelOpen: index === 0,
                             panel: <PermitAccordionPanel permit={permit} />,

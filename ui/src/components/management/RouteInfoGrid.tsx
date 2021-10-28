@@ -1,60 +1,78 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
-import { IonCol, IonGrid, IonIcon, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
-import { flagOutline } from "ionicons/icons";
+import { IonCol, IonGrid, IonIcon, IonRouterLink, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
+import Moment from "react-moment";
 import moment from "moment";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
 import IRoute from "../../interfaces/IRoute";
-import { actions as managementActions } from "../../store/managementSlice";
-import { useTypedSelector } from "../../store/store";
-import { SupervisorType } from "../../utils/constants";
+import IRouteTransport from "../../interfaces/IRouteTransport";
+import ISupervision from "../../interfaces/ISupervision";
+import mapPoint from "../../theme/icons/map-point.svg";
+import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 
 interface RouteInfoGridProps {
   routeTransportId: number;
   permitRoutes: IRoute[];
+  modifiedRouteTransportDetail: IRouteTransport;
+  setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
+  selectedRouteOption: IRoute;
+  setSelectedRouteOption: Dispatch<SetStateAction<IRoute | undefined>>;
 }
 
-const RouteInfoGrid = ({ routeTransportId, permitRoutes = [] }: RouteInfoGridProps): JSX.Element => {
+const RouteInfoGrid = ({
+  routeTransportId,
+  permitRoutes = [],
+  modifiedRouteTransportDetail,
+  setModifiedRouteTransportDetail,
+  selectedRouteOption,
+  setSelectedRouteOption,
+}: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
 
-  const management = useTypedSelector((state) => state.managementReducer);
-  const { modifiedRouteTransportDetail, selectedRouteOption } = management;
-  const { plannedDepartureTime } = modifiedRouteTransportDetail[routeTransportId] || {};
-  const { id: selectedRouteId, departureAddress, arrivalAddress } = selectedRouteOption[routeTransportId] || {};
-  const { streetaddress: departureStreetAddress } = departureAddress || {};
-  const { streetaddress: arrivalStreetAddress } = arrivalAddress || {};
+  const { plannedDepartureTime, currentStatus } = modifiedRouteTransportDetail || {};
+  const { status } = currentStatus || {};
+  const { id: selectedRouteId, name: selectedRouteName, departureAddress, arrivalAddress } = selectedRouteOption || {};
+  const { streetAddress: departureStreetAddress } = departureAddress || {};
+  const { streetAddress: arrivalStreetAddress } = arrivalAddress || {};
 
   const estimatedDeparture = moment(plannedDepartureTime);
 
   const setPlannedDepartureTime = (dateTime: Date) => {
-    // dispatch({ type: managementActions.MODIFY_ROUTE_TRANSPORT, payload: { plannedDepartureTime: dateTime } });
-    const newDetail = { ...modifiedRouteTransportDetail[routeTransportId], plannedDepartureTime: dateTime };
-    dispatch({ type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL, payload: newDetail });
+    if (modifiedRouteTransportDetail) {
+      const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: dateTime };
+      setModifiedRouteTransportDetail(newDetail);
+    }
   };
 
   const selectRoute = (routeId: number) => {
     const selectedRoute = permitRoutes.find((route) => route.id === routeId);
     if (selectedRoute) {
-      dispatch({ type: managementActions.SET_SELECTED_ROUTE_OPTION, payload: { routeTransportId, route: selectedRoute } });
+      setSelectedRouteOption(selectedRoute);
 
-      // Make sure supervision details are available for BridgeGrid
-      const { routeBridges = [] } = selectedRoute || {};
-      const newSupervisions = routeBridges.map((routeBridge) => {
-        const { id: routeBridgeId } = routeBridge;
-        return {
-          plannedTime: moment().toDate(),
-          routeBridgeId,
-          supervisorType: SupervisorType.OWN_SUPERVISOR,
-          supervisors: [],
+      if (modifiedRouteTransportDetail && (!routeTransportId || routeTransportId === 0)) {
+        // This is a new route transport, so make sure supervision details are available for BridgeGrid
+        const { routeBridges = [] } = selectedRoute || {};
+        const newSupervisions: ISupervision[] = routeBridges.map((routeBridge) => {
+          const { id: routeBridgeId } = routeBridge;
+          return {
+            id: 0,
+            routeBridgeId,
+            routeTransportId,
+            plannedTime: moment().toDate(),
+            conformsToPermit: false,
+            supervisorType: SupervisorType.OWN_SUPERVISOR,
+            supervisors: [],
+          };
+        });
+        const newDetail: IRouteTransport = {
+          ...modifiedRouteTransportDetail,
+          routeId,
+          route: selectedRoute,
+          supervisions: newSupervisions,
         };
-      });
-      dispatch({
-        type: managementActions.SET_MODIFIED_ROUTE_TRANSPORT_DETAIL,
-        payload: { ...modifiedRouteTransportDetail[routeTransportId], routeId, route: selectedRoute, supervisions: newSupervisions },
-      });
+        setModifiedRouteTransportDetail(newDetail);
+      }
     }
   };
 
@@ -63,14 +81,15 @@ const RouteInfoGrid = ({ routeTransportId, permitRoutes = [] }: RouteInfoGridPro
       <IonRow>
         <IonCol size-lg="3">
           <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin">
+            <IonRow className="ion-margin-start ion-margin-top">
               <IonCol>
-                <IonText className="headingText">{t("management.addTransport.routeInfo.estimatedDepartureDate")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.routeInfo.estimatedDepartureDate")}</IonText>
               </IonCol>
             </IonRow>
-            <IonRow>
+            <IonRow className="ion-margin-start">
               <IonCol>
-                <DatePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />
+                {status === TransportStatus.PLANNED && <DatePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />}
+                {status !== TransportStatus.PLANNED && <Moment format={DATE_FORMAT}>{estimatedDeparture}</Moment>}
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -78,14 +97,15 @@ const RouteInfoGrid = ({ routeTransportId, permitRoutes = [] }: RouteInfoGridPro
 
         <IonCol size-lg="3">
           <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin">
+            <IonRow className="ion-margin-start ion-margin-top">
               <IonCol>
-                <IonText className="headingText">{t("management.addTransport.routeInfo.estimatedDepartureTime")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.routeInfo.estimatedDepartureTime")}</IonText>
               </IonCol>
             </IonRow>
-            <IonRow>
+            <IonRow className="ion-margin-start">
               <IonCol>
-                <TimePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />
+                {status === TransportStatus.PLANNED && <TimePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />}
+                {status !== TransportStatus.PLANNED && <Moment format={TIME_FORMAT_MIN}>{estimatedDeparture}</Moment>}
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -93,30 +113,33 @@ const RouteInfoGrid = ({ routeTransportId, permitRoutes = [] }: RouteInfoGridPro
 
         <IonCol size="12" size-lg="6">
           <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin">
+            <IonRow className="ion-margin-start ion-margin-top">
               <IonCol>
-                <IonText className="headingText">{t("management.addTransport.routeInfo.route")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.routeInfo.route")}</IonText>
               </IonCol>
             </IonRow>
-            <IonRow>
+            <IonRow className="ion-margin-start">
               <IonCol>
-                <IonSelect
-                  interface="action-sheet"
-                  cancelText={t("common.buttons.back")}
-                  value={selectedRouteId}
-                  onIonChange={(e) => selectRoute(e.detail.value)}
-                >
-                  {permitRoutes.map((route, index) => {
-                    const { id, name } = route;
-                    const key = `route_${index}`;
+                {status === TransportStatus.PLANNED && (
+                  <IonSelect
+                    interface="action-sheet"
+                    cancelText={t("common.buttons.back")}
+                    value={selectedRouteId}
+                    onIonChange={(e) => selectRoute(e.detail.value)}
+                  >
+                    {permitRoutes.map((route, index) => {
+                      const { id, name } = route;
+                      const key = `route_${index}`;
 
-                    return (
-                      <IonSelectOption key={key} value={id}>
-                        {name}
-                      </IonSelectOption>
-                    );
-                  })}
-                </IonSelect>
+                      return (
+                        <IonSelectOption key={key} value={id}>
+                          {name}
+                        </IonSelectOption>
+                      );
+                    })}
+                  </IonSelect>
+                )}
+                {status !== TransportStatus.PLANNED && <IonText>{selectedRouteName}</IonText>}
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -128,7 +151,7 @@ const RouteInfoGrid = ({ routeTransportId, permitRoutes = [] }: RouteInfoGridPro
           <IonGrid className="ion-no-padding">
             <IonRow className="ion-margin">
               <IonCol size="12" size-sm="4">
-                <IonText className="headingText">{t("management.addTransport.routeInfo.origin")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.routeInfo.origin")}</IonText>
               </IonCol>
               <IonCol size="12" size-sm="8">
                 <IonText>{departureStreetAddress}</IonText>
@@ -136,7 +159,7 @@ const RouteInfoGrid = ({ routeTransportId, permitRoutes = [] }: RouteInfoGridPro
             </IonRow>
             <IonRow className="ion-margin">
               <IonCol size="12" size-sm="4">
-                <IonText className="headingText">{t("management.addTransport.routeInfo.destination")}</IonText>
+                <IonText className="headingText">{t("management.transportDetail.routeInfo.destination")}</IonText>
               </IonCol>
               <IonCol size="12" size-sm="8">
                 <IonText>{arrivalStreetAddress}</IonText>
@@ -148,10 +171,12 @@ const RouteInfoGrid = ({ routeTransportId, permitRoutes = [] }: RouteInfoGridPro
         <IonCol size="12" size-lg="4">
           <IonGrid className="ion-no-padding">
             <IonRow className="ion-margin">
-              <IonCol size="12" size-lg="5" />
-              <IonCol size="12" size-lg="7">
-                <IonText>{`${t("management.addTransport.routeInfo.showRouteOnMap")} `}</IonText>
-                <IonIcon icon={flagOutline} />
+              <IonCol size="12" size-lg="4" />
+              <IonCol size="12" size-lg="8">
+                <IonRouterLink routerLink={`/routemap/${selectedRouteId}`}>
+                  <IonText className="linkText">{t("management.transportDetail.routeInfo.showRouteOnMap")}</IonText>
+                  <IonIcon className="otherIcon" icon={mapPoint} />
+                </IonRouterLink>
               </IonCol>
             </IonRow>
           </IonGrid>

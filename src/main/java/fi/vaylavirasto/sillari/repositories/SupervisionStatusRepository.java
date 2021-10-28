@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.repositories;
 import fi.vaylavirasto.sillari.mapper.SupervisionStatusMapper;
 import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -21,9 +22,9 @@ public class SupervisionStatusRepository {
     private DSLContext dsl;
 
     public List<SupervisionStatusModel> getSupervisionStatusHistory(Integer supervisionId) {
-        return dsl.selectFrom(SupervisionStatusMapper.supervisionStatus)
-                .where(SupervisionStatusMapper.supervisionStatus.SUPERVISION_ID.eq(supervisionId))
-                .orderBy(SupervisionStatusMapper.supervisionStatus.TIME.desc())
+        return dsl.selectFrom(TableAlias.supervisionStatus)
+                .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(supervisionId))
+                .orderBy(TableAlias.supervisionStatus.TIME.desc())
                 .fetch(new SupervisionStatusMapper());
     }
 
@@ -35,10 +36,10 @@ public class SupervisionStatusRepository {
     }
 
     public void insertSupervisionStatus(DSLContext ctx, Integer supervisionId, SupervisionStatusType statusType) {
-        ctx.insertInto(SupervisionStatusMapper.supervisionStatus,
-                        SupervisionStatusMapper.supervisionStatus.SUPERVISION_ID,
-                        SupervisionStatusMapper.supervisionStatus.STATUS,
-                        SupervisionStatusMapper.supervisionStatus.TIME
+        ctx.insertInto(TableAlias.supervisionStatus,
+                        TableAlias.supervisionStatus.SUPERVISION_ID,
+                        TableAlias.supervisionStatus.STATUS,
+                        TableAlias.supervisionStatus.TIME
                 ).values(
                         supervisionId,
                         String.valueOf(statusType),
@@ -46,4 +47,9 @@ public class SupervisionStatusRepository {
                 .execute();
     }
 
+    public void deleteSupervisionStatuses(DSLContext ctx, Integer supervisionId) {
+        ctx.deleteFrom(TableAlias.supervisionStatus)
+                .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(supervisionId))
+                .execute();
+    }
 }

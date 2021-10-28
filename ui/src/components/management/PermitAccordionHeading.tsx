@@ -2,11 +2,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
-import { add } from "ionicons/icons";
+import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import IPermit from "../../interfaces/IPermit";
-import { useTypedSelector } from "../../store/store";
 import { getRouteTransportsOfPermit, onRetry } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
 
@@ -20,12 +18,13 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps): JSX.El
 
   const { id: permitId, permitNumber, validStartDate, validEndDate } = permit;
 
-  const management = useTypedSelector((state) => state.managementReducer);
-  const { routeTransportList = [] } = management;
-
-  useQuery(["getRouteTransportsOfPermit", permitId], () => getRouteTransportsOfPermit(Number(permitId), dispatch), {
-    retry: onRetry,
-  });
+  const { data: routeTransportList } = useQuery(
+    ["getRouteTransportsOfPermit", permitId],
+    () => getRouteTransportsOfPermit(Number(permitId), dispatch),
+    {
+      retry: onRetry,
+    }
+  );
 
   return (
     <IonGrid className="ion-no-padding">
@@ -49,18 +48,19 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps): JSX.El
           </IonGrid>
         </IonCol>
         <IonCol>
-          <IonText>{`${t("management.companySummary.transports")}: ${routeTransportList.length}`}</IonText>
+          <IonText>{`${t("management.companySummary.transports")}: ${routeTransportList ? routeTransportList.length : 0}`}</IonText>
         </IonCol>
         <IonCol className="ion-hide-md-down">
           <IonButton
             color="secondary"
+            // expand="block"
+            size="large"
             routerLink={`/management/addTransport/${permitId}`}
             onClick={(evt) => {
               evt.stopPropagation();
             }}
           >
             {t("management.companySummary.addTransportButtonLabel")}
-            <IonIcon icon={add} slot="start" />
           </IonButton>
         </IonCol>
       </IonRow>

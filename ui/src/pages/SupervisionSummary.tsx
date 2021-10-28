@@ -10,12 +10,10 @@ import SupervisionHeader from "../components/SupervisionHeader";
 import SupervisionFooter from "../components/SupervisionFooter";
 import SupervisionObservationsSummary from "../components/SupervisionObservationsSummary";
 import SupervisionPhotos from "../components/SupervisionPhotos";
-import IPermit from "../interfaces/IPermit";
-import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
-import { actions as crossingActions } from "../store/crossingsSlice";
+import { actions as supervisionActions } from "../store/supervisionSlice";
 import { useTypedSelector } from "../store/store";
-import { getPermitOfRouteBridge, getRouteBridge, getSupervision, onRetry } from "../utils/backendData";
+import { getSupervision, onRetry } from "../utils/supervisionBackendData";
 
 interface SummaryProps {
   supervisionId: string;
@@ -28,12 +26,10 @@ const SupervisionSummary = (): JSX.Element => {
   const [toastMessage, setToastMessage] = useState("");
 
   const {
-    selectedPermitDetail,
-    selectedBridgeDetail,
     selectedSupervisionDetail,
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.crossingsReducer);
-  const { routeBridgeId = "0", images: supervisionImages = [] } = selectedSupervisionDetail || {};
+  } = useTypedSelector((state) => state.supervisionReducer);
+  const { images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
   const { isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
@@ -41,44 +37,24 @@ const SupervisionSummary = (): JSX.Element => {
     { retry: onRetry }
   );
 
-  // Use the enabled option to only fetch data when routeBridgeId is available
-  useQuery(["getRouteBridge", routeBridgeId], () => getRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
-    retry: onRetry,
-    enabled: Number(routeBridgeId) > 0,
-  });
-  useQuery(["getPermitOfRouteBridge", routeBridgeId], () => getPermitOfRouteBridge(Number(routeBridgeId), dispatch, selectedBridgeDetail), {
-    retry: onRetry,
-    enabled: Number(routeBridgeId) > 0,
-  });
-
   useEffect(() => {
     if (!isLoadingSupervision) {
       // Remove any uploaded images from the camera images stored in redux
-      dispatch({ type: crossingActions.UPDATE_IMAGES, payload: supervisionImages });
+      dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: supervisionImages });
     }
   }, [isLoadingSupervision, supervisionImages, dispatch]);
 
-  const noNetworkNoData =
-    (isFailed.getSupervision && selectedSupervisionDetail === undefined) ||
-    (isFailed.getRouteBridge && selectedBridgeDetail === undefined) ||
-    (isFailed.getPermitOfRouteBridge && selectedPermitDetail === undefined);
+  const noNetworkNoData = isFailed.getSupervision && selectedSupervisionDetail === undefined;
 
   return (
     <IonPage>
-      <Header
-        title={t("supervision.summary.title")}
-        somethingFailed={isFailed.getSupervision || isFailed.getRouteBridge || isFailed.getPermitOfRouteBridge}
-      />
+      <Header title={t("supervision.summary.title")} somethingFailed={isFailed.getSupervision} />
       <IonContent fullscreen>
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (
           <>
-            <SupervisionHeader
-              permit={selectedPermitDetail as IPermit}
-              routeBridge={selectedBridgeDetail as IRouteBridge}
-              supervision={selectedSupervisionDetail as ISupervision}
-            />
+            <SupervisionHeader supervision={selectedSupervisionDetail as ISupervision} />
             <SupervisionPhotos supervision={selectedSupervisionDetail as ISupervision} headingKey="supervision.photos" />
             <SupervisionObservationsSummary supervision={selectedSupervisionDetail as ISupervision} />
             <SupervisionFooter supervision={selectedSupervisionDetail as ISupervision} draft={false} setToastMessage={setToastMessage} />

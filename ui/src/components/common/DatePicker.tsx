@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonDatetime, IonIcon, IonItem } from "@ionic/react";
-import { calendarOutline } from "ionicons/icons";
 import moment from "moment";
+import calendar from "../../theme/icons/calendar.svg";
 import "./DatePicker.css";
 
 interface DatePickerProps {
@@ -27,7 +27,7 @@ const DatePicker = ({ className, value, onChange }: DatePickerProps): JSX.Elemen
         max={maxYear}
         onIonChange={(e) => onChange(moment(e.detail.value).toDate())}
       />
-      <IonIcon className="openIcon" icon={calendarOutline} slot="end" />
+      <IonIcon className="otherIcon openIcon" icon={calendar} slot="end" />
     </IonItem>
   );
 };

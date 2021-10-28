@@ -3,10 +3,15 @@
     "buttons": {
       "done": "Done",
       "back": "Back",
+      "back2": "Back",
       "cancel": "Cancel",
       "edit": "Edit",
       "save": "Save",
       "send": "Send"
+    },
+    "answer": {
+      "yes": "Yes",
+      "no": "No"
     }
   },
   "main": {
@@ -16,8 +21,8 @@
     "title": "SillaRi",
     "content": "Welcome!",
     "tab": {
-      "transportCompanies": "Transport companies",
-      "upcomingBridges": "Bridges"
+      "transports": "Transports",
+      "bridges": "Bridges"
     },
     "noNetworkNoData": "Unable to retrieve data, trying again..."
   },
@@ -45,7 +50,7 @@
   },
   "SidebarMenu": {
     "title": "SillaRi",
-    "mainPage": "Main page",
+    "mainPage": "Transports and bridges",
     "settings": "Settings",
     "map": "Map",
     "camera": "Camera",
@@ -56,7 +61,12 @@
   "company": {
     "transportPermit": "Transport permit",
     "validityPeriod": "Validity period",
-    "route": "Route"
+    "transport": {
+      "transportDeparted": "Transport departed",
+      "transportArrived": "Transport arrived",
+      "nextTransport": "Next transport",
+      "estimatedDepartureTime": "estimated departure"
+    }
   },
   "route": {
     "transportPermit": "Transport permit",
@@ -69,7 +79,7 @@
     "routeInfo": {
       "title": "Route information",
       "route": "Route",
-      "showWholeRoute": "Show whole route",
+      "showRouteOnMap": "Show route on map",
       "departurePoint": "Departure point",
       "arrivalPoint": "Arrival point"
     },
@@ -83,7 +93,6 @@
       "transportTotalMass": "Total mass",
       "axleWeightsDistances": "Axle weights and distances"
     },
-    "transportValid": "Transport is in accordance with the permit on departure",
     "bridgesToSupervise": "Bridges to supervise"
   },
   "bridge": {
@@ -98,6 +107,7 @@
     "trafficSupervisors": {
       "title": "Traffic supervisors"
     },
+    "transportPermit": "Transport permit",
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Transport conforms to permit",
     "startSupervision": "Start supervision",
@@ -111,6 +121,7 @@
   },
   "supervision": {
     "title": "Bridge supervision",
+    "transportPermit": "Transport permit",
     "permitNumber": "Permit number",
     "supervisionStarted": "Supervision started",
     "bridgeName": "Bridge details",
@@ -133,12 +144,8 @@
       "additionalInfo": "Additional information",
       "placeholder": "Add text here"
     },
-    "answer": {
-      "yes": "Yes",
-      "no": "No"
-    },
     "buttons": {
-      "takePhotos": "Take photos",
+      "takePhotos": "Photos",
       "drivingLine": "Driving line",
       "summary": "Go to summary",
       "saveToSendList": "Save (to the send list)"
@@ -152,6 +159,7 @@
       "noAnomalies": "None",
       "additionalInfo": "Additional information",
       "approved": "Approved",
+      "notApproved": "Not approved",
       "saved": "Supervision has been saved (to the send list)"
     }
   },
@@ -183,7 +191,7 @@
         "modify": "Modify"
       }
     },
-    "addTransport": {
+    "transportDetail": {
       "headerTitleAdd": "Add new transport",
       "headerTitleDetail": "Transport details",
       "transportPermit": "Transport permit",
@@ -194,10 +202,14 @@
       "buttons": {
         "deleteTransport": "Delete transport"
       },
+      "alert": {
+        "deleteTransport": "Are you sure you want to delete the transport?"
+      },
       "saved": "Saved",
+      "deleted": "Deleted",
       "routeInfo": {
         "estimatedDepartureDate": "Estimated departure date",
-        "estimatedDepartureTime": "Estimated departure time",
+        "estimatedDepartureTime": "time",
         "route": "Route",
         "origin": "Origin",
         "destination": "Destination",
@@ -248,7 +260,15 @@
     "transport": {
       "header": {
         "title": "Transport"
-      }
+      },
+      "permitLabel": "Permit:",
+      "routeLabel": "Route:",
+      "mapButtonLabel": "Map",
+      "transportStatusLabel": "Transport status",
+      "transportStatusBoxLabel": {
+        "notStarted": "Not started"
+      },
+      "startDrivingButtonLabel": "START DRIVING"
     }
   }
 }
