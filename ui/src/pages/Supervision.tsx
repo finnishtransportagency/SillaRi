@@ -70,7 +70,9 @@ const Supervision = (): JSX.Element => {
       console.log("STARTED AND GOT NEW DATA", data);
       // Update "getSupervision" query to return the updated data
       queryClient.setQueryData(["getSupervision", supervisionId], data);
-      setModifiedSupervisionReport(data.report || defaultReport);
+      if (data.report) {
+        setModifiedSupervisionReport({ ...data.report });
+      }
     },
   });
   const { isLoading: isSendingSupervisionStart } = supervisionStartMutation;
@@ -79,7 +81,9 @@ const Supervision = (): JSX.Element => {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
-      setModifiedSupervisionReport(data.report || defaultReport);
+      if (data.report) {
+        setModifiedSupervisionReport({ ...data.report });
+      }
       dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: data.images });
     },
   });
@@ -126,26 +130,24 @@ const Supervision = (): JSX.Element => {
     history.push(`/bridgeDetail/${supervisionId}`);
   };
 
+  const { report: savedReport } = supervision || {};
+  const { id: savedReportId, draft: savedReportDraft = true } = savedReport || {};
+
   useEffect(() => {
     if (!isLoadingSupervision && !isSendingSupervisionStart && !isSendingReportUpdate && supervision) {
       // When page has loaded, start supervision or set existing supervision report to draft. Set modifiedReport.
-      const { report: savedReport } = supervision;
-      const { draft: isDraft } = savedReport || {};
       console.log("Loaded", supervision);
+      console.log("savedReport", savedReport);
       console.log("modifiedSupervisionReport", modifiedSupervisionReport);
 
-      // Page is loaded for the first time, modifiedSupervisionReport has default values
-      if (modifiedSupervisionReport.id <= 0) {
+      // Page is loaded for the first time, modifiedSupervisionReport has default values or previous values
+      if (modifiedSupervisionReport.id <= 0 || modifiedSupervisionReport.id !== savedReportId) {
         if (!savedReport) {
           // Create new report with default values and set the result to modified report
           supervisionStartMutation.mutate(modifiedSupervisionReport);
         } else {
-          if (!isDraft) {
-            // Set saved report to draft and set the result to modified report
-            reportUpdateMutation.mutate({ ...savedReport, draft: true });
-          } else {
-            setModifiedSupervisionReport(savedReport);
-          }
+          // Update the modified report with data from backend
+          setModifiedSupervisionReport({ ...savedReport });
         }
       }
     }
@@ -153,10 +155,12 @@ const Supervision = (): JSX.Element => {
     isLoadingSupervision,
     isSendingSupervisionStart,
     isSendingReportUpdate,
-    supervision,
     supervisionStartMutation,
     reportUpdateMutation,
     modifiedSupervisionReport,
+    supervision,
+    savedReport,
+    savedReportId,
   ]);
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
@@ -176,7 +180,8 @@ const Supervision = (): JSX.Element => {
               setModifiedSupervisionReport={setModifiedSupervisionReport}
             />
             <SupervisionFooter
-              report={modifiedSupervisionReport}
+              reportId={savedReportId}
+              isDraft={savedReportDraft}
               isLoading={isLoadingSupervision || isSendingSupervisionStart || isSendingReportUpdate}
               saveChanges={saveReport}
               cancelChanges={cancelReport}

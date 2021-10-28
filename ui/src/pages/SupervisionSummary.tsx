@@ -11,7 +11,7 @@ import SupervisionObservationsSummary from "../components/SupervisionObservation
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector } from "../store/store";
-import { finishSupervision, getSupervision, onRetry } from "../utils/supervisionBackendData";
+import { finishSupervision, getSupervision, onRetry, updateSupervisionReport } from "../utils/supervisionBackendData";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import SupervisionFooter from "../components/SupervisionFooter";
 
@@ -38,6 +38,15 @@ const SupervisionSummary = (): JSX.Element => {
     { retry: onRetry }
   );
 
+  const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
+    retry: onRetry,
+    onSuccess: (data) => {
+      console.log("reportUpdateMutation setDraft done");
+      queryClient.setQueryData(["getSupervision", supervisionId], data);
+    },
+  });
+  const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
+
   const finishSupervisionMutation = useMutation((finishRequest: ISupervision) => finishSupervision(finishRequest, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
@@ -48,6 +57,7 @@ const SupervisionSummary = (): JSX.Element => {
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
 
   const { report } = supervision || {};
+  const { id: reportId, draft = false } = report || {};
 
   /*useEffect(() => {
     if (!isLoadingSupervision) {
@@ -58,14 +68,17 @@ const SupervisionSummary = (): JSX.Element => {
 
   const saveReport = (): void => {
     if (supervision) {
-      finishSupervisionMutation.mutate(supervision);
+      console.log("Maybe something wrong with supervision as param");
+      //finishSupervisionMutation.mutate(supervision);
     }
   };
 
   const editReport = (): void => {
-    // TODO confirm that all changes are lost and supervision status reset
-    // Set supervision status back to 'PLANNED' and delete report
-    history.push(`/supervision/${supervisionId}`);
+    if (report) {
+      const updatedReport = { ...report, draft: true };
+      reportUpdateMutation.mutate(updatedReport);
+    }
+    history.goBack();
   };
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
@@ -82,8 +95,9 @@ const SupervisionSummary = (): JSX.Element => {
             <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" />
             <SupervisionObservationsSummary report={report as ISupervisionReport} />
             <SupervisionFooter
-              report={report as ISupervisionReport}
-              isLoading={isLoadingSupervision || isSendingFinishSupervision}
+              reportId={reportId}
+              isDraft={draft}
+              isLoading={isLoadingSupervision || isSendingReportUpdate || isSendingFinishSupervision}
               saveChanges={saveReport}
               cancelChanges={editReport}
             />
