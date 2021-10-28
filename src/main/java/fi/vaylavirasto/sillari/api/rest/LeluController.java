@@ -172,8 +172,9 @@ public class LeluController {
 
 
     @RequestMapping(value = "/supervisionReport", method = RequestMethod.GET)
+    @ResponseBody
     @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
-    public ResponseEntity<byte[]> getSupervisionReport(@RequestParam String reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+    public byte[] getSupervisionReport(@RequestParam String reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
         logger.debug("Lelu getReport " + reportId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
