@@ -14,6 +14,7 @@ public class SupervisorMapper implements RecordMapper<Record, SupervisorModel> {
         supervisorModel.setId(record.get(TableAlias.supervisor.ID));
         supervisorModel.setFirstName(record.get(TableAlias.supervisor.FIRSTNAME));
         supervisorModel.setLastName(record.get(TableAlias.supervisor.LASTNAME));
+        supervisorModel.setUsername(record.get(TableAlias.supervisor.USERNAME));
         return supervisorModel;
     }
 }

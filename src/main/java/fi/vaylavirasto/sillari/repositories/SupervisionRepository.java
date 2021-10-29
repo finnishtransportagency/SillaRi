@@ -111,7 +111,7 @@ public class SupervisionRepository {
             supervisionModel.setId(supervisionId);
 
             supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getId(), supervisorModel.getPriority());
+                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
             });
 
             supervisionStatusRepository.insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.PLANNED);
@@ -132,7 +132,7 @@ public class SupervisionRepository {
 
             supervisorRepository.deleteSupervisionSupervisors(ctx, supervisionModel.getId());
             supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisorModel.getId(), supervisorModel.getPriority());
+                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisorModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
             });
         });
     }

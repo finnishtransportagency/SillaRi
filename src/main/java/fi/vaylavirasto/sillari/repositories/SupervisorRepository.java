@@ -33,21 +33,22 @@ public class SupervisorRepository {
                     SupervisorModel supervisor = supervisorMapper.map(record);
                     if (supervisor != null) {
                         supervisor.setPriority(record.get(TableAlias.supervisionSupervisor.PRIORITY));
-                        supervisor.setUsername(record.get(TableAlias.supervisionSupervisor.USERNAME));
                     }
                     return supervisor;
                 });
     }
 
-    public void insertSupervisionSupervisor(DSLContext ctx, Integer supervisionId, Integer supervisorId, Integer priority) {
+    public void insertSupervisionSupervisor(DSLContext ctx, Integer supervisionId, Integer supervisorId, Integer priority, String username) {
         ctx.insertInto(TableAlias.supervisionSupervisor,
                         TableAlias.supervisionSupervisor.SUPERVISION_ID,
                         TableAlias.supervisionSupervisor.SUPERVISOR_ID,
-                        TableAlias.supervisionSupervisor.PRIORITY
+                        TableAlias.supervisionSupervisor.PRIORITY,
+                        TableAlias.supervisionSupervisor.USERNAME
                 ).values(
                         supervisionId,
                         supervisorId,
-                        priority
+                        priority,
+                        username
                 )
                 .execute();
     }
