@@ -255,7 +255,8 @@
       },
       "inputLabel": "Please enter transport code",
       "inputPlaceholder": "Transport code",
-      "submitButtonLabel": "Submit code"
+      "submitButtonLabel": "Submit code",
+      "invalidCodeErrorMessage": "Invalid code"
     },
     "transport": {
       "header": {

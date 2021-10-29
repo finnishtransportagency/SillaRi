@@ -256,7 +256,8 @@
       },
       "inputLabel": "Anna kuljetuksen koodi",
       "inputPlaceholder": "Kuljetuksen koodi",
-      "submitButtonLabel": "Lähetä koodi"
+      "submitButtonLabel": "Lähetä koodi",
+      "invalidCodeErrorMessage": "Virheellinen koodi"
     },
     "transport": {
       "header": {
