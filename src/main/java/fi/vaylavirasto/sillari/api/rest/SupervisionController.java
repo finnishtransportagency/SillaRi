@@ -105,10 +105,10 @@ public class SupervisionController {
     @Operation(summary = "Finish supervision")
     @PostMapping(value = "/finishsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> finishSupervision(@RequestBody SupervisionModel supervision) {
+    public ResponseEntity<?> finishSupervision(@RequestParam Integer supervisionId) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "finishSupervision");
         try {
-            SupervisionModel supervisionModel = supervisionService.finishSupervision(supervision);
+            SupervisionModel supervisionModel = supervisionService.finishSupervision(supervisionId);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

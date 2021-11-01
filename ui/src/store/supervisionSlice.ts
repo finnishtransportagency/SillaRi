@@ -63,8 +63,8 @@ const supervisionSlice = createSlice({
       console.log("SET_MODIFIED_REPORT", action.payload);
       return { ...state, modifiedReport: action.payload };
     },
-    SAVE_IMAGES: (state, action: PayloadAction<IImageItem[]>) => {
-      console.log("SAVE_IMAGES", action.payload);
+    SET_IMAGES: (state, action: PayloadAction<IImageItem[]>) => {
+      console.log("SET_IMAGES", action.payload);
       return { ...state, images: action.payload };
     },
     UPDATE_IMAGES: (state, action: PayloadAction<ISupervisionImage[]>) => {
@@ -75,6 +75,7 @@ const supervisionSlice = createSlice({
         const isStateImageInPayload = supervisionImages.some((supervisionImage) => supervisionImage.filename === image.filename);
         return isStateImageInPayload ? acc : [...acc, image];
       }, []);
+      console.log("CAMERA_IMAGES", cameraImages);
       return { ...state, images: cameraImages };
     },
     SET_FAILED_QUERY: (state, action: PayloadAction<IFailedQuery>) => {

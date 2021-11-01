@@ -32,7 +32,6 @@ const SupervisionObservations = (): JSX.Element => {
   const updateRadioOrCheckboxValue = (payload: IRadioValue) => {
     if (modifiedReport) {
       let updatedReport: ISupervisionReport = modifiedReport;
-      console.log("HELLO updateRadioOrCheckboxValue", payload);
       if (payload.name === "drivingLineOk") {
         updatedReport = { ...modifiedReport, drivingLineOk: payload.value };
       } else if (payload.name === "speedLimitOk") {
@@ -55,7 +54,6 @@ const SupervisionObservations = (): JSX.Element => {
   const updateTextAreaValue = (payload: ITextAreaValue) => {
     if (modifiedReport) {
       let updatedReport: ISupervisionReport = modifiedReport;
-      console.log("HELLO updateTextAreaValue", payload);
       if (payload.name === "drivingLineInfo") {
         updatedReport = { ...modifiedReport, drivingLineInfo: payload.value };
       } else if (payload.name === "speedLimitInfo") {

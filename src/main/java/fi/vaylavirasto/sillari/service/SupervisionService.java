@@ -102,9 +102,9 @@ public class SupervisionService {
     }
 
     // Ends the supervision by adding the status FINISHED
-    public SupervisionModel finishSupervision(SupervisionModel supervisionModel) {
-        supervisionStatusRepository.insertSupervisionStatus(supervisionModel.getId(), SupervisionStatusType.FINISHED);
-        return getSupervision(supervisionModel.getId());
+    public SupervisionModel finishSupervision(Integer supervisionId) {
+        supervisionStatusRepository.insertSupervisionStatus(supervisionId, SupervisionStatusType.FINISHED);
+        return getSupervision(supervisionId);
     }
 
     // Updates the report fields

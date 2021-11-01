@@ -48,7 +48,6 @@ const Supervision = (): JSX.Element => {
   const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(initialReport, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
-      console.log("STARTED AND GOT NEW DATA", data);
       // Update "getSupervision" query to return the updated data
       queryClient.setQueryData(["getSupervision", supervisionId], data);
       dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...data.report } });
@@ -61,12 +60,16 @@ const Supervision = (): JSX.Element => {
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
       dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...data.report } });
-      dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: data.images });
     },
   });
   const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
 
-  const imageUploadMutation = useMutation((fileUpload: ISupervisionImageInput) => sendImageUpload(fileUpload, dispatch), { retry: onRetry });
+  const imageUploadMutation = useMutation((fileUpload: ISupervisionImageInput) => sendImageUpload(fileUpload, dispatch), {
+    retry: onRetry,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["getSupervision", supervisionId]);
+    },
+  });
 
   // Save changes in both report and images
   const saveReport = (): void => {
@@ -105,7 +108,8 @@ const Supervision = (): JSX.Element => {
     // TODO confirm that all changes are lost and supervision status reset
     // Set supervision status back to 'PLANNED' and delete report
     // Then go back to bridgeDetail page
-    history.push(`/bridgeDetail/${supervisionId}`);
+    // We don't want to allow the user to get back to this page by using "back"
+    history.replace(`/bridgeDetail/${supervisionId}`);
   };
 
   useEffect(() => {
@@ -113,10 +117,6 @@ const Supervision = (): JSX.Element => {
       // When page has loaded, start supervision or set modifiedReport to previously saved report.
       const { report: savedReport } = supervision || {};
       const { id: savedReportId } = savedReport || {};
-
-      console.log("Loaded", supervision);
-      console.log("savedReport", savedReport);
-      console.log("modifiedReport", modifiedReport);
 
       // Page is loaded for the first time, modifiedSupervisionReport is not set or has previous values
       if (!modifiedReport || modifiedReport.id <= 0 || modifiedReport.id !== savedReportId) {
@@ -158,6 +158,16 @@ const Supervision = (): JSX.Element => {
     modifiedReport,
     dispatch,
   ]);
+
+  useEffect(() => {
+    if (supervision && !isLoadingSupervision) {
+      const { images: savedImages = [] } = supervision || {};
+      // Remove any uploaded images from the camera images stored in redux
+      if (savedImages.length > 0) {
+        dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: savedImages });
+      }
+    }
+  }, [isLoadingSupervision, supervision, dispatch]);
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 

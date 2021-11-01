@@ -227,16 +227,15 @@ export const denyCrossing = async (denyRequest: ISupervision, dispatch: Dispatch
   }
 };
 
-export const finishSupervision = async (finishRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
+export const finishSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { finishSupervision: false } });
 
-    const finishSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/finishsupervision`, {
+    const finishSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/finishsupervision?supervisionId=${supervisionId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(finishRequest),
     });
 
     if (finishSupervisionResponse.ok) {

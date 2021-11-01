@@ -45,32 +45,26 @@ const SupervisionSummary = (): JSX.Element => {
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
       dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...data.report } });
+      // We don't want to allow the user to get back to this page by using "back"
+      history.replace(`/supervision/${supervisionId}`);
     },
   });
   const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
 
-  const finishSupervisionMutation = useMutation((finishRequest: ISupervision) => finishSupervision(finishRequest, dispatch), {
+  const finishSupervisionMutation = useMutation((superId: string) => finishSupervision(Number(superId), dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
       dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...data.report } });
       setToastMessage(t("supervision.summary.saved"));
+      // TODO go back to supervision list - but where? Main page?
+      //  history.replace(`/`);
     },
   });
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
 
-  /*useEffect(() => {
-    if (!isLoadingSupervision) {
-      // Remove any uploaded images from the camera images stored in redux
-      dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: savedImages });
-    }
-  }, [isLoadingSupervision, savedImages, dispatch]);*/
-
   const saveReport = (): void => {
-    if (supervision) {
-      console.log("Maybe something wrong with supervision as param");
-      //finishSupervisionMutation.mutate(supervision);
-    }
+    finishSupervisionMutation.mutate(supervisionId);
   };
 
   const editReport = (): void => {
@@ -79,7 +73,6 @@ const SupervisionSummary = (): JSX.Element => {
       const updatedReport = { ...report, draft: true };
       reportUpdateMutation.mutate(updatedReport);
     }
-    history.goBack();
   };
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;

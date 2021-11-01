@@ -61,7 +61,7 @@ const CameraContainer = (): JSX.Element => {
       const uuid = uuidv4();
       const fname = `image_${uuid}.jpg`;
       dispatch({
-        type: supervisionActions.SAVE_IMAGES,
+        type: supervisionActions.SET_IMAGES,
         payload: [...images, { id: uuid, filename: fname, dataUrl: image.dataUrl, date: now }],
       });
     } catch (err) {
@@ -72,7 +72,7 @@ const CameraContainer = (): JSX.Element => {
 
   const removeImageItem = (uuid: string) => {
     const imagesToEdit = images.filter((image) => image.id !== uuid);
-    dispatch({ type: supervisionActions.SAVE_IMAGES, payload: imagesToEdit });
+    dispatch({ type: supervisionActions.SET_IMAGES, payload: imagesToEdit });
   };
 
   const deleteImageObject = (objectKey: string) => {
