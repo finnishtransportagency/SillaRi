@@ -57,7 +57,7 @@ const Supervision = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <>
-            <SupervisionHeader supervision={selectedSupervisionDetail as ISupervision} className="header" isCrossingInstructionsIncluded />
+            <SupervisionHeader supervision={selectedSupervisionDetail as ISupervision} />
             <SupervisionPhotos supervision={selectedSupervisionDetail as ISupervision} headingKey="supervision.photosDrivingLine" isButtonsIncluded />
             <SupervisionObservations supervision={selectedSupervisionDetail as ISupervision} />
             <SupervisionFooter supervision={selectedSupervisionDetail as ISupervision} draft />

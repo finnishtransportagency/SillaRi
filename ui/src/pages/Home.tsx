@@ -6,7 +6,7 @@ import type { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton, IonSlide, IonSlides } from "@ionic/react";
 import Header from "../components/Header";
 import { useTypedSelector } from "../store/store";
-import { getCompanyTransportsList, getSupervisionList, onRetry } from "../utils/supervisionBackendData";
+import { checkUser, getCompanyTransportsList, getSupervisionList, onRetry } from "../utils/supervisionBackendData";
 import SupervisionList from "../components/SupervisionList";
 import "./Home.css";
 import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion";
@@ -29,6 +29,7 @@ const Home = (): JSX.Element => {
   // TODO use logged in user
   const supervisorUser = "USER1";
 
+  useQuery(["checkUser"], () => checkUser(supervisorUser), { retry: onRetry });
   useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(supervisorUser, dispatch), { retry: onRetry });
   useQuery(["getSupervisionList"], () => getSupervisionList(supervisorUser, dispatch), { retry: onRetry });
 

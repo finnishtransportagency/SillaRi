@@ -1,9 +1,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { IonButton, IonCol, IonGrid, IonItem, IonLabel, IonRow } from "@ionic/react";
-import { document } from "ionicons/icons";
+import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow } from "@ionic/react";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector } from "../store/store";
+import camera from "../theme/icons/camera_white.svg";
+import lane from "../theme/icons/lane_white.svg";
 import ImageThumbnailRow from "./ImageThumbnailRow";
 
 interface SupervisionPhotosProps {
@@ -20,8 +21,8 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: Super
 
   return (
     <>
-      <IonItem className="header" detailIcon={document} lines="none">
-        <IonLabel className="headingText">{t(headingKey)}</IonLabel>
+      <IonItem className="header" lines="none">
+        <IonLabel>{t(headingKey).toUpperCase()}</IonLabel>
       </IonItem>
 
       <IonGrid>
@@ -32,14 +33,16 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: Super
         <IonGrid>
           <IonRow>
             <IonCol className="ion-text-center">
-              <IonButton color="tertiary" routerLink={`/takephotos/${supervisionId}`}>
+              <IonButton color="secondary" expand="block" size="large" routerLink={`/takephotos/${supervisionId}`}>
+                <IonIcon className="otherIcon" icon={camera} color="primary" slot="start" />
                 {t("supervision.buttons.takePhotos")}
               </IonButton>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol className="ion-text-center">
-              <IonButton color="tertiary" disabled>
+              <IonButton color="secondary" expand="block" size="large" disabled>
+                <IonIcon className="otherIcon" icon={lane} color="primary" slot="start" />
                 {t("supervision.buttons.drivingLine")}
               </IonButton>
             </IonCol>

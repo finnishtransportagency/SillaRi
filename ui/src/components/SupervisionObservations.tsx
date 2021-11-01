@@ -1,11 +1,12 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { IonCheckbox, IonItem, IonLabel, IonRadio, IonRadioGroup, IonTextarea } from "@ionic/react";
+import { IonCheckbox, IonIcon, IonItem, IonLabel, IonRadio, IonRadioGroup, IonTextarea } from "@ionic/react";
 import IRadioValue from "../interfaces/IRadioValue";
 import ISupervision from "../interfaces/ISupervision";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
 import { actions as supervisionActions } from "../store/supervisionSlice";
+import empty from "../theme/icons/empty.svg";
 
 interface SupervisionObservationsProps {
   supervision: ISupervision;
@@ -28,7 +29,7 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
     jointDamage = false,
     bendOrDisplacement = false,
     otherObservations = false,
-    // otherObservationsInfo = "",
+    otherObservationsInfo = "",
     additionalInfo = "",
   } = report || {};
 
@@ -56,7 +57,7 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
   return (
     <>
       <IonItem className="header" lines="none">
-        <IonLabel className="headingText">{t("supervision.report.observations")}</IonLabel>
+        <IonLabel>{t("supervision.report.observations").toUpperCase()}</IonLabel>
       </IonItem>
 
       <IonItem lines="none">
@@ -174,10 +175,9 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
             />
             <IonLabel>{t("supervision.report.otherObservations")}</IonLabel>
           </IonItem>
-          {/* TODO - check if other observations needs its own text area, or if anomaliesDescription below is enough
-            otherObservations && (
+          {otherObservations && (
             <IonItem lines="none">
-              <IonIcon slot="start" icon={help} />
+              <IonIcon className="otherIcon" slot="start" icon={empty} />
               <IonTextarea
                 placeholder={t("supervision.report.placeholder")}
                 value={otherObservationsInfo}
@@ -186,7 +186,7 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
                 }}
               />
             </IonItem>
-          )*/}
+          )}
 
           <IonItem lines="none">
             <IonLabel>{t("supervision.report.anomaliesDescription")}</IonLabel>

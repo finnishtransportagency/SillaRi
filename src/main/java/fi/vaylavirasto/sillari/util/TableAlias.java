@@ -18,6 +18,7 @@ public class TableAlias {
     public static final Bridge bridge = Tables.BRIDGE.as("br");
     public static final RouteTransport routeTransport = Tables.ROUTE_TRANSPORT.as("rtr");
     public static final RouteTransportStatus transportStatus = Tables.ROUTE_TRANSPORT_STATUS.as("rts");
+    public static final RouteTransportPassword routeTransportPassword = Tables.ROUTE_TRANSPORT_PASSWORD.as("rtp");
     public static final Supervision supervision = Tables.SUPERVISION.as("sn");
     public static final SupervisionStatus supervisionStatus = Tables.SUPERVISION_STATUS.as("sns");
     public static final SupervisionReport supervisionReport = Tables.SUPERVISION_REPORT.as("snr");

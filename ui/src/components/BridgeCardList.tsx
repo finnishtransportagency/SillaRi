@@ -15,7 +15,7 @@ const BridgeCardList = ({ supervisions }: BridgeCardListProps): JSX.Element => {
     <>
       <IonItem className="header" lines="none">
         <IonLabel>
-          <IonLabel className="headingText">{t("route.bridgesToSupervise")}</IonLabel>
+          <IonLabel>{t("route.bridgesToSupervise").toUpperCase()}</IonLabel>
         </IonLabel>
       </IonItem>
 

@@ -7,8 +7,8 @@ public class SupervisorModel {
     private Integer id;
     private String firstName;
     private String lastName;
+    private String username;
 
     // For supervision supervisor
     private Integer priority;
-    private String username;
 }

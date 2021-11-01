@@ -50,7 +50,7 @@
   },
   "SidebarMenu": {
     "title": "SillaRi",
-    "mainPage": "Main page",
+    "mainPage": "Transports and bridges",
     "settings": "Settings",
     "map": "Map",
     "camera": "Camera",
@@ -79,7 +79,7 @@
     "routeInfo": {
       "title": "Route information",
       "route": "Route",
-      "showWholeRoute": "Show whole route",
+      "showRouteOnMap": "Show route on map",
       "departurePoint": "Departure point",
       "arrivalPoint": "Arrival point"
     },
@@ -107,6 +107,7 @@
     "trafficSupervisors": {
       "title": "Traffic supervisors"
     },
+    "transportPermit": "Transport permit",
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Transport conforms to permit",
     "startSupervision": "Start supervision",
@@ -120,6 +121,7 @@
   },
   "supervision": {
     "title": "Bridge supervision",
+    "transportPermit": "Transport permit",
     "permitNumber": "Permit number",
     "supervisionStarted": "Supervision started",
     "bridgeName": "Bridge details",
@@ -143,7 +145,7 @@
       "placeholder": "Add text here"
     },
     "buttons": {
-      "takePhotos": "Take photos",
+      "takePhotos": "Photos",
       "drivingLine": "Driving line",
       "summary": "Go to summary",
       "saveToSendList": "Save (to the send list)"
@@ -157,6 +159,7 @@
       "noAnomalies": "None",
       "additionalInfo": "Additional information",
       "approved": "Approved",
+      "notApproved": "Not approved",
       "saved": "Supervision has been saved (to the send list)"
     }
   },
@@ -206,7 +209,7 @@
       "deleted": "Deleted",
       "routeInfo": {
         "estimatedDepartureDate": "Estimated departure date",
-        "estimatedDepartureTime": "Estimated departure time",
+        "estimatedDepartureTime": "time",
         "route": "Route",
         "origin": "Origin",
         "destination": "Destination",
@@ -252,12 +255,21 @@
       },
       "inputLabel": "Please enter transport code",
       "inputPlaceholder": "Transport code",
-      "submitButtonLabel": "Submit code"
+      "submitButtonLabel": "Submit code",
+      "invalidCodeErrorMessage": "Invalid code"
     },
     "transport": {
       "header": {
         "title": "Transport"
-      }
+      },
+      "permitLabel": "Permit:",
+      "routeLabel": "Route:",
+      "mapButtonLabel": "Map",
+      "transportStatusLabel": "Transport status",
+      "transportStatusBoxLabel": {
+        "notStarted": "Not started"
+      },
+      "startDrivingButtonLabel": "START DRIVING"
     }
   }
 }

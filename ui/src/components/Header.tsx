@@ -25,7 +25,7 @@ const Header = ({ title, somethingFailed }: HeaderProps): JSX.Element => {
             <IonIcon slot="icon-only" icon={arrowBackOutline} />
           </IonButton>
         </IonButtons>
-        <IonTitle>{title}</IonTitle>
+        <IonTitle className="headingBoldText">{title}</IonTitle>
         <IonButtons slot="end">
           <IonButton shape="round" className={somethingFailed ? "" : "ion-hide"}>
             <IonIcon slot="icon-only" icon={cloudOfflineOutline} />

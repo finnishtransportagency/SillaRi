@@ -1,17 +1,21 @@
 import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonTitle, IonToolbar } from "@ionic/react";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { calendar, car, home, logOutOutline, settings } from "ionicons/icons";
 import { useTranslation } from "react-i18next";
 import Cookies from "js-cookie";
 import { unregister } from "../serviceWorkerRegistration";
+import calendar from "../theme/icons/calendar.svg";
+import lane from "../theme/icons/lane.svg";
+import logout from "../theme/icons/logout.svg";
+import settings from "../theme/icons/settings.svg";
+import truck from "../theme/icons/truck.svg";
 import "./SidebarMenu.css";
 
 const SidebarMenu: React.FC = () => {
   const { t } = useTranslation();
   const history = useHistory();
 
-  const logout = () => {
+  const logoutFromApp = () => {
     // Unregister service worker
     unregister(() => {
       // Remove all cookies for this site
@@ -30,37 +34,37 @@ const SidebarMenu: React.FC = () => {
       <IonContent>
         <IonHeader>
           <IonToolbar color="primary">
-            <IonTitle>{t("SidebarMenu.title")}</IonTitle>
+            <IonTitle className="headingBoldText">{t("SidebarMenu.title")}</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonList>
           <IonMenuToggle>
             <IonItem routerLink="/">
-              <IonIcon icon={home} slot="start" />
+              <IonIcon className="otherIcon" icon={lane} slot="start" />
               <IonLabel>{t("SidebarMenu.mainPage")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>
             <IonItem routerLink="/settings">
-              <IonIcon icon={settings} slot="start" />
+              <IonIcon className="otherIcon" icon={settings} slot="start" />
               <IonLabel>{t("SidebarMenu.settings")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>
             <IonItem routerLink="/management/1">
-              <IonIcon icon={calendar} slot="start" />
+              <IonIcon className="otherIcon" icon={calendar} slot="start" />
               <IonLabel>{t("SidebarMenu.management")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>
             <IonItem routerLink="/transport">
-              <IonIcon icon={car} slot="start" />
+              <IonIcon className="otherIcon" icon={truck} slot="start" />
               <IonLabel>{t("SidebarMenu.transports")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>
-            <IonItem button onClick={logout}>
-              <IonIcon icon={logOutOutline} slot="start" />
+            <IonItem button onClick={logoutFromApp}>
+              <IonIcon className="otherIcon" icon={logout} slot="start" />
               <IonLabel>{t("SidebarMenu.logout")}</IonLabel>
             </IonItem>
           </IonMenuToggle>

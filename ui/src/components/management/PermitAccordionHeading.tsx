@@ -2,8 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
-import { add } from "ionicons/icons";
+import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import IPermit from "../../interfaces/IPermit";
 import { getRouteTransportsOfPermit, onRetry } from "../../utils/managementBackendData";
@@ -54,13 +53,14 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps): JSX.El
         <IonCol className="ion-hide-md-down">
           <IonButton
             color="secondary"
+            // expand="block"
+            size="large"
             routerLink={`/management/addTransport/${permitId}`}
             onClick={(evt) => {
               evt.stopPropagation();
             }}
           >
             {t("management.companySummary.addTransportButtonLabel")}
-            <IonIcon icon={add} slot="start" />
           </IonButton>
         </IonCol>
       </IonRow>

@@ -2,18 +2,16 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import Moment from "react-moment";
 import { IonItem, IonLabel } from "@ionic/react";
-import { document } from "ionicons/icons";
 import ISupervision from "../interfaces/ISupervision";
+import file from "../theme/icons/file.svg";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
-import "./SupervisionHeader.css";
 
 interface SupervisionHeaderProps {
   supervision: ISupervision;
-  className?: string;
   isCrossingInstructionsIncluded?: boolean;
 }
 
-const SupervisionHeader = ({ supervision, className, isCrossingInstructionsIncluded }: SupervisionHeaderProps): JSX.Element => {
+const SupervisionHeader = ({ supervision, isCrossingInstructionsIncluded }: SupervisionHeaderProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { routeBridge, startedTime } = supervision || {};
@@ -25,24 +23,24 @@ const SupervisionHeader = ({ supervision, className, isCrossingInstructionsInclu
   // TODO - add crossing instructions link
   return (
     <>
-      <IonItem className={className} detailIcon={document} lines="none">
-        <IonLabel className="headingText">{t("supervision.permitNumber")}</IonLabel>
+      <IonItem className="header itemIcon" detail detailIcon={file} lines="none">
+        <IonLabel className="headingText">{t("supervision.transportPermit")}</IonLabel>
         <IonLabel>{permitNumber}</IonLabel>
       </IonItem>
-      <IonItem className={className} lines="none">
-        <IonLabel>{t("supervision.supervisionStarted")}</IonLabel>
+      <IonItem className="header itemIcon" detail detailIcon="" lines="none">
+        <IonLabel className="headingText">{t("supervision.supervisionStarted")}</IonLabel>
         <IonLabel>{startedTime ? <Moment format={DATE_TIME_FORMAT_MIN}>{startedTime}</Moment> : ""}</IonLabel>
       </IonItem>
-      <IonItem className={className} lines="none">
-        <IonLabel>{t("supervision.bridgeName")}</IonLabel>
+      <IonItem className="header itemIcon" detail detailIcon="" lines="none">
+        <IonLabel className="headingText">{t("supervision.bridgeName")}</IonLabel>
         <IonLabel>
           {name} | {identifier}
         </IonLabel>
       </IonItem>
       {isCrossingInstructionsIncluded && (
-        <IonItem className={`${className} itemIcon`} detail detailIcon={document} lines="none">
-          <IonLabel>{t("supervision.crossingInstructions")}</IonLabel>
-          <IonLabel className="crossingInstructionsLink">TODO</IonLabel>
+        <IonItem className="header itemIcon" detail detailIcon={file} lines="none">
+          <IonLabel className="headingText">{t("supervision.crossingInstructions")}</IonLabel>
+          <IonLabel>TODO</IonLabel>
         </IonItem>
       )}
     </>

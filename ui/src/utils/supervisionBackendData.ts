@@ -321,3 +321,64 @@ export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promis
     throw new Error(err as string);
   }
 };
+
+// TEST - try different methods to check if the user is valid
+export const checkUser = async (username: string): Promise<void> => {
+  try {
+    const checkUserResponse = await fetch(`${getOrigin()}/api/ui/checkuser`);
+
+    console.log("checkUserResponse 1 debug - ", checkUserResponse);
+
+    if (checkUserResponse.ok) {
+      console.log("checkUser 1 ok");
+    } else {
+      console.log("checkUser 1 error", notOkError);
+    }
+  } catch (err) {
+    console.log("checkUser 1 error", err as string);
+  }
+
+  try {
+    const checkUserResponse = await fetch(`${getOrigin()}/api/ui/checkuser`, { credentials: "include" });
+
+    console.log("checkUserResponse 2 debug - ", checkUserResponse);
+
+    if (checkUserResponse.ok) {
+      console.log("checkUser 2 ok");
+    } else {
+      console.log("checkUser 2 error", notOkError);
+    }
+  } catch (err) {
+    console.log("checkUser 2 error", err as string);
+  }
+
+  try {
+    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor?username=${username}`);
+
+    console.log("companyTransportsResponse 1 debug - ", companyTransportsResponse);
+
+    if (companyTransportsResponse.ok) {
+      console.log("companyTransports 1 ok");
+    } else {
+      console.log("companyTransports 1 error", notOkError);
+    }
+  } catch (err) {
+    console.log("companyTransports 1 error", err as string);
+  }
+
+  try {
+    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor?username=${username}`, {
+      credentials: "include",
+    });
+
+    console.log("companyTransportsResponse 2 debug - ", companyTransportsResponse);
+
+    if (companyTransportsResponse.ok) {
+      console.log("companyTransports 2 ok");
+    } else {
+      console.log("companyTransports 2 error", notOkError);
+    }
+  } catch (err) {
+    console.log("companyTransports 2 error", err as string);
+  }
+};

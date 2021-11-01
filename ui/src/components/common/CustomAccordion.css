@@ -1,18 +1,27 @@
-.customAccordion {
+.customAccordion .accordion__panel {
   border: 2px solid var(--ion-color-base);
-}
-
-.customAccordion .accordion__item + .accordion__item {
-  border-top: 2px solid var(--ion-color-base);
+  border-top: 0;
 }
 
 .customAccordion .accordion__button {
   cursor: pointer;
+  border: 2px solid var(--ion-color-base);
+  border-bottom: 2px solid var(--ion-color-light);
 }
 
 .customAccordion .accordion__button[aria-expanded="true"],
 .customAccordion .accordion__button[aria-selected="true"] {
-  border-bottom: 1px solid var(--ion-color-base);
+  border-bottom: 0;
+}
+
+.customAccordion .accordion__button[aria-expanded="false"] .accordionHeaderItem {
+  border-top: 4px solid transparent;
+}
+
+.customAccordion .accordion__button[aria-expanded="true"] .accordionHeaderItem {
+  --background: #f2fafd;
+  border-top: 4px solid var(--ion-color-primary);
+  border-bottom: 2px solid #b2e0f6;
 }
 
 .customAccordion .accordion__button .openIcon {
