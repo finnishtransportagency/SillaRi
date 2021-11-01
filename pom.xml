@@ -67,7 +67,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.5.10</version>
+            <version>1.5.12</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -243,19 +243,19 @@
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>6.3.1</version>
+            <version>6.4.1</version>
             <type>maven-plugin</type>
         </dependency>
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-core</artifactId>
-            <version>6.3.1</version>
+            <version>6.4.1</version>
             <type>maven-plugin</type>
         </dependency>
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-utils</artifactId>
-            <version>6.3.1</version>
+            <version>6.4.1</version>
             <type>maven-plugin</type>
         </dependency>
 
