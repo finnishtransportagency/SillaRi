@@ -17,13 +17,7 @@ const SupervisionFooter = ({ reportId, isDraft, isLoading, saveChanges, cancelCh
     <IonGrid>
       <IonRow>
         <IonCol className="ion-text-center">
-          <IonButton
-            color="primary"
-            expand="block"
-            size="large"
-            disabled={!reportId || reportId < 0 || isLoading}
-            onClick={() => saveChanges()}
-          >
+          <IonButton color="primary" expand="block" size="large" disabled={!reportId || reportId < 0 || isLoading} onClick={() => saveChanges()}>
             {isDraft ? t("supervision.buttons.summary") : t("supervision.buttons.saveToSendList")}
           </IonButton>
         </IonCol>
