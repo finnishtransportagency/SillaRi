@@ -4,10 +4,10 @@ import { useQuery } from "react-query";
 import { useHistory, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { IonButton, IonCol, IonContent, IonGrid, IonItem, IonLabel, IonPage, IonRow, IonTextarea } from "@ionic/react";
-import { document } from "ionicons/icons";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
+import file from "../theme/icons/file.svg";
 import { getSupervision, denyCrossing, onRetry } from "../utils/supervisionBackendData";
 
 interface DenyCrossingProps {
@@ -49,12 +49,12 @@ const DenyCrossing = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <>
-            <IonItem className="header" detailIcon={document} lines="none">
-              <IonLabel className="headingText">{t("supervision.permitNumber")}</IonLabel>
-              <IonLabel>{permitNumber}</IonLabel>
+            <IonItem className="header itemIcon" detail detailIcon={file} lines="none">
+              <IonLabel className="headingText">{t("supervision.transportPermit")}</IonLabel>
+              <IonLabel className="iconText">{permitNumber}</IonLabel>
             </IonItem>
             <IonItem className="header" lines="none">
-              <IonLabel>{t("supervision.bridgeName")}</IonLabel>
+              <IonLabel className="headingText">{t("supervision.bridgeName")}</IonLabel>
               <IonLabel>
                 {name} | {identifier}
               </IonLabel>
@@ -73,14 +73,12 @@ const DenyCrossing = (): JSX.Element => {
             <IonGrid>
               <IonRow>
                 <IonCol className="ion-text-center">
-                  <IonCol>
-                    <IonButton color="primary">{`${t("common.buttons.send")} (TODO)`}</IonButton>
-                  </IonCol>
+                  <IonButton color="primary" expand="block" size="large">{`${t("common.buttons.send")} (TODO)`}</IonButton>
                 </IonCol>
               </IonRow>
               <IonRow>
                 <IonCol className="ion-text-center">
-                  <IonButton color="secondary" onClick={() => history.goBack()}>
+                  <IonButton color="tertiary" expand="block" size="large" onClick={() => history.goBack()}>
                     {t("common.buttons.cancel")}
                   </IonButton>
                 </IonCol>

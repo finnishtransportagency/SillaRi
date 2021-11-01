@@ -93,7 +93,7 @@ const SupervisionObservations = (): JSX.Element => {
   return (
     <>
       <IonItem className="header" lines="none">
-        <IonLabel className="headingText">{t("supervision.report.observations")}</IonLabel>
+        <IonLabel>{t("supervision.report.observations").toUpperCase()}</IonLabel>
       </IonItem>
 
       <IonItem lines="none">

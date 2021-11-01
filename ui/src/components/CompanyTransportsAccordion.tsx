@@ -24,7 +24,7 @@ const CompanyTransportsAccordion = ({ companyTransportsList, noNetworkNoData }: 
             return {
               uuid: key,
               heading: <TransportCardListHeader companyTransports={companyTransports} />,
-              isPanelOpen: index === 0,
+              // isPanelOpen: index === 0,
               panel: <TransportCardList transports={transports} />,
             };
           })}

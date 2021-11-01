@@ -44,7 +44,7 @@ const CompanySummary = (): JSX.Element => {
           <IonGrid className="ion-no-padding" fixed>
             <IonRow>
               <IonCol className="ion-padding">
-                <IonText className="headingText">{t("management.companySummary.permitListTitle")}</IonText>
+                <IonText className="headingBoldText">{t("management.companySummary.permitListTitle")}</IonText>
               </IonCol>
             </IonRow>
 
@@ -59,7 +59,7 @@ const CompanySummary = (): JSX.Element => {
 
                           return {
                             uuid: key,
-                            headingColor: "primary",
+                            // headingColor: "primary",
                             heading: <PermitAccordionHeading permit={permit} />,
                             isPanelOpen: index === 0,
                             panel: <PermitAccordionPanel permit={permit} />,

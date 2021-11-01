@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>793D7D67-19C7-4D53-B056-EFACDF23D4B2</title>
+    <g id="UI-Style-Guide" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Style-Guideline" transform="translate(-387.000000, -4924.000000)">
+            <g id="static/icon/24x24/calendar" transform="translate(387.000000, 4924.000000)">
+                <polygon id="hit-area" points="0 0 24 0 24 24 0 24"></polygon>
+                <path d="M7.75,2.65 L7.75,4.35 L16.25,4.35 L16.25,2.65 L17.95,2.65 L17.95,4.35 L18.8,4.35 C19.735,4.35 20.5,5.115 20.5,6.05 L20.5,6.05 L20.5,19.65 C20.5,20.585 19.735,21.35 18.8,21.35 L18.8,21.35 L5.2,21.35 C4.265,21.35 3.5,20.585 3.5,19.65 L3.5,19.65 L3.5,6.05 C3.5,5.115 4.265,4.35 5.2,4.35 L5.2,4.35 L6.05,4.35 L6.05,2.65 L7.75,2.65 Z M18.8,8.6 L5.2,8.6 L5.2,19.65 L18.8,19.65 L18.8,8.6 Z" id="Combined-Shape" fill="#0064AF"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -179,7 +179,7 @@ const Supervision = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <>
-            <SupervisionHeader supervision={supervision as ISupervision} className="header" isCrossingInstructionsIncluded />
+            <SupervisionHeader supervision={supervision as ISupervision} />
             <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photosDrivingLine" isButtonsIncluded />
             <SupervisionObservations />
             <SupervisionFooter

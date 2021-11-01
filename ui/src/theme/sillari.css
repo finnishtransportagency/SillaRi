@@ -1,3 +1,24 @@
+@font-face {
+  font-family: "Exo2";
+  font-weight: 400;
+  font-style: normal;
+  src: url("./font/static/Exo2-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Exo2";
+  font-weight: 600;
+  font-style: normal;
+  src: url("./font/static/Exo2-SemiBold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Exo2";
+  font-weight: 700;
+  font-style: normal;
+  src: url("./font/static/Exo2-Bold.ttf") format("truetype");
+}
+
 .listContainer {
   width: 100%;
 }
@@ -7,16 +28,27 @@
 }
 
 .headingText {
-  font-weight: bold;
+  font-weight: 600; /* semi-bold */
+}
+
+.headingBoldText {
+  font-weight: 700; /* bold */
 }
 
 .itemIcon {
-  --detail-icon-color: var(--ion-color-primary);
   --detail-icon-opacity: 1;
+  --detail-icon-font-size: 24px;
+}
+
+.otherIcon {
+  opacity: 1;
+  font-size: 24px;
 }
 
 .linkText {
+  color: var(--ion-color-primary);
   text-decoration: underline;
+  margin-right: 8px;
 }
 
 .disabledLink {
@@ -34,6 +66,28 @@
 
 ion-select {
   border: 2px solid var(--ion-color-base);
+}
+
+ion-button,
+ion-segment-button {
+  text-transform: none;
+}
+
+ion-button {
+  --box-shadow: none;
+  --border-radius: 12px;
+}
+
+ion-button.ion-color-tertiary {
+  --border-color: #49c2f1;
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+ion-label {
+  /* wrap text instead of using ellipsis */
+  text-overflow: clip !important;
+  white-space: normal !important;
 }
 
 /** Additional Vayla colors **/

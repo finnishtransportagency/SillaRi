@@ -2,6 +2,7 @@ import type { Dispatch } from "redux";
 import ICompany from "../interfaces/ICompany";
 import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
+import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
 import ISupervisor from "../interfaces/ISupervisor";
 import { getOrigin } from "./request";
 import { actions as managementActions } from "../store/managementSlice";
@@ -90,6 +91,26 @@ export const getRouteTransport = async (routeTransportId: number, dispatch: Disp
     }
   } catch (err) {
     dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const findRouteTransportPassword = async (transportPassword: string, dispatch: Dispatch): Promise<IRouteTransportPassword> => {
+  try {
+    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
+
+    const rtpResponse = await fetch(`${getOrigin()}/api/transport/login?transportPassword=${transportPassword}`);
+
+    if (rtpResponse.ok) {
+      const rtp = (await rtpResponse.json()) as Promise<IRouteTransportPassword>;
+      console.log("findRouteTransportPassword", transportPassword);
+      return await rtp;
+    } else {
+      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
     throw new Error(err as string);
   }
 };

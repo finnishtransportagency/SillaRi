@@ -12,7 +12,7 @@ const TrafficSupervisorsAccordion = (): JSX.Element => {
       items={[
         {
           uuid: "trafficSupervisors",
-          heading: <IonText>{t("bridge.trafficSupervisors.title")}</IonText>,
+          heading: <IonText className="headingText">{t("bridge.trafficSupervisors.title")}</IonText>,
           panel: (
             <div>
               <IonItem>

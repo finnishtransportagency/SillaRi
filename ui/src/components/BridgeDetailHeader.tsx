@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonImg, IonItem, IonLabel } from "@ionic/react";
-import { flag } from "ionicons/icons";
 import IRouteBridge from "../interfaces/IRouteBridge";
+import mapPoint from "../theme/icons/map-point.svg";
 import "./BridgeDetailHeader.css";
 
 interface BridgeDetailHeaderProps {
@@ -19,19 +19,15 @@ const BridgeDetailHeader = ({ routeBridge }: BridgeDetailHeaderProps): JSX.Eleme
     <>
       <IonImg className="bridgeImage" src="assets/bridge.jpg" />
       <IonItem className="header" lines="none">
-        <IonLabel className="headingText">{t("bridge.title")}</IonLabel>
+        <IonLabel>{t("bridge.title").toUpperCase()}</IonLabel>
       </IonItem>
-      <IonItem>
-        <IonLabel>{t("bridge.identifier")}</IonLabel>
+      <IonItem className="itemIcon" detail detailIcon="">
+        <IonLabel className="headingText">{t("bridge.identifier")}</IonLabel>
         <IonLabel>{identifier}</IonLabel>
       </IonItem>
-      <IonItem className="itemIcon" detail detailIcon={flag} routerLink={`/bridgemap/${routeBridgeId}`}>
-        <IonLabel>
-          <IonLabel>{t("bridge.location")}</IonLabel>
-          <IonLabel>
-            <small>{municipality}</small>
-          </IonLabel>
-        </IonLabel>
+      <IonItem className="itemIcon" detail detailIcon={mapPoint} routerLink={`/bridgemap/${routeBridgeId}`}>
+        <IonLabel className="headingText">{t("bridge.location")}</IonLabel>
+        <IonLabel>{municipality}</IonLabel>
       </IonItem>
     </>
   );

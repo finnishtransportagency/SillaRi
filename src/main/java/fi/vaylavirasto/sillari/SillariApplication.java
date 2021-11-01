@@ -42,8 +42,10 @@ public class SillariApplication {
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:3001");
         config.addAllowedOrigin("https://sillaridev.testivaylapilvi.fi");
+        config.addAllowedOrigin("https://sillaritest.testivaylapilvi.fi");
         config.addAllowedOrigin("https://sillari.testivaylapilvi.fi");
         config.addAllowedOrigin("https://sillari.vaylapilvi.fi");
+        config.addAllowedOrigin("https://vaylatest.auth.eu-west-1.amazoncognito.com");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);

@@ -28,19 +28,25 @@ const SupervisionObservationsSummary = ({ report }: SupervisionObservationsSumma
   return (
     <>
       <IonItem className="header" lines="none">
-        <IonLabel className="headingText">{t("supervision.summary.observations")}</IonLabel>
+        <IonLabel>{t("supervision.summary.observations").toUpperCase()}</IonLabel>
       </IonItem>
 
-      <IonItem lines="none">
-        <IonLabel>{t("supervision.summary.drivingLine")}</IonLabel>
-        <IonLabel>{drivingLineOk ? t("supervision.summary.approved") : `${t("supervision.summary.notApproved")} ${drivingLineInfo}`}</IonLabel>
+      <IonItem>
+        <IonLabel className="headingText">{t("supervision.summary.drivingLine")}</IonLabel>
+        <IonLabel>
+          <IonLabel>{drivingLineOk ? t("supervision.summary.approved") : t("supervision.summary.notApproved")}</IonLabel>
+          <IonLabel>{drivingLineOk ? "" : drivingLineInfo}</IonLabel>
+        </IonLabel>
       </IonItem>
-      <IonItem lines="none">
-        <IonLabel>{t("supervision.summary.speedLimit")}</IonLabel>
-        <IonLabel>{speedLimitOk ? t("supervision.summary.approved") : `${t("supervision.summary.notApproved")} ${speedLimitInfo}`}</IonLabel>
+      <IonItem>
+        <IonLabel className="headingText">{t("supervision.summary.speedLimit")}</IonLabel>
+        <IonLabel>
+          <IonLabel>{speedLimitOk ? t("supervision.summary.approved") : t("supervision.summary.notApproved")}</IonLabel>
+          <IonLabel>{speedLimitOk ? "" : speedLimitInfo}</IonLabel>
+        </IonLabel>
       </IonItem>
-      <IonItem lines="none">
-        <IonLabel>{t("supervision.summary.anomalies")}</IonLabel>
+      <IonItem>
+        <IonLabel className="headingText">{t("supervision.summary.anomalies")}</IonLabel>
         <IonLabel>
           {!anomalies ? (
             t("supervision.summary.noAnomalies")
@@ -56,8 +62,8 @@ const SupervisionObservationsSummary = ({ report }: SupervisionObservationsSumma
         </IonLabel>
       </IonItem>
 
-      <IonItem lines="none">
-        <IonLabel>{t("supervision.summary.additionalInfo")}</IonLabel>
+      <IonItem>
+        <IonLabel className="headingText">{t("supervision.summary.additionalInfo")}</IonLabel>
         <IonLabel>{additionalInfo}</IonLabel>
       </IonItem>
     </>
