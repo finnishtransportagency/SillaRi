@@ -4,7 +4,7 @@ import { IonItem, IonLabel } from "@ionic/react";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 interface SupervisionObservationsSummaryProps {
-  report: ISupervisionReport;
+  report?: ISupervisionReport;
 }
 
 const SupervisionObservationsSummary = ({ report }: SupervisionObservationsSummaryProps): JSX.Element => {

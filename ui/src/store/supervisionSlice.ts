@@ -9,6 +9,7 @@ import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
 import IRouteTransport from "../interfaces/IRouteTransport";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 interface IStateProps {
   companyTransportsList: ICompanyTransports[];
@@ -16,6 +17,7 @@ interface IStateProps {
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
   supervisionList: ISupervision[];
+  modifiedReport?: ISupervisionReport;
   images: IImageItem[];
   networkStatus: INetworkStatus;
 }
@@ -26,6 +28,7 @@ const initialState: IStateProps = {
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
   supervisionList: [],
+  modifiedReport: undefined,
   images: [],
   networkStatus: {
     isFailed: {},
@@ -55,6 +58,10 @@ const supervisionSlice = createSlice({
     GET_SUPERVISION_LIST: (state, action: PayloadAction<ISupervision[]>) => {
       console.log("GET_SUPERVISION_LIST", action.payload);
       return { ...state, supervisionList: action.payload };
+    },
+    SET_MODIFIED_REPORT: (state, action: PayloadAction<ISupervisionReport>) => {
+      console.log("SET_MODIFIED_REPORT", action.payload);
+      return { ...state, modifiedReport: action.payload };
     },
     SAVE_IMAGES: (state, action: PayloadAction<IImageItem[]>) => {
       console.log("SAVE_IMAGES", action.payload);

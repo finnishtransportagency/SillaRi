@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
@@ -31,29 +31,10 @@ const Supervision = (): JSX.Element => {
 
   const { supervisionId = "0" } = useParams<SupervisionProps>();
   const {
+    modifiedReport,
     images = [],
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
-
-  const defaultReport: ISupervisionReport = {
-    id: -1,
-    supervisionId: Number(supervisionId),
-    drivingLineOk: false,
-    drivingLineInfo: "",
-    speedLimitOk: false,
-    speedLimitInfo: "",
-    anomalies: true,
-    anomaliesDescription: "",
-    surfaceDamage: false,
-    jointDamage: false,
-    bendOrDisplacement: false,
-    otherObservations: false,
-    otherObservationsInfo: "",
-    additionalInfo: "",
-    draft: true,
-  };
-
-  const [modifiedSupervisionReport, setModifiedSupervisionReport] = useState<ISupervisionReport>(defaultReport);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
@@ -70,9 +51,7 @@ const Supervision = (): JSX.Element => {
       console.log("STARTED AND GOT NEW DATA", data);
       // Update "getSupervision" query to return the updated data
       queryClient.setQueryData(["getSupervision", supervisionId], data);
-      if (data.report) {
-        setModifiedSupervisionReport({ ...data.report });
-      }
+      dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...data.report } });
     },
   });
   const { isLoading: isSendingSupervisionStart } = supervisionStartMutation;
@@ -81,9 +60,7 @@ const Supervision = (): JSX.Element => {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
-      if (data.report) {
-        setModifiedSupervisionReport({ ...data.report });
-      }
+      dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...data.report } });
       dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: data.images });
     },
   });
@@ -93,21 +70,22 @@ const Supervision = (): JSX.Element => {
 
   // Save changes in both report and images
   const saveReport = (): void => {
-    const r = modifiedSupervisionReport;
-    // Update conflicting values
-    const updatedReport = {
-      ...r,
-      drivingLineInfo: !r.drivingLineOk ? r.drivingLineInfo : "",
-      speedLimitInfo: !r.speedLimitOk ? r.speedLimitInfo : "",
-      anomaliesDescription: r.anomalies ? r.anomaliesDescription : "",
-      surfaceDamage: r.anomalies ? r.surfaceDamage : false,
-      jointDamage: r.anomalies ? r.jointDamage : false,
-      bendOrDisplacement: r.anomalies ? r.bendOrDisplacement : false,
-      otherObservations: r.anomalies ? r.otherObservations : false,
-      otherObservationsInfo: r.anomalies && r.otherObservations ? r.otherObservationsInfo : "",
-      draft: false,
-    };
-    reportUpdateMutation.mutate(updatedReport);
+    if (modifiedReport) {
+      // Update conflicting values
+      const updatedReport = {
+        ...modifiedReport,
+        drivingLineInfo: !modifiedReport.drivingLineOk ? modifiedReport.drivingLineInfo : "",
+        speedLimitInfo: !modifiedReport.speedLimitOk ? modifiedReport.speedLimitInfo : "",
+        anomaliesDescription: modifiedReport.anomalies ? modifiedReport.anomaliesDescription : "",
+        surfaceDamage: modifiedReport.anomalies ? modifiedReport.surfaceDamage : false,
+        jointDamage: modifiedReport.anomalies ? modifiedReport.jointDamage : false,
+        bendOrDisplacement: modifiedReport.anomalies ? modifiedReport.bendOrDisplacement : false,
+        otherObservations: modifiedReport.anomalies ? modifiedReport.otherObservations : false,
+        otherObservationsInfo: modifiedReport.anomalies && modifiedReport.otherObservations ? modifiedReport.otherObservationsInfo : "",
+        draft: false,
+      };
+      reportUpdateMutation.mutate(updatedReport);
+    }
 
     images.forEach((image) => {
       const fileUpload = {
@@ -130,24 +108,42 @@ const Supervision = (): JSX.Element => {
     history.push(`/bridgeDetail/${supervisionId}`);
   };
 
-  const { report: savedReport } = supervision || {};
-  const { id: savedReportId, draft: savedReportDraft = true } = savedReport || {};
-
   useEffect(() => {
     if (!isLoadingSupervision && !isSendingSupervisionStart && !isSendingReportUpdate && supervision) {
-      // When page has loaded, start supervision or set existing supervision report to draft. Set modifiedReport.
+      // When page has loaded, start supervision or set modifiedReport to previously saved report.
+      const { report: savedReport } = supervision || {};
+      const { id: savedReportId } = savedReport || {};
+
       console.log("Loaded", supervision);
       console.log("savedReport", savedReport);
-      console.log("modifiedSupervisionReport", modifiedSupervisionReport);
+      console.log("modifiedReport", modifiedReport);
 
-      // Page is loaded for the first time, modifiedSupervisionReport has default values or previous values
-      if (modifiedSupervisionReport.id <= 0 || modifiedSupervisionReport.id !== savedReportId) {
+      // Page is loaded for the first time, modifiedSupervisionReport is not set or has previous values
+      if (!modifiedReport || modifiedReport.id <= 0 || modifiedReport.id !== savedReportId) {
         if (!savedReport) {
           // Create new report with default values and set the result to modified report
-          supervisionStartMutation.mutate(modifiedSupervisionReport);
+          const defaultReport: ISupervisionReport = {
+            id: -1,
+            supervisionId: Number(supervisionId),
+            drivingLineOk: false,
+            drivingLineInfo: "",
+            speedLimitOk: false,
+            speedLimitInfo: "",
+            anomalies: true,
+            anomaliesDescription: "",
+            surfaceDamage: false,
+            jointDamage: false,
+            bendOrDisplacement: false,
+            otherObservations: false,
+            otherObservationsInfo: "",
+            additionalInfo: "",
+            draft: true,
+          };
+
+          supervisionStartMutation.mutate(defaultReport);
         } else {
           // Update the modified report with data from backend
-          setModifiedSupervisionReport({ ...savedReport });
+          dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...savedReport } });
         }
       }
     }
@@ -157,10 +153,10 @@ const Supervision = (): JSX.Element => {
     isSendingReportUpdate,
     supervisionStartMutation,
     reportUpdateMutation,
-    modifiedSupervisionReport,
     supervision,
-    savedReport,
-    savedReportId,
+    supervisionId,
+    modifiedReport,
+    dispatch,
   ]);
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
@@ -175,13 +171,10 @@ const Supervision = (): JSX.Element => {
           <>
             <SupervisionHeader supervision={supervision as ISupervision} className="header" isCrossingInstructionsIncluded />
             <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photosDrivingLine" isButtonsIncluded />
-            <SupervisionObservations
-              modifiedSupervisionReport={modifiedSupervisionReport}
-              setModifiedSupervisionReport={setModifiedSupervisionReport}
-            />
+            <SupervisionObservations />
             <SupervisionFooter
-              reportId={savedReportId}
-              isDraft={savedReportDraft}
+              reportId={modifiedReport?.id}
+              isDraft={modifiedReport?.draft || true}
               isLoading={isLoadingSupervision || isSendingSupervisionStart || isSendingReportUpdate}
               saveChanges={saveReport}
               cancelChanges={cancelReport}

@@ -14,6 +14,7 @@ import { useTypedSelector } from "../store/store";
 import { finishSupervision, getSupervision, onRetry, updateSupervisionReport } from "../utils/supervisionBackendData";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import SupervisionFooter from "../components/SupervisionFooter";
+import { actions as supervisionActions } from "../store/supervisionSlice";
 
 interface SummaryProps {
   supervisionId: string;
@@ -37,12 +38,13 @@ const SupervisionSummary = (): JSX.Element => {
     () => getSupervision(Number(supervisionId), dispatch),
     { retry: onRetry }
   );
+  const { report } = supervision || {};
 
   const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
-      console.log("reportUpdateMutation setDraft done");
       queryClient.setQueryData(["getSupervision", supervisionId], data);
+      dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...data.report } });
     },
   });
   const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
@@ -51,13 +53,11 @@ const SupervisionSummary = (): JSX.Element => {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
+      dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...data.report } });
       setToastMessage(t("supervision.summary.saved"));
     },
   });
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
-
-  const { report } = supervision || {};
-  const { id: reportId, draft = false } = report || {};
 
   /*useEffect(() => {
     if (!isLoadingSupervision) {
@@ -74,6 +74,7 @@ const SupervisionSummary = (): JSX.Element => {
   };
 
   const editReport = (): void => {
+    // Set report back to draft and update modifiedReport on Supervision page
     if (report) {
       const updatedReport = { ...report, draft: true };
       reportUpdateMutation.mutate(updatedReport);
@@ -93,10 +94,10 @@ const SupervisionSummary = (): JSX.Element => {
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
             <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" />
-            <SupervisionObservationsSummary report={report as ISupervisionReport} />
+            <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
-              reportId={reportId}
-              isDraft={draft}
+              reportId={report?.id}
+              isDraft={report?.draft || false}
               isLoading={isLoadingSupervision || isSendingReportUpdate || isSendingFinishSupervision}
               saveChanges={saveReport}
               cancelChanges={editReport}

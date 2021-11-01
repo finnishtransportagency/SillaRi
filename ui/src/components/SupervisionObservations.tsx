@@ -1,17 +1,18 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonCheckbox, IonIcon, IonItem, IonLabel, IonRadio, IonRadioGroup, IonTextarea } from "@ionic/react";
 import IRadioValue from "../interfaces/IRadioValue";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
+import { useDispatch } from "react-redux";
+import { actions as supervisionActions } from "../store/supervisionSlice";
+import { useTypedSelector } from "../store/store";
 
-interface SupervisionObservationsProps {
-  modifiedSupervisionReport: ISupervisionReport;
-  setModifiedSupervisionReport: Dispatch<SetStateAction<ISupervisionReport>>;
-}
-
-const SupervisionObservations = ({ modifiedSupervisionReport, setModifiedSupervisionReport }: SupervisionObservationsProps): JSX.Element => {
+const SupervisionObservations = (): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
+  const { modifiedReport } = useTypedSelector((state) => state.supervisionReducer);
 
   const {
     drivingLineOk,
@@ -26,47 +27,47 @@ const SupervisionObservations = ({ modifiedSupervisionReport, setModifiedSupervi
     otherObservations,
     otherObservationsInfo,
     additionalInfo,
-  } = modifiedSupervisionReport;
+  } = modifiedReport || {};
 
   const updateRadioOrCheckboxValue = (payload: IRadioValue) => {
-    if (modifiedSupervisionReport) {
-      let updatedReport: ISupervisionReport = modifiedSupervisionReport;
+    if (modifiedReport) {
+      let updatedReport: ISupervisionReport = modifiedReport;
       console.log("HELLO updateRadioOrCheckboxValue", payload);
       if (payload.name === "drivingLineOk") {
-        updatedReport = { ...modifiedSupervisionReport, drivingLineOk: payload.value };
+        updatedReport = { ...modifiedReport, drivingLineOk: payload.value };
       } else if (payload.name === "speedLimitOk") {
-        updatedReport = { ...modifiedSupervisionReport, speedLimitOk: payload.value };
+        updatedReport = { ...modifiedReport, speedLimitOk: payload.value };
       } else if (payload.name === "anomalies") {
-        updatedReport = { ...modifiedSupervisionReport, anomalies: payload.value };
+        updatedReport = { ...modifiedReport, anomalies: payload.value };
       } else if (payload.name === "surfaceDamage") {
-        updatedReport = { ...modifiedSupervisionReport, surfaceDamage: payload.value };
+        updatedReport = { ...modifiedReport, surfaceDamage: payload.value };
       } else if (payload.name === "jointDamage") {
-        updatedReport = { ...modifiedSupervisionReport, jointDamage: payload.value };
+        updatedReport = { ...modifiedReport, jointDamage: payload.value };
       } else if (payload.name === "bendOrDisplacement") {
-        updatedReport = { ...modifiedSupervisionReport, bendOrDisplacement: payload.value };
+        updatedReport = { ...modifiedReport, bendOrDisplacement: payload.value };
       } else if (payload.name === "otherObservations") {
-        updatedReport = { ...modifiedSupervisionReport, otherObservations: payload.value };
+        updatedReport = { ...modifiedReport, otherObservations: payload.value };
       }
-      setModifiedSupervisionReport(updatedReport);
+      dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: updatedReport });
     }
   };
 
   const updateTextAreaValue = (payload: ITextAreaValue) => {
-    if (modifiedSupervisionReport) {
-      let updatedReport: ISupervisionReport = modifiedSupervisionReport;
+    if (modifiedReport) {
+      let updatedReport: ISupervisionReport = modifiedReport;
       console.log("HELLO updateTextAreaValue", payload);
       if (payload.name === "drivingLineInfo") {
-        updatedReport = { ...modifiedSupervisionReport, drivingLineInfo: payload.value };
+        updatedReport = { ...modifiedReport, drivingLineInfo: payload.value };
       } else if (payload.name === "speedLimitInfo") {
-        updatedReport = { ...modifiedSupervisionReport, speedLimitInfo: payload.value };
+        updatedReport = { ...modifiedReport, speedLimitInfo: payload.value };
       } else if (payload.name === "otherObservationsInfo") {
-        updatedReport = { ...modifiedSupervisionReport, otherObservationsInfo: payload.value };
+        updatedReport = { ...modifiedReport, otherObservationsInfo: payload.value };
       } else if (payload.name === "anomaliesDescription") {
-        updatedReport = { ...modifiedSupervisionReport, anomaliesDescription: payload.value };
+        updatedReport = { ...modifiedReport, anomaliesDescription: payload.value };
       } else if (payload.name === "additionalInfo") {
-        updatedReport = { ...modifiedSupervisionReport, additionalInfo: payload.value };
+        updatedReport = { ...modifiedReport, additionalInfo: payload.value };
       }
-      setModifiedSupervisionReport(updatedReport);
+      dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: updatedReport });
     }
   };
 
