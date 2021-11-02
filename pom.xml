@@ -239,7 +239,7 @@
             <version>22.0.0</version>
         </dependency>
         <!-- MONTHLY DEPENDENCY CHECK -->
-
+        <!--
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
@@ -258,7 +258,7 @@
             <version>6.4.1</version>
             <type>maven-plugin</type>
         </dependency>
-
+        -->
     </dependencies>
 
     <build>
@@ -399,7 +399,7 @@
                 </executions>
             </plugin>
             <!-- MONTHLY DEPENDENCY CHECK -->
-
+            <!--
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
@@ -412,7 +412,7 @@
                     </execution>
                 </executions>
             </plugin>
-
+            -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
