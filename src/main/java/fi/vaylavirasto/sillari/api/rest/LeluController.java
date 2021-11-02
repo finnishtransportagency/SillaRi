@@ -11,6 +11,9 @@ import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.service.LeluService;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +23,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -171,9 +173,11 @@ public class LeluController {
     }
 
 
-    @RequestMapping(value = "/supervisionReport", method = RequestMethod.GET)
+    @GetMapping(value = "/supervisionReport", produces = MediaType.APPLICATION_PDF_VALUE)
+    @ResponseBody
     @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
-    public ResponseEntity<byte[]> getSupervisionReport(@RequestParam String reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+    @ApiResponses(value = {  @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class)))) })
+    public byte[] getSupervisionReport(@RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
         logger.debug("Lelu getReport " + reportId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
