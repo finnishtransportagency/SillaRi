@@ -4,21 +4,15 @@ import IFailedQuery from "../interfaces/IFailedQuery";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import IImageItem from "../interfaces/IImageItem";
 import INetworkStatus from "../interfaces/INetworkStatus";
-import IRoute from "../interfaces/IRoute";
-import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 interface IStateProps {
-  selectedRouteDetail?: IRoute;
-  selectedBridgeDetail?: IRouteBridge;
   modifiedReport?: ISupervisionReport;
   images: IImageItem[];
   networkStatus: INetworkStatus;
 }
 
 const initialState: IStateProps = {
-  selectedRouteDetail: undefined,
-  selectedBridgeDetail: undefined,
   modifiedReport: undefined,
   images: [],
   networkStatus: {
@@ -30,14 +24,6 @@ const supervisionSlice = createSlice({
   name: "supervision",
   initialState,
   reducers: {
-    GET_ROUTE: (state, action: PayloadAction<IRoute>) => {
-      console.log("GET_ROUTE", action.payload);
-      return { ...state, selectedRouteDetail: action.payload };
-    },
-    GET_ROUTE_BRIDGE: (state, action: PayloadAction<IRouteBridge>) => {
-      console.log("GET_ROUTE_BRIDGE", action.payload);
-      return { ...state, selectedBridgeDetail: action.payload };
-    },
     SET_MODIFIED_REPORT: (state, action: PayloadAction<ISupervisionReport>) => {
       console.log("SET_MODIFIED_REPORT", action.payload);
       return { ...state, modifiedReport: action.payload };

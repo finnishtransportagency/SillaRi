@@ -38,28 +38,6 @@ export const getCompanyTransportsList = async (username: string, dispatch: Dispa
   }
 };
 
-export const getRoute = async (routeId: number, dispatch: Dispatch, selectedRouteDetail?: IRoute): Promise<void> => {
-  try {
-    if (selectedRouteDetail && selectedRouteDetail.id !== routeId) {
-      dispatch({ type: supervisionActions.GET_ROUTE, payload: undefined });
-    }
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: false } });
-
-    const routeResponse = await fetch(`${getOrigin()}/api/route/getroute?routeId=${routeId}`);
-
-    if (routeResponse.ok) {
-      const route = (await routeResponse.json()) as Promise<IRoute>;
-      dispatch({ type: supervisionActions.GET_ROUTE, payload: route });
-    } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: true } });
-    throw new Error(err as string);
-  }
-};
-
 export const getRouteTransportOfSupervisor = async (routeTransportId: number, username: string, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
     console.log("GetRouteTransportOfSupervisor", routeTransportId, username);
@@ -82,18 +60,36 @@ export const getRouteTransportOfSupervisor = async (routeTransportId: number, us
   }
 };
 
-export const getRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, selectedBridgeDetail?: IRouteBridge): Promise<void> => {
+export const getRouteGeometry = async (routeId: number, dispatch: Dispatch): Promise<IRoute> => {
   try {
-    if (selectedBridgeDetail && selectedBridgeDetail.id !== routeBridgeId) {
-      dispatch({ type: supervisionActions.GET_ROUTE_BRIDGE, payload: undefined });
+    console.log("GetRouteGeometry", routeId);
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: false } });
+
+    const routeResponse = await fetch(`${getOrigin()}/api/route/getroute?routeId=${routeId}`);
+
+    if (routeResponse.ok) {
+      const route = (await routeResponse.json()) as Promise<IRoute>;
+      return await route;
+    } else {
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: true } });
+      throw new Error(notOkError);
     }
+  } catch (err) {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const getRouteBridgeGeometry = async (routeBridgeId: number, dispatch: Dispatch): Promise<IRouteBridge> => {
+  try {
+    console.log("getRouteBridgeGeometry", routeBridgeId);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteBridge: false } });
 
     const routeBridgeResponse = await fetch(`${getOrigin()}/api/routebridge/getroutebridge?routeBridgeId=${routeBridgeId}`);
 
     if (routeBridgeResponse.ok) {
       const routeBridge = (await routeBridgeResponse.json()) as Promise<IRouteBridge>;
-      dispatch({ type: supervisionActions.GET_ROUTE_BRIDGE, payload: routeBridge });
+      return await routeBridge;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteBridge: true } });
       throw new Error(notOkError);
