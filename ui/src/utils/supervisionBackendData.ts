@@ -60,16 +60,9 @@ export const getRoute = async (routeId: number, dispatch: Dispatch, selectedRout
   }
 };
 
-export const getRouteTransportOfSupervisor = async (
-  routeTransportId: number,
-  username: string,
-  dispatch: Dispatch,
-  selectedRouteTransportDetail?: IRouteTransport
-): Promise<void> => {
+export const getRouteTransportOfSupervisor = async (routeTransportId: number, username: string, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
-    if (selectedRouteTransportDetail && selectedRouteTransportDetail.id !== routeTransportId) {
-      dispatch({ type: supervisionActions.GET_ROUTE_TRANSPORT, payload: undefined });
-    }
+    console.log("GetRouteTransportOfSupervisor", routeTransportId, username);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
 
     const routeTransportResponse = await fetch(
@@ -78,7 +71,7 @@ export const getRouteTransportOfSupervisor = async (
 
     if (routeTransportResponse.ok) {
       const routeTransport = (await routeTransportResponse.json()) as Promise<IRouteTransport>;
-      dispatch({ type: supervisionActions.GET_ROUTE_TRANSPORT, payload: routeTransport });
+      return await routeTransport;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
       throw new Error(notOkError);

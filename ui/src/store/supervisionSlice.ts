@@ -6,11 +6,9 @@ import IImageItem from "../interfaces/IImageItem";
 import INetworkStatus from "../interfaces/INetworkStatus";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
-import IRouteTransport from "../interfaces/IRouteTransport";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 interface IStateProps {
-  selectedRouteTransport?: IRouteTransport;
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
   modifiedReport?: ISupervisionReport;
@@ -19,7 +17,6 @@ interface IStateProps {
 }
 
 const initialState: IStateProps = {
-  selectedRouteTransport: undefined,
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
   modifiedReport: undefined,
@@ -33,10 +30,6 @@ const supervisionSlice = createSlice({
   name: "supervision",
   initialState,
   reducers: {
-    GET_ROUTE_TRANSPORT: (state, action: PayloadAction<IRouteTransport>) => {
-      console.log("GET_ROUTE_TRANSPORT", action.payload);
-      return { ...state, selectedRouteTransport: action.payload };
-    },
     GET_ROUTE: (state, action: PayloadAction<IRoute>) => {
       console.log("GET_ROUTE", action.payload);
       return { ...state, selectedRouteDetail: action.payload };
