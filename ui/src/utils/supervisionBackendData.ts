@@ -18,15 +18,16 @@ export const onRetry = (failureCount: number, error: string): boolean => {
   return true;
 };
 
-export const getCompanyTransportsList = async (username: string, dispatch: Dispatch): Promise<void> => {
+export const getCompanyTransportsList = async (username: string, dispatch: Dispatch): Promise<ICompanyTransports[]> => {
   try {
+    console.log("GetCompanyTransportsList", username);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyTransportsList: false } });
 
     const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor?username=${username}`);
 
     if (companyTransportsResponse.ok) {
       const companyTransportsList = (await companyTransportsResponse.json()) as Promise<ICompanyTransports[]>;
-      dispatch({ type: supervisionActions.GET_COMPANY_TRANSPORTS_LIST, payload: companyTransportsList });
+      return await companyTransportsList;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyTransportsList: true } });
       throw new Error(notOkError);
@@ -110,16 +111,16 @@ export const getRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, 
   }
 };
 
-export const getSupervisionList = async (username: string, dispatch: Dispatch): Promise<void> => {
+export const getSupervisionList = async (username: string, dispatch: Dispatch): Promise<ISupervision[]> => {
   try {
+    console.log("GetSupervisionList", username);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionList: false } });
 
     const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsofsupervisor?username=${username}`);
 
     if (supervisionsResponse.ok) {
       const supervisions = (await supervisionsResponse.json()) as Promise<ISupervision[]>;
-
-      dispatch({ type: supervisionActions.GET_SUPERVISION_LIST, payload: supervisions });
+      return await supervisions;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
       throw new Error(notOkError);

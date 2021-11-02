@@ -10,28 +10,41 @@ import { checkUser, getCompanyTransportsList, getSupervisionList, onRetry } from
 import SupervisionList from "../components/SupervisionList";
 import "./Home.css";
 import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion";
+import ISupervisionDay from "../interfaces/ISupervisionDay";
+import { groupSupervisionsByDate } from "../utils/supervisionUtil";
 
 const Home = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const [currentSegment, setCurrentSegment] = useState<string>("0");
   const slidesRef = useRef<HTMLIonSlidesElement>(null);
 
+  const [currentSegment, setCurrentSegment] = useState<string>("0");
+  const [supervisionDays, setSupervisionDays] = useState<ISupervisionDay[]>([]);
+
   const {
-    companyTransportsList = [],
-    supervisionList = [],
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
-
-  const transportsCount = companyTransportsList.map((ct) => (ct.transports ? ct.transports.length : 0)).reduce((prev, next) => prev + next, 0);
 
   // TODO use logged in user
   const supervisorUser = "USER1";
 
   useQuery(["checkUser"], () => checkUser(supervisorUser), { retry: onRetry });
-  useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(supervisorUser, dispatch), { retry: onRetry });
-  useQuery(["getSupervisionList"], () => getSupervisionList(supervisorUser, dispatch), { retry: onRetry });
+
+  const { data: companyTransportsList = [] } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(supervisorUser, dispatch), {
+    retry: onRetry,
+  });
+
+  const { data: supervisionList = [] } = useQuery(["getSupervisionList"], () => getSupervisionList(supervisorUser, dispatch), {
+    retry: onRetry,
+    onSuccess: (data) => {
+      if (data && data.length > 0) {
+        // TODO group supervisions by supervision status inside date (in_progress and planned - finished should be hidden)
+        const groupedSupervisions = groupSupervisionsByDate(data);
+        setSupervisionDays(groupedSupervisions);
+      }
+    },
+  });
 
   const changeSlide = (evt: CustomEvent<SegmentChangeEventDetail>) => {
     if (slidesRef.current) {
@@ -45,6 +58,8 @@ const Home = (): JSX.Element => {
       setCurrentSegment(String(newSlideIndex));
     }
   };
+
+  const transportsCount = companyTransportsList.map((ct) => (ct.transports ? ct.transports.length : 0)).reduce((prev, next) => prev + next, 0);
 
   const noNetworkNoData =
     (isFailed.getCompanyTransportsList && companyTransportsList.length === 0) || (isFailed.getSupervisionList && supervisionList.length === 0);
@@ -66,7 +81,7 @@ const Home = (): JSX.Element => {
             <CompanyTransportsAccordion companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
           <IonSlide>
-            <SupervisionList supervisionList={supervisionList} noNetworkNoData={noNetworkNoData} />
+            <SupervisionList supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
         </IonSlides>
       </IonContent>

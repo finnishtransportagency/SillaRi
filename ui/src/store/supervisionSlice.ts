@@ -6,28 +6,22 @@ import IImageItem from "../interfaces/IImageItem";
 import INetworkStatus from "../interfaces/INetworkStatus";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
-import ISupervision from "../interfaces/ISupervision";
-import ICompanyTransports from "../interfaces/ICompanyTransports";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 interface IStateProps {
-  companyTransportsList: ICompanyTransports[];
   selectedRouteTransport?: IRouteTransport;
   selectedRouteDetail?: IRoute;
   selectedBridgeDetail?: IRouteBridge;
-  supervisionList: ISupervision[];
   modifiedReport?: ISupervisionReport;
   images: IImageItem[];
   networkStatus: INetworkStatus;
 }
 
 const initialState: IStateProps = {
-  companyTransportsList: [],
   selectedRouteTransport: undefined,
   selectedRouteDetail: undefined,
   selectedBridgeDetail: undefined,
-  supervisionList: [],
   modifiedReport: undefined,
   images: [],
   networkStatus: {
@@ -39,10 +33,6 @@ const supervisionSlice = createSlice({
   name: "supervision",
   initialState,
   reducers: {
-    GET_COMPANY_TRANSPORTS_LIST: (state, action: PayloadAction<ICompanyTransports[]>) => {
-      console.log("GET_COMPANY_TRANSPORTS_LIST", action.payload);
-      return { ...state, companyTransportsList: action.payload };
-    },
     GET_ROUTE_TRANSPORT: (state, action: PayloadAction<IRouteTransport>) => {
       console.log("GET_ROUTE_TRANSPORT", action.payload);
       return { ...state, selectedRouteTransport: action.payload };
@@ -54,10 +44,6 @@ const supervisionSlice = createSlice({
     GET_ROUTE_BRIDGE: (state, action: PayloadAction<IRouteBridge>) => {
       console.log("GET_ROUTE_BRIDGE", action.payload);
       return { ...state, selectedBridgeDetail: action.payload };
-    },
-    GET_SUPERVISION_LIST: (state, action: PayloadAction<ISupervision[]>) => {
-      console.log("GET_SUPERVISION_LIST", action.payload);
-      return { ...state, supervisionList: action.payload };
     },
     SET_MODIFIED_REPORT: (state, action: PayloadAction<ISupervisionReport>) => {
       console.log("SET_MODIFIED_REPORT", action.payload);
