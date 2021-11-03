@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
-import { IonContent, IonPage } from "@ionic/react";
+import { IonContent, IonPage, useIonViewDidEnter } from "@ionic/react";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import SupervisionFooter from "../components/SupervisionFooter";
@@ -12,7 +12,7 @@ import SupervisionObservations from "../components/SupervisionObservations";
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector } from "../store/store";
-import { getSupervision, onRetry, sendImageUpload, startSupervision, updateSupervisionReport } from "../utils/supervisionBackendData";
+import { getSupervision, onRetry, sendImageUpload, updateSupervisionReport } from "../utils/supervisionBackendData";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import moment from "moment";
 import { DATE_TIME_FORMAT } from "../utils/constants";
@@ -42,19 +42,11 @@ const Supervision = (): JSX.Element => {
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
+      onSuccess: (data) => {
+        console.log("GetSupervision done", data.id, data.currentStatus, data.report ? data.report.draft : "");
+      },
     }
   );
-
-  // Set-up mutations for modifying data later
-  const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(initialReport, dispatch), {
-    retry: onRetry,
-    onSuccess: (data) => {
-      // Update "getSupervision" query to return the updated data
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
-      setModifiedReport(data.report ? { ...data.report } : undefined);
-    },
-  });
-  const { isLoading: isSendingSupervisionStart } = supervisionStartMutation;
 
   const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
     retry: onRetry,
@@ -105,7 +97,7 @@ const Supervision = (): JSX.Element => {
     // Use direction "back" to force this page to unmount, otherwise "useEffect" is still listening in the background
     // https://github.com/ionic-team/ionic-framework/issues/20543
     // "The idea is if you are leaving a page by going back, the state of the page no longer needs to be maintained"
-    history.push(`/summary/${supervisionId}`, { direction: "back" });
+    history.push(`/summary/${supervisionId}`);
   };
 
   const cancelReport = (): void => {
@@ -117,49 +109,19 @@ const Supervision = (): JSX.Element => {
   };
 
   useEffect(() => {
-    if (!isLoadingSupervision && !isSendingSupervisionStart && !isSendingReportUpdate && supervision) {
+    if (!isLoadingSupervision && !isSendingReportUpdate && supervision) {
       // When page has loaded, start supervision or set modifiedReport to previously saved report.
       const { report: savedReport } = supervision || {};
 
-      // Page is loaded for the first time, modifiedReport is not set or has previous values
-      if (modifiedReport === undefined) {
-        if (!savedReport) {
-          // Create new report with default values and set the result to modified report
-          const defaultReport: ISupervisionReport = {
-            id: -1,
-            supervisionId: Number(supervisionId),
-            drivingLineOk: false,
-            drivingLineInfo: "",
-            speedLimitOk: false,
-            speedLimitInfo: "",
-            anomalies: true,
-            anomaliesDescription: "",
-            surfaceDamage: false,
-            jointDamage: false,
-            bendOrDisplacement: false,
-            otherObservations: false,
-            otherObservationsInfo: "",
-            additionalInfo: "",
-            draft: true,
-          };
+      console.log("ModifiedReport", modifiedReport);
 
-          supervisionStartMutation.mutate(defaultReport);
-        } else {
-          // Update the modified report with data from backend
-          setModifiedReport({ ...savedReport });
-        }
+      // Page is loaded for the first time, modifiedReport is not set or has previous values
+      if (modifiedReport === undefined && savedReport) {
+        // Update the modified report with data from backend
+        setModifiedReport({ ...savedReport });
       }
     }
-  }, [
-    isLoadingSupervision,
-    isSendingSupervisionStart,
-    isSendingReportUpdate,
-    supervisionStartMutation,
-    reportUpdateMutation,
-    supervision,
-    supervisionId,
-    modifiedReport,
-  ]);
+  }, [isLoadingSupervision, isSendingReportUpdate, reportUpdateMutation, supervision, modifiedReport]);
 
   useEffect(() => {
     if (supervision && !isLoadingSupervision) {
@@ -170,6 +132,11 @@ const Supervision = (): JSX.Element => {
       }
     }
   }, [isLoadingSupervision, supervision, dispatch]);
+
+  useIonViewDidEnter(() => {
+    console.log("useIonViewDidEnter");
+    setModifiedReport(undefined);
+  });
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
@@ -187,7 +154,7 @@ const Supervision = (): JSX.Element => {
             <SupervisionFooter
               reportId={modifiedReport?.id}
               isSummary={false}
-              isLoading={isLoadingSupervision || isSendingSupervisionStart || isSendingReportUpdate}
+              isLoading={isLoadingSupervision || isSendingReportUpdate}
               saveChanges={saveReport}
               cancelChanges={cancelReport}
             />

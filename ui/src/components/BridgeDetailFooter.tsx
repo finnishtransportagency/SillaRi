@@ -6,6 +6,11 @@ import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
 import file from "../theme/icons/file.svg";
 import { DATE_TIME_FORMAT_MIN, SupervisionStatus } from "../utils/constants";
+import { useMutation, useQueryClient } from "react-query";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
+import { onRetry, startSupervision } from "../utils/supervisionBackendData";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 interface BridgeDetailFooterProps {
   permit: IPermit;
@@ -16,10 +21,44 @@ interface BridgeDetailFooterProps {
 
 const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConformsToPermit }: BridgeDetailFooterProps): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const queryClient = useQueryClient();
 
   const { permitNumber } = permit || {};
   const { id: supervisionId, conformsToPermit = false, currentStatus, startedTime } = supervision || {};
   const supervisionStarted = currentStatus && currentStatus.status !== SupervisionStatus.PLANNED;
+
+  // Set-up mutations for modifying data later
+  const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(initialReport, dispatch), {
+    retry: onRetry,
+    onSuccess: (data) => {
+      // Update "getSupervision" query to return the updated data
+      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      history.push(`/supervision/${supervisionId}`);
+    },
+  });
+
+  const start = () => {
+    const defaultReport: ISupervisionReport = {
+      id: -1,
+      supervisionId: Number(supervisionId),
+      drivingLineOk: false,
+      drivingLineInfo: "",
+      speedLimitOk: false,
+      speedLimitInfo: "",
+      anomalies: true,
+      anomaliesDescription: "",
+      surfaceDamage: false,
+      jointDamage: false,
+      bendOrDisplacement: false,
+      otherObservations: false,
+      otherObservationsInfo: "",
+      additionalInfo: "",
+      draft: true,
+    };
+    supervisionStartMutation.mutate(defaultReport);
+  };
 
   return (
     <>
@@ -59,7 +98,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
               color="primary"
               expand="block"
               size="large"
-              routerLink={`/supervision/${supervisionId}`}
+              onClick={() => start()}
             >
               {t("bridge.startSupervision")}
             </IonButton>
