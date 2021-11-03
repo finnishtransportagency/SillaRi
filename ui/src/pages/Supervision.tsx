@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
@@ -31,10 +31,11 @@ const Supervision = (): JSX.Element => {
 
   const { supervisionId = "0" } = useParams<SupervisionProps>();
   const {
-    modifiedReport,
     images = [],
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
+
+  const [modifiedReport, setModifiedReport] = useState<ISupervisionReport | undefined>(undefined);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
@@ -50,7 +51,7 @@ const Supervision = (): JSX.Element => {
     onSuccess: (data) => {
       // Update "getSupervision" query to return the updated data
       queryClient.setQueryData(["getSupervision", supervisionId], data);
-      dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...data.report } });
+      setModifiedReport(data.report ? { ...data.report } : undefined);
     },
   });
   const { isLoading: isSendingSupervisionStart } = supervisionStartMutation;
@@ -59,7 +60,7 @@ const Supervision = (): JSX.Element => {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
-      dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...data.report } });
+      setModifiedReport(data.report ? { ...data.report } : undefined);
     },
   });
   const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
@@ -101,7 +102,10 @@ const Supervision = (): JSX.Element => {
       imageUploadMutation.mutate(fileUpload);
     });
 
-    history.push(`/summary/${supervisionId}`);
+    // Use direction "back" to force this page to unmount, otherwise "useEffect" is still listening in the background
+    // https://github.com/ionic-team/ionic-framework/issues/20543
+    // "The idea is if you are leaving a page by going back, the state of the page no longer needs to be maintained"
+    history.push(`/summary/${supervisionId}`, { direction: "back" });
   };
 
   const cancelReport = (): void => {
@@ -109,17 +113,16 @@ const Supervision = (): JSX.Element => {
     // Set supervision status back to 'PLANNED' and delete report
     // Then go back to bridgeDetail page
     // We don't want to allow the user to get back to this page by using "back"
-    history.replace(`/bridgeDetail/${supervisionId}`);
+    history.replace(`/bridgeDetail/${supervisionId}`, { direction: "back" });
   };
 
   useEffect(() => {
     if (!isLoadingSupervision && !isSendingSupervisionStart && !isSendingReportUpdate && supervision) {
       // When page has loaded, start supervision or set modifiedReport to previously saved report.
       const { report: savedReport } = supervision || {};
-      const { id: savedReportId } = savedReport || {};
 
-      // Page is loaded for the first time, modifiedSupervisionReport is not set or has previous values
-      if (!modifiedReport || modifiedReport.id <= 0 || modifiedReport.id !== savedReportId) {
+      // Page is loaded for the first time, modifiedReport is not set or has previous values
+      if (modifiedReport === undefined) {
         if (!savedReport) {
           // Create new report with default values and set the result to modified report
           const defaultReport: ISupervisionReport = {
@@ -143,7 +146,7 @@ const Supervision = (): JSX.Element => {
           supervisionStartMutation.mutate(defaultReport);
         } else {
           // Update the modified report with data from backend
-          dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...savedReport } });
+          setModifiedReport({ ...savedReport });
         }
       }
     }
@@ -156,7 +159,6 @@ const Supervision = (): JSX.Element => {
     supervision,
     supervisionId,
     modifiedReport,
-    dispatch,
   ]);
 
   useEffect(() => {
@@ -181,10 +183,10 @@ const Supervision = (): JSX.Element => {
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
             <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photosDrivingLine" isButtonsIncluded />
-            <SupervisionObservations />
+            <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} />
             <SupervisionFooter
               reportId={modifiedReport?.id}
-              isDraft={modifiedReport?.draft || true}
+              isSummary={false}
               isLoading={isLoadingSupervision || isSendingSupervisionStart || isSendingReportUpdate}
               saveChanges={saveReport}
               cancelChanges={cancelReport}

@@ -1,18 +1,17 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { IonCheckbox, IonIcon, IonItem, IonLabel, IonRadio, IonRadioGroup, IonTextarea } from "@ionic/react";
 import IRadioValue from "../interfaces/IRadioValue";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
-import { useDispatch } from "react-redux";
-import { actions as supervisionActions } from "../store/supervisionSlice";
-import { useTypedSelector } from "../store/store";
 
-const SupervisionObservations = (): JSX.Element => {
+interface SupervisionObservationsProps {
+  modifiedReport: ISupervisionReport | undefined;
+  setModifiedReport: Dispatch<SetStateAction<ISupervisionReport | undefined>>;
+}
+
+const SupervisionObservations = ({ modifiedReport, setModifiedReport }: SupervisionObservationsProps): JSX.Element => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-
-  const { modifiedReport } = useTypedSelector((state) => state.supervisionReducer);
 
   const {
     drivingLineOk,
@@ -47,7 +46,7 @@ const SupervisionObservations = (): JSX.Element => {
       } else if (payload.name === "otherObservations") {
         updatedReport = { ...modifiedReport, otherObservations: payload.value };
       }
-      dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: updatedReport });
+      setModifiedReport(updatedReport);
     }
   };
 
@@ -65,7 +64,7 @@ const SupervisionObservations = (): JSX.Element => {
       } else if (payload.name === "additionalInfo") {
         updatedReport = { ...modifiedReport, additionalInfo: payload.value };
       }
-      dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: updatedReport });
+      setModifiedReport(updatedReport);
     }
   };
 

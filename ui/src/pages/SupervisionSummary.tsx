@@ -14,7 +14,6 @@ import { useTypedSelector } from "../store/store";
 import { finishSupervision, getSupervision, onRetry, updateSupervisionReport } from "../utils/supervisionBackendData";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import SupervisionFooter from "../components/SupervisionFooter";
-import { actions as supervisionActions } from "../store/supervisionSlice";
 
 interface SummaryProps {
   supervisionId: string;
@@ -44,7 +43,6 @@ const SupervisionSummary = (): JSX.Element => {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
-      dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...data.report } });
       // We don't want to allow the user to get back to this page by using "back"
       history.replace(`/supervision/${supervisionId}`);
     },
@@ -55,7 +53,6 @@ const SupervisionSummary = (): JSX.Element => {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
-      dispatch({ type: supervisionActions.SET_MODIFIED_REPORT, payload: { ...data.report } });
       setToastMessage(t("supervision.summary.saved"));
       // TODO go back to supervision list - but where? Main page?
       //  history.replace(`/`);
@@ -90,7 +87,7 @@ const SupervisionSummary = (): JSX.Element => {
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
               reportId={report?.id}
-              isDraft={report?.draft || false}
+              isSummary={true}
               isLoading={isLoadingSupervision || isSendingReportUpdate || isSendingFinishSupervision}
               saveChanges={saveReport}
               cancelChanges={editReport}

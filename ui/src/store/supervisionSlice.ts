@@ -4,16 +4,13 @@ import IFailedQuery from "../interfaces/IFailedQuery";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import IImageItem from "../interfaces/IImageItem";
 import INetworkStatus from "../interfaces/INetworkStatus";
-import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 interface IStateProps {
-  modifiedReport?: ISupervisionReport;
   images: IImageItem[];
   networkStatus: INetworkStatus;
 }
 
 const initialState: IStateProps = {
-  modifiedReport: undefined,
   images: [],
   networkStatus: {
     isFailed: {},
@@ -24,10 +21,6 @@ const supervisionSlice = createSlice({
   name: "supervision",
   initialState,
   reducers: {
-    SET_MODIFIED_REPORT: (state, action: PayloadAction<ISupervisionReport>) => {
-      console.log("SET_MODIFIED_REPORT", action.payload);
-      return { ...state, modifiedReport: action.payload };
-    },
     SET_IMAGES: (state, action: PayloadAction<IImageItem[]>) => {
       console.log("SET_IMAGES", action.payload);
       return { ...state, images: action.payload };
