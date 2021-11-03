@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow } from "@ionic/react";
 import ISupervision from "../interfaces/ISupervision";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { useTypedSelector } from "../store/store";
 import camera from "../theme/icons/camera_white.svg";
 import lane from "../theme/icons/lane_white.svg";
@@ -9,15 +10,17 @@ import ImageThumbnailRow from "./ImageThumbnailRow";
 
 interface SupervisionPhotosProps {
   supervision: ISupervision;
+  modifiedReport: ISupervisionReport | undefined;
   headingKey: string;
   isButtonsIncluded?: boolean;
 }
 
-const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: SupervisionPhotosProps): JSX.Element => {
+const SupervisionPhotos = ({ supervision, modifiedReport, headingKey, isButtonsIncluded }: SupervisionPhotosProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { images = [] } = useTypedSelector((state) => state.supervisionReducer);
   const { id: supervisionId, images: savedImages = [] } = supervision || {};
+  const { draft } = modifiedReport || {};
 
   return (
     <>
@@ -33,7 +36,7 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: Super
         <IonGrid>
           <IonRow>
             <IonCol className="ion-text-center">
-              <IonButton color="secondary" expand="block" size="large" routerLink={`/takephotos/${supervisionId}`}>
+              <IonButton color="secondary" expand="block" size="large" routerLink={`/takephotos/${supervisionId}`} disabled={!draft}>
                 <IonIcon className="otherIcon" icon={camera} color="primary" slot="start" />
                 {t("supervision.buttons.takePhotos")}
               </IonButton>

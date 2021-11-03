@@ -149,7 +149,12 @@ const Supervision = (): JSX.Element => {
         ) : (
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
-            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photosDrivingLine" isButtonsIncluded />
+            <SupervisionPhotos
+              supervision={supervision as ISupervision}
+              modifiedReport={modifiedReport}
+              headingKey="supervision.photosDrivingLine"
+              isButtonsIncluded
+            />
             <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} />
             <SupervisionFooter
               reportId={modifiedReport?.id}

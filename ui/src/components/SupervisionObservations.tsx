@@ -26,6 +26,7 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
     otherObservations,
     otherObservationsInfo,
     additionalInfo,
+    draft,
   } = modifiedReport || {};
 
   const updateRadioOrCheckboxValue = (payload: IRadioValue) => {
@@ -102,11 +103,11 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
         <IonItem lines="none">
           <IonItem lines="none">
             <IonLabel>{t("common.answer.yes")}</IonLabel>
-            <IonRadio slot="start" value="yes" />
+            <IonRadio slot="start" value="yes" disabled={!draft} />
           </IonItem>
           <IonItem lines="none">
             <IonLabel>{t("common.answer.no")}</IonLabel>
-            <IonRadio slot="start" value="no" />
+            <IonRadio slot="start" value="no" disabled={!draft} />
           </IonItem>
         </IonItem>
       </IonRadioGroup>
@@ -119,6 +120,7 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
             <IonTextarea
               placeholder={t("supervision.report.placeholder")}
               value={drivingLineInfo}
+              disabled={!draft}
               onIonChange={(e) => {
                 return textAreaChanged("drivingLineInfo", e.detail.value ?? "");
               }}
@@ -134,11 +136,11 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
         <IonItem lines="none">
           <IonItem lines="none">
             <IonLabel>{t("common.answer.yes")}</IonLabel>
-            <IonRadio slot="start" value="yes" />
+            <IonRadio slot="start" value="yes" disabled={!draft} />
           </IonItem>
           <IonItem lines="none">
             <IonLabel>{t("common.answer.no")}</IonLabel>
-            <IonRadio slot="start" value="no" />
+            <IonRadio slot="start" value="no" disabled={!draft} />
           </IonItem>
         </IonItem>
       </IonRadioGroup>
@@ -151,6 +153,7 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
             <IonTextarea
               placeholder={t("supervision.report.placeholder")}
               value={speedLimitInfo}
+              disabled={!draft}
               onIonChange={(e) => {
                 return textAreaChanged("speedLimitInfo", e.detail.value ?? "");
               }}
@@ -166,11 +169,11 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
         <IonItem lines="none">
           <IonItem lines="none">
             <IonLabel>{t("common.answer.yes")}</IonLabel>
-            <IonRadio slot="start" value="yes" />
+            <IonRadio slot="start" value="yes" disabled={!draft} />
           </IonItem>
           <IonItem lines="none">
             <IonLabel>{t("common.answer.no")}</IonLabel>
-            <IonRadio slot="start" value="no" />
+            <IonRadio slot="start" value="no" disabled={!draft} />
           </IonItem>
         </IonItem>
       </IonRadioGroup>
@@ -181,12 +184,19 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
               slot="start"
               value="surfaceDamage"
               checked={surfaceDamage}
+              disabled={!draft}
               onClick={() => checkboxClicked("surfaceDamage", !surfaceDamage)}
             />
             <IonLabel>{t("supervision.report.surfaceDamage")}</IonLabel>
           </IonItem>
           <IonItem lines="none">
-            <IonCheckbox slot="start" value="jointDamage" checked={jointDamage} onClick={() => checkboxClicked("jointDamage", !jointDamage)} />
+            <IonCheckbox
+              slot="start"
+              value="jointDamage"
+              checked={jointDamage}
+              disabled={!draft}
+              onClick={() => checkboxClicked("jointDamage", !jointDamage)}
+            />
             <IonLabel>{t("supervision.report.jointDamage")}</IonLabel>
           </IonItem>
           <IonItem lines="none">
@@ -194,6 +204,7 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
               slot="start"
               value="bendOrDisplacement"
               checked={bendOrDisplacement}
+              disabled={!draft}
               onClick={() => checkboxClicked("bendOrDisplacement", !bendOrDisplacement)}
             />
             <IonLabel>{t("supervision.report.bendOrDisplacement")}</IonLabel>
@@ -203,6 +214,7 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
               slot="start"
               value="otherObservations"
               checked={otherObservations}
+              disabled={!draft}
               onClick={() => checkboxClicked("otherObservations", !otherObservations)}
             />
             <IonLabel>{t("supervision.report.otherObservations")}</IonLabel>
@@ -213,6 +225,7 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
               <IonTextarea
                 placeholder={t("supervision.report.placeholder")}
                 value={otherObservationsInfo}
+                disabled={!draft}
                 onIonChange={(e) => {
                   return textAreaChanged("otherObservationsInfo", e.detail.value ?? "");
                 }}
@@ -226,6 +239,7 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
             <IonTextarea
               placeholder={t("supervision.report.placeholder")}
               value={anomaliesDescription}
+              disabled={!draft}
               onIonChange={(e) => {
                 return textAreaChanged("anomaliesDescription", e.detail.value ?? "");
               }}
@@ -241,6 +255,7 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
         <IonTextarea
           placeholder={t("supervision.report.placeholder")}
           value={additionalInfo}
+          disabled={!draft}
           onIonChange={(e) => {
             return textAreaChanged("additionalInfo", e.detail.value ?? "");
           }}
