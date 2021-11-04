@@ -1,16 +1,16 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import Moment from "react-moment";
 import { IonButton, IonCheckbox, IonCol, IonGrid, IonItem, IonLabel, IonRow } from "@ionic/react";
 import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
 import file from "../theme/icons/file.svg";
-import { DATE_TIME_FORMAT_MIN, SupervisionStatus } from "../utils/constants";
+import { SupervisionStatus } from "../utils/constants";
 import { useMutation, useQueryClient } from "react-query";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { onRetry, startSupervision } from "../utils/supervisionBackendData";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import SupervisionStatusInfo from "./SupervisionStatusInfo";
 
 interface BridgeDetailFooterProps {
   permit: IPermit;
@@ -26,8 +26,13 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   const queryClient = useQueryClient();
 
   const { permitNumber } = permit || {};
-  const { id: supervisionId, conformsToPermit = false, currentStatus, startedTime } = supervision || {};
-  const supervisionStarted = currentStatus && currentStatus.status !== SupervisionStatus.PLANNED;
+  const { id: supervisionId, conformsToPermit = false, currentStatus, startedTime, crossingDeniedTime, finishedTime } = supervision || {};
+
+  const supervisionNotStarted = !isLoadingSupervision && currentStatus && currentStatus.status === SupervisionStatus.PLANNED;
+  const supervisionInProgress = currentStatus && currentStatus.status === SupervisionStatus.IN_PROGRESS;
+  const crossingDenied = currentStatus && currentStatus.status === SupervisionStatus.CROSSING_DENIED;
+  const supervisionFinished =
+    currentStatus && (currentStatus.status === SupervisionStatus.FINISHED || currentStatus.status === SupervisionStatus.REPORT_SIGNED);
 
   // Set-up mutations for modifying data later
   const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(initialReport, dispatch), {
@@ -39,7 +44,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
     },
   });
 
-  const start = () => {
+  const supervisionStartClicked = () => {
     const defaultReport: ISupervisionReport = {
       id: -1,
       supervisionId: Number(supervisionId),
@@ -67,16 +72,15 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
         <IonLabel>{permitNumber}</IonLabel>
       </IonItem>
 
-      {!isLoadingSupervision && !supervisionId && (
-        <IonItem color="danger" className="itemIcon" detail detailIcon="" lines="none">
-          <IonLabel className="headingText">{t("bridge.supervisionMissing")}</IonLabel>
-        </IonItem>
+      {!isLoadingSupervision && !supervisionId && <SupervisionStatusInfo color="danger" infoText={t("bridge.supervisionMissing")} />}
+      {!isLoadingSupervision && supervisionInProgress && (
+        <SupervisionStatusInfo color="success" infoText={t("bridge.supervisionStarted")} time={startedTime} />
       )}
-      {!isLoadingSupervision && supervisionStarted && (
-        <IonItem color="success" className="itemIcon" detail detailIcon="" lines="none">
-          <IonLabel className="headingText">{t("bridge.supervisionStarted")}</IonLabel>
-          <IonLabel>{startedTime ? <Moment format={DATE_TIME_FORMAT_MIN}>{startedTime}</Moment> : ""}</IonLabel>
-        </IonItem>
+      {!isLoadingSupervision && crossingDenied && (
+        <SupervisionStatusInfo color="warning" infoText={t("bridge.crossingDenied")} time={crossingDeniedTime} />
+      )}
+      {!isLoadingSupervision && supervisionFinished && (
+        <SupervisionStatusInfo color="secondary" infoText={t("bridge.supervisionFinished")} time={finishedTime} />
       )}
 
       <IonItem lines="none">
@@ -84,7 +88,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
           slot="start"
           value="conforms"
           checked={conformsToPermit}
-          disabled={!supervisionId || supervisionStarted}
+          disabled={!supervisionId || !supervisionNotStarted}
           onClick={() => setConformsToPermit(!conformsToPermit)}
         />
         <IonLabel>{t("bridge.conformsToPermit")}</IonLabel>
@@ -94,11 +98,11 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
         <IonRow>
           <IonCol className="ion-text-center">
             <IonButton
-              disabled={!supervisionId || !conformsToPermit || supervisionStarted}
+              disabled={!supervisionId || !conformsToPermit || !supervisionNotStarted}
               color="primary"
               expand="block"
               size="large"
-              onClick={() => start()}
+              onClick={() => supervisionStartClicked()}
             >
               {t("bridge.startSupervision")}
             </IonButton>
@@ -107,7 +111,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
         <IonRow>
           <IonCol className="ion-text-center">
             <IonButton
-              disabled={!supervisionId || supervisionStarted}
+              disabled={!supervisionId || !supervisionNotStarted}
               color="tertiary"
               expand="block"
               size="large"

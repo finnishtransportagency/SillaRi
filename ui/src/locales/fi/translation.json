@@ -114,7 +114,9 @@
     "startSupervision": "Aloita valvonta",
     "denyCrossing": "Kuljetus ei voi ylittää siltaa",
     "supervisionMissing": "Sillanvalvontaa ei ole vielä suunniteltu",
-    "supervisionStarted": "Valvonta aloitettu"
+    "supervisionStarted": "Valvonta aloitettu",
+    "crossingDenied": "Sillan ylitys peruttu",
+    "supervisionFinished": "Valvonta päättynyt"
   },
   "denyCrossing": {
     "cantCross": "Kuljetus ei voi ylittää siltaa",

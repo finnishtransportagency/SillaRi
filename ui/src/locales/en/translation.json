@@ -113,7 +113,9 @@
     "startSupervision": "Start supervision",
     "denyCrossing": "Transport cannot cross bridge",
     "supervisionMissing": "Bridge supervision is not yet planned",
-    "supervisionStarted": "Supervision started"
+    "supervisionStarted": "Supervision started",
+    "crossingDenied": "Bridge crossing cancelled",
+    "supervisionFinished": "Supervision finished"
   },
   "denyCrossing": {
     "cantCross": "Transport cannot cross bridge",

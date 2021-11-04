@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useHistory, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { IonButton, IonCol, IonContent, IonGrid, IonItem, IonLabel, IonPage, IonRow, IonTextarea } from "@ionic/react";
@@ -8,7 +8,8 @@ import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import file from "../theme/icons/file.svg";
-import { getSupervision, denyCrossing, onRetry } from "../utils/supervisionBackendData";
+import { denyCrossing, getSupervision, onRetry } from "../utils/supervisionBackendData";
+import ISupervision from "../interfaces/ISupervision";
 
 interface DenyCrossingProps {
   supervisionId: string;
@@ -18,6 +19,8 @@ const DenyCrossing = (): JSX.Element => {
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
   const { supervisionId = "0" } = useParams<DenyCrossingProps>();
 
   const {
@@ -30,11 +33,37 @@ const DenyCrossing = (): JSX.Element => {
     { retry: onRetry }
   );
 
+  const denyCrossingMutation = useMutation((supervisionInput: ISupervision) => denyCrossing(supervisionInput, dispatch), {
+    retry: onRetry,
+    onSuccess: (data) => {
+      // Update "getSupervision" query to return the updated data
+      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      history.goBack();
+    },
+  });
+  const { isLoading: isSendingDenyCrossing } = denyCrossingMutation;
+
   const { routeBridge } = supervision || {};
   const { route, bridge } = routeBridge || {};
   const { name = "", identifier = "" } = bridge || {};
   const { permit } = route || {};
   const { permitNumber = "" } = permit || {};
+
+  const denyCrossingClicked = () => {
+    if (supervision) {
+      const { routeBridgeId, routeTransportId, plannedTime, supervisorType, conformsToPermit } = supervision;
+      const updatedSupervision: ISupervision = {
+        id: Number(supervisionId),
+        routeBridgeId,
+        routeTransportId,
+        plannedTime,
+        conformsToPermit,
+        supervisorType,
+        denyCrossingReason: "",
+      };
+      denyCrossingMutation.mutate(updatedSupervision);
+    }
+  };
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
@@ -73,7 +102,15 @@ const DenyCrossing = (): JSX.Element => {
             <IonGrid>
               <IonRow>
                 <IonCol className="ion-text-center">
-                  <IonButton color="primary" expand="block" size="large">{`${t("common.buttons.send")} (TODO)`}</IonButton>
+                  <IonButton
+                    color="primary"
+                    expand="block"
+                    size="large"
+                    disabled={isLoadingSupervision || isSendingDenyCrossing}
+                    onClick={() => denyCrossingClicked()}
+                  >
+                    {t("common.buttons.send")}
+                  </IonButton>
                 </IonCol>
               </IonRow>
               <IonRow>
