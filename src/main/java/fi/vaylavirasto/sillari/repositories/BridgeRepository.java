@@ -41,4 +41,19 @@ public class BridgeRepository {
         return resultMap;
     }
 
+    public Map<String, Integer> updateBridgeGeom(Integer id, Integer x, Integer y) {
+        dsl.transaction(configuration -> {
+                    DSLContext ctx = DSL.using(configuration);
+
+                    ctx.update(TableAlias.bridge)
+                            .set(TableAlias.bridge.GEOM, permitModel.getPermitNumber())
+                };
+        Map<String, Integer> resultMap = result.intoMap(TableAlias.bridge.OID, TableAlias.bridge.ID);
+        logger.debug("Bridge OIDs with corresponding Bridge IDs resultMap={}", resultMap);
+        return resultMap;
+    }
+
+    UPDATE sillari.bridge SET GEOM =ST_GeomFromText('POINT(-71.060316 48.432044)', 3067)
+    WHERE id=14;;
+
 }
