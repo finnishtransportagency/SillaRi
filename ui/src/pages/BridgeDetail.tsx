@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonContent, IonPage } from "@ionic/react";
 import { useTypedSelector } from "../store/store";
@@ -21,29 +21,37 @@ interface BridgeDetailProps {
 
 const BridgeDetail = (): JSX.Element => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
   const { supervisionId = "0" } = useParams<BridgeDetailProps>();
 
   const {
-    selectedSupervisionDetail,
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
-  const { id, routeBridgeId, routeTransportId, plannedTime, supervisorType, routeBridge } = selectedSupervisionDetail || {};
-  const { bridge, route } = routeBridge || {};
-  const { name = "" } = bridge || {};
-  const { permit } = route || {};
 
-  const { isLoading: isLoadingSupervision } = useQuery(
+  const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
-    () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail),
+    () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
     }
   );
 
-  const supervisionUpdateMutation = useMutation((supervision: ISupervision) => updateConformsToPermit(supervision, dispatch), { retry: onRetry });
+  const supervisionUpdateMutation = useMutation((updatedSupervision: ISupervision) => updateConformsToPermit(updatedSupervision, dispatch), {
+    retry: onRetry,
+    onSuccess: (data) => {
+      // Update the supervision from "getSupervision" with the updated supervision data in the response
+      queryClient.setQueryData(["getSupervision", supervisionId], data);
+    },
+  });
+
+  const { id, routeBridgeId, routeTransportId, plannedTime, supervisorType, routeBridge } = supervision || {};
+  const { bridge, route } = routeBridge || {};
+  const { name = "" } = bridge || {};
+  const { permit } = route || {};
 
   const setConformsToPermit = (conforms: boolean) => {
-    const updatedSupervision = {
+    const updatedSupervisionInput = {
       id,
       routeBridgeId,
       routeTransportId,
@@ -53,11 +61,11 @@ const BridgeDetail = (): JSX.Element => {
     } as ISupervision;
 
     if (!isLoadingSupervision) {
-      supervisionUpdateMutation.mutate(updatedSupervision);
+      supervisionUpdateMutation.mutate(updatedSupervisionInput);
     }
   };
 
-  const noNetworkNoData = isFailed.getSupervision && selectedSupervisionDetail === undefined;
+  const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
   return (
     <IonPage>
@@ -72,7 +80,7 @@ const BridgeDetail = (): JSX.Element => {
             <TrafficSupervisorsAccordion />
             <BridgeDetailFooter
               permit={permit as IPermit}
-              supervision={selectedSupervisionDetail as ISupervision}
+              supervision={supervision as ISupervision}
               isLoadingSupervision={isLoadingSupervision}
               setConformsToPermit={setConformsToPermit}
             />

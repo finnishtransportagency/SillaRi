@@ -131,9 +131,9 @@
     "report": {
       "observations": "Observations",
       "drivingLineOk": "Driving line complied with",
-      "drivingLineInfo": "Why driving line not accepted?",
-      "speedLimitOk": "Speed limit accepted",
-      "speedLimitInfo": "Why speed limit not accepted?",
+      "drivingLineInfo": "Why is the driving line not approved?",
+      "speedLimitOk": "Speed limit approved",
+      "speedLimitInfo": "Why is the speed limit not approved?",
       "anomalies": "Anomalies",
       "anomaliesInfo": "Specify anomalies",
       "surfaceDamage": "Surface damage",

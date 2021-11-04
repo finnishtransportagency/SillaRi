@@ -89,9 +89,9 @@ public class SupervisionService {
     }
 
     // Adds the status IN_PROGRESS and creates a new supervision report
-    public SupervisionModel startSupervision(Integer supervisionId) {
-        supervisionReportRepository.createSupervisionReport(supervisionId);
-        return getSupervision(supervisionId);
+    public SupervisionModel startSupervision(SupervisionReportModel report) {
+        supervisionReportRepository.createSupervisionReport(report);
+        return getSupervision(report.getSupervisionId());
     }
 
     // Cancels the supervision by adding the status CANCELLED
@@ -102,9 +102,9 @@ public class SupervisionService {
     }
 
     // Ends the supervision by adding the status FINISHED
-    public SupervisionModel finishSupervision(SupervisionModel supervisionModel) {
-        supervisionStatusRepository.insertSupervisionStatus(supervisionModel.getId(), SupervisionStatusType.FINISHED);
-        return getSupervision(supervisionModel.getId());
+    public SupervisionModel finishSupervision(Integer supervisionId) {
+        supervisionStatusRepository.insertSupervisionStatus(supervisionId, SupervisionStatusType.FINISHED);
+        return getSupervision(supervisionId);
     }
 
     // Updates the report fields

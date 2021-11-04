@@ -17,7 +17,8 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: Super
   const { t } = useTranslation();
 
   const { images = [] } = useTypedSelector((state) => state.supervisionReducer);
-  const { id: supervisionId, images: supervisionImages = [] } = supervision || {};
+  const { id: supervisionId, images: savedImages = [], report } = supervision || {};
+  const { draft = false } = report || {};
 
   return (
     <>
@@ -26,14 +27,14 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: Super
       </IonItem>
 
       <IonGrid>
-        <ImageThumbnailRow images={images} supervisionImages={supervisionImages} />
+        <ImageThumbnailRow images={images} savedImages={savedImages} />
       </IonGrid>
 
       {isButtonsIncluded && (
         <IonGrid>
           <IonRow>
             <IonCol className="ion-text-center">
-              <IonButton color="secondary" expand="block" size="large" routerLink={`/takephotos/${supervisionId}`}>
+              <IonButton color="secondary" expand="block" size="large" routerLink={`/takephotos/${supervisionId}`} disabled={!draft}>
                 <IonIcon className="otherIcon" icon={camera} color="primary" slot="start" />
                 {t("supervision.buttons.takePhotos")}
               </IonButton>

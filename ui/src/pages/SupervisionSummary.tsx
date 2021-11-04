@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonContent, IonPage, IonToast } from "@ionic/react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import SupervisionHeader from "../components/SupervisionHeader";
-import SupervisionFooter from "../components/SupervisionFooter";
 import SupervisionObservationsSummary from "../components/SupervisionObservationsSummary";
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
-import { actions as supervisionActions } from "../store/supervisionSlice";
 import { useTypedSelector } from "../store/store";
-import { getSupervision, onRetry } from "../utils/supervisionBackendData";
+import { finishSupervision, getSupervision, onRetry, updateSupervisionReport } from "../utils/supervisionBackendData";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
+import SupervisionFooter from "../components/SupervisionFooter";
 
 interface SummaryProps {
   supervisionId: string;
@@ -22,29 +22,57 @@ interface SummaryProps {
 const SupervisionSummary = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const history = useHistory();
+  const queryClient = useQueryClient();
+
   const { supervisionId = "0" } = useParams<SummaryProps>();
   const [toastMessage, setToastMessage] = useState("");
 
   const {
-    selectedSupervisionDetail,
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
-  const { images: supervisionImages = [] } = selectedSupervisionDetail || {};
 
-  const { isLoading: isLoadingSupervision } = useQuery(
+  const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
-    () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail),
+    () => getSupervision(Number(supervisionId), dispatch),
     { retry: onRetry }
   );
+  const { report } = supervision || {};
 
-  useEffect(() => {
-    if (!isLoadingSupervision) {
-      // Remove any uploaded images from the camera images stored in redux
-      dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: supervisionImages });
+  const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
+    retry: onRetry,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      // We don't want to allow the user to get back to this page by using "back"
+      history.replace(`/supervision/${supervisionId}`);
+    },
+  });
+  const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
+
+  const finishSupervisionMutation = useMutation((superId: string) => finishSupervision(Number(superId), dispatch), {
+    retry: onRetry,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      setToastMessage(t("supervision.summary.saved"));
+      // TODO go back to supervision list - but where? Main page?
+      //  history.replace(`/`);
+    },
+  });
+  const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
+
+  const saveReport = (): void => {
+    finishSupervisionMutation.mutate(supervisionId);
+  };
+
+  const editReport = (): void => {
+    // Set report back to draft and update modifiedReport on Supervision page
+    if (report) {
+      const updatedReport = { ...report, draft: true };
+      reportUpdateMutation.mutate(updatedReport);
     }
-  }, [isLoadingSupervision, supervisionImages, dispatch]);
+  };
 
-  const noNetworkNoData = isFailed.getSupervision && selectedSupervisionDetail === undefined;
+  const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
   return (
     <IonPage>
@@ -54,10 +82,16 @@ const SupervisionSummary = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <>
-            <SupervisionHeader supervision={selectedSupervisionDetail as ISupervision} />
-            <SupervisionPhotos supervision={selectedSupervisionDetail as ISupervision} headingKey="supervision.photos" />
-            <SupervisionObservationsSummary supervision={selectedSupervisionDetail as ISupervision} />
-            <SupervisionFooter supervision={selectedSupervisionDetail as ISupervision} draft={false} setToastMessage={setToastMessage} />
+            <SupervisionHeader supervision={supervision as ISupervision} />
+            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" />
+            <SupervisionObservationsSummary report={report} />
+            <SupervisionFooter
+              reportId={report?.id}
+              isSummary={true}
+              isLoading={isLoadingSupervision || isSendingReportUpdate || isSendingFinishSupervision}
+              saveChanges={saveReport}
+              cancelChanges={editReport}
+            />
           </>
         )}
 

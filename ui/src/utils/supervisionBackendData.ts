@@ -18,15 +18,16 @@ export const onRetry = (failureCount: number, error: string): boolean => {
   return true;
 };
 
-export const getCompanyTransportsList = async (username: string, dispatch: Dispatch): Promise<void> => {
+export const getCompanyTransportsList = async (username: string, dispatch: Dispatch): Promise<ICompanyTransports[]> => {
   try {
+    console.log("GetCompanyTransportsList", username);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyTransportsList: false } });
 
     const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor?username=${username}`);
 
     if (companyTransportsResponse.ok) {
       const companyTransportsList = (await companyTransportsResponse.json()) as Promise<ICompanyTransports[]>;
-      dispatch({ type: supervisionActions.GET_COMPANY_TRANSPORTS_LIST, payload: companyTransportsList });
+      return await companyTransportsList;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyTransportsList: true } });
       throw new Error(notOkError);
@@ -37,38 +38,9 @@ export const getCompanyTransportsList = async (username: string, dispatch: Dispa
   }
 };
 
-export const getRoute = async (routeId: number, dispatch: Dispatch, selectedRouteDetail?: IRoute): Promise<void> => {
+export const getRouteTransportOfSupervisor = async (routeTransportId: number, username: string, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
-    if (selectedRouteDetail && selectedRouteDetail.id !== routeId) {
-      dispatch({ type: supervisionActions.GET_ROUTE, payload: undefined });
-    }
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: false } });
-
-    const routeResponse = await fetch(`${getOrigin()}/api/route/getroute?routeId=${routeId}`);
-
-    if (routeResponse.ok) {
-      const route = (await routeResponse.json()) as Promise<IRoute>;
-      dispatch({ type: supervisionActions.GET_ROUTE, payload: route });
-    } else {
-      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: true } });
-      throw new Error(notOkError);
-    }
-  } catch (err) {
-    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: true } });
-    throw new Error(err as string);
-  }
-};
-
-export const getRouteTransportOfSupervisor = async (
-  routeTransportId: number,
-  username: string,
-  dispatch: Dispatch,
-  selectedRouteTransportDetail?: IRouteTransport
-): Promise<void> => {
-  try {
-    if (selectedRouteTransportDetail && selectedRouteTransportDetail.id !== routeTransportId) {
-      dispatch({ type: supervisionActions.GET_ROUTE_TRANSPORT, payload: undefined });
-    }
+    console.log("GetRouteTransportOfSupervisor", routeTransportId, username);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
 
     const routeTransportResponse = await fetch(
@@ -77,7 +49,7 @@ export const getRouteTransportOfSupervisor = async (
 
     if (routeTransportResponse.ok) {
       const routeTransport = (await routeTransportResponse.json()) as Promise<IRouteTransport>;
-      dispatch({ type: supervisionActions.GET_ROUTE_TRANSPORT, payload: routeTransport });
+      return await routeTransport;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
       throw new Error(notOkError);
@@ -88,18 +60,36 @@ export const getRouteTransportOfSupervisor = async (
   }
 };
 
-export const getRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, selectedBridgeDetail?: IRouteBridge): Promise<void> => {
+export const getRouteGeometry = async (routeId: number, dispatch: Dispatch): Promise<IRoute> => {
   try {
-    if (selectedBridgeDetail && selectedBridgeDetail.id !== routeBridgeId) {
-      dispatch({ type: supervisionActions.GET_ROUTE_BRIDGE, payload: undefined });
+    console.log("GetRouteGeometry", routeId);
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: false } });
+
+    const routeResponse = await fetch(`${getOrigin()}/api/route/getroute?routeId=${routeId}`);
+
+    if (routeResponse.ok) {
+      const route = (await routeResponse.json()) as Promise<IRoute>;
+      return await route;
+    } else {
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: true } });
+      throw new Error(notOkError);
     }
+  } catch (err) {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRoute: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const getRouteBridgeGeometry = async (routeBridgeId: number, dispatch: Dispatch): Promise<IRouteBridge> => {
+  try {
+    console.log("getRouteBridgeGeometry", routeBridgeId);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteBridge: false } });
 
     const routeBridgeResponse = await fetch(`${getOrigin()}/api/routebridge/getroutebridge?routeBridgeId=${routeBridgeId}`);
 
     if (routeBridgeResponse.ok) {
       const routeBridge = (await routeBridgeResponse.json()) as Promise<IRouteBridge>;
-      dispatch({ type: supervisionActions.GET_ROUTE_BRIDGE, payload: routeBridge });
+      return await routeBridge;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteBridge: true } });
       throw new Error(notOkError);
@@ -110,16 +100,16 @@ export const getRouteBridge = async (routeBridgeId: number, dispatch: Dispatch, 
   }
 };
 
-export const getSupervisionList = async (username: string, dispatch: Dispatch): Promise<void> => {
+export const getSupervisionList = async (username: string, dispatch: Dispatch): Promise<ISupervision[]> => {
   try {
+    console.log("GetSupervisionList", username);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionList: false } });
 
     const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsofsupervisor?username=${username}`);
 
     if (supervisionsResponse.ok) {
       const supervisions = (await supervisionsResponse.json()) as Promise<ISupervision[]>;
-
-      dispatch({ type: supervisionActions.GET_SUPERVISION_LIST, payload: supervisions });
+      return await supervisions;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
       throw new Error(notOkError);
@@ -130,18 +120,16 @@ export const getSupervisionList = async (username: string, dispatch: Dispatch): 
   }
 };
 
-export const getSupervision = async (supervisionId: number, dispatch: Dispatch, selectedSupervisionDetail?: ISupervision): Promise<void> => {
+export const getSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
-    if (selectedSupervisionDetail && selectedSupervisionDetail.id !== supervisionId) {
-      dispatch({ type: supervisionActions.GET_SUPERVISION, payload: undefined });
-    }
+    console.log("GetSupervision", supervisionId);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervision: false } });
 
     const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}`);
 
     if (supervisionResponse.ok) {
       const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.GET_SUPERVISION, payload: supervision });
+      return await supervision;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervision: true } });
       throw new Error(notOkError);
@@ -152,8 +140,9 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch, 
   }
 };
 
-export const updateConformsToPermit = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+export const updateConformsToPermit = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
   try {
+    console.log("UpdateConformsToPermit", updateRequest);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateConformsToPermit: false } });
 
     const updateSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/updateconformstopermit`, {
@@ -166,7 +155,7 @@ export const updateConformsToPermit = async (updateRequest: ISupervision, dispat
 
     if (updateSupervisionResponse.ok) {
       const updatedSupervision = (await updateSupervisionResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.UPDATE_CONFORMS_TO_PERMIT, payload: updatedSupervision });
+      return await updatedSupervision;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateConformsToPermit: true } });
       throw new Error(notOkError);
@@ -177,17 +166,22 @@ export const updateConformsToPermit = async (updateRequest: ISupervision, dispat
   }
 };
 
-export const startSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<void> => {
+export const startSupervision = async (report: ISupervisionReport, dispatch: Dispatch): Promise<ISupervision> => {
   try {
+    console.log("StartSupervision", report);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { startSupervision: false } });
 
-    const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision?supervisionId=${supervisionId}`, {
+    const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(report),
     });
 
     if (startSupervisionResponse.ok) {
       const startedSupervision = (await startSupervisionResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.START_SUPERVISION, payload: startedSupervision });
+      return await startedSupervision;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { startSupervision: true } });
       throw new Error(notOkError);
@@ -198,7 +192,7 @@ export const startSupervision = async (supervisionId: number, dispatch: Dispatch
   }
 };
 
-export const denyCrossing = async (denyRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+export const denyCrossing = async (denyRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { denyCrossing: false } });
 
@@ -212,7 +206,7 @@ export const denyCrossing = async (denyRequest: ISupervision, dispatch: Dispatch
 
     if (denyCrossingResponse.ok) {
       const supervision = (await denyCrossingResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.DENY_CROSSING, payload: supervision });
+      return await supervision;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { denyCrossing: true } });
       throw new Error(notOkError);
@@ -223,21 +217,20 @@ export const denyCrossing = async (denyRequest: ISupervision, dispatch: Dispatch
   }
 };
 
-export const finishSupervision = async (finishRequest: ISupervision, dispatch: Dispatch): Promise<void> => {
+export const finishSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { finishSupervision: false } });
 
-    const finishSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/finishsupervision`, {
+    const finishSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/finishsupervision?supervisionId=${supervisionId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(finishRequest),
     });
 
     if (finishSupervisionResponse.ok) {
       const finishedSupervision = (await finishSupervisionResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.FINISH_SUPERVISION, payload: finishedSupervision });
+      return await finishedSupervision;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { finishSupervision: true } });
       throw new Error(notOkError);
@@ -248,7 +241,7 @@ export const finishSupervision = async (finishRequest: ISupervision, dispatch: D
   }
 };
 
-export const updateSupervisionReport = async (updateRequest: ISupervisionReport, dispatch: Dispatch): Promise<void> => {
+export const updateSupervisionReport = async (updateRequest: ISupervisionReport, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateSupervisionReport: false } });
 
@@ -262,7 +255,7 @@ export const updateSupervisionReport = async (updateRequest: ISupervisionReport,
 
     if (updateReportResponse.ok) {
       const updatedSupervision = (await updateReportResponse.json()) as Promise<ISupervision>;
-      dispatch({ type: supervisionActions.SUPERVISION_SUMMARY, payload: updatedSupervision });
+      return await updatedSupervision;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateSupervisionReport: true } });
       throw new Error(notOkError);

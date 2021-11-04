@@ -22,24 +22,24 @@ const RouteTransportDetail = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const {
-    selectedRouteTransport,
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
-  const { route, supervisions = [] } = selectedRouteTransport || {};
-  const { name = "", permit } = route || {};
 
   const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
 
   // TODO change to logged in user
   const username = "USER1";
 
-  useQuery(
+  const { data: routeTransport } = useQuery(
     ["getRouteTransportOfSupervisor", routeTransportId],
-    () => getRouteTransportOfSupervisor(Number(routeTransportId), username, dispatch, selectedRouteTransport),
+    () => getRouteTransportOfSupervisor(Number(routeTransportId), username, dispatch),
     { retry: onRetry }
   );
 
-  const noNetworkNoData = isFailed.getRouteTransportOfSupervisor && selectedRouteTransport === undefined;
+  const { route, supervisions = [] } = routeTransport || {};
+  const { name = "", permit } = route || {};
+
+  const noNetworkNoData = isFailed.getRouteTransportOfSupervisor && routeTransport === undefined;
 
   return (
     <IonPage>

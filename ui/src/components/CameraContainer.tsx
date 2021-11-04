@@ -27,7 +27,7 @@ const CameraContainer = (): JSX.Element => {
   const queryClient = useQueryClient();
 
   const { supervisionId = "0" } = useParams<CameraContainerProps>();
-  const { selectedSupervisionDetail, images = [] } = useTypedSelector((state: RootState) => state.supervisionReducer);
+  const { images = [] } = useTypedSelector((state: RootState) => state.supervisionReducer);
 
   const [isImagePreviewOpen, setImagePreviewOpen] = useState<boolean>(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
@@ -37,16 +37,17 @@ const CameraContainer = (): JSX.Element => {
     setImagePreviewUrl(imageUrl || imagePreviewUrl);
   };
 
-  const { images: supervisionImages = [] } = selectedSupervisionDetail || {};
-
-  useQuery(["getSupervision", supervisionId], () => getSupervision(Number(supervisionId), dispatch, selectedSupervisionDetail), { retry: onRetry });
+  const { data: supervision } = useQuery(["getSupervision", supervisionId], () => getSupervision(Number(supervisionId), dispatch), {
+    retry: onRetry,
+  });
+  const { images: savedImages = [] } = supervision || {};
 
   // Set-up mutations for modifying data later
   const imageDeleteMutation = useMutation((objectKey: string) => deleteImage(objectKey, dispatch), {
     retry: onRetry,
     onSuccess: () => {
       // Fetch the supervision data again to update the image list after the delete has finished
-      queryClient.invalidateQueries("getSupervision");
+      queryClient.invalidateQueries(["getSupervision", supervisionId]);
     },
   });
 
@@ -61,7 +62,7 @@ const CameraContainer = (): JSX.Element => {
       const uuid = uuidv4();
       const fname = `image_${uuid}.jpg`;
       dispatch({
-        type: supervisionActions.SAVE_IMAGES,
+        type: supervisionActions.SET_IMAGES,
         payload: [...images, { id: uuid, filename: fname, dataUrl: image.dataUrl, date: now }],
       });
     } catch (err) {
@@ -72,7 +73,7 @@ const CameraContainer = (): JSX.Element => {
 
   const removeImageItem = (uuid: string) => {
     const imagesToEdit = images.filter((image) => image.id !== uuid);
-    dispatch({ type: supervisionActions.SAVE_IMAGES, payload: imagesToEdit });
+    dispatch({ type: supervisionActions.SET_IMAGES, payload: imagesToEdit });
   };
 
   const deleteImageObject = (objectKey: string) => {
@@ -82,7 +83,7 @@ const CameraContainer = (): JSX.Element => {
     }
   };
 
-  const allImagesAmount = (images ? images.length : 0) + (supervisionImages ? supervisionImages.length : 0);
+  const allImagesAmount = (images ? images.length : 0) + (savedImages ? savedImages.length : 0);
 
   // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
   return (
@@ -120,9 +121,9 @@ const CameraContainer = (): JSX.Element => {
               );
             })}
 
-        {supervisionImages &&
-          supervisionImages.length > 0 &&
-          [...supervisionImages]
+        {savedImages &&
+          savedImages.length > 0 &&
+          [...savedImages]
             .sort((a, b) => {
               const am = moment(a.taken);
               const bm = moment(b.taken);

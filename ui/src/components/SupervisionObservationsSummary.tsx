@@ -1,30 +1,28 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonItem, IonLabel } from "@ionic/react";
-import ISupervision from "../interfaces/ISupervision";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 interface SupervisionObservationsSummaryProps {
-  supervision: ISupervision;
+  report?: ISupervisionReport;
 }
 
-const SupervisionObservationsSummary = ({ supervision }: SupervisionObservationsSummaryProps): JSX.Element => {
+const SupervisionObservationsSummary = ({ report }: SupervisionObservationsSummaryProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { report } = supervision || {};
-
   const {
-    drivingLineOk = true,
-    drivingLineInfo = "",
-    speedLimitOk = true,
-    speedLimitInfo = "",
-    anomalies = false,
-    anomaliesDescription = "",
-    surfaceDamage = false,
-    jointDamage = false,
-    bendOrDisplacement = false,
-    otherObservations = false,
-    otherObservationsInfo = "",
-    additionalInfo = "",
+    drivingLineOk,
+    drivingLineInfo,
+    speedLimitOk,
+    speedLimitInfo,
+    anomalies,
+    anomaliesDescription,
+    surfaceDamage,
+    jointDamage,
+    bendOrDisplacement,
+    otherObservations,
+    otherObservationsInfo,
+    additionalInfo,
   } = report || {};
 
   return (
