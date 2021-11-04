@@ -8,9 +8,10 @@ import ISupervisionReport from "../interfaces/ISupervisionReport";
 interface SupervisionObservationsProps {
   modifiedReport: ISupervisionReport | undefined;
   setModifiedReport: Dispatch<SetStateAction<ISupervisionReport | undefined>>;
+  savedReport: ISupervisionReport | undefined;
 }
 
-const SupervisionObservations = ({ modifiedReport, setModifiedReport }: SupervisionObservationsProps): JSX.Element => {
+const SupervisionObservations = ({ modifiedReport, setModifiedReport, savedReport }: SupervisionObservationsProps): JSX.Element => {
   const { t } = useTranslation();
 
   const {
@@ -26,8 +27,9 @@ const SupervisionObservations = ({ modifiedReport, setModifiedReport }: Supervis
     otherObservations,
     otherObservationsInfo,
     additionalInfo,
-    draft,
   } = modifiedReport || {};
+
+  const { draft = false } = savedReport || {};
 
   const updateRadioOrCheckboxValue = (payload: IRadioValue) => {
     if (modifiedReport) {

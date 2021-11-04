@@ -24,7 +24,7 @@ const SupervisionFooter = ({ reportId, isSummary, isLoading, saveChanges, cancel
       </IonRow>
       <IonRow>
         <IonCol className="ion-text-center">
-          <IonButton color="tertiary" expand="block" size="large" onClick={() => cancelChanges()}>
+          <IonButton color="tertiary" expand="block" size="large" disabled={!reportId || reportId < 0} onClick={() => cancelChanges()}>
             {isSummary ? t("common.buttons.edit") : t("common.buttons.cancel")}
           </IonButton>
         </IonCol>

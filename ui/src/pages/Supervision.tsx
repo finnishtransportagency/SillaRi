@@ -138,6 +138,7 @@ const Supervision = (): JSX.Element => {
     setModifiedReport(undefined);
   });
 
+  const { report: savedReport } = supervision || {};
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
   return (
@@ -149,13 +150,8 @@ const Supervision = (): JSX.Element => {
         ) : (
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
-            <SupervisionPhotos
-              supervision={supervision as ISupervision}
-              modifiedReport={modifiedReport}
-              headingKey="supervision.photosDrivingLine"
-              isButtonsIncluded
-            />
-            <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} />
+            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photosDrivingLine" isButtonsIncluded />
+            <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} savedReport={savedReport} />
             <SupervisionFooter
               reportId={modifiedReport?.id}
               isSummary={false}
