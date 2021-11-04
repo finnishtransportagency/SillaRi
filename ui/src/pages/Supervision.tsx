@@ -43,7 +43,7 @@ const Supervision = (): JSX.Element => {
     {
       retry: onRetry,
       onSuccess: (data) => {
-        console.log("GetSupervision done", data.id, data.currentStatus, data.report ? data.report.draft : "");
+        console.log("GetSupervision done", data.id, data.currentStatus, "draft: ", data.report ? data.report.draft : "");
       },
     }
   );
@@ -113,15 +113,14 @@ const Supervision = (): JSX.Element => {
       // When page has loaded, start supervision or set modifiedReport to previously saved report.
       const { report: savedReport } = supervision || {};
 
-      console.log("ModifiedReport", modifiedReport);
-
-      // Page is loaded for the first time, modifiedReport is not set or has previous values
+      // Page is loaded for the first time, modifiedReport is not set
       if (modifiedReport === undefined && savedReport) {
+        console.log("setModifiedReport", savedReport);
         // Update the modified report with data from backend
         setModifiedReport({ ...savedReport });
       }
     }
-  }, [isLoadingSupervision, isSendingReportUpdate, reportUpdateMutation, supervision, modifiedReport]);
+  }, [isLoadingSupervision, isSendingReportUpdate, supervision, modifiedReport]);
 
   useEffect(() => {
     if (supervision && !isLoadingSupervision) {
@@ -134,7 +133,8 @@ const Supervision = (): JSX.Element => {
   }, [isLoadingSupervision, supervision, dispatch]);
 
   useIonViewDidEnter(() => {
-    console.log("useIonViewDidEnter");
+    // Make sure that previous values are not stored in modifiedReport (because of Ionic)
+    console.log("useIonViewDidEnter", "setModifiedReport undefined");
     setModifiedReport(undefined);
   });
 
