@@ -41,19 +41,17 @@ public class BridgeRepository {
         return resultMap;
     }
 
-    public Map<String, Integer> updateBridgeGeom(Integer id, Integer x, Integer y) {
+    public void updateBridgeGeom(Integer id, Integer x, Integer y) {
         dsl.transaction(configuration -> {
                     DSLContext ctx = DSL.using(configuration);
-
+                    Field<String> geojsonField = DSL.field("ST_GeomFromText('POINT("+x+" "+y+")', 3067)", String.class);
                     ctx.update(TableAlias.bridge)
-                            .set(TableAlias.bridge.GEOM, permitModel.getPermitNumber())
-                };
-        Map<String, Integer> resultMap = result.intoMap(TableAlias.bridge.OID, TableAlias.bridge.ID);
-        logger.debug("Bridge OIDs with corresponding Bridge IDs resultMap={}", resultMap);
-        return resultMap;
+                            .set(TableAlias.bridge.GEOM, geojsonField)
+                            .where(TableAlias.bridge.ID.eq(id))
+                            .execute();
+                });
     }
 
-    UPDATE sillari.bridge SET GEOM =ST_GeomFromText('POINT(-71.060316 48.432044)', 3067)
-    WHERE id=14;;
+
 
 }
