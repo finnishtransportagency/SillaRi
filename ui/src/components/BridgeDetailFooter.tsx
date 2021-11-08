@@ -29,10 +29,12 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   const { id: supervisionId, conformsToPermit = false, currentStatus, startedTime, crossingDeniedTime, finishedTime } = supervision || {};
 
   const supervisionPending = !isLoadingSupervision && currentStatus && currentStatus.status === SupervisionStatus.PLANNED;
-  const supervisionInProgress = currentStatus && currentStatus.status === SupervisionStatus.IN_PROGRESS;
-  const crossingDenied = currentStatus && currentStatus.status === SupervisionStatus.CROSSING_DENIED;
+  const supervisionInProgress = !isLoadingSupervision && currentStatus && currentStatus.status === SupervisionStatus.IN_PROGRESS;
+  const crossingDenied = !isLoadingSupervision && currentStatus && currentStatus.status === SupervisionStatus.CROSSING_DENIED;
   const supervisionFinished =
-    currentStatus && (currentStatus.status === SupervisionStatus.FINISHED || currentStatus.status === SupervisionStatus.REPORT_SIGNED);
+    !isLoadingSupervision &&
+    currentStatus &&
+    (currentStatus.status === SupervisionStatus.FINISHED || currentStatus.status === SupervisionStatus.REPORT_SIGNED);
 
   // Set-up mutations for modifying data later
   const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(initialReport, dispatch), {
