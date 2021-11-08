@@ -1,15 +1,18 @@
 package fi.vaylavirasto.sillari.service;
 
 
-import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
-import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
+import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
-import fi.vaylavirasto.sillari.model.*;
+import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
+import fi.vaylavirasto.sillari.model.CompanyModel;
+import fi.vaylavirasto.sillari.model.PermitModel;
+import fi.vaylavirasto.sillari.model.RouteBridgeModel;
+import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,6 +42,8 @@ public class LeluService {
     private SupervisionRepository supervisionRepository;
     private final MessageSource messageSource;
     private LeluRouteUploadUtil leluRouteUploadUtil;
+
+
 
     @Autowired
     public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil
@@ -200,6 +205,9 @@ public class LeluService {
                 } else {
                     // TODO What to do if bridge is not found?
                     logger.warn("Bridge missing from db with oid {}", routeBridge.getBridge().getOid());
+                    //add bridge to db if it's found in trex
+
+
                 }
             }
         }

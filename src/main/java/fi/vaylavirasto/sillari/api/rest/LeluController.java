@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluRouteDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
@@ -9,6 +10,7 @@ import fi.vaylavirasto.sillari.api.rest.error.LeluPermitSaveException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.service.LeluService;
+import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -41,11 +44,13 @@ public class LeluController {
     private String currentApiVersion;
 
     private final LeluService leluService;
+    private final TRexService trexService;
     private final MessageSource messageSource;
 
     @Autowired
-    public LeluController(LeluService leluService, MessageSource messageSource) {
+    public LeluController(LeluService leluService, TRexService trexService, MessageSource messageSource) {
         this.leluService = leluService;
+        this.trexService = trexService;
         this.messageSource = messageSource;
     }
 
@@ -100,10 +105,11 @@ public class LeluController {
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
     })
     public LeluPermitResponseDTO savePermit(@Valid @RequestBody LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPermitSaveException {
+        getBridgesFromTrexToDB(permitDTO.getRoutes());
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             try {
-                //TODO call non ddev version when time
+                //TODO call non dev version when time
                 return leluService.createOrUpdatePermitDevVersion(permitDTO);
             } catch (LeluPermitSaveException leluPermitSaveException) {
                 logger.error(leluPermitSaveException.getMessage());
@@ -116,6 +122,10 @@ public class LeluController {
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
         }
+    }
+
+    private void getBridgesFromTrexToDB(List<LeluRouteDTO> routes) {
+        routes
     }
 
 
