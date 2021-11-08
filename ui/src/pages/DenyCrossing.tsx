@@ -1,22 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useHistory, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCol, IonContent, IonGrid, IonItem, IonLabel, IonPage, IonRow, IonTextarea } from "@ionic/react";
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonPage,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
+  IonTextarea,
+} from "@ionic/react";
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import file from "../theme/icons/file.svg";
 import { denyCrossing, getSupervision, onRetry } from "../utils/supervisionBackendData";
 import ISupervision from "../interfaces/ISupervision";
+import { SupervisionStatus } from "../utils/constants";
 
 interface DenyCrossingProps {
   supervisionId: string;
 }
 
 const DenyCrossing = (): JSX.Element => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -26,6 +41,14 @@ const DenyCrossing = (): JSX.Element => {
   const {
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
+
+  const [denyReason, setDenyReason] = useState<string | undefined>(undefined);
+  const [otherReasonSelected, setOtherReasonSelected] = useState<boolean>(false);
+
+  const tFI = i18n.getFixedT("fi"); // Save fixed deny reason options always in the same language to DB
+  const transportWontCross = tFI("denyCrossing.transportWontCross");
+  const obstacleOnBridge = tFI("denyCrossing.obstacleOnBridge");
+  const otherReason = "other";
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
@@ -43,11 +66,29 @@ const DenyCrossing = (): JSX.Element => {
   });
   const { isLoading: isSendingDenyCrossing } = denyCrossingMutation;
 
-  const { routeBridge } = supervision || {};
+  const { routeBridge, currentStatus } = supervision || {};
   const { route, bridge } = routeBridge || {};
   const { name = "", identifier = "" } = bridge || {};
   const { permit } = route || {};
   const { permitNumber = "" } = permit || {};
+
+  const supervisionPending = !isLoadingSupervision && currentStatus && currentStatus.status === SupervisionStatus.PLANNED;
+
+  const radioClicked = (radioValue: string) => {
+    if (radioValue === otherReason) {
+      setOtherReasonSelected(true);
+      setDenyReason("");
+    } else {
+      setOtherReasonSelected(false);
+      setDenyReason(radioValue);
+    }
+  };
+
+  const textAreaChanged = (textValue: string) => {
+    if (otherReasonSelected) {
+      setDenyReason(textValue);
+    }
+  };
 
   const denyCrossingClicked = () => {
     if (supervision) {
@@ -59,16 +100,13 @@ const DenyCrossing = (): JSX.Element => {
         plannedTime,
         conformsToPermit,
         supervisorType,
-        denyCrossingReason: "",
+        denyCrossingReason: denyReason,
       };
       denyCrossingMutation.mutate(updatedSupervision);
     }
   };
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
-
-  // TODO - send "denyCrossing" and deny reason to backend
-  // and use the response from the mutation to update ["getSupervision", supervisionId] query
 
   return (
     <IonPage>
@@ -92,12 +130,37 @@ const DenyCrossing = (): JSX.Element => {
             <IonItem lines="none">
               <IonLabel className="headingText">{t("denyCrossing.cantCross")}</IonLabel>
             </IonItem>
-            <IonItem lines="none">
-              <IonLabel>{t("denyCrossing.whyCantCross")}</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonTextarea placeholder={t("supervision.report.placeholder")} />
-            </IonItem>
+
+            <IonList>
+              <IonRadioGroup onIonChange={(e) => radioClicked(e.detail.value)}>
+                <IonListHeader>
+                  <IonLabel>{t("denyCrossing.whyCantCross")}</IonLabel>
+                </IonListHeader>
+                <IonItem>
+                  <IonLabel>{t("denyCrossing.transportWontCross")}</IonLabel>
+                  <IonRadio value={transportWontCross} disabled={!supervisionPending} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel>{t("denyCrossing.obstacleOnBridge")}</IonLabel>
+                  <IonRadio value={obstacleOnBridge} disabled={!supervisionPending} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel>{t("denyCrossing.other")}</IonLabel>
+                  <IonRadio value={otherReason} disabled={!supervisionPending} />
+                </IonItem>
+              </IonRadioGroup>
+              {otherReasonSelected && (
+                <IonItem lines="none">
+                  <IonTextarea
+                    placeholder={t("denyCrossing.placeholder")}
+                    disabled={!supervisionPending}
+                    onIonChange={(e) => {
+                      return textAreaChanged(e.detail.value ?? "");
+                    }}
+                  />
+                </IonItem>
+              )}
+            </IonList>
 
             <IonGrid>
               <IonRow>
@@ -106,7 +169,7 @@ const DenyCrossing = (): JSX.Element => {
                     color="primary"
                     expand="block"
                     size="large"
-                    disabled={isLoadingSupervision || isSendingDenyCrossing}
+                    disabled={isLoadingSupervision || isSendingDenyCrossing || !supervisionPending}
                     onClick={() => denyCrossingClicked()}
                   >
                     {t("common.buttons.send")}

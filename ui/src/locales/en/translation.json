@@ -118,8 +118,12 @@
     "supervisionFinished": "Supervision finished"
   },
   "denyCrossing": {
-    "cantCross": "Transport cannot cross bridge",
-    "whyCantCross": "Why can't transport cross bridge?"
+    "cantCross": "Transport cannot cross the bridge",
+    "whyCantCross": "Why can't the transport cross the bridge?",
+    "transportWontCross": "Transport was left on route or ended earlier",
+    "obstacleOnBridge": "Physical obstacle on bridge",
+    "other": "Something else, what?",
+    "placeholder": "Add text here"
   },
   "supervision": {
     "title": "Bridge supervision",

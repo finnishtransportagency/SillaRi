@@ -120,7 +120,11 @@
   },
   "denyCrossing": {
     "cantCross": "Kuljetus ei voi ylittää siltaa",
-    "whyCantCross": "Miksi kuljetus ei voi ylittää siltaa?"
+    "whyCantCross": "Miksi kuljetus ei voi ylittää siltaa?",
+    "transportWontCross": "Kuljetus on jäänyt reitille tai päättynyt aiemmin",
+    "obstacleOnBridge": "Fyysinen este sillalla",
+    "other": "Jotain muuta, mitä?",
+    "placeholder": "Lisää tekstiä tähän"
   },
   "supervision": {
     "title": "Sillan valvonta",

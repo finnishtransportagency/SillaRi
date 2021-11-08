@@ -28,7 +28,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   const { permitNumber } = permit || {};
   const { id: supervisionId, conformsToPermit = false, currentStatus, startedTime, crossingDeniedTime, finishedTime } = supervision || {};
 
-  const supervisionNotStarted = !isLoadingSupervision && currentStatus && currentStatus.status === SupervisionStatus.PLANNED;
+  const supervisionPending = !isLoadingSupervision && currentStatus && currentStatus.status === SupervisionStatus.PLANNED;
   const supervisionInProgress = currentStatus && currentStatus.status === SupervisionStatus.IN_PROGRESS;
   const crossingDenied = currentStatus && currentStatus.status === SupervisionStatus.CROSSING_DENIED;
   const supervisionFinished =
@@ -88,7 +88,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
           slot="start"
           value="conforms"
           checked={conformsToPermit}
-          disabled={!supervisionId || !supervisionNotStarted}
+          disabled={!supervisionId || !supervisionPending}
           onClick={() => setConformsToPermit(!conformsToPermit)}
         />
         <IonLabel>{t("bridge.conformsToPermit")}</IonLabel>
@@ -98,7 +98,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
         <IonRow>
           <IonCol className="ion-text-center">
             <IonButton
-              disabled={!supervisionId || !conformsToPermit || !supervisionNotStarted}
+              disabled={!supervisionId || !conformsToPermit || !supervisionPending}
               color="primary"
               expand="block"
               size="large"
@@ -111,7 +111,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
         <IonRow>
           <IonCol className="ion-text-center">
             <IonButton
-              disabled={!supervisionId || !supervisionNotStarted}
+              disabled={!supervisionId || !supervisionPending}
               color="tertiary"
               expand="block"
               size="large"
