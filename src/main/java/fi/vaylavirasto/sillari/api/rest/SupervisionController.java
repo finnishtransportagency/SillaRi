@@ -89,6 +89,19 @@ public class SupervisionController {
         }
     }
 
+    @Operation(summary = "Cancel supervision, delete supervision report")
+    @PostMapping(value = "/cancelsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> cancelSupervision(@RequestParam Integer supervisionId) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "cancelSupervision");
+        try {
+            SupervisionModel supervisionModel = supervisionService.cancelSupervision(supervisionId);
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Deny crossing")
     @PostMapping(value = "/denycrossing", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")

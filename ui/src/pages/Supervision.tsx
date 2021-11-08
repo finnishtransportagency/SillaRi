@@ -102,7 +102,7 @@ const Supervision = (): JSX.Element => {
 
   const cancelReport = (): void => {
     // TODO confirm that all changes are lost and supervision status reset
-    // Set supervision status back to 'PLANNED' and delete report
+    // Add supervision status 'CANCELLED' and delete report
     // Then go back to bridgeDetail page
     // We don't want to allow the user to get back to this page by using "back"
     history.replace(`/bridgeDetail/${supervisionId}`, { direction: "back" });

@@ -74,7 +74,6 @@ public class SupervisionService {
     }
 
     // Updates supervision fields (supervisors, planned time)
-    // TODO do we need to add a new status row?
     public void updateSupervision(SupervisionModel supervisionModel) {
         supervisionRepository.updateSupervision(supervisionModel);
     }
@@ -94,7 +93,7 @@ public class SupervisionService {
         return getSupervision(report.getSupervisionId());
     }
 
-    // Cancels the supervision by adding the status CROSSING_DENIED
+    // Ends the supervision by adding the status CROSSING_DENIED
     public SupervisionModel denyCrossing(SupervisionModel supervisionModel) {
         supervisionRepository.updateSupervision(supervisionModel.getId(), supervisionModel.getDenyCrossingReason());
         return getSupervision(supervisionModel.getId());
@@ -106,8 +105,13 @@ public class SupervisionService {
         return getSupervision(supervisionId);
     }
 
+    // Deletes the report and adds the status CANCELLED
+    public SupervisionModel cancelSupervision(Integer supervisionId) {
+        supervisionReportRepository.deleteSupervisionReport(supervisionId);
+        return getSupervision(supervisionId);
+    }
+
     // Updates the report fields
-    // TODO do we need to add a new status row?
     public SupervisionModel updateSupervisionReport(SupervisionReportModel supervisionReportModel) {
         supervisionReportRepository.updateSupervisionReport(supervisionReportModel);
         return getSupervision(supervisionReportModel.getSupervisionId());
