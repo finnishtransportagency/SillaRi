@@ -75,15 +75,9 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
       </IonItem>
 
       {!isLoadingSupervision && !supervisionId && <SupervisionStatusInfo color="danger" infoText={t("bridge.supervisionMissing")} />}
-      {!isLoadingSupervision && supervisionInProgress && (
-        <SupervisionStatusInfo color="success" infoText={t("bridge.supervisionStarted")} time={startedTime} />
-      )}
-      {!isLoadingSupervision && crossingDenied && (
-        <SupervisionStatusInfo color="warning" infoText={t("bridge.crossingDenied")} time={crossingDeniedTime} />
-      )}
-      {!isLoadingSupervision && supervisionFinished && (
-        <SupervisionStatusInfo color="secondary" infoText={t("bridge.supervisionFinished")} time={finishedTime} />
-      )}
+      {supervisionInProgress && <SupervisionStatusInfo color="success" infoText={t("bridge.supervisionStarted")} time={startedTime} />}
+      {crossingDenied && <SupervisionStatusInfo color="warning" infoText={t("bridge.crossingDenied")} time={crossingDeniedTime} />}
+      {supervisionFinished && <SupervisionStatusInfo color="secondary" infoText={t("bridge.supervisionFinished")} time={finishedTime} />}
 
       <IonItem lines="none">
         <IonCheckbox
