@@ -2,7 +2,8 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { IonCol, IonGrid, IonRouterLink, IonRow, IonText } from "@ionic/react";
+import { Link } from "react-router-dom";
+import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import ISupervision from "../../interfaces/ISupervision";
@@ -180,9 +181,9 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                         <IonText className="headingText">{t("management.companySummary.route.action")}</IonText>
                       </IonCol>
                       <IonCol size="7" size-sm="9" size-lg="12">
-                        <IonRouterLink routerLink={`/management/transportDetail/${routeTransportId}`}>
+                        <Link to={`/management/transportDetail/${routeTransportId}`}>
                           <IonText className="linkText">{action}</IonText>
-                        </IonRouterLink>
+                        </Link>
                       </IonCol>
                     </IonRow>
                   </IonGrid>

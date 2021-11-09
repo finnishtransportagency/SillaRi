@@ -1,6 +1,6 @@
 import React from "react";
-import { Route } from "react-router-dom";
-import { IonApp, IonRouterOutlet, setupConfig } from "@ionic/react";
+import { Route, Switch } from "react-router-dom";
+import { IonApp, IonContent, setupConfig } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -57,23 +57,25 @@ const App: React.FC = () => (
     <IonApp>
       <IonReactRouter>
         <SidebarMenu />
-        <IonRouterOutlet id="MainContent">
-          <Route path="/" component={Home} exact />
-          <Route path="/settings" component={Settings} exact />
-          <Route path="/bridgemap/:routeBridgeId" component={Map} exact />
-          <Route path="/routemap/:routeId" component={Map} exact />
-          <Route path="/routeTransportDetail/:routeTransportId" component={RouteTransportDetail} exact />
-          <Route path="/bridgeDetail/:supervisionId" component={BridgeDetail} exact />
-          <Route path="/supervision/:supervisionId" component={Supervision} exact />
-          <Route path="/denyCrossing/:supervisionId" component={DenyCrossing} exact />
-          <Route path="/summary/:supervisionId" component={SupervisionSummary} exact />
-          <Route path="/takePhotos/:supervisionId" component={Camera} exact />
-          <Route path="/management/:companyId" component={CompanySummary} exact />
-          <Route path="/management/addTransport/:permitId" component={AddTransport} exact />
-          <Route path="/management/transportDetail/:routeTransportId" component={TransportDetail} exact />
-          <Route path="/transport" component={TransportCodeInput} exact />
-          <Route path="/transport/:routeTransportId" component={Transport} exact />
-        </IonRouterOutlet>
+        <IonContent id="MainContent">
+          <Switch>
+            <Route path="/" component={Home} exact />
+            <Route path="/settings" component={Settings} exact />
+            <Route path="/bridgemap/:routeBridgeId" component={Map} exact />
+            <Route path="/routemap/:routeId" component={Map} exact />
+            <Route path="/routeTransportDetail/:routeTransportId" component={RouteTransportDetail} exact />
+            <Route path="/bridgeDetail/:supervisionId" component={BridgeDetail} exact />
+            <Route path="/supervision/:supervisionId" component={Supervision} exact />
+            <Route path="/denyCrossing/:supervisionId" component={DenyCrossing} exact />
+            <Route path="/summary/:supervisionId" component={SupervisionSummary} exact />
+            <Route path="/takePhotos/:supervisionId" component={Camera} exact />
+            <Route path="/management/:companyId" component={CompanySummary} exact />
+            <Route path="/management/addTransport/:permitId" component={AddTransport} exact />
+            <Route path="/management/transportDetail/:routeTransportId" component={TransportDetail} exact />
+            <Route path="/transport" component={TransportCodeInput} exact />
+            <Route path="/transport/:routeTransportId" component={Transport} exact />
+          </Switch>
+        </IonContent>
       </IonReactRouter>
     </IonApp>
   </QueryClientProvider>
