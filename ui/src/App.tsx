@@ -1,6 +1,7 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { IonApp, IonContent, setupConfig } from "@ionic/react";
+import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Home from "./pages/Home";
@@ -54,7 +55,7 @@ const queryClient = new QueryClient();
 const App: React.FC = () => (
   <QueryClientProvider client={queryClient}>
     <IonApp>
-      <BrowserRouter>
+      <IonReactRouter>
         <SidebarMenu />
         <IonContent id="MainContent">
           <Switch>
@@ -75,7 +76,7 @@ const App: React.FC = () => (
             <Route path="/transport/:routeTransportId" component={Transport} exact />
           </Switch>
         </IonContent>
-      </BrowserRouter>
+      </IonReactRouter>
     </IonApp>
   </QueryClientProvider>
 );
