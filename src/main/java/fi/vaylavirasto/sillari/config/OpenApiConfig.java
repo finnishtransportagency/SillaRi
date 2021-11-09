@@ -18,7 +18,12 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 @Server(
                         url = "http://localhost:8080/api/",
                         description = "Local Server"
+                ),
+                @Server(
+                        url = "https://sillaritest.testivaylapilvi.fi",
+                        description = "Test Server"
                 )
+
         }
 )
 public class OpenApiConfig {
