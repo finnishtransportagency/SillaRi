@@ -13,15 +13,16 @@ public class SupervisionModel {
     private Integer routeTransportId;
     private OffsetDateTime plannedTime;
     private Boolean conformsToPermit;
+    private SupervisorType supervisorType;
+    private String denyCrossingReason;
     private SupervisionStatusModel currentStatus;
     private List<SupervisionStatusModel> statusHistory;
-    private SupervisorType supervisorType;
     private List<SupervisorModel> supervisors;
     private SupervisionReportModel report;
     private List<SupervisionImageModel> images;
 
     private OffsetDateTime startedTime; // First IN_PROGRESS in statusHistory
-    private OffsetDateTime cancelledTime; // First CANCELLED in statusHistory
+    private OffsetDateTime crossingDeniedTime; // First CROSSING_DENIED in statusHistory
     private OffsetDateTime finishedTime; // First FINISHED in statusHistory
 
     // Parents
@@ -47,8 +48,8 @@ public class SupervisionModel {
                 .min(Comparator.comparing(SupervisionStatusModel::getTime))
                 .map(SupervisionStatusModel::getTime).orElse(null);
 
-        OffsetDateTime cancelledTime = statusHistory.stream()
-                .filter(model -> SupervisionStatusType.CANCELLED.equals(model.getStatus()))
+        OffsetDateTime crossingDeniedTime = statusHistory.stream()
+                .filter(model -> SupervisionStatusType.CROSSING_DENIED.equals(model.getStatus()))
                 .min(Comparator.comparing(SupervisionStatusModel::getTime))
                 .map(SupervisionStatusModel::getTime).orElse(null);
 
@@ -58,7 +59,7 @@ public class SupervisionModel {
                 .map(SupervisionStatusModel::getTime).orElse(null);
 
         this.startedTime = startedTime;
-        this.cancelledTime = cancelledTime;
+        this.crossingDeniedTime = crossingDeniedTime;
         this.finishedTime = finishedTime;
     }
 

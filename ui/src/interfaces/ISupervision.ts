@@ -15,11 +15,12 @@ export default interface ISupervision {
   plannedTime: Date;
   conformsToPermit: boolean;
   supervisorType: SupervisorType;
+  denyCrossingReason?: string;
   supervisors?: ISupervisor[];
   statusHistory?: ISupervisionStatus[];
   currentStatus?: ISupervisionStatus; // Not in DB, latest status picked from statusHistory
   startedTime?: Date; // Not in DB, first IN_PROGRESS status timestamp filtered from statusHistory
-  cancelledTime?: Date; // Not in DB, first CANCELLED status timestamp filtered from statusHistory
+  crossingDeniedTime?: Date; // Not in DB, first CROSSING_DENIED status timestamp filtered from statusHistory
   finishedTime?: Date; // Not in DB, first FINISHED status timestamp filtered from statusHistory
   report?: ISupervisionReport;
   images?: ISupervisionImage[];

@@ -21,6 +21,7 @@ public class SupervisionMapper implements RecordMapper<Record, SupervisionModel>
         supervisionModel.setPlannedTime(record.get(TableAlias.supervision.PLANNED_TIME));
         supervisionModel.setConformsToPermit(record.get(TableAlias.supervision.CONFORMS_TO_PERMIT));
         supervisionModel.setSupervisorType(record.get(TableAlias.supervision.SUPERVISOR_TYPE, new SupervisorTypeConverter(String.class, SupervisorType.class)));
+        supervisionModel.setDenyCrossingReason(record.get(TableAlias.supervision.DENY_CROSSING_REASON));
         supervisionModel.setStatusHistory(new ArrayList<>());
         supervisionModel.setSupervisors(new ArrayList<>());
         supervisionModel.setImages(new ArrayList<>());
