@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                         description = "Local Server"
                 ),
                 @Server(
-                        url = "https://sillaritest.testivaylapilvi.fi",
+                        url = "https://sillaritest.testivaylapilvi.fi/api/",
                         description = "Test Server"
                 )
 
