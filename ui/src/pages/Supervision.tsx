@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
-import { IonContent, IonPage, useIonViewDidEnter } from "@ionic/react";
+import { IonContent, IonPage } from "@ionic/react";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import SupervisionFooter from "../components/SupervisionFooter";
@@ -131,12 +131,6 @@ const Supervision = (): JSX.Element => {
       }
     }
   }, [isLoadingSupervision, supervision, dispatch]);
-
-  useIonViewDidEnter(() => {
-    // Make sure that previous values are not stored in modifiedReport (because of Ionic)
-    console.log("useIonViewDidEnter", "setModifiedReport undefined");
-    setModifiedReport(undefined);
-  });
 
   const { report: savedReport } = supervision || {};
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
