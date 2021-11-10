@@ -10,13 +10,19 @@ public class BridgeService {
     @Autowired
     BridgeRepository bridgeRepository;
 
-    public BridgeModel createOrUpdateBridge(Integer id) {
-        BridgeModel bridgeModel = bridgeRepository.getBridge(id);
-        if (bridgeModel != null && bridgeModel.getBridge() != null) {
-            String bridgeGeoJson = bridgeRepository.getBridgeGeoJson(bridgeModel.getBridge().getId());
-            bridgeModel.getBridge().setGeojson(bridgeGeoJson);
-        }
-        return bridgeModel;
+    public void createOrUpdateBridge(BridgeModel bridge) {
+
     }
 
+    public BridgeModel getBridge(String oid) {
+        return bridgeRepository.getBridge(oid);
+    }
+
+    public void updateBridge(BridgeModel bridge) {
+        bridgeRepository.update(bridge);
+    }
+
+    public void insertBridge(BridgeModel bridge) {
+        bridgeRepository.insert(bridge);
+    }
 }
