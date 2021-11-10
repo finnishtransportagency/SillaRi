@@ -11,7 +11,11 @@ import settings from "../theme/icons/settings.svg";
 import truck from "../theme/icons/truck.svg";
 import "./SidebarMenu.css";
 
-const SidebarMenu: React.FC = () => {
+interface SidebarMenuProps {
+  roles: string[];
+}
+
+const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -38,28 +42,34 @@ const SidebarMenu: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonList>
-          <IonMenuToggle>
-            <IonItem routerLink="/">
-              <IonIcon className="otherIcon" icon={lane} slot="start" />
-              <IonLabel>{t("SidebarMenu.mainPage")}</IonLabel>
-            </IonItem>
-          </IonMenuToggle>
+          {roles.includes("SILLARI_TEST_SILLANVALVOJA") && (
+            <IonMenuToggle>
+              <IonItem routerLink="/">
+                <IonIcon className="otherIcon" icon={lane} slot="start" />
+                <IonLabel>{t("SidebarMenu.mainPage")}</IonLabel>
+              </IonItem>
+            </IonMenuToggle>
+          )}
+          {roles.includes("SILLARI_TEST_AJOJARJESTELIJA") && (
+            <IonMenuToggle>
+              <IonItem routerLink="/management/1">
+                <IonIcon className="otherIcon" icon={calendar} slot="start" />
+                <IonLabel>{t("SidebarMenu.management")}</IonLabel>
+              </IonItem>
+            </IonMenuToggle>
+          )}
+          {roles.includes("SILLARI_TEST_KULJETTAJA") && (
+            <IonMenuToggle>
+              <IonItem routerLink="/transport">
+                <IonIcon className="otherIcon" icon={truck} slot="start" />
+                <IonLabel>{t("SidebarMenu.transports")}</IonLabel>
+              </IonItem>
+            </IonMenuToggle>
+          )}
           <IonMenuToggle>
             <IonItem routerLink="/settings">
               <IonIcon className="otherIcon" icon={settings} slot="start" />
               <IonLabel>{t("SidebarMenu.settings")}</IonLabel>
-            </IonItem>
-          </IonMenuToggle>
-          <IonMenuToggle>
-            <IonItem routerLink="/management/1">
-              <IonIcon className="otherIcon" icon={calendar} slot="start" />
-              <IonLabel>{t("SidebarMenu.management")}</IonLabel>
-            </IonItem>
-          </IonMenuToggle>
-          <IonMenuToggle>
-            <IonItem routerLink="/transport">
-              <IonIcon className="otherIcon" icon={truck} slot="start" />
-              <IonLabel>{t("SidebarMenu.transports")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>

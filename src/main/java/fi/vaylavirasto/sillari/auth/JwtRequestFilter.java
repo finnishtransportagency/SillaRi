@@ -131,7 +131,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                     // NOTE: this is just a test, the real user roles will be added later
                     List<GrantedAuthority> authorityList = new ArrayList<>();
-                    authorityList.add(SillariRole.fromString("SILLARI_TEST"));
+                    authorityList.add(SillariRole.fromString("SILLARI_TEST_SILLANVALVOJA"));
+                    authorityList.add(SillariRole.fromString("SILLARI_TEST_AJOJARJESTELIJA"));
+                    authorityList.add(SillariRole.fromString("SILLARI_TEST_KULJETTAJA"));
                     SillariUser userDetails = new SillariUser(userNameDetail, authorityList);
 
                     authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
@@ -148,8 +150,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     logger.debug("Using local development authentication");
 
                     List<GrantedAuthority> authorityList = new ArrayList<>();
-                    authorityList.add(SillariRole.fromString("SILLARI_TEST"));
-                    SillariUser userDetails = new SillariUser("DEV_USER", authorityList);
+                    authorityList.add(SillariRole.fromString("SILLARI_TEST_SILLANVALVOJA"));
+                    authorityList.add(SillariRole.fromString("SILLARI_TEST_AJOJARJESTELIJA"));
+                    authorityList.add(SillariRole.fromString("SILLARI_TEST_KULJETTAJA"));
+                    SillariUser userDetails = new SillariUser("Testi Käyttäjä", authorityList);
 
                     authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

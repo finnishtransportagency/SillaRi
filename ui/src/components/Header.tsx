@@ -14,7 +14,7 @@ const Header = ({ title, somethingFailed }: HeaderProps): JSX.Element => {
   const { pathname } = useLocation();
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
-  const canGoBack = pathname !== "/";
+  const canGoBack = pathname !== "/supervision" && pathname !== "/transport" && pathname !== "/management/1";
 
   return (
     <IonHeader>

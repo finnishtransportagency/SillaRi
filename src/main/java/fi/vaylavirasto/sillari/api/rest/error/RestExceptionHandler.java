@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.security.access.AccessDeniedException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -50,6 +51,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public void other(Exception ex, HttpServletResponse response) throws IOException {
         logger.error("General Exception: ", ex);
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
+        logger.error("AccessDeniedException: ", ex);
+        return new ResponseEntity<>("", HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(LeluPermitSaveException.class)
