@@ -154,6 +154,7 @@
       "takePhotos": "(SV) Photos",
       "drivingLine": "(SV) Driving line",
       "summary": "(SV) Go to summary",
+      "cancel": "(SV) Cancel supervision",
       "saveToSendList": "(SV) Save (to the send list)"
     },
     "summary": {

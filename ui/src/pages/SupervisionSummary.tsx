@@ -14,6 +14,7 @@ import { useTypedSelector } from "../store/store";
 import { finishSupervision, getSupervision, onRetry, updateSupervisionReport } from "../utils/supervisionBackendData";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import SupervisionFooter from "../components/SupervisionFooter";
+import { SupervisionStatus } from "../utils/constants";
 
 interface SummaryProps {
   supervisionId: string;
@@ -37,14 +38,15 @@ const SupervisionSummary = (): JSX.Element => {
     () => getSupervision(Number(supervisionId), dispatch),
     { retry: onRetry }
   );
-  const { report } = supervision || {};
+  const { report, currentStatus } = supervision || {};
+  const { status: supervisionStatus } = currentStatus || {};
 
   const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
-      // We don't want to allow the user to get back to this page by using "back"
-      history.replace(`/supervision/${supervisionId}`);
+      // Cannot use history.replace or history.goBack if we want to be able to cancel changes on Supervision page and get back here
+      history.push(`/supervision/${supervisionId}`);
     },
   });
   const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
@@ -55,7 +57,7 @@ const SupervisionSummary = (): JSX.Element => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
       setToastMessage(t("supervision.summary.saved"));
       // TODO go back to supervision list - but where? Main page?
-      //  history.replace(`/`);
+      //  history.push(`/`);
     },
   });
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
@@ -86,11 +88,13 @@ const SupervisionSummary = (): JSX.Element => {
             <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" />
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
-              reportId={report?.id}
-              isSummary={true}
               isLoading={isLoadingSupervision || isSendingReportUpdate || isSendingFinishSupervision}
               saveChanges={saveReport}
+              saveDenied={!report || supervisionStatus === SupervisionStatus.REPORT_SIGNED}
+              saveLabel={t("supervision.buttons.saveToSendList")}
               cancelChanges={editReport}
+              cancelDenied={!report || supervisionStatus === SupervisionStatus.REPORT_SIGNED}
+              cancelLabel={t("common.buttons.edit")}
             />
           </>
         )}

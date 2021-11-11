@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
+import { Prompt, useHistory, useParams } from "react-router-dom";
 import { IonContent, IonPage } from "@ionic/react";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
@@ -12,10 +12,11 @@ import SupervisionObservations from "../components/SupervisionObservations";
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector } from "../store/store";
-import { getSupervision, onRetry, sendImageUpload, updateSupervisionReport } from "../utils/supervisionBackendData";
+import { cancelSupervision, getSupervision, onRetry, sendImageUpload, updateSupervisionReport } from "../utils/supervisionBackendData";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import moment from "moment";
-import { DATE_TIME_FORMAT } from "../utils/constants";
+import { DATE_TIME_FORMAT, SupervisionStatus } from "../utils/constants";
+import { reportHasUnsavedChanges } from "../utils/supervisionUtil";
 import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
 import { actions as supervisionActions } from "../store/supervisionSlice";
 
@@ -48,6 +49,11 @@ const Supervision = (): JSX.Element => {
     }
   );
 
+  const { report: savedReport, currentStatus } = supervision || {};
+  const { status: supervisionStatus } = currentStatus || {};
+  const supervisionInProgress = !isLoadingSupervision && supervisionStatus === SupervisionStatus.IN_PROGRESS;
+  const supervisionFinished = !isLoadingSupervision && supervisionStatus === SupervisionStatus.FINISHED;
+
   const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
@@ -63,9 +69,20 @@ const Supervision = (): JSX.Element => {
       queryClient.invalidateQueries(["getSupervision", supervisionId]);
     },
   });
+  const { isLoading: isSendingImageUpload } = imageUploadMutation;
+
+  const cancelSupervisionMutation = useMutation((superId: string) => cancelSupervision(Number(superId), dispatch), {
+    retry: onRetry,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      // We don't want to allow the user to get back to this page by using "back"
+      history.replace(`/bridgeDetail/${supervisionId}`, { direction: "back" });
+    },
+  });
+  const { isLoading: isSendingCancelSupervision } = cancelSupervisionMutation;
 
   // Save changes in both report and images
-  const saveReport = (): void => {
+  const saveReportClicked = (): void => {
     if (modifiedReport) {
       // Update conflicting values
       const updatedReport = {
@@ -94,25 +111,25 @@ const Supervision = (): JSX.Element => {
       imageUploadMutation.mutate(fileUpload);
     });
 
-    // Use direction "back" to force this page to unmount, otherwise "useEffect" is still listening in the background
-    // https://github.com/ionic-team/ionic-framework/issues/20543
-    // "The idea is if you are leaving a page by going back, the state of the page no longer needs to be maintained"
+    setModifiedReport(undefined);
     history.push(`/summary/${supervisionId}`);
   };
 
-  const cancelReport = (): void => {
-    // TODO confirm that all changes are lost and supervision status reset
-    // Add supervision status 'CANCELLED' and delete report
-    // Then go back to bridgeDetail page
-    // We don't want to allow the user to get back to this page by using "back"
-    history.replace(`/bridgeDetail/${supervisionId}`, { direction: "back" });
+  const cancelSupervisionClicked = (): void => {
+    // TODO confirm that all changes are lost
+    if (supervisionInProgress) {
+      cancelSupervisionMutation.mutate(supervisionId);
+    } else {
+      history.goBack();
+    }
+  };
+
+  const showPrompt = (): boolean => {
+    return reportHasUnsavedChanges(modifiedReport, savedReport);
   };
 
   useEffect(() => {
     if (!isLoadingSupervision && !isSendingReportUpdate && supervision) {
-      // When page has loaded, start supervision or set modifiedReport to previously saved report.
-      const { report: savedReport } = supervision || {};
-
       // Page is loaded for the first time, modifiedReport is not set
       if (modifiedReport === undefined && savedReport) {
         console.log("setModifiedReport", savedReport);
@@ -120,7 +137,7 @@ const Supervision = (): JSX.Element => {
         setModifiedReport({ ...savedReport });
       }
     }
-  }, [isLoadingSupervision, isSendingReportUpdate, supervision, modifiedReport]);
+  }, [isLoadingSupervision, isSendingReportUpdate, supervision, modifiedReport, savedReport]);
 
   useEffect(() => {
     if (supervision && !isLoadingSupervision) {
@@ -132,7 +149,6 @@ const Supervision = (): JSX.Element => {
     }
   }, [isLoadingSupervision, supervision, dispatch]);
 
-  const { report: savedReport } = supervision || {};
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
   return (
@@ -143,15 +159,18 @@ const Supervision = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <>
+            <Prompt when={showPrompt()} message={"Hello prompt!"} />
             <SupervisionHeader supervision={supervision as ISupervision} />
             <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photosDrivingLine" isButtonsIncluded />
             <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} savedReport={savedReport} />
             <SupervisionFooter
-              reportId={modifiedReport?.id}
-              isSummary={false}
-              isLoading={isLoadingSupervision || isSendingReportUpdate}
-              saveChanges={saveReport}
-              cancelChanges={cancelReport}
+              isLoading={isLoadingSupervision || isSendingReportUpdate || isSendingImageUpload || isSendingCancelSupervision}
+              saveChanges={saveReportClicked}
+              saveDenied={!savedReport || (!supervisionInProgress && !supervisionFinished)}
+              saveLabel={t("supervision.buttons.summary")}
+              cancelChanges={cancelSupervisionClicked}
+              cancelDenied={!savedReport || (!supervisionInProgress && !supervisionFinished)}
+              cancelLabel={supervisionInProgress ? t("supervision.buttons.cancel") : t("common.buttons.cancel")}
             />
           </>
         )}
