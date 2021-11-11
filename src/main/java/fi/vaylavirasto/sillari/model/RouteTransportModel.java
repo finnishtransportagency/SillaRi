@@ -20,6 +20,9 @@ public class RouteTransportModel {
     private OffsetDateTime departureTime; // First DEPARTED in statusHistory
     private OffsetDateTime arrivalTime; // First ARRIVED in statusHistory
 
+    // Only returned to the transport company admin UI
+    private RouteTransportPasswordModel currentTransportPassword;
+
     public void setStatusHistory(List<RouteTransportStatusModel> statusHistory) {
         this.statusHistory = statusHistory;
 
@@ -47,5 +50,4 @@ public class RouteTransportModel {
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
     }
-
 }

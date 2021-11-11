@@ -13,6 +13,7 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
@@ -23,6 +24,8 @@ public class RouteTransportRepository {
     private DSLContext dsl;
     @Autowired
     RouteTransportStatusRepository routeTransportStatusRepository;
+    @Autowired
+    RouteTransportPasswordRepository routeTransportPasswordRepository;
 
     public RouteTransportModel getRouteTransportById(Integer id) {
         return dsl.select().from(TableAlias.routeTransport)
@@ -50,7 +53,7 @@ public class RouteTransportRepository {
                 .fetch(new RouteTransportMapper());
     }
 
-    public Integer createRouteTransport(RouteTransportModel routeTransportModel) throws DataAccessException {
+    public Integer createRouteTransport(RouteTransportModel routeTransportModel, String password, OffsetDateTime passwordExpiryDate) throws DataAccessException {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
@@ -69,11 +72,15 @@ public class RouteTransportRepository {
 
             routeTransportStatusRepository.insertTransportStatus(ctx, routeTransportId, TransportStatusType.PLANNED);
 
+            if (password != null && password.length() > 0 && passwordExpiryDate != null) {
+                routeTransportPasswordRepository.insertTransportPassword(ctx, routeTransportId, password, passwordExpiryDate);
+            }
+
             return routeTransportId;
         });
     }
 
-    public void updateRouteTransport(RouteTransportModel routeTransportModel) {
+    public void updateRouteTransport(RouteTransportModel routeTransportModel, OffsetDateTime passwordExpiryDate) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
@@ -82,6 +89,26 @@ public class RouteTransportRepository {
                     .set(TableAlias.routeTransport.PLANNED_DEPARTURE_TIME, routeTransportModel.getPlannedDepartureTime())
                     .where(TableAlias.routeTransport.ID.eq(routeTransportModel.getId()))
                     .execute();
+
+            if (passwordExpiryDate != null) {
+                routeTransportPasswordRepository.updateTransportPasswordExpiry(ctx, routeTransportModel.getId(), passwordExpiryDate);
+            }
+        });
+    }
+
+    public void updateRouteTransportAndInsertPassword(RouteTransportModel routeTransportModel, String password, OffsetDateTime passwordExpiryDate) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            ctx.update(TableAlias.routeTransport)
+                    .set(TableAlias.routeTransport.ROUTE_ID, routeTransportModel.getRouteId())
+                    .set(TableAlias.routeTransport.PLANNED_DEPARTURE_TIME, routeTransportModel.getPlannedDepartureTime())
+                    .where(TableAlias.routeTransport.ID.eq(routeTransportModel.getId()))
+                    .execute();
+
+            if (password != null && password.length() > 0 && passwordExpiryDate != null) {
+                routeTransportPasswordRepository.insertTransportPassword(ctx, routeTransportModel.getId(), password, passwordExpiryDate);
+            }
         });
     }
 
@@ -90,6 +117,7 @@ public class RouteTransportRepository {
             DSLContext ctx = DSL.using(configuration);
 
             routeTransportStatusRepository.deleteSupervisionStatuses(ctx, routeTransportModel.getId());
+            routeTransportPasswordRepository.deleteTransportPasswords(ctx, routeTransportModel.getId());
 
             ctx.delete(TableAlias.routeTransport)
                     .where(TableAlias.routeTransport.ID.eq(routeTransportModel.getId()))

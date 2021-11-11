@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Timed
-@RequestMapping("/transport")
+@RequestMapping("/transportpassword")
 public class RouteTransportPasswordController {
     @Autowired
     RouteTransportPasswordService rtpService;
@@ -29,6 +29,20 @@ public class RouteTransportPasswordController {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportPasswordController", "findRouteTransportPassword");
         try {
             RouteTransportPasswordModel rtp = rtpService.findRouteTransportPassword(transportPassword);
+            return ResponseEntity.ok().body(rtp != null ? rtp : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Generate new transport password")
+    @GetMapping(value = "/generate", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> generateNewRouteTransportPassword(@RequestParam Integer routeTransportId) {
+        ServiceMetric serviceMetric = new ServiceMetric("RouteTransportPasswordController", "generateNewRouteTransportPassword");
+        try {
+            // TODO - restrict this method to transport company admin users only
+            RouteTransportPasswordModel rtp = rtpService.generateRouteTransportPassword(routeTransportId);
             return ResponseEntity.ok().body(rtp != null ? rtp : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

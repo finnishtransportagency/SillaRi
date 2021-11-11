@@ -3,11 +3,14 @@ package fi.vaylavirasto.sillari.service;
 import fi.vaylavirasto.sillari.model.PermitModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
+import fi.vaylavirasto.sillari.model.RouteTransportPasswordModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -30,8 +33,10 @@ public class RouteTransportService {
     SupervisionStatusRepository supervisionStatusRepository;
     @Autowired
     SupervisorRepository supervisorRepository;
+    @Autowired
+    RouteTransportPasswordRepository routeTransportPasswordRepository;
 
-    public RouteTransportModel getRouteTransport(Integer routeTransportId) {
+    public RouteTransportModel getRouteTransport(Integer routeTransportId, boolean includePassword) {
         RouteTransportModel routeTransportModel = routeTransportRepository.getRouteTransportById(routeTransportId);
 
         if (routeTransportModel != null) {
@@ -47,12 +52,17 @@ public class RouteTransportService {
                 });
             }
             routeTransportModel.setSupervisions(supervisions);
+
+            if (includePassword) {
+                // Only for use with the transport company admin UI
+                routeTransportModel.setCurrentTransportPassword(routeTransportPasswordRepository.getTransportPassword(routeTransportModel.getId()));
+            }
         }
 
         return routeTransportModel;
     }
 
-    public List<RouteTransportModel> getRouteTransportsOfPermit(Integer permitId) {
+    public List<RouteTransportModel> getRouteTransportsOfPermit(Integer permitId, boolean includePassword) {
         List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByPermitId(permitId);
 
         if (routeTransportModels != null) {
@@ -69,6 +79,11 @@ public class RouteTransportService {
                     });
                 }
                 routeTransportModel.setSupervisions(supervisions);
+
+                if (includePassword) {
+                    // Only for use with the transport company admin UI
+                    routeTransportModel.setCurrentTransportPassword(routeTransportPasswordRepository.getTransportPassword(routeTransportModel.getId()));
+                }
             });
         }
 
@@ -113,14 +128,53 @@ public class RouteTransportService {
         return routeTransport;
     }
 
+    private OffsetDateTime getPasswordExpiryDate(RouteTransportModel routeTransportModel) {
+        // Get the planned date of the last supervision to use for the password expiry date, but only if it's later than now
+        OffsetDateTime passwordExpiryDate = OffsetDateTime.now();
+        if (routeTransportModel.getSupervisions() != null && !routeTransportModel.getSupervisions().isEmpty()) {
+            SupervisionModel lastSupervision = routeTransportModel.getSupervisions().stream()
+                    .max(Comparator.comparing(SupervisionModel::getPlannedTime)).orElse(null);
+
+            if (lastSupervision != null) {
+                OffsetDateTime maxPlannedTime = lastSupervision.getPlannedTime();
+
+                if (maxPlannedTime != null && maxPlannedTime.isAfter(passwordExpiryDate)) {
+                    passwordExpiryDate = maxPlannedTime;
+                }
+            }
+        }
+
+        // Add a 1 day buffer to the expiry date
+        passwordExpiryDate = passwordExpiryDate.plusDays(1);
+
+        return passwordExpiryDate;
+    }
+
     public RouteTransportModel createRouteTransport(RouteTransportModel routeTransportModel) {
-        Integer routeTransportId = routeTransportRepository.createRouteTransport(routeTransportModel);
-        return getRouteTransport(routeTransportId);
+        // Generate a password and get a new expiry date when creating a new transport
+        Integer routeTransportId = routeTransportRepository.createRouteTransport(routeTransportModel,
+                routeTransportPasswordRepository.generateUniqueTransportPassword(),
+                getPasswordExpiryDate(routeTransportModel));
+
+        return getRouteTransport(routeTransportId, false);
     }
 
     public RouteTransportModel updateRouteTransport(RouteTransportModel routeTransportModel) {
-        routeTransportRepository.updateRouteTransport(routeTransportModel);
-        return getRouteTransport(routeTransportModel.getId());
+        RouteTransportPasswordModel existingPassword = routeTransportPasswordRepository.getTransportPassword(routeTransportModel.getId());
+
+        if (existingPassword != null) {
+            // In the usual case when updating a transport, keep the same password but use a new expiry date
+            routeTransportRepository.updateRouteTransport(routeTransportModel,
+                    getPasswordExpiryDate(routeTransportModel));
+        } else {
+            // Just in case a password wasn't created before, generate one now
+            // This shouldn't happen if the transport was added via the SillaRi UI
+            routeTransportRepository.updateRouteTransportAndInsertPassword(routeTransportModel,
+                    routeTransportPasswordRepository.generateUniqueTransportPassword(),
+                    getPasswordExpiryDate(routeTransportModel));
+        }
+
+        return getRouteTransport(routeTransportModel.getId(), false);
     }
 
     public void deleteRouteTransport(RouteTransportModel routeTransportModel) {
