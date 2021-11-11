@@ -158,6 +158,13 @@
       "cancel": "Peru valvonta",
       "saveToSendList": "Tallenna (lähetyslistalle)"
     },
+    "warning": {
+      "cancelSupervisionHeader": "Haluatko varmasti perua valvonnan?",
+      "cancelSupervisionText": "Raporttiin kirjatut tiedot poistetaan.",
+      "leavePage": "Halutko varmasti poistua sivulta?",
+      "unsavedChanges": "Valvonnassa on tallentamattomia muutoksia.",
+      "supervisionNotFinished": "Valvontaa ei ole tallennettu lähetyslistalle."
+    },
     "summary": {
       "title": "Yhteenveto",
       "observations": "Havainnot",

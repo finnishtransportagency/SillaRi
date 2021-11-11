@@ -157,6 +157,13 @@
       "cancel": "Cancel supervision",
       "saveToSendList": "Save (to the send list)"
     },
+    "warning": {
+      "cancelSupervisionHeader": "Are you sure you want to cancel the supervision?",
+      "cancelSupervisionText": "All data from the report will be deleted.",
+      "leavePage": "Are you sure you want to leave the page?",
+      "unsavedChanges": "Supervision has unsaved changes.",
+      "supervisionNotFinished": "Supervision has not been saved to send list."
+    },
     "summary": {
       "title": "Summary",
       "observations": "Observations",

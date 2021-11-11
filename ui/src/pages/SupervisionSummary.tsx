@@ -11,8 +11,7 @@ import SupervisionObservationsSummary from "../components/SupervisionObservation
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector } from "../store/store";
-import { finishSupervision, getSupervision, onRetry, updateSupervisionReport } from "../utils/supervisionBackendData";
-import ISupervisionReport from "../interfaces/ISupervisionReport";
+import { finishSupervision, getSupervision, onRetry } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
 import { SupervisionStatus } from "../utils/constants";
 
@@ -28,6 +27,7 @@ const SupervisionSummary = (): JSX.Element => {
 
   const { supervisionId = "0" } = useParams<SummaryProps>();
   const [toastMessage, setToastMessage] = useState("");
+  const [shouldBlockNavigation, setShouldBlockNavigation] = useState(true);
 
   const {
     networkStatus: { isFailed = {} },
@@ -41,37 +41,28 @@ const SupervisionSummary = (): JSX.Element => {
   const { report, currentStatus } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
 
-  const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
-    retry: onRetry,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
-      // Cannot use history.replace or history.goBack if we want to be able to cancel changes on Supervision page and get back here
-      history.push(`/supervision/${supervisionId}`);
-    },
-  });
-  const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
+  const notAllowedToEdit = !report || supervisionStatus === SupervisionStatus.REPORT_SIGNED;
 
   const finishSupervisionMutation = useMutation((superId: string) => finishSupervision(Number(superId), dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
       setToastMessage(t("supervision.summary.saved"));
-      // TODO go back to supervision list - but where? Main page?
-      //  history.push(`/`);
+      // TODO go back to supervision list - but where?
+      history.push("/");
     },
   });
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
 
   const saveReport = (): void => {
+    setShouldBlockNavigation(false);
     finishSupervisionMutation.mutate(supervisionId);
   };
 
   const editReport = (): void => {
-    // Set report back to draft and update modifiedReport on Supervision page
-    if (report) {
-      const updatedReport = { ...report, draft: true };
-      reportUpdateMutation.mutate(updatedReport);
-    }
+    // Cannot use history.replace or history.goBack if we want to be able to cancel changes on Supervision page and get back here
+    setShouldBlockNavigation(false);
+    history.push(`/supervision/${supervisionId}`);
   };
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
@@ -85,15 +76,19 @@ const SupervisionSummary = (): JSX.Element => {
         ) : (
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
-            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" />
+            <SupervisionPhotos
+              supervision={supervision as ISupervision}
+              headingKey="supervision.photos"
+              disabled={notAllowedToEdit}
+              setShouldBlockNavigation={setShouldBlockNavigation}
+            />
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
-              isLoading={isLoadingSupervision || isSendingReportUpdate || isSendingFinishSupervision}
+              isLoading={isLoadingSupervision || isSendingFinishSupervision}
+              disabled={notAllowedToEdit}
               saveChanges={saveReport}
-              saveDenied={!report || supervisionStatus === SupervisionStatus.REPORT_SIGNED}
-              saveLabel={t("supervision.buttons.saveToSendList")}
               cancelChanges={editReport}
-              cancelDenied={!report || supervisionStatus === SupervisionStatus.REPORT_SIGNED}
+              saveLabel={t("supervision.buttons.saveToSendList")}
               cancelLabel={t("common.buttons.edit")}
             />
           </>

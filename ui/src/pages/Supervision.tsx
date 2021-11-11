@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { Prompt, useHistory, useParams } from "react-router-dom";
-import { IonContent, IonPage } from "@ionic/react";
+import { useHistory, useParams } from "react-router-dom";
+import { IonContent, IonPage, useIonAlert } from "@ionic/react";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import SupervisionFooter from "../components/SupervisionFooter";
@@ -37,6 +37,8 @@ const Supervision = (): JSX.Element => {
   } = useTypedSelector((state) => state.supervisionReducer);
 
   const [modifiedReport, setModifiedReport] = useState<ISupervisionReport | undefined>(undefined);
+  const [shouldBlockNavigation, setShouldBlockNavigation] = useState(true);
+  const [present] = useIonAlert();
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
@@ -54,11 +56,12 @@ const Supervision = (): JSX.Element => {
   const supervisionInProgress = !isLoadingSupervision && supervisionStatus === SupervisionStatus.IN_PROGRESS;
   const supervisionFinished = !isLoadingSupervision && supervisionStatus === SupervisionStatus.FINISHED;
 
+  const notAllowedToEdit = !savedReport || (!supervisionInProgress && !supervisionFinished);
+
   const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
-      setModifiedReport(data.report ? { ...data.report } : undefined);
     },
   });
   const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
@@ -95,7 +98,6 @@ const Supervision = (): JSX.Element => {
         bendOrDisplacement: modifiedReport.anomalies ? modifiedReport.bendOrDisplacement : false,
         otherObservations: modifiedReport.anomalies ? modifiedReport.otherObservations : false,
         otherObservationsInfo: modifiedReport.anomalies && modifiedReport.otherObservations ? modifiedReport.otherObservationsInfo : "",
-        draft: false,
       };
       reportUpdateMutation.mutate(updatedReport);
     }
@@ -111,20 +113,38 @@ const Supervision = (): JSX.Element => {
       imageUploadMutation.mutate(fileUpload);
     });
 
-    setModifiedReport(undefined);
+    setShouldBlockNavigation(false);
     history.push(`/summary/${supervisionId}`);
   };
 
+  const confirmCancelSupervision = () => {
+    present({
+      header: t("supervision.warning.cancelSupervisionHeader"),
+      message: t("supervision.warning.cancelSupervisionText"),
+      buttons: [
+        {
+          text: t("common.answer.yes"),
+          handler: () => {
+            setShouldBlockNavigation(false);
+            cancelSupervisionMutation.mutate(supervisionId);
+          },
+        },
+        t("common.answer.no"),
+      ],
+    });
+  };
+
   const cancelSupervisionClicked = (): void => {
-    // TODO confirm that all changes are lost
     if (supervisionInProgress) {
-      cancelSupervisionMutation.mutate(supervisionId);
+      confirmCancelSupervision();
     } else {
+      setShouldBlockNavigation(false);
       history.goBack();
     }
   };
 
-  const showPrompt = (): boolean => {
+  const unsavedChanges = (): boolean => {
+    // TODO check unsaved images
     return reportHasUnsavedChanges(modifiedReport, savedReport);
   };
 
@@ -159,17 +179,21 @@ const Supervision = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <>
-            <Prompt when={showPrompt()} message={"Hello prompt!"} />
             <SupervisionHeader supervision={supervision as ISupervision} />
-            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photosDrivingLine" isButtonsIncluded />
-            <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} savedReport={savedReport} />
+            <SupervisionPhotos
+              supervision={supervision as ISupervision}
+              headingKey="supervision.photosDrivingLine"
+              isButtonsIncluded
+              disabled={notAllowedToEdit}
+              setShouldBlockNavigation={setShouldBlockNavigation}
+            />
+            <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} disabled={notAllowedToEdit} />
             <SupervisionFooter
               isLoading={isLoadingSupervision || isSendingReportUpdate || isSendingImageUpload || isSendingCancelSupervision}
+              disabled={notAllowedToEdit}
               saveChanges={saveReportClicked}
-              saveDenied={!savedReport || (!supervisionInProgress && !supervisionFinished)}
-              saveLabel={t("supervision.buttons.summary")}
               cancelChanges={cancelSupervisionClicked}
-              cancelDenied={!savedReport || (!supervisionInProgress && !supervisionFinished)}
+              saveLabel={t("supervision.buttons.summary")}
               cancelLabel={supervisionInProgress ? t("supervision.buttons.cancel") : t("common.buttons.cancel")}
             />
           </>
