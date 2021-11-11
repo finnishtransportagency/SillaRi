@@ -49,6 +49,7 @@
   color: var(--ion-color-primary);
   text-decoration: underline;
   margin-right: 8px;
+  cursor: pointer;
 }
 
 .disabledLink {

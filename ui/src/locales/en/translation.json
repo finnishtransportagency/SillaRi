@@ -189,12 +189,14 @@
         "route": "Route",
         "supervision": "Supervision",
         "time": "Time",
+        "password": "Password",
         "status": "Status",
         "action": "Action"
       },
       "action": {
         "details": "Details",
-        "modify": "Modify"
+        "modify": "Modify",
+        "show": "Show"
       }
     },
     "transportDetail": {

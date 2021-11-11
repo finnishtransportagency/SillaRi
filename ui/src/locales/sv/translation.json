@@ -189,12 +189,14 @@
         "route": "(SV) Route",
         "supervision": "(SV) Supervision",
         "time": "(SV) Time",
+        "password": "(SV) Password",
         "status": "(SV) Status",
         "action": "(SV) Action"
       },
       "action": {
         "details": "(SV) Details",
-        "modify": "(SV) Modify"
+        "modify": "(SV) Modify",
+        "show": "(SV) Show"
       }
     },
     "transportDetail": {

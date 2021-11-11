@@ -1,12 +1,13 @@
-import React from "react";
+import React, { MouseEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
+import { IonCol, IonGrid, IonIcon, IonRow, IonText, useIonPopover } from "@ionic/react";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import ISupervision from "../../interfaces/ISupervision";
+import close from "../../theme/icons/close.svg";
 import { getRouteTransportsOfPermit, onRetry } from "../../utils/managementBackendData";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 import "./RouteGrid.css";
@@ -19,6 +20,33 @@ interface RouteGridProps {
 const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
+  const [popoverText, setPopoverText] = useState("");
+  const [present, dismiss] = useIonPopover(
+    <IonGrid>
+      <IonRow>
+        <IonCol>
+          <IonText>{popoverText}</IonText>
+        </IonCol>
+        <IonCol size="2">
+          <IonIcon
+            className="otherIcon"
+            icon={close}
+            onClick={() => {
+              setPopoverText("");
+              dismiss();
+            }}
+          />
+        </IonCol>
+      </IonRow>
+    </IonGrid>,
+    {
+      onHide: () => {
+        setPopoverText("");
+        dismiss();
+      },
+    }
+  );
 
   const { id: permitId } = permit;
 
@@ -53,25 +81,37 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
     }
   };
 
+  const showPassword = (evt: MouseEvent, password?: string) => {
+    if (password) {
+      setPopoverText(password);
+      present({
+        event: evt.nativeEvent,
+      });
+    }
+  };
+
   return (
     <IonGrid className="routeGrid ion-no-padding">
       <IonRow className="lightBackground ion-hide-lg-down">
-        <IonCol size="12" size-lg="1" className="ion-padding">
+        <IonCol size="15" size-lg="1" className="ion-padding">
           <IonText>{t("management.companySummary.route.id").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="12" size-lg="3" className="ion-padding">
+        <IonCol size="15" size-lg="3" className="ion-padding">
           <IonText>{t("management.companySummary.route.route").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="12" size-lg="2" className="ion-padding">
+        <IonCol size="15" size-lg="3" className="ion-padding">
           <IonText>{t("management.companySummary.route.supervision").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="12" size-lg="2" className="ion-padding">
+        <IonCol size="15" size-lg="2" className="ion-padding">
           <IonText>{t("management.companySummary.route.time").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="12" size-lg="2" className="ion-padding">
+        <IonCol size="15" size-lg="2" className="ion-padding">
+          <IonText>{t("management.companySummary.route.password").toUpperCase()}</IonText>
+        </IonCol>
+        <IonCol size="15" size-lg="2" className="ion-padding">
           <IonText>{t("management.companySummary.route.status").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="12" size-lg="2" className="ion-padding">
+        <IonCol size="15" size-lg="2" className="ion-padding">
           <IonText>{t("management.companySummary.route.action").toUpperCase()}</IonText>
         </IonCol>
       </IonRow>
@@ -107,8 +147,9 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
           .sort((a, b) => b.id - a.id)
           .map((routeTransport, index) => {
             const key = `routetransport_${index}`;
-            const { id: routeTransportId, currentStatus, route, supervisions } = routeTransport;
+            const { id: routeTransportId, currentTransportPassword, currentStatus, route, supervisions } = routeTransport;
             const { name: routeName } = route || {};
+            const { transportPassword } = currentTransportPassword || {};
             const { status } = currentStatus || {};
 
             const statusText = status ? t(`management.transportStatus.${status.toLowerCase()}`) : t("management.transportStatus.unknown");
@@ -117,12 +158,12 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
 
             return (
               <IonRow key={key}>
-                <IonCol size="12" size-lg="1" className="ion-padding">
+                <IonCol size="15" size-lg="1" className="ion-padding">
                   <IonText className="headingText ion-hide-lg-up">{`${t("management.companySummary.route.id")}: `}</IonText>
                   <IonText>{routeTransportId}</IonText>
                 </IonCol>
 
-                <IonCol size="12" size-lg="3" className="ion-padding">
+                <IonCol size="15" size-lg="3" className="ion-padding">
                   <IonGrid className="ion-no-padding">
                     <IonRow>
                       <IonCol size="12" className="ion-hide-lg-up">
@@ -135,7 +176,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                   </IonGrid>
                 </IonCol>
 
-                <IonCol size="12" size-lg="2" className="ion-padding">
+                <IonCol size="15" size-lg="3" className="ion-padding">
                   <IonGrid className="ion-no-padding">
                     <IonRow>
                       <IonCol size="12" className="ion-hide-lg-up">
@@ -148,7 +189,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                   </IonGrid>
                 </IonCol>
 
-                <IonCol size="12" size-lg="2" className="ion-padding">
+                <IonCol size="15" size-lg="2" className="ion-padding">
                   <IonGrid className="ion-no-padding">
                     <IonRow>
                       <IonCol size="12" className="ion-hide-lg-up">
@@ -161,7 +202,26 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                   </IonGrid>
                 </IonCol>
 
-                <IonCol size="12" size-lg="2" className="ion-padding">
+                <IonCol size="15" size-lg="2" className="ion-padding">
+                  <IonGrid className="ion-no-padding">
+                    <IonRow>
+                      <IonCol size="5" size-sm="3" className="ion-hide-lg-up">
+                        <IonText className="headingText">{t("management.companySummary.route.password")}</IonText>
+                      </IonCol>
+                      <IonCol size="7" size-sm="9" size-lg="12">
+                        {transportPassword && transportPassword.length > 0 ? (
+                          <IonText className="linkText" onClick={(evt) => showPassword(evt, transportPassword)}>
+                            {t("management.companySummary.action.show")}
+                          </IonText>
+                        ) : (
+                          <IonText>{`(${t("management.transportDetail.passwordUnknown")})`}</IonText>
+                        )}
+                      </IonCol>
+                    </IonRow>
+                  </IonGrid>
+                </IonCol>
+
+                <IonCol size="15" size-lg="2" className="ion-padding">
                   <IonGrid className="ion-no-padding">
                     <IonRow>
                       <IonCol size="5" size-sm="3" className="ion-hide-lg-up">
@@ -174,7 +234,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                   </IonGrid>
                 </IonCol>
 
-                <IonCol size="12" size-lg="2" className="ion-padding">
+                <IonCol size="15" size-lg="2" className="ion-padding">
                   <IonGrid className="ion-no-padding">
                     <IonRow>
                       <IonCol size="5" size-sm="3" className="ion-hide-lg-up">
