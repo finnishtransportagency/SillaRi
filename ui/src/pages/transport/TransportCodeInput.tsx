@@ -11,11 +11,11 @@ const TransportCodeForm = (): JSX.Element => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  let codeInputValue = "";
+  const [codeInputValue, setCodeInputValue] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
   const setCodeValue = (value: string) => {
-    codeInputValue = value;
+    setCodeInputValue(value.toUpperCase());
     setErrorMsg("");
   };
 
@@ -47,7 +47,8 @@ const TransportCodeForm = (): JSX.Element => {
         >
           <IonInput
             type="password"
-            name={"code"}
+            name="code"
+            value={codeInputValue}
             placeholder={t("transports.transportCodeInput.inputPlaceholder")}
             onIonChange={(event) => {
               setCodeValue((event.target as HTMLInputElement).value);
