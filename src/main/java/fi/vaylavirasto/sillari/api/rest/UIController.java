@@ -5,6 +5,7 @@ import fi.vaylavirasto.sillari.config.SillariConfig;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,16 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Collection;
+import java.util.Set;
+import java.util.List;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import fi.vaylavirasto.sillari.auth.SillariUser;
+import fi.vaylavirasto.sillari.auth.SillariRole;
 
 @RestController
 @Timed
@@ -153,5 +164,32 @@ public class UIController {
         // This method is used by the frontend to get the response headers for checking the user's groups
         ServiceMetric serviceMetric = new ServiceMetric("UIController", "checkUser");
         serviceMetric.end();
+    }
+
+    @Operation(summary = "Get user data")
+    @GetMapping(value = "/userdata")
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> userData(){
+        ServiceMetric serviceMetric = new ServiceMetric("UIController", "userData");
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!(principal instanceof SillariUser)) {
+            serviceMetric.end();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+        }
+
+        String username = ((SillariUser)principal).getUsername();
+        Collection<GrantedAuthority> authorities = ((SillariUser)principal).getAuthorities();
+
+        Set<String> roles = AuthorityUtils.authorityListToSet(authorities);
+
+        HashMap<String, Object> responseBody = new HashMap<>();
+        responseBody.put("username", username);
+        responseBody.put("roles", roles);
+
+        serviceMetric.end();
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 }
