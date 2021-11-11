@@ -207,13 +207,17 @@
       "transportInformation": "Kuljetuksen tiedot",
       "bridgesToSupervise": "Valvottavat sillat",
       "buttons": {
+        "generatePassword": "Uusi salasana",
         "deleteTransport": "Poista kuljetus"
       },
       "alert": {
+        "generatePassword": "Oletko varma, että haluat generoida uuden salasanan?",
         "deleteTransport": "Oletko varma, että haluat poistaa kuljetuksen?"
       },
       "saved": "Tallennettu",
       "deleted": "Poistettu",
+      "password": "Kuljetuksen salasana",
+      "passwordUnknown": "Puuttuu",
       "routeInfo": {
         "estimatedDepartureDate": "Arvioitu lähtöpäivä",
         "estimatedDepartureTime": "klo",

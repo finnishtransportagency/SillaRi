@@ -97,9 +97,9 @@ export const getRouteTransport = async (routeTransportId: number, dispatch: Disp
 
 export const findRouteTransportPassword = async (transportPassword: string, dispatch: Dispatch): Promise<IRouteTransportPassword> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
+    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: false } });
 
-    const rtpResponse = await fetch(`${getOrigin()}/api/transport/login?transportPassword=${transportPassword}`);
+    const rtpResponse = await fetch(`${getOrigin()}/api/transportpassword/login?transportPassword=${transportPassword}`);
 
     if (rtpResponse.ok) {
       const rtp = (await rtpResponse.json()) as Promise<IRouteTransportPassword>;
@@ -111,6 +111,26 @@ export const findRouteTransportPassword = async (transportPassword: string, disp
     }
   } catch (err) {
     dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const generateNewRouteTransportPassword = async (routeTransportId: number, dispatch: Dispatch): Promise<IRouteTransportPassword> => {
+  try {
+    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { generateNewRouteTransportPassword: false } });
+
+    const rtpResponse = await fetch(`${getOrigin()}/api/transportpassword/generate?routeTransportId=${routeTransportId}`);
+
+    if (rtpResponse.ok) {
+      const rtp = (await rtpResponse.json()) as Promise<IRouteTransportPassword>;
+      console.log("generateNewRouteTransportPassword", routeTransportId);
+      return await rtp;
+    } else {
+      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { generateNewRouteTransportPassword: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { generateNewRouteTransportPassword: true } });
     throw new Error(err as string);
   }
 };

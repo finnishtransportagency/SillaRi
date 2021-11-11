@@ -14,6 +14,7 @@ import { DATE_FORMAT, TransportStatus } from "../../utils/constants";
 import BridgeGrid from "./BridgeGrid";
 import RouteInfoGrid from "./RouteInfoGrid";
 import TransportInfoAccordion from "./TransportInfoAccordion";
+import TransportPassword from "./TransportPassword";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -88,9 +89,9 @@ const RouteTransportInfo = ({
   const saveRouteTransportDetail = () => {
     // The backend methods handle the status values, so these should be left undefined here
     if (!!routeTransportId && routeTransportId > 0) {
-      routeTransportUpdateMutation.mutate({ ...modifiedRouteTransportDetail, currentStatus: undefined });
+      routeTransportUpdateMutation.mutate({ ...modifiedRouteTransportDetail, currentStatus: undefined, currentTransportPassword: undefined });
     } else {
-      routeTransportPlannedMutation.mutate({ ...modifiedRouteTransportDetail, currentStatus: undefined });
+      routeTransportPlannedMutation.mutate({ ...modifiedRouteTransportDetail, currentStatus: undefined, currentTransportPassword: undefined });
     }
   };
 
@@ -160,6 +161,20 @@ const RouteTransportInfo = ({
                 <IonText className="headingBoldText">{t("management.transportDetail.transportInformation")}</IonText>
               </IonCol>
             </IonRow>
+
+            {!!routeTransportId && routeTransportId > 0 && (
+              <IonRow className="ion-margin">
+                <IonCol>
+                  <TransportPassword
+                    routeTransportId={routeTransportId}
+                    modifiedRouteTransportDetail={modifiedRouteTransportDetail}
+                    setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+                    isSendingTransportUpdate={isSendingTransportUpdate}
+                  />
+                </IonCol>
+              </IonRow>
+            )}
+
             <IonRow className="ion-margin">
               <IonCol>
                 <RouteInfoGrid

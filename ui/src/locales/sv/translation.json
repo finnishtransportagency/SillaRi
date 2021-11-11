@@ -206,13 +206,17 @@
       "transportInformation": "(SV) Transport information",
       "bridgesToSupervise": "(SV) Bridges to supervise",
       "buttons": {
+        "generatePassword": "(SV) New password",
         "deleteTransport": "(SV) Delete transport"
       },
       "alert": {
+        "generatePassword": "(SV) Are you sure you want to generate a new password?",
         "deleteTransport": "(SV) Are you sure you want to delete the transport?"
       },
       "saved": "(SV) Saved",
       "deleted": "(SV) Deleted",
+      "password": "(SV) Transport password",
+      "passwordUnknown": "(SV) Unknown",
       "routeInfo": {
         "estimatedDepartureDate": "(SV) Estimated departure date",
         "estimatedDepartureTime": "(SV) time",
