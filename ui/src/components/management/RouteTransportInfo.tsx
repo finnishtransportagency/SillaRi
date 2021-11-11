@@ -260,7 +260,13 @@ const RouteTransportInfo = ({
       {status !== TransportStatus.PLANNED && (
         <IonRow className="ion-margin ion-justify-content-end">
           <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-            <IonButton color="primary" disabled={isSendingTransportUpdate || isDeletingTransport} onClick={() => history.goBack()}>
+            <IonButton
+              color="primary"
+              expand="block"
+              size="large"
+              disabled={isSendingTransportUpdate || isDeletingTransport}
+              onClick={() => history.goBack()}
+            >
               <IonText>{t("common.buttons.back2")}</IonText>
             </IonButton>
           </IonCol>

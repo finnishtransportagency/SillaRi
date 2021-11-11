@@ -79,7 +79,7 @@ ion-button {
 }
 
 ion-button.ion-color-tertiary {
-  --border-color: #49c2f1;
+  --border-color: var(--ion-color-tertiary-100);
   --border-width: 1px;
   --border-style: solid;
 }
