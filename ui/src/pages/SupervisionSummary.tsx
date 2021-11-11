@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { IonContent, IonPage, IonToast } from "@ionic/react";
+import { IonContent, IonPage, IonToast, useIonAlert } from "@ionic/react";
 import { useHistory, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
@@ -27,7 +27,7 @@ const SupervisionSummary = (): JSX.Element => {
 
   const { supervisionId = "0" } = useParams<SummaryProps>();
   const [toastMessage, setToastMessage] = useState("");
-  const [shouldBlockNavigation, setShouldBlockNavigation] = useState(true);
+  const [present] = useIonAlert();
 
   const {
     networkStatus: { isFailed = {} },
@@ -55,33 +55,48 @@ const SupervisionSummary = (): JSX.Element => {
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
 
   const saveReport = (): void => {
-    setShouldBlockNavigation(false);
     finishSupervisionMutation.mutate(supervisionId);
   };
 
   const editReport = (): void => {
     // Cannot use history.replace or history.goBack if we want to be able to cancel changes on Supervision page and get back here
-    setShouldBlockNavigation(false);
     history.push(`/supervision/${supervisionId}`);
+  };
+
+  const showConfirmLeavePage = () => {
+    present({
+      header: t("supervision.warning.leavePage"),
+      message: t("supervision.warning.supervisionNotFinished"),
+      buttons: [
+        {
+          text: t("common.answer.yes"),
+          handler: () => history.goBack(),
+        },
+        t("common.answer.no"),
+      ],
+    });
+  };
+
+  const confirmGoBack = (): void => {
+    if (supervisionStatus !== SupervisionStatus.FINISHED) {
+      showConfirmLeavePage();
+    } else {
+      history.goBack();
+    }
   };
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
   return (
     <IonPage>
-      <Header title={t("supervision.summary.title")} somethingFailed={isFailed.getSupervision} />
+      <Header title={t("supervision.summary.title")} somethingFailed={isFailed.getSupervision} confirmGoBack={confirmGoBack} />
       <IonContent fullscreen>
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
-            <SupervisionPhotos
-              supervision={supervision as ISupervision}
-              headingKey="supervision.photos"
-              disabled={notAllowedToEdit}
-              setShouldBlockNavigation={setShouldBlockNavigation}
-            />
+            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" disabled={notAllowedToEdit} />
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
               isLoading={isLoadingSupervision || isSendingFinishSupervision}

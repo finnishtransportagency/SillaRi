@@ -37,7 +37,6 @@ const Supervision = (): JSX.Element => {
   } = useTypedSelector((state) => state.supervisionReducer);
 
   const [modifiedReport, setModifiedReport] = useState<ISupervisionReport | undefined>(undefined);
-  const [shouldBlockNavigation, setShouldBlockNavigation] = useState(true);
   const [present] = useIonAlert();
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
@@ -112,12 +111,10 @@ const Supervision = (): JSX.Element => {
 
       imageUploadMutation.mutate(fileUpload);
     });
-
-    setShouldBlockNavigation(false);
     history.push(`/summary/${supervisionId}`);
   };
 
-  const confirmCancelSupervision = () => {
+  const showConfirmCancelSupervision = () => {
     present({
       header: t("supervision.warning.cancelSupervisionHeader"),
       message: t("supervision.warning.cancelSupervisionText"),
@@ -125,7 +122,6 @@ const Supervision = (): JSX.Element => {
         {
           text: t("common.answer.yes"),
           handler: () => {
-            setShouldBlockNavigation(false);
             cancelSupervisionMutation.mutate(supervisionId);
           },
         },
@@ -136,16 +132,33 @@ const Supervision = (): JSX.Element => {
 
   const cancelSupervisionClicked = (): void => {
     if (supervisionInProgress) {
-      confirmCancelSupervision();
+      showConfirmCancelSupervision();
     } else {
-      setShouldBlockNavigation(false);
       history.goBack();
     }
   };
 
-  const unsavedChanges = (): boolean => {
+  const showConfirmLeavePage = () => {
+    present({
+      header: t("supervision.warning.leavePage"),
+      message: t("supervision.warning.unsavedChanges"),
+      buttons: [
+        {
+          text: t("common.answer.yes"),
+          handler: () => history.goBack(),
+        },
+        t("common.answer.no"),
+      ],
+    });
+  };
+
+  const confirmGoBack = (): void => {
     // TODO check unsaved images
-    return reportHasUnsavedChanges(modifiedReport, savedReport);
+    if (reportHasUnsavedChanges(modifiedReport, savedReport)) {
+      showConfirmLeavePage();
+    } else {
+      history.goBack();
+    }
   };
 
   useEffect(() => {
@@ -173,7 +186,7 @@ const Supervision = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} />
+      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} confirmGoBack={confirmGoBack} />
       <IonContent fullscreen>
         {noNetworkNoData ? (
           <NoNetworkNoData />
@@ -185,7 +198,6 @@ const Supervision = (): JSX.Element => {
               headingKey="supervision.photosDrivingLine"
               isButtonsIncluded
               disabled={notAllowedToEdit}
-              setShouldBlockNavigation={setShouldBlockNavigation}
             />
             <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} disabled={notAllowedToEdit} />
             <SupervisionFooter

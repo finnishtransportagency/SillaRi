@@ -7,21 +7,24 @@ import { arrowBackOutline, cloudDownloadOutline, cloudOfflineOutline, cloudOutli
 interface HeaderProps {
   title: string;
   somethingFailed?: boolean;
+  confirmGoBack?: () => void;
 }
 
-const Header = ({ title, somethingFailed }: HeaderProps): JSX.Element => {
+const Header = ({ title, somethingFailed, confirmGoBack }: HeaderProps): JSX.Element => {
   const history = useHistory();
   const { pathname } = useLocation();
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
   const canGoBack = pathname !== "/supervision" && pathname !== "/transport" && pathname !== "/management/1";
 
+  const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : history.goBack;
+
   return (
     <IonHeader>
       <IonToolbar color="primary">
         <IonButtons slot="start">
           <IonMenuButton className={canGoBack ? "ion-hide" : ""} />
-          <IonButton shape="round" className={canGoBack ? "" : "ion-hide"} onClick={() => history.goBack()}>
+          <IonButton shape="round" className={canGoBack ? "" : "ion-hide"} onClick={() => goBack()}>
             <IonIcon slot="icon-only" icon={arrowBackOutline} />
           </IonButton>
         </IonButtons>

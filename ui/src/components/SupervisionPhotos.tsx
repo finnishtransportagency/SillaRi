@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow } from "@ionic/react";
 import ISupervision from "../interfaces/ISupervision";
@@ -13,16 +13,9 @@ interface SupervisionPhotosProps {
   headingKey: string;
   isButtonsIncluded?: boolean;
   disabled: boolean;
-  setShouldBlockNavigation: Dispatch<SetStateAction<boolean>>;
 }
 
-const SupervisionPhotos = ({
-  supervision,
-  headingKey,
-  isButtonsIncluded,
-  disabled,
-  setShouldBlockNavigation,
-}: SupervisionPhotosProps): JSX.Element => {
+const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded, disabled }: SupervisionPhotosProps): JSX.Element => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -30,7 +23,6 @@ const SupervisionPhotos = ({
   const { id: supervisionId, images: savedImages = [] } = supervision || {};
 
   const takePhotosClicked = (): void => {
-    setShouldBlockNavigation(false);
     history.push(`/takephotos/${supervisionId}`);
   };
 
