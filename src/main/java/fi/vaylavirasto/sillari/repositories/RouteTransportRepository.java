@@ -26,6 +26,8 @@ public class RouteTransportRepository {
     RouteTransportStatusRepository routeTransportStatusRepository;
     @Autowired
     RouteTransportPasswordRepository routeTransportPasswordRepository;
+    @Autowired
+    PermitRepository permitRepository;
 
     public RouteTransportModel getRouteTransportById(Integer id) {
         return dsl.select().from(TableAlias.routeTransport)
@@ -53,7 +55,7 @@ public class RouteTransportRepository {
                 .fetch(new RouteTransportMapper());
     }
 
-    public Integer createRouteTransport(RouteTransportModel routeTransportModel, String password, OffsetDateTime passwordExpiryDate) throws DataAccessException {
+    public Integer createRouteTransport(RouteTransportModel routeTransportModel, String password) throws DataAccessException {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
@@ -70,17 +72,21 @@ public class RouteTransportRepository {
             Integer routeTransportId = routeTransportIdResult != null ? routeTransportIdResult.value1() : null;
             routeTransportModel.setId(routeTransportId);
 
-            routeTransportStatusRepository.insertTransportStatus(ctx, routeTransportId, TransportStatusType.PLANNED);
+            if (routeTransportId != null) {
+                routeTransportStatusRepository.insertTransportStatus(ctx, routeTransportId, TransportStatusType.PLANNED);
 
-            if (password != null && password.length() > 0 && passwordExpiryDate != null) {
-                routeTransportPasswordRepository.insertTransportPassword(ctx, routeTransportId, password, passwordExpiryDate);
+                OffsetDateTime passwordExpiryDate = permitRepository.getPermitValidEndDateByRouteTransportId(ctx, routeTransportId);
+
+                if (password != null && password.length() > 0 && passwordExpiryDate != null) {
+                    routeTransportPasswordRepository.insertTransportPassword(ctx, routeTransportId, password, passwordExpiryDate);
+                }
             }
 
             return routeTransportId;
         });
     }
 
-    public void updateRouteTransport(RouteTransportModel routeTransportModel, OffsetDateTime passwordExpiryDate) {
+    public void updateRouteTransport(RouteTransportModel routeTransportModel) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
@@ -89,6 +95,8 @@ public class RouteTransportRepository {
                     .set(TableAlias.routeTransport.PLANNED_DEPARTURE_TIME, routeTransportModel.getPlannedDepartureTime())
                     .where(TableAlias.routeTransport.ID.eq(routeTransportModel.getId()))
                     .execute();
+
+            OffsetDateTime passwordExpiryDate = permitRepository.getPermitValidEndDateByRouteTransportId(ctx, routeTransportModel.getId());
 
             if (passwordExpiryDate != null) {
                 routeTransportPasswordRepository.updateTransportPasswordExpiry(ctx, routeTransportModel.getId(), passwordExpiryDate);
@@ -96,7 +104,7 @@ public class RouteTransportRepository {
         });
     }
 
-    public void updateRouteTransportAndInsertPassword(RouteTransportModel routeTransportModel, String password, OffsetDateTime passwordExpiryDate) {
+    public void updateRouteTransportAndInsertPassword(RouteTransportModel routeTransportModel, String password) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
@@ -105,6 +113,8 @@ public class RouteTransportRepository {
                     .set(TableAlias.routeTransport.PLANNED_DEPARTURE_TIME, routeTransportModel.getPlannedDepartureTime())
                     .where(TableAlias.routeTransport.ID.eq(routeTransportModel.getId()))
                     .execute();
+
+            OffsetDateTime passwordExpiryDate = permitRepository.getPermitValidEndDateByRouteTransportId(ctx, routeTransportModel.getId());
 
             if (password != null && password.length() > 0 && passwordExpiryDate != null) {
                 routeTransportPasswordRepository.insertTransportPassword(ctx, routeTransportModel.getId(), password, passwordExpiryDate);

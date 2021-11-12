@@ -128,33 +128,10 @@ public class RouteTransportService {
         return routeTransport;
     }
 
-    private OffsetDateTime getPasswordExpiryDate(RouteTransportModel routeTransportModel) {
-        // Get the planned date of the last supervision to use for the password expiry date, but only if it's later than now
-        OffsetDateTime passwordExpiryDate = OffsetDateTime.now();
-        if (routeTransportModel.getSupervisions() != null && !routeTransportModel.getSupervisions().isEmpty()) {
-            SupervisionModel lastSupervision = routeTransportModel.getSupervisions().stream()
-                    .max(Comparator.comparing(SupervisionModel::getPlannedTime)).orElse(null);
-
-            if (lastSupervision != null) {
-                OffsetDateTime maxPlannedTime = lastSupervision.getPlannedTime();
-
-                if (maxPlannedTime != null && maxPlannedTime.isAfter(passwordExpiryDate)) {
-                    passwordExpiryDate = maxPlannedTime;
-                }
-            }
-        }
-
-        // Add a 1 day buffer to the expiry date
-        passwordExpiryDate = passwordExpiryDate.plusDays(1);
-
-        return passwordExpiryDate;
-    }
-
     public RouteTransportModel createRouteTransport(RouteTransportModel routeTransportModel) {
         // Generate a password and get a new expiry date when creating a new transport
         Integer routeTransportId = routeTransportRepository.createRouteTransport(routeTransportModel,
-                routeTransportPasswordRepository.generateUniqueTransportPassword(),
-                getPasswordExpiryDate(routeTransportModel));
+                routeTransportPasswordRepository.generateUniqueTransportPassword());
 
         return getRouteTransport(routeTransportId, false);
     }
@@ -164,14 +141,12 @@ public class RouteTransportService {
 
         if (existingPassword != null) {
             // In the usual case when updating a transport, keep the same password but use a new expiry date
-            routeTransportRepository.updateRouteTransport(routeTransportModel,
-                    getPasswordExpiryDate(routeTransportModel));
+            routeTransportRepository.updateRouteTransport(routeTransportModel);
         } else {
             // Just in case a password wasn't created before, generate one now
             // This shouldn't happen if the transport was added via the SillaRi UI
             routeTransportRepository.updateRouteTransportAndInsertPassword(routeTransportModel,
-                    routeTransportPasswordRepository.generateUniqueTransportPassword(),
-                    getPasswordExpiryDate(routeTransportModel));
+                    routeTransportPasswordRepository.generateUniqueTransportPassword());
         }
 
         return getRouteTransport(routeTransportModel.getId(), false);
