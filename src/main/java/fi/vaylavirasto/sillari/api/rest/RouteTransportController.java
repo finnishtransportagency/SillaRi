@@ -38,7 +38,8 @@ public class RouteTransportController {
     public ResponseEntity<?> getRouteTransport(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransport");
         try {
-            RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId);
+            // TODO - restrict this method to transport company admin users only
+            RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId, true);
             return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -51,7 +52,8 @@ public class RouteTransportController {
     public ResponseEntity<?> getRouteTransportsOfPermit(@RequestParam Integer permitId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportsOfPermit");
         try {
-            List<RouteTransportModel> routeTransports = routeTransportService.getRouteTransportsOfPermit(permitId);
+            // TODO - restrict this method to transport company admin users only
+            List<RouteTransportModel> routeTransports = routeTransportService.getRouteTransportsOfPermit(permitId, true);
             return ResponseEntity.ok().body(routeTransports != null ? routeTransports : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -77,6 +79,7 @@ public class RouteTransportController {
     public ResponseEntity<?> createRouteTransport(@RequestBody RouteTransportModel routeTransport) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "createRouteTransport");
         try {
+            // TODO - restrict this method to transport company admin users only
             RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
             if (routeTransport.getSupervisions() != null && insertedRouteTransport != null) {
@@ -92,7 +95,7 @@ public class RouteTransportController {
             }
 
             if (insertedRouteTransport != null) {
-                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(insertedRouteTransport.getId());
+                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(insertedRouteTransport.getId(), true);
                 return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
             } else {
                 return ResponseEntity.ok().body(new EmptyJsonResponse());
@@ -108,6 +111,7 @@ public class RouteTransportController {
     public ResponseEntity<?> updateRouteTransport(@RequestBody RouteTransportModel routeTransport) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "updateRouteTransport");
         try {
+            // TODO - restrict this method to transport company admin users only
             RouteTransportModel updatedTransportModel = routeTransportService.updateRouteTransport(routeTransport);
 
             if (routeTransport.getSupervisions() != null) {
@@ -121,7 +125,7 @@ public class RouteTransportController {
             }
 
             if (updatedTransportModel != null) {
-                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(updatedTransportModel.getId());
+                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(updatedTransportModel.getId(), true);
                 return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
             } else {
                 return ResponseEntity.ok().body(new EmptyJsonResponse());
@@ -137,8 +141,10 @@ public class RouteTransportController {
     public boolean deleteRouteTransport(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "updateRouteTransport");
         try {
+            // TODO - restrict this method to transport company admin users only
+
             // Fetch all the route transport details including the status which is not sent
-            RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId);
+            RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId, false);
 
             // Only route transports with planned status can be deleted
             if (routeTransport != null && routeTransport.getCurrentStatus() != null &&

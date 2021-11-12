@@ -189,12 +189,14 @@
         "route": "Route",
         "supervision": "Supervision",
         "time": "Time",
+        "password": "Password",
         "status": "Status",
         "action": "Action"
       },
       "action": {
         "details": "Details",
-        "modify": "Modify"
+        "modify": "Modify",
+        "show": "Show"
       }
     },
     "transportDetail": {
@@ -206,13 +208,17 @@
       "transportInformation": "Transport information",
       "bridgesToSupervise": "Bridges to supervise",
       "buttons": {
+        "generatePassword": "New password",
         "deleteTransport": "Delete transport"
       },
       "alert": {
+        "generatePassword": "Are you sure you want to generate a new password?",
         "deleteTransport": "Are you sure you want to delete the transport?"
       },
       "saved": "Saved",
       "deleted": "Deleted",
+      "password": "Transport password",
+      "passwordUnknown": "Unknown",
       "routeInfo": {
         "estimatedDepartureDate": "Estimated departure date",
         "estimatedDepartureTime": "time",

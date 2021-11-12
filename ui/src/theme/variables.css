@@ -21,6 +21,10 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-secondary-shade: #0088c6;
   --ion-color-secondary-tint: #1aa4e4;
 
+  /** secondary additional (Vayla blue) **/
+  --ion-color-secondary-50: #7fccf0;
+  --ion-color-secondary-5: #f2fafd;
+
   /** tertiary (Vayla light blue) **/
   /*
   --ion-color-tertiary: #49c2f1;
@@ -34,6 +38,9 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-tertiary-contrast-rgb: 0, 100, 175;
   --ion-color-tertiary-shade: #40abd4;
   --ion-color-tertiary-tint: #5bc8f2;
+
+  /** tertiary additional (Vayla light blue) **/
+  --ion-color-tertiary-100: #49c2f1;
 
   /** success (Vayla green) **/
   --ion-color-success: #8dcb6d;

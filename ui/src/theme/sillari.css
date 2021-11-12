@@ -49,6 +49,7 @@
   color: var(--ion-color-primary);
   text-decoration: underline;
   margin-right: 8px;
+  cursor: pointer;
 }
 
 .disabledLink {
@@ -79,7 +80,7 @@ ion-button {
 }
 
 ion-button.ion-color-tertiary {
-  --border-color: #49c2f1;
+  --border-color: var(--ion-color-tertiary-100);
   --border-width: 1px;
   --border-style: solid;
 }

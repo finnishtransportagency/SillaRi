@@ -16,6 +16,7 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,6 +98,18 @@ public class PermitRepository {
     public Integer getPermitIdByPermitNumberAndVersion(String permitNumber, int permitVersion) {
         Record1<Integer> record = dsl.select(TableAlias.permit.ID).from(TableAlias.permit)
                 .where(TableAlias.permit.PERMIT_NUMBER.eq(permitNumber).and(TableAlias.permit.LELU_VERSION.eq(permitVersion)))
+                .fetchOne();
+        return record != null ? record.value1() : null;
+    }
+
+    public OffsetDateTime getPermitValidEndDateByRouteTransportId(DSLContext ctx, Integer routeTransportId) {
+        Record1<OffsetDateTime> record = ctx.select(TableAlias.permit.VALID_END_DATE)
+                .from(TableAlias.permit)
+                .innerJoin(TableAlias.route)
+                .on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
+                .innerJoin(TableAlias.routeTransport)
+                .on(TableAlias.route.ID.eq(TableAlias.routeTransport.ROUTE_ID))
+                .where(TableAlias.routeTransport.ID.eq(routeTransportId))
                 .fetchOne();
         return record != null ? record.value1() : null;
     }
