@@ -339,6 +339,31 @@ export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promis
   }
 };
 
+export const deleteSupervisionImages = async (supervisionId: number, dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteImage: deleteSupervisionImages } });
+
+    const imageDeleteResponse = await fetch(`${getOrigin()}/api/images/deletesupervisionimages?supervisionId=${supervisionId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (imageDeleteResponse.ok) {
+      const imageDelete = (await imageDeleteResponse.json()) as Promise<boolean>;
+      console.log("deleteSupervisionImages response", imageDelete);
+      dispatch({ type: supervisionActions.SET_IMAGES, payload: [] });
+    } else {
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteSupervisionImages: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteSupervisionImages: true } });
+    throw new Error(err as string);
+  }
+};
+
 // TEST - try different methods to check if the user is valid
 export const checkUser = async (username: string): Promise<void> => {
   try {

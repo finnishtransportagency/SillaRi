@@ -12,7 +12,14 @@ import SupervisionObservations from "../components/SupervisionObservations";
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector } from "../store/store";
-import { cancelSupervision, getSupervision, onRetry, sendImageUpload, updateSupervisionReport } from "../utils/supervisionBackendData";
+import {
+  cancelSupervision,
+  deleteSupervisionImages,
+  getSupervision,
+  onRetry,
+  sendImageUpload,
+  updateSupervisionReport,
+} from "../utils/supervisionBackendData";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import moment from "moment";
 import { DATE_TIME_FORMAT, SupervisionStatus } from "../utils/constants";
@@ -73,12 +80,20 @@ const Supervision = (): JSX.Element => {
   });
   const { isLoading: isSendingImageUpload } = imageUploadMutation;
 
-  const cancelSupervisionMutation = useMutation((superId: string) => cancelSupervision(Number(superId), dispatch), {
+  const deleteImagesMutation = useMutation((superId: string) => deleteSupervisionImages(Number(superId), dispatch), {
     retry: onRetry,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
+    onSuccess: () => {
+      queryClient.invalidateQueries(["getSupervision", supervisionId]);
       // We don't want to allow the user to get back to this page by using "back"
       history.replace(`/bridgeDetail/${supervisionId}`, { direction: "back" });
+    },
+  });
+  const { isLoading: isSendingDeleteImages } = imageUploadMutation;
+
+  const cancelSupervisionMutation = useMutation((superId: string) => cancelSupervision(Number(superId), dispatch), {
+    retry: onRetry,
+    onSuccess: () => {
+      deleteImagesMutation.mutate(supervisionId);
     },
   });
   const { isLoading: isSendingCancelSupervision } = cancelSupervisionMutation;
@@ -174,13 +189,13 @@ const Supervision = (): JSX.Element => {
   }, [isLoadingSupervision, isSendingReportUpdate, supervision, modifiedReport, savedReport]);
 
   useEffect(() => {
-    if (supervision && !isLoadingSupervision && !isSendingImageUpload) {
+    if (supervision && !isLoadingSupervision && !isSendingImageUpload && !isSendingDeleteImages) {
       // Remove any uploaded images from the camera images stored in redux
       if (savedImages.length > 0) {
         dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: savedImages });
       }
     }
-  }, [isLoadingSupervision, isSendingImageUpload, supervision, savedImages, dispatch]);
+  }, [isLoadingSupervision, isSendingImageUpload, isSendingDeleteImages, supervision, savedImages, dispatch]);
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
