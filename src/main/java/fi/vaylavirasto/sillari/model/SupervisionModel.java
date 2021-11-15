@@ -21,9 +21,9 @@ public class SupervisionModel {
     private SupervisionReportModel report;
     private List<SupervisionImageModel> images;
 
-    private OffsetDateTime startedTime; // First IN_PROGRESS in statusHistory
-    private OffsetDateTime crossingDeniedTime; // First CROSSING_DENIED in statusHistory
-    private OffsetDateTime finishedTime; // First FINISHED in statusHistory
+    private OffsetDateTime startedTime; // Latest IN_PROGRESS in statusHistory (because might have been started and cancelled and started again)
+    private OffsetDateTime crossingDeniedTime; // First (and only) CROSSING_DENIED in statusHistory
+    private OffsetDateTime finishedTime; // First (and only) FINISHED in statusHistory
 
     // Parents
     private RouteBridgeModel routeBridge;
@@ -45,7 +45,7 @@ public class SupervisionModel {
     private void setStatusTimes(List<SupervisionStatusModel> statusHistory) {
         OffsetDateTime startedTime = statusHistory.stream()
                 .filter(model -> SupervisionStatusType.IN_PROGRESS.equals(model.getStatus()))
-                .min(Comparator.comparing(SupervisionStatusModel::getTime))
+                .max(Comparator.comparing(SupervisionStatusModel::getTime))
                 .map(SupervisionStatusModel::getTime).orElse(null);
 
         OffsetDateTime crossingDeniedTime = statusHistory.stream()

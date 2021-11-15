@@ -6,19 +6,25 @@ import { useTypedSelector } from "../store/store";
 import camera from "../theme/icons/camera_white.svg";
 import lane from "../theme/icons/lane_white.svg";
 import ImageThumbnailRow from "./ImageThumbnailRow";
+import { useHistory } from "react-router-dom";
 
 interface SupervisionPhotosProps {
   supervision: ISupervision;
   headingKey: string;
   isButtonsIncluded?: boolean;
+  disabled: boolean;
 }
 
-const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: SupervisionPhotosProps): JSX.Element => {
+const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded, disabled }: SupervisionPhotosProps): JSX.Element => {
   const { t } = useTranslation();
+  const history = useHistory();
 
   const { images = [] } = useTypedSelector((state) => state.supervisionReducer);
-  const { id: supervisionId, images: savedImages = [], report } = supervision || {};
-  const { draft = false } = report || {};
+  const { id: supervisionId, images: savedImages = [] } = supervision || {};
+
+  const takePhotosClicked = (): void => {
+    history.push(`/takephotos/${supervisionId}`);
+  };
 
   return (
     <>
@@ -34,7 +40,7 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded }: Super
         <IonGrid>
           <IonRow>
             <IonCol className="ion-text-center">
-              <IonButton color="secondary" expand="block" size="large" routerLink={`/takephotos/${supervisionId}`} disabled={!draft}>
+              <IonButton color="secondary" expand="block" size="large" disabled={disabled} onClick={() => takePhotosClicked()}>
                 <IonIcon className="otherIcon" icon={camera} color="primary" slot="start" />
                 {t("supervision.buttons.takePhotos")}
               </IonButton>

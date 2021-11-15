@@ -192,6 +192,30 @@ export const startSupervision = async (report: ISupervisionReport, dispatch: Dis
   }
 };
 
+export const cancelSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
+  try {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { cancelSupervision: false } });
+
+    const cancelSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/cancelsupervision?supervisionId=${supervisionId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (cancelSupervisionResponse.ok) {
+      const cancelledSupervision = (await cancelSupervisionResponse.json()) as Promise<ISupervision>;
+      return await cancelledSupervision;
+    } else {
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { cancelSupervision: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { cancelSupervision: true } });
+    throw new Error(err as string);
+  }
+};
+
 export const denyCrossing = async (denyRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { denyCrossing: false } });
@@ -311,6 +335,31 @@ export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promis
     }
   } catch (err) {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteImage: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const deleteSupervisionImages = async (supervisionId: number, dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteImage: deleteSupervisionImages } });
+
+    const imageDeleteResponse = await fetch(`${getOrigin()}/api/images/deletesupervisionimages?supervisionId=${supervisionId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (imageDeleteResponse.ok) {
+      const imageDelete = (await imageDeleteResponse.json()) as Promise<boolean>;
+      console.log("deleteSupervisionImages response", imageDelete);
+      dispatch({ type: supervisionActions.SET_IMAGES, payload: [] });
+    } else {
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteSupervisionImages: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteSupervisionImages: true } });
     throw new Error(err as string);
   }
 };

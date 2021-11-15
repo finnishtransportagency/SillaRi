@@ -77,4 +77,10 @@ public class SupervisionImageRepository {
                 .execute();
     }
 
+    public int deleteFilesBySupervisionId(Integer supervisionId) {
+        return dsl.delete(TableAlias.supervisionImage)
+                .where(TableAlias.supervisionImage.SUPERVISION_ID.eq(supervisionId))
+                .execute();
+    }
+
 }

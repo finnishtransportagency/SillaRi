@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { IonContent, IonPage, IonToast } from "@ionic/react";
+import { IonContent, IonPage, IonToast, useIonAlert } from "@ionic/react";
 import { useHistory, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
@@ -11,9 +11,9 @@ import SupervisionObservationsSummary from "../components/SupervisionObservation
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector } from "../store/store";
-import { finishSupervision, getSupervision, onRetry, updateSupervisionReport } from "../utils/supervisionBackendData";
-import ISupervisionReport from "../interfaces/ISupervisionReport";
+import { finishSupervision, getSupervision, onRetry } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
+import { SupervisionStatus } from "../utils/constants";
 
 interface SummaryProps {
   supervisionId: string;
@@ -27,6 +27,7 @@ const SupervisionSummary = (): JSX.Element => {
 
   const { supervisionId = "0" } = useParams<SummaryProps>();
   const [toastMessage, setToastMessage] = useState("");
+  const [present] = useIonAlert();
 
   const {
     networkStatus: { isFailed = {} },
@@ -37,25 +38,18 @@ const SupervisionSummary = (): JSX.Element => {
     () => getSupervision(Number(supervisionId), dispatch),
     { retry: onRetry }
   );
-  const { report } = supervision || {};
+  const { report, currentStatus } = supervision || {};
+  const { status: supervisionStatus } = currentStatus || {};
 
-  const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
-    retry: onRetry,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
-      // We don't want to allow the user to get back to this page by using "back"
-      history.replace(`/supervision/${supervisionId}`);
-    },
-  });
-  const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
+  const notAllowedToEdit = !report || supervisionStatus === SupervisionStatus.REPORT_SIGNED;
 
   const finishSupervisionMutation = useMutation((superId: string) => finishSupervision(Number(superId), dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
       setToastMessage(t("supervision.summary.saved"));
-      // TODO go back to supervision list - but where? Main page?
-      //  history.replace(`/`);
+      // TODO go back to supervision list - but where?
+      history.push("/");
     },
   });
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
@@ -65,10 +59,29 @@ const SupervisionSummary = (): JSX.Element => {
   };
 
   const editReport = (): void => {
-    // Set report back to draft and update modifiedReport on Supervision page
-    if (report) {
-      const updatedReport = { ...report, draft: true };
-      reportUpdateMutation.mutate(updatedReport);
+    // Cannot use history.replace or history.goBack if we want to be able to cancel changes on Supervision page and get back here
+    history.push(`/supervision/${supervisionId}`);
+  };
+
+  const showConfirmLeavePage = () => {
+    present({
+      header: t("supervision.warning.leavePage"),
+      message: t("supervision.warning.supervisionNotFinished"),
+      buttons: [
+        t("common.answer.no"),
+        {
+          text: t("common.answer.yes"),
+          handler: () => history.goBack(),
+        },
+      ],
+    });
+  };
+
+  const confirmGoBack = (): void => {
+    if (supervisionStatus !== SupervisionStatus.FINISHED) {
+      showConfirmLeavePage();
+    } else {
+      history.goBack();
     }
   };
 
@@ -76,21 +89,22 @@ const SupervisionSummary = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("supervision.summary.title")} somethingFailed={isFailed.getSupervision} />
+      <Header title={t("supervision.summary.title")} somethingFailed={isFailed.getSupervision} confirmGoBack={confirmGoBack} />
       <IonContent fullscreen>
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
-            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" />
+            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" disabled={notAllowedToEdit} />
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
-              reportId={report?.id}
-              isSummary={true}
-              isLoading={isLoadingSupervision || isSendingReportUpdate || isSendingFinishSupervision}
+              isLoading={isLoadingSupervision || isSendingFinishSupervision}
+              disabled={notAllowedToEdit}
               saveChanges={saveReport}
               cancelChanges={editReport}
+              saveLabel={t("supervision.buttons.saveToSendList")}
+              cancelLabel={t("common.buttons.edit")}
             />
           </>
         )}
