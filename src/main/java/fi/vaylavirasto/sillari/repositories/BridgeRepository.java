@@ -2,12 +2,10 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.BridgeMapper;
 import fi.vaylavirasto.sillari.model.BridgeModel;
-import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.*;
-import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -60,85 +58,57 @@ public class BridgeRepository {
                 .fetchAny(new BridgeMapper());
     }
 
-    public Integer createBridge(BridgeModel bridge) throws DataAccessException {
+
+
+    public Integer createBridge(BridgeModel bridge) {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
-
-            Record1<Integer> permitIdResult = ctx.insertInto(TableAlias.permit,
+            Field<String> geojsonField = DSL.field("ST_GeomFromText('POINT("+bridge.getX()+" "+bridge.getY()+")', 3067)", String.class);
+            Record1<Integer> bridgeIdResult = ctx.insertInto(TableAlias.bridge,
                             TableAlias.bridge.OID,
                             TableAlias.bridge.IDENTIFIER,
                             TableAlias.bridge.MUNICIPALITY,
-                            TableAlias.bridge.
+                            TableAlias.bridge.NAME,
+                            TableAlias.bridge.ROAD_ADDRESS,
+                            TableAlias.bridge.STATUS,
+                    TableAlias.bridge.GEOM
                     ).values(
-                            permitModel.getCompanyId(),
-                            permitModel.getPermitNumber(),
-                            permitModel.getLeluVersion(),
-                            permitModel.getLeluLastModifiedDate(),
-                            permitModel.getValidStartDate(),
-                            permitModel.getValidEndDate(),
-                            permitModel.getTransportTotalMass(),
-                            permitModel.getAdditionalDetails())
-                    .returningResult(TableAlias.permit.ID)
+                            bridge.getOid(),
+                            bridge.getIdentifier(),
+                    bridge.getMunicipality(),
+                    bridge.getName(),
+                    bridge.getRoadAddress(),
+                    bridge.getStatus(),
+                    geojsonField)
+
+                    .returningResult(TableAlias.bridge.ID)
                     .fetchOne(); // Execute and return zero or one record
 
-            Integer permitId = permitIdResult != null ? permitIdResult.value1() : null;
-            permitModel.setId(permitId);
+            Integer bridgeId = bridgeIdResult != null ? bridgeIdResult.value1() : null;
+            bridge.setId(bridgeId);
 
-            insertTransportDimensions(ctx, permitModel);
-            insertUnloadedTransportDimensions(ctx, permitModel);
-            insertVehicles(ctx, permitModel);
-            insertAxleChart(ctx, permitModel);
 
-            for (RouteModel routeModel : permitModel.getRoutes()) {
-                routeModel.setPermitId(permitModel.getId());
-                insertRouteAndRouteBridges(ctx, routeModel);
-            }
-
-            return permitId;
+            return bridgeId;
         });
     }
 
-    public Integer insert(BridgeModel bridge) {
-        return dsl.transactionResult(configuration -> {
+    public void updateBridge(BridgeModel bridge) {
+        dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
+            Field<String> geojsonField = DSL.field("ST_GeomFromText('POINT("+bridge.getX()+" "+bridge.getY()+")', 3067)", String.class);
 
-            Record1<Integer> permitIdResult = ctx.insertInto(TableAlias.permit,
-                            TableAlias.permit.COMPANY_ID,
-                            TableAlias.permit.PERMIT_NUMBER,
-                            TableAlias.permit.LELU_VERSION,
-                            TableAlias.permit.LELU_LAST_MODIFIED_DATE,
-                            TableAlias.permit.VALID_START_DATE,
-                            TableAlias.permit.VALID_END_DATE,
-                            TableAlias.permit.TRANSPORT_TOTAL_MASS,
-                            TableAlias.permit.ADDITIONAL_DETAILS
-                    ).values(
-                            permitModel.getCompanyId(),
-                            permitModel.getPermitNumber(),
-                            permitModel.getLeluVersion(),
-                            permitModel.getLeluLastModifiedDate(),
-                            permitModel.getValidStartDate(),
-                            permitModel.getValidEndDate(),
-                            permitModel.getTransportTotalMass(),
-                            permitModel.getAdditionalDetails())
-                    .returningResult(TableAlias.permit.ID)
-                    .fetchOne(); // Execute and return zero or one record
+            ctx.update(TableAlias.bridge)
+                    .set(TableAlias.bridge.OID, bridge.getOid())
+                    .set(TableAlias.bridge.IDENTIFIER,bridge.getIdentifier())
+                    .set(TableAlias.bridge.MUNICIPALITY,bridge.getMunicipality())
+                    .set(TableAlias.bridge.NAME, bridge.getName())
+                    .set(TableAlias.bridge.ROAD_ADDRESS,bridge.getRoadAddress())
+                    .set(TableAlias.bridge.STATUS,bridge.getStatus())
+                    .set(TableAlias.bridge.GEOM, geojsonField)
+                    .where(TableAlias.bridge.ID.eq(bridge.getId()))
+                    .execute();
 
-            Integer permitId = permitIdResult != null ? permitIdResult.value1() : null;
-            permitModel.setId(permitId);
-
-            insertTransportDimensions(ctx, permitModel);
-            insertUnloadedTransportDimensions(ctx, permitModel);
-            insertVehicles(ctx, permitModel);
-            insertAxleChart(ctx, permitModel);
-
-            for (RouteModel routeModel : permitModel.getRoutes()) {
-                routeModel.setPermitId(permitModel.getId());
-                insertRouteAndRouteBridges(ctx, routeModel);
-            }
-
-            return permitId;
         });
     }
-    public void update(BridgeModel bridge) {
-    }
+
 }

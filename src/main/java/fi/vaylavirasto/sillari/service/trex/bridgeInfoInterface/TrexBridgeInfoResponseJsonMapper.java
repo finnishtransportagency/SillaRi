@@ -12,8 +12,12 @@ public interface TrexBridgeInfoResponseJsonMapper {
     @Mappings({
             @Mapping(target="identifier", source = "dto.tunnus"),
             @Mapping(target="name", source="dto.nimi"),
+            @Mapping(target="oid", source="dto.oid"),
             @Mapping(target="roadAddress", expression = "java(createRoadAddress(dto.getTieosoitteet()))"),
-            @Mapping(target="municipality", expression = "java(createMunicipality(dto.getSijaintikunnat()))")
+            @Mapping(target="municipality", expression = "java(createMunicipality(dto.getSijaintikunnat()))"),
+            @Mapping(target="status", source="dto.tila"),
+            @Mapping(target="x", source="dto.keskipistesijainti.epsg3067.x"),
+            @Mapping(target="y", source="dto.keskipistesijainti.epsg3067.y")
     })
     BridgeModel fromDTOToModel(TrexBridgeInfoResponseJson dto);
 

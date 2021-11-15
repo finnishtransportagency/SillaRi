@@ -129,13 +129,7 @@ public class LeluController {
         logger.debug("hello get bridge " + oid);
         try {
             BridgeModel bridge = trexService.getBridge(oid);
-            BridgeModel oldBridge = bridgeService.getBridge(oid);
-            if(oldBridge != null){
-                bridgeService.updateBridge(bridge);
-            }
-            else{
-                bridgeService.insertBridge(bridge);
-            }
+            bridgeService.createOrUpdateBridge(bridge);
             logger.debug("HELLO BRIDGE: " + bridge);
 
         } catch (TRexRestException e) {

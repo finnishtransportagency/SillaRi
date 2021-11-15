@@ -11,18 +11,12 @@ public class BridgeService {
     BridgeRepository bridgeRepository;
 
     public void createOrUpdateBridge(BridgeModel bridge) {
-
-    }
-
-    public BridgeModel getBridge(String oid) {
-        return bridgeRepository.getBridge(oid);
-    }
-
-    public void updateBridge(BridgeModel bridge) {
-        bridgeRepository.update(bridge);
-    }
-
-    public void insertBridge(BridgeModel bridge) {
-        bridgeRepository.insert(bridge);
+        BridgeModel oldBridge = bridgeRepository.getBridge(bridge.getOid());
+        if(oldBridge != null){
+            bridgeRepository.updateBridge(bridge);
+        }
+        else{
+            bridgeRepository.createBridge(bridge);
+        }
     }
 }

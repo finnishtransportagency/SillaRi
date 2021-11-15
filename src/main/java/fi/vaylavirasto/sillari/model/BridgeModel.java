@@ -13,5 +13,9 @@ public class BridgeModel {
     private String roadAddress;
     private String municipality;
     private String geojson;
+    private String status;
+    private Double x;
+    private Double y;
+    private Integer wkid;
     private List<RouteBridgeModel> routeBridges;
 }

@@ -21,7 +21,12 @@ public class TRexService {
     private final TrexBridgeInfoResponseJsonMapper dtoMapper = Mappers.getMapper(TrexBridgeInfoResponseJsonMapper.class);
 
     public BridgeModel getBridge(String oid) throws TRexRestException {
-        return dtoMapper.fromDTOToModel(getBridgeInfo(oid));
+        logger.debug("hello oid: " +oid );
+        var b = getBridgeInfo(oid);
+        logger.debug("hello b: " + b);
+        var m = dtoMapper.fromDTOToModel(b);
+        logger.debug("hello m: " + m);
+        return m;
     }
 
     public TrexBridgeInfoResponseJson getBridgeInfo(String bridgeOid) throws TRexRestException {
