@@ -3,6 +3,7 @@ import ICompany from "../interfaces/ICompany";
 import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
+import IRouteTransportStatus from "../interfaces/IRouteTransportStatus";
 import ISupervisor from "../interfaces/ISupervisor";
 import { getOrigin } from "./request";
 import { actions as managementActions } from "../store/managementSlice";
@@ -228,6 +229,32 @@ export const deleteRouteTransport = async (routeTransportId: number, dispatch: D
     }
   } catch (err) {
     dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { deleteRouteTransport: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const changeRouteTransportStatus = async (routeTransportStatus: IRouteTransportStatus, dispatch: Dispatch): Promise<IRouteTransport> => {
+  try {
+    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: false } });
+
+    const changeRouteTransportStatusResponse = await fetch(`${getOrigin()}/api/routetransport/changeroutetransportstatus`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(routeTransportStatus),
+    });
+
+    if (changeRouteTransportStatusResponse.ok) {
+      const changedRouteTransport = (await changeRouteTransportStatusResponse.json()) as Promise<IRouteTransport>;
+      console.log("changeRouteTransportStatus", changedRouteTransport);
+      return await changedRouteTransport;
+    } else {
+      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: true } });
     throw new Error(err as string);
   }
 };

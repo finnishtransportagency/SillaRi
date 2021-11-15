@@ -277,11 +277,26 @@
         "title": "Kuljetus"
       },
       "permitLabel": "Kuljetuslupa",
-      "transportStatusLabel": "Kuljetuksen status",
-      "transportStatusBoxLabel": {
-        "notStarted": "Ajo ei ole vielä alkanut"
+      "transportStatusLabel": "Status",
+      "statusInfo": {
+        "planned": "Ajoa ei ole vielä aloitettu",
+        "departed": "Ajo aloitettu",
+        "stopped": "Tauko aloitettu",
+        "in_progress": "Ajo aloitettu",
+        "arrived": "Kuljetus päättynyt"
       },
-      "startDrivingButtonLabel": "Aloita ajaminen"
+      "status": {
+        "departed": "Liikkeellä",
+        "stopped": "Tauolla",
+        "in_progress": "Liikkeellä",
+        "arrived": "Päättynyt"
+      },
+      "buttons": {
+        "startDriving": "Aloita ajaminen",
+        "startBreak": "Aloita touko",
+        "stopBreak": "Jatka ajamista",
+        "stopDriving": "Päätä kuljetus"
+      }
     }
   },
   "supervisor": {

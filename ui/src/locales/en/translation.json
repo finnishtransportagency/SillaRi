@@ -276,11 +276,26 @@
         "title": "Transport"
       },
       "permitLabel": "Permit",
-      "transportStatusLabel": "Transport status",
-      "transportStatusBoxLabel": {
-        "notStarted": "Not started"
+      "transportStatusLabel": "Status",
+      "statusInfo": {
+        "planned": "Drive has not yet started",
+        "departed": "Drive started",
+        "stopped": "Break started",
+        "in_progress": "Drive started",
+        "arrived": "Transport finished"
       },
-      "startDrivingButtonLabel": "Start driving"
+      "status": {
+        "departed": "On the move",
+        "stopped": "On a break",
+        "in_progress": "On the move",
+        "arrived": "Finished"
+      },
+      "buttons": {
+        "startDriving": "Start driving",
+        "startBreak": "Start break",
+        "stopBreak": "Continue driving",
+        "stopDriving": "End transport"
+      }
     }
   }
 }
