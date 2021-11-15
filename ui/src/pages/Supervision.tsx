@@ -135,13 +135,13 @@ const Supervision = (): JSX.Element => {
       header: t("supervision.warning.cancelSupervisionHeader"),
       message: t("supervision.warning.cancelSupervisionText"),
       buttons: [
+        t("common.buttons.back2"),
         {
-          text: t("common.answer.yes"),
+          text: t("supervision.buttons.cancel"),
           handler: () => {
             cancelSupervisionMutation.mutate(supervisionId);
           },
         },
-        t("common.answer.no"),
       ],
     });
   };
@@ -159,11 +159,11 @@ const Supervision = (): JSX.Element => {
       header: t("supervision.warning.leavePage"),
       message: t("supervision.warning.unsavedChanges"),
       buttons: [
+        t("common.answer.no"),
         {
           text: t("common.answer.yes"),
           handler: () => history.goBack(),
         },
-        t("common.answer.no"),
       ],
     });
   };
