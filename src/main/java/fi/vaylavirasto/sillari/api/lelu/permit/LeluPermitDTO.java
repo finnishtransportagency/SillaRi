@@ -68,6 +68,9 @@ public class LeluPermitDTO {
     @Schema(description = "Additional details", example = "Muita huomioita")
     private String additionalDetails;
 
+    @Schema(description = "Contract ID in LeLu.", example = "12345")
+    private Long contractId;
+
     @Valid
     @NotEmpty(message = "{permit.routes.not.empty}")
     @Schema(description = "List of routes included in the permit", required = true)
