@@ -15,7 +15,7 @@
 }
 
 .customAccordion .accordion__button[aria-expanded="false"] .accordionHeaderItem {
-  border-top: 4px solid transparent;
+  border-top: 4px solid var(--ion-color-light);
 }
 
 .customAccordion .accordion__button[aria-expanded="true"] .accordionHeaderItem {

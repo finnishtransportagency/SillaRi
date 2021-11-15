@@ -5,6 +5,7 @@
       "back": "Peru",
       "back2": "Takaisin",
       "cancel": "Peruuta",
+      "search": "Hae",
       "edit": "Muokkaa",
       "save": "Tallenna",
       "send": "Lähetä"
@@ -142,7 +143,7 @@
       "speedLimitOk": "Ajonopeus on hyväksytty",
       "speedLimitInfo": "Miksi ajonopeutta ei hyväksytä?",
       "anomalies": "Poikkeavia havaintoja",
-      "anomaliesInfo": "Tarkenna poikkeavia havaintoja:",
+      "anomaliesInfo": "Tarkenna poikkeavia havaintoja",
       "surfaceDamage": "Päällystevaurio",
       "jointDamage": "Liikuntasauman rikkoutuminen",
       "bendOrDisplacement": "Pysyvä taipuma tai muu siirtymä",
@@ -266,23 +267,21 @@
       "header": {
         "title": "Kuljetukset"
       },
-      "inputLabel": "Anna kuljetuksen koodi",
-      "inputPlaceholder": "Kuljetuksen koodi",
-      "submitButtonLabel": "Lähetä koodi",
+      "inputTitle": "Tuleva kuljetus",
+      "inputLabel": "Kuljetuksen salasana",
+      "inputPlaceholder": "Salasana",
       "invalidCodeErrorMessage": "Virheellinen koodi"
     },
     "transport": {
       "header": {
         "title": "Kuljetus"
       },
-      "permitLabel": "Kuljetuslupa:",
-      "routeLabel": "Reitti:",
-      "mapButtonLabel": "Kartta",
+      "permitLabel": "Kuljetuslupa",
       "transportStatusLabel": "Kuljetuksen status",
       "transportStatusBoxLabel": {
         "notStarted": "Ajo ei ole vielä alkanut"
       },
-      "startDrivingButtonLabel": "ALOITA AJAMINEN"
+      "startDrivingButtonLabel": "Aloita ajaminen"
     }
   },
   "supervisor": {

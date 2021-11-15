@@ -5,6 +5,7 @@
       "back": "(SV) Back",
       "back2": "(SV) Back",
       "cancel": "(SV) Cancel",
+      "search": "(SV) Search",
       "edit": "(SV) Edit",
       "save": "(SV) Save",
       "send": "(SV) Send"
@@ -265,23 +266,21 @@
       "header": {
         "title": "(SV) Transports"
       },
-      "inputLabel": "(SV) Please enter transport code",
-      "inputPlaceholder": "(SV) Transport code",
-      "submitButtonLabel": "(SV) Submit code",
+      "inputTitle": "(SV) Upcoming transport",
+      "inputLabel": "(SV) Transport password",
+      "inputPlaceholder": "(SV) Password",
       "invalidCodeErrorMessage": "(SV) Invalid code"
     },
     "transport": {
       "header": {
         "title": "(SV) Transport"
       },
-      "permitLabel": "(SV) Permit:",
-      "routeLabel": "(SV) Route:",
-      "mapButtonLabel": "(SV) Map",
+      "permitLabel": "(SV) Permit",
       "transportStatusLabel": "(SV) Transport status",
       "transportStatusBoxLabel": {
         "notStarted": "(SV) Not started"
       },
-      "startDrivingButtonLabel": "(SV) START DRIVING"
+      "startDrivingButtonLabel": "(SV) Start driving"
     }
   }
 }

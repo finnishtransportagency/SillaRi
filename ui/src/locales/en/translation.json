@@ -5,6 +5,7 @@
       "back": "Back",
       "back2": "Back",
       "cancel": "Cancel",
+      "search": "Search",
       "edit": "Edit",
       "save": "Save",
       "send": "Send"
@@ -265,23 +266,21 @@
       "header": {
         "title": "Transports"
       },
-      "inputLabel": "Please enter transport code",
-      "inputPlaceholder": "Transport code",
-      "submitButtonLabel": "Submit code",
+      "inputTitle": "Upcoming transport",
+      "inputLabel": "Transport password",
+      "inputPlaceholder": "Password",
       "invalidCodeErrorMessage": "Invalid code"
     },
     "transport": {
       "header": {
         "title": "Transport"
       },
-      "permitLabel": "Permit:",
-      "routeLabel": "Route:",
-      "mapButtonLabel": "Map",
+      "permitLabel": "Permit",
       "transportStatusLabel": "Transport status",
       "transportStatusBoxLabel": {
         "notStarted": "Not started"
       },
-      "startDrivingButtonLabel": "START DRIVING"
+      "startDrivingButtonLabel": "Start driving"
     }
   }
 }
