@@ -4,6 +4,7 @@ import IFailedQuery from "../interfaces/IFailedQuery";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import IImageItem from "../interfaces/IImageItem";
 import INetworkStatus from "../interfaces/INetworkStatus";
+import { filterUnsavedImages } from "../utils/supervisionUtil";
 
 interface IStateProps {
   images: IImageItem[];
@@ -29,12 +30,9 @@ const supervisionSlice = createSlice({
       // Remove any camera images from the state that have been uploaded, and so are now in the supervision images
       console.log("UPDATE_IMAGES", action.payload);
       const supervisionImages = action.payload || [];
-      const cameraImages = current(state.images).reduce((acc: IImageItem[], image) => {
-        const isStateImageInPayload = supervisionImages.some((supervisionImage) => supervisionImage.filename === image.filename);
-        return isStateImageInPayload ? acc : [...acc, image];
-      }, []);
-      console.log("CAMERA_IMAGES", cameraImages);
-      return { ...state, images: cameraImages };
+      const unsavedImages = filterUnsavedImages(current(state.images), supervisionImages);
+      console.log("UNSAVED_IMAGES", unsavedImages);
+      return { ...state, images: unsavedImages };
     },
     SET_FAILED_QUERY: (state, action: PayloadAction<IFailedQuery>) => {
       // console.log("SET_FAILED_QUERY", action.payload);

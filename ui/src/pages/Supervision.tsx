@@ -16,7 +16,7 @@ import { cancelSupervision, getSupervision, onRetry, sendImageUpload, updateSupe
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import moment from "moment";
 import { DATE_TIME_FORMAT, SupervisionStatus } from "../utils/constants";
-import { reportHasUnsavedChanges } from "../utils/supervisionUtil";
+import { filterUnsavedImages, reportHasUnsavedChanges } from "../utils/supervisionUtil";
 import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
 import { actions as supervisionActions } from "../store/supervisionSlice";
 
@@ -50,7 +50,7 @@ const Supervision = (): JSX.Element => {
     }
   );
 
-  const { report: savedReport, currentStatus } = supervision || {};
+  const { report: savedReport, currentStatus, images: savedImages = [] } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
   const supervisionInProgress = !isLoadingSupervision && supervisionStatus === SupervisionStatus.IN_PROGRESS;
   const supervisionFinished = !isLoadingSupervision && supervisionStatus === SupervisionStatus.FINISHED;
@@ -97,6 +97,7 @@ const Supervision = (): JSX.Element => {
         bendOrDisplacement: modifiedReport.anomalies ? modifiedReport.bendOrDisplacement : false,
         otherObservations: modifiedReport.anomalies ? modifiedReport.otherObservations : false,
         otherObservationsInfo: modifiedReport.anomalies && modifiedReport.otherObservations ? modifiedReport.otherObservationsInfo : "",
+        draft: false,
       };
       reportUpdateMutation.mutate(updatedReport);
     }
@@ -153,8 +154,8 @@ const Supervision = (): JSX.Element => {
   };
 
   const confirmGoBack = (): void => {
-    // TODO check unsaved images
-    if (reportHasUnsavedChanges(modifiedReport, savedReport)) {
+    const hasUnsavedImages = filterUnsavedImages(images, savedImages).length > 0;
+    if (reportHasUnsavedChanges(modifiedReport, savedReport) || hasUnsavedImages) {
       showConfirmLeavePage();
     } else {
       history.goBack();
@@ -173,14 +174,13 @@ const Supervision = (): JSX.Element => {
   }, [isLoadingSupervision, isSendingReportUpdate, supervision, modifiedReport, savedReport]);
 
   useEffect(() => {
-    if (supervision && !isLoadingSupervision) {
-      const { images: savedImages = [] } = supervision || {};
+    if (supervision && !isLoadingSupervision && !isSendingImageUpload) {
       // Remove any uploaded images from the camera images stored in redux
       if (savedImages.length > 0) {
         dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: savedImages });
       }
     }
-  }, [isLoadingSupervision, supervision, dispatch]);
+  }, [isLoadingSupervision, isSendingImageUpload, supervision, savedImages, dispatch]);
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
