@@ -68,11 +68,11 @@ const SupervisionSummary = (): JSX.Element => {
       header: t("supervision.warning.leavePage"),
       message: t("supervision.warning.supervisionNotFinished"),
       buttons: [
+        t("common.answer.no"),
         {
           text: t("common.answer.yes"),
           handler: () => history.goBack(),
         },
-        t("common.answer.no"),
       ],
     });
   };
