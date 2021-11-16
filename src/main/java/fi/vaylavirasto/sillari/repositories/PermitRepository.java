@@ -126,7 +126,7 @@ public class PermitRepository {
                             TableAlias.permit.VALID_START_DATE,
                             TableAlias.permit.VALID_END_DATE,
                             TableAlias.permit.TRANSPORT_TOTAL_MASS,
-                            TableAlias.permit.CONTRACT_ID,
+                            TableAlias.permit.CONTRACT_NUMBER,
                             TableAlias.permit.ADDITIONAL_DETAILS
                     ).values(
                             permitModel.getCompanyId(),
@@ -136,7 +136,7 @@ public class PermitRepository {
                             permitModel.getValidStartDate(),
                             permitModel.getValidEndDate(),
                             permitModel.getTransportTotalMass(),
-                            permitModel.getContractId(),
+                            permitModel.getContractNumber(),
                             permitModel.getAdditionalDetails())
                     .returningResult(TableAlias.permit.ID)
                     .fetchOne(); // Execute and return zero or one record
@@ -389,7 +389,7 @@ public class PermitRepository {
                     .set(TableAlias.permit.VALID_START_DATE, permitModel.getValidStartDate())
                     .set(TableAlias.permit.VALID_END_DATE, permitModel.getValidEndDate())
                     .set(TableAlias.permit.TRANSPORT_TOTAL_MASS, permitModel.getTransportTotalMass())
-                    .set(TableAlias.permit.CONTRACT_ID, permitModel.getContractId())
+                    .set(TableAlias.permit.CONTRACT_NUMBER, permitModel.getContractNumber())
                     .set(TableAlias.permit.ADDITIONAL_DETAILS, permitModel.getAdditionalDetails())
                     .where(TableAlias.permit.ID.eq(permitModel.getId()))
                     .execute();

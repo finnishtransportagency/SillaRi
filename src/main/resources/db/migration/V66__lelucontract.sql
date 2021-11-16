@@ -1,1 +1,1 @@
-alter table sillari.permit add column if not exists contract_id bigint;
+alter table sillari.permit add column if not exists contract_number bigint;
