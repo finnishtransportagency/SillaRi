@@ -11,6 +11,7 @@ public class RouteBridgeModel {
     private Integer bridgeId;
     private String crossingInstruction;
     private List<SupervisionModel> supervisions;
+    private Long contractNumber;
 
     // Parents
     private BridgeModel bridge;

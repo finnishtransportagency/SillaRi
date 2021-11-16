@@ -126,7 +126,6 @@ public class PermitRepository {
                             TableAlias.permit.VALID_START_DATE,
                             TableAlias.permit.VALID_END_DATE,
                             TableAlias.permit.TRANSPORT_TOTAL_MASS,
-                            TableAlias.permit.CONTRACT_NUMBER,
                             TableAlias.permit.ADDITIONAL_DETAILS
                     ).values(
                             permitModel.getCompanyId(),
@@ -136,7 +135,6 @@ public class PermitRepository {
                             permitModel.getValidStartDate(),
                             permitModel.getValidEndDate(),
                             permitModel.getTransportTotalMass(),
-                            permitModel.getContractNumber(),
                             permitModel.getAdditionalDetails())
                     .returningResult(TableAlias.permit.ID)
                     .fetchOne(); // Execute and return zero or one record
@@ -316,11 +314,13 @@ public class PermitRepository {
                 ctx.insertInto(TableAlias.routeBridge,
                                 TableAlias.routeBridge.ROUTE_ID,
                                 TableAlias.routeBridge.BRIDGE_ID,
-                                TableAlias.routeBridge.CROSSING_INSTRUCTION
+                                TableAlias.routeBridge.CROSSING_INSTRUCTION,
+                                TableAlias.routeBridge.CONTRACT_NUMBER
                         ).values(
                                 routeBridgeModel.getRouteId(),
                                 routeBridgeModel.getBridgeId(),
-                                routeBridgeModel.getCrossingInstruction())
+                                routeBridgeModel.getCrossingInstruction(),
+                                routeBridgeModel.getContractNumber())
                         .execute();
             } else {
                 logger.warn("BridgeId missing for routeBridge, cannot insert");
@@ -389,7 +389,6 @@ public class PermitRepository {
                     .set(TableAlias.permit.VALID_START_DATE, permitModel.getValidStartDate())
                     .set(TableAlias.permit.VALID_END_DATE, permitModel.getValidEndDate())
                     .set(TableAlias.permit.TRANSPORT_TOTAL_MASS, permitModel.getTransportTotalMass())
-                    .set(TableAlias.permit.CONTRACT_NUMBER, permitModel.getContractNumber())
                     .set(TableAlias.permit.ADDITIONAL_DETAILS, permitModel.getAdditionalDetails())
                     .where(TableAlias.permit.ID.eq(permitModel.getId()))
                     .execute();

@@ -21,7 +21,6 @@ public class PermitModel {
     private String additionalDetails;
     private List<VehicleModel> vehicles;
     private AxleChartModel axleChart;
-    private Long contractNumber;
     private List<RouteModel> routes;
 
     // Parent

@@ -22,7 +22,6 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         permitModel.setValidEndDate(record.get(TableAlias.permit.VALID_END_DATE));
         permitModel.setTransportTotalMass(record.get(TableAlias.permit.TRANSPORT_TOTAL_MASS));
         permitModel.setAdditionalDetails(record.get(TableAlias.permit.ADDITIONAL_DETAILS));
-        permitModel.setContractNumber(record.get(TableAlias.permit.CONTRACT_NUMBER));
         permitModel.setRoutes(new ArrayList<>());
         return permitModel;
     }
