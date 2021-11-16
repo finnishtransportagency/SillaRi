@@ -2,17 +2,15 @@ import React, { useState } from "react";
 import { IonCol, IonImg, IonRow, IonThumbnail } from "@ionic/react";
 import moment from "moment";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
-import IImageItem from "../interfaces/IImageItem";
 import { getOrigin } from "../utils/request";
 import ImagePreview from "./ImagePreview";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 
 interface ImageThumbnailRowProps {
-  images: IImageItem[];
-  savedImages: ISupervisionImage[];
+  images: ISupervisionImage[];
 }
 
-const ImageThumbnailRow = ({ images, savedImages }: ImageThumbnailRowProps): JSX.Element => {
+const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
   const [isImagePreviewOpen, setImagePreviewOpen] = useState<boolean>(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
 
@@ -27,26 +25,6 @@ const ImageThumbnailRow = ({ images, savedImages }: ImageThumbnailRowProps): JSX
       {images &&
         images.length > 0 &&
         [...images]
-          .sort((a, b) => {
-            const am = moment(a.date);
-            const bm = moment(b.date);
-            return bm.diff(am, "seconds");
-          })
-          .map((imageItem) => {
-            const imageUrl = imageItem.dataUrl;
-
-            return (
-              <IonCol key={imageItem.id} size="3">
-                <IonThumbnail onClick={() => showImage(true, imageUrl as string)}>
-                  <IonImg src={imageUrl} />
-                </IonThumbnail>
-              </IonCol>
-            );
-          })}
-
-      {savedImages &&
-        savedImages.length > 0 &&
-        [...savedImages]
           .sort((a, b) => {
             const am = moment(a.taken, DATE_TIME_FORMAT);
             const bm = moment(b.taken, DATE_TIME_FORMAT);

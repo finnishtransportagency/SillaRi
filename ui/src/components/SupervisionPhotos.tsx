@@ -2,7 +2,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow } from "@ionic/react";
 import ISupervision from "../interfaces/ISupervision";
-import { useTypedSelector } from "../store/store";
 import camera from "../theme/icons/camera_white.svg";
 import lane from "../theme/icons/lane_white.svg";
 import ImageThumbnailRow from "./ImageThumbnailRow";
@@ -19,8 +18,7 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded, disable
   const { t } = useTranslation();
   const history = useHistory();
 
-  const { images = [] } = useTypedSelector((state) => state.supervisionReducer);
-  const { id: supervisionId, images: savedImages = [] } = supervision || {};
+  const { id: supervisionId, images = [] } = supervision || {};
 
   const takePhotosClicked = (): void => {
     history.push(`/takephotos/${supervisionId}`);
@@ -33,7 +31,7 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded, disable
       </IonItem>
 
       <IonGrid>
-        <ImageThumbnailRow images={images} savedImages={savedImages} />
+        <ImageThumbnailRow images={images} />
       </IonGrid>
 
       {isButtonsIncluded && (
