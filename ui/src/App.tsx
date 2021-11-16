@@ -8,7 +8,6 @@ import Home from "./pages/Home";
 import Settings from "./pages/Settings";
 import Map from "./pages/Map";
 import Supervision from "./pages/Supervision";
-import Camera from "./pages/Camera";
 import RouteTransportDetail from "./pages/RouteTransportDetail";
 import DenyCrossing from "./pages/DenyCrossing";
 import BridgeDetail from "./pages/BridgeDetail";
@@ -43,6 +42,7 @@ import "./theme/variables.css";
 import "./theme/sillari.css";
 import IUserData from "./interfaces/IUserData";
 import { getOrigin } from "./utils/request";
+import CameraContainer from "./components/CameraContainer";
 
 // Use the same style for all platforms
 setupConfig({
@@ -112,7 +112,7 @@ const App: React.FC = () => {
                 <Route path="/supervision/:supervisionId" component={Supervision} exact />
                 <Route path="/denyCrossing/:supervisionId" component={DenyCrossing} exact />
                 <Route path="/summary/:supervisionId" component={SupervisionSummary} exact />
-                <Route path="/takePhotos/:supervisionId" component={Camera} exact />
+                <Route path="/takePhotos/:supervisionId" component={CameraContainer} exact />
                 <Route path="/management/:companyId" component={CompanySummary} exact />
                 <Route path="/management/addTransport/:permitId" component={AddTransport} exact />
                 <Route path="/management/transportDetail/:routeTransportId" component={TransportDetail} exact />
