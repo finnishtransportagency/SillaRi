@@ -7,8 +7,6 @@ import { useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
-import { RootState, useTypedSelector } from "../store/store";
-import { actions as supervisionActions } from "../store/supervisionSlice";
 import camera from "../theme/icons/camera_white.svg";
 import { deleteImage, getSupervision, onRetry, sendImageUpload } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
@@ -17,6 +15,7 @@ import ImagePreview from "../components/ImagePreview";
 import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
 import Header from "../components/Header";
 import PhotoItem from "../components/PhotoItem";
+import IImageItem from "../interfaces/IImageItem";
 
 interface PhotosProps {
   supervisionId: string;
@@ -29,19 +28,18 @@ const Photos = (): JSX.Element => {
   const queryClient = useQueryClient();
 
   const { supervisionId = "0" } = useParams<PhotosProps>();
-  const { images = [] } = useTypedSelector((state: RootState) => state.supervisionReducer);
 
+  const [images, setImages] = useState<IImageItem[]>([]);
   const [isImagePreviewOpen, setImagePreviewOpen] = useState<boolean>(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
 
-  const showImage = (isOpen: boolean, imageUrl?: string) => {
-    setImagePreviewOpen(isOpen);
-    setImagePreviewUrl(imageUrl || imagePreviewUrl);
-  };
-
-  const { data: supervision } = useQuery(["getSupervision", supervisionId], () => getSupervision(Number(supervisionId), dispatch), {
-    retry: onRetry,
-  });
+  const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
+    ["getSupervision", supervisionId],
+    () => getSupervision(Number(supervisionId), dispatch),
+    {
+      retry: onRetry,
+    }
+  );
   const { images: savedImages = [] } = supervision || {};
 
   // Set-up mutations for modifying data later
@@ -62,6 +60,13 @@ const Photos = (): JSX.Element => {
   });
   const { isLoading: isSendingImageDelete } = imageDeleteMutation;
 
+  const isLoading = isLoadingSupervision || isSendingImageUpload || isSendingImageDelete;
+
+  const showImage = (isOpen: boolean, imageUrl?: string) => {
+    setImagePreviewOpen(isOpen);
+    setImagePreviewUrl(imageUrl || imagePreviewUrl);
+  };
+
   const takePicture = async () => {
     try {
       // Use uuid in the filename to make it unique
@@ -72,10 +77,9 @@ const Photos = (): JSX.Element => {
       const now = new Date();
       const uuid = uuidv4();
       const fname = `image_${uuid}.jpg`;
-      dispatch({
-        type: supervisionActions.SET_IMAGES,
-        payload: [...images, { id: uuid, filename: fname, dataUrl: image.dataUrl, date: now }],
-      });
+
+      const newImage: IImageItem = { id: uuid, filename: fname, dataUrl: image.dataUrl, date: now };
+      setImages([...images, newImage]);
     } catch (err) {
       console.log("TakePicture REJECTED:");
       console.log(err);
@@ -84,7 +88,7 @@ const Photos = (): JSX.Element => {
 
   const removeImageItem = (uuid: string) => {
     const imagesToEdit = images.filter((image) => image.id !== uuid);
-    dispatch({ type: supervisionActions.SET_IMAGES, payload: imagesToEdit });
+    setImages(imagesToEdit);
   };
 
   const deleteImageObject = (objectKey: string) => {
@@ -140,7 +144,7 @@ const Photos = (): JSX.Element => {
                       key={imageItem.id}
                       imageUrl={imageItem.dataUrl}
                       taken={imageItem.date}
-                      isLoading={isSendingImageUpload || isSendingImageDelete}
+                      isLoading={isLoading}
                       showImage={thumbnailClicked}
                       removeImage={deleteClicked}
                     />
@@ -164,7 +168,7 @@ const Photos = (): JSX.Element => {
                       key={supervisionImage.id}
                       imageUrl={imageUrl}
                       taken={moment(supervisionImage.taken, DATE_TIME_FORMAT).toDate()}
-                      isLoading={isSendingImageUpload || isSendingImageDelete}
+                      isLoading={isLoading}
                       showImage={thumbnailClicked}
                       removeImage={deleteClicked}
                     />
