@@ -5,7 +5,7 @@ import { DATE_TIME_FORMAT } from "../utils/constants";
 import erase from "../theme/icons/erase_white.svg";
 import { useTranslation } from "react-i18next";
 
-interface SupervisionPhotoProps {
+interface PhotoItemProps {
   imageUrl: string | undefined;
   taken: Date;
   isLoading: boolean;
@@ -13,7 +13,7 @@ interface SupervisionPhotoProps {
   removeImage: () => void;
 }
 
-const SupervisionPhoto = ({ imageUrl, taken, isLoading, showImage, removeImage }: SupervisionPhotoProps): JSX.Element => {
+const PhotoItem = ({ imageUrl, taken, isLoading, showImage, removeImage }: PhotoItemProps): JSX.Element => {
   const { t } = useTranslation();
 
   return (
@@ -32,4 +32,4 @@ const SupervisionPhoto = ({ imageUrl, taken, isLoading, showImage, removeImage }
   );
 };
 
-export default SupervisionPhoto;
+export default PhotoItem;

@@ -16,7 +16,7 @@ import { getOrigin } from "../utils/request";
 import ImagePreview from "../components/ImagePreview";
 import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
 import Header from "../components/Header";
-import SupervisionPhoto from "../components/SupervisionPhoto";
+import PhotoItem from "../components/PhotoItem";
 
 interface PhotosProps {
   supervisionId: string;
@@ -136,7 +136,7 @@ const Photos = (): JSX.Element => {
                   const deleteClicked = (): void => removeImageItem(imageItem.id);
 
                   return (
-                    <SupervisionPhoto
+                    <PhotoItem
                       key={imageItem.id}
                       imageUrl={imageItem.dataUrl}
                       taken={imageItem.date}
@@ -160,7 +160,7 @@ const Photos = (): JSX.Element => {
                   const deleteClicked = (): void => deleteImageObject(supervisionImage.objectKey);
 
                   return (
-                    <SupervisionPhoto
+                    <PhotoItem
                       key={supervisionImage.id}
                       imageUrl={imageUrl}
                       taken={moment(supervisionImage.taken, DATE_TIME_FORMAT).toDate()}
