@@ -1,6 +1,6 @@
 import React from "react";
-import {useTranslation} from "react-i18next";
-import {IonItem, IonLabel, IonText} from "@ionic/react";
+import { useTranslation } from "react-i18next";
+import { IonItem, IonLabel, IonText } from "@ionic/react";
 import CustomAccordion from "./common/CustomAccordion";
 
 const TrafficSupervisorsAccordion = (): JSX.Element => {
