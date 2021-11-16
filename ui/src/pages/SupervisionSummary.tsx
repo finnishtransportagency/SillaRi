@@ -38,10 +38,6 @@ const SupervisionSummary = (): JSX.Element => {
     () => getSupervision(Number(supervisionId), dispatch),
     { retry: onRetry }
   );
-  const { report, currentStatus } = supervision || {};
-  const { status: supervisionStatus } = currentStatus || {};
-
-  const notAllowedToEdit = !report || supervisionStatus === SupervisionStatus.REPORT_SIGNED;
 
   const finishSupervisionMutation = useMutation((superId: string) => finishSupervision(Number(superId), dispatch), {
     retry: onRetry,
@@ -53,6 +49,12 @@ const SupervisionSummary = (): JSX.Element => {
     },
   });
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
+
+  const { report, currentStatus } = supervision || {};
+  const { status: supervisionStatus } = currentStatus || {};
+
+  const isLoading = isLoadingSupervision || isSendingFinishSupervision;
+  const notAllowedToEdit = !report || supervisionStatus === SupervisionStatus.REPORT_SIGNED;
 
   const saveReport = (): void => {
     finishSupervisionMutation.mutate(supervisionId);
@@ -96,11 +98,10 @@ const SupervisionSummary = (): JSX.Element => {
         ) : (
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
-            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" disabled={notAllowedToEdit} />
+            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" disabled={isLoading || notAllowedToEdit} />
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
-              isLoading={isLoadingSupervision || isSendingFinishSupervision}
-              disabled={notAllowedToEdit}
+              disabled={isLoading || notAllowedToEdit}
               saveChanges={saveReport}
               cancelChanges={editReport}
               saveLabel={t("supervision.buttons.saveToSendList")}
