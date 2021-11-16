@@ -275,6 +275,8 @@
       "header": {
         "title": "Transport"
       },
+      "estimatedDepartureTime": "Estimated departure time",
+      "departureTime": "Departure time",
       "permitLabel": "Permit",
       "transportStatusLabel": "Status",
       "statusInfo": {

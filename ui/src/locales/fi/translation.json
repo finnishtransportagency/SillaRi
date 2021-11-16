@@ -276,6 +276,8 @@
       "header": {
         "title": "Kuljetus"
       },
+      "estimatedDepartureTime": "Arvioitu lähtöaika",
+      "departureTime": "Lähtöaika",
       "permitLabel": "Kuljetuslupa",
       "transportStatusLabel": "Status",
       "statusInfo": {
