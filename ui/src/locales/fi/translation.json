@@ -296,6 +296,11 @@
         "startBreak": "Aloita touko",
         "stopBreak": "Jatka ajamista",
         "stopDriving": "Päätä kuljetus"
+      },
+      "stopAlert": {
+        "title": "Haluatko varmasti päättää kuljetuksen?",
+        "message": "Päätettyä kuljetusta ei voi enää jatkaa.",
+        "confirm": "Päätä kuljetus"
       }
     }
   },

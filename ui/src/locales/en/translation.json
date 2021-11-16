@@ -295,6 +295,11 @@
         "startBreak": "Start break",
         "stopBreak": "Continue driving",
         "stopDriving": "End transport"
+      },
+      "stopAlert": {
+        "title": "Are you sure you want to end the transport?",
+        "message": "The transport cannot be continued anymore.",
+        "confirm": "End transport"
       }
     }
   }

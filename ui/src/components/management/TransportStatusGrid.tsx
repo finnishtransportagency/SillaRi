@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText, useIonAlert } from "@ionic/react";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
 import arrowLeft from "../../theme/icons/arrow-left.svg";
@@ -20,6 +20,7 @@ const TransportStatusGrid = ({ selectedRouteTransportDetail }: TransportStatusGr
   const dispatch = useDispatch();
   const history = useHistory();
   const queryClient = useQueryClient();
+  const [present] = useIonAlert();
 
   const { id: routeTransportId, currentStatus } = selectedRouteTransportDetail || {};
   const { status } = currentStatus || {};
@@ -41,6 +42,18 @@ const TransportStatusGrid = ({ selectedRouteTransportDetail }: TransportStatusGr
   const changeStatus = (newStatus: TransportStatus) => {
     const newTransportStatus: IRouteTransportStatus = { id: 0, routeTransportId, status: newStatus };
     routeTransportStatusMutation.mutate(newTransportStatus);
+  };
+
+  const confirmArrival = () => {
+    // Ask the user to confirm that they want to end the transport
+    present({
+      header: t("transports.transport.stopAlert.title"),
+      message: t("transports.transport.stopAlert.message"),
+      buttons: [
+        { text: t("transports.transport.stopAlert.confirm"), handler: () => changeStatus(TransportStatus.ARRIVED) },
+        t("common.buttons.back2"),
+      ],
+    });
   };
 
   return (
@@ -114,13 +127,7 @@ const TransportStatusGrid = ({ selectedRouteTransportDetail }: TransportStatusGr
                       )}
 
                       {(status === TransportStatus.DEPARTED || status === TransportStatus.IN_PROGRESS || status === TransportStatus.STOPPED) && (
-                        <IonButton
-                          color="tertiary"
-                          expand="block"
-                          size="large"
-                          disabled={isChangingTransportStatus}
-                          onClick={() => changeStatus(TransportStatus.ARRIVED)}
-                        >
+                        <IonButton color="tertiary" expand="block" size="large" disabled={isChangingTransportStatus} onClick={confirmArrival}>
                           {t("transports.transport.buttons.stopDriving")}
                         </IonButton>
                       )}
