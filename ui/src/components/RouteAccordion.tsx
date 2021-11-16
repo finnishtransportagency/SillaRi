@@ -8,9 +8,10 @@ import mapRoute from "../theme/icons/map-route.svg";
 
 interface RouteAccordionProps {
   route: IRoute;
+  isPanelOpen?: boolean;
 }
 
-const RouteAccordion = ({ route }: RouteAccordionProps): JSX.Element => {
+const RouteAccordion = ({ route, isPanelOpen }: RouteAccordionProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { id: routeId, departureAddress, arrivalAddress } = route || {};
@@ -23,6 +24,7 @@ const RouteAccordion = ({ route }: RouteAccordionProps): JSX.Element => {
         {
           uuid: "permit",
           heading: <IonText>{t("route.routeInfo.title")}</IonText>,
+          isPanelOpen,
           panel: (
             <div>
               <IonItem className="itemIcon" detail detailIcon={mapRoute} routerLink={`/routemap/${routeId}`}>
@@ -38,7 +40,7 @@ const RouteAccordion = ({ route }: RouteAccordionProps): JSX.Element => {
                   </IonLabel>
                 </IonLabel>
               </IonItem>
-              <IonItem>
+              <IonItem lines="none">
                 <IonIcon className="otherIcon" icon={mapPoint} color="primary" slot="start" />
                 <IonLabel>
                   <IonLabel>{t("route.routeInfo.arrivalPoint")}</IonLabel>
@@ -53,6 +55,10 @@ const RouteAccordion = ({ route }: RouteAccordionProps): JSX.Element => {
       ]}
     />
   );
+};
+
+RouteAccordion.defaultProps = {
+  isPanelOpen: false,
 };
 
 export default RouteAccordion;

@@ -7,6 +7,7 @@ import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +26,13 @@ public class RouteTransportStatusRepository {
                 .where(TableAlias.transportStatus.ROUTE_TRANSPORT_ID.eq(routeTransportId))
                 .orderBy(TableAlias.transportStatus.TIME.desc())
                 .fetch(new RouteTransportStatusMapper());
+    }
+
+    public void insertTransportStatus(Integer routeTransportId, TransportStatusType statusType) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+            insertTransportStatus(ctx, routeTransportId, statusType);
+        });
     }
 
     public void insertTransportStatus(DSLContext ctx, Integer routeTransportId, TransportStatusType statusType) {

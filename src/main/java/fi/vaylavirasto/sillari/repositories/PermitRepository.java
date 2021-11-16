@@ -16,6 +16,7 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -101,6 +102,18 @@ public class PermitRepository {
         return record != null ? record.value1() : null;
     }
 
+    public OffsetDateTime getPermitValidEndDateByRouteTransportId(DSLContext ctx, Integer routeTransportId) {
+        Record1<OffsetDateTime> record = ctx.select(TableAlias.permit.VALID_END_DATE)
+                .from(TableAlias.permit)
+                .innerJoin(TableAlias.route)
+                .on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
+                .innerJoin(TableAlias.routeTransport)
+                .on(TableAlias.route.ID.eq(TableAlias.routeTransport.ROUTE_ID))
+                .where(TableAlias.routeTransport.ID.eq(routeTransportId))
+                .fetchOne();
+        return record != null ? record.value1() : null;
+    }
+
     public Integer createPermit(PermitModel permitModel) throws DataAccessException {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
@@ -113,6 +126,7 @@ public class PermitRepository {
                             TableAlias.permit.VALID_START_DATE,
                             TableAlias.permit.VALID_END_DATE,
                             TableAlias.permit.TRANSPORT_TOTAL_MASS,
+                            TableAlias.permit.CONTRACT_NUMBER,
                             TableAlias.permit.ADDITIONAL_DETAILS
                     ).values(
                             permitModel.getCompanyId(),
@@ -122,6 +136,7 @@ public class PermitRepository {
                             permitModel.getValidStartDate(),
                             permitModel.getValidEndDate(),
                             permitModel.getTransportTotalMass(),
+                            permitModel.getContractNumber(),
                             permitModel.getAdditionalDetails())
                     .returningResult(TableAlias.permit.ID)
                     .fetchOne(); // Execute and return zero or one record
@@ -374,6 +389,7 @@ public class PermitRepository {
                     .set(TableAlias.permit.VALID_START_DATE, permitModel.getValidStartDate())
                     .set(TableAlias.permit.VALID_END_DATE, permitModel.getValidEndDate())
                     .set(TableAlias.permit.TRANSPORT_TOTAL_MASS, permitModel.getTransportTotalMass())
+                    .set(TableAlias.permit.CONTRACT_NUMBER, permitModel.getContractNumber())
                     .set(TableAlias.permit.ADDITIONAL_DETAILS, permitModel.getAdditionalDetails())
                     .where(TableAlias.permit.ID.eq(permitModel.getId()))
                     .execute();

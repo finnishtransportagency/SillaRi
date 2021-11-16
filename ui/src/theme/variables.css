@@ -21,6 +21,10 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-secondary-shade: #0088c6;
   --ion-color-secondary-tint: #1aa4e4;
 
+  /** secondary additional (Vayla blue) **/
+  --ion-color-secondary-50: #7fccf0;
+  --ion-color-secondary-5: #f2fafd;
+
   /** tertiary (Vayla light blue) **/
   /*
   --ion-color-tertiary: #49c2f1;
@@ -35,6 +39,9 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-tertiary-shade: #40abd4;
   --ion-color-tertiary-tint: #5bc8f2;
 
+  /** tertiary additional (Vayla light blue) **/
+  --ion-color-tertiary-100: #49c2f1;
+
   /** success (Vayla green) **/
   --ion-color-success: #8dcb6d;
   --ion-color-success-rgb: 141, 203, 109;
@@ -42,6 +49,9 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-success-contrast-rgb: 0, 0, 0;
   --ion-color-success-shade: #7cb360;
   --ion-color-success-tint: #98d07c;
+
+  /** success additional (Vayla green) **/
+  --ion-color-success-25: #e3f2db;
 
   /** warning (Vayla yellow) **/
   --ion-color-warning: #ffc300;
@@ -52,12 +62,15 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-warning-tint: #ffc91a;
 
   /** danger **/
-  --ion-color-danger: #eb445a;
-  --ion-color-danger-rgb: 235, 68, 90;
+  --ion-color-danger: #c73f00;
+  --ion-color-danger-rgb: 199, 63, 0;
   --ion-color-danger-contrast: #ffffff;
   --ion-color-danger-contrast-rgb: 255, 255, 255;
-  --ion-color-danger-shade: #cf3c4f;
-  --ion-color-danger-tint: #ed576b;
+  --ion-color-danger-shade: #af3700;
+  --ion-color-danger-tint: #cd521a;
+
+  /** danger additional **/
+  --ion-color-danger-25: #f1cfc0;
 
   /** dark **/
   --ion-color-dark: #222428;
