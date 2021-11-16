@@ -50,7 +50,6 @@ const Supervision = (): JSX.Element => {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
-      history.push(`/summary/${supervisionId}`);
     },
   });
   const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
@@ -73,7 +72,7 @@ const Supervision = (): JSX.Element => {
   });
   const { isLoading: isSendingCancelSupervision } = cancelSupervisionMutation;
 
-  const { report: savedReport, currentStatus } = supervision || {};
+  const { report: savedReport, currentStatus, images = [] } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
 
   const isLoading = isLoadingSupervision || isSendingReportUpdate || isSendingCancelSupervision || isSendingDeleteImages;
@@ -82,7 +81,7 @@ const Supervision = (): JSX.Element => {
   const notAllowedToEdit = !savedReport || (!supervisionInProgress && !supervisionFinished);
 
   // Save changes in report
-  const saveReportClicked = (): void => {
+  const saveReport = (isDraft: boolean): void => {
     if (modifiedReport) {
       // Update conflicting values
       const updatedReport = {
@@ -95,10 +94,15 @@ const Supervision = (): JSX.Element => {
         bendOrDisplacement: modifiedReport.anomalies ? modifiedReport.bendOrDisplacement : false,
         otherObservations: modifiedReport.anomalies ? modifiedReport.otherObservations : false,
         otherObservationsInfo: modifiedReport.anomalies && modifiedReport.otherObservations ? modifiedReport.otherObservationsInfo : "",
-        draft: false,
+        draft: isDraft,
       };
       reportUpdateMutation.mutate(updatedReport);
     }
+  };
+
+  const saveReportClicked = (): void => {
+    saveReport(false);
+    history.push(`/summary/${supervisionId}`);
   };
 
   const showConfirmCancelSupervision = () => {
@@ -147,6 +151,11 @@ const Supervision = (): JSX.Element => {
     }
   };
 
+  const takePhotosClicked = (): void => {
+    saveReport(savedReport ? savedReport.draft : true);
+    history.push(`/takephotos/${supervisionId}`);
+  };
+
   useEffect(() => {
     if (!isLoading && supervision) {
       // Page is loaded for the first time, modifiedReport is not set
@@ -170,9 +179,10 @@ const Supervision = (): JSX.Element => {
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
             <SupervisionPhotos
-              supervision={supervision as ISupervision}
+              images={images}
               headingKey="supervision.photosDrivingLine"
               isButtonsIncluded
+              takePhotos={takePhotosClicked}
               disabled={isLoading || notAllowedToEdit}
             />
             <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} disabled={notAllowedToEdit} />

@@ -154,8 +154,8 @@ const Photos = (): JSX.Element => {
               savedImages.length > 0 &&
               [...savedImages]
                 .sort((a, b) => {
-                  const am = moment(a.taken);
-                  const bm = moment(b.taken);
+                  const am = moment(a.taken, DATE_TIME_FORMAT);
+                  const bm = moment(b.taken, DATE_TIME_FORMAT);
                   return bm.diff(am, "seconds");
                 })
                 .map((supervisionImage) => {

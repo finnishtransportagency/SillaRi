@@ -50,7 +50,7 @@ const SupervisionSummary = (): JSX.Element => {
   });
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
 
-  const { report, currentStatus } = supervision || {};
+  const { report, currentStatus, images = [] } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
 
   const isLoading = isLoadingSupervision || isSendingFinishSupervision;
@@ -98,7 +98,7 @@ const SupervisionSummary = (): JSX.Element => {
         ) : (
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
-            <SupervisionPhotos supervision={supervision as ISupervision} headingKey="supervision.photos" disabled={isLoading || notAllowedToEdit} />
+            <SupervisionPhotos images={images} headingKey="supervision.photos" disabled={isLoading || notAllowedToEdit} />
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
               disabled={isLoading || notAllowedToEdit}
