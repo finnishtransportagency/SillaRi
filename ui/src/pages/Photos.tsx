@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { IonButton, IonContent, IonFab, IonIcon, IonImg, IonItem, IonLabel, IonList, IonListHeader, IonPage, IonThumbnail } from "@ionic/react";
+import { IonButton, IonContent, IonFab, IonIcon, IonLabel, IonList, IonListHeader, IonPage } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Camera, CameraSource, CameraResultType } from "@capacitor/camera";
-import Moment from "react-moment";
 import { useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import moment from "moment";
@@ -11,25 +10,25 @@ import { v4 as uuidv4 } from "uuid";
 import { RootState, useTypedSelector } from "../store/store";
 import { actions as supervisionActions } from "../store/supervisionSlice";
 import camera from "../theme/icons/camera_white.svg";
-import erase from "../theme/icons/erase_white.svg";
 import { deleteImage, getSupervision, onRetry, sendImageUpload } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import { getOrigin } from "../utils/request";
-import ImagePreview from "./ImagePreview";
+import ImagePreview from "../components/ImagePreview";
 import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
-import Header from "./Header";
+import Header from "../components/Header";
+import SupervisionPhoto from "../components/SupervisionPhoto";
 
-interface CameraContainerProps {
+interface PhotosProps {
   supervisionId: string;
 }
 
-const CameraContainer = (): JSX.Element => {
+const Photos = (): JSX.Element => {
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
-  const { supervisionId = "0" } = useParams<CameraContainerProps>();
+  const { supervisionId = "0" } = useParams<PhotosProps>();
   const { images = [] } = useTypedSelector((state: RootState) => state.supervisionReducer);
 
   const [isImagePreviewOpen, setImagePreviewOpen] = useState<boolean>(false);
@@ -133,30 +132,20 @@ const CameraContainer = (): JSX.Element => {
                   return bm.diff(am, "seconds");
                 })
                 .map((imageItem) => {
-                  const imageUrl = imageItem.dataUrl;
+                  const thumbnailClicked = (): void => showImage(true, imageItem.dataUrl as string);
+                  const deleteClicked = (): void => removeImageItem(imageItem.id);
 
                   return (
-                    <IonItem key={imageItem.id}>
-                      <IonThumbnail slot="start" onClick={() => showImage(true, imageUrl as string)}>
-                        <IonImg src={imageUrl} />
-                      </IonThumbnail>
-                      <IonLabel>
-                        <Moment format={DATE_TIME_FORMAT}>{imageItem.date}</Moment>
-                      </IonLabel>
-                      <IonButton
-                        slot="end"
-                        expand="block"
-                        size="default"
-                        disabled={isSendingImageUpload || isSendingImageDelete}
-                        onClick={() => removeImageItem(imageItem.id)}
-                      >
-                        <IonIcon className="otherIcon" icon={erase} slot="start" />
-                        {t("camera.item.deleteButtonLabel")}
-                      </IonButton>
-                    </IonItem>
+                    <SupervisionPhoto
+                      key={imageItem.id}
+                      imageUrl={imageItem.dataUrl}
+                      taken={imageItem.date}
+                      isLoading={isSendingImageUpload || isSendingImageDelete}
+                      showImage={thumbnailClicked}
+                      removeImage={deleteClicked}
+                    />
                   );
                 })}
-
             {savedImages &&
               savedImages.length > 0 &&
               [...savedImages]
@@ -167,24 +156,18 @@ const CameraContainer = (): JSX.Element => {
                 })
                 .map((supervisionImage) => {
                   const imageUrl = `${getOrigin()}/api/images/get?objectKey=${supervisionImage.objectKey}`;
+                  const thumbnailClicked = (): void => showImage(true, imageUrl);
+                  const deleteClicked = (): void => deleteImageObject(supervisionImage.objectKey);
 
                   return (
-                    <IonItem key={supervisionImage.id}>
-                      <IonThumbnail slot="start" onClick={() => showImage(true, imageUrl)}>
-                        <IonImg src={imageUrl} />
-                      </IonThumbnail>
-                      <IonLabel>{supervisionImage.taken}</IonLabel>
-                      <IonButton
-                        slot="end"
-                        expand="block"
-                        size="default"
-                        disabled={isSendingImageUpload || isSendingImageDelete}
-                        onClick={() => deleteImageObject(supervisionImage.objectKey)}
-                      >
-                        <IonIcon className="otherIcon" icon={erase} slot="start" />
-                        {t("camera.item.deleteButtonLabel")}
-                      </IonButton>
-                    </IonItem>
+                    <SupervisionPhoto
+                      key={supervisionImage.id}
+                      imageUrl={imageUrl}
+                      taken={moment(supervisionImage.taken, DATE_TIME_FORMAT).toDate()}
+                      isLoading={isSendingImageUpload || isSendingImageDelete}
+                      showImage={thumbnailClicked}
+                      removeImage={deleteClicked}
+                    />
                   );
                 })}
           </IonList>
@@ -203,4 +186,4 @@ const CameraContainer = (): JSX.Element => {
   );
 };
 
-export default CameraContainer;
+export default Photos;
