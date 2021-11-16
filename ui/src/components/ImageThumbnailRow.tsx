@@ -5,6 +5,7 @@ import ISupervisionImage from "../interfaces/ISupervisionImage";
 import IImageItem from "../interfaces/IImageItem";
 import { getOrigin } from "../utils/request";
 import ImagePreview from "./ImagePreview";
+import { DATE_TIME_FORMAT } from "../utils/constants";
 
 interface ImageThumbnailRowProps {
   images: IImageItem[];
@@ -47,8 +48,8 @@ const ImageThumbnailRow = ({ images, savedImages }: ImageThumbnailRowProps): JSX
         savedImages.length > 0 &&
         [...savedImages]
           .sort((a, b) => {
-            const am = moment(a.taken);
-            const bm = moment(b.taken);
+            const am = moment(a.taken, DATE_TIME_FORMAT);
+            const bm = moment(b.taken, DATE_TIME_FORMAT);
             return bm.diff(am, "seconds");
           })
           .map((image) => {
