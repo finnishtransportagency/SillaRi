@@ -100,9 +100,7 @@
     "identifier": "Identifier",
     "location": "Location",
     "crossingInstructions": {
-      "title": "Instructions",
-      "documentingHeader": "Dokumentointi",
-      "documentingParagraph": "Valvoja seuraa ... jne todo"
+      "title": "Instructions"
     },
     "trafficSupervisors": {
       "title": "Traffic supervisors"

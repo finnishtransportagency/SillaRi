@@ -101,9 +101,7 @@
     "identifier": "Tunnus",
     "location": "Sijainti",
     "crossingInstructions": {
-      "title": "Ohjeet",
-      "documentingHeader": "Dokumentointi",
-      "documentingParagraph": "Valvoja seuraa ... jne todo"
+      "title": "Ohjeet"
     },
     "trafficSupervisors": {
       "title": "Liikenteenohjaajat"

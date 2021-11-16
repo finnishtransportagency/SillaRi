@@ -1,6 +1,6 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
-import { IonItem, IonLabel, IonText } from "@ionic/react";
+import {useTranslation} from "react-i18next";
+import {IonItem, IonLabel, IonText} from "@ionic/react";
 import CustomAccordion from "./common/CustomAccordion";
 import IRouteBridge from "../interfaces/IRouteBridge";
 
@@ -23,12 +23,8 @@ const CrossingInstructionsAccordion = ({ routeBridge }: CrossingInstructionsAcco
           panel: (
             <div>
               <IonItem>
-                <IonLabel>TODO</IonLabel>
+                <IonLabel>Tulosssa myöhemmin</IonLabel>
                 <IonLabel>{crossingInstruction}</IonLabel>
-              </IonItem>
-              <IonItem>
-                <IonLabel>{t("bridge.crossingInstructions.documentingHeader")}</IonLabel>
-                <IonLabel>{t("bridge.crossingInstructions.documentingParagraph")}</IonLabel>
               </IonItem>
             </div>
           ),

@@ -100,9 +100,7 @@
     "identifier": "(SV) Identifier",
     "location": "(SV) Location",
     "crossingInstructions": {
-      "title": "(SV) Instructions",
-      "documentingHeader": "(SV) Dokumentointi",
-      "documentingParagraph": "(SV) Valvoja seuraa ... jne todo"
+      "title": "(SV) Instructions"
     },
     "trafficSupervisors": {
       "title": "(SV) Traffic supervisors"

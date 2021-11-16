@@ -1,6 +1,6 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
-import { IonItem, IonLabel, IonText } from "@ionic/react";
+import {useTranslation} from "react-i18next";
+import {IonItem, IonLabel, IonText} from "@ionic/react";
 import CustomAccordion from "./common/CustomAccordion";
 
 const TrafficSupervisorsAccordion = (): JSX.Element => {
@@ -16,7 +16,7 @@ const TrafficSupervisorsAccordion = (): JSX.Element => {
           panel: (
             <div>
               <IonItem>
-                <IonLabel>TODO</IonLabel>
+                <IonLabel>Tulossa myöhemmin</IonLabel>
               </IonItem>
             </div>
           ),
