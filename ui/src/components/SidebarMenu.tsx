@@ -42,7 +42,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
           </IonToolbar>
         </IonHeader>
         <IonList>
-          {roles.includes("SILLARI_TEST_SILLANVALVOJA") && (
+          {roles.includes("SILLARI_SILLANVALVOJA") && (
             <IonMenuToggle>
               <IonItem routerLink="/">
                 <IonIcon className="otherIcon" icon={lane} slot="start" />
@@ -50,7 +50,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
               </IonItem>
             </IonMenuToggle>
           )}
-          {roles.includes("SILLARI_TEST_AJOJARJESTELIJA") && (
+          {roles.includes("SILLARI_AJOJARJESTELIJA") && (
             <IonMenuToggle>
               <IonItem routerLink="/management/1">
                 <IonIcon className="otherIcon" icon={calendar} slot="start" />
@@ -58,7 +58,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
               </IonItem>
             </IonMenuToggle>
           )}
-          {roles.includes("SILLARI_TEST_KULJETTAJA") && (
+          {roles.includes("SILLARI_KULJETTAJA") && (
             <IonMenuToggle>
               <IonItem routerLink="/transport">
                 <IonIcon className="otherIcon" icon={truck} slot="start" />

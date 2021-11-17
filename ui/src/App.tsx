@@ -67,11 +67,11 @@ const App: React.FC = () => {
         if (userDataResponse?.ok) {
           const responseData = await userDataResponse.json();
           if (responseData.roles.length > 0) {
-            if (responseData.roles.includes("SILLARI_TEST_SILLANVALVOJA")) {
+            if (responseData.roles.includes("SILLARI_SILLANVALVOJA")) {
               setHomePage("/supervision");
-            } else if (responseData.roles.includes("SILLARI_TEST_AJOJARJESTELIJA")) {
+            } else if (responseData.roles.includes("SILLARI_AJOJARJESTELIJA")) {
               setHomePage("/management/1");
-            } else if (responseData.roles.includes("SILLARI_TEST_KULJETTAJA")) {
+            } else if (responseData.roles.includes("SILLARI_KULJETTAJA")) {
               setHomePage("/transport");
             }
             setUserData(responseData);

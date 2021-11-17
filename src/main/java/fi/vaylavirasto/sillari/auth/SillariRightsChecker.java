@@ -9,9 +9,9 @@ public class SillariRightsChecker {
         return (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() != null
                 && authentication.getAuthorities() != null &&
                 (
-                    authentication.getAuthorities().contains(SillariRole.SILLARI_TEST_SILLANVALVOJA_AUTHORITY) ||
-                    authentication.getAuthorities().contains(SillariRole.SILLARI_TEST_AJOJARJESTELIJA_AUTHORITY) ||
-                    authentication.getAuthorities().contains(SillariRole.SILLARI_TEST_KULJETTAJA_AUTHORITY)
+                    authentication.getAuthorities().contains(SillariRole.SILLARI_SILLANVALVOJA_AUTHORITY) ||
+                    authentication.getAuthorities().contains(SillariRole.SILLARI_AJOJARJESTELIJA_AUTHORITY) ||
+                    authentication.getAuthorities().contains(SillariRole.SILLARI_KULJETTAJA_AUTHORITY)
                 ));
     }
 
