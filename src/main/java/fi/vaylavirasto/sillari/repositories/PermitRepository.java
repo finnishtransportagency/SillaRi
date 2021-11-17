@@ -417,6 +417,18 @@ public class PermitRepository {
         });
     }
 
+    public void updatePermitPdf(Integer permitId, String pdfObjectKey) throws DataAccessException {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            ctx.update(TableAlias.permit)
+                    .set(TableAlias.permit.PDF_OBJECT_KEY, pdfObjectKey)
+                    .where(TableAlias.permit.ID.eq(permitId))
+                    .execute();
+
+        });
+    }
+
     private void deleteRoutes(List<Integer> routesToDelete, DSLContext ctx) {
         for (Integer routeID : routesToDelete) {
             deleteAddresses(ctx, routeID);

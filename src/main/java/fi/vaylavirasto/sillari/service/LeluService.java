@@ -8,6 +8,7 @@ import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
+import fi.vaylavirasto.sillari.api.rest.error.LeluPermitNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
 import fi.vaylavirasto.sillari.model.*;
@@ -252,7 +253,17 @@ public class LeluService {
         }
     }
 
-    public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) {
-        return null;
+    public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) throws LeluPermitNotFoundException {
+        Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitNumber, permitVersion);
+        if(permitId == null){
+            throw new LeluPermitNotFoundException();
+        }
+        String objectKey = permitNumber + permitVersion;
+
+
+
+        permitRepository.updatePermitPdf(permitId, objectKey);
+
+        return new LeluPermiPdfResponseDTO();
     }
 }

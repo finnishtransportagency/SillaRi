@@ -7,6 +7,7 @@ import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseD
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.service.LeluService;
+import fi.vaylavirasto.sillari.service.PermitService;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -28,6 +29,7 @@ import javax.validation.Valid;
 import java.util.Locale;
 
 
+
 @RestController
 @RequestMapping("/lelu")
 public class LeluController {
@@ -38,11 +40,12 @@ public class LeluController {
     @Value("${sillari.lelu.version}")
     private String currentApiVersion;
 
+
     private final LeluService leluService;
     private final MessageSource messageSource;
 
     @Autowired
-    public LeluController(LeluService leluService, MessageSource messageSource) {
+    public LeluController(LeluService leluService, PermitService permitService, MessageSource messageSource) {
         this.leluService = leluService;
         this.messageSource = messageSource;
     }
@@ -140,8 +143,8 @@ public class LeluController {
 
     @PostMapping(value = "/uploadpermitpdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    @Operation(summary = "Uploads the route geometry to a route",
-            description = "Uploads the route geometry to an existing route. File must be a geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix compressed to a single zip file")
+    @Operation(summary = "Uploads the permit pdf to a permit",
+            description = "Uploads the permit pdf to an existing permit.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "File is empty."),
             @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route not found with provided id."),
