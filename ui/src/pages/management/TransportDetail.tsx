@@ -92,7 +92,10 @@ const TransportDetail = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("management.transportDetail.headerTitleDetail")} somethingFailed={isFailed.getPermit} />
+      <Header
+        title={t("management.transportDetail.headerTitleDetail")}
+        somethingFailed={isFailed.getRouteTransport || isFailed.getPermitOfRouteTransport || isFailed.getSupervisors}
+      />
       <IonContent fullscreen color="light">
         {noNetworkNoData ? (
           <NoNetworkNoData />

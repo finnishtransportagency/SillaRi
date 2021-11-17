@@ -314,11 +314,13 @@ public class PermitRepository {
                 ctx.insertInto(TableAlias.routeBridge,
                                 TableAlias.routeBridge.ROUTE_ID,
                                 TableAlias.routeBridge.BRIDGE_ID,
-                                TableAlias.routeBridge.CROSSING_INSTRUCTION
+                                TableAlias.routeBridge.CROSSING_INSTRUCTION,
+                                TableAlias.routeBridge.CONTRACT_NUMBER
                         ).values(
                                 routeBridgeModel.getRouteId(),
                                 routeBridgeModel.getBridgeId(),
-                                routeBridgeModel.getCrossingInstruction())
+                                routeBridgeModel.getCrossingInstruction(),
+                                routeBridgeModel.getContractNumber())
                         .execute();
             } else {
                 logger.warn("BridgeId missing for routeBridge, cannot insert");

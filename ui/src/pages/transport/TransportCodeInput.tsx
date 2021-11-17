@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IonButton, IonContent, IonInput, IonPage } from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonGrid, IonInput, IonLabel, IonPage, IonRow, IonText } from "@ionic/react";
 import Header from "../../components/Header";
 import { useHistory } from "react-router";
 import { findRouteTransportPassword } from "../../utils/managementBackendData";
@@ -35,30 +35,60 @@ const TransportCodeForm = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={t("transports.transportCodeInput.header.title")} />
-      <IonContent class="ion-padding" color="light">
-        <h3>{t("transports.transportCodeInput.inputLabel")}</h3>
-        <form
-          name="codeInputForm"
-          onSubmit={(event) => {
-            event.preventDefault();
-            (event.target as HTMLFormElement).reset();
-            handleSubmit();
-          }}
-        >
-          <IonInput
-            type="password"
-            name="code"
-            value={codeInputValue}
-            placeholder={t("transports.transportCodeInput.inputPlaceholder")}
-            onIonChange={(event) => {
-              setCodeValue((event.target as HTMLInputElement).value);
-            }}
-            clearInput
-            show-hide-input
-          />
-          <IonButton type="submit">{t("transports.transportCodeInput.submitButtonLabel")}</IonButton>
-        </form>
-        {errorMsg ? <div>{errorMsg}</div> : <div></div>}
+      <IonContent fullscreen color="light">
+        <IonGrid className="ion-no-padding" fixed>
+          <IonRow>
+            <IonCol size="12" className="ion-padding">
+              <IonText className="headingBoldText">{t("transports.transportCodeInput.inputTitle")}</IonText>
+            </IonCol>
+          </IonRow>
+
+          <IonRow>
+            <IonCol size="12" className="whiteBackground">
+              <IonGrid className="ion-no-padding">
+                <IonRow className="ion-margin">
+                  <IonCol size="12">
+                    <IonLabel className="headingText">{t("transports.transportCodeInput.inputLabel")}</IonLabel>
+                  </IonCol>
+                </IonRow>
+                <IonRow className="ion-margin">
+                  <IonCol size="12" size-sm="4">
+                    <IonInput
+                      type="password"
+                      value={codeInputValue}
+                      placeholder={t("transports.transportCodeInput.inputPlaceholder")}
+                      onIonChange={(event) => {
+                        setCodeValue((event.target as HTMLInputElement).value);
+                      }}
+                      clearInput
+                    />
+                  </IonCol>
+                </IonRow>
+                <IonRow className="ion-margin">
+                  <IonCol size="12" size-sm="4">
+                    <IonButton color="primary" expand="block" size="large" onClick={handleSubmit}>
+                      {t("common.buttons.search")}
+                    </IonButton>
+                  </IonCol>
+                </IonRow>
+              </IonGrid>
+            </IonCol>
+          </IonRow>
+
+          {errorMsg && (
+            <IonRow>
+              <IonCol size="12" className="whiteBackground">
+                <IonGrid className="ion-no-padding">
+                  <IonRow className="ion-margin">
+                    <IonCol size="12">
+                      <IonText>{errorMsg}</IonText>
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </IonCol>
+            </IonRow>
+          )}
+        </IonGrid>
       </IonContent>
     </IonPage>
   );

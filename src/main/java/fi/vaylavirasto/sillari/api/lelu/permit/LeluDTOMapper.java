@@ -38,8 +38,6 @@ public interface LeluDTOMapper {
             @Mapping(target = "leluId", source = "dto.id"),
             @Mapping(target = "routeBridges", source = "dto.bridges"),
     })
-
-
     RouteModel fromDTOToModel(LeluRouteDTO dto);
 
     @Mappings({

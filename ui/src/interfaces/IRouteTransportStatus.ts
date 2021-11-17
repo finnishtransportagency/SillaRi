@@ -4,5 +4,5 @@ export default interface IRouteTransportStatus {
   id: number;
   routeTransportId: number;
   status: TransportStatus;
-  time: Date;
+  time?: Date;
 }
