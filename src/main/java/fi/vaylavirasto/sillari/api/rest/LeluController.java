@@ -2,12 +2,10 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
-import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
-import fi.vaylavirasto.sillari.api.rest.error.LeluPermitSaveException;
-import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
-import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
+import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.service.LeluService;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -139,6 +137,27 @@ public class LeluController {
         logger.debug("FILE contenttype:" + file.getContentType());
         return leluService.uploadRouteGeometry(routeId, file);
     }
+
+    @PostMapping(value = "/uploadpermitpdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseBody
+    @Operation(summary = "Uploads the route geometry to a route",
+            description = "Uploads the route geometry to an existing route. File must be a geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix compressed to a single zip file")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400 BAD_REQUEST", description = "File is empty."),
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route not found with provided id."),
+            @ApiResponse(responseCode = "500 INTERNAL_SERVER_ERROR", description = "Error processing route geometry file.")
+    })
+    public LeluPermiPdfResponseDTO uploadPermitPdf(@RequestParam(required = true) String permitNumber, @RequestParam(required = true) Integer permitVersion,
+                                                   @RequestPart("file") MultipartFile file)
+            throws LeluPermitNotFoundException, LeluPermitPdfUploadException {
+        logger.debug("Lelu uploadpermitpdf {}", permitNumber);
+        logger.debug("FILE name:" + file.getName());
+        logger.debug("FILE OriginalFilename:" + file.getOriginalFilename());
+        logger.debug("FILE size:" + file.getSize());
+        logger.debug("FILE contenttype:" + file.getContentType());
+        return leluService.uploadPermitPdf(permitNumber, permitVersion, file);
+    }
+
 
     @RequestMapping(value = "/uploadroutegeometry2", method = RequestMethod.POST)
     @ResponseBody

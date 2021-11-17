@@ -1,6 +1,7 @@
 package fi.vaylavirasto.sillari.service;
 
 
+import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
@@ -251,4 +252,7 @@ public class LeluService {
         }
     }
 
+    public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) {
+        return null;
+    }
 }
