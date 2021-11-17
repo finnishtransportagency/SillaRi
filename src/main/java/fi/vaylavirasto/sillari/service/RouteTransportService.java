@@ -4,6 +4,7 @@ import fi.vaylavirasto.sillari.model.PermitModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.model.RouteTransportPasswordModel;
+import fi.vaylavirasto.sillari.model.RouteTransportStatusModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,5 +155,11 @@ public class RouteTransportService {
 
     public void deleteRouteTransport(RouteTransportModel routeTransportModel) {
         routeTransportRepository.deleteRouteTransport(routeTransportModel);
+    }
+
+    public void addRouteTransportStatus(RouteTransportStatusModel routeTransportStatusModel) {
+        if (routeTransportStatusModel != null) {
+            routeTransportStatusRepository.insertTransportStatus(routeTransportStatusModel.getRouteTransportId(), routeTransportStatusModel.getStatus());
+        }
     }
 }

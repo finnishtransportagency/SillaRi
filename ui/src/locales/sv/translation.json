@@ -5,6 +5,7 @@
       "back": "(SV) Back",
       "back2": "(SV) Back",
       "cancel": "(SV) Cancel",
+      "search": "(SV) Search",
       "edit": "(SV) Edit",
       "save": "(SV) Save",
       "send": "(SV) Send"
@@ -273,23 +274,43 @@
       "header": {
         "title": "(SV) Transports"
       },
-      "inputLabel": "(SV) Please enter transport code",
-      "inputPlaceholder": "(SV) Transport code",
-      "submitButtonLabel": "(SV) Submit code",
+      "inputTitle": "(SV) Upcoming transport",
+      "inputLabel": "(SV) Transport password",
+      "inputPlaceholder": "(SV) Password",
       "invalidCodeErrorMessage": "(SV) Invalid code"
     },
     "transport": {
       "header": {
         "title": "(SV) Transport"
       },
-      "permitLabel": "(SV) Permit:",
-      "routeLabel": "(SV) Route:",
-      "mapButtonLabel": "(SV) Map",
-      "transportStatusLabel": "(SV) Transport status",
-      "transportStatusBoxLabel": {
-        "notStarted": "(SV) Not started"
+      "estimatedDepartureTime": "(SV) Estimated departure time",
+      "departureTime": "(SV) Departure time",
+      "permitLabel": "(SV) Permit",
+      "transportStatusLabel": "(SV) Status",
+      "statusInfo": {
+        "planned": "(SV) Drive has not yet started",
+        "departed": "(SV) Drive started",
+        "stopped": "(SV) Break started",
+        "in_progress": "(SV) Drive started",
+        "arrived": "(SV) Transport finished"
       },
-      "startDrivingButtonLabel": "(SV) START DRIVING"
+      "status": {
+        "departed": "(SV) On the move",
+        "stopped": "(SV) On a break",
+        "in_progress": "(SV) On the move",
+        "arrived": "(SV) Finished"
+      },
+      "buttons": {
+        "startDriving": "(SV) Start driving",
+        "startBreak": "(SV) Start break",
+        "stopBreak": "(SV) Continue driving",
+        "stopDriving": "(SV) End transport"
+      },
+      "stopAlert": {
+        "title": "(SV) Are you sure you want to end the transport?",
+        "message": "(SV) The transport cannot be continued anymore.",
+        "confirm": "(SV) End transport"
+      }
     }
   }
 }

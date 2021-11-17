@@ -5,6 +5,7 @@
       "back": "Back",
       "back2": "Back",
       "cancel": "Cancel",
+      "search": "Search",
       "edit": "Edit",
       "save": "Save",
       "send": "Send"
@@ -273,23 +274,43 @@
       "header": {
         "title": "Transports"
       },
-      "inputLabel": "Please enter transport code",
-      "inputPlaceholder": "Transport code",
-      "submitButtonLabel": "Submit code",
+      "inputTitle": "Upcoming transport",
+      "inputLabel": "Transport password",
+      "inputPlaceholder": "Password",
       "invalidCodeErrorMessage": "Invalid code"
     },
     "transport": {
       "header": {
         "title": "Transport"
       },
-      "permitLabel": "Permit:",
-      "routeLabel": "Route:",
-      "mapButtonLabel": "Map",
-      "transportStatusLabel": "Transport status",
-      "transportStatusBoxLabel": {
-        "notStarted": "Not started"
+      "estimatedDepartureTime": "Estimated departure time",
+      "departureTime": "Departure time",
+      "permitLabel": "Permit",
+      "transportStatusLabel": "Status",
+      "statusInfo": {
+        "planned": "Drive has not yet started",
+        "departed": "Drive started",
+        "stopped": "Break started",
+        "in_progress": "Drive started",
+        "arrived": "Transport finished"
       },
-      "startDrivingButtonLabel": "START DRIVING"
+      "status": {
+        "departed": "On the move",
+        "stopped": "On a break",
+        "in_progress": "On the move",
+        "arrived": "Finished"
+      },
+      "buttons": {
+        "startDriving": "Start driving",
+        "startBreak": "Start break",
+        "stopBreak": "Continue driving",
+        "stopDriving": "End transport"
+      },
+      "stopAlert": {
+        "title": "Are you sure you want to end the transport?",
+        "message": "The transport cannot be continued anymore.",
+        "confirm": "End transport"
+      }
     }
   }
 }
