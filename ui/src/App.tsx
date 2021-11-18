@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
-import { IonApp, IonContent, setupConfig } from "@ionic/react";
+import { IonApp, IonButton, IonContent, setupConfig } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -44,6 +44,9 @@ import IUserData from "./interfaces/IUserData";
 import { getOrigin } from "./utils/request";
 import Photos from "./pages/Photos";
 
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import Cookies from "js-cookie";
+
 // Use the same style for all platforms
 setupConfig({
   mode: "md",
@@ -80,8 +83,8 @@ const App: React.FC = () => {
           }
         } else {
           console.log(userDataResponse);
-          if (userDataResponse.status === 403) {
-            setErrorMsg("403 - Access denied.");
+          if (userDataResponse.status === 401) {
+            setErrorMsg("401 - Access denied.");
           } else {
             setErrorMsg("Käsittelemätön virhetilanne 1.");
           }
@@ -94,11 +97,32 @@ const App: React.FC = () => {
     fetchUserData();
   }, []);
 
+  const logoutFromApp = () => {
+    serviceWorkerRegistration.unregister(() => {
+      const cookies = Cookies.get();
+      Object.keys(cookies).forEach((key) => {
+        Cookies.remove(key);
+      });
+    });
+    window.location.reload();
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <IonApp>
         {!userData ? (
-          <div>{errorMsg ? <div>{errorMsg}</div> : <div>Starting app...</div>}</div>
+          <div>
+            {errorMsg ? (
+              <div>
+                <div>{errorMsg}</div>
+                <IonButton color="primary" expand="block" size="large" onClick={logoutFromApp}>
+                  Kirjaudu sisään
+                </IonButton>
+              </div>
+            ) : (
+              <div>Starting app...</div>
+            )}
+          </div>
         ) : (
           <IonReactRouter>
             <SidebarMenu roles={userData.roles} />
