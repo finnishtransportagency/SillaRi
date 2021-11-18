@@ -55,6 +55,7 @@ const Home = (): JSX.Element => {
   };
 
   const transportsCount = companyTransportsList.map((ct) => (ct.transports ? ct.transports.length : 0)).reduce((prev, next) => prev + next, 0);
+  const bridgesCount = supervisionDays.map((sd) => (sd.supervisions ? sd.supervisions.length : 0)).reduce((prev, next) => prev + next, 0);
 
   const noNetworkNoData =
     (isFailed.getCompanyTransportsList && companyTransportsList.length === 0) || (isFailed.getSupervisionList && supervisionList.length === 0);
@@ -67,7 +68,7 @@ const Home = (): JSX.Element => {
           <IonLabel>{`${t("main.tab.transports")} (${transportsCount})`}</IonLabel>
         </IonSegmentButton>
         <IonSegmentButton className="mainSegmentButton" value="1">
-          <IonLabel>{`${t("main.tab.bridges")} (${supervisionList.length})`}</IonLabel>
+          <IonLabel>{`${t("main.tab.bridges")} (${bridgesCount})`}</IonLabel>
         </IonSegmentButton>
       </IonSegment>
       <IonContent>
