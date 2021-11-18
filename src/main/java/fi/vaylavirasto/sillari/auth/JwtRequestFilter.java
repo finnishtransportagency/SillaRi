@@ -173,7 +173,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     authorityList.add(SillariRole.fromString("SILLARI_AJOJARJESTELIJA"));
                     authorityList.add(SillariRole.fromString("SILLARI_KULJETTAJA"));
 
-                    SillariUser userDetails = new SillariUser("Testi Käyttäjä", authorityList);
+                    SillariUser userDetails = new SillariUser("T012345", authorityList);
 
                     authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

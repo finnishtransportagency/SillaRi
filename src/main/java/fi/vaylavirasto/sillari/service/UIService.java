@@ -1,22 +1,19 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.io.*;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -107,4 +104,18 @@ public class UIService {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    public SillariUser getSillariUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!(principal instanceof SillariUser)) {
+            throw new AccessDeniedException("User not SillariUser");
+        }
+
+        SillariUser user = (SillariUser) principal;
+        Collection<GrantedAuthority> authorities = user.getAuthorities();
+        user.setRoles(AuthorityUtils.authorityListToSet(authorities));
+        return user;
+    }
+
 }
