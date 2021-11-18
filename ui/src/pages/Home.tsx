@@ -11,7 +11,7 @@ import SupervisionList from "../components/SupervisionList";
 import "./Home.css";
 import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
-import { groupSupervisionsByDate } from "../utils/supervisionUtil";
+import { filterFinishedSupervisions, groupSupervisionsByDate } from "../utils/supervisionUtil";
 
 const Home = (): JSX.Element => {
   const { t } = useTranslation();
@@ -39,8 +39,8 @@ const Home = (): JSX.Element => {
     retry: onRetry,
     onSuccess: (data) => {
       if (data && data.length > 0) {
-        // TODO group supervisions by supervision status inside date (in_progress and planned - finished should be hidden)
-        const groupedSupervisions = groupSupervisionsByDate(data);
+        const filteredSupervisions = filterFinishedSupervisions(data);
+        const groupedSupervisions = groupSupervisionsByDate(filteredSupervisions);
         setSupervisionDays(groupedSupervisions);
       }
     },
