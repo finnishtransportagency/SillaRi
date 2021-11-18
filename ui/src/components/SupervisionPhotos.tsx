@@ -1,29 +1,26 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow } from "@ionic/react";
-import ISupervision from "../interfaces/ISupervision";
-import { useTypedSelector } from "../store/store";
 import camera from "../theme/icons/camera_white.svg";
 import lane from "../theme/icons/lane_white.svg";
 import ImageThumbnailRow from "./ImageThumbnailRow";
-import { useHistory } from "react-router-dom";
+import ISupervisionImage from "../interfaces/ISupervisionImage";
 
 interface SupervisionPhotosProps {
-  supervision: ISupervision;
+  images: ISupervisionImage[];
   headingKey: string;
-  isButtonsIncluded?: boolean;
   disabled: boolean;
+  isButtonsIncluded?: boolean;
+  takePhotos?: () => void;
 }
 
-const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded, disabled }: SupervisionPhotosProps): JSX.Element => {
+const SupervisionPhotos = ({ images = [], headingKey, disabled, isButtonsIncluded, takePhotos }: SupervisionPhotosProps): JSX.Element => {
   const { t } = useTranslation();
-  const history = useHistory();
-
-  const { images = [] } = useTypedSelector((state) => state.supervisionReducer);
-  const { id: supervisionId, images: savedImages = [] } = supervision || {};
 
   const takePhotosClicked = (): void => {
-    history.push(`/takephotos/${supervisionId}`);
+    if (takePhotos !== undefined) {
+      takePhotos();
+    }
   };
 
   return (
@@ -33,7 +30,7 @@ const SupervisionPhotos = ({ supervision, headingKey, isButtonsIncluded, disable
       </IonItem>
 
       <IonGrid>
-        <ImageThumbnailRow images={images} savedImages={savedImages} />
+        <ImageThumbnailRow images={images} />
       </IonGrid>
 
       {isButtonsIncluded && (

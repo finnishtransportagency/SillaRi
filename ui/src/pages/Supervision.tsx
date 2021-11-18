@@ -12,20 +12,10 @@ import SupervisionObservations from "../components/SupervisionObservations";
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector } from "../store/store";
-import {
-  cancelSupervision,
-  deleteSupervisionImages,
-  getSupervision,
-  onRetry,
-  sendImageUpload,
-  updateSupervisionReport,
-} from "../utils/supervisionBackendData";
+import { cancelSupervision, deleteSupervisionImages, getSupervision, onRetry, updateSupervisionReport } from "../utils/supervisionBackendData";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
-import moment from "moment";
-import { DATE_TIME_FORMAT, SupervisionStatus } from "../utils/constants";
-import { filterUnsavedImages, reportHasUnsavedChanges } from "../utils/supervisionUtil";
-import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
-import { actions as supervisionActions } from "../store/supervisionSlice";
+import { SupervisionStatus } from "../utils/constants";
+import { reportHasUnsavedChanges } from "../utils/supervisionUtil";
 
 interface SupervisionProps {
   supervisionId: string;
@@ -39,7 +29,6 @@ const Supervision = (): JSX.Element => {
 
   const { supervisionId = "0" } = useParams<SupervisionProps>();
   const {
-    images = [],
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
 
@@ -57,13 +46,6 @@ const Supervision = (): JSX.Element => {
     }
   );
 
-  const { report: savedReport, currentStatus, images: savedImages = [] } = supervision || {};
-  const { status: supervisionStatus } = currentStatus || {};
-  const supervisionInProgress = !isLoadingSupervision && supervisionStatus === SupervisionStatus.IN_PROGRESS;
-  const supervisionFinished = !isLoadingSupervision && supervisionStatus === SupervisionStatus.FINISHED;
-
-  const notAllowedToEdit = !savedReport || (!supervisionInProgress && !supervisionFinished);
-
   const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
@@ -71,14 +53,6 @@ const Supervision = (): JSX.Element => {
     },
   });
   const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
-
-  const imageUploadMutation = useMutation((fileUpload: ISupervisionImageInput) => sendImageUpload(fileUpload, dispatch), {
-    retry: onRetry,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["getSupervision", supervisionId]);
-    },
-  });
-  const { isLoading: isSendingImageUpload } = imageUploadMutation;
 
   const deleteImagesMutation = useMutation((superId: string) => deleteSupervisionImages(Number(superId), dispatch), {
     retry: onRetry,
@@ -88,7 +62,7 @@ const Supervision = (): JSX.Element => {
       history.replace(`/bridgeDetail/${supervisionId}`, { direction: "back" });
     },
   });
-  const { isLoading: isSendingDeleteImages } = imageUploadMutation;
+  const { isLoading: isSendingDeleteImages } = deleteImagesMutation;
 
   const cancelSupervisionMutation = useMutation((superId: string) => cancelSupervision(Number(superId), dispatch), {
     retry: onRetry,
@@ -98,8 +72,16 @@ const Supervision = (): JSX.Element => {
   });
   const { isLoading: isSendingCancelSupervision } = cancelSupervisionMutation;
 
-  // Save changes in both report and images
-  const saveReportClicked = (): void => {
+  const { report: savedReport, currentStatus, images = [] } = supervision || {};
+  const { status: supervisionStatus } = currentStatus || {};
+
+  const isLoading = isLoadingSupervision || isSendingReportUpdate || isSendingCancelSupervision || isSendingDeleteImages;
+  const supervisionInProgress = !isLoading && supervisionStatus === SupervisionStatus.IN_PROGRESS;
+  const supervisionFinished = !isLoading && supervisionStatus === SupervisionStatus.FINISHED;
+  const notAllowedToEdit = !savedReport || (!supervisionInProgress && !supervisionFinished);
+
+  // Save changes in report
+  const saveReport = (isDraft: boolean): void => {
     if (modifiedReport) {
       // Update conflicting values
       const updatedReport = {
@@ -112,21 +94,14 @@ const Supervision = (): JSX.Element => {
         bendOrDisplacement: modifiedReport.anomalies ? modifiedReport.bendOrDisplacement : false,
         otherObservations: modifiedReport.anomalies ? modifiedReport.otherObservations : false,
         otherObservationsInfo: modifiedReport.anomalies && modifiedReport.otherObservations ? modifiedReport.otherObservationsInfo : "",
-        draft: false,
+        draft: isDraft,
       };
       reportUpdateMutation.mutate(updatedReport);
     }
+  };
 
-    images.forEach((image) => {
-      const fileUpload = {
-        supervisionId: supervisionId.toString(),
-        filename: image.filename,
-        base64: image.dataUrl,
-        taken: moment(image.date).format(DATE_TIME_FORMAT),
-      } as ISupervisionImageInput;
-
-      imageUploadMutation.mutate(fileUpload);
-    });
+  const saveReportClicked = (): void => {
+    saveReport(false);
     history.push(`/summary/${supervisionId}`);
   };
 
@@ -169,16 +144,20 @@ const Supervision = (): JSX.Element => {
   };
 
   const confirmGoBack = (): void => {
-    const hasUnsavedImages = filterUnsavedImages(images, savedImages).length > 0;
-    if (reportHasUnsavedChanges(modifiedReport, savedReport) || hasUnsavedImages) {
+    if (reportHasUnsavedChanges(modifiedReport, savedReport)) {
       showConfirmLeavePage();
     } else {
       history.goBack();
     }
   };
 
+  const takePhotosClicked = (): void => {
+    saveReport(savedReport ? savedReport.draft : true);
+    history.push(`/takephotos/${supervisionId}`);
+  };
+
   useEffect(() => {
-    if (!isLoadingSupervision && !isSendingReportUpdate && supervision) {
+    if (!isLoading && supervision) {
       // Page is loaded for the first time, modifiedReport is not set
       if (modifiedReport === undefined && savedReport) {
         console.log("setModifiedReport", savedReport);
@@ -186,16 +165,7 @@ const Supervision = (): JSX.Element => {
         setModifiedReport({ ...savedReport });
       }
     }
-  }, [isLoadingSupervision, isSendingReportUpdate, supervision, modifiedReport, savedReport]);
-
-  useEffect(() => {
-    if (supervision && !isLoadingSupervision && !isSendingImageUpload && !isSendingDeleteImages) {
-      // Remove any uploaded images from the camera images stored in redux
-      if (savedImages.length > 0) {
-        dispatch({ type: supervisionActions.UPDATE_IMAGES, payload: savedImages });
-      }
-    }
-  }, [isLoadingSupervision, isSendingImageUpload, isSendingDeleteImages, supervision, savedImages, dispatch]);
+  }, [isLoading, supervision, modifiedReport, savedReport]);
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
@@ -209,15 +179,15 @@ const Supervision = (): JSX.Element => {
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
             <SupervisionPhotos
-              supervision={supervision as ISupervision}
+              images={images}
               headingKey="supervision.photosDrivingLine"
               isButtonsIncluded
-              disabled={notAllowedToEdit}
+              takePhotos={takePhotosClicked}
+              disabled={isLoading || notAllowedToEdit}
             />
             <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} disabled={notAllowedToEdit} />
             <SupervisionFooter
-              isLoading={isLoadingSupervision || isSendingReportUpdate || isSendingImageUpload || isSendingCancelSupervision}
-              disabled={notAllowedToEdit}
+              disabled={isLoading || notAllowedToEdit}
               saveChanges={saveReportClicked}
               cancelChanges={cancelSupervisionClicked}
               saveLabel={t("supervision.buttons.summary")}

@@ -315,7 +315,7 @@ export const sendImageUpload = async (fileUpload: ISupervisionImageInput, dispat
   }
 };
 
-export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promise<void> => {
+export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promise<boolean> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteImage: false } });
 
@@ -327,8 +327,9 @@ export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promis
     });
 
     if (imageDeleteResponse.ok) {
-      const imageDelete = (await imageDeleteResponse.json()) as Promise<ISupervisionImage>;
-      console.log("deleteImage response", imageDelete);
+      const imageDeleteResult = (await imageDeleteResponse.json()) as Promise<boolean>;
+      console.log("deleteImage response", imageDeleteResult);
+      return await imageDeleteResult;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteImage: true } });
       throw new Error(notOkError);
@@ -339,7 +340,7 @@ export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promis
   }
 };
 
-export const deleteSupervisionImages = async (supervisionId: number, dispatch: Dispatch): Promise<void> => {
+export const deleteSupervisionImages = async (supervisionId: number, dispatch: Dispatch): Promise<boolean> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteImage: deleteSupervisionImages } });
 
@@ -351,9 +352,9 @@ export const deleteSupervisionImages = async (supervisionId: number, dispatch: D
     });
 
     if (imageDeleteResponse.ok) {
-      const imageDelete = (await imageDeleteResponse.json()) as Promise<boolean>;
-      console.log("deleteSupervisionImages response", imageDelete);
-      dispatch({ type: supervisionActions.SET_IMAGES, payload: [] });
+      const imageDeleteResult = (await imageDeleteResponse.json()) as Promise<boolean>;
+      console.log("deleteSupervisionImages response", imageDeleteResult);
+      return await imageDeleteResult;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteSupervisionImages: true } });
       throw new Error(notOkError);
