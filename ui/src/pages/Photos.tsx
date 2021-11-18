@@ -120,71 +120,69 @@ const Photos = (): JSX.Element => {
     <IonPage>
       <Header title={t("main.header.title")} confirmGoBack={saveImages} />
       <IonContent fullscreen>
-        <IonContent>
-          <IonListHeader>
-            <IonLabel>
-              {t("camera.listLabel")} ({allImagesAmount} {t("camera.listLabelPcs")})
-            </IonLabel>
-          </IonListHeader>
-          <IonList>
-            {images &&
-              images.length > 0 &&
-              [...images]
-                .sort((a, b) => {
-                  const am = moment(a.date);
-                  const bm = moment(b.date);
-                  return bm.diff(am, "seconds");
-                })
-                .map((imageItem) => {
-                  const thumbnailClicked = (): void => showImage(true, imageItem.dataUrl as string);
-                  const deleteClicked = (): void => removeImageItem(imageItem.id);
+        <IonListHeader>
+          <IonLabel>
+            {t("camera.listLabel")} ({allImagesAmount} {t("camera.listLabelPcs")})
+          </IonLabel>
+        </IonListHeader>
+        <IonList>
+          {images &&
+            images.length > 0 &&
+            [...images]
+              .sort((a, b) => {
+                const am = moment(a.date);
+                const bm = moment(b.date);
+                return bm.diff(am, "seconds");
+              })
+              .map((imageItem) => {
+                const thumbnailClicked = (): void => showImage(true, imageItem.dataUrl as string);
+                const deleteClicked = (): void => removeImageItem(imageItem.id);
 
-                  return (
-                    <PhotoItem
-                      key={imageItem.id}
-                      imageUrl={imageItem.dataUrl}
-                      taken={imageItem.date}
-                      isLoading={isLoading}
-                      showImage={thumbnailClicked}
-                      removeImage={deleteClicked}
-                    />
-                  );
-                })}
-            {savedImages &&
-              savedImages.length > 0 &&
-              [...savedImages]
-                .sort((a, b) => {
-                  const am = moment(a.taken, DATE_TIME_FORMAT);
-                  const bm = moment(b.taken, DATE_TIME_FORMAT);
-                  return bm.diff(am, "seconds");
-                })
-                .map((supervisionImage) => {
-                  const imageUrl = `${getOrigin()}/api/images/get?objectKey=${supervisionImage.objectKey}`;
-                  const thumbnailClicked = (): void => showImage(true, imageUrl);
-                  const deleteClicked = (): void => deleteImageObject(supervisionImage.objectKey);
+                return (
+                  <PhotoItem
+                    key={imageItem.id}
+                    imageUrl={imageItem.dataUrl}
+                    taken={imageItem.date}
+                    isLoading={isLoading}
+                    showImage={thumbnailClicked}
+                    removeImage={deleteClicked}
+                  />
+                );
+              })}
+          {savedImages &&
+            savedImages.length > 0 &&
+            [...savedImages]
+              .sort((a, b) => {
+                const am = moment(a.taken, DATE_TIME_FORMAT);
+                const bm = moment(b.taken, DATE_TIME_FORMAT);
+                return bm.diff(am, "seconds");
+              })
+              .map((supervisionImage) => {
+                const imageUrl = `${getOrigin()}/api/images/get?objectKey=${supervisionImage.objectKey}`;
+                const thumbnailClicked = (): void => showImage(true, imageUrl);
+                const deleteClicked = (): void => deleteImageObject(supervisionImage.objectKey);
 
-                  return (
-                    <PhotoItem
-                      key={supervisionImage.id}
-                      imageUrl={imageUrl}
-                      taken={moment(supervisionImage.taken, DATE_TIME_FORMAT).toDate()}
-                      isLoading={isLoading}
-                      showImage={thumbnailClicked}
-                      removeImage={deleteClicked}
-                    />
-                  );
-                })}
-          </IonList>
+                return (
+                  <PhotoItem
+                    key={supervisionImage.id}
+                    imageUrl={imageUrl}
+                    taken={moment(supervisionImage.taken, DATE_TIME_FORMAT).toDate()}
+                    isLoading={isLoading}
+                    showImage={thumbnailClicked}
+                    removeImage={deleteClicked}
+                  />
+                );
+              })}
+        </IonList>
 
-          <ImagePreview imageUrl={imagePreviewUrl} isOpen={isImagePreviewOpen} setIsOpen={() => showImage(false)} />
+        <ImagePreview imageUrl={imagePreviewUrl} isOpen={isImagePreviewOpen} setIsOpen={() => showImage(false)} />
 
-          <IonFab slot="fixed" horizontal="end" vertical="bottom">
-            <IonButton expand="block" size="large" onClick={() => takePicture()}>
-              <IonIcon className="otherIcon" icon={camera} slot="start" />
-              {t("camera.takePhotoButtonLabel")}
-            </IonButton>
-          </IonFab>
-        </IonContent>
+        <IonFab slot="fixed" horizontal="end" vertical="bottom">
+          <IonButton expand="block" size="large" onClick={() => takePicture()}>
+            <IonIcon className="otherIcon" icon={camera} slot="start" />
+            {t("camera.takePhotoButtonLabel")}
+          </IonButton>
+        </IonFab>
       </IonContent>
     </IonPage>
   );
