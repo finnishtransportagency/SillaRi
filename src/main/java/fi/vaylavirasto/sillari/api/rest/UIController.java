@@ -147,15 +147,6 @@ public class UIController {
         }
     }
 
-    @Operation(summary = "Check user")
-    @GetMapping(value = "/checkuser")
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public void checkUser(){
-        // This method is used by the frontend to get the response headers for checking the user's groups
-        ServiceMetric serviceMetric = new ServiceMetric("UIController", "checkUser");
-        serviceMetric.end();
-    }
-
     @Operation(summary = "Get user data")
     @GetMapping(value = "/userdata")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")

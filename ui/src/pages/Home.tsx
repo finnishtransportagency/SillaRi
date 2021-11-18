@@ -6,7 +6,7 @@ import type { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton, IonSlide, IonSlides } from "@ionic/react";
 import Header from "../components/Header";
 import { useTypedSelector } from "../store/store";
-import { checkUser, getCompanyTransportsList, getSupervisionList, onRetry } from "../utils/supervisionBackendData";
+import { getCompanyTransportsList, getSupervisionList, onRetry } from "../utils/supervisionBackendData";
 import SupervisionList from "../components/SupervisionList";
 import "./Home.css";
 import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion";
@@ -25,8 +25,6 @@ const Home = (): JSX.Element => {
   const {
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
-
-  useQuery(["checkUser"], () => checkUser(), { retry: onRetry });
 
   const { data: companyTransportsList = [] } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
     retry: onRetry,
