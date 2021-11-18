@@ -18,12 +18,12 @@ export const onRetry = (failureCount: number, error: string): boolean => {
   return true;
 };
 
-export const getCompanyTransportsList = async (username: string, dispatch: Dispatch): Promise<ICompanyTransports[]> => {
+export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICompanyTransports[]> => {
   try {
-    console.log("GetCompanyTransportsList", username);
+    console.log("getCompanyTransportsList");
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyTransportsList: false } });
 
-    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor?username=${username}`);
+    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor`);
 
     if (companyTransportsResponse.ok) {
       const companyTransportsList = (await companyTransportsResponse.json()) as Promise<ICompanyTransports[]>;
@@ -38,13 +38,13 @@ export const getCompanyTransportsList = async (username: string, dispatch: Dispa
   }
 };
 
-export const getRouteTransportOfSupervisor = async (routeTransportId: number, username: string, dispatch: Dispatch): Promise<IRouteTransport> => {
+export const getRouteTransportOfSupervisor = async (routeTransportId: number, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
-    console.log("GetRouteTransportOfSupervisor", routeTransportId, username);
+    console.log("GetRouteTransportOfSupervisor", routeTransportId);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
 
     const routeTransportResponse = await fetch(
-      `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}&username=${username}`
+      `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}`
     );
 
     if (routeTransportResponse.ok) {
@@ -100,12 +100,12 @@ export const getRouteBridgeGeometry = async (routeBridgeId: number, dispatch: Di
   }
 };
 
-export const getSupervisionList = async (username: string, dispatch: Dispatch): Promise<ISupervision[]> => {
+export const getSupervisionList = async (dispatch: Dispatch): Promise<ISupervision[]> => {
   try {
-    console.log("GetSupervisionList", username);
+    console.log("GetSupervisionList");
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionList: false } });
 
-    const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsofsupervisor?username=${username}`);
+    const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsofsupervisor`);
 
     if (supervisionsResponse.ok) {
       const supervisions = (await supervisionsResponse.json()) as Promise<ISupervision[]>;
@@ -366,7 +366,7 @@ export const deleteSupervisionImages = async (supervisionId: number, dispatch: D
 };
 
 // TEST - try different methods to check if the user is valid
-export const checkUser = async (username: string): Promise<void> => {
+export const checkUser = async (): Promise<void> => {
   try {
     const checkUserResponse = await fetch(`${getOrigin()}/api/ui/checkuser`);
 
@@ -396,7 +396,7 @@ export const checkUser = async (username: string): Promise<void> => {
   }
 
   try {
-    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor?username=${username}`);
+    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor`);
 
     console.log("companyTransportsResponse 1 debug - ", companyTransportsResponse);
 
@@ -410,7 +410,7 @@ export const checkUser = async (username: string): Promise<void> => {
   }
 
   try {
-    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor?username=${username}`, {
+    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor`, {
       credentials: "include",
     });
 

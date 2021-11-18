@@ -26,16 +26,13 @@ const Home = (): JSX.Element => {
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
 
-  // TODO use logged in user
-  const supervisorUser = "USER1";
+  useQuery(["checkUser"], () => checkUser(), { retry: onRetry });
 
-  useQuery(["checkUser"], () => checkUser(supervisorUser), { retry: onRetry });
-
-  const { data: companyTransportsList = [] } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(supervisorUser, dispatch), {
+  const { data: companyTransportsList = [] } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
     retry: onRetry,
   });
 
-  const { data: supervisionList = [] } = useQuery(["getSupervisionList"], () => getSupervisionList(supervisorUser, dispatch), {
+  const { data: supervisionList = [] } = useQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       if (data && data.length > 0) {
