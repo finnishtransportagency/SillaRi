@@ -49,7 +49,7 @@ const RouteTransportDetail = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={name} somethingFailed={isFailed.getRouteTransportOfSupervisor} />
+      <Header title={name} somethingFailed={isFailed.getRouteTransportOfSupervisor} includeSendingList />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />
