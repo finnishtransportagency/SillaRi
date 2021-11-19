@@ -54,6 +54,20 @@ public class SupervisionController {
         }
     }
 
+    @Operation(summary = "Get supervisions of supervisor")
+    @GetMapping(value = "/getsupervisionsendinglistofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getSupervisionSendingListOfSupervisor() {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionSendingListOfSupervisor");
+        try {
+            SillariUser user = uiService.getSillariUser();
+            List<SupervisionModel> supervisions = supervisionService.getFinishedButUnsignedSupervisions(user.getUsername());
+            return ResponseEntity.ok().body(supervisions != null ? supervisions : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Get supervisors")
     @GetMapping(value = "/getsupervisors", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
@@ -127,6 +141,25 @@ public class SupervisionController {
         try {
             SupervisionModel supervisionModel = supervisionService.finishSupervision(supervisionId);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Complete supervisions")
+    @PostMapping(value = "/completesupervisions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> completeSupervisions(@RequestParam List<Integer> supervisionIds) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "completeSupervisions");
+        try {
+            if (supervisionIds != null && !supervisionIds.isEmpty()) {
+                supervisionIds.forEach(supervisionId -> {
+                    supervisionService.completeSupervision(supervisionId);
+                });
+            }
+
+            // TODO - check if any data should be returned
+            return ResponseEntity.ok().body(new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }

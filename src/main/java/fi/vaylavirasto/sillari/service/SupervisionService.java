@@ -62,6 +62,16 @@ public class SupervisionService {
         return supervisions;
     }
 
+    public List<SupervisionModel> getFinishedButUnsignedSupervisions(String username) {
+        List<SupervisionModel> supervisions = supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisorUsername(username);
+        for (SupervisionModel supervision : supervisions) {
+            // The sending list needs supervision started time, bridge and permit details
+            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+            fillPermitDetails(supervision);
+        }
+        return supervisions;
+    }
+
     public List<SupervisorModel> getSupervisors() {
         // TODO - limit the list of supervisors somehow?
         return supervisorRepository.getSupervisors();
@@ -102,6 +112,12 @@ public class SupervisionService {
     // Ends the supervision by adding the status FINISHED
     public SupervisionModel finishSupervision(Integer supervisionId) {
         supervisionStatusRepository.insertSupervisionStatus(supervisionId, SupervisionStatusType.FINISHED);
+        return getSupervision(supervisionId);
+    }
+
+    // Completes the supervision by adding the status REPORT_SIGNED
+    public SupervisionModel completeSupervision(Integer supervisionId) {
+        supervisionStatusRepository.insertSupervisionStatus(supervisionId, SupervisionStatusType.REPORT_SIGNED);
         return getSupervision(supervisionId);
     }
 

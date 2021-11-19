@@ -19,6 +19,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static org.jooq.impl.DSL.exists;
+import static org.jooq.impl.DSL.notExists;
+import static org.jooq.impl.DSL.selectOne;
+
 @Repository
 public class SupervisionRepository {
     private static final Logger logger = LogManager.getLogger();
@@ -69,6 +73,24 @@ public class SupervisionRepository {
                 .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
                 .and(TableAlias.routeTransport.ID.eq(routeTransportId))
                 .orderBy(TableAlias.supervision.PLANNED_TIME) // TODO change to routeBridge.bridgeOrder when it's added to Lelu API
+                .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
+    }
+
+    public List<SupervisionModel> getFinishedButUnsignedSupervisionsBySupervisorUsername(String username) {
+        return dsl.select().from(TableAlias.supervision)
+                .innerJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))
+                .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
+                .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
+                .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
+                .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
+                .and(exists(selectOne()
+                        .from(TableAlias.supervisionStatus)
+                        .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)
+                                .and(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.FINISHED.toString())))))
+                .and(notExists(selectOne()
+                        .from(TableAlias.supervisionStatus)
+                        .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)
+                                .and(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.REPORT_SIGNED.toString())))))
                 .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
     }
 
