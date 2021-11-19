@@ -30,12 +30,9 @@ const RouteTransportDetail = (): JSX.Element => {
   const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
   const [supervisions, setSupervisions] = useState<ISupervision[]>([]);
 
-  // TODO change to logged in user
-  const username = "USER1";
-
   const { data: routeTransport } = useQuery(
     ["getRouteTransportOfSupervisor", routeTransportId],
-    () => getRouteTransportOfSupervisor(Number(routeTransportId), username, dispatch),
+    () => getRouteTransportOfSupervisor(Number(routeTransportId), dispatch),
     {
       retry: onRetry,
       onSuccess: (data) => {

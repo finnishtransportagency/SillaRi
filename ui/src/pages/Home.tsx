@@ -6,7 +6,7 @@ import type { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton, IonSlide, IonSlides } from "@ionic/react";
 import Header from "../components/Header";
 import { useTypedSelector } from "../store/store";
-import { checkUser, getCompanyTransportsList, getSupervisionList, onRetry } from "../utils/supervisionBackendData";
+import { getCompanyTransportsList, getSupervisionList, onRetry } from "../utils/supervisionBackendData";
 import SupervisionList from "../components/SupervisionList";
 import "./Home.css";
 import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion";
@@ -26,16 +26,11 @@ const Home = (): JSX.Element => {
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
 
-  // TODO use logged in user
-  const supervisorUser = "USER1";
-
-  useQuery(["checkUser"], () => checkUser(supervisorUser), { retry: onRetry });
-
-  const { data: companyTransportsList = [] } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(supervisorUser, dispatch), {
+  const { data: companyTransportsList = [] } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
     retry: onRetry,
   });
 
-  const { data: supervisionList = [] } = useQuery(["getSupervisionList"], () => getSupervisionList(supervisorUser, dispatch), {
+  const { data: supervisionList = [] } = useQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       if (data && data.length > 0) {
@@ -60,6 +55,7 @@ const Home = (): JSX.Element => {
   };
 
   const transportsCount = companyTransportsList.map((ct) => (ct.transports ? ct.transports.length : 0)).reduce((prev, next) => prev + next, 0);
+  const bridgesCount = supervisionDays.map((sd) => (sd.supervisions ? sd.supervisions.length : 0)).reduce((prev, next) => prev + next, 0);
 
   const noNetworkNoData =
     (isFailed.getCompanyTransportsList && companyTransportsList.length === 0) || (isFailed.getSupervisionList && supervisionList.length === 0);
@@ -72,7 +68,7 @@ const Home = (): JSX.Element => {
           <IonLabel>{`${t("main.tab.transports")} (${transportsCount})`}</IonLabel>
         </IonSegmentButton>
         <IonSegmentButton className="mainSegmentButton" value="1">
-          <IonLabel>{`${t("main.tab.bridges")} (${supervisionList.length})`}</IonLabel>
+          <IonLabel>{`${t("main.tab.bridges")} (${bridgesCount})`}</IonLabel>
         </IonSegmentButton>
       </IonSegment>
       <IonContent>

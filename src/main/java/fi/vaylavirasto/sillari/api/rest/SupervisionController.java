@@ -1,11 +1,13 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.service.SupervisionService;
+import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,8 @@ import java.util.List;
 @Timed
 @RequestMapping("/supervision")
 public class SupervisionController {
-
+    @Autowired
+    UIService uiService;
     @Autowired
     SupervisionService supervisionService;
 
@@ -40,10 +43,11 @@ public class SupervisionController {
     @Operation(summary = "Get supervisions of supervisor")
     @GetMapping(value = "/getsupervisionsofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getSupervisionsOfSupervisor(@RequestParam String username) {
+    public ResponseEntity<?> getSupervisionsOfSupervisor() {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionsOfSupervisor");
         try {
-            List<SupervisionModel> supervisions = supervisionService.getSupervisionsOfSupervisor(username);
+            SillariUser user = uiService.getSillariUser();
+            List<SupervisionModel> supervisions = supervisionService.getSupervisionsOfSupervisor(user.getUsername());
             return ResponseEntity.ok().body(supervisions != null ? supervisions : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
