@@ -112,7 +112,7 @@ const DenyCrossing = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} />
+      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} includeSendingList />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

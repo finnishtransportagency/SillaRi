@@ -154,7 +154,7 @@
       "drivingLine": "Driving line",
       "summary": "Go to summary",
       "cancel": "Cancel supervision",
-      "saveToSendList": "Save (to the send list)"
+      "saveToSendList": "Save to the sending list"
     },
     "warning": {
       "cancelSupervisionHeader": "Are you sure you want to cancel the supervision?",
@@ -173,8 +173,17 @@
       "additionalInfo": "Additional information",
       "approved": "Approved",
       "notApproved": "Not approved",
-      "saved": "Supervision has been saved (to the send list)"
+      "saved": "Supervision has been saved to the sending list"
     }
+  },
+  "sendingList": {
+    "title": "Sending list",
+    "transportPermit": "Transport permit",
+    "tractorUnit": "Tractor unit",
+    "supervisionStarted": "Supervision started",
+    "sendSelected": "Send selected",
+    "sentOk": "Selected supervisions have been sent",
+    "nothingToSend": "No supervision reports to send"
   },
   "management": {
     "companySummary": {

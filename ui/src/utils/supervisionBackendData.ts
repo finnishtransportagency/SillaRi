@@ -120,6 +120,26 @@ export const getSupervisionList = async (dispatch: Dispatch): Promise<ISupervisi
   }
 };
 
+export const getSupervisionSendingList = async (dispatch: Dispatch): Promise<ISupervision[]> => {
+  try {
+    console.log("getSupervisionSendingList");
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionSendingList: false } });
+
+    const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsendinglistofsupervisor`);
+
+    if (supervisionsResponse.ok) {
+      const supervisions = (await supervisionsResponse.json()) as Promise<ISupervision[]>;
+      return await supervisions;
+    } else {
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionSendingList: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionSendingList: true } });
+    throw new Error(err as string);
+  }
+};
+
 export const getSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("GetSupervision", supervisionId);
@@ -261,6 +281,31 @@ export const finishSupervision = async (supervisionId: number, dispatch: Dispatc
     }
   } catch (err) {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { finishSupervision: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const completeSupervisions = async (supervisionIds: string[], dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { completeSupervisions: false } });
+
+    const completeSupervisionsResponse = await fetch(`${getOrigin()}/api/supervision/completesupervisions?supervisionIds=${supervisionIds.join()}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (completeSupervisionsResponse.ok) {
+      // TODO - check if any data should be returned
+      const completeSupervisionsResult = (await completeSupervisionsResponse.json()) as Promise<ISupervision>;
+      console.log("completeSupervisions response", completeSupervisionsResult);
+    } else {
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { completeSupervisions: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { completeSupervisions: true } });
     throw new Error(err as string);
   }
 };

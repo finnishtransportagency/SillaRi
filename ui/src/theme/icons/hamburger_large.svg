@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>76E38E49-2ABE-4CE7-9F5D-E72B600A5EA1</title>
+    <g id="UI-Style-Guide" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Style-Guideline" transform="translate(-255.000000, -5673.000000)">
+            <g id="static/icon/32x32/hamburger" transform="translate(255.000000, 5673.000000)">
+                <polygon id="hit-area" points="0 0 32 0 32 32 0 32"></polygon>
+                <path d="M26,21 L26,24 L14,24 L14,21 L26,21 Z M26,14 L26,17 L5,17 L5,14 L26,14 Z M17,7 L17,10 L5,10 L5,7 L17,7 Z" id="Combined-Shape" fill="#0064AF"></path>
+            </g>
+        </g>
+    </g>
+</svg>

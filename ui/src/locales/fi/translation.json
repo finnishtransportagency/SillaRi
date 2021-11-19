@@ -155,7 +155,7 @@
       "drivingLine": "Ajolinja",
       "summary": "Siirry yhteenvetoon",
       "cancel": "Peru valvonta",
-      "saveToSendList": "Tallenna (lähetyslistalle)"
+      "saveToSendList": "Tallenna lähetyslistalle"
     },
     "warning": {
       "cancelSupervisionHeader": "Haluatko varmasti perua valvonnan?",
@@ -174,8 +174,17 @@
       "additionalInfo": "Lisätiedot",
       "approved": "Hyväksytty",
       "notApproved": "Ei hyväksytty",
-      "saved": "Valvonta on tallennettu (lähetyslistalle)"
+      "saved": "Valvonta on tallennettu lähetyslistalle"
     }
+  },
+  "sendingList": {
+    "title": "Lähetyslista",
+    "transportPermit": "Kuljetuslupa",
+    "tractorUnit": "Vetoauto",
+    "supervisionStarted": "Valvonta aloitettu",
+    "sendSelected": "Lähetä valitut",
+    "sentOk": "Valitut valvonnat on lähetetty",
+    "nothingToSend": "Ei lähetettäviä valvontaraportteja"
   },
   "management": {
     "companySummary": {
