@@ -1,11 +1,14 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
+import fi.vaylavirasto.sillari.model.RouteTransportStatusModel;
 import fi.vaylavirasto.sillari.model.TransportStatusType;
 import fi.vaylavirasto.sillari.service.RouteTransportService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
+import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,8 @@ import java.util.List;
 @RequestMapping("/routetransport")
 public class RouteTransportController {
     @Autowired
+    UIService uiService;
+    @Autowired
     RouteTransportService routeTransportService;
     @Autowired
     SupervisionService supervisionService;
@@ -38,7 +43,8 @@ public class RouteTransportController {
     public ResponseEntity<?> getRouteTransport(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransport");
         try {
-            RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId);
+            // TODO - restrict this method to transport company admin users only
+            RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId, true);
             return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -51,7 +57,8 @@ public class RouteTransportController {
     public ResponseEntity<?> getRouteTransportsOfPermit(@RequestParam Integer permitId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportsOfPermit");
         try {
-            List<RouteTransportModel> routeTransports = routeTransportService.getRouteTransportsOfPermit(permitId);
+            // TODO - restrict this method to transport company admin users only
+            List<RouteTransportModel> routeTransports = routeTransportService.getRouteTransportsOfPermit(permitId, true);
             return ResponseEntity.ok().body(routeTransports != null ? routeTransports : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -61,10 +68,11 @@ public class RouteTransportController {
     @Operation(summary = "Get route transport of supervisor, with supervisions and route data")
     @GetMapping(value = "/getroutetransportofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getRouteTransportOfSupervisor(@RequestParam Integer routeTransportId, String username) {
+    public ResponseEntity<?> getRouteTransportOfSupervisor(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportOfSupervisor");
         try {
-            RouteTransportModel routeTransport = routeTransportService.getRouteTransportOfSupervisor(routeTransportId, username);
+            SillariUser user = uiService.getSillariUser();
+            RouteTransportModel routeTransport = routeTransportService.getRouteTransportOfSupervisor(routeTransportId, user.getUsername());
             return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -77,6 +85,7 @@ public class RouteTransportController {
     public ResponseEntity<?> createRouteTransport(@RequestBody RouteTransportModel routeTransport) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "createRouteTransport");
         try {
+            // TODO - restrict this method to transport company admin users only
             RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
             if (routeTransport.getSupervisions() != null && insertedRouteTransport != null) {
@@ -92,7 +101,7 @@ public class RouteTransportController {
             }
 
             if (insertedRouteTransport != null) {
-                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(insertedRouteTransport.getId());
+                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(insertedRouteTransport.getId(), true);
                 return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
             } else {
                 return ResponseEntity.ok().body(new EmptyJsonResponse());
@@ -108,6 +117,7 @@ public class RouteTransportController {
     public ResponseEntity<?> updateRouteTransport(@RequestBody RouteTransportModel routeTransport) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "updateRouteTransport");
         try {
+            // TODO - restrict this method to transport company admin users only
             RouteTransportModel updatedTransportModel = routeTransportService.updateRouteTransport(routeTransport);
 
             if (routeTransport.getSupervisions() != null) {
@@ -121,7 +131,7 @@ public class RouteTransportController {
             }
 
             if (updatedTransportModel != null) {
-                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(updatedTransportModel.getId());
+                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(updatedTransportModel.getId(), true);
                 return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
             } else {
                 return ResponseEntity.ok().body(new EmptyJsonResponse());
@@ -137,8 +147,10 @@ public class RouteTransportController {
     public boolean deleteRouteTransport(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "updateRouteTransport");
         try {
+            // TODO - restrict this method to transport company admin users only
+
             // Fetch all the route transport details including the status which is not sent
-            RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId);
+            RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId, false);
 
             // Only route transports with planned status can be deleted
             if (routeTransport != null && routeTransport.getCurrentStatus() != null &&
@@ -159,6 +171,26 @@ public class RouteTransportController {
                 return true;
             } else {
                 return false;
+            }
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Change route transport status")
+    @PostMapping(value = "/changeroutetransportstatus", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> changeRouteTransportStatus(@RequestBody RouteTransportStatusModel routeTransportStatus) {
+        ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "changeRouteTransportStatus");
+        try {
+            // TODO - restrict this method to transport UI users only
+            if (routeTransportStatus != null) {
+                routeTransportService.addRouteTransportStatus(routeTransportStatus);
+
+                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(routeTransportStatus.getRouteTransportId(), false);
+                return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
+            } else {
+                return ResponseEntity.ok().body(new EmptyJsonResponse());
             }
         } finally {
             serviceMetric.end();

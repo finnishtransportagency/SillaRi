@@ -2,7 +2,9 @@ package fi.vaylavirasto.sillari.model;
 
 public enum SupervisionStatusType {
     PLANNED,
-    CANCELLED,
     IN_PROGRESS,
-    FINISHED
+    CANCELLED,
+    FINISHED,
+    CROSSING_DENIED,
+    REPORT_SIGNED
 }

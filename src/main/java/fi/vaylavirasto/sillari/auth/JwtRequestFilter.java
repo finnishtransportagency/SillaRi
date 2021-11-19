@@ -3,6 +3,8 @@ package fi.vaylavirasto.sillari.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.SignatureException;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -119,19 +121,37 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 PreAuthenticatedAuthenticationToken authenticationToken = null;
                 if (claims != null) {
+
+                     // claims.forEach((k, v) -> logger.debug(String.format("Claim %s=%s", k, v)));
+
                     String username = (String) claims.get("username");
                     String uid = (String) claims.get("custom:uid");
                     String userNameDetail = (uid != null) ? uid : username;
+
                     logger.debug(String.format("Username %s", userNameDetail));
 
                     String[] roles = ((String) claims.get("custom:rooli")).split("\\,");
                     logger.debug(String.format("Roles %s", String.join(",", roles)));
 
-                    // claims.forEach((k, v) -> logger.debug(String.format("Claim %s=%s", k, v)));
-
-                    // NOTE: this is just a test, the real user roles will be added later
                     List<GrantedAuthority> authorityList = new ArrayList<>();
-                    authorityList.add(SillariRole.fromString("SILLARI_TEST"));
+
+                    if (ArrayUtils.contains(roles, "sillari_sillanvalvoja")) {
+                        authorityList.add(SillariRole.fromString("SILLARI_SILLANVALVOJA"));
+                    }
+                    if (ArrayUtils.contains(roles, "sillari_ajojarjestelija")) {
+                        authorityList.add(SillariRole.fromString("SILLARI_AJOJARJESTELIJA"));
+                    }
+                    if (ArrayUtils.contains(roles, "sillari_kuljettaja")) {
+                        authorityList.add(SillariRole.fromString("SILLARI_KULJETTAJA"));
+                    }
+
+                    // NOTE: Set all roles if none is set in KVH. REMOVE THIS once all user roles has been set correctly in KVH!
+                    if (authorityList.size() < 1) {
+                        authorityList.add(SillariRole.fromString("SILLARI_SILLANVALVOJA"));
+                        authorityList.add(SillariRole.fromString("SILLARI_AJOJARJESTELIJA"));
+                        authorityList.add(SillariRole.fromString("SILLARI_KULJETTAJA"));
+                    }
+
                     SillariUser userDetails = new SillariUser(userNameDetail, authorityList);
 
                     authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
@@ -148,8 +168,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     logger.debug("Using local development authentication");
 
                     List<GrantedAuthority> authorityList = new ArrayList<>();
-                    authorityList.add(SillariRole.fromString("SILLARI_TEST"));
-                    SillariUser userDetails = new SillariUser("DEV_USER", authorityList);
+                    // NOTE: Add all roles. Each role (and combinations) can be tested by commenting row(s) out below
+                    authorityList.add(SillariRole.fromString("SILLARI_SILLANVALVOJA"));
+                    authorityList.add(SillariRole.fromString("SILLARI_AJOJARJESTELIJA"));
+                    authorityList.add(SillariRole.fromString("SILLARI_KULJETTAJA"));
+
+                    SillariUser userDetails = new SillariUser("T012345", authorityList);
 
                     authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

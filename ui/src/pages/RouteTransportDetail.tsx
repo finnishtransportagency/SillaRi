@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
@@ -13,6 +13,8 @@ import IRoute from "../interfaces/IRoute";
 import { useTypedSelector } from "../store/store";
 import { getRouteTransportOfSupervisor, onRetry } from "../utils/supervisionBackendData";
 import BridgeCardList from "../components/BridgeCardList";
+import { filterFinishedSupervisions } from "../utils/supervisionUtil";
+import ISupervision from "../interfaces/ISupervision";
 
 interface RouteTransportDetailProps {
   routeTransportId: string;
@@ -22,28 +24,32 @@ const RouteTransportDetail = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const {
-    selectedRouteTransport,
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
-  const { route, supervisions = [] } = selectedRouteTransport || {};
-  const { name = "", permit } = route || {};
 
   const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
+  const [supervisions, setSupervisions] = useState<ISupervision[]>([]);
 
-  // TODO change to logged in user
-  const username = "USER1";
-
-  useQuery(
+  const { data: routeTransport } = useQuery(
     ["getRouteTransportOfSupervisor", routeTransportId],
-    () => getRouteTransportOfSupervisor(Number(routeTransportId), username, dispatch, selectedRouteTransport),
-    { retry: onRetry }
+    () => getRouteTransportOfSupervisor(Number(routeTransportId), dispatch),
+    {
+      retry: onRetry,
+      onSuccess: (data) => {
+        const { supervisions: routeTransportSupervisions } = data || {};
+        setSupervisions(filterFinishedSupervisions(routeTransportSupervisions));
+      },
+    }
   );
 
-  const noNetworkNoData = isFailed.getRouteTransportOfSupervisor && selectedRouteTransport === undefined;
+  const { route } = routeTransport || {};
+  const { name = "", permit } = route || {};
+
+  const noNetworkNoData = isFailed.getRouteTransportOfSupervisor && routeTransport === undefined;
 
   return (
     <IonPage>
-      <Header title={name} somethingFailed={isFailed.getRouteTransportOfSupervisor} />
+      <Header title={name} somethingFailed={isFailed.getRouteTransportOfSupervisor} includeSendingList />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

@@ -10,27 +10,36 @@ import { getCompanyTransportsList, getSupervisionList, onRetry } from "../utils/
 import SupervisionList from "../components/SupervisionList";
 import "./Home.css";
 import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion";
+import ISupervisionDay from "../interfaces/ISupervisionDay";
+import { filterFinishedSupervisions, groupSupervisionsByDate } from "../utils/supervisionUtil";
 
 const Home = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const [currentSegment, setCurrentSegment] = useState<string>("0");
   const slidesRef = useRef<HTMLIonSlidesElement>(null);
 
+  const [currentSegment, setCurrentSegment] = useState<string>("0");
+  const [supervisionDays, setSupervisionDays] = useState<ISupervisionDay[]>([]);
+
   const {
-    companyTransportsList = [],
-    supervisionList = [],
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.supervisionReducer);
 
-  const transportsCount = companyTransportsList.map((ct) => (ct.transports ? ct.transports.length : 0)).reduce((prev, next) => prev + next, 0);
+  const { data: companyTransportsList = [] } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
+    retry: onRetry,
+  });
 
-  // TODO use logged in user
-  const supervisorUser = "USER1";
-
-  useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(supervisorUser, dispatch), { retry: onRetry });
-  useQuery(["getSupervisionList"], () => getSupervisionList(supervisorUser, dispatch), { retry: onRetry });
+  const { data: supervisionList = [] } = useQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
+    retry: onRetry,
+    onSuccess: (data) => {
+      if (data && data.length > 0) {
+        const filteredSupervisions = filterFinishedSupervisions(data);
+        const groupedSupervisions = groupSupervisionsByDate(filteredSupervisions);
+        setSupervisionDays(groupedSupervisions);
+      }
+    },
+  });
 
   const changeSlide = (evt: CustomEvent<SegmentChangeEventDetail>) => {
     if (slidesRef.current) {
@@ -45,18 +54,21 @@ const Home = (): JSX.Element => {
     }
   };
 
+  const transportsCount = companyTransportsList.map((ct) => (ct.transports ? ct.transports.length : 0)).reduce((prev, next) => prev + next, 0);
+  const bridgesCount = supervisionDays.map((sd) => (sd.supervisions ? sd.supervisions.length : 0)).reduce((prev, next) => prev + next, 0);
+
   const noNetworkNoData =
     (isFailed.getCompanyTransportsList && companyTransportsList.length === 0) || (isFailed.getSupervisionList && supervisionList.length === 0);
 
   return (
     <IonPage>
-      <Header title={t("main.header.title")} somethingFailed={isFailed.getCompanyTransportsList || isFailed.getSupervisionList} />
+      <Header title={t("main.header.title")} somethingFailed={isFailed.getCompanyTransportsList || isFailed.getSupervisionList} includeSendingList />
       <IonSegment className="mainSegment" value={currentSegment} onIonChange={changeSlide}>
         <IonSegmentButton className="mainSegmentButton" value="0">
           <IonLabel>{`${t("main.tab.transports")} (${transportsCount})`}</IonLabel>
         </IonSegmentButton>
         <IonSegmentButton className="mainSegmentButton" value="1">
-          <IonLabel>{`${t("main.tab.bridges")} (${supervisionList.length})`}</IonLabel>
+          <IonLabel>{`${t("main.tab.bridges")} (${bridgesCount})`}</IonLabel>
         </IonSegmentButton>
       </IonSegment>
       <IonContent>
@@ -65,7 +77,7 @@ const Home = (): JSX.Element => {
             <CompanyTransportsAccordion companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
           <IonSlide>
-            <SupervisionList supervisionList={supervisionList} noNetworkNoData={noNetworkNoData} />
+            <SupervisionList supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} />
           </IonSlide>
         </IonSlides>
       </IonContent>

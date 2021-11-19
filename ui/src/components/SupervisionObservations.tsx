@@ -1,57 +1,93 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { IonCheckbox, IonIcon, IonItem, IonLabel, IonRadio, IonRadioGroup, IonTextarea } from "@ionic/react";
 import IRadioValue from "../interfaces/IRadioValue";
-import ISupervision from "../interfaces/ISupervision";
 import ITextAreaValue from "../interfaces/ITextAreaValue";
-import { actions as supervisionActions } from "../store/supervisionSlice";
-import empty from "../theme/icons/empty.svg";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 interface SupervisionObservationsProps {
-  supervision: ISupervision;
+  modifiedReport: ISupervisionReport | undefined;
+  setModifiedReport: Dispatch<SetStateAction<ISupervisionReport | undefined>>;
+  disabled: boolean;
 }
 
-const SupervisionObservations = ({ supervision }: SupervisionObservationsProps): JSX.Element => {
+const SupervisionObservations = ({ modifiedReport, setModifiedReport, disabled }: SupervisionObservationsProps): JSX.Element => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-
-  const { report } = supervision || {};
 
   const {
-    drivingLineOk = true,
-    drivingLineInfo = "",
-    speedLimitOk = true,
-    speedLimitInfo = "",
-    anomalies = false,
-    anomaliesDescription = "",
-    surfaceDamage = false,
-    jointDamage = false,
-    bendOrDisplacement = false,
-    otherObservations = false,
-    otherObservationsInfo = "",
-    additionalInfo = "",
-  } = report || {};
+    drivingLineOk,
+    drivingLineInfo,
+    speedLimitOk,
+    speedLimitInfo,
+    anomalies,
+    anomaliesDescription,
+    surfaceDamage,
+    jointDamage,
+    bendOrDisplacement,
+    otherObservations,
+    otherObservationsInfo,
+    additionalInfo,
+  } = modifiedReport || {};
+
+  const updateRadioOrCheckboxValue = (payload: IRadioValue) => {
+    if (modifiedReport) {
+      let updatedReport: ISupervisionReport = modifiedReport;
+      if (payload.name === "drivingLineOk") {
+        updatedReport = { ...modifiedReport, drivingLineOk: payload.value };
+      } else if (payload.name === "speedLimitOk") {
+        updatedReport = { ...modifiedReport, speedLimitOk: payload.value };
+      } else if (payload.name === "anomalies") {
+        updatedReport = { ...modifiedReport, anomalies: payload.value };
+      } else if (payload.name === "surfaceDamage") {
+        updatedReport = { ...modifiedReport, surfaceDamage: payload.value };
+      } else if (payload.name === "jointDamage") {
+        updatedReport = { ...modifiedReport, jointDamage: payload.value };
+      } else if (payload.name === "bendOrDisplacement") {
+        updatedReport = { ...modifiedReport, bendOrDisplacement: payload.value };
+      } else if (payload.name === "otherObservations") {
+        updatedReport = { ...modifiedReport, otherObservations: payload.value };
+      }
+      setModifiedReport(updatedReport);
+    }
+  };
+
+  const updateTextAreaValue = (payload: ITextAreaValue) => {
+    if (modifiedReport) {
+      let updatedReport: ISupervisionReport = modifiedReport;
+      if (payload.name === "drivingLineInfo") {
+        updatedReport = { ...modifiedReport, drivingLineInfo: payload.value };
+      } else if (payload.name === "speedLimitInfo") {
+        updatedReport = { ...modifiedReport, speedLimitInfo: payload.value };
+      } else if (payload.name === "otherObservationsInfo") {
+        updatedReport = { ...modifiedReport, otherObservationsInfo: payload.value };
+      } else if (payload.name === "anomaliesDescription") {
+        updatedReport = { ...modifiedReport, anomaliesDescription: payload.value };
+      } else if (payload.name === "additionalInfo") {
+        updatedReport = { ...modifiedReport, additionalInfo: payload.value };
+      }
+      setModifiedReport(updatedReport);
+    }
+  };
 
   const radioClicked = (radioName: string, radioValue: string) => {
     const radioPayload = {
       name: radioName,
       value: radioValue === "yes",
     } as IRadioValue;
-    dispatch({ type: supervisionActions.REPORT_RADIO_CHANGED, payload: radioPayload });
+    updateRadioOrCheckboxValue(radioPayload);
   };
 
-  const checkBoxClicked = (checkBoxName: string, checkBoxValue: boolean) => {
-    const radioPayload = {
-      name: checkBoxName,
-      value: checkBoxValue,
+  const checkboxClicked = (checkboxName: string, checkboxValue: boolean) => {
+    const checkboxPayload = {
+      name: checkboxName,
+      value: checkboxValue,
     } as IRadioValue;
-    dispatch({ type: supervisionActions.REPORT_RADIO_CHANGED, payload: radioPayload });
+    updateRadioOrCheckboxValue(checkboxPayload);
   };
 
-  const textAreaValueChanged = (pname: string, pvalue: string) => {
-    const change = { name: pname, value: pvalue } as ITextAreaValue;
-    dispatch({ type: supervisionActions.REPORT_TEXTAREA_CHANGED, payload: change });
+  const textAreaChanged = (textName: string, textValue: string) => {
+    const textAreaPayload = { name: textName, value: textValue } as ITextAreaValue;
+    updateTextAreaValue(textAreaPayload);
   };
 
   return (
@@ -67,11 +103,11 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
         <IonItem lines="none">
           <IonItem lines="none">
             <IonLabel>{t("common.answer.yes")}</IonLabel>
-            <IonRadio slot="start" value="yes" />
+            <IonRadio slot="start" value="yes" disabled={disabled} />
           </IonItem>
           <IonItem lines="none">
             <IonLabel>{t("common.answer.no")}</IonLabel>
-            <IonRadio slot="start" value="no" />
+            <IonRadio slot="start" value="no" disabled={disabled} />
           </IonItem>
         </IonItem>
       </IonRadioGroup>
@@ -84,8 +120,9 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
             <IonTextarea
               placeholder={t("supervision.report.placeholder")}
               value={drivingLineInfo}
+              disabled={disabled}
               onIonChange={(e) => {
-                return textAreaValueChanged("drivingLineInfo", e.detail.value ?? "");
+                return textAreaChanged("drivingLineInfo", e.detail.value ?? "");
               }}
             />
           </IonItem>
@@ -99,11 +136,11 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
         <IonItem lines="none">
           <IonItem lines="none">
             <IonLabel>{t("common.answer.yes")}</IonLabel>
-            <IonRadio slot="start" value="yes" />
+            <IonRadio slot="start" value="yes" disabled={disabled} />
           </IonItem>
           <IonItem lines="none">
             <IonLabel>{t("common.answer.no")}</IonLabel>
-            <IonRadio slot="start" value="no" />
+            <IonRadio slot="start" value="no" disabled={disabled} />
           </IonItem>
         </IonItem>
       </IonRadioGroup>
@@ -116,8 +153,9 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
             <IonTextarea
               placeholder={t("supervision.report.placeholder")}
               value={speedLimitInfo}
+              disabled={disabled}
               onIonChange={(e) => {
-                return textAreaValueChanged("speedLimitInfo", e.detail.value ?? "");
+                return textAreaChanged("speedLimitInfo", e.detail.value ?? "");
               }}
             />
           </IonItem>
@@ -131,11 +169,11 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
         <IonItem lines="none">
           <IonItem lines="none">
             <IonLabel>{t("common.answer.yes")}</IonLabel>
-            <IonRadio slot="start" value="yes" />
+            <IonRadio slot="start" value="yes" disabled={disabled} />
           </IonItem>
           <IonItem lines="none">
             <IonLabel>{t("common.answer.no")}</IonLabel>
-            <IonRadio slot="start" value="no" />
+            <IonRadio slot="start" value="no" disabled={disabled} />
           </IonItem>
         </IonItem>
       </IonRadioGroup>
@@ -146,48 +184,54 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
               slot="start"
               value="surfaceDamage"
               checked={surfaceDamage}
-              onClick={() => checkBoxClicked("surfaceDamage", !surfaceDamage)}
+              disabled={disabled}
+              onClick={() => checkboxClicked("surfaceDamage", !surfaceDamage)}
             />
             <IonLabel>{t("supervision.report.surfaceDamage")}</IonLabel>
           </IonItem>
-
           <IonItem lines="none">
-            <IonCheckbox slot="start" value="jointDamage" checked={jointDamage} onClick={() => checkBoxClicked("jointDamage", !jointDamage)} />
+            <IonCheckbox
+              slot="start"
+              value="jointDamage"
+              checked={jointDamage}
+              disabled={disabled}
+              onClick={() => checkboxClicked("jointDamage", !jointDamage)}
+            />
             <IonLabel>{t("supervision.report.jointDamage")}</IonLabel>
           </IonItem>
-
           <IonItem lines="none">
             <IonCheckbox
               slot="start"
               value="bendOrDisplacement"
               checked={bendOrDisplacement}
-              onClick={() => checkBoxClicked("bendOrDisplacement", !bendOrDisplacement)}
+              disabled={disabled}
+              onClick={() => checkboxClicked("bendOrDisplacement", !bendOrDisplacement)}
             />
             <IonLabel>{t("supervision.report.bendOrDisplacement")}</IonLabel>
           </IonItem>
-
           <IonItem lines="none">
             <IonCheckbox
               slot="start"
               value="otherObservations"
               checked={otherObservations}
-              onClick={() => checkBoxClicked("otherObservations", !otherObservations)}
+              disabled={disabled}
+              onClick={() => checkboxClicked("otherObservations", !otherObservations)}
             />
             <IonLabel>{t("supervision.report.otherObservations")}</IonLabel>
           </IonItem>
           {otherObservations && (
             <IonItem lines="none">
-              <IonIcon className="otherIcon" slot="start" icon={empty} />
+              <IonIcon slot="start" icon="" />
               <IonTextarea
                 placeholder={t("supervision.report.placeholder")}
                 value={otherObservationsInfo}
+                disabled={disabled}
                 onIonChange={(e) => {
-                  return textAreaValueChanged("otherObservationsInfo", e.detail.value ?? "");
+                  return textAreaChanged("otherObservationsInfo", e.detail.value ?? "");
                 }}
               />
             </IonItem>
           )}
-
           <IonItem lines="none">
             <IonLabel>{t("supervision.report.anomaliesDescription")}</IonLabel>
           </IonItem>
@@ -195,8 +239,9 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
             <IonTextarea
               placeholder={t("supervision.report.placeholder")}
               value={anomaliesDescription}
+              disabled={disabled}
               onIonChange={(e) => {
-                return textAreaValueChanged("anomaliesDescription", e.detail.value ?? "");
+                return textAreaChanged("anomaliesDescription", e.detail.value ?? "");
               }}
             />
           </IonItem>
@@ -210,8 +255,9 @@ const SupervisionObservations = ({ supervision }: SupervisionObservationsProps):
         <IonTextarea
           placeholder={t("supervision.report.placeholder")}
           value={additionalInfo}
+          disabled={disabled}
           onIonChange={(e) => {
-            return textAreaValueChanged("additionalInfo", e.detail.value ?? "");
+            return textAreaChanged("additionalInfo", e.detail.value ?? "");
           }}
         />
       </IonItem>

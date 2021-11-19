@@ -33,6 +33,9 @@ public class LeluBridgeDTO {
     @Schema(description = "Bridge crossing instructions and other possible supervisors", example = "Ajoneuvon keskilinjan oltava 4,25 metrin etäisyydellä idänpuoleisesta kaiteesta.")
     private String additionalInfo;
 
+    @Schema(description = "Contract number in LeLu.", example = "12345")
+    private Long contractNumber;
+
     public LeluBridgeDTO() {
     }
 

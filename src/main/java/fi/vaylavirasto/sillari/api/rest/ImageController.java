@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.Base64;
+import java.util.List;
 
 @RestController
 @Timed
@@ -119,26 +120,53 @@ public class ImageController {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deleteImage");
         try {
             String decodedKey = new String(Base64.getDecoder().decode(objectKey));
-
-            if (activeProfile.equals("local")) {
-                // Delete from local file system
-                String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
-
-                File deleteFile = new File("/", filename);
-                if (deleteFile.exists()) {
-                    Files.delete(deleteFile.toPath());
-                }
-            } else {
-                // Delete from AWS
-                awss3Client.delete(decodedKey);
-            }
+            // Delete image from AWS bucket or local file system
+            deleteFile(decodedKey);
 
             // Delete the image row from the database
-            supervisionImageService.deleteFile(decodedKey);
+            supervisionImageService.deleteSupervisionImage(decodedKey);
         } finally {
             serviceMetric.end();
         }
         return true;
+    }
+
+    @Operation(summary = "Delete all supervision images")
+    @DeleteMapping("/deletesupervisionimages")
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public boolean deleteSupervisionImages(@RequestParam Integer supervisionId) throws IOException {
+        ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deletesupervisionimages");
+
+        try {
+            List<SupervisionImageModel> images = supervisionImageService.getSupervisionImages(supervisionId);
+
+            // Delete images from AWS bucket or local file system
+            for (SupervisionImageModel image : images) {
+                String decodedKey = new String(Base64.getDecoder().decode(image.getObjectKey()));
+                deleteFile(decodedKey);
+            }
+
+            // Delete image rows from the database
+            supervisionImageService.deleteSupervisionImages(supervisionId);
+        } finally {
+            serviceMetric.end();
+        }
+        return true;
+    }
+
+    private void deleteFile(String decodedKey) throws IOException {
+        if (activeProfile.equals("local")) {
+            // Delete from local file system
+            String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
+
+            File deleteFile = new File("/", filename);
+            if (deleteFile.exists()) {
+                Files.delete(deleteFile.toPath());
+            }
+        } else {
+            // Delete from AWS
+            awss3Client.delete(decodedKey);
+        }
     }
 
     @Operation(summary = "Keep alive")

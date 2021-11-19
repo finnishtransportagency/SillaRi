@@ -16,7 +16,7 @@ const TrafficSupervisorsAccordion = (): JSX.Element => {
           panel: (
             <div>
               <IonItem>
-                <IonLabel>TODO</IonLabel>
+                <IonLabel>Tulossa myöhemmin</IonLabel>
               </IonItem>
             </div>
           ),

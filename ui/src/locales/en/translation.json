@@ -5,6 +5,7 @@
       "back": "Back",
       "back2": "Back",
       "cancel": "Cancel",
+      "search": "Search",
       "edit": "Edit",
       "save": "Save",
       "send": "Send"
@@ -100,9 +101,7 @@
     "identifier": "Identifier",
     "location": "Location",
     "crossingInstructions": {
-      "title": "Instructions",
-      "documentingHeader": "Dokumentointi",
-      "documentingParagraph": "Valvoja seuraa ... jne todo"
+      "title": "Instructions"
     },
     "trafficSupervisors": {
       "title": "Traffic supervisors"
@@ -113,11 +112,17 @@
     "startSupervision": "Start supervision",
     "denyCrossing": "Transport cannot cross bridge",
     "supervisionMissing": "Bridge supervision is not yet planned",
-    "supervisionStarted": "Supervision started"
+    "supervisionStarted": "Supervision started",
+    "crossingDenied": "Bridge crossing cancelled",
+    "supervisionFinished": "Supervision finished"
   },
   "denyCrossing": {
-    "cantCross": "Transport cannot cross bridge",
-    "whyCantCross": "Why can't transport cross bridge?"
+    "cantCross": "Transport cannot cross the bridge",
+    "whyCantCross": "Why can't the transport cross the bridge?",
+    "transportWontCross": "Transport was left on route or ended earlier",
+    "obstacleOnBridge": "Physical obstacle on bridge",
+    "other": "Something else, what?",
+    "placeholder": "Add text here"
   },
   "supervision": {
     "title": "Bridge supervision",
@@ -131,9 +136,9 @@
     "report": {
       "observations": "Observations",
       "drivingLineOk": "Driving line complied with",
-      "drivingLineInfo": "Why driving line not accepted?",
-      "speedLimitOk": "Speed limit accepted",
-      "speedLimitInfo": "Why speed limit not accepted?",
+      "drivingLineInfo": "Why is the driving line not approved?",
+      "speedLimitOk": "Speed limit approved",
+      "speedLimitInfo": "Why is the speed limit not approved?",
       "anomalies": "Anomalies",
       "anomaliesInfo": "Specify anomalies",
       "surfaceDamage": "Surface damage",
@@ -148,7 +153,15 @@
       "takePhotos": "Photos",
       "drivingLine": "Driving line",
       "summary": "Go to summary",
-      "saveToSendList": "Save (to the send list)"
+      "cancel": "Cancel supervision",
+      "saveToSendList": "Save to the sending list"
+    },
+    "warning": {
+      "cancelSupervisionHeader": "Are you sure you want to cancel the supervision?",
+      "cancelSupervisionText": "All data from the report will be deleted.",
+      "leavePage": "Are you sure you want to leave the page?",
+      "unsavedChanges": "Supervision has unsaved changes.",
+      "supervisionNotFinished": "Supervision has not been saved to send list."
     },
     "summary": {
       "title": "Summary",
@@ -160,8 +173,17 @@
       "additionalInfo": "Additional information",
       "approved": "Approved",
       "notApproved": "Not approved",
-      "saved": "Supervision has been saved (to the send list)"
+      "saved": "Supervision has been saved to the sending list"
     }
+  },
+  "sendingList": {
+    "title": "Sending list",
+    "transportPermit": "Transport permit",
+    "tractorUnit": "Tractor unit",
+    "supervisionStarted": "Supervision started",
+    "sendSelected": "Send selected",
+    "sentOk": "Selected supervisions have been sent",
+    "nothingToSend": "No supervision reports to send"
   },
   "management": {
     "companySummary": {
@@ -183,12 +205,14 @@
         "route": "Route",
         "supervision": "Supervision",
         "time": "Time",
+        "password": "Password",
         "status": "Status",
         "action": "Action"
       },
       "action": {
         "details": "Details",
-        "modify": "Modify"
+        "modify": "Modify",
+        "show": "Show"
       }
     },
     "transportDetail": {
@@ -200,13 +224,17 @@
       "transportInformation": "Transport information",
       "bridgesToSupervise": "Bridges to supervise",
       "buttons": {
+        "generatePassword": "New password",
         "deleteTransport": "Delete transport"
       },
       "alert": {
+        "generatePassword": "Are you sure you want to generate a new password?",
         "deleteTransport": "Are you sure you want to delete the transport?"
       },
       "saved": "Saved",
       "deleted": "Deleted",
+      "password": "Transport password",
+      "passwordUnknown": "Unknown",
       "routeInfo": {
         "estimatedDepartureDate": "Estimated departure date",
         "estimatedDepartureTime": "time",
@@ -253,22 +281,43 @@
       "header": {
         "title": "Transports"
       },
-      "inputLabel": "Please enter transport code",
-      "inputPlaceholder": "Transport code",
-      "submitButtonLabel": "Submit code"
+      "inputTitle": "Upcoming transport",
+      "inputLabel": "Transport password",
+      "inputPlaceholder": "Password",
+      "invalidCodeErrorMessage": "Invalid code"
     },
     "transport": {
       "header": {
         "title": "Transport"
       },
-      "permitLabel": "Permit:",
-      "routeLabel": "Route:",
-      "mapButtonLabel": "Map",
-      "transportStatusLabel": "Transport status",
-      "transportStatusBoxLabel": {
-        "notStarted": "Not started"
+      "estimatedDepartureTime": "Estimated departure time",
+      "departureTime": "Departure time",
+      "permitLabel": "Permit",
+      "transportStatusLabel": "Status",
+      "statusInfo": {
+        "planned": "Drive has not yet started",
+        "departed": "Drive started",
+        "stopped": "Break started",
+        "in_progress": "Drive started",
+        "arrived": "Transport finished"
       },
-      "startDrivingButtonLabel": "START DRIVING"
+      "status": {
+        "departed": "On the move",
+        "stopped": "On a break",
+        "in_progress": "On the move",
+        "arrived": "Finished"
+      },
+      "buttons": {
+        "startDriving": "Start driving",
+        "startBreak": "Start break",
+        "stopBreak": "Continue driving",
+        "stopDriving": "End transport"
+      },
+      "stopAlert": {
+        "title": "Are you sure you want to end the transport?",
+        "message": "The transport cannot be continued anymore.",
+        "confirm": "End transport"
+      }
     }
   }
 }

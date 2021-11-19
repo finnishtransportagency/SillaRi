@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
-import { IonCol, IonGrid, IonIcon, IonRouterLink, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
+import { Link } from "react-router-dom";
+import { IonCol, IonGrid, IonIcon, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import moment from "moment";
 import DatePicker from "../common/DatePicker";
@@ -81,12 +82,12 @@ const RouteInfoGrid = ({
       <IonRow>
         <IonCol size-lg="3">
           <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin-start ion-margin-top">
+            <IonRow className="ion-margin-top">
               <IonCol>
                 <IonText className="headingText">{t("management.transportDetail.routeInfo.estimatedDepartureDate")}</IonText>
               </IonCol>
             </IonRow>
-            <IonRow className="ion-margin-start">
+            <IonRow>
               <IonCol>
                 {status === TransportStatus.PLANNED && <DatePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />}
                 {status !== TransportStatus.PLANNED && <Moment format={DATE_FORMAT}>{estimatedDeparture}</Moment>}
@@ -97,12 +98,12 @@ const RouteInfoGrid = ({
 
         <IonCol size-lg="3">
           <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin-start ion-margin-top">
+            <IonRow className="ion-margin-start ion-margin-end ion-margin-top">
               <IonCol>
                 <IonText className="headingText">{t("management.transportDetail.routeInfo.estimatedDepartureTime")}</IonText>
               </IonCol>
             </IonRow>
-            <IonRow className="ion-margin-start">
+            <IonRow className="ion-margin-start ion-margin-end">
               <IonCol>
                 {status === TransportStatus.PLANNED && <TimePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />}
                 {status !== TransportStatus.PLANNED && <Moment format={TIME_FORMAT_MIN}>{estimatedDeparture}</Moment>}
@@ -113,12 +114,12 @@ const RouteInfoGrid = ({
 
         <IonCol size="12" size-lg="6">
           <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin-start ion-margin-top">
+            <IonRow className="ion-margin-top">
               <IonCol>
                 <IonText className="headingText">{t("management.transportDetail.routeInfo.route")}</IonText>
               </IonCol>
             </IonRow>
-            <IonRow className="ion-margin-start">
+            <IonRow>
               <IonCol>
                 {status === TransportStatus.PLANNED && (
                   <IonSelect
@@ -149,7 +150,7 @@ const RouteInfoGrid = ({
       <IonRow>
         <IonCol size="12" size-lg="8">
           <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin">
+            <IonRow className="ion-margin-top">
               <IonCol size="12" size-sm="4">
                 <IonText className="headingText">{t("management.transportDetail.routeInfo.origin")}</IonText>
               </IonCol>
@@ -157,7 +158,7 @@ const RouteInfoGrid = ({
                 <IonText>{departureStreetAddress}</IonText>
               </IonCol>
             </IonRow>
-            <IonRow className="ion-margin">
+            <IonRow className="ion-margin-top">
               <IonCol size="12" size-sm="4">
                 <IonText className="headingText">{t("management.transportDetail.routeInfo.destination")}</IonText>
               </IonCol>
@@ -170,13 +171,13 @@ const RouteInfoGrid = ({
 
         <IonCol size="12" size-lg="4">
           <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin">
+            <IonRow className="ion-margin-top">
               <IonCol size="12" size-lg="4" />
               <IonCol size="12" size-lg="8">
-                <IonRouterLink routerLink={`/routemap/${selectedRouteId}`}>
+                <Link to={`/routemap/${selectedRouteId}`}>
                   <IonText className="linkText">{t("management.transportDetail.routeInfo.showRouteOnMap")}</IonText>
                   <IonIcon className="otherIcon" icon={mapPoint} />
-                </IonRouterLink>
+                </Link>
               </IonCol>
             </IonRow>
           </IonGrid>

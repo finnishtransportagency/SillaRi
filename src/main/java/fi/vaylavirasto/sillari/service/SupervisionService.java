@@ -62,6 +62,16 @@ public class SupervisionService {
         return supervisions;
     }
 
+    public List<SupervisionModel> getFinishedButUnsignedSupervisions(String username) {
+        List<SupervisionModel> supervisions = supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisorUsername(username);
+        for (SupervisionModel supervision : supervisions) {
+            // The sending list needs supervision started time, bridge and permit details
+            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+            fillPermitDetails(supervision);
+        }
+        return supervisions;
+    }
+
     public List<SupervisorModel> getSupervisors() {
         // TODO - limit the list of supervisors somehow?
         return supervisorRepository.getSupervisors();
@@ -74,7 +84,6 @@ public class SupervisionService {
     }
 
     // Updates supervision fields (supervisors, planned time)
-    // TODO do we need to add a new status row?
     public void updateSupervision(SupervisionModel supervisionModel) {
         supervisionRepository.updateSupervision(supervisionModel);
     }
@@ -89,26 +98,36 @@ public class SupervisionService {
     }
 
     // Adds the status IN_PROGRESS and creates a new supervision report
-    public SupervisionModel startSupervision(Integer supervisionId) {
-        supervisionReportRepository.createSupervisionReport(supervisionId);
-        return getSupervision(supervisionId);
+    public SupervisionModel startSupervision(SupervisionReportModel report) {
+        supervisionReportRepository.createSupervisionReport(report);
+        return getSupervision(report.getSupervisionId());
     }
 
-    // Cancels the supervision by adding the status CANCELLED
-    // TODO change CANCELLED to CROSSING_DENIED and save deny reason somewhere (to supervision?)
+    // Ends the supervision by adding the status CROSSING_DENIED
     public SupervisionModel denyCrossing(SupervisionModel supervisionModel) {
-        supervisionStatusRepository.insertSupervisionStatus(supervisionModel.getId(), SupervisionStatusType.CANCELLED);
+        supervisionRepository.updateSupervision(supervisionModel.getId(), supervisionModel.getDenyCrossingReason());
         return getSupervision(supervisionModel.getId());
     }
 
     // Ends the supervision by adding the status FINISHED
-    public SupervisionModel finishSupervision(SupervisionModel supervisionModel) {
-        supervisionStatusRepository.insertSupervisionStatus(supervisionModel.getId(), SupervisionStatusType.FINISHED);
-        return getSupervision(supervisionModel.getId());
+    public SupervisionModel finishSupervision(Integer supervisionId) {
+        supervisionStatusRepository.insertSupervisionStatus(supervisionId, SupervisionStatusType.FINISHED);
+        return getSupervision(supervisionId);
+    }
+
+    // Completes the supervision by adding the status REPORT_SIGNED
+    public SupervisionModel completeSupervision(Integer supervisionId) {
+        supervisionStatusRepository.insertSupervisionStatus(supervisionId, SupervisionStatusType.REPORT_SIGNED);
+        return getSupervision(supervisionId);
+    }
+
+    // Deletes the report and adds the status CANCELLED
+    public SupervisionModel cancelSupervision(Integer supervisionId) {
+        supervisionReportRepository.deleteSupervisionReport(supervisionId);
+        return getSupervision(supervisionId);
     }
 
     // Updates the report fields
-    // TODO do we need to add a new status row?
     public SupervisionModel updateSupervisionReport(SupervisionReportModel supervisionReportModel) {
         supervisionReportRepository.updateSupervisionReport(supervisionReportModel);
         return getSupervision(supervisionReportModel.getSupervisionId());

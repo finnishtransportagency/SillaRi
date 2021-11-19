@@ -8,6 +8,8 @@ export enum SupervisionStatus {
   IN_PROGRESS = "IN_PROGRESS",
   CANCELLED = "CANCELLED",
   FINISHED = "FINISHED",
+  CROSSING_DENIED = "CROSSING_DENIED",
+  REPORT_SIGNED = "REPORT_SIGNED",
 }
 
 export enum SupervisorType {

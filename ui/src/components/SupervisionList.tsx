@@ -6,22 +6,19 @@ import { DATE_FORMAT } from "../utils/constants";
 import Moment from "react-moment";
 import BridgeCard from "./BridgeCard";
 import ISupervision from "../interfaces/ISupervision";
-import { groupSupervisionsByDate } from "../utils/supervisionUtil";
 
 interface SupervisionListProps {
-  supervisionList: ISupervision[];
+  supervisionDays: ISupervisionDay[];
   noNetworkNoData: boolean;
 }
 
-const SupervisionList = ({ supervisionList, noNetworkNoData }: SupervisionListProps): JSX.Element => {
-  const groupedSupervisions = groupSupervisionsByDate(supervisionList);
-
+const SupervisionList = ({ supervisionDays, noNetworkNoData }: SupervisionListProps): JSX.Element => {
   return (
     <div className="listContainer">
       {noNetworkNoData ? (
         <NoNetworkNoData />
       ) : (
-        groupedSupervisions.map((supervisionDay: ISupervisionDay, dIndex) => {
+        supervisionDays.map((supervisionDay: ISupervisionDay, dIndex) => {
           const dayKey = `day${dIndex}`;
 
           return (

@@ -5,6 +5,7 @@
       "back": "(SV) Back",
       "back2": "(SV) Back",
       "cancel": "(SV) Cancel",
+      "search": "(SV) Search",
       "edit": "(SV) Edit",
       "save": "(SV) Save",
       "send": "(SV) Send"
@@ -100,9 +101,7 @@
     "identifier": "(SV) Identifier",
     "location": "(SV) Location",
     "crossingInstructions": {
-      "title": "(SV) Instructions",
-      "documentingHeader": "(SV) Dokumentointi",
-      "documentingParagraph": "(SV) Valvoja seuraa ... jne todo"
+      "title": "(SV) Instructions"
     },
     "trafficSupervisors": {
       "title": "(SV) Traffic supervisors"
@@ -113,11 +112,17 @@
     "startSupervision": "(SV) Start supervision",
     "denyCrossing": "(SV) Transport cannot cross bridge",
     "supervisionMissing": "(SV) Bridge supervision is not yet planned",
-    "supervisionStarted": "(SV) Supervision started"
+    "supervisionStarted": "(SV) Supervision started",
+    "crossingDenied": "(SV) Bridge crossing cancelled",
+    "supervisionFinished": "(SV) Supervision finished"
   },
   "denyCrossing": {
-    "cantCross": "(SV) Transport cannot cross bridge",
-    "whyCantCross": "(SV) Why can't transport cross bridge?"
+    "cantCross": "(SV) Transport cannot cross the bridge",
+    "whyCantCross": "(SV) Why can't the transport cross the bridge?",
+    "transportWontCross": "(SV) Transport was left on route or ended earlier",
+    "obstacleOnBridge": "(SV) Physical obstacle on bridge",
+    "other": "(SV) Something else, what?",
+    "placeholder": "(SV) Add text here"
   },
   "supervision": {
     "title": "(SV) Bridge supervision",
@@ -148,7 +153,15 @@
       "takePhotos": "(SV) Photos",
       "drivingLine": "(SV) Driving line",
       "summary": "(SV) Go to summary",
-      "saveToSendList": "(SV) Save (to the send list)"
+      "cancel": "(SV) Cancel supervision",
+      "saveToSendList": "(SV) Save to the sending list"
+    },
+    "warning": {
+      "cancelSupervisionHeader": "(SV) Are you sure you want to cancel the supervision?",
+      "cancelSupervisionText": "(SV) All data from the report will be deleted.",
+      "leavePage": "(SV) Are you sure you want to leave the page?",
+      "unsavedChanges": "(SV) Supervision has unsaved changes.",
+      "supervisionNotFinished": "(SV) Supervision has not been saved to send list."
     },
     "summary": {
       "title": "(SV) Summary",
@@ -160,8 +173,17 @@
       "additionalInfo": "(SV) Additional information",
       "approved": "(SV) Approved",
       "notApproved": "(SV) Not approved",
-      "saved": "(SV) Supervision has been saved (to the send list)"
+      "saved": "(SV) Supervision has been saved to the sending list"
     }
+  },
+  "sendingList": {
+    "title": "(SV) Sending list",
+    "transportPermit": "(SV) Transport permit",
+    "tractorUnit": "(SV) Tractor unit",
+    "supervisionStarted": "(SV) Supervision started",
+    "sendSelected": "(SV) Send selected",
+    "sentOk": "(SV) Selected supervisions have been sent",
+    "nothingToSend": "(SV) No supervision reports to send"
   },
   "management": {
     "companySummary": {
@@ -183,12 +205,14 @@
         "route": "(SV) Route",
         "supervision": "(SV) Supervision",
         "time": "(SV) Time",
+        "password": "(SV) Password",
         "status": "(SV) Status",
         "action": "(SV) Action"
       },
       "action": {
         "details": "(SV) Details",
-        "modify": "(SV) Modify"
+        "modify": "(SV) Modify",
+        "show": "(SV) Show"
       }
     },
     "transportDetail": {
@@ -200,13 +224,17 @@
       "transportInformation": "(SV) Transport information",
       "bridgesToSupervise": "(SV) Bridges to supervise",
       "buttons": {
+        "generatePassword": "(SV) New password",
         "deleteTransport": "(SV) Delete transport"
       },
       "alert": {
+        "generatePassword": "(SV) Are you sure you want to generate a new password?",
         "deleteTransport": "(SV) Are you sure you want to delete the transport?"
       },
       "saved": "(SV) Saved",
       "deleted": "(SV) Deleted",
+      "password": "(SV) Transport password",
+      "passwordUnknown": "(SV) Unknown",
       "routeInfo": {
         "estimatedDepartureDate": "(SV) Estimated departure date",
         "estimatedDepartureTime": "(SV) time",
@@ -253,22 +281,43 @@
       "header": {
         "title": "(SV) Transports"
       },
-      "inputLabel": "(SV) Please enter transport code",
-      "inputPlaceholder": "(SV) Transport code",
-      "submitButtonLabel": "(SV) Submit code"
+      "inputTitle": "(SV) Upcoming transport",
+      "inputLabel": "(SV) Transport password",
+      "inputPlaceholder": "(SV) Password",
+      "invalidCodeErrorMessage": "(SV) Invalid code"
     },
     "transport": {
       "header": {
         "title": "(SV) Transport"
       },
-      "permitLabel": "(SV) Permit:",
-      "routeLabel": "(SV) Route:",
-      "mapButtonLabel": "(SV) Map",
-      "transportStatusLabel": "(SV) Transport status",
-      "transportStatusBoxLabel": {
-        "notStarted": "(SV) Not started"
+      "estimatedDepartureTime": "(SV) Estimated departure time",
+      "departureTime": "(SV) Departure time",
+      "permitLabel": "(SV) Permit",
+      "transportStatusLabel": "(SV) Status",
+      "statusInfo": {
+        "planned": "(SV) Drive has not yet started",
+        "departed": "(SV) Drive started",
+        "stopped": "(SV) Break started",
+        "in_progress": "(SV) Drive started",
+        "arrived": "(SV) Transport finished"
       },
-      "startDrivingButtonLabel": "(SV) START DRIVING"
+      "status": {
+        "departed": "(SV) On the move",
+        "stopped": "(SV) On a break",
+        "in_progress": "(SV) On the move",
+        "arrived": "(SV) Finished"
+      },
+      "buttons": {
+        "startDriving": "(SV) Start driving",
+        "startBreak": "(SV) Start break",
+        "stopBreak": "(SV) Continue driving",
+        "stopDriving": "(SV) End transport"
+      },
+      "stopAlert": {
+        "title": "(SV) Are you sure you want to end the transport?",
+        "message": "(SV) The transport cannot be continued anymore.",
+        "confirm": "(SV) End transport"
+      }
     }
   }
 }

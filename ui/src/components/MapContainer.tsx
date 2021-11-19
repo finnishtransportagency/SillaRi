@@ -26,8 +26,7 @@ import RouteTileLayer from "./map/RouteTileLayer";
 import RouteVectorLayer from "./map/RouteVectorLayer";
 import UserVectorLayer from "./map/UserVectorLayer";
 import { getOrigin } from "../utils/request";
-import { useTypedSelector } from "../store/store";
-import { getRoute, getRouteBridge, onRetry } from "../utils/supervisionBackendData";
+import { getRouteGeometry, getRouteBridgeGeometry, onRetry } from "../utils/supervisionBackendData";
 import "./MapContainer.scss";
 
 interface MapContainerProps {
@@ -52,24 +51,22 @@ const MapContainer = (): JSX.Element => {
   const [routeExtent, setRouteExtent] = useState<Extent>();
   const [mapInitialised, setMapInitialised] = useState<boolean>(false);
 
-  const { selectedBridgeDetail, selectedRouteDetail } = useTypedSelector((state) => state.supervisionReducer);
-  const { bridge, routeId = 0 } = selectedBridgeDetail || {};
-  const { identifier: bridgeIdentifier, geojson: bridgeGeojson } = bridge || {};
-  const { geojson: routeGeojson, routeBridges = [] } = selectedRouteDetail || {};
-
   // Only fetch the data if the layers have not been created yet
   const queryRouteBridgeId = routeBridgeIdParam && routeBridgeIdParam.length > 0 ? Number(routeBridgeIdParam) : 0;
-  useQuery(["getRouteBridge", queryRouteBridgeId], () => getRouteBridge(Number(queryRouteBridgeId), dispatch, selectedBridgeDetail), {
+  const { data: routeBridge } = useQuery(["getRouteBridge", queryRouteBridgeId], () => getRouteBridgeGeometry(Number(queryRouteBridgeId), dispatch), {
     retry: onRetry,
   });
+  const { bridge, routeId = 0 } = routeBridge || {};
+  const { identifier: bridgeIdentifier, geojson: bridgeGeojson } = bridge || {};
 
   // Note: when showing single bridges on the map, the route line is also needed to be shown,
   // so fetch the route data only after routeId has been fetched from the routebridge data
   const queryRouteId = routeIdParam && routeIdParam.length > 0 ? Number(routeIdParam) : routeId;
-  useQuery(["getRoute", queryRouteId], () => getRoute(queryRouteId, dispatch, selectedRouteDetail), {
+  const { data: route } = useQuery(["getRoute", queryRouteId], () => getRouteGeometry(queryRouteId, dispatch), {
     retry: onRetry,
     enabled: (!!routeIdParam && routeIdParam.length > 0) || (!!routeBridgeIdParam && routeBridgeIdParam.length > 0 && !!routeId && routeId > 0),
   });
+  const { geojson: routeGeojson, routeBridges = [] } = route || {};
 
   const projection = "EPSG:3067";
   const debug = false;
@@ -116,7 +113,7 @@ const MapContainer = (): JSX.Element => {
   const initDataLayers = () => {
     console.log("initDataLayers");
     console.log("initDataLayers bridgeLayer", bridgeLayer, "routeLayer", routeLayer);
-    console.log("initDataLayers selectedBridgeDetail", selectedBridgeDetail, "selectedRouteDetail", selectedRouteDetail);
+    console.log("initDataLayers routeBridge", routeBridge, "route", route);
 
     // This function is called several times from useEffect when the dependencies change
     // However, the data layers should only be created once
@@ -150,7 +147,7 @@ const MapContainer = (): JSX.Element => {
 
       // Note: the bridge and route detail in redux state is initially undefined
       // When the queries are done and the data is in redux state, the detail will be either an object or null, not undefined anymore
-      if (selectedBridgeDetail !== undefined && selectedRouteDetail !== undefined) {
+      if (routeBridge !== undefined && route !== undefined) {
         if ((!routeBridgeIdParam || routeBridgeIdParam.length === 0) && (!routeIdParam || routeIdParam.length === 0)) {
           // No specific bridge or route to show, so show all the bridge and route data from geoserver
           getGeoServerTileLayers();
@@ -276,8 +273,8 @@ const MapContainer = (): JSX.Element => {
   // Initialise the data layers with bridge and route information as dependencies
   // This means initDataLayers is called several times but only when the dependencies change
   useEffect(initDataLayers, [
-    selectedBridgeDetail,
-    selectedRouteDetail,
+    routeBridge,
+    route,
     bridgeLayer,
     routeLayer,
     userLayer,
