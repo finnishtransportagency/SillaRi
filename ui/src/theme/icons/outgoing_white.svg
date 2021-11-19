@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="27px" height="28px" viewBox="0 0 27 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>C7076440-F905-42D4-8594-0061BA071D9F</title>
+    <g id="UI-Style-Guide" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Style-Guideline" transform="translate(-135.000000, -5012.000000)">
+            <g id="static/icon/24x24/outgoing" transform="translate(135.000000, 5012.000000)">
+                <polygon id="hit-area" points="0 0 24 0 24 24 0 24"></polygon>
+                <path d="M18.7068123,4.29244636 C18.4338123,4.02144636 18.0268123,3.92744636 17.6638123,4.05844636 L3.66381231,9.05844636 C3.28681231,9.19244636 3.02581231,9.53944636 3.00181231,9.93844636 C2.97781231,10.3384464 3.19381231,10.7134464 3.55281231,10.8934464 L8.13881231,13.1854464 L13.9998123,8.99944636 L9.81281231,14.8614464 L12.1048123,19.4474464 C12.2758123,19.7864464 12.6228123,19.9994464 12.9998123,19.9994464 C13.0208123,19.9994464 13.0408123,19.9984464 13.0608123,19.9974464 C13.4608123,19.9734464 13.8078123,19.7134464 13.9428123,19.3354464 L18.9428123,5.33544636 C19.0718123,4.97244636 18.9798123,4.56544636 18.7068123,4.29244636" id="Fill-1" fill="#FFFFFF"></path>
+                <g id="static/icon/16x16/badge" transform="translate(11.000000, 12.000000)">
+                    <circle id="Mask" fill="#0089FF" cx="8" cy="8" r="8"></circle>
+                    <text id="0" font-family="HelveticaNeue-Bold, Helvetica Neue" font-size="12" font-weight="bold" line-spacing="16" fill="#FFFFFF">
+                        <tspan x="4.664" y="12">0</tspan>
+                    </text>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
