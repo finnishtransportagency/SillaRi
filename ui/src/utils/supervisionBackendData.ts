@@ -18,12 +18,12 @@ export const onRetry = (failureCount: number, error: string): boolean => {
   return true;
 };
 
-export const getCompanyTransportsList = async (username: string, dispatch: Dispatch): Promise<ICompanyTransports[]> => {
+export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICompanyTransports[]> => {
   try {
-    console.log("GetCompanyTransportsList", username);
+    console.log("getCompanyTransportsList");
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getCompanyTransportsList: false } });
 
-    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor?username=${username}`);
+    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor`);
 
     if (companyTransportsResponse.ok) {
       const companyTransportsList = (await companyTransportsResponse.json()) as Promise<ICompanyTransports[]>;
@@ -38,13 +38,13 @@ export const getCompanyTransportsList = async (username: string, dispatch: Dispa
   }
 };
 
-export const getRouteTransportOfSupervisor = async (routeTransportId: number, username: string, dispatch: Dispatch): Promise<IRouteTransport> => {
+export const getRouteTransportOfSupervisor = async (routeTransportId: number, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
-    console.log("GetRouteTransportOfSupervisor", routeTransportId, username);
+    console.log("GetRouteTransportOfSupervisor", routeTransportId);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
 
     const routeTransportResponse = await fetch(
-      `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}&username=${username}`
+      `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}`
     );
 
     if (routeTransportResponse.ok) {
@@ -100,12 +100,12 @@ export const getRouteBridgeGeometry = async (routeBridgeId: number, dispatch: Di
   }
 };
 
-export const getSupervisionList = async (username: string, dispatch: Dispatch): Promise<ISupervision[]> => {
+export const getSupervisionList = async (dispatch: Dispatch): Promise<ISupervision[]> => {
   try {
-    console.log("GetSupervisionList", username);
+    console.log("GetSupervisionList");
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionList: false } });
 
-    const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsofsupervisor?username=${username}`);
+    const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsofsupervisor`);
 
     if (supervisionsResponse.ok) {
       const supervisions = (await supervisionsResponse.json()) as Promise<ISupervision[]>;
@@ -116,6 +116,26 @@ export const getSupervisionList = async (username: string, dispatch: Dispatch): 
     }
   } catch (err) {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const getSupervisionSendingList = async (dispatch: Dispatch): Promise<ISupervision[]> => {
+  try {
+    console.log("getSupervisionSendingList");
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionSendingList: false } });
+
+    const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsendinglistofsupervisor`);
+
+    if (supervisionsResponse.ok) {
+      const supervisions = (await supervisionsResponse.json()) as Promise<ISupervision[]>;
+      return await supervisions;
+    } else {
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionSendingList: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisionSendingList: true } });
     throw new Error(err as string);
   }
 };
@@ -265,6 +285,31 @@ export const finishSupervision = async (supervisionId: number, dispatch: Dispatc
   }
 };
 
+export const completeSupervisions = async (supervisionIds: string[], dispatch: Dispatch): Promise<void> => {
+  try {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { completeSupervisions: false } });
+
+    const completeSupervisionsResponse = await fetch(`${getOrigin()}/api/supervision/completesupervisions?supervisionIds=${supervisionIds.join()}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (completeSupervisionsResponse.ok) {
+      // TODO - check if any data should be returned
+      const completeSupervisionsResult = (await completeSupervisionsResponse.json()) as Promise<ISupervision>;
+      console.log("completeSupervisions response", completeSupervisionsResult);
+    } else {
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { completeSupervisions: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { completeSupervisions: true } });
+    throw new Error(err as string);
+  }
+};
+
 export const updateSupervisionReport = async (updateRequest: ISupervisionReport, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateSupervisionReport: false } });
@@ -315,7 +360,7 @@ export const sendImageUpload = async (fileUpload: ISupervisionImageInput, dispat
   }
 };
 
-export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promise<void> => {
+export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promise<boolean> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteImage: false } });
 
@@ -327,8 +372,9 @@ export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promis
     });
 
     if (imageDeleteResponse.ok) {
-      const imageDelete = (await imageDeleteResponse.json()) as Promise<ISupervisionImage>;
-      console.log("deleteImage response", imageDelete);
+      const imageDeleteResult = (await imageDeleteResponse.json()) as Promise<boolean>;
+      console.log("deleteImage response", imageDeleteResult);
+      return await imageDeleteResult;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteImage: true } });
       throw new Error(notOkError);
@@ -339,7 +385,7 @@ export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promis
   }
 };
 
-export const deleteSupervisionImages = async (supervisionId: number, dispatch: Dispatch): Promise<void> => {
+export const deleteSupervisionImages = async (supervisionId: number, dispatch: Dispatch): Promise<boolean> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteImage: deleteSupervisionImages } });
 
@@ -351,9 +397,9 @@ export const deleteSupervisionImages = async (supervisionId: number, dispatch: D
     });
 
     if (imageDeleteResponse.ok) {
-      const imageDelete = (await imageDeleteResponse.json()) as Promise<boolean>;
-      console.log("deleteSupervisionImages response", imageDelete);
-      dispatch({ type: supervisionActions.SET_IMAGES, payload: [] });
+      const imageDeleteResult = (await imageDeleteResponse.json()) as Promise<boolean>;
+      console.log("deleteSupervisionImages response", imageDeleteResult);
+      return await imageDeleteResult;
     } else {
       dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteSupervisionImages: true } });
       throw new Error(notOkError);
@@ -361,66 +407,5 @@ export const deleteSupervisionImages = async (supervisionId: number, dispatch: D
   } catch (err) {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteSupervisionImages: true } });
     throw new Error(err as string);
-  }
-};
-
-// TEST - try different methods to check if the user is valid
-export const checkUser = async (username: string): Promise<void> => {
-  try {
-    const checkUserResponse = await fetch(`${getOrigin()}/api/ui/checkuser`);
-
-    console.log("checkUserResponse 1 debug - ", checkUserResponse);
-
-    if (checkUserResponse.ok) {
-      console.log("checkUser 1 ok");
-    } else {
-      console.log("checkUser 1 error", notOkError);
-    }
-  } catch (err) {
-    console.log("checkUser 1 error", err as string);
-  }
-
-  try {
-    const checkUserResponse = await fetch(`${getOrigin()}/api/ui/checkuser`, { credentials: "include" });
-
-    console.log("checkUserResponse 2 debug - ", checkUserResponse);
-
-    if (checkUserResponse.ok) {
-      console.log("checkUser 2 ok");
-    } else {
-      console.log("checkUser 2 error", notOkError);
-    }
-  } catch (err) {
-    console.log("checkUser 2 error", err as string);
-  }
-
-  try {
-    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor?username=${username}`);
-
-    console.log("companyTransportsResponse 1 debug - ", companyTransportsResponse);
-
-    if (companyTransportsResponse.ok) {
-      console.log("companyTransports 1 ok");
-    } else {
-      console.log("companyTransports 1 error", notOkError);
-    }
-  } catch (err) {
-    console.log("companyTransports 1 error", err as string);
-  }
-
-  try {
-    const companyTransportsResponse = await fetch(`${getOrigin()}/api/company/getcompanytransportlistofsupervisor?username=${username}`, {
-      credentials: "include",
-    });
-
-    console.log("companyTransportsResponse 2 debug - ", companyTransportsResponse);
-
-    if (companyTransportsResponse.ok) {
-      console.log("companyTransports 2 ok");
-    } else {
-      console.log("companyTransports 2 error", notOkError);
-    }
-  } catch (err) {
-    console.log("companyTransports 2 error", err as string);
   }
 };

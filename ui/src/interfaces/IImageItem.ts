@@ -3,5 +3,4 @@ export default interface IImageItem {
   filename: string;
   dataUrl: string | undefined;
   date: Date;
-  base64: string;
 }

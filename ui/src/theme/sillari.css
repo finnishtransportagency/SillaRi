@@ -40,9 +40,27 @@
   --detail-icon-font-size: 24px;
 }
 
+.itemIconLarge {
+  --detail-icon-opacity: 1;
+  --detail-icon-font-size: 32px;
+}
+
 .otherIcon {
   opacity: 1;
   font-size: 24px;
+  cursor: pointer;
+}
+
+.otherIconLarge {
+  opacity: 1;
+  font-size: 32px;
+  cursor: pointer;
+}
+
+.iconBadge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
 }
 
 .linkText {

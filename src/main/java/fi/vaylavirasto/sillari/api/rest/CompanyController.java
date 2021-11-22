@@ -1,10 +1,12 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.dto.CompanyTransportsDTO;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.service.CompanyService;
+import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +29,8 @@ public class CompanyController {
     private static final Logger logger = LogManager.getLogger();
 
     @Autowired
+    UIService uiService;
+    @Autowired
     private CompanyService companyService;
 
     @Operation(summary = "Get company")
@@ -45,10 +49,11 @@ public class CompanyController {
     @Operation(summary = "Get supervisor transports grouped by company")
     @GetMapping(value = "/getcompanytransportlistofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getCompanyTransportListOfSupervisor(@RequestParam String username) {
+    public ResponseEntity<?> getCompanyTransportListOfSupervisor() {
         ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getCompanyTransportListOfSupervisor");
         try {
-            List<CompanyTransportsDTO> companyList = companyService.getCompanyTransportListOfSupervisor(username);
+            SillariUser user = uiService.getSillariUser();
+            List<CompanyTransportsDTO> companyList = companyService.getCompanyTransportListOfSupervisor(user.getUsername());
             return ResponseEntity.ok().body(companyList != null ? companyList : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

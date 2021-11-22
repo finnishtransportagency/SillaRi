@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>7004C18D-231E-4D46-9C2F-B2DB5B9852CD</title>
+    <defs>
+        <path d="M24.131728,6.24695167 L26.2530483,8.36827202 L18.1209517,16.4999517 L26.2530483,24.631728 L24.131728,26.7530483 L15.9999517,18.6209517 L7.86827202,26.7530483 L5.74695167,24.631728 L13.8779517,16.4999517 L5.74695167,8.36827202 L7.86827202,6.24695167 L15.9999517,14.3779517 L24.131728,6.24695167 Z" id="path-1"></path>
+    </defs>
+    <g id="UI-Style-Guide" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Style-Guideline" transform="translate(-193.000000, -5673.000000)">
+            <g id="static/icon/32x32/close" transform="translate(193.000000, 5673.000000)">
+                <polygon id="hit-area" points="0 0 32 0 32 32 0 32"></polygon>
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Mask" fill="#FFFFFF" xlink:href="#path-1"></use>
+            </g>
+        </g>
+    </g>
+</svg>

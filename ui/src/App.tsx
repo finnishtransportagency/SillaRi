@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
-import { IonApp, IonContent, setupConfig } from "@ionic/react";
+import { IonApp, IonButton, IonContent, setupConfig } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -8,7 +8,6 @@ import Home from "./pages/Home";
 import Settings from "./pages/Settings";
 import Map from "./pages/Map";
 import Supervision from "./pages/Supervision";
-import Camera from "./pages/Camera";
 import RouteTransportDetail from "./pages/RouteTransportDetail";
 import DenyCrossing from "./pages/DenyCrossing";
 import BridgeDetail from "./pages/BridgeDetail";
@@ -43,6 +42,10 @@ import "./theme/variables.css";
 import "./theme/sillari.css";
 import IUserData from "./interfaces/IUserData";
 import { getOrigin } from "./utils/request";
+import Photos from "./pages/Photos";
+
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import Cookies from "js-cookie";
 
 // Use the same style for all platforms
 setupConfig({
@@ -80,8 +83,8 @@ const App: React.FC = () => {
           }
         } else {
           console.log(userDataResponse);
-          if (userDataResponse.status === 403) {
-            setErrorMsg("403 - Access denied.");
+          if (userDataResponse.status === 401) {
+            setErrorMsg("401 - Access denied.");
           } else {
             setErrorMsg("Käsittelemätön virhetilanne 1.");
           }
@@ -94,11 +97,32 @@ const App: React.FC = () => {
     fetchUserData();
   }, []);
 
+  const logoutFromApp = () => {
+    serviceWorkerRegistration.unregister(() => {
+      const cookies = Cookies.get();
+      Object.keys(cookies).forEach((key) => {
+        Cookies.remove(key);
+      });
+    });
+    window.location.reload();
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <IonApp>
         {!userData ? (
-          <div>{errorMsg ? <div>{errorMsg}</div> : <div>Starting app...</div>}</div>
+          <div>
+            {errorMsg ? (
+              <div>
+                <div>{errorMsg}</div>
+                <IonButton color="primary" expand="block" size="large" onClick={logoutFromApp}>
+                  Kirjaudu sisään
+                </IonButton>
+              </div>
+            ) : (
+              <div>Starting app...</div>
+            )}
+          </div>
         ) : (
           <IonReactRouter>
             <SidebarMenu roles={userData.roles} />
@@ -112,7 +136,7 @@ const App: React.FC = () => {
                 <Route path="/supervision/:supervisionId" component={Supervision} exact />
                 <Route path="/denyCrossing/:supervisionId" component={DenyCrossing} exact />
                 <Route path="/summary/:supervisionId" component={SupervisionSummary} exact />
-                <Route path="/takePhotos/:supervisionId" component={Camera} exact />
+                <Route path="/takePhotos/:supervisionId" component={Photos} exact />
                 <Route path="/management/:companyId" component={CompanySummary} exact />
                 <Route path="/management/addTransport/:permitId" component={AddTransport} exact />
                 <Route path="/management/transportDetail/:routeTransportId" component={TransportDetail} exact />

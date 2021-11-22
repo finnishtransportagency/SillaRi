@@ -1,11 +1,11 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.config.SillariConfig;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,23 +15,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
-import java.util.Map;
 import java.util.HashMap;
-import java.util.Collection;
-import java.util.Set;
-import java.util.List;
-
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import fi.vaylavirasto.sillari.auth.SillariUser;
-import fi.vaylavirasto.sillari.auth.SillariRole;
+import java.util.Map;
 
 @RestController
 @Timed
@@ -157,39 +147,22 @@ public class UIController {
         }
     }
 
-    @Operation(summary = "Check user")
-    @GetMapping(value = "/checkuser")
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public void checkUser(){
-        // This method is used by the frontend to get the response headers for checking the user's groups
-        ServiceMetric serviceMetric = new ServiceMetric("UIController", "checkUser");
-        serviceMetric.end();
-    }
-
     @Operation(summary = "Get user data")
     @GetMapping(value = "/userdata")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> userData(){
+    public ResponseEntity<?> userData() {
         ServiceMetric serviceMetric = new ServiceMetric("UIController", "userData");
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            SillariUser user = uiService.getSillariUser();
 
-        if (!(principal instanceof SillariUser)) {
+            HashMap<String, Object> responseBody = new HashMap<>();
+            responseBody.put("username", user.getUsername());
+            responseBody.put("roles", user.getRoles());
+
+            return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+        } finally {
             serviceMetric.end();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
         }
-
-        String username = ((SillariUser)principal).getUsername();
-        Collection<GrantedAuthority> authorities = ((SillariUser)principal).getAuthorities();
-
-        Set<String> roles = AuthorityUtils.authorityListToSet(authorities);
-
-        HashMap<String, Object> responseBody = new HashMap<>();
-        responseBody.put("username", username);
-        responseBody.put("roles", roles);
-
-        serviceMetric.end();
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 }
