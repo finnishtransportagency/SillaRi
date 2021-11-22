@@ -5,9 +5,9 @@ import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
 import file from "../theme/icons/file.svg";
 import { SupervisionStatus } from "../utils/constants";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
-import { onRetry, startSupervision } from "../utils/supervisionBackendData";
+import { getSupervisorUser, onRetry, startSupervision } from "../utils/supervisionBackendData";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import SupervisionStatusInfo from "./SupervisionStatusInfo";
@@ -25,9 +25,14 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   const history = useHistory();
   const queryClient = useQueryClient();
 
+  const { data: supervisorUser, isLoading: isLoadingSupervisorUser } = useQuery(["getSupervisor"], () => getSupervisorUser(dispatch), {
+    retry: onRetry,
+  });
+
+  const { username: currentSupervisor = "" } = supervisorUser || {};
   const { permitNumber } = permit || {};
   const { id: supervisionId, conformsToPermit = false, currentStatus, finishedTime } = supervision || {};
-  const { status: supervisionStatus, time: statusTime } = currentStatus || {};
+  const { status: supervisionStatus, time: statusTime, username: statusUser } = currentStatus || {};
 
   const supervisionPending =
     !isLoadingSupervision && (supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED);
@@ -35,6 +40,8 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   const crossingDenied = !isLoadingSupervision && supervisionStatus === SupervisionStatus.CROSSING_DENIED;
   const supervisionFinished =
     !isLoadingSupervision && (supervisionStatus === SupervisionStatus.FINISHED || supervisionStatus === SupervisionStatus.REPORT_SIGNED);
+
+  const statusByCurrentSupervisor = !isLoadingSupervisorUser && currentSupervisor && statusUser === currentSupervisor;
 
   // Set-up mutations for modifying data later
   const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(initialReport, dispatch), {
@@ -67,6 +74,10 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
     supervisionStartMutation.mutate(defaultReport);
   };
 
+  const continueSupervisionClicked = () => {
+    history.push(`/supervision/${supervisionId}`);
+  };
+
   return (
     <>
       <IonItem className="itemIcon" detail detailIcon={file} lines="none">
@@ -93,15 +104,28 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
       <IonGrid>
         <IonRow>
           <IonCol className="ion-text-center">
-            <IonButton
-              disabled={!supervisionId || !conformsToPermit || !supervisionPending}
-              color="primary"
-              expand="block"
-              size="large"
-              onClick={() => supervisionStartClicked()}
-            >
-              {t("bridge.startSupervision")}
-            </IonButton>
+            {(supervisionPending || crossingDenied) && (
+              <IonButton
+                disabled={!supervisionId || !conformsToPermit || crossingDenied}
+                color="primary"
+                expand="block"
+                size="large"
+                onClick={() => supervisionStartClicked()}
+              >
+                {t("bridge.startSupervision")}
+              </IonButton>
+            )}
+            {!supervisionPending && !crossingDenied && (
+              <IonButton
+                disabled={!supervisionInProgress || !statusByCurrentSupervisor}
+                color="primary"
+                expand="block"
+                size="large"
+                onClick={() => continueSupervisionClicked()}
+              >
+                {t("bridge.continueSupervision")}
+              </IonButton>
+            )}
           </IonCol>
         </IonRow>
         <IonRow>

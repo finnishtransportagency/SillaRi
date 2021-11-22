@@ -17,6 +17,8 @@ public class SupervisionStatusMapper implements RecordMapper<Record, Supervision
         supervisionStatusModel.setSupervisionId(record.get(TableAlias.supervisionStatus.SUPERVISION_ID));
         supervisionStatusModel.setStatus(record.get(TableAlias.supervisionStatus.STATUS, new SupervisionStatusTypeConverter(String.class, SupervisionStatusType.class)));
         supervisionStatusModel.setTime(record.get(TableAlias.supervisionStatus.TIME));
+        supervisionStatusModel.setReason(record.get(TableAlias.supervisionStatus.REASON));
+        supervisionStatusModel.setUsername(record.get(TableAlias.supervisionStatus.USERNAME));
         return supervisionStatusModel;
     }
 }

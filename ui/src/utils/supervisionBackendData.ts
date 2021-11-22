@@ -10,6 +10,7 @@ import { actions as supervisionActions } from "../store/supervisionSlice";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
+import IUserData from "../interfaces/IUserData";
 
 const notOkError = "Network response was not ok";
 
@@ -17,6 +18,26 @@ export const onRetry = (failureCount: number, error: string): boolean => {
   // Retry forever by returning true
   console.error("ERROR", failureCount, error);
   return true;
+};
+
+export const getSupervisorUser = async (dispatch: Dispatch): Promise<IUserData> => {
+  try {
+    console.log("getSupervisorUser");
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisorUser: false } });
+
+    const userDataResponse = await fetch(`${getOrigin()}/api/ui/userdata`);
+
+    if (userDataResponse.ok) {
+      const userData = (await userDataResponse.json()) as Promise<IUserData>;
+      return await userData;
+    } else {
+      dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisorUser: true } });
+      throw new Error(notOkError);
+    }
+  } catch (err) {
+    dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { getSupervisorUser: true } });
+    throw new Error(err as string);
+  }
 };
 
 export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICompanyTransports[]> => {
