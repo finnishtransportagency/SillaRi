@@ -28,7 +28,7 @@ const BridgeDetail = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.supervisionReducer);
+  } = useTypedSelector((state) => state.rootReducer);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],

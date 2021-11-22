@@ -41,7 +41,7 @@ const DenyCrossing = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.supervisionReducer);
+  } = useTypedSelector((state) => state.rootReducer);
 
   const [denyReason, setDenyReason] = useState<string | undefined>(undefined);
   const [otherReasonSelected, setOtherReasonSelected] = useState<boolean>(false);

@@ -24,7 +24,7 @@ const Transport = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const management = useTypedSelector((state) => state.managementReducer);
+  const management = useTypedSelector((state) => state.rootReducer);
 
   const {
     networkStatus: { isFailed = {} },

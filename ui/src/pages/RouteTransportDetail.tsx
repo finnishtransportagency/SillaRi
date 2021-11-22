@@ -26,7 +26,7 @@ const RouteTransportDetail = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.supervisionReducer);
+  } = useTypedSelector((state) => state.rootReducer);
 
   const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
   const [supervisions, setSupervisions] = useState<ISupervision[]>([]);

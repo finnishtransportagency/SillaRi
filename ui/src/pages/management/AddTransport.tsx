@@ -30,7 +30,7 @@ const AddTransport = (): JSX.Element => {
   const [modifiedRouteTransportDetail, setModifiedRouteTransportDetail] = useState<IRouteTransport | undefined>(undefined);
   const [selectedRouteOption, setSelectedRouteOption] = useState<IRoute | undefined>(undefined);
 
-  const management = useTypedSelector((state) => state.managementReducer);
+  const management = useTypedSelector((state) => state.rootReducer);
   const {
     networkStatus: { isFailed = {} },
   } = management;
