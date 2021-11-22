@@ -1,17 +1,14 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { createSelectorHook } from "react-redux";
-import supervisionSlice from "./supervisionSlice";
-import managementSlice from "./managementSlice";
+import rootSlice from "./rootSlice";
 
-const supervisionReducer = supervisionSlice.reducer;
-const managementReducer = managementSlice.reducer;
+const rootReducer = rootSlice.reducer;
 
 const middleware = [...getDefaultMiddleware({ serializableCheck: false, immutableCheck: false })];
 
 const store = configureStore({
   reducer: {
-    supervisionReducer,
-    managementReducer,
+    rootReducer,
   },
   middleware,
 });

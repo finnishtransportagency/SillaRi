@@ -1,18 +1,18 @@
 import type { Dispatch } from "redux";
+import { getOrigin } from "./request";
+import { actions } from "../store/rootSlice";
 import ICompany from "../interfaces/ICompany";
 import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
 import IRouteTransportStatus from "../interfaces/IRouteTransportStatus";
 import ISupervisor from "../interfaces/ISupervisor";
-import { getOrigin } from "./request";
-import { actions as managementActions } from "../store/managementSlice";
 
 const notOkError = "Network response was not ok";
 
 export const getCompany = async (companyId: number, dispatch: Dispatch): Promise<ICompany> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getCompany: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getCompany: false } });
 
     const companyResponse = await fetch(`${getOrigin()}/api/company/getcompany?companyId=${companyId}`);
 
@@ -21,18 +21,18 @@ export const getCompany = async (companyId: number, dispatch: Dispatch): Promise
       console.log("getCompany", company);
       return await company;
     } else {
-      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getCompany: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getCompany: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getCompany: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getCompany: true } });
     throw new Error(err as string);
   }
 };
 
 export const getPermit = async (permitId: number, dispatch: Dispatch): Promise<IPermit> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getPermit: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermit: false } });
 
     const permitResponse = await fetch(`${getOrigin()}/api/permit/getpermit?permitId=${permitId}`);
 
@@ -41,18 +41,18 @@ export const getPermit = async (permitId: number, dispatch: Dispatch): Promise<I
       console.log("getPermit", permit);
       return await permit;
     } else {
-      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getPermit: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermit: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getPermit: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermit: true } });
     throw new Error(err as string);
   }
 };
 
 export const getPermitOfRouteTransport = async (routeTransportId: number, dispatch: Dispatch): Promise<IPermit> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getPermitOfRouteTransport: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermitOfRouteTransport: false } });
 
     const permitOfRouteTransportResponse = await fetch(`${getOrigin()}/api/permit/getpermitofroutetransport?routeTransportId=${routeTransportId}`);
 
@@ -61,18 +61,18 @@ export const getPermitOfRouteTransport = async (routeTransportId: number, dispat
       console.log("getPermitOfRouteTransport", permitOfRouteTransport);
       return await permitOfRouteTransport;
     } else {
-      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getPermitOfRouteTransport: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermitOfRouteTransport: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getPermitOfRouteTransport: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermitOfRouteTransport: true } });
     throw new Error(err as string);
   }
 };
 
 export const getRouteTransport = async (routeTransportId: number, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
 
     const routeTransportResponse = await fetch(`${getOrigin()}/api/routetransport/getroutetransport?routeTransportId=${routeTransportId}`);
 
@@ -81,18 +81,18 @@ export const getRouteTransport = async (routeTransportId: number, dispatch: Disp
       console.log("getRouteTransport", routeTransport);
       return await routeTransport;
     } else {
-      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
     throw new Error(err as string);
   }
 };
 
 export const findRouteTransportPassword = async (transportPassword: string, dispatch: Dispatch): Promise<IRouteTransportPassword> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: false } });
 
     const rtpResponse = await fetch(`${getOrigin()}/api/transportpassword/login?transportPassword=${transportPassword}`);
 
@@ -101,18 +101,18 @@ export const findRouteTransportPassword = async (transportPassword: string, disp
       console.log("findRouteTransportPassword", transportPassword);
       return await rtp;
     } else {
-      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
     throw new Error(err as string);
   }
 };
 
 export const generateNewRouteTransportPassword = async (routeTransportId: number, dispatch: Dispatch): Promise<IRouteTransportPassword> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { generateNewRouteTransportPassword: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { generateNewRouteTransportPassword: false } });
 
     const rtpResponse = await fetch(`${getOrigin()}/api/transportpassword/generate?routeTransportId=${routeTransportId}`);
 
@@ -121,18 +121,18 @@ export const generateNewRouteTransportPassword = async (routeTransportId: number
       console.log("generateNewRouteTransportPassword", routeTransportId);
       return await rtp;
     } else {
-      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { generateNewRouteTransportPassword: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { generateNewRouteTransportPassword: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { generateNewRouteTransportPassword: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { generateNewRouteTransportPassword: true } });
     throw new Error(err as string);
   }
 };
 
 export const getRouteTransportsOfPermit = async (permitId: number, dispatch: Dispatch): Promise<IRouteTransport[]> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: false } });
 
     const routeTransportListResponse = await fetch(`${getOrigin()}/api/routetransport/getroutetransportsofpermit?permitId=${permitId}`);
 
@@ -141,18 +141,18 @@ export const getRouteTransportsOfPermit = async (permitId: number, dispatch: Dis
       console.log("getRouteTransportsOfPermit", routeTransportList);
       return await routeTransportList;
     } else {
-      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: true } });
     throw new Error(err as string);
   }
 };
 
 export const createRouteTransport = async (routeTransport: IRouteTransport, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { createRouteTransport: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: false } });
 
     const createRouteTransportResponse = await fetch(`${getOrigin()}/api/routetransport/createroutetransport`, {
       method: "POST",
@@ -167,18 +167,18 @@ export const createRouteTransport = async (routeTransport: IRouteTransport, disp
       console.log("createRouteTransport", plannedRouteTransport);
       return await plannedRouteTransport;
     } else {
-      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
     throw new Error(err as string);
   }
 };
 
 export const updateRouteTransport = async (routeTransport: IRouteTransport, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { updateRouteTransport: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateRouteTransport: false } });
 
     const updateRouteTransportResponse = await fetch(`${getOrigin()}/api/routetransport/updateroutetransport`, {
       method: "PUT",
@@ -193,18 +193,18 @@ export const updateRouteTransport = async (routeTransport: IRouteTransport, disp
       console.log("updateRouteTransport", updatedRouteTransport);
       return await updatedRouteTransport;
     } else {
-      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { updateRouteTransport: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateRouteTransport: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { updateRouteTransport: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateRouteTransport: true } });
     throw new Error(err as string);
   }
 };
 
 export const deleteRouteTransport = async (routeTransportId: number, dispatch: Dispatch): Promise<boolean> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { deleteRouteTransport: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteRouteTransport: false } });
 
     const deleteRouteTransportResponse = await fetch(`${getOrigin()}/api/routetransport/deleteroutetransport?routeTransportId=${routeTransportId}`, {
       method: "DELETE",
@@ -218,18 +218,18 @@ export const deleteRouteTransport = async (routeTransportId: number, dispatch: D
       console.log("deleteRouteTransport", deleteRouteTransportResult);
       return await deleteRouteTransportResult;
     } else {
-      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { deleteRouteTransport: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteRouteTransport: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { deleteRouteTransport: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteRouteTransport: true } });
     throw new Error(err as string);
   }
 };
 
 export const changeRouteTransportStatus = async (routeTransportStatus: IRouteTransportStatus, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: false } });
 
     const changeRouteTransportStatusResponse = await fetch(`${getOrigin()}/api/routetransport/changeroutetransportstatus`, {
       method: "POST",
@@ -244,18 +244,18 @@ export const changeRouteTransportStatus = async (routeTransportStatus: IRouteTra
       console.log("changeRouteTransportStatus", changedRouteTransport);
       return await changedRouteTransport;
     } else {
-      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: true } });
     throw new Error(err as string);
   }
 };
 
 export const getSupervisors = async (dispatch: Dispatch): Promise<ISupervisor[]> => {
   try {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getSupervisors: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: false } });
 
     const supervisorsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisors`);
 
@@ -264,11 +264,11 @@ export const getSupervisors = async (dispatch: Dispatch): Promise<ISupervisor[]>
       console.log("getSupervisors", supervisors);
       return await supervisors;
     } else {
-      dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
       throw new Error(notOkError);
     }
   } catch (err) {
-    dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
     throw new Error(err as string);
   }
 };
