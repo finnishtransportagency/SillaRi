@@ -13,7 +13,8 @@ import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervisor from "../../interfaces/ISupervisor";
 import { useTypedSelector } from "../../store/store";
-import { getPermitOfRouteTransport, getRouteTransport, getSupervisors, onRetry } from "../../utils/managementBackendData";
+import { onRetry } from "../../utils/backendData";
+import { getPermitOfRouteTransport, getRouteTransport, getSupervisors } from "../../utils/managementBackendData";
 
 interface TransportDetailProps {
   routeTransportId: string;

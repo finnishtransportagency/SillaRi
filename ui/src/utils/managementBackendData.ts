@@ -10,12 +10,6 @@ import { actions as managementActions } from "../store/managementSlice";
 
 const notOkError = "Network response was not ok";
 
-export const onRetry = (failureCount: number, error: string): boolean => {
-  // Retry forever by returning true
-  console.error("ERROR", failureCount, error);
-  return true;
-};
-
 export const getCompany = async (companyId: number, dispatch: Dispatch): Promise<ICompany> => {
   try {
     dispatch({ type: managementActions.SET_FAILED_QUERY, payload: { getCompany: false } });

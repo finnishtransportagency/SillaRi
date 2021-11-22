@@ -22,7 +22,8 @@ import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import file from "../theme/icons/file.svg";
-import { denyCrossing, getSupervision, onRetry } from "../utils/supervisionBackendData";
+import { onRetry } from "../utils/backendData";
+import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
 import { SupervisionStatus } from "../utils/constants";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 

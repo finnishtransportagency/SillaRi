@@ -15,7 +15,8 @@ import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
 import ISupervisor from "../../interfaces/ISupervisor";
 import { useTypedSelector } from "../../store/store";
 import { TransportStatus } from "../../utils/constants";
-import { getPermit, getSupervisors, onRetry } from "../../utils/managementBackendData";
+import { onRetry } from "../../utils/backendData";
+import { getPermit, getSupervisors } from "../../utils/managementBackendData";
 
 interface AddTransportProps {
   permitId: string;

@@ -7,7 +7,8 @@ import file from "../theme/icons/file.svg";
 import { SupervisionStatus } from "../utils/constants";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
-import { getSupervisorUser, onRetry, startSupervision } from "../utils/supervisionBackendData";
+import { getUserData, onRetry } from "../utils/backendData";
+import { startSupervision } from "../utils/supervisionBackendData";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import SupervisionStatusInfo from "./SupervisionStatusInfo";
@@ -25,7 +26,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   const history = useHistory();
   const queryClient = useQueryClient();
 
-  const { data: supervisorUser, isLoading: isLoadingSupervisorUser } = useQuery(["getSupervisor"], () => getSupervisorUser(dispatch), {
+  const { data: supervisorUser, isLoading: isLoadingSupervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
     retry: onRetry,
   });
 
