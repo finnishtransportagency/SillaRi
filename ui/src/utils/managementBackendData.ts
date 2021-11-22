@@ -1,5 +1,6 @@
 import type { Dispatch } from "redux";
 import { getOrigin } from "./request";
+import { NETWORK_RESPONSE_NOT_OK } from "./constants";
 import { actions } from "../store/rootSlice";
 import ICompany from "../interfaces/ICompany";
 import IPermit from "../interfaces/IPermit";
@@ -7,8 +8,6 @@ import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
 import IRouteTransportStatus from "../interfaces/IRouteTransportStatus";
 import ISupervisor from "../interfaces/ISupervisor";
-
-const notOkError = "Network response was not ok";
 
 export const getCompany = async (companyId: number, dispatch: Dispatch): Promise<ICompany> => {
   try {
@@ -22,7 +21,7 @@ export const getCompany = async (companyId: number, dispatch: Dispatch): Promise
       return await company;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getCompany: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getCompany: true } });
@@ -42,7 +41,7 @@ export const getPermit = async (permitId: number, dispatch: Dispatch): Promise<I
       return await permit;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermit: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermit: true } });
@@ -62,7 +61,7 @@ export const getPermitOfRouteTransport = async (routeTransportId: number, dispat
       return await permitOfRouteTransport;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermitOfRouteTransport: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermitOfRouteTransport: true } });
@@ -82,7 +81,7 @@ export const getRouteTransport = async (routeTransportId: number, dispatch: Disp
       return await routeTransport;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
@@ -102,7 +101,7 @@ export const findRouteTransportPassword = async (transportPassword: string, disp
       return await rtp;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
@@ -122,7 +121,7 @@ export const generateNewRouteTransportPassword = async (routeTransportId: number
       return await rtp;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { generateNewRouteTransportPassword: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { generateNewRouteTransportPassword: true } });
@@ -142,7 +141,7 @@ export const getRouteTransportsOfPermit = async (permitId: number, dispatch: Dis
       return await routeTransportList;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: true } });
@@ -168,7 +167,7 @@ export const createRouteTransport = async (routeTransport: IRouteTransport, disp
       return await plannedRouteTransport;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
@@ -194,7 +193,7 @@ export const updateRouteTransport = async (routeTransport: IRouteTransport, disp
       return await updatedRouteTransport;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateRouteTransport: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateRouteTransport: true } });
@@ -219,7 +218,7 @@ export const deleteRouteTransport = async (routeTransportId: number, dispatch: D
       return await deleteRouteTransportResult;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteRouteTransport: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteRouteTransport: true } });
@@ -245,7 +244,7 @@ export const changeRouteTransportStatus = async (routeTransportStatus: IRouteTra
       return await changedRouteTransport;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: true } });
@@ -265,7 +264,7 @@ export const getSupervisors = async (dispatch: Dispatch): Promise<ISupervisor[]>
       return await supervisors;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: true } });

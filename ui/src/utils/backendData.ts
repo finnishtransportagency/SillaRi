@@ -1,11 +1,10 @@
 import type { Dispatch } from "redux";
 import { getOrigin } from "./request";
+import { NETWORK_RESPONSE_NOT_OK } from "./constants";
 import { actions } from "../store/rootSlice";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import IUserData from "../interfaces/IUserData";
-
-const notOkError = "Network response was not ok";
 
 export const onRetry = (failureCount: number, error: string): boolean => {
   // Retry forever by returning true
@@ -25,7 +24,7 @@ export const getUserData = async (dispatch: Dispatch): Promise<IUserData> => {
       return await userData;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisorUser: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisorUser: true } });
@@ -45,7 +44,7 @@ export const getRouteGeometry = async (routeId: number, dispatch: Dispatch): Pro
       return await route;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRoute: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRoute: true } });
@@ -65,7 +64,7 @@ export const getRouteBridgeGeometry = async (routeBridgeId: number, dispatch: Di
       return await routeBridge;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteBridge: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteBridge: true } });

@@ -1,5 +1,6 @@
 import type { Dispatch } from "redux";
 import { getOrigin } from "./request";
+import { NETWORK_RESPONSE_NOT_OK } from "./constants";
 import { actions } from "../store/rootSlice";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
@@ -8,8 +9,6 @@ import ISupervisionReport from "../interfaces/ISupervisionReport";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
-
-const notOkError = "Network response was not ok";
 
 export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICompanyTransports[]> => {
   try {
@@ -23,7 +22,7 @@ export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICom
       return await companyTransportsList;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getCompanyTransportsList: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getCompanyTransportsList: true } });
@@ -45,7 +44,7 @@ export const getRouteTransportOfSupervisor = async (routeTransportId: number, di
       return await routeTransport;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
@@ -65,7 +64,7 @@ export const getSupervisionList = async (dispatch: Dispatch): Promise<ISupervisi
       return await supervisions;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
@@ -85,7 +84,7 @@ export const getSupervisionSendingList = async (dispatch: Dispatch): Promise<ISu
       return await supervisions;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionSendingList: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionSendingList: true } });
@@ -105,7 +104,7 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
       return await supervision;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
@@ -131,7 +130,7 @@ export const updateConformsToPermit = async (updateRequest: ISupervision, dispat
       return await updatedSupervision;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateConformsToPermit: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateConformsToPermit: true } });
@@ -157,7 +156,7 @@ export const startSupervision = async (report: ISupervisionReport, dispatch: Dis
       return await startedSupervision;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { startSupervision: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { startSupervision: true } });
@@ -182,7 +181,7 @@ export const cancelSupervision = async (supervisionId: number, dispatch: Dispatc
       return await cancelledSupervision;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { cancelSupervision: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { cancelSupervision: true } });
@@ -205,7 +204,7 @@ export const denyCrossing = async (denyCrossingInput: IDenyCrossingInput, dispat
       return await supervision;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { denyCrossing: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { denyCrossing: true } });
@@ -230,7 +229,7 @@ export const finishSupervision = async (supervisionId: number, dispatch: Dispatc
       return await finishedSupervision;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { finishSupervision: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { finishSupervision: true } });
@@ -256,7 +255,7 @@ export const completeSupervisions = async (supervisionIds: string[], dispatch: D
       console.log("completeSupervisions response", completeSupervisionsResult);
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { completeSupervisions: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { completeSupervisions: true } });
@@ -282,7 +281,7 @@ export const updateSupervisionReport = async (updateRequest: ISupervisionReport,
       return await updatedSupervision;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateSupervisionReport: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateSupervisionReport: true } });
@@ -308,7 +307,7 @@ export const sendImageUpload = async (fileUpload: ISupervisionImageInput, dispat
       console.log("imageUpload response", imageUpload);
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { sendImageUpload: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { sendImageUpload: true } });
@@ -334,7 +333,7 @@ export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promis
       return await imageDeleteResult;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteImage: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteImage: true } });
@@ -360,7 +359,7 @@ export const deleteSupervisionImages = async (supervisionId: number, dispatch: D
       return await imageDeleteResult;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteSupervisionImages: true } });
-      throw new Error(notOkError);
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteSupervisionImages: true } });
