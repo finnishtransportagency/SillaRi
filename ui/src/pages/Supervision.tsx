@@ -64,7 +64,7 @@ const Supervision = (): JSX.Element => {
   });
   const { isLoading: isSendingDeleteImages } = deleteImagesMutation;
 
-  const cancelSupervisionMutation = useMutation((superId: string) => cancelSupervision(Number(superId), dispatch), {
+  const cancelSupervisionMutation = useMutation(() => cancelSupervision(Number(supervisionId), dispatch), {
     retry: onRetry,
     onSuccess: () => {
       deleteImagesMutation.mutate(supervisionId);
@@ -114,7 +114,7 @@ const Supervision = (): JSX.Element => {
         {
           text: t("supervision.buttons.cancel"),
           handler: () => {
-            cancelSupervisionMutation.mutate(supervisionId);
+            cancelSupervisionMutation.mutate();
           },
         },
       ],

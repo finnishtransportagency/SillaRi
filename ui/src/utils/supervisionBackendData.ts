@@ -160,12 +160,12 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
   }
 };
 
-export const updateConformsToPermit = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
+export const updateConformsToPermit = async (supervisionId: number, updateRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("UpdateConformsToPermit", updateRequest);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateConformsToPermit: false } });
 
-    const updateSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/updateconformstopermit`, {
+    const updateSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/updateconformstopermit?supervisionId=${supervisionId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -186,12 +186,12 @@ export const updateConformsToPermit = async (updateRequest: ISupervision, dispat
   }
 };
 
-export const startSupervision = async (report: ISupervisionReport, dispatch: Dispatch): Promise<ISupervision> => {
+export const startSupervision = async (supervisionId: number, report: ISupervisionReport, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("StartSupervision", report);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { startSupervision: false } });
 
-    const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision`, {
+    const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision?supervisionId=${supervisionId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -236,11 +236,11 @@ export const cancelSupervision = async (supervisionId: number, dispatch: Dispatc
   }
 };
 
-export const denyCrossing = async (denyRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
+export const denyCrossing = async (supervisionId: number, denyRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { denyCrossing: false } });
 
-    const denyCrossingResponse = await fetch(`${getOrigin()}/api/supervision/denycrossing`, {
+    const denyCrossingResponse = await fetch(`${getOrigin()}/api/supervision/denycrossing?supervisionId=${supervisionId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

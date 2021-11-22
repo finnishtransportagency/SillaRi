@@ -136,8 +136,6 @@ public class SupervisionRepository {
                 supervisorRepository.insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
             });
 
-            supervisionStatusRepository.insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.PLANNED);
-
             return supervisionId;
         });
     }
@@ -178,8 +176,6 @@ public class SupervisionRepository {
                     .set(TableAlias.supervision.DENY_CROSSING_REASON, denyCrossingReason)
                     .where(TableAlias.supervision.ID.eq(supervisionId))
                     .execute();
-
-            supervisionStatusRepository.insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.CROSSING_DENIED);
         });
     }
 

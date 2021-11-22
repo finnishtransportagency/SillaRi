@@ -1,10 +1,12 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -79,8 +81,10 @@ public class SupervisionService {
 
     // Creates new supervision and adds a new status with type PLANNED
     // The timestamp in PLANNED is the current time, not planned_time which can be updated later.
-    public void createSupervision(SupervisionModel supervisionModel) {
-        supervisionRepository.createSupervision(supervisionModel);
+    public void createSupervision(SupervisionModel supervisionModel, SillariUser user) {
+        Integer supervisionId = supervisionRepository.createSupervision(supervisionModel);
+        SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.PLANNED, OffsetDateTime.now(), user.getUsername());
+        supervisionStatusRepository.insertSupervisionStatus(status);
     }
 
     // Updates supervision fields (supervisors, planned time)
@@ -98,31 +102,42 @@ public class SupervisionService {
     }
 
     // Adds the status IN_PROGRESS and creates a new supervision report
-    public SupervisionModel startSupervision(SupervisionReportModel report) {
+    public SupervisionModel startSupervision(Integer supervisionId, SupervisionReportModel report, SillariUser user) {
+        SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.IN_PROGRESS, OffsetDateTime.now(), user.getUsername());
+        supervisionStatusRepository.insertSupervisionStatus(status);
+
         supervisionReportRepository.createSupervisionReport(report);
         return getSupervision(report.getSupervisionId());
     }
 
     // Ends the supervision by adding the status CROSSING_DENIED
-    public SupervisionModel denyCrossing(SupervisionModel supervisionModel) {
+    public SupervisionModel denyCrossing(Integer supervisionId, SupervisionModel supervisionModel, SillariUser user) {
+        SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.CROSSING_DENIED, OffsetDateTime.now(), user.getUsername());
+        supervisionStatusRepository.insertSupervisionStatus(status);
+
         supervisionRepository.updateSupervision(supervisionModel.getId(), supervisionModel.getDenyCrossingReason());
         return getSupervision(supervisionModel.getId());
     }
 
     // Ends the supervision by adding the status FINISHED
-    public SupervisionModel finishSupervision(Integer supervisionId) {
-        supervisionStatusRepository.insertSupervisionStatus(supervisionId, SupervisionStatusType.FINISHED);
+    public SupervisionModel finishSupervision(Integer supervisionId, SillariUser user) {
+        SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.FINISHED, OffsetDateTime.now(), user.getUsername());
+        supervisionStatusRepository.insertSupervisionStatus(status);
         return getSupervision(supervisionId);
     }
 
     // Completes the supervision by adding the status REPORT_SIGNED
-    public SupervisionModel completeSupervision(Integer supervisionId) {
-        supervisionStatusRepository.insertSupervisionStatus(supervisionId, SupervisionStatusType.REPORT_SIGNED);
+    public SupervisionModel completeSupervision(Integer supervisionId, SillariUser user) {
+        SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.REPORT_SIGNED, OffsetDateTime.now(), user.getUsername());
+        supervisionStatusRepository.insertSupervisionStatus(status);
         return getSupervision(supervisionId);
     }
 
     // Deletes the report and adds the status CANCELLED
-    public SupervisionModel cancelSupervision(Integer supervisionId) {
+    public SupervisionModel cancelSupervision(Integer supervisionId, SillariUser user) {
+        SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.CANCELLED, OffsetDateTime.now(), user.getUsername());
+        supervisionStatusRepository.insertSupervisionStatus(status);
+
         supervisionReportRepository.deleteSupervisionReport(supervisionId);
         return getSupervision(supervisionId);
     }

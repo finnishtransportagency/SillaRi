@@ -56,7 +56,7 @@ const DenyCrossing = (): JSX.Element => {
     { retry: onRetry }
   );
 
-  const denyCrossingMutation = useMutation((supervisionInput: ISupervision) => denyCrossing(supervisionInput, dispatch), {
+  const denyCrossingMutation = useMutation((supervisionInput: ISupervision) => denyCrossing(Number(supervisionId), supervisionInput, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       // Update "getSupervision" query to return the updated data
