@@ -126,16 +126,21 @@ public class LeluController {
 
 
     private void getBridgeFromTrexToDB(String oid) {
-        logger.debug("hello get bridge " + oid);
+        logger.debug("get bridge " + oid);
         try {
             BridgeModel bridge = trexService.getBridge(oid);
             bridgeService.createOrUpdateBridge(bridge);
-            logger.debug("HELLO BRIDGE: " + bridge);
+            logger.debug("bridge inserter or updated: " + bridge);
 
         } catch (TRexRestException e) {
-            logger.warn("HELLO trex fail ");
+            logger.warn("Trex fail getting bridge " +oid);
             e.printStackTrace();
         }
+        catch (Exception e){
+            logger.error("Fail getBridgeFromTrexToDB " + e.getClass().getName() + " " +e.getMessage());
+            e.printStackTrace();
+        }
+
     }
 
 

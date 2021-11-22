@@ -93,6 +93,7 @@ public class BridgeRepository {
     }
 
     public void updateBridge(BridgeModel bridge) {
+        logger.debug("HELLOMOI: " + bridge.getRoadAddress());
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
             Field<String> geojsonField = DSL.field("ST_GeomFromText('POINT("+bridge.getX()+" "+bridge.getY()+")', 3067)", String.class);
