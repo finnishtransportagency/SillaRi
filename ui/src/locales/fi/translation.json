@@ -137,9 +137,9 @@
     "report": {
       "observations": "Havainnot",
       "drivingLineOk": "Ajolinjaa on noudatettu",
-      "drivingLineInfo": "Miksi ajolinjaa ei hyväksytä?",
-      "speedLimitOk": "Ajonopeus on hyväksytty",
-      "speedLimitInfo": "Miksi ajonopeutta ei hyväksytä?",
+      "drivingLineInfo": "Miksi ajolinjaa ei noudatettu?",
+      "speedLimitOk": "Ajonopeus on noudatettu",
+      "speedLimitInfo": "Miksi ajonopeutta ei noudatettu?",
       "anomalies": "Poikkeavia havaintoja",
       "anomaliesInfo": "Tarkenna poikkeavia havaintoja",
       "surfaceDamage": "Päällystevaurio",
@@ -320,11 +320,5 @@
         "confirm": "Päätä kuljetus"
       }
     }
-  },
-  "supervisor": {
-    "bridges": "Sillat",
-    "nextCrossing": "Seuraava ylitys",
-    "numberOfPermits": "Kuljetuslupia",
-    "permits": "Kuljetusluvat"
   }
 }
