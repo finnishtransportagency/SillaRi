@@ -67,12 +67,14 @@ const DenyCrossing = (): JSX.Element => {
   const { isLoading: isSendingDenyCrossing } = denyCrossingMutation;
 
   const { routeBridge, currentStatus } = supervision || {};
+  const { status: supervisionStatus } = currentStatus || {};
   const { route, bridge } = routeBridge || {};
   const { name = "", identifier = "" } = bridge || {};
   const { permit } = route || {};
   const { permitNumber = "" } = permit || {};
 
-  const supervisionPending = !isLoadingSupervision && currentStatus && currentStatus.status === SupervisionStatus.PLANNED;
+  const supervisionPending =
+    !isLoadingSupervision && (supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED);
 
   const radioClicked = (radioValue: string) => {
     if (radioValue === otherReason) {
@@ -110,7 +112,7 @@ const DenyCrossing = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} />
+      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} includeSendingList />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

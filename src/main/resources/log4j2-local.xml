@@ -25,7 +25,7 @@
             <AppenderRef ref="ConsoleAppender" level="info"/>
         </Logger>
 
-        <Logger name="fi.vaylavirasto.sillari.auth.JwtRequestFilter" additivity="false">
+        <Logger name="fi.vaylavirasto.sillari.auth.JwtRequestFilter" additivity="true">
             <AppenderRef ref="ConsoleAppender" level="info"/>
         </Logger>
 

@@ -26,15 +26,15 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   const queryClient = useQueryClient();
 
   const { permitNumber } = permit || {};
-  const { id: supervisionId, conformsToPermit = false, currentStatus, startedTime, crossingDeniedTime, finishedTime } = supervision || {};
+  const { id: supervisionId, conformsToPermit = false, currentStatus, finishedTime } = supervision || {};
+  const { status: supervisionStatus, time: statusTime } = currentStatus || {};
 
-  const supervisionPending = !isLoadingSupervision && currentStatus && currentStatus.status === SupervisionStatus.PLANNED;
-  const supervisionInProgress = !isLoadingSupervision && currentStatus && currentStatus.status === SupervisionStatus.IN_PROGRESS;
-  const crossingDenied = !isLoadingSupervision && currentStatus && currentStatus.status === SupervisionStatus.CROSSING_DENIED;
+  const supervisionPending =
+    !isLoadingSupervision && (supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED);
+  const supervisionInProgress = !isLoadingSupervision && supervisionStatus === SupervisionStatus.IN_PROGRESS;
+  const crossingDenied = !isLoadingSupervision && supervisionStatus === SupervisionStatus.CROSSING_DENIED;
   const supervisionFinished =
-    !isLoadingSupervision &&
-    currentStatus &&
-    (currentStatus.status === SupervisionStatus.FINISHED || currentStatus.status === SupervisionStatus.REPORT_SIGNED);
+    !isLoadingSupervision && (supervisionStatus === SupervisionStatus.FINISHED || supervisionStatus === SupervisionStatus.REPORT_SIGNED);
 
   // Set-up mutations for modifying data later
   const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(initialReport, dispatch), {
@@ -75,8 +75,8 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
       </IonItem>
 
       {!isLoadingSupervision && !supervisionId && <SupervisionStatusInfo color="danger" infoText={t("bridge.supervisionMissing")} />}
-      {supervisionInProgress && <SupervisionStatusInfo color="success" infoText={t("bridge.supervisionStarted")} time={startedTime} />}
-      {crossingDenied && <SupervisionStatusInfo color="warning" infoText={t("bridge.crossingDenied")} time={crossingDeniedTime} />}
+      {supervisionInProgress && <SupervisionStatusInfo color="success" infoText={t("bridge.supervisionStarted")} time={statusTime} />}
+      {crossingDenied && <SupervisionStatusInfo color="warning" infoText={t("bridge.crossingDenied")} time={statusTime} />}
       {supervisionFinished && <SupervisionStatusInfo color="secondary" infoText={t("bridge.supervisionFinished")} time={finishedTime} />}
 
       <IonItem lines="none">

@@ -23,12 +23,8 @@ const CrossingInstructionsAccordion = ({ routeBridge }: CrossingInstructionsAcco
           panel: (
             <div>
               <IonItem>
-                <IonLabel>TODO</IonLabel>
+                <IonLabel>Tulossa myöhemmin</IonLabel>
                 <IonLabel>{crossingInstruction}</IonLabel>
-              </IonItem>
-              <IonItem>
-                <IonLabel>{t("bridge.crossingInstructions.documentingHeader")}</IonLabel>
-                <IonLabel>{t("bridge.crossingInstructions.documentingParagraph")}</IonLabel>
               </IonItem>
             </div>
           ),

@@ -1,6 +1,6 @@
-import React from "react";
-import { Route, Switch } from "react-router-dom";
-import { IonApp, IonContent, setupConfig } from "@ionic/react";
+import React, { useEffect, useState } from "react";
+import { Redirect, Route, Switch } from "react-router-dom";
+import { IonApp, IonButton, IonContent, setupConfig } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -8,7 +8,6 @@ import Home from "./pages/Home";
 import Settings from "./pages/Settings";
 import Map from "./pages/Map";
 import Supervision from "./pages/Supervision";
-import Camera from "./pages/Camera";
 import RouteTransportDetail from "./pages/RouteTransportDetail";
 import DenyCrossing from "./pages/DenyCrossing";
 import BridgeDetail from "./pages/BridgeDetail";
@@ -41,6 +40,12 @@ import "./theme/variables.css";
 
 /* Sillari.css */
 import "./theme/sillari.css";
+import IUserData from "./interfaces/IUserData";
+import { getOrigin } from "./utils/request";
+import Photos from "./pages/Photos";
+
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import Cookies from "js-cookie";
 
 // Use the same style for all platforms
 setupConfig({
@@ -52,33 +57,102 @@ setupConfig({
 // The queries themselves are stored in the cache based on a query key (using the query parameters), and garbage collected after 5 minutes if not used again
 const queryClient = new QueryClient();
 
-const App: React.FC = () => (
-  <QueryClientProvider client={queryClient}>
-    <IonApp>
-      <IonReactRouter>
-        <SidebarMenu />
-        <IonContent id="MainContent">
-          <Switch>
-            <Route path="/" component={Home} exact />
-            <Route path="/settings" component={Settings} exact />
-            <Route path="/bridgemap/:routeBridgeId" component={Map} exact />
-            <Route path="/routemap/:routeId" component={Map} exact />
-            <Route path="/routeTransportDetail/:routeTransportId" component={RouteTransportDetail} exact />
-            <Route path="/bridgeDetail/:supervisionId" component={BridgeDetail} exact />
-            <Route path="/supervision/:supervisionId" component={Supervision} exact />
-            <Route path="/denyCrossing/:supervisionId" component={DenyCrossing} exact />
-            <Route path="/summary/:supervisionId" component={SupervisionSummary} exact />
-            <Route path="/takePhotos/:supervisionId" component={Camera} exact />
-            <Route path="/management/:companyId" component={CompanySummary} exact />
-            <Route path="/management/addTransport/:permitId" component={AddTransport} exact />
-            <Route path="/management/transportDetail/:routeTransportId" component={TransportDetail} exact />
-            <Route path="/transport" component={TransportCodeInput} exact />
-            <Route path="/transport/:routeTransportId" component={Transport} exact />
-          </Switch>
-        </IonContent>
-      </IonReactRouter>
-    </IonApp>
-  </QueryClientProvider>
-);
+const App: React.FC = () => {
+  const [userData, setUserData] = useState<IUserData>();
+  const [homePage, setHomePage] = useState<string>("/supervision");
+  const [errorMsg, setErrorMsg] = useState<string>();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userDataResponse = await fetch(`${getOrigin()}/api/ui/userdata`);
+
+        if (userDataResponse?.ok) {
+          const responseData = await userDataResponse.json();
+          if (responseData.roles.length > 0) {
+            if (responseData.roles.includes("SILLARI_SILLANVALVOJA")) {
+              setHomePage("/supervision");
+            } else if (responseData.roles.includes("SILLARI_AJOJARJESTELIJA")) {
+              setHomePage("/management/1");
+            } else if (responseData.roles.includes("SILLARI_KULJETTAJA")) {
+              setHomePage("/transport");
+            }
+            setUserData(responseData);
+          } else {
+            setErrorMsg("Ei oikeutta SillaRi-sovelluksen käyttöön.");
+          }
+        } else {
+          console.log(userDataResponse);
+          if (userDataResponse.status === 401) {
+            setErrorMsg("401 - Access denied.");
+          } else {
+            setErrorMsg("Käsittelemätön virhetilanne 1.");
+          }
+        }
+      } catch (e) {
+        console.log(e);
+        setErrorMsg("Käsittelemätön virhetilanne 2.");
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  const logoutFromApp = () => {
+    serviceWorkerRegistration.unregister(() => {
+      const cookies = Cookies.get();
+      Object.keys(cookies).forEach((key) => {
+        Cookies.remove(key);
+      });
+    });
+    window.location.reload();
+  };
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <IonApp>
+        {!userData ? (
+          <div>
+            {errorMsg ? (
+              <div>
+                <div>{errorMsg}</div>
+                <IonButton color="primary" expand="block" size="large" onClick={logoutFromApp}>
+                  Kirjaudu sisään
+                </IonButton>
+              </div>
+            ) : (
+              <div>Starting app...</div>
+            )}
+          </div>
+        ) : (
+          <IonReactRouter>
+            <SidebarMenu roles={userData.roles} />
+            <IonContent id="MainContent">
+              <Switch>
+                <Route path="/supervision" component={Home} exact />
+                <Route path="/bridgemap/:routeBridgeId" component={Map} exact />
+                <Route path="/routemap/:routeId" component={Map} exact />
+                <Route path="/routeTransportDetail/:routeTransportId" component={RouteTransportDetail} exact />
+                <Route path="/bridgeDetail/:supervisionId" component={BridgeDetail} exact />
+                <Route path="/supervision/:supervisionId" component={Supervision} exact />
+                <Route path="/denyCrossing/:supervisionId" component={DenyCrossing} exact />
+                <Route path="/summary/:supervisionId" component={SupervisionSummary} exact />
+                <Route path="/takePhotos/:supervisionId" component={Photos} exact />
+                <Route path="/management/:companyId" component={CompanySummary} exact />
+                <Route path="/management/addTransport/:permitId" component={AddTransport} exact />
+                <Route path="/management/transportDetail/:routeTransportId" component={TransportDetail} exact />
+                <Route path="/transport" component={TransportCodeInput} exact />
+                <Route path="/transport/:routeTransportId" component={Transport} exact />
+                <Route path="/settings" component={Settings} exact />
+                <Route path="/" exact>
+                  <Redirect to={homePage} />
+                </Route>
+              </Switch>
+            </IonContent>
+          </IonReactRouter>
+        )}
+      </IonApp>
+    </QueryClientProvider>
+  );
+};
 
 export default withTranslation()(App);

@@ -15,13 +15,13 @@
 }
 
 .customAccordion .accordion__button[aria-expanded="false"] .accordionHeaderItem {
-  border-top: 4px solid transparent;
+  border-top: 4px solid var(--ion-color-light);
 }
 
 .customAccordion .accordion__button[aria-expanded="true"] .accordionHeaderItem {
-  --background: #f2fafd;
+  --background: var(--ion-color-secondary-5);
   border-top: 4px solid var(--ion-color-primary);
-  border-bottom: 2px solid #b2e0f6;
+  border-bottom: 2px solid var(--ion-color-secondary-50);
 }
 
 .customAccordion .accordion__button .openIcon {

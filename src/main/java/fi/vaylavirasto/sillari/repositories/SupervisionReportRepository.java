@@ -102,4 +102,16 @@ public class SupervisionReportRepository {
         });
     }
 
+    public void deleteSupervisionReport(Integer supervisionId) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            ctx.delete(TableAlias.supervisionReport)
+                    .where(TableAlias.supervisionReport.SUPERVISION_ID.eq(supervisionId))
+                    .execute();
+
+            supervisionStatusRepository.insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.CANCELLED);
+        });
+    }
+
 }

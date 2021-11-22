@@ -1,5 +1,6 @@
 .routeGrid {
   border: 2px solid var(--ion-color-base);
+  --ion-grid-columns: 15;
 }
 
 .routeGrid > ion-row {

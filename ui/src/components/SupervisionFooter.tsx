@@ -1,31 +1,28 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
 
 interface SupervisionFooterProps {
-  reportId?: number;
-  isSummary: boolean;
-  isLoading: boolean;
+  disabled: boolean;
   saveChanges: () => void;
   cancelChanges: () => void;
+  saveLabel: string;
+  cancelLabel: string;
 }
 
-const SupervisionFooter = ({ reportId, isSummary, isLoading, saveChanges, cancelChanges }: SupervisionFooterProps): JSX.Element => {
-  const { t } = useTranslation();
-
+const SupervisionFooter = ({ disabled, saveChanges, cancelChanges, saveLabel, cancelLabel }: SupervisionFooterProps): JSX.Element => {
   return (
     <IonGrid>
       <IonRow>
         <IonCol className="ion-text-center">
-          <IonButton color="primary" expand="block" size="large" disabled={!reportId || reportId < 0 || isLoading} onClick={() => saveChanges()}>
-            {isSummary ? t("supervision.buttons.saveToSendList") : t("supervision.buttons.summary")}
+          <IonButton color="primary" expand="block" size="large" disabled={disabled} onClick={() => saveChanges()}>
+            {saveLabel}
           </IonButton>
         </IonCol>
       </IonRow>
       <IonRow>
         <IonCol className="ion-text-center">
-          <IonButton color="tertiary" expand="block" size="large" disabled={!reportId || reportId < 0} onClick={() => cancelChanges()}>
-            {isSummary ? t("common.buttons.edit") : t("common.buttons.cancel")}
+          <IonButton color="tertiary" expand="block" size="large" disabled={disabled} onClick={() => cancelChanges()}>
+            {cancelLabel}
           </IonButton>
         </IonCol>
       </IonRow>

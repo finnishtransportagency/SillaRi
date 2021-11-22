@@ -5,6 +5,7 @@
       "back": "Peru",
       "back2": "Takaisin",
       "cancel": "Peruuta",
+      "search": "Hae",
       "edit": "Muokkaa",
       "save": "Tallenna",
       "send": "Lähetä"
@@ -101,9 +102,7 @@
     "identifier": "Tunnus",
     "location": "Sijainti",
     "crossingInstructions": {
-      "title": "Ohjeet",
-      "documentingHeader": "Dokumentointi",
-      "documentingParagraph": "Valvoja seuraa ... jne todo"
+      "title": "Ohjeet"
     },
     "trafficSupervisors": {
       "title": "Liikenteenohjaajat"
@@ -142,7 +141,7 @@
       "speedLimitOk": "Ajonopeus on hyväksytty",
       "speedLimitInfo": "Miksi ajonopeutta ei hyväksytä?",
       "anomalies": "Poikkeavia havaintoja",
-      "anomaliesInfo": "Tarkenna poikkeavia havaintoja:",
+      "anomaliesInfo": "Tarkenna poikkeavia havaintoja",
       "surfaceDamage": "Päällystevaurio",
       "jointDamage": "Liikuntasauman rikkoutuminen",
       "bendOrDisplacement": "Pysyvä taipuma tai muu siirtymä",
@@ -155,7 +154,15 @@
       "takePhotos": "Valokuvat",
       "drivingLine": "Ajolinja",
       "summary": "Siirry yhteenvetoon",
-      "saveToSendList": "Tallenna (lähetyslistalle)"
+      "cancel": "Peru valvonta",
+      "saveToSendList": "Tallenna lähetyslistalle"
+    },
+    "warning": {
+      "cancelSupervisionHeader": "Haluatko varmasti perua valvonnan?",
+      "cancelSupervisionText": "Raporttiin kirjatut tiedot poistetaan.",
+      "leavePage": "Halutko varmasti poistua sivulta?",
+      "unsavedChanges": "Valvonnassa on tallentamattomia muutoksia.",
+      "supervisionNotFinished": "Valvontaa ei ole tallennettu lähetyslistalle."
     },
     "summary": {
       "title": "Yhteenveto",
@@ -167,8 +174,17 @@
       "additionalInfo": "Lisätiedot",
       "approved": "Hyväksytty",
       "notApproved": "Ei hyväksytty",
-      "saved": "Valvonta on tallennettu (lähetyslistalle)"
+      "saved": "Valvonta on tallennettu lähetyslistalle"
     }
+  },
+  "sendingList": {
+    "title": "Lähetyslista",
+    "transportPermit": "Kuljetuslupa",
+    "tractorUnit": "Vetoauto",
+    "supervisionStarted": "Valvonta aloitettu",
+    "sendSelected": "Lähetä valitut",
+    "sentOk": "Valitut valvonnat on lähetetty",
+    "nothingToSend": "Ei lähetettäviä valvontaraportteja"
   },
   "management": {
     "companySummary": {
@@ -190,12 +206,14 @@
         "route": "Reitti",
         "supervision": "Sillanvalvonta",
         "time": "Ajankohta",
+        "password": "Salasana",
         "status": "Tila",
         "action": "Toiminto"
       },
       "action": {
         "details": "Lisätiedot",
-        "modify": "Muokkaa"
+        "modify": "Muokkaa",
+        "show": "Näytä"
       }
     },
     "transportDetail": {
@@ -207,13 +225,17 @@
       "transportInformation": "Kuljetuksen tiedot",
       "bridgesToSupervise": "Valvottavat sillat",
       "buttons": {
+        "generatePassword": "Uusi salasana",
         "deleteTransport": "Poista kuljetus"
       },
       "alert": {
+        "generatePassword": "Oletko varma, että haluat generoida uuden salasanan?",
         "deleteTransport": "Oletko varma, että haluat poistaa kuljetuksen?"
       },
       "saved": "Tallennettu",
       "deleted": "Poistettu",
+      "password": "Kuljetuksen salasana",
+      "passwordUnknown": "Puuttuu",
       "routeInfo": {
         "estimatedDepartureDate": "Arvioitu lähtöpäivä",
         "estimatedDepartureTime": "klo",
@@ -260,23 +282,43 @@
       "header": {
         "title": "Kuljetukset"
       },
-      "inputLabel": "Anna kuljetuksen koodi",
-      "inputPlaceholder": "Kuljetuksen koodi",
-      "submitButtonLabel": "Lähetä koodi",
+      "inputTitle": "Tuleva kuljetus",
+      "inputLabel": "Kuljetuksen salasana",
+      "inputPlaceholder": "Salasana",
       "invalidCodeErrorMessage": "Virheellinen koodi"
     },
     "transport": {
       "header": {
         "title": "Kuljetus"
       },
-      "permitLabel": "Kuljetuslupa:",
-      "routeLabel": "Reitti:",
-      "mapButtonLabel": "Kartta",
-      "transportStatusLabel": "Kuljetuksen status",
-      "transportStatusBoxLabel": {
-        "notStarted": "Ajo ei ole vielä alkanut"
+      "estimatedDepartureTime": "Arvioitu lähtöaika",
+      "departureTime": "Lähtöaika",
+      "permitLabel": "Kuljetuslupa",
+      "transportStatusLabel": "Status",
+      "statusInfo": {
+        "planned": "Ajoa ei ole vielä aloitettu",
+        "departed": "Ajo aloitettu",
+        "stopped": "Tauko aloitettu",
+        "in_progress": "Ajo aloitettu",
+        "arrived": "Kuljetus päättynyt"
       },
-      "startDrivingButtonLabel": "ALOITA AJAMINEN"
+      "status": {
+        "departed": "Liikkeellä",
+        "stopped": "Tauolla",
+        "in_progress": "Liikkeellä",
+        "arrived": "Päättynyt"
+      },
+      "buttons": {
+        "startDriving": "Aloita ajaminen",
+        "startBreak": "Aloita touko",
+        "stopBreak": "Jatka ajamista",
+        "stopDriving": "Päätä kuljetus"
+      },
+      "stopAlert": {
+        "title": "Haluatko varmasti päättää kuljetuksen?",
+        "message": "Päätettyä kuljetusta ei voi enää jatkaa.",
+        "confirm": "Päätä kuljetus"
+      }
     }
   },
   "supervisor": {
