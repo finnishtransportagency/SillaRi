@@ -23,8 +23,8 @@ import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import file from "../theme/icons/file.svg";
 import { denyCrossing, getSupervision, onRetry } from "../utils/supervisionBackendData";
-import ISupervision from "../interfaces/ISupervision";
 import { SupervisionStatus } from "../utils/constants";
+import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 
 interface DenyCrossingProps {
   supervisionId: string;
@@ -56,7 +56,7 @@ const DenyCrossing = (): JSX.Element => {
     { retry: onRetry }
   );
 
-  const denyCrossingMutation = useMutation((supervisionInput: ISupervision) => denyCrossing(Number(supervisionId), supervisionInput, dispatch), {
+  const denyCrossingMutation = useMutation((denyCrossingInput: IDenyCrossingInput) => denyCrossing(denyCrossingInput, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       // Update "getSupervision" query to return the updated data
@@ -93,18 +93,9 @@ const DenyCrossing = (): JSX.Element => {
   };
 
   const denyCrossingClicked = () => {
-    if (supervision) {
-      const { routeBridgeId, routeTransportId, plannedTime, supervisorType, conformsToPermit } = supervision;
-      const updatedSupervision: ISupervision = {
-        id: Number(supervisionId),
-        routeBridgeId,
-        routeTransportId,
-        plannedTime,
-        conformsToPermit,
-        supervisorType,
-        denyCrossingReason: denyReason,
-      };
-      denyCrossingMutation.mutate(updatedSupervision);
+    if (denyReason) {
+      const denyCrossingInput: IDenyCrossingInput = { supervisionId: Number(supervisionId), denyReason: denyReason };
+      denyCrossingMutation.mutate(denyCrossingInput);
     }
   };
 
@@ -171,7 +162,7 @@ const DenyCrossing = (): JSX.Element => {
                     color="primary"
                     expand="block"
                     size="large"
-                    disabled={isLoadingSupervision || isSendingDenyCrossing || !supervisionPending}
+                    disabled={isLoadingSupervision || isSendingDenyCrossing || !supervisionPending || !denyReason}
                     onClick={() => denyCrossingClicked()}
                   >
                     {t("common.buttons.send")}

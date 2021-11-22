@@ -37,16 +37,13 @@ const BridgeDetail = (): JSX.Element => {
     }
   );
 
-  const supervisionUpdateMutation = useMutation(
-    (updatedSupervision: ISupervision) => updateConformsToPermit(Number(supervisionId), updatedSupervision, dispatch),
-    {
-      retry: onRetry,
-      onSuccess: (data) => {
-        // Update the supervision from "getSupervision" with the updated supervision data in the response
-        queryClient.setQueryData(["getSupervision", supervisionId], data);
-      },
-    }
-  );
+  const supervisionUpdateMutation = useMutation((updatedSupervision: ISupervision) => updateConformsToPermit(updatedSupervision, dispatch), {
+    retry: onRetry,
+    onSuccess: (data) => {
+      // Update the supervision from "getSupervision" with the updated supervision data in the response
+      queryClient.setQueryData(["getSupervision", supervisionId], data);
+    },
+  });
 
   const { id, routeBridgeId, routeTransportId, plannedTime, supervisorType, routeBridge } = supervision || {};
   const { bridge, route } = routeBridge || {};

@@ -168,17 +168,6 @@ public class SupervisionRepository {
         });
     }
 
-    public void updateSupervision(Integer supervisionId, String denyCrossingReason) {
-        dsl.transaction(configuration -> {
-            DSLContext ctx = DSL.using(configuration);
-
-            ctx.update(TableAlias.supervision)
-                    .set(TableAlias.supervision.DENY_CROSSING_REASON, denyCrossingReason)
-                    .where(TableAlias.supervision.ID.eq(supervisionId))
-                    .execute();
-        });
-    }
-
     public void deleteSupervision(SupervisionModel supervisionModel) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);

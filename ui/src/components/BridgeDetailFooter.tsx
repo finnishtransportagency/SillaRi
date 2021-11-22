@@ -37,7 +37,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
     !isLoadingSupervision && (supervisionStatus === SupervisionStatus.FINISHED || supervisionStatus === SupervisionStatus.REPORT_SIGNED);
 
   // Set-up mutations for modifying data later
-  const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(supervisionId, initialReport, dispatch), {
+  const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(initialReport, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       // Update "getSupervision" query to return the updated data

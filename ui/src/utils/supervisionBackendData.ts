@@ -9,6 +9,7 @@ import { getOrigin } from "./request";
 import { actions as supervisionActions } from "../store/supervisionSlice";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
 import IRouteTransport from "../interfaces/IRouteTransport";
+import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 
 const notOkError = "Network response was not ok";
 
@@ -160,12 +161,12 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
   }
 };
 
-export const updateConformsToPermit = async (supervisionId: number, updateRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
+export const updateConformsToPermit = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("UpdateConformsToPermit", updateRequest);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateConformsToPermit: false } });
 
-    const updateSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/updateconformstopermit?supervisionId=${supervisionId}`, {
+    const updateSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/updateconformstopermit`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -186,12 +187,12 @@ export const updateConformsToPermit = async (supervisionId: number, updateReques
   }
 };
 
-export const startSupervision = async (supervisionId: number, report: ISupervisionReport, dispatch: Dispatch): Promise<ISupervision> => {
+export const startSupervision = async (report: ISupervisionReport, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("StartSupervision", report);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { startSupervision: false } });
 
-    const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision?supervisionId=${supervisionId}`, {
+    const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -214,6 +215,7 @@ export const startSupervision = async (supervisionId: number, report: ISupervisi
 
 export const cancelSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
+    console.log("CancelSupervision", supervisionId);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { cancelSupervision: false } });
 
     const cancelSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/cancelsupervision?supervisionId=${supervisionId}`, {
@@ -236,16 +238,14 @@ export const cancelSupervision = async (supervisionId: number, dispatch: Dispatc
   }
 };
 
-export const denyCrossing = async (supervisionId: number, denyRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
+export const denyCrossing = async (denyCrossingInput: IDenyCrossingInput, dispatch: Dispatch): Promise<ISupervision> => {
   try {
+    console.log("DenyCrossing", denyCrossingInput);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { denyCrossing: false } });
 
-    const denyCrossingResponse = await fetch(`${getOrigin()}/api/supervision/denycrossing?supervisionId=${supervisionId}`, {
+    const { supervisionId, denyReason } = denyCrossingInput;
+    const denyCrossingResponse = await fetch(`${getOrigin()}/api/supervision/denycrossing?supervisionId=${supervisionId}&denyReason=${denyReason}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(denyRequest),
     });
 
     if (denyCrossingResponse.ok) {
@@ -263,6 +263,7 @@ export const denyCrossing = async (supervisionId: number, denyRequest: ISupervis
 
 export const finishSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
+    console.log("FinishSupervision", supervisionId);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { finishSupervision: false } });
 
     const finishSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/finishsupervision?supervisionId=${supervisionId}`, {
@@ -287,6 +288,7 @@ export const finishSupervision = async (supervisionId: number, dispatch: Dispatc
 
 export const completeSupervisions = async (supervisionIds: string[], dispatch: Dispatch): Promise<void> => {
   try {
+    console.log("CompleteSupervisions", supervisionIds);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { completeSupervisions: false } });
 
     const completeSupervisionsResponse = await fetch(`${getOrigin()}/api/supervision/completesupervisions?supervisionIds=${supervisionIds.join()}`, {
@@ -312,6 +314,7 @@ export const completeSupervisions = async (supervisionIds: string[], dispatch: D
 
 export const updateSupervisionReport = async (updateRequest: ISupervisionReport, dispatch: Dispatch): Promise<ISupervision> => {
   try {
+    console.log("UpdateSupervisionReport", updateRequest);
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { updateSupervisionReport: false } });
 
     const updateReportResponse = await fetch(`${getOrigin()}/api/supervision/updatesupervisionreport`, {
@@ -337,6 +340,7 @@ export const updateSupervisionReport = async (updateRequest: ISupervisionReport,
 
 export const sendImageUpload = async (fileUpload: ISupervisionImageInput, dispatch: Dispatch): Promise<void> => {
   try {
+    console.log("SendImageUpload");
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { sendImageUpload: false } });
 
     const imageUploadResponse = await fetch(`${getOrigin()}/api/images/upload`, {
@@ -362,6 +366,7 @@ export const sendImageUpload = async (fileUpload: ISupervisionImageInput, dispat
 
 export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promise<boolean> => {
   try {
+    console.log("DeleteImage");
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteImage: false } });
 
     const imageDeleteResponse = await fetch(`${getOrigin()}/api/images/delete?objectKey=${objectKey}`, {
@@ -386,6 +391,7 @@ export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promis
 };
 
 export const deleteSupervisionImages = async (supervisionId: number, dispatch: Dispatch): Promise<boolean> => {
+  console.log("DeleteSupervisionImages", supervisionId);
   try {
     dispatch({ type: supervisionActions.SET_FAILED_QUERY, payload: { deleteImage: deleteSupervisionImages } });
 

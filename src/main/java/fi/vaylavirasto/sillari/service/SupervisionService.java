@@ -92,9 +92,9 @@ public class SupervisionService {
         supervisionRepository.updateSupervision(supervisionModel);
     }
 
-    public SupervisionModel updateConformsToPermit(Integer supervisionId, Boolean conformsToPermit) {
-        supervisionRepository.updateSupervision(supervisionId, conformsToPermit);
-        return getSupervision(supervisionId);
+    public SupervisionModel updateConformsToPermit(SupervisionModel supervision) {
+        supervisionRepository.updateSupervision(supervision.getId(), supervision.getConformsToPermit());
+        return getSupervision(supervision.getId());
     }
 
     public void deleteSupervision(SupervisionModel supervisionModel) {
@@ -102,21 +102,20 @@ public class SupervisionService {
     }
 
     // Adds the status IN_PROGRESS and creates a new supervision report
-    public SupervisionModel startSupervision(Integer supervisionId, SupervisionReportModel report, SillariUser user) {
+    public SupervisionModel startSupervision(SupervisionReportModel report, SillariUser user) {
+        Integer supervisionId = report.getSupervisionId();
         SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.IN_PROGRESS, OffsetDateTime.now(), user.getUsername());
         supervisionStatusRepository.insertSupervisionStatus(status);
 
         supervisionReportRepository.createSupervisionReport(report);
-        return getSupervision(report.getSupervisionId());
+        return getSupervision(supervisionId);
     }
 
     // Ends the supervision by adding the status CROSSING_DENIED
-    public SupervisionModel denyCrossing(Integer supervisionId, SupervisionModel supervisionModel, SillariUser user) {
-        SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.CROSSING_DENIED, OffsetDateTime.now(), user.getUsername());
+    public SupervisionModel denyCrossing(Integer supervisionId, String denyReason, SillariUser user) {
+        SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.CROSSING_DENIED, OffsetDateTime.now(), denyReason, user.getUsername());
         supervisionStatusRepository.insertSupervisionStatus(status);
-
-        supervisionRepository.updateSupervision(supervisionModel.getId(), supervisionModel.getDenyCrossingReason());
-        return getSupervision(supervisionModel.getId());
+        return getSupervision(supervisionId);
     }
 
     // Ends the supervision by adding the status FINISHED

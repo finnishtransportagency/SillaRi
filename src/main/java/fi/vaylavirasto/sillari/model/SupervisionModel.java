@@ -14,7 +14,6 @@ public class SupervisionModel {
     private OffsetDateTime plannedTime;
     private Boolean conformsToPermit;
     private SupervisorType supervisorType;
-    private String denyCrossingReason;
     private SupervisionStatusModel currentStatus;
     private List<SupervisionStatusModel> statusHistory;
     private List<SupervisorModel> supervisors;

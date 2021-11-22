@@ -84,10 +84,10 @@ public class SupervisionController {
     @Operation(summary = "Update conforms to permit attribute in supervision")
     @PutMapping(value = "/updateconformstopermit", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> updateConformsToPermit(@RequestParam Integer supervisionId, @RequestBody SupervisionModel supervision) {
+    public ResponseEntity<?> updateConformsToPermit(@RequestBody SupervisionModel supervision) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateConformsToPermit");
         try {
-            SupervisionModel supervisionModel = supervisionService.updateConformsToPermit(supervisionId, supervision.getConformsToPermit());
+            SupervisionModel supervisionModel = supervisionService.updateConformsToPermit(supervision);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -97,11 +97,11 @@ public class SupervisionController {
     @Operation(summary = "Start supervision, create supervision report")
     @PostMapping(value = "/startsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> startSupervision(@RequestParam Integer supervisionId, @RequestBody SupervisionReportModel report) {
+    public ResponseEntity<?> startSupervision(@RequestBody SupervisionReportModel report) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "startSupervision");
         try {
             SillariUser user = uiService.getSillariUser();
-            SupervisionModel supervisionModel = supervisionService.startSupervision(supervisionId, report, user);
+            SupervisionModel supervisionModel = supervisionService.startSupervision(report, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -125,11 +125,11 @@ public class SupervisionController {
     @Operation(summary = "Deny crossing")
     @PostMapping(value = "/denycrossing", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> denyCrossing(@RequestParam Integer supervisionId, @RequestBody SupervisionModel supervision) {
+    public ResponseEntity<?> denyCrossing(@RequestParam Integer supervisionId, @RequestParam String denyReason) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "denyCrossing");
         try {
             SillariUser user = uiService.getSillariUser();
-            SupervisionModel supervisionModel = supervisionService.denyCrossing(supervisionId, supervision, user);
+            SupervisionModel supervisionModel = supervisionService.denyCrossing(supervisionId, denyReason, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
