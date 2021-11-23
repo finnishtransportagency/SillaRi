@@ -10,7 +10,8 @@ import CustomAccordion from "../../components/common/CustomAccordion";
 import PermitAccordionHeading from "../../components/management/PermitAccordionHeading";
 import PermitAccordionPanel from "../../components/management/PermitAccordionPanel";
 import { useTypedSelector } from "../../store/store";
-import { getCompany, onRetry } from "../../utils/managementBackendData";
+import { onRetry } from "../../utils/backendData";
+import { getCompany } from "../../utils/managementBackendData";
 
 interface CompanySummaryProps {
   companyId: string;
@@ -20,7 +21,7 @@ const CompanySummary = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const management = useTypedSelector((state) => state.managementReducer);
+  const management = useTypedSelector((state) => state.rootReducer);
   const {
     networkStatus: { isFailed = {} },
   } = management;

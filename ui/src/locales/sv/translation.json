@@ -110,6 +110,7 @@
     "permitNumber": "(SV) Lupanumero",
     "conformsToPermit": "(SV) Transport conforms to permit",
     "startSupervision": "(SV) Start supervision",
+    "continueSupervision": "(SV) Continue supervision",
     "denyCrossing": "(SV) Transport cannot cross bridge",
     "supervisionMissing": "(SV) Bridge supervision is not yet planned",
     "supervisionStarted": "(SV) Supervision started",

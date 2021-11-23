@@ -12,7 +12,8 @@ import TransportStatusGrid from "../../components/management/TransportStatusGrid
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import { useTypedSelector } from "../../store/store";
-import { getPermitOfRouteTransport, getRouteTransport, onRetry } from "../../utils/managementBackendData";
+import { onRetry } from "../../utils/backendData";
+import { getPermitOfRouteTransport, getRouteTransport } from "../../utils/managementBackendData";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 
 interface TransportProps {
@@ -23,7 +24,7 @@ const Transport = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const management = useTypedSelector((state) => state.managementReducer);
+  const management = useTypedSelector((state) => state.rootReducer);
 
   const {
     networkStatus: { isFailed = {} },

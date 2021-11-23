@@ -5,4 +5,6 @@ export default interface ISupervisionStatus {
   supervisionId: number;
   status: SupervisionStatus;
   time: Date;
+  reason?: string;
+  username: string;
 }

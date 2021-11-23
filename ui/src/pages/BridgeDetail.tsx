@@ -13,7 +13,8 @@ import TrafficSupervisorsAccordion from "../components/TrafficSupervisorsAccordi
 import IPermit from "../interfaces/IPermit";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
-import { getSupervision, onRetry, updateConformsToPermit } from "../utils/supervisionBackendData";
+import { onRetry } from "../utils/backendData";
+import { getSupervision, updateConformsToPermit } from "../utils/supervisionBackendData";
 
 interface BridgeDetailProps {
   supervisionId: string;
@@ -27,7 +28,7 @@ const BridgeDetail = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.supervisionReducer);
+  } = useTypedSelector((state) => state.rootReducer);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],

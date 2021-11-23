@@ -22,9 +22,10 @@ import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import file from "../theme/icons/file.svg";
-import { denyCrossing, getSupervision, onRetry } from "../utils/supervisionBackendData";
-import ISupervision from "../interfaces/ISupervision";
+import { onRetry } from "../utils/backendData";
+import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
 import { SupervisionStatus } from "../utils/constants";
+import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 
 interface DenyCrossingProps {
   supervisionId: string;
@@ -40,7 +41,7 @@ const DenyCrossing = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.supervisionReducer);
+  } = useTypedSelector((state) => state.rootReducer);
 
   const [denyReason, setDenyReason] = useState<string | undefined>(undefined);
   const [otherReasonSelected, setOtherReasonSelected] = useState<boolean>(false);
@@ -56,7 +57,7 @@ const DenyCrossing = (): JSX.Element => {
     { retry: onRetry }
   );
 
-  const denyCrossingMutation = useMutation((supervisionInput: ISupervision) => denyCrossing(supervisionInput, dispatch), {
+  const denyCrossingMutation = useMutation((denyCrossingInput: IDenyCrossingInput) => denyCrossing(denyCrossingInput, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       // Update "getSupervision" query to return the updated data
@@ -93,18 +94,9 @@ const DenyCrossing = (): JSX.Element => {
   };
 
   const denyCrossingClicked = () => {
-    if (supervision) {
-      const { routeBridgeId, routeTransportId, plannedTime, supervisorType, conformsToPermit } = supervision;
-      const updatedSupervision: ISupervision = {
-        id: Number(supervisionId),
-        routeBridgeId,
-        routeTransportId,
-        plannedTime,
-        conformsToPermit,
-        supervisorType,
-        denyCrossingReason: denyReason,
-      };
-      denyCrossingMutation.mutate(updatedSupervision);
+    if (denyReason) {
+      const denyCrossingInput: IDenyCrossingInput = { supervisionId: Number(supervisionId), denyReason: denyReason };
+      denyCrossingMutation.mutate(denyCrossingInput);
     }
   };
 
@@ -171,7 +163,7 @@ const DenyCrossing = (): JSX.Element => {
                     color="primary"
                     expand="block"
                     size="large"
-                    disabled={isLoadingSupervision || isSendingDenyCrossing || !supervisionPending}
+                    disabled={isLoadingSupervision || isSendingDenyCrossing || !supervisionPending || !denyReason}
                     onClick={() => denyCrossingClicked()}
                   >
                     {t("common.buttons.send")}

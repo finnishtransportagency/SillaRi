@@ -8,7 +8,8 @@ import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import ISupervision from "../../interfaces/ISupervision";
 import close from "../../theme/icons/close.svg";
-import { getRouteTransportsOfPermit, onRetry } from "../../utils/managementBackendData";
+import { onRetry } from "../../utils/backendData";
+import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 import "./RouteGrid.css";
 

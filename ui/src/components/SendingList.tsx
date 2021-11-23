@@ -7,7 +7,8 @@ import moment from "moment";
 import ISupervision from "../interfaces/ISupervision";
 import close from "../theme/icons/close_large_white.svg";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
-import { completeSupervisions, onRetry } from "../utils/supervisionBackendData";
+import { onRetry } from "../utils/backendData";
+import { completeSupervisions } from "../utils/supervisionBackendData";
 
 interface SendingListProps {
   isOpen: boolean;
