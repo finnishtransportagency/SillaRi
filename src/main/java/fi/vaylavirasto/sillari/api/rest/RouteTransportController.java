@@ -85,6 +85,8 @@ public class RouteTransportController {
     public ResponseEntity<?> createRouteTransport(@RequestBody RouteTransportModel routeTransport) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "createRouteTransport");
         try {
+            SillariUser user = uiService.getSillariUser();
+
             // TODO - restrict this method to transport company admin users only
             RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
@@ -95,7 +97,7 @@ public class RouteTransportController {
                     if (supervisionModel.getId() != null && supervisionModel.getId() > 0) {
                         supervisionService.updateSupervision(supervisionModel);
                     } else {
-                        supervisionService.createSupervision(supervisionModel);
+                        supervisionService.createSupervision(supervisionModel, user);
                     }
                 });
             }
@@ -117,6 +119,8 @@ public class RouteTransportController {
     public ResponseEntity<?> updateRouteTransport(@RequestBody RouteTransportModel routeTransport) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "updateRouteTransport");
         try {
+            SillariUser user = uiService.getSillariUser();
+
             // TODO - restrict this method to transport company admin users only
             RouteTransportModel updatedTransportModel = routeTransportService.updateRouteTransport(routeTransport);
 
@@ -125,7 +129,7 @@ public class RouteTransportController {
                     if (supervisionModel.getId() != null && supervisionModel.getId() > 0) {
                         supervisionService.updateSupervision(supervisionModel);
                     } else {
-                        supervisionService.createSupervision(supervisionModel);
+                        supervisionService.createSupervision(supervisionModel, user);
                     }
                 });
             }

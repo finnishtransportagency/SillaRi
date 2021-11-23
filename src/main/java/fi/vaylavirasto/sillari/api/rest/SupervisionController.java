@@ -87,7 +87,7 @@ public class SupervisionController {
     public ResponseEntity<?> updateConformsToPermit(@RequestBody SupervisionModel supervision) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateConformsToPermit");
         try {
-            SupervisionModel supervisionModel = supervisionService.updateConformsToPermit(supervision.getId(), supervision.getConformsToPermit());
+            SupervisionModel supervisionModel = supervisionService.updateConformsToPermit(supervision);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -100,7 +100,8 @@ public class SupervisionController {
     public ResponseEntity<?> startSupervision(@RequestBody SupervisionReportModel report) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "startSupervision");
         try {
-            SupervisionModel supervisionModel = supervisionService.startSupervision(report);
+            SillariUser user = uiService.getSillariUser();
+            SupervisionModel supervisionModel = supervisionService.startSupervision(report, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -113,7 +114,8 @@ public class SupervisionController {
     public ResponseEntity<?> cancelSupervision(@RequestParam Integer supervisionId) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "cancelSupervision");
         try {
-            SupervisionModel supervisionModel = supervisionService.cancelSupervision(supervisionId);
+            SillariUser user = uiService.getSillariUser();
+            SupervisionModel supervisionModel = supervisionService.cancelSupervision(supervisionId, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -123,10 +125,11 @@ public class SupervisionController {
     @Operation(summary = "Deny crossing")
     @PostMapping(value = "/denycrossing", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> denyCrossing(@RequestBody SupervisionModel supervision) {
+    public ResponseEntity<?> denyCrossing(@RequestParam Integer supervisionId, @RequestParam String denyReason) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "denyCrossing");
         try {
-            SupervisionModel supervisionModel = supervisionService.denyCrossing(supervision);
+            SillariUser user = uiService.getSillariUser();
+            SupervisionModel supervisionModel = supervisionService.denyCrossing(supervisionId, denyReason, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -139,7 +142,8 @@ public class SupervisionController {
     public ResponseEntity<?> finishSupervision(@RequestParam Integer supervisionId) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "finishSupervision");
         try {
-            SupervisionModel supervisionModel = supervisionService.finishSupervision(supervisionId);
+            SillariUser user = uiService.getSillariUser();
+            SupervisionModel supervisionModel = supervisionService.finishSupervision(supervisionId, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -152,9 +156,11 @@ public class SupervisionController {
     public ResponseEntity<?> completeSupervisions(@RequestParam List<Integer> supervisionIds) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "completeSupervisions");
         try {
+            SillariUser user = uiService.getSillariUser();
+
             if (supervisionIds != null && !supervisionIds.isEmpty()) {
                 supervisionIds.forEach(supervisionId -> {
-                    supervisionService.completeSupervision(supervisionId);
+                    supervisionService.completeSupervision(supervisionId, user);
                 });
             }
 

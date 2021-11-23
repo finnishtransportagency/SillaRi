@@ -3,6 +3,8 @@ export const TIME_FORMAT_MIN = "HH:mm";
 export const DATE_TIME_FORMAT = "DD.MM.YYYY HH:mm:ss";
 export const DATE_TIME_FORMAT_MIN = "DD.MM.YYYY HH:mm";
 
+export const NETWORK_RESPONSE_NOT_OK = "Network response was not ok";
+
 export enum SupervisionStatus {
   PLANNED = "PLANNED",
   IN_PROGRESS = "IN_PROGRESS",

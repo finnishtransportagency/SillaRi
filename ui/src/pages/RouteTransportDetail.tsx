@@ -11,7 +11,8 @@ import PermitTransportAccordion from "../components/PermitTransportAccordion";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import { useTypedSelector } from "../store/store";
-import { getRouteTransportOfSupervisor, onRetry } from "../utils/supervisionBackendData";
+import { onRetry } from "../utils/backendData";
+import { getRouteTransportOfSupervisor } from "../utils/supervisionBackendData";
 import BridgeCardList from "../components/BridgeCardList";
 import { filterFinishedSupervisions } from "../utils/supervisionUtil";
 import ISupervision from "../interfaces/ISupervision";
@@ -25,7 +26,7 @@ const RouteTransportDetail = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.supervisionReducer);
+  } = useTypedSelector((state) => state.rootReducer);
 
   const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
   const [supervisions, setSupervisions] = useState<ISupervision[]>([]);
