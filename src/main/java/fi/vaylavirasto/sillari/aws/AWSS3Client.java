@@ -23,14 +23,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
-import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class AWSS3Client {
     private static final Logger logger = LogManager.getLogger();
     private AmazonS3 s3Client=null;
-    private static final String bucketName = "sillari-photos";
+    public static final String SILLARI_PHOTOS_BUCKET = "sillari-photos";
+    public static final String SILLARI_PERMIT_PDF_BUCKET = "sillari-permits";
     private final String roleArn;
     private String accessKey;
     private String secretKey;
@@ -90,13 +90,13 @@ public class AWSS3Client {
         }
     }
 
-    public boolean upload(String key, byte photo[], long length, String contenttype) {
+    public boolean upload(String key, byte[] bytes, String contenttype, String bucketName) {
         try {
             init();
-            ByteArrayInputStream byteInputStream = new ByteArrayInputStream(photo);
+            ByteArrayInputStream byteInputStream = new ByteArrayInputStream(bytes);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contenttype);
-            metadata.setContentLength(length);
+            metadata.setContentLength(bytes.length);
             PutObjectRequest request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
             s3Client.putObject(request);
         } catch(Exception e) {
@@ -105,7 +105,7 @@ public class AWSS3Client {
         return false;
     }
 
-    public byte[] download(String objectKey) {
+    public byte[] download(String objectKey, String bucketName) {
         try {
             init();
             GetObjectRequest request = new GetObjectRequest(bucketName, objectKey);
@@ -117,7 +117,7 @@ public class AWSS3Client {
         return null;
     }
 
-    public void delete(String objectKey) {
+    public void delete(String objectKey, String bucketName) {
         try {
             init();
             DeleteObjectRequest request = new DeleteObjectRequest(bucketName, objectKey);
@@ -126,4 +126,6 @@ public class AWSS3Client {
             logger.error(e);
         }
     }
+
+
 }

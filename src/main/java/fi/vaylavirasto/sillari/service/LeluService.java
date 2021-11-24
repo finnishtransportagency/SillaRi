@@ -11,18 +11,23 @@ import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseD
 import fi.vaylavirasto.sillari.api.rest.error.LeluPermitNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
+import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -41,9 +46,14 @@ public class LeluService {
     private SupervisionRepository supervisionRepository;
     private final MessageSource messageSource;
     private LeluRouteUploadUtil leluRouteUploadUtil;
+    private AWSS3Client awss3Client;
+
+    @Value("${spring.profiles.active:Unknown}")
+    private String activeProfile;
+
 
     @Autowired
-    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client
     ) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
@@ -258,11 +268,26 @@ public class LeluService {
         if(permitId == null){
             throw new LeluPermitNotFoundException();
         }
-        String objectKey = permitNumber + permitVersion;
-
+        String objectKey = "permitPdf/" + permitNumber + "_" + permitVersion + "/" + file.getOriginalFilename();
 
 
         permitRepository.updatePermitPdf(permitId, objectKey);
+        if (activeProfile.equals("local")) {
+            // Save to local file system
+            File outputFile = new File("/",objectKey);
+            try {
+                Files.write(outputFile.toPath(), file.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Upload to AWS
+            try {
+                awss3Client.upload(objectKey, file.getBytes(),"application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         return new LeluPermiPdfResponseDTO();
     }

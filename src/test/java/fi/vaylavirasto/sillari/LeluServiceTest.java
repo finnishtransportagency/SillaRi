@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari;
 
 import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.lelu.permit.*;
+import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.LeluRouteUploadUtil;
@@ -58,6 +59,9 @@ public class LeluServiceTest {
     @Autowired
     private LeluRouteUploadUtil leluRouteUploadUtil;
 
+    @Autowired
+    private AWSS3Client awss3Client;
+
 
     @Captor
     ArgumentCaptor<PermitModel> permitModelCaptor;
@@ -65,7 +69,7 @@ public class LeluServiceTest {
     ArgumentCaptor<List<Integer>> routeIdsToDeleteCaptor;
 
     @InjectMocks
-    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository, messageSource, leluRouteUploadUtil);
+    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository, messageSource, leluRouteUploadUtil, awss3Client);
 
     @Test
     public void testCreatePermitWithExistingCompany() {
