@@ -7,7 +7,8 @@ import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText, useIonAlert } fro
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
 import arrowLeft from "../../theme/icons/arrow-left.svg";
-import { changeRouteTransportStatus, onRetry } from "../../utils/managementBackendData";
+import { onRetry } from "../../utils/backendData";
+import { changeRouteTransportStatus } from "../../utils/managementBackendData";
 import { TransportStatus } from "../../utils/constants";
 import "./TransportStatusGrid.css";
 
