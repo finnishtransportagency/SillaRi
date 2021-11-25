@@ -16,12 +16,11 @@ public class BridgeService {
 
     public void createOrUpdateBridge(BridgeModel bridge) {
         BridgeModel oldBridge = bridgeRepository.getBridge(bridge.getOid());
-        if(oldBridge != null){
+        if (oldBridge != null) {
             bridge.setId(oldBridge.getId());
             bridgeRepository.updateBridge(bridge);
             logger.debug("updatedBridge");
-        }
-        else{
+        } else {
             bridgeRepository.createBridge(bridge);
             logger.debug("createdBridge");
         }

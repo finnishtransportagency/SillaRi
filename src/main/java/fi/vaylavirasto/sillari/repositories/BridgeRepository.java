@@ -19,6 +19,7 @@ public class BridgeRepository {
     private DSLContext dsl;
 
     private static final Logger logger = LogManager.getLogger();
+    private static final int WKID = 3067; // Spatial reference id
 
     public String getBridgeGeoJson(Integer id) {
         // In ST_AsGeoJSON(geom, 0, 2), the '0' means decimal places, the '2' means the option to include the short CRS (EPSG:3067)
@@ -42,13 +43,13 @@ public class BridgeRepository {
 
     public void updateBridgeGeom(Integer id, Integer x, Integer y) {
         dsl.transaction(configuration -> {
-                    DSLContext ctx = DSL.using(configuration);
-                    Field<String> geojsonField = DSL.field("ST_GeomFromText('POINT("+x+" "+y+")', 3067)", String.class);
-                    ctx.update(TableAlias.bridge)
-                            .set(TableAlias.bridge.GEOM, geojsonField)
-                            .where(TableAlias.bridge.ID.eq(id))
-                            .execute();
-                });
+            DSLContext ctx = DSL.using(configuration);
+            Field<String> geojsonField = DSL.field("ST_GeomFromText('POINT(" + x + " " + y + ")', " + WKID + ")", String.class);
+            ctx.update(TableAlias.bridge)
+                    .set(TableAlias.bridge.GEOM, geojsonField)
+                    .where(TableAlias.bridge.ID.eq(id))
+                    .execute();
+        });
     }
 
 
@@ -59,11 +60,10 @@ public class BridgeRepository {
     }
 
 
-
     public Integer createBridge(BridgeModel bridge) {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
-            Field<String> geojsonField = DSL.field("ST_GeomFromText('POINT("+bridge.getX()+" "+bridge.getY()+")', 3067)", String.class);
+            Field<String> geojsonField = DSL.field("ST_GeomFromText('POINT(" + bridge.getCoordinates().getX() + " " + bridge.getCoordinates().getY() + ")', " + WKID + ")", String.class);
             Record1<Integer> bridgeIdResult = ctx.insertInto(TableAlias.bridge,
                             TableAlias.bridge.OID,
                             TableAlias.bridge.IDENTIFIER,
@@ -71,15 +71,15 @@ public class BridgeRepository {
                             TableAlias.bridge.NAME,
                             TableAlias.bridge.ROAD_ADDRESS,
                             TableAlias.bridge.STATUS,
-                    TableAlias.bridge.GEOM
+                            TableAlias.bridge.GEOM
                     ).values(
                             bridge.getOid(),
                             bridge.getIdentifier(),
-                    bridge.getMunicipality(),
-                    bridge.getName(),
-                    bridge.getRoadAddress(),
-                    bridge.getStatus(),
-                    geojsonField)
+                            bridge.getMunicipality(),
+                            bridge.getName(),
+                            bridge.getRoadAddress(),
+                            bridge.getStatus(),
+                            geojsonField)
 
                     .returningResult(TableAlias.bridge.ID)
                     .fetchOne(); // Execute and return zero or one record
@@ -95,19 +95,18 @@ public class BridgeRepository {
     public void updateBridge(BridgeModel bridge) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
-            Field<String> geojsonField = DSL.field("ST_GeomFromText('POINT("+bridge.getX()+" "+bridge.getY()+")', 3067)", String.class);
+            Field<String> geojsonField = DSL.field("ST_GeomFromText('POINT(" + bridge.getCoordinates().getX() + " " + bridge.getCoordinates().getY() + ")', " + WKID + ")", String.class);
 
             ctx.update(TableAlias.bridge)
                     .set(TableAlias.bridge.OID, bridge.getOid())
-                    .set(TableAlias.bridge.IDENTIFIER,bridge.getIdentifier())
-                    .set(TableAlias.bridge.MUNICIPALITY,bridge.getMunicipality())
+                    .set(TableAlias.bridge.IDENTIFIER, bridge.getIdentifier())
+                    .set(TableAlias.bridge.MUNICIPALITY, bridge.getMunicipality())
                     .set(TableAlias.bridge.NAME, bridge.getName())
-                    .set(TableAlias.bridge.ROAD_ADDRESS,bridge.getRoadAddress())
-                    .set(TableAlias.bridge.STATUS,bridge.getStatus())
+                    .set(TableAlias.bridge.ROAD_ADDRESS, bridge.getRoadAddress())
+                    .set(TableAlias.bridge.STATUS, bridge.getStatus())
                     .set(TableAlias.bridge.GEOM, geojsonField)
                     .where(TableAlias.bridge.ID.eq(bridge.getId()))
                     .execute();
-
         });
     }
 

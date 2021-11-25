@@ -89,7 +89,7 @@ public class LeluService {
             response.setStatus(LeluPermitStatus.CREATED);
             return response;
         } else {
-            logger.debug("Permit not found with id create new", permitModel.getPermitNumber());
+            logger.debug("Permit not found with id {}, create new", permitModel.getPermitNumber());
 
             // Insert new permit and all child records
             // Missing route addresses (not yet in lelu model)

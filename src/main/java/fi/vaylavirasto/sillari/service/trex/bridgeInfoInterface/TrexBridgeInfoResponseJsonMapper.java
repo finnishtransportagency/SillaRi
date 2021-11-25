@@ -16,25 +16,24 @@ public interface TrexBridgeInfoResponseJsonMapper {
             @Mapping(target="roadAddress", expression = "java(createRoadAddress(dto.getTieosoitteet()))"),
             @Mapping(target="municipality", expression = "java(createMunicipality(dto.getSijaintikunnat()))"),
             @Mapping(target="status", source="dto.tila"),
-            @Mapping(target="x", source="dto.keskipistesijainti.epsg3067.x"),
-            @Mapping(target="y", source="dto.keskipistesijainti.epsg3067.y")
+            @Mapping(target="coordinates.x", source="dto.keskipistesijainti.epsg3067.x"),
+            @Mapping(target="coordinates.y", source="dto.keskipistesijainti.epsg3067.y")
     })
     BridgeModel fromDTOToModel(TrexBridgeInfoResponseJson dto);
 
-    default String createRoadAddress(List<TieosoitteetItem> tieosoitteetItems){
-        var tieosoitteetItem = tieosoitteetItems.get(0);
-        return ""+tieosoitteetItem.getTienumero()+"-"+tieosoitteetItem.getTieosa()+"-"+tieosoitteetItem.getEtaisyys()+"-"+tieosoitteetItem.getAjorata();
+    default String createRoadAddress(List<TieosoitteetItem> tieosoitteetItems) {
+        TieosoitteetItem tieosoitteetItem = tieosoitteetItems.get(0);
+        return "" + tieosoitteetItem.getTienumero() + "-" + tieosoitteetItem.getTieosa() + "-" + tieosoitteetItem.getEtaisyys() + "-" + tieosoitteetItem.getAjorata();
     }
 
     default String createMunicipality(List<SijaintikunnatItem> sijaintikunnatItemList){
-        String municipality ="";
+        StringBuilder municipality = new StringBuilder();
         try {
             for (SijaintikunnatItem k : sijaintikunnatItemList) {
-                municipality += k.getNimi() + " ";
+                municipality.append(k.getNimi()).append(" ");
             }
-        } catch (Exception e){
-
+        } catch (Exception ignored){
         }
-        return municipality.trim();
+        return municipality.toString().trim();
     }
 }

@@ -104,11 +104,11 @@ public class LeluController {
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
     })
     public LeluPermitResponseDTO savePermit(@Valid @RequestBody LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPermitSaveException {
-        //get Bridges From Trex To DB
-        permitDTO.getRoutes().forEach(r->r.getBridges().forEach(b->getBridgeFromTrexToDB(b.getOid())));
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             try {
+                // Get Bridges From Trex To DB
+                permitDTO.getRoutes().forEach(r -> r.getBridges().forEach(b -> getBridgeFromTrexToDB(b.getOid())));
                 //TODO call non dev version when time
                 return leluService.createOrUpdatePermitDevVersion(permitDTO);
             } catch (LeluPermitSaveException leluPermitSaveException) {
@@ -126,23 +126,17 @@ public class LeluController {
 
 
     private void getBridgeFromTrexToDB(String oid) {
-        logger.debug("get bridge " + oid);
+        logger.debug("get bridge {}", oid);
         try {
             BridgeModel bridge = trexService.getBridge(oid);
             bridgeService.createOrUpdateBridge(bridge);
-            logger.debug("bridge inserter or updated: " + bridge);
-
+            logger.debug("bridge inserted or updated: {}", bridge);
         } catch (TRexRestException e) {
-            logger.warn("Trex fail getting bridge " +oid);
-            e.printStackTrace();
+            logger.warn("Trex fail getting bridge: {}", oid, e);
+        } catch (Exception e) {
+            logger.error("Fail getBridgeFromTrexToDB", e);
         }
-        catch (Exception e){
-            logger.error("Fail getBridgeFromTrexToDB " + e.getClass().getName() + " " +e.getMessage());
-            e.printStackTrace();
-        }
-
     }
-
 
 
     @PostMapping(value = "/uploadroutegeometry", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
