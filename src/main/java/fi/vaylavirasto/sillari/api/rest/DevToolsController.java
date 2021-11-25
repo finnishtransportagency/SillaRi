@@ -36,7 +36,6 @@ public class DevToolsController {
     public TrexBridgeInfoResponseJson testConnectionToTrex() throws TRexRestException {
 
         logger.debug("HELLO test connections");
-        String returnString = "";
         TrexBridgeInfoResponseJson b = null;
         try {
             b = tRexService.getBridgeInfo("1.2.246.578.1.15.401830");
@@ -80,264 +79,715 @@ public class DevToolsController {
 
 
     private String trexHardString() {
-        return "{\n" +
-                "  \"tila\": \"kaytossa\",\n" +
-                "  \"janteet\": [\n" +
-                "    {\n" +
-                "      \"numero\": 0,\n" +
-                "      \"rakennetyypit\": [\n" +
-                "        {\n" +
-                "          \"kansimateriaali\": {\n" +
-                "            \"nimi\": \"string\",\n" +
-                "            \"tunnus\": \"string\",\n" +
-                "            \"kuvaus\": \"string\",\n" +
-                "            \"lyhenne\": \"string\"\n" +
-                "          },\n" +
-                "          \"liittyvanJanteenNumero\": 0,\n" +
-                "          \"lyhenne\": \"string\",\n" +
-                "          \"maareet\": [\n" +
-                "            {\n" +
-                "              \"nimi\": \"Eroosio\",\n" +
-                "              \"tunnus\": \"001\",\n" +
-                "              \"erikseen\": true,\n" +
-                "              \"kuvaus\": \"string\",\n" +
-                "              \"avattava\": true,\n" +
-                "              \"lyhenne\": \"string\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"nimi\": \"string\",\n" +
-                "          \"paarakennusmateriaali\": {\n" +
-                "            \"nimi\": \"Eroosio\",\n" +
-                "            \"tunnus\": \"001\",\n" +
-                "            \"adjektiivi\": \"string\",\n" +
-                "            \"kuvaus\": \"string\",\n" +
-                "            \"lyhenne\": \"string\"\n" +
-                "          },\n" +
-                "          \"rakentamistapa\": {\n" +
-                "            \"nimi\": \"string\",\n" +
-                "            \"tunnus\": \"string\",\n" +
-                "            \"kuvaus\": \"string\",\n" +
-                "            \"lyhenne\": \"string\"\n" +
-                "          },\n" +
-                "          \"staattinenRakenne\": {\n" +
-                "            \"nimi\": \"string\",\n" +
-                "            \"tunnus\": \"string\",\n" +
-                "            \"kuvaus\": \"string\",\n" +
-                "            \"lyhenne\": \"string\"\n" +
-                "          }\n" +
-                "        }\n" +
-                "      ],\n" +
-                "      \"jannetyyppi\": {\n" +
-                "        \"nimi\": \"Eroosio\",\n" +
-                "        \"tunnus\": \"001\",\n" +
-                "        \"kuvaus\": \"string\",\n" +
-                "        \"lyhenne\": \"string\"\n" +
-                "      },\n" +
-                "      \"pituus\": {\n" +
-                "        \"arvo\": 0,\n" +
-                "        \"yksikko\": \"pas\",\n" +
-                "        \"kerrannaisyksikko\": \"mega\"\n" +
-                "      },\n" +
-                "      \"kohtisuoraPituus\": {\n" +
-                "        \"arvo\": 0,\n" +
-                "        \"yksikko\": \"pas\",\n" +
-                "        \"kerrannaisyksikko\": \"mega\"\n" +
-                "      },\n" +
-                "      \"vapaaaukko\": {\n" +
-                "        \"mitta\": {\n" +
-                "          \"arvo\": 0,\n" +
-                "          \"yksikko\": \"pas\",\n" +
-                "          \"kerrannaisyksikko\": \"mega\"\n" +
-                "        },\n" +
-                "        \"kohtisuoraMitta\": {\n" +
-                "          \"arvo\": 0,\n" +
-                "          \"yksikko\": \"pas\",\n" +
-                "          \"kerrannaisyksikko\": \"mega\"\n" +
-                "        },\n" +
-                "        \"alikulkukorkeus\": {\n" +
-                "          \"arvo\": 0,\n" +
-                "          \"yksikko\": \"pas\",\n" +
-                "          \"kerrannaisyksikko\": \"mega\"\n" +
-                "        }\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"kulkukorkeudenEste\": \"Ansaan yläpaarre\",\n" +
-                "  \"maaraavanJanteenNumero\": 0,\n" +
-                "  \"merivedenVaikutus\": true,\n" +
-                "  \"kokonaispintaala\": {\n" +
-                "    \"arvo\": 23.4,\n" +
-                "    \"yksikko\": \"neliometri\"\n" +
-                "  },\n" +
-                "  \"hyodyllinenLeveys\": {\n" +
-                "    \"minimi\": {\n" +
-                "      \"arvo\": 7.25,\n" +
-                "      \"yksikko\": \"metri\"\n" +
-                "    },\n" +
-                "    \"maksimi\": {\n" +
-                "      \"arvo\": 7.3,\n" +
-                "      \"yksikko\": \"metri\"\n" +
-                "    }\n" +
-                "  },\n" +
-                "  \"kulkukorkeus\": {\n" +
-                "    \"arvo\": 2.9,\n" +
-                "    \"yksikko\": \"metri\"\n" +
-                "  },\n" +
-                "  \"nykyinenOmistaja\": {\n" +
-                "    \"y-tunnus\": \"12345\",\n" +
-                "    \"nimi\": \"Väylävirasto\"\n" +
-                "  },\n" +
-                "  \"katuosoitteet\": [\n" +
-                "    {\n" +
-                "      \"nimi\": \"string\",\n" +
-                "      \"kunta\": {\n" +
-                "        \"tunnus\": \"285\",\n" +
-                "        \"nimi\": \"Kotka\"\n" +
-                "      },\n" +
-                "      \"sijainti\": \"oletus\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"keskipistesijainti\": {\n" +
-                "    \"epsg-3067\": {\n" +
-                "      \"x\": 222275,\n" +
-                "      \"y\": 7020592\n" +
-                "    },\n" +
-                "    \"epsg-4326\": {\n" +
-                "      \"lat\": 63.2067184984122,\n" +
-                "      \"lon\": 21.4728801056541\n" +
-                "    },\n" +
-                "    \"tarkkuustaso\": {\n" +
-                "      \"tunnus\": \"002\",\n" +
-                "      \"nimi\": \"GPS-tieto\",\n" +
-                "      \"jarjestysnumero\": 2\n" +
-                "    }\n" +
-                "  },\n" +
-                "  \"kokonaispituus\": {\n" +
-                "    \"arvo\": 22.3,\n" +
-                "    \"yksikko\": \"metri\"\n" +
-                "  },\n" +
-                "  \"ymparistorasitus\": {\n" +
-                "    \"tunnus\": \"18\",\n" +
-                "    \"nimi\": \"Glykoli\"\n" +
-                "  },\n" +
-                "  \"tunnus\": \"H-12\",\n" +
-                "  \"rataosoitteet\": [\n" +
-                "    {\n" +
-                "      \"ratanumero\": \"string\",\n" +
-                "      \"ratakilometri\": 0,\n" +
-                "      \"etaisyys\": 0,\n" +
-                "      \"sijaintiraide\": \"string\",\n" +
-                "      \"nimi\": \"string\",\n" +
-                "      \"sijainti\": \"oletus\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"vaylanpito\": {\n" +
-                "    \"tunnus\": \"TIE\",\n" +
-                "    \"nimi\": \"Tieväylien pito\"\n" +
-                "  },\n" +
-                "  \"sijaintikunnat\": [\n" +
-                "    {\n" +
-                "      \"tunnus\": \"285\",\n" +
-                "      \"nimi\": \"Kotka\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"historiallinenMerkittavyys\": {\n" +
-                "    \"tunnus\": \"12\",\n" +
-                "    \"nimi\": \"Merkittävä\"\n" +
-                "  },\n" +
-                "  \"tieosoitteet\": [\n" +
-                "    {\n" +
-                "      \"tienumero\": 0,\n" +
-                "      \"tieosa\": 0,\n" +
-                "      \"etaisyys\": 0,\n" +
-                "      \"ajorata\": 0,\n" +
-                "      \"nimi\": \"string\",\n" +
-                "      \"sijainti\": \"oletus\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"nimi\": \"Raippaluodon silta\",\n" +
-                "  \"kaareva\": true,\n" +
-                "  \"nykyinenKunnossapitaja\": {\n" +
-                "    \"y-tunnus\": \"12345\",\n" +
-                "    \"nimi\": \"Väylävirasto\"\n" +
-                "  },\n" +
-                "  \"oid\": \"string\",\n" +
-                "  \"vesivaylaosoitteet\": [\n" +
-                "    {\n" +
-                "      \"numero\": 0,\n" +
-                "      \"nimi\": \"string\",\n" +
-                "      \"sijainti\": \"alittava\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"epajatkuvuuskohdat\": [\n" +
-                "    {\n" +
-                "      \"edeltavanJanteenNumero\": 0,\n" +
-                "      \"pituus\": {\n" +
-                "        \"arvo\": 0,\n" +
-                "        \"yksikko\": \"pas\",\n" +
-                "        \"kerrannaisyksikko\": \"mega\"\n" +
-                "      },\n" +
-                "      \"kohtisuoraPituus\": {\n" +
-                "        \"arvo\": 0,\n" +
-                "        \"yksikko\": \"pas\",\n" +
-                "        \"kerrannaisyksikko\": \"mega\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"ajoradanLeveys\": {\n" +
-                "    \"arvo\": 0,\n" +
-                "    \"yksikko\": \"pas\",\n" +
-                "    \"kerrannaisyksikko\": \"mega\"\n" +
-                "  },\n" +
-                "  \"paivitetty\": \"2018-10-01\",\n" +
-                "  \"kayttotarkoitukset\": [\n" +
-                "    {\n" +
-                "      \"tunnus\": \"20\",\n" +
-                "      \"nimi\": \"Raittisilta\",\n" +
-                "      \"kuvaus\": \"Silta, joka johtaa kevyen-, traktori- yms. liikenteen tai karjan vesistön yli\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"rakennekorkeus\": {\n" +
-                "    \"arvo\": 5.2,\n" +
-                "    \"yksikko\": \"metri\"\n" +
-                "  },\n" +
-                "  \"kannenPituus\": {\n" +
-                "    \"arvo\": 21.7,\n" +
-                "    \"yksikko\": \"metri\"\n" +
-                "  },\n" +
-                "  \"rakenneluokka\": {\n" +
-                "    \"tunnus\": \"S\",\n" +
-                "    \"nimi\": \"Silta\"\n" +
-                "  },\n" +
-                "  \"sijaintisuunta\": {\n" +
-                "    \"tunnus\": \"N\"\n" +
-                "  },\n" +
-                "  \"levennysvuosi\": 2001,\n" +
-                "  \"kokonaisleveys\": {\n" +
-                "    \"minimi\": {\n" +
-                "      \"arvo\": 6.15,\n" +
-                "      \"yksikko\": \"metri\"\n" +
-                "    },\n" +
-                "    \"maksimi\": {\n" +
-                "      \"arvo\": 6.2,\n" +
-                "      \"yksikko\": \"metri\"\n" +
-                "    }\n" +
-                "  },\n" +
-                "  \"kannenPintaala\": {\n" +
-                "    \"arvo\": 62.25,\n" +
-                "    \"yksikko\": \"neliometri\"\n" +
-                "  },\n" +
-                "  \"tienLeveys\": {\n" +
-                "    \"arvo\": 0,\n" +
-                "    \"yksikko\": \"pas\",\n" +
-                "    \"kerrannaisyksikko\": \"mega\"\n" +
-                "  },\n" +
-                "  \"levennys\": {\n" +
-                "    \"arvo\": 0,\n" +
-                "    \"yksikko\": \"pas\",\n" +
-                "    \"kerrannaisyksikko\": \"mega\"\n" +
-                "  },\n" +
-                "  \"valmistumisvuosi\": 0\n" +
+        return "{" +
+                "    \"tila\": \"kaytossa\"," +
+                "    \"janteet\": [{" +
+                "            \"numero\": 1," +
+                "            \"rakennetyypit\": [{" +
+                "                    \"kansimateriaali\": {" +
+                "                        \"nimi\": \"Teräsbetonikantinen, liittorakenteinen\"," +
+                "                        \"tunnus\": \"3\"," +
+                "                        \"lyhenne\": \"bl\"" +
+                "                    }," +
+                "                    \"lyhenne\": \"Tvksbl\"," +
+                "                    \"maareet\": [{" +
+                "                            \"nimi\": \"vino\"," +
+                "                            \"tunnus\": \"31\"," +
+                "                            \"erikseen\": false," +
+                "                            \"avattava\": false," +
+                "                            \"lyhenne\": \"v\"" +
+                "                        }" +
+                "                    ]," +
+                "                    \"nimi\": \"Teräksinen vinoköysi, teräsbetonikantinen, liittorakenteinen\"," +
+                "                    \"paarakennusmateriaali\": {" +
+                "                        \"nimi\": \"Teräs\"," +
+                "                        \"tunnus\": \"13\"," +
+                "                        \"adjektiivi\": \"Teräksinen\"," +
+                "                        \"lyhenne\": \"T\"" +
+                "                    }," +
+                "                    \"staattinenRakenne\": {" +
+                "                        \"nimi\": \"köysi\"," +
+                "                        \"tunnus\": \"24\"," +
+                "                        \"lyhenne\": \"ks\"" +
+                "                    }" +
+                "                }" +
+                "            ]," +
+                "            \"jannetyyppi\": {" +
+                "                \"nimi\": \"Tavallinen\"," +
+                "                \"tunnus\": \"11\"" +
+                "            }," +
+                "            \"pituus\": {" +
+                "                \"arvo\": 60," +
+                "                \"yksikko\": \"metri\"" +
+                "            }," +
+                "            \"vapaaaukko\": {" +
+                "                \"mitta\": {" +
+                "                    \"arvo\": 39," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }," +
+                "                \"alikulkukorkeus\": {" +
+                "                    \"arvo\": 10.5," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }" +
+                "            }" +
+                "        }, {" +
+                "            \"numero\": 2," +
+                "            \"rakennetyypit\": [{" +
+                "                    \"kansimateriaali\": {" +
+                "                        \"nimi\": \"Teräsbetonikantinen, liittorakenteinen\"," +
+                "                        \"tunnus\": \"3\"," +
+                "                        \"lyhenne\": \"bl\"" +
+                "                    }," +
+                "                    \"lyhenne\": \"Tvksbl\"," +
+                "                    \"maareet\": [{" +
+                "                            \"nimi\": \"vino\"," +
+                "                            \"tunnus\": \"31\"," +
+                "                            \"erikseen\": false," +
+                "                            \"avattava\": false," +
+                "                            \"lyhenne\": \"v\"" +
+                "                        }" +
+                "                    ]," +
+                "                    \"nimi\": \"Teräksinen vinoköysi, teräsbetonikantinen, liittorakenteinen\"," +
+                "                    \"paarakennusmateriaali\": {" +
+                "                        \"nimi\": \"Teräs\"," +
+                "                        \"tunnus\": \"13\"," +
+                "                        \"adjektiivi\": \"Teräksinen\"," +
+                "                        \"lyhenne\": \"T\"" +
+                "                    }," +
+                "                    \"staattinenRakenne\": {" +
+                "                        \"nimi\": \"köysi\"," +
+                "                        \"tunnus\": \"24\"," +
+                "                        \"lyhenne\": \"ks\"" +
+                "                    }" +
+                "                }" +
+                "            ]," +
+                "            \"jannetyyppi\": {" +
+                "                \"nimi\": \"Tavallinen\"," +
+                "                \"tunnus\": \"11\"" +
+                "            }," +
+                "            \"pituus\": {" +
+                "                \"arvo\": 65," +
+                "                \"yksikko\": \"metri\"" +
+                "            }," +
+                "            \"vapaaaukko\": {" +
+                "                \"mitta\": {" +
+                "                    \"arvo\": 63," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }," +
+                "                \"alikulkukorkeus\": {" +
+                "                    \"arvo\": 11.4," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }" +
+                "            }" +
+                "        }, {" +
+                "            \"numero\": 3," +
+                "            \"rakennetyypit\": [{" +
+                "                    \"kansimateriaali\": {" +
+                "                        \"nimi\": \"Teräsbetonikantinen, liittorakenteinen\"," +
+                "                        \"tunnus\": \"3\"," +
+                "                        \"lyhenne\": \"bl\"" +
+                "                    }," +
+                "                    \"lyhenne\": \"Tvksbl\"," +
+                "                    \"maareet\": [{" +
+                "                            \"nimi\": \"vino\"," +
+                "                            \"tunnus\": \"31\"," +
+                "                            \"erikseen\": false," +
+                "                            \"avattava\": false," +
+                "                            \"lyhenne\": \"v\"" +
+                "                        }" +
+                "                    ]," +
+                "                    \"nimi\": \"Teräksinen vinoköysi, teräsbetonikantinen, liittorakenteinen\"," +
+                "                    \"paarakennusmateriaali\": {" +
+                "                        \"nimi\": \"Teräs\"," +
+                "                        \"tunnus\": \"13\"," +
+                "                        \"adjektiivi\": \"Teräksinen\"," +
+                "                        \"lyhenne\": \"T\"" +
+                "                    }," +
+                "                    \"staattinenRakenne\": {" +
+                "                        \"nimi\": \"köysi\"," +
+                "                        \"tunnus\": \"24\"," +
+                "                        \"lyhenne\": \"ks\"" +
+                "                    }" +
+                "                }" +
+                "            ]," +
+                "            \"jannetyyppi\": {" +
+                "                \"nimi\": \"Tavallinen\"," +
+                "                \"tunnus\": \"11\"" +
+                "            }," +
+                "            \"pituus\": {" +
+                "                \"arvo\": 70," +
+                "                \"yksikko\": \"metri\"" +
+                "            }," +
+                "            \"vapaaaukko\": {" +
+                "                \"mitta\": {" +
+                "                    \"arvo\": 68," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }," +
+                "                \"alikulkukorkeus\": {" +
+                "                    \"arvo\": 14.2," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }" +
+                "            }" +
+                "        }, {" +
+                "            \"numero\": 4," +
+                "            \"rakennetyypit\": [{" +
+                "                    \"kansimateriaali\": {" +
+                "                        \"nimi\": \"Teräsbetonikantinen, liittorakenteinen\"," +
+                "                        \"tunnus\": \"3\"," +
+                "                        \"lyhenne\": \"bl\"" +
+                "                    }," +
+                "                    \"lyhenne\": \"Tvksbl\"," +
+                "                    \"maareet\": [{" +
+                "                            \"nimi\": \"vino\"," +
+                "                            \"tunnus\": \"31\"," +
+                "                            \"erikseen\": false," +
+                "                            \"avattava\": false," +
+                "                            \"lyhenne\": \"v\"" +
+                "                        }" +
+                "                    ]," +
+                "                    \"nimi\": \"Teräksinen vinoköysi, teräsbetonikantinen, liittorakenteinen\"," +
+                "                    \"paarakennusmateriaali\": {" +
+                "                        \"nimi\": \"Teräs\"," +
+                "                        \"tunnus\": \"13\"," +
+                "                        \"adjektiivi\": \"Teräksinen\"," +
+                "                        \"lyhenne\": \"T\"" +
+                "                    }," +
+                "                    \"staattinenRakenne\": {" +
+                "                        \"nimi\": \"köysi\"," +
+                "                        \"tunnus\": \"24\"," +
+                "                        \"lyhenne\": \"ks\"" +
+                "                    }" +
+                "                }" +
+                "            ]," +
+                "            \"jannetyyppi\": {" +
+                "                \"nimi\": \"Tavallinen\"," +
+                "                \"tunnus\": \"11\"" +
+                "            }," +
+                "            \"pituus\": {" +
+                "                \"arvo\": 75," +
+                "                \"yksikko\": \"metri\"" +
+                "            }," +
+                "            \"vapaaaukko\": {" +
+                "                \"mitta\": {" +
+                "                    \"arvo\": 73," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }," +
+                "                \"alikulkukorkeus\": {" +
+                "                    \"arvo\": 17.2," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }" +
+                "            }" +
+                "        }, {" +
+                "            \"numero\": 5," +
+                "            \"rakennetyypit\": [{" +
+                "                    \"kansimateriaali\": {" +
+                "                        \"nimi\": \"Teräsbetonikantinen, liittorakenteinen\"," +
+                "                        \"tunnus\": \"3\"," +
+                "                        \"lyhenne\": \"bl\"" +
+                "                    }," +
+                "                    \"lyhenne\": \"Tvksbl\"," +
+                "                    \"maareet\": [{" +
+                "                            \"nimi\": \"vino\"," +
+                "                            \"tunnus\": \"31\"," +
+                "                            \"erikseen\": false," +
+                "                            \"avattava\": false," +
+                "                            \"lyhenne\": \"v\"" +
+                "                        }" +
+                "                    ]," +
+                "                    \"nimi\": \"Teräksinen vinoköysi, teräsbetonikantinen, liittorakenteinen\"," +
+                "                    \"paarakennusmateriaali\": {" +
+                "                        \"nimi\": \"Teräs\"," +
+                "                        \"tunnus\": \"13\"," +
+                "                        \"adjektiivi\": \"Teräksinen\"," +
+                "                        \"lyhenne\": \"T\"" +
+                "                    }," +
+                "                    \"staattinenRakenne\": {" +
+                "                        \"nimi\": \"köysi\"," +
+                "                        \"tunnus\": \"24\"," +
+                "                        \"lyhenne\": \"ks\"" +
+                "                    }" +
+                "                }" +
+                "            ]," +
+                "            \"jannetyyppi\": {" +
+                "                \"nimi\": \"Tavallinen\"," +
+                "                \"tunnus\": \"11\"" +
+                "            }," +
+                "            \"pituus\": {" +
+                "                \"arvo\": 95," +
+                "                \"yksikko\": \"metri\"" +
+                "            }," +
+                "            \"vapaaaukko\": {" +
+                "                \"mitta\": {" +
+                "                    \"arvo\": 92," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }," +
+                "                \"alikulkukorkeus\": {" +
+                "                    \"arvo\": 20.3," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }" +
+                "            }" +
+                "        }, {" +
+                "            \"numero\": 6," +
+                "            \"rakennetyypit\": [{" +
+                "                    \"kansimateriaali\": {" +
+                "                        \"nimi\": \"Teräsbetonikantinen, liittorakenteinen\"," +
+                "                        \"tunnus\": \"3\"," +
+                "                        \"lyhenne\": \"bl\"" +
+                "                    }," +
+                "                    \"lyhenne\": \"Tvksbl\"," +
+                "                    \"maareet\": [{" +
+                "                            \"nimi\": \"vino\"," +
+                "                            \"tunnus\": \"31\"," +
+                "                            \"erikseen\": false," +
+                "                            \"avattava\": false," +
+                "                            \"lyhenne\": \"v\"" +
+                "                        }" +
+                "                    ]," +
+                "                    \"nimi\": \"Teräksinen vinoköysi, teräsbetonikantinen, liittorakenteinen\"," +
+                "                    \"paarakennusmateriaali\": {" +
+                "                        \"nimi\": \"Teräs\"," +
+                "                        \"tunnus\": \"13\"," +
+                "                        \"adjektiivi\": \"Teräksinen\"," +
+                "                        \"lyhenne\": \"T\"" +
+                "                    }," +
+                "                    \"staattinenRakenne\": {" +
+                "                        \"nimi\": \"köysi\"," +
+                "                        \"tunnus\": \"24\"," +
+                "                        \"lyhenne\": \"ks\"" +
+                "                    }" +
+                "                }" +
+                "            ]," +
+                "            \"jannetyyppi\": {" +
+                "                \"nimi\": \"Tavallinen\"," +
+                "                \"tunnus\": \"11\"" +
+                "            }," +
+                "            \"pituus\": {" +
+                "                \"arvo\": 250," +
+                "                \"yksikko\": \"metri\"" +
+                "            }," +
+                "            \"vapaaaukko\": {" +
+                "                \"mitta\": {" +
+                "                    \"arvo\": 246," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }," +
+                "                \"alikulkukorkeus\": {" +
+                "                    \"arvo\": 26," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }" +
+                "            }" +
+                "        }, {" +
+                "            \"numero\": 7," +
+                "            \"rakennetyypit\": [{" +
+                "                    \"kansimateriaali\": {" +
+                "                        \"nimi\": \"Teräsbetonikantinen, liittorakenteinen\"," +
+                "                        \"tunnus\": \"3\"," +
+                "                        \"lyhenne\": \"bl\"" +
+                "                    }," +
+                "                    \"lyhenne\": \"Tvksbl\"," +
+                "                    \"maareet\": [{" +
+                "                            \"nimi\": \"vino\"," +
+                "                            \"tunnus\": \"31\"," +
+                "                            \"erikseen\": false," +
+                "                            \"avattava\": false," +
+                "                            \"lyhenne\": \"v\"" +
+                "                        }" +
+                "                    ]," +
+                "                    \"nimi\": \"Teräksinen vinoköysi, teräsbetonikantinen, liittorakenteinen\"," +
+                "                    \"paarakennusmateriaali\": {" +
+                "                        \"nimi\": \"Teräs\"," +
+                "                        \"tunnus\": \"13\"," +
+                "                        \"adjektiivi\": \"Teräksinen\"," +
+                "                        \"lyhenne\": \"T\"" +
+                "                    }," +
+                "                    \"staattinenRakenne\": {" +
+                "                        \"nimi\": \"köysi\"," +
+                "                        \"tunnus\": \"24\"," +
+                "                        \"lyhenne\": \"ks\"" +
+                "                    }" +
+                "                }" +
+                "            ]," +
+                "            \"jannetyyppi\": {" +
+                "                \"nimi\": \"Tavallinen\"," +
+                "                \"tunnus\": \"11\"" +
+                "            }," +
+                "            \"pituus\": {" +
+                "                \"arvo\": 95," +
+                "                \"yksikko\": \"metri\"" +
+                "            }," +
+                "            \"vapaaaukko\": {" +
+                "                \"mitta\": {" +
+                "                    \"arvo\": 92," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }," +
+                "                \"alikulkukorkeus\": {" +
+                "                    \"arvo\": 20.2," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }" +
+                "            }" +
+                "        }, {" +
+                "            \"numero\": 8," +
+                "            \"rakennetyypit\": [{" +
+                "                    \"kansimateriaali\": {" +
+                "                        \"nimi\": \"Teräsbetonikantinen, liittorakenteinen\"," +
+                "                        \"tunnus\": \"3\"," +
+                "                        \"lyhenne\": \"bl\"" +
+                "                    }," +
+                "                    \"lyhenne\": \"Tvksbl\"," +
+                "                    \"maareet\": [{" +
+                "                            \"nimi\": \"vino\"," +
+                "                            \"tunnus\": \"31\"," +
+                "                            \"erikseen\": false," +
+                "                            \"avattava\": false," +
+                "                            \"lyhenne\": \"v\"" +
+                "                        }" +
+                "                    ]," +
+                "                    \"nimi\": \"Teräksinen vinoköysi, teräsbetonikantinen, liittorakenteinen\"," +
+                "                    \"paarakennusmateriaali\": {" +
+                "                        \"nimi\": \"Teräs\"," +
+                "                        \"tunnus\": \"13\"," +
+                "                        \"adjektiivi\": \"Teräksinen\"," +
+                "                        \"lyhenne\": \"T\"" +
+                "                    }," +
+                "                    \"staattinenRakenne\": {" +
+                "                        \"nimi\": \"köysi\"," +
+                "                        \"tunnus\": \"24\"," +
+                "                        \"lyhenne\": \"ks\"" +
+                "                    }" +
+                "                }" +
+                "            ]," +
+                "            \"jannetyyppi\": {" +
+                "                \"nimi\": \"Tavallinen\"," +
+                "                \"tunnus\": \"11\"" +
+                "            }," +
+                "            \"pituus\": {" +
+                "                \"arvo\": 75," +
+                "                \"yksikko\": \"metri\"" +
+                "            }," +
+                "            \"vapaaaukko\": {" +
+                "                \"mitta\": {" +
+                "                    \"arvo\": 73," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }," +
+                "                \"alikulkukorkeus\": {" +
+                "                    \"arvo\": 17," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }" +
+                "            }" +
+                "        }, {" +
+                "            \"numero\": 9," +
+                "            \"rakennetyypit\": [{" +
+                "                    \"kansimateriaali\": {" +
+                "                        \"nimi\": \"Teräsbetonikantinen, liittorakenteinen\"," +
+                "                        \"tunnus\": \"3\"," +
+                "                        \"lyhenne\": \"bl\"" +
+                "                    }," +
+                "                    \"lyhenne\": \"Tvksbl\"," +
+                "                    \"maareet\": [{" +
+                "                            \"nimi\": \"vino\"," +
+                "                            \"tunnus\": \"31\"," +
+                "                            \"erikseen\": false," +
+                "                            \"avattava\": false," +
+                "                            \"lyhenne\": \"v\"" +
+                "                        }" +
+                "                    ]," +
+                "                    \"nimi\": \"Teräksinen vinoköysi, teräsbetonikantinen, liittorakenteinen\"," +
+                "                    \"paarakennusmateriaali\": {" +
+                "                        \"nimi\": \"Teräs\"," +
+                "                        \"tunnus\": \"13\"," +
+                "                        \"adjektiivi\": \"Teräksinen\"," +
+                "                        \"lyhenne\": \"T\"" +
+                "                    }," +
+                "                    \"staattinenRakenne\": {" +
+                "                        \"nimi\": \"köysi\"," +
+                "                        \"tunnus\": \"24\"," +
+                "                        \"lyhenne\": \"ks\"" +
+                "                    }" +
+                "                }" +
+                "            ]," +
+                "            \"jannetyyppi\": {" +
+                "                \"nimi\": \"Tavallinen\"," +
+                "                \"tunnus\": \"11\"" +
+                "            }," +
+                "            \"pituus\": {" +
+                "                \"arvo\": 70," +
+                "                \"yksikko\": \"metri\"" +
+                "            }," +
+                "            \"vapaaaukko\": {" +
+                "                \"mitta\": {" +
+                "                    \"arvo\": 68," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }," +
+                "                \"alikulkukorkeus\": {" +
+                "                    \"arvo\": 13.6," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }" +
+                "            }" +
+                "        }, {" +
+                "            \"numero\": 10," +
+                "            \"rakennetyypit\": [{" +
+                "                    \"kansimateriaali\": {" +
+                "                        \"nimi\": \"Teräsbetonikantinen, liittorakenteinen\"," +
+                "                        \"tunnus\": \"3\"," +
+                "                        \"lyhenne\": \"bl\"" +
+                "                    }," +
+                "                    \"lyhenne\": \"Tvksbl\"," +
+                "                    \"maareet\": [{" +
+                "                            \"nimi\": \"vino\"," +
+                "                            \"tunnus\": \"31\"," +
+                "                            \"erikseen\": false," +
+                "                            \"avattava\": false," +
+                "                            \"lyhenne\": \"v\"" +
+                "                        }" +
+                "                    ]," +
+                "                    \"nimi\": \"Teräksinen vinoköysi, teräsbetonikantinen, liittorakenteinen\"," +
+                "                    \"paarakennusmateriaali\": {" +
+                "                        \"nimi\": \"Teräs\"," +
+                "                        \"tunnus\": \"13\"," +
+                "                        \"adjektiivi\": \"Teräksinen\"," +
+                "                        \"lyhenne\": \"T\"" +
+                "                    }," +
+                "                    \"staattinenRakenne\": {" +
+                "                        \"nimi\": \"köysi\"," +
+                "                        \"tunnus\": \"24\"," +
+                "                        \"lyhenne\": \"ks\"" +
+                "                    }" +
+                "                }" +
+                "            ]," +
+                "            \"jannetyyppi\": {" +
+                "                \"nimi\": \"Tavallinen\"," +
+                "                \"tunnus\": \"11\"" +
+                "            }," +
+                "            \"pituus\": {" +
+                "                \"arvo\": 65," +
+                "                \"yksikko\": \"metri\"" +
+                "            }," +
+                "            \"vapaaaukko\": {" +
+                "                \"mitta\": {" +
+                "                    \"arvo\": 63," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }," +
+                "                \"alikulkukorkeus\": {" +
+                "                    \"arvo\": 10.5," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }" +
+                "            }" +
+                "        }, {" +
+                "            \"numero\": 11," +
+                "            \"rakennetyypit\": [{" +
+                "                    \"kansimateriaali\": {" +
+                "                        \"nimi\": \"Teräsbetonikantinen, liittorakenteinen\"," +
+                "                        \"tunnus\": \"3\"," +
+                "                        \"lyhenne\": \"bl\"" +
+                "                    }," +
+                "                    \"lyhenne\": \"Tvksbl\"," +
+                "                    \"maareet\": [{" +
+                "                            \"nimi\": \"vino\"," +
+                "                            \"tunnus\": \"31\"," +
+                "                            \"erikseen\": false," +
+                "                            \"avattava\": false," +
+                "                            \"lyhenne\": \"v\"" +
+                "                        }" +
+                "                    ]," +
+                "                    \"nimi\": \"Teräksinen vinoköysi, teräsbetonikantinen, liittorakenteinen\"," +
+                "                    \"paarakennusmateriaali\": {" +
+                "                        \"nimi\": \"Teräs\"," +
+                "                        \"tunnus\": \"13\"," +
+                "                        \"adjektiivi\": \"Teräksinen\"," +
+                "                        \"lyhenne\": \"T\"" +
+                "                    }," +
+                "                    \"staattinenRakenne\": {" +
+                "                        \"nimi\": \"köysi\"," +
+                "                        \"tunnus\": \"24\"," +
+                "                        \"lyhenne\": \"ks\"" +
+                "                    }" +
+                "                }" +
+                "            ]," +
+                "            \"jannetyyppi\": {" +
+                "                \"nimi\": \"Tavallinen\"," +
+                "                \"tunnus\": \"11\"" +
+                "            }," +
+                "            \"pituus\": {" +
+                "                \"arvo\": 60," +
+                "                \"yksikko\": \"metri\"" +
+                "            }," +
+                "            \"vapaaaukko\": {" +
+                "                \"mitta\": {" +
+                "                    \"arvo\": 58," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }," +
+                "                \"alikulkukorkeus\": {" +
+                "                    \"arvo\": 7.7," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }" +
+                "            }" +
+                "        }, {" +
+                "            \"numero\": 12," +
+                "            \"rakennetyypit\": [{" +
+                "                    \"kansimateriaali\": {" +
+                "                        \"nimi\": \"Teräsbetonikantinen, liittorakenteinen\"," +
+                "                        \"tunnus\": \"3\"," +
+                "                        \"lyhenne\": \"bl\"" +
+                "                    }," +
+                "                    \"lyhenne\": \"Tvksbl\"," +
+                "                    \"maareet\": [{" +
+                "                            \"nimi\": \"vino\"," +
+                "                            \"tunnus\": \"31\"," +
+                "                            \"erikseen\": false," +
+                "                            \"avattava\": false," +
+                "                            \"lyhenne\": \"v\"" +
+                "                        }" +
+                "                    ]," +
+                "                    \"nimi\": \"Teräksinen vinoköysi, teräsbetonikantinen, liittorakenteinen\"," +
+                "                    \"paarakennusmateriaali\": {" +
+                "                        \"nimi\": \"Teräs\"," +
+                "                        \"tunnus\": \"13\"," +
+                "                        \"adjektiivi\": \"Teräksinen\"," +
+                "                        \"lyhenne\": \"T\"" +
+                "                    }," +
+                "                    \"staattinenRakenne\": {" +
+                "                        \"nimi\": \"köysi\"," +
+                "                        \"tunnus\": \"24\"," +
+                "                        \"lyhenne\": \"ks\"" +
+                "                    }" +
+                "                }" +
+                "            ]," +
+                "            \"jannetyyppi\": {" +
+                "                \"nimi\": \"Tavallinen\"," +
+                "                \"tunnus\": \"11\"" +
+                "            }," +
+                "            \"pituus\": {" +
+                "                \"arvo\": 50," +
+                "                \"yksikko\": \"metri\"" +
+                "            }," +
+                "            \"vapaaaukko\": {" +
+                "                \"mitta\": {" +
+                "                    \"arvo\": 37," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }," +
+                "                \"alikulkukorkeus\": {" +
+                "                    \"arvo\": 5.9," +
+                "                    \"yksikko\": \"metri\"" +
+                "                }" +
+                "            }" +
+                "        }" +
+                "    ]," +
+                "    \"kulkukorkeudenEste\": \"Pyloni, muodoltaan ylösalaisin oleva Y.\"," +
+                "    \"maaraavanJanteenNumero\": 1," +
+                "    \"merivedenVaikutus\": true," +
+                "    \"kokonaispintaala\": {" +
+                "        \"arvo\": 12540," +
+                "        \"yksikko\": \"neliometri\"" +
+                "    }," +
+                "    \"hyodyllinenLeveys\": {" +
+                "        \"minimi\": {" +
+                "            \"arvo\": 12," +
+                "            \"yksikko\": \"metri\"" +
+                "        }" +
+                "    }," +
+                "    \"kulkukorkeus\": {" +
+                "        \"arvo\": 17," +
+                "        \"yksikko\": \"metri\"" +
+                "    }," +
+                "    \"nykyinenOmistaja\": {" +
+                "        \"nimi\": \"Väylävirasto\"," +
+                "        \"yTunnus\": \"1010547-1\"" +
+                "    }," +
+                "    \"keskipistesijainti\": {" +
+                "        \"epsg3067\": {" +
+                "            \"x\": 222275," +
+                "            \"y\": 7020592" +
+                "        }," +
+                "        \"epsg4326\": {" +
+                "            \"lat\": 63.2067184984122," +
+                "            \"lon\": 21.4728801056541" +
+                "        }" +
+                "    }," +
+                "    \"kokonaispituus\": {" +
+                "        \"arvo\": 1045," +
+                "        \"yksikko\": \"metri\"" +
+                "    }," +
+                "    \"ymparistorasitus\": {" +
+                "        \"tunnus\": \"14\"," +
+                "        \"nimi\": \"Meri\"," +
+                "        \"kuvaus\": \"Meri-ilmasto\"" +
+                "    }," +
+                "    \"tunnus\": \"V-1997\"," +
+                "    \"vaylanpito\": {" +
+                "        \"tunnus\": \"TIE\"," +
+                "        \"nimi\": \"Tieverkko\"" +
+                "    }," +
+                "    \"sijaintikunnat\": [{" +
+                "            \"tunnus\": \"499\"," +
+                "            \"nimi\": \"Mustasaari\"" +
+                "        }" +
+                "    ]," +
+                "    \"historiallinenMerkittavyys\": {" +
+                "        \"tunnus\": \"12\"," +
+                "        \"nimi\": \"Merkittävä\"" +
+                "    }," +
+                "    \"tieosoitteet\": [{" +
+                "            \"tienumero\": 724," +
+                "            \"tieosa\": 5," +
+                "            \"etaisyys\": 514," +
+                "            \"ajorata\": 0," +
+                "            \"nimi\": \"Vaasa-Raippaluoto\"," +
+                "            \"sijainti\": \"oletus\"" +
+                "        }, {" +
+                "            \"tienumero\": 70724," +
+                "            \"tieosa\": 707," +
+                "            \"etaisyys\": 4930," +
+                "            \"ajorata\": 0," +
+                "            \"nimi\": \"*****\"," +
+                "            \"sijainti\": \"oletus\"" +
+                "        }" +
+                "    ]," +
+                "    \"nimi\": \"Raippaluodon silta\"," +
+                "    \"kaareva\": true," +
+                "    \"nykyinenKunnossapitaja\": {" +
+                "        \"nimi\": \"Etelä-Pohjanmaan ELY-keskus\"" +
+                "    }," +
+                "    \"oid\": \"1.2.246.578.1.15.1001997\"," +
+                "    \"vesivaylaosoitteet\": [{" +
+                "            \"nimi\": \"POHJAN* Closing connection 0" +
+                "            * TLSv1.2 (OUT), TLS alert, close notify (256):" +
+                "            LAHTI / ALSKATIN SALMI\"," +
+                "            \"sijainti\": \"alittava\"" +
+                "        }" +
+                "    ]," +
+                "    \"ajoradanLeveys\": {" +
+                "        \"arvo\": 7," +
+                "        \"yksikko\": \"metri\"" +
+                "    }," +
+                "    \"paivitetty\": \"2021-11-22\"," +
+                "    \"kayttotarkoitukset\": [{" +
+                "            \"tunnus\": \"11\"," +
+                "            \"nimi\": \"Vesistösilta\"," +
+                "            \"kuvaus\": \"Vesistön ylittämiseksi rakennettu tiesilta\"" +
+                "        }" +
+                "    ]," +
+                "    \"kannenPituus\": {" +
+                "        \"arvo\": 1032.5," +
+                "        \"yksikko\": \"metri\"" +
+                "    }," +
+                "    \"rakenneluokka\": {" +
+                "        \"tunnus\": \"S\"," +
+                "        \"nimi\": \"Silta\"" +
+                "    }," +
+                "    \"kokonaisleveys\": {" +
+                "        \"minimi\": {" +
+                "            \"arvo\": 12.8," +
+                "            \"yksikko\": \"metri\"" +
+                "        }" +
+                "    }," +
+                "    \"kannenPintaala\": {" +
+                "        \"arvo\": 13216," +
+                "        \"yksikko\": \"neliometri\"" +
+                "    }," +
+                "    \"tienLeveys\": {" +
+                "        \"arvo\": 8.2," +
+                "        \"yksikko\": \"metri\"" +
+                "    }," +
+                "    \"valmistumisvuosi\": 1997" +
                 "}";
     }
 
