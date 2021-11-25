@@ -2,15 +2,12 @@ package fi.vaylavirasto.sillari.service;
 
 
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
-import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
+import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
-import fi.vaylavirasto.sillari.api.rest.error.LeluPermitNotFoundException;
-import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
-import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
@@ -263,9 +260,9 @@ public class LeluService {
         }
     }
 
-    public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) throws LeluPermitNotFoundException {
+    public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) throws LeluPermitNotFoundException, LeluPermitPdfUploadException {
         Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitNumber, permitVersion);
-        if(permitId == null){
+        if (permitId == null) {
             throw new LeluPermitNotFoundException();
         }
         String objectKey = "permitPdf/" + permitNumber + "_" + permitVersion + "/" + file.getOriginalFilename();
@@ -274,11 +271,12 @@ public class LeluService {
         permitRepository.updatePermitPdf(permitId, objectKey);
         if (activeProfile.equals("local")) {
             // Save to local file system
-            File outputFile = new File("/",objectKey);
+            File outputFile = new File("/", file.getOriginalFilename());
             try {
                 Files.write(outputFile.toPath(), file.getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
+                throw new LeluPermitPdfUploadException(e.getMessage());
             }
         } else {
             // Upload to AWS
@@ -286,6 +284,7 @@ public class LeluService {
                 awss3Client.upload(objectKey, file.getBytes(),"application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET);
             } catch (IOException e) {
                 e.printStackTrace();
+                throw new LeluPermitPdfUploadException(e.getMessage());
             }
         }
 
