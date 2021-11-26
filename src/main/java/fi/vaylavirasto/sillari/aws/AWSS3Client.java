@@ -30,7 +30,7 @@ import java.util.Date;
 public class AWSS3Client {
     private static final Logger logger = LogManager.getLogger();
     private AmazonS3 s3Client=null;
-    private static final String bucketName = "sillari-photos";
+    private static String bucketName = "sillari-photos";
     private final String roleArn;
     private String accessKey;
     private String secretKey;
@@ -42,6 +42,8 @@ public class AWSS3Client {
         if("localhost".equals(environment)) {
             accessKey = System.getenv("accessKey");
             secretKey = System.getenv("secretKey");
+        } if("test".equals(environment)) {
+            bucketName = "sillari-photos-test";
         }
         roleArn = System.getenv("roleArn");
     }
