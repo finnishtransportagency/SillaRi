@@ -51,6 +51,7 @@ const AddTransport = (): JSX.Element => {
         id: 0,
         routeId: 0,
         plannedDepartureTime: moment().toDate(),
+        tractorUnit: "",
         currentStatus: { status: TransportStatus.PLANNED } as IRouteTransportStatus,
       };
       setModifiedRouteTransportDetail(newRouteTransport);

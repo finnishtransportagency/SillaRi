@@ -203,6 +203,7 @@
       },
       "route": {
         "id": "ID",
+        "tractorUnit": "Tractor",
         "route": "Route",
         "supervision": "Supervision",
         "time": "Time",

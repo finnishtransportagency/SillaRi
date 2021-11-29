@@ -203,6 +203,7 @@
       },
       "route": {
         "id": "(SV) ID",
+        "tractorUnit": "(SV) Vetoauto",
         "route": "(SV) Route",
         "supervision": "(SV) Supervision",
         "time": "(SV) Time",

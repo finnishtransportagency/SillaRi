@@ -204,6 +204,7 @@
       },
       "route": {
         "id": "ID",
+        "tractorUnit": "Vetoauto",
         "route": "Reitti",
         "supervision": "Sillanvalvonta",
         "time": "Ajankohta",
