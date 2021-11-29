@@ -72,7 +72,7 @@ public class SupervisionRepository {
                 .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
                 .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
                 .and(TableAlias.routeTransport.ID.eq(routeTransportId))
-                .orderBy(TableAlias.supervision.PLANNED_TIME) // TODO change to routeBridge.bridgeOrder when it's added to Lelu API
+                .orderBy(TableAlias.routeBridge.ORDINAL)
                 .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
     }
 
