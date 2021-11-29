@@ -74,7 +74,7 @@ public class LeluService {
         permitModel.setCompanyId(companyId);
 
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
-        setBridgeIdsToRouteBridges(permitModel);
+        matchRouteBridgesWithBridges(permitModel);
         PermitModel oldPermitModel = getWholePermitModel(permitModel.getPermitNumber());
 
         if (oldPermitModel != null) {
@@ -137,7 +137,7 @@ public class LeluService {
         permitModel.setCompanyId(companyId);
 
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
-        setBridgeIdsToRouteBridges(permitModel);
+        matchRouteBridgesWithBridges(permitModel);
 
         Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitModel.getPermitNumber(), permitModel.getLeluVersion());
 
@@ -194,7 +194,7 @@ public class LeluService {
     }
 
 
-    private void setBridgeIdsToRouteBridges(PermitModel permitModel) {
+    private void matchRouteBridgesWithBridges(PermitModel permitModel) {
         // Get bridge IDs for unique bridges in routes
         Map<String, Integer> idOIDMap = getBridgeIdsWithOIDs(permitModel);
         for (RouteModel route : permitModel.getRoutes()) {
@@ -203,11 +203,8 @@ public class LeluService {
                 if (bridgeId != null) {
                     routeBridge.setBridgeId(bridgeId);
                 } else {
-                    // TODO What to do if bridge is not found?
-                    logger.warn("Bridge missing from db with oid {}", routeBridge.getBridge().getOid());
-                    //add bridge to db if it's found in trex
-
-
+                    // TODO What to do if bridge is not found? Create bridge with LeLu data..?
+                    logger.warn("Bridge missing with oid {}", routeBridge.getBridge().getOid());
                 }
             }
         }
