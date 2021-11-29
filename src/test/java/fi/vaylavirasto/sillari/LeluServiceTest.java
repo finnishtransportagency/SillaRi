@@ -49,18 +49,14 @@ public class LeluServiceTest {
     private BridgeRepository bridgeRepository;
     @Mock
     private SupervisionRepository supervisionRepository;
+    @Mock
+    private AWSS3Client awss3Client;
 
     @Autowired
     private MessageSource messageSource;
 
     @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
     private LeluRouteUploadUtil leluRouteUploadUtil;
-
-    @Autowired
-    private AWSS3Client awss3Client;
 
 
     @Captor

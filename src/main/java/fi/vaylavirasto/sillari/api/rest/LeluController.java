@@ -45,7 +45,7 @@ public class LeluController {
     private final MessageSource messageSource;
 
     @Autowired
-    public LeluController(LeluService leluService, PermitService permitService, MessageSource messageSource) {
+    public LeluController(LeluService leluService, MessageSource messageSource) {
         this.leluService = leluService;
         this.messageSource = messageSource;
     }

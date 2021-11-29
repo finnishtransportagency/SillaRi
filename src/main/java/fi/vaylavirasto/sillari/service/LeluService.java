@@ -60,6 +60,7 @@ public class LeluService {
         this.messageSource = messageSource;
         this.leluRouteUploadUtil = leluRouteUploadUtil;
         this.supervisionRepository = supervisionRepository;
+        this.awss3Client = awss3Client;
     }
 
     // TODO
@@ -275,19 +276,20 @@ public class LeluService {
             try {
                 Files.write(outputFile.toPath(), file.getBytes());
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Error writing file." + e.getClass().getName() + " " + e.getMessage());
                 throw new LeluPermitPdfUploadException(e.getMessage());
             }
         } else {
             // Upload to AWS
             try {
-                awss3Client.upload(objectKey, file.getBytes(),"application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET);
+                awss3Client.upload(objectKey, file.getBytes(), "application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Error uploading file to aws." + e.getClass().getName() + " " + e.getMessage());
                 throw new LeluPermitPdfUploadException(e.getMessage());
             }
         }
 
-        return new LeluPermiPdfResponseDTO();
+        return new LeluPermiPdfResponseDTO(permitNumber, permitVersion, messageSource.getMessage("lelu.permit.pdf.upload.completed", null, Locale.ROOT));
+
     }
 }
