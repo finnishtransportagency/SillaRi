@@ -1,12 +1,13 @@
 package fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
-import lombok.Data;
-
 public @Data
+@ToString
 class TrexBridgeInfoResponseJson {
 
     @JsonProperty("nykyinenKunnossapitaja")

@@ -304,23 +304,28 @@ public class PermitRepository {
         return departureAddressId;
     }
 
-    private void insertRouteBridges(DSLContext ctx, RouteModel routeModel) {
-        List<RouteBridgeModel> routeBridges = routeModel.getRouteBridges();
+    private void insertRouteBridges(DSLContext ctx, RouteModel route) {
+        List<RouteBridgeModel> routeBridges = route.getRouteBridges();
 
-        for (RouteBridgeModel routeBridgeModel : routeBridges) {
-            if (routeBridgeModel.getBridgeId() != null) {
-                routeBridgeModel.setRouteId(routeModel.getId());
+        for (int i = 0; i < routeBridges.size(); i++) {
+            RouteBridgeModel routeBridge = routeBridges.get(i);
+
+            if (routeBridge.getBridgeId() != null) {
+                routeBridge.setRouteId(route.getId());
+                routeBridge.setOrdinal(i + 1);
 
                 ctx.insertInto(TableAlias.routeBridge,
                                 TableAlias.routeBridge.ROUTE_ID,
                                 TableAlias.routeBridge.BRIDGE_ID,
+                                TableAlias.routeBridge.ORDINAL,
                                 TableAlias.routeBridge.CROSSING_INSTRUCTION,
                                 TableAlias.routeBridge.CONTRACT_NUMBER
                         ).values(
-                                routeBridgeModel.getRouteId(),
-                                routeBridgeModel.getBridgeId(),
-                                routeBridgeModel.getCrossingInstruction(),
-                                routeBridgeModel.getContractNumber())
+                                routeBridge.getRouteId(),
+                                routeBridge.getBridgeId(),
+                                routeBridge.getOrdinal(),
+                                routeBridge.getCrossingInstruction(),
+                                routeBridge.getContractNumber())
                         .execute();
             } else {
                 logger.warn("BridgeId missing for routeBridge, cannot insert");

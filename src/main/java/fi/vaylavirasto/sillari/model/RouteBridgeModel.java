@@ -9,9 +9,10 @@ public class RouteBridgeModel {
     private Integer id;
     private Integer routeId;
     private Integer bridgeId;
+    private Integer ordinal;
     private String crossingInstruction;
-    private List<SupervisionModel> supervisions;
     private Long contractNumber;
+    private List<SupervisionModel> supervisions;
 
     // Parents
     private BridgeModel bridge;
