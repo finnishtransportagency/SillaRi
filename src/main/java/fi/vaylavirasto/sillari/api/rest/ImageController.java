@@ -59,7 +59,7 @@ public class ImageController {
                 }
             } else {
                 // Get from AWS
-                byte[] image = awss3Client.download(decodedKey, AWSS3Client.SILLARI_PHOTOS_BUCKET);
+                byte[] image = awss3Client.download(decodedKey, awss3Client.getPhotoBucketName());
                 if (image != null) {
                     response.setContentType("image/jpeg");
                     OutputStream out = response.getOutputStream();
@@ -103,7 +103,7 @@ public class ImageController {
                 Files.write(outputFile.toPath(), decodedString);
             } else {
                 // Upload to AWS
-                awss3Client.upload(model.getObjectKey(), decodedString,  contentType, AWSS3Client.SILLARI_PHOTOS_BUCKET);
+                awss3Client.upload(model.getObjectKey(), decodedString,  contentType, awss3Client.getPhotoBucketName());
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -165,7 +165,7 @@ public class ImageController {
             }
         } else {
             // Delete from AWS
-            awss3Client.delete(decodedKey, AWSS3Client.SILLARI_PHOTOS_BUCKET);
+            awss3Client.delete(decodedKey, awss3Client.getPhotoBucketName());
         }
     }
 

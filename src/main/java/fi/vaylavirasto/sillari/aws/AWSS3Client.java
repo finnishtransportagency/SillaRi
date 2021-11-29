@@ -29,7 +29,8 @@ import java.util.Date;
 public class AWSS3Client {
     private static final Logger logger = LogManager.getLogger();
     private AmazonS3 s3Client=null;
-    public static final String SILLARI_PHOTOS_BUCKET = "sillari-photos";
+    public static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
+    public static final String SILLARI_PHOTOS_BUCKET_TEST = "sillari-photos-test";
     public static final String SILLARI_PERMIT_PDF_BUCKET = "sillari-permits";
     private final String roleArn;
     private String accessKey;
@@ -44,6 +45,15 @@ public class AWSS3Client {
             secretKey = System.getenv("secretKey");
         }
         roleArn = System.getenv("roleArn");
+    }
+
+    public String getPhotoBucketName(){
+        if("test".equals(environment)) {
+            return SILLARI_PHOTOS_BUCKET_TEST;
+        }
+        else{
+            return SILLARI_PHOTOS_BUCKET_DEV;
+        }
     }
 
     private void init() {
