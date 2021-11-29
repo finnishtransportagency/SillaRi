@@ -261,10 +261,10 @@ public class LeluService {
         }
     }
 
-    public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) throws LeluPermitNotFoundException, LeluPermitPdfUploadException {
+    public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) throws LeluPermitPdfUploadException {
         Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitNumber, permitVersion);
         if (permitId == null) {
-            throw new LeluPermitNotFoundException();
+            throw new LeluPermitPdfUploadException(messageSource.getMessage("lelu.permit.not.found", null, Locale.ROOT), HttpStatus.NOT_FOUND);
         }
         String objectKey = "permitPdf/" + permitNumber + "_" + permitVersion + "/" + file.getOriginalFilename();
 
@@ -277,7 +277,7 @@ public class LeluService {
                 Files.write(outputFile.toPath(), file.getBytes());
             } catch (IOException e) {
                 logger.error("Error writing file." + e.getClass().getName() + " " + e.getMessage());
-                throw new LeluPermitPdfUploadException(e.getMessage());
+                throw new LeluPermitPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             // Upload to AWS
@@ -285,7 +285,7 @@ public class LeluService {
                 awss3Client.upload(objectKey, file.getBytes(), "application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET);
             } catch (IOException e) {
                 logger.error("Error uploading file to aws." + e.getClass().getName() + " " + e.getMessage());
-                throw new LeluPermitPdfUploadException(e.getMessage());
+                throw new LeluPermitPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 

@@ -147,12 +147,12 @@ public class LeluController {
             description = "Uploads the permit pdf to an existing permit.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "File is empty."),
-            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route not found with provided id."),
-            @ApiResponse(responseCode = "500 INTERNAL_SERVER_ERROR", description = "Error processing route geometry file.")
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Permit not found with provided number and version."),
+            @ApiResponse(responseCode = "500 INTERNAL_SERVER_ERROR", description = "Error uploading file.")
     })
     public LeluPermiPdfResponseDTO uploadPermitPdf(@RequestParam(required = true) String permitNumber, @RequestParam(required = true) Integer permitVersion,
                                                    @RequestPart("file") MultipartFile file)
-            throws LeluPermitNotFoundException, LeluPermitPdfUploadException {
+            throws LeluPermitPdfUploadException {
         logger.debug("Lelu uploadpermitpdf {}", permitNumber);
         logger.debug("FILE name:" + file.getName());
         logger.debug("FILE OriginalFilename:" + file.getOriginalFilename());
