@@ -243,7 +243,8 @@
         "route": "(SV) Route",
         "origin": "(SV) Origin",
         "destination": "(SV) Destination",
-        "showRouteOnMap": "(SV) Show route on map"
+        "showRouteOnMap": "(SV) Show route on map",
+        "tractorUnitIdentifier": "(SV) Vehicle registration number (tractor unit)"
       },
       "transportInfo": {
         "title": "(SV) Transport permit information",

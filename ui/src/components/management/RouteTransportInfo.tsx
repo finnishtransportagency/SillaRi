@@ -44,7 +44,7 @@ const RouteTransportInfo = ({
   const queryClient = useQueryClient();
   const [present] = useIonAlert();
 
-  const { companyId, permitNumber, validStartDate, validEndDate, routes = [] } = permit || {};
+  const { companyId, permitNumber, validStartDate, validEndDate } = permit || {};
   const { currentStatus } = modifiedRouteTransportDetail || {};
   const { status } = currentStatus || {};
 
@@ -180,7 +180,7 @@ const RouteTransportInfo = ({
               <IonCol>
                 <RouteInfoGrid
                   routeTransportId={routeTransportId}
-                  permitRoutes={routes}
+                  permit={permit}
                   modifiedRouteTransportDetail={modifiedRouteTransportDetail}
                   setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
                   selectedRouteOption={selectedRouteOption}

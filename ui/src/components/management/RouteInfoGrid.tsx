@@ -11,10 +11,11 @@ import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import mapPoint from "../../theme/icons/map-point.svg";
 import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
+import IPermit from "../../interfaces/IPermit";
 
 interface RouteInfoGridProps {
   routeTransportId: number;
-  permitRoutes: IRoute[];
+  permit: IPermit;
   modifiedRouteTransportDetail: IRouteTransport;
   setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
   selectedRouteOption: IRoute;
@@ -23,7 +24,7 @@ interface RouteInfoGridProps {
 
 const RouteInfoGrid = ({
   routeTransportId,
-  permitRoutes = [],
+  permit,
   modifiedRouteTransportDetail,
   setModifiedRouteTransportDetail,
   selectedRouteOption,
@@ -31,6 +32,7 @@ const RouteInfoGrid = ({
 }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
 
+  const { routes: permitRoutes = [], vehicles = [] } = permit || {};
   const { plannedDepartureTime, currentStatus } = modifiedRouteTransportDetail || {};
   const { status } = currentStatus || {};
   const { id: selectedRouteId, name: selectedRouteName, departureAddress, arrivalAddress } = selectedRouteOption || {};
@@ -42,6 +44,13 @@ const RouteInfoGrid = ({
   const setPlannedDepartureTime = (dateTime: Date) => {
     if (modifiedRouteTransportDetail) {
       const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: dateTime };
+      setModifiedRouteTransportDetail(newDetail);
+    }
+  };
+
+  const setTractorUnit = (identifier: string) => {
+    if (modifiedRouteTransportDetail) {
+      const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, tractorUnit: identifier };
       setModifiedRouteTransportDetail(newDetail);
     }
   };
@@ -182,6 +191,31 @@ const RouteInfoGrid = ({
             </IonRow>
           </IonGrid>
         </IonCol>
+      </IonRow>
+
+      <IonRow className="ion-margin-top">
+        <IonGrid className="ion-no-padding">
+          <IonRow className="ion-margin-top">
+            <IonCol size="12" size-lg="12">
+              <IonText className="headingText">{t("management.transportDetail.routeInfo.tractorUnitIdentifier")}</IonText>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol size="12" size-lg="2">
+              <IonSelect interface="action-sheet" cancelText={t("common.buttons.back")} onIonChange={(e) => setTractorUnit(e.detail.value)}>
+                {vehicles.map((vehicle, index) => {
+                  const { identifier } = vehicle;
+                  const key = `vehicle_${index}`;
+                  return (
+                    <IonSelectOption key={key} value={identifier}>
+                      {identifier}
+                    </IonSelectOption>
+                  );
+                })}
+              </IonSelect>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
       </IonRow>
     </IonGrid>
   );

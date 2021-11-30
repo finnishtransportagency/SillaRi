@@ -244,7 +244,8 @@
         "route": "Reitti",
         "origin": "Lähtöpaikka",
         "destination": "Määräpaikka",
-        "showRouteOnMap": "Näytä reitti kartalla"
+        "showRouteOnMap": "Näytä reitti kartalla",
+        "tractorUnitIdentifier": "Ajoneuvon rekisteritunnus (vetoauto)"
       },
       "transportInfo": {
         "title": "Kuljetusluvan tietoja",
