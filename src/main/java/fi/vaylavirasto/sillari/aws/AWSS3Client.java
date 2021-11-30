@@ -114,8 +114,9 @@ public class AWSS3Client {
             s3Client.putObject(request);
         } catch(Exception e) {
             logger.error(e);
+            return false;
         }
-        return false;
+        return true;
     }
 
     public byte[] download(String objectKey, String bucketName) {
