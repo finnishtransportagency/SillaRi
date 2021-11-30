@@ -22,8 +22,13 @@ public interface TrexBridgeInfoResponseJsonMapper {
     BridgeModel fromDTOToModel(TrexBridgeInfoResponseJson dto);
 
     default String createRoadAddress(List<TieosoitteetItem> tieosoitteetItems) {
-        TieosoitteetItem tieosoitteetItem = tieosoitteetItems.get(0);
-        return "" + tieosoitteetItem.getTienumero() + "-" + tieosoitteetItem.getTieosa() + "-" + tieosoitteetItem.getEtaisyys() + "-" + tieosoitteetItem.getAjorata();
+        if(!tieosoitteetItems.isEmpty() && tieosoitteetItems.get(0).getTienumero() != null) {
+            TieosoitteetItem tieosoitteetItem = tieosoitteetItems.get(0);
+            return "" + tieosoitteetItem.getTienumero() + "-" + tieosoitteetItem.getTieosa() + "-" + tieosoitteetItem.getEtaisyys() + "-" + tieosoitteetItem.getAjorata();
+        }
+        else{
+            return null;
+        }
     }
 
     default String createMunicipality(List<SijaintikunnatItem> sijaintikunnatItemList){
