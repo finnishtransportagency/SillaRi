@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 
 public class LeluRouteGeometryResponseDTO {
-    @Schema(description = "Permit ID in SillaRi", example = "737")
+    @Schema(description = "Route ID in SillaRi", example = "737")
     private Long routeId;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

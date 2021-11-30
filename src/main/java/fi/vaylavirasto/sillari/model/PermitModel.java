@@ -22,6 +22,7 @@ public class PermitModel {
     private List<VehicleModel> vehicles;
     private AxleChartModel axleChart;
     private List<RouteModel> routes;
+    private String pdfObjectKey;
 
     // Parent
     private CompanyModel company;
