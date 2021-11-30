@@ -16,6 +16,7 @@ import BridgeGrid from "./BridgeGrid";
 import RouteInfoGrid from "./RouteInfoGrid";
 import TransportInfoAccordion from "./TransportInfoAccordion";
 import TransportPassword from "./TransportPassword";
+import IVehicle from "../../interfaces/IVehicle";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -25,6 +26,8 @@ interface RouteTransportInfoProps {
   setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
   selectedRouteOption: IRoute;
   setSelectedRouteOption: Dispatch<SetStateAction<IRoute | undefined>>;
+  selectedVehicle: IVehicle | undefined;
+  setSelectedVehicle: Dispatch<SetStateAction<IVehicle | undefined>>;
   setToastMessage: Dispatch<SetStateAction<string>>;
 }
 
@@ -36,6 +39,8 @@ const RouteTransportInfo = ({
   setModifiedRouteTransportDetail,
   selectedRouteOption,
   setSelectedRouteOption,
+  selectedVehicle,
+  setSelectedVehicle,
   setToastMessage,
 }: RouteTransportInfoProps): JSX.Element => {
   const { t } = useTranslation();
@@ -185,6 +190,8 @@ const RouteTransportInfo = ({
                   setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
                   selectedRouteOption={selectedRouteOption}
                   setSelectedRouteOption={setSelectedRouteOption}
+                  selectedVehicle={selectedVehicle}
+                  setSelectedVehicle={setSelectedVehicle}
                 />
               </IonCol>
             </IonRow>

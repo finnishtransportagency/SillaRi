@@ -12,6 +12,7 @@ import ISupervision from "../../interfaces/ISupervision";
 import mapPoint from "../../theme/icons/map-point.svg";
 import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 import IPermit from "../../interfaces/IPermit";
+import IVehicle from "../../interfaces/IVehicle";
 
 interface RouteInfoGridProps {
   routeTransportId: number;
@@ -20,6 +21,8 @@ interface RouteInfoGridProps {
   setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
   selectedRouteOption: IRoute;
   setSelectedRouteOption: Dispatch<SetStateAction<IRoute | undefined>>;
+  selectedVehicle: IVehicle | undefined;
+  setSelectedVehicle: Dispatch<SetStateAction<IVehicle | undefined>>;
 }
 
 const RouteInfoGrid = ({
@@ -29,6 +32,8 @@ const RouteInfoGrid = ({
   setModifiedRouteTransportDetail,
   selectedRouteOption,
   setSelectedRouteOption,
+  selectedVehicle,
+  setSelectedVehicle,
 }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
 
@@ -48,9 +53,10 @@ const RouteInfoGrid = ({
     }
   };
 
-  const setTractorUnit = (identifier: string) => {
+  const setTractorUnit = (vehicle: IVehicle) => {
+    setSelectedVehicle(vehicle);
     if (modifiedRouteTransportDetail) {
-      const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, tractorUnit: identifier };
+      const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, tractorUnit: vehicle.identifier };
       setModifiedRouteTransportDetail(newDetail);
     }
   };
@@ -202,17 +208,31 @@ const RouteInfoGrid = ({
           </IonRow>
           <IonRow>
             <IonCol size="12" size-lg="2">
-              <IonSelect interface="action-sheet" cancelText={t("common.buttons.back")} onIonChange={(e) => setTractorUnit(e.detail.value)}>
-                {vehicles.map((vehicle, index) => {
-                  const { identifier } = vehicle;
-                  const key = `vehicle_${index}`;
-                  return (
-                    <IonSelectOption key={key} value={identifier}>
-                      {identifier}
-                    </IonSelectOption>
-                  );
-                })}
-              </IonSelect>
+              {status === TransportStatus.PLANNED && (
+                <IonSelect
+                  interface="action-sheet"
+                  cancelText={t("common.buttons.back")}
+                  value={selectedVehicle}
+                  onIonChange={(e) => setTractorUnit(e.detail.value)}
+                >
+                  {vehicles.map((vehicle, index) => {
+                    const { type, identifier } = vehicle;
+                    const key = `vehicle_${index}`;
+                    return (
+                      <IonSelectOption key={key} value={vehicle}>
+                        {identifier}
+                      </IonSelectOption>
+                    );
+                  })}
+                </IonSelect>
+              )}
+              {status !== TransportStatus.PLANNED && (
+                <IonText>
+                  {selectedVehicle
+                    ? `${selectedVehicle.identifier} (${selectedVehicle.type})`
+                    : t("management.transportDetail.routeInfo.tractorUnitNotSelected")}
+                </IonText>
+              )}
             </IonCol>
           </IonRow>
         </IonGrid>

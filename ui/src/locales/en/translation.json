@@ -244,7 +244,8 @@
         "origin": "Origin",
         "destination": "Destination",
         "showRouteOnMap": "Show route on map",
-        "tractorUnitIdentifier": "Vehicle registration number (tractor unit)"
+        "tractorUnitIdentifier": "Vehicle registration number (tractor unit)",
+        "tractorUnitNotSelected": "Registration number missing"
       },
       "transportInfo": {
         "title": "Transport permit information",
