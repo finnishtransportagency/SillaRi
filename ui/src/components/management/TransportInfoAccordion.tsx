@@ -11,7 +11,7 @@ interface TransportInfoAccordionProps {
 const TransportInfoAccordion = ({ permit }: TransportInfoAccordionProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { transportDimensions, transportTotalMass: totalMass = 0 } = permit || {};
+  const { transportDimensions, transportTotalMass: totalMass = 0, vehicles = [] } = permit || {};
   const { height = 0, width = 0, length = 0 } = transportDimensions || {};
 
   return (
@@ -30,7 +30,38 @@ const TransportInfoAccordion = ({ permit }: TransportInfoAccordionProps): JSX.El
           ),
           panel: (
             <IonGrid className="ion-no-padding">
+              <IonRow className="ion-margin">
+                <IonCol size="12" size-lg="6">
+                  <IonText className="headingText">{t("management.transportDetail.transportInfo.subtitle")}</IonText>
+                </IonCol>
+              </IonRow>
               <IonRow>
+                <IonCol size="12" size-lg="6">
+                  <IonGrid className="ion-no-padding">
+                    <IonRow className="ion-margin">
+                      <IonCol size="12" size-sm="6">
+                        <IonText className="headingText">{t("management.transportDetail.transportInfo.vehicles")}</IonText>
+                      </IonCol>
+                      <IonCol size="12" size-sm="6">
+                        <IonGrid className="ion-no-padding">
+                          {vehicles.map((vehicle, index) => {
+                            const key = `vehicle${index}`;
+                            const { type, identifier } = vehicle || {}; // TODO vehicle type in correct format for UI
+
+                            return (
+                              <IonRow key={key}>
+                                <IonCol>
+                                  <IonText>{`${type} ${identifier}`}</IonText>
+                                </IonCol>
+                              </IonRow>
+                            );
+                          })}
+                        </IonGrid>
+                      </IonCol>
+                    </IonRow>
+                  </IonGrid>
+                </IonCol>
+
                 <IonCol size="12" size-lg="6">
                   <IonGrid className="ion-no-padding">
                     <IonRow className="ion-margin">
@@ -57,11 +88,7 @@ const TransportInfoAccordion = ({ permit }: TransportInfoAccordionProps): JSX.El
                         </IonGrid>
                       </IonCol>
                     </IonRow>
-                  </IonGrid>
-                </IonCol>
 
-                <IonCol size="12" size-lg="6">
-                  <IonGrid className="ion-no-padding">
                     <IonRow className="ion-margin">
                       <IonCol size="12" size-sm="6">
                         <IonText className="headingText">{t("management.transportDetail.transportInfo.totalMass")}</IonText>

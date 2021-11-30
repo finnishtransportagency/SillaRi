@@ -246,9 +246,11 @@
         "showRouteOnMap": "Show route on map"
       },
       "transportInfo": {
-        "title": "Maximum dimensions and mass",
-        "totalMass": "Total mass",
-        "dimensions": "Transport dimensions",
+        "title": "Transport permit information",
+        "subtitle": "Vehicles, maximum dimensions and mass",
+        "vehicles": "Vehicles in the permit",
+        "totalMass": "Max permitted total mass",
+        "dimensions": "Transport max dimensions",
         "height": "Height from the ground",
         "width": "Width",
         "length": "Length"

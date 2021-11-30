@@ -247,9 +247,11 @@
         "showRouteOnMap": "Näytä reitti kartalla"
       },
       "transportInfo": {
-        "title": "Enimmäismitat ja -massat",
-        "totalMass": "Kokonaismassa",
-        "dimensions": "Kuljetuksen mitat",
+        "title": "Kuljetusluvan tietoja",
+        "subtitle": "Ajoneuvot, enimmäismitat ja -massa",
+        "vehicles": "Luvan ajoneuvot",
+        "totalMass": "Suurin sallittu kokonaismassa",
+        "dimensions": "Kuljetuksen enimmäismitat",
         "height": "Korkeus maasta",
         "width": "Leveys",
         "length": "Pituus"
