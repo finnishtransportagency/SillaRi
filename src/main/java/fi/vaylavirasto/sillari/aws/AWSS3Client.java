@@ -28,6 +28,8 @@ import java.util.Date;
 @Component
 public class AWSS3Client {
     private static final Logger logger = LogManager.getLogger();
+    public static final String SILLARI_PHOTOS_ROLE_SESSION_NAME = "SILLARI-PHOTOS";
+    public static final String SILLARI_PERMITS_ROLE_SESSION_NAME = "SILLARI-PERMITS";
     private AmazonS3 s3Client=null;
     public static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
     public static final String SILLARI_PHOTOS_BUCKET_TEST = "sillari-photos-test";
@@ -39,6 +41,7 @@ public class AWSS3Client {
     private AssumeRoleResult roleResponse = null;
 
     public AWSS3Client() {
+
         environment = System.getenv("environment");
         if("localhost".equals(environment)) {
             accessKey = System.getenv("accessKey");
@@ -56,7 +59,7 @@ public class AWSS3Client {
         }
     }
 
-    private void init() {
+    private void init(String sillariPhotosRoleSessionName) {
         if(roleResponse != null) {
             long now = new Date().getTime();
             if(roleResponse.getCredentials().getExpiration().getTime() < now + 60*1000L) {
@@ -81,7 +84,7 @@ public class AWSS3Client {
 
             AssumeRoleRequest roleRequest = new AssumeRoleRequest()
                     .withRoleArn(roleArn)
-                    .withRoleSessionName("SILLARI-PHOTOS");
+                    .withRoleSessionName(sillariPhotosRoleSessionName);
 
             roleResponse = stsClient.assumeRole(roleRequest);
             Credentials myCreds = roleResponse.getCredentials();
@@ -100,9 +103,9 @@ public class AWSS3Client {
         }
     }
 
-    public boolean upload(String key, byte[] bytes, String contenttype, String bucketName) {
+    public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName) {
         try {
-            init();
+            init(sillariPhotosRoleSessionName);
             ByteArrayInputStream byteInputStream = new ByteArrayInputStream(bytes);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contenttype);
@@ -117,7 +120,7 @@ public class AWSS3Client {
 
     public byte[] download(String objectKey, String bucketName) {
         try {
-            init();
+            init(SILLARI_PHOTOS_ROLE_SESSION_NAME);
             GetObjectRequest request = new GetObjectRequest(bucketName, objectKey);
             S3Object object = s3Client.getObject(request);
             return IOUtils.toByteArray(object.getObjectContent());
@@ -129,7 +132,7 @@ public class AWSS3Client {
 
     public void delete(String objectKey, String bucketName) {
         try {
-            init();
+            init(SILLARI_PHOTOS_ROLE_SESSION_NAME);
             DeleteObjectRequest request = new DeleteObjectRequest(bucketName, objectKey);
             s3Client.deleteObject(request);
         } catch(Exception e) {
