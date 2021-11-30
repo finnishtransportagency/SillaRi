@@ -103,7 +103,7 @@ public class ImageController {
                 Files.write(outputFile.toPath(), decodedString);
             } else {
                 // Upload to AWS
-                awss3Client.upload(model.getObjectKey(), decodedString,  contentType, awss3Client.getPhotoBucketName());
+                awss3Client.upload(model.getObjectKey(), decodedString,  contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME);
             }
         } catch(Exception e) {
             e.printStackTrace();
