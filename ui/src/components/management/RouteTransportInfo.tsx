@@ -256,7 +256,7 @@ const RouteTransportInfo = ({
               color="primary"
               expand="block"
               size="large"
-              disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption}
+              disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption || !selectedVehicle}
               onClick={saveRouteTransportDetail}
             >
               <IonText>{t("common.buttons.save")}</IonText>
