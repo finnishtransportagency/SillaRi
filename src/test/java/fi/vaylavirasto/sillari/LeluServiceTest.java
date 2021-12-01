@@ -7,6 +7,7 @@ import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.LeluRouteUploadUtil;
 import fi.vaylavirasto.sillari.service.LeluService;
+import fi.vaylavirasto.sillari.service.trex.TRexService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -15,7 +16,6 @@ import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
@@ -52,6 +52,7 @@ public class LeluServiceTest {
     @Mock
     private AWSS3Client awss3Client;
 
+
     @Autowired
     private MessageSource messageSource;
 
@@ -59,13 +60,16 @@ public class LeluServiceTest {
     private LeluRouteUploadUtil leluRouteUploadUtil;
 
 
+
+
     @Captor
     ArgumentCaptor<PermitModel> permitModelCaptor;
     @Captor
     ArgumentCaptor<List<Integer>> routeIdsToDeleteCaptor;
 
+
     @InjectMocks
-    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository, messageSource, leluRouteUploadUtil, awss3Client);
+    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository, messageSource, leluRouteUploadUtil, awss3Client, trexService);
 
     @Test
     public void testCreatePermitWithExistingCompany() {

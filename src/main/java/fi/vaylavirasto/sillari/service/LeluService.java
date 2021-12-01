@@ -12,11 +12,9 @@ import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.RouteBridgeModel;
-import fi.vaylavirasto.sillari.model.RouteModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
+import fi.vaylavirasto.sillari.service.trex.TRexService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
@@ -50,6 +48,7 @@ public class LeluService {
     private final MessageSource messageSource;
     private LeluRouteUploadUtil leluRouteUploadUtil;
     private AWSS3Client awss3Client;
+    private final TRexService trexService;
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
@@ -58,8 +57,8 @@ public class LeluService {
 
 
     @Autowired
-    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client
-    ) {
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
+                       TRexService trexService) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
         this.routeRepository = routeRepository;
@@ -69,6 +68,7 @@ public class LeluService {
         this.leluRouteUploadUtil = leluRouteUploadUtil;
         this.supervisionRepository = supervisionRepository;
         this.awss3Client = awss3Client;
+        this.trexService = trexService;
     }
 
     // TODO
@@ -78,9 +78,9 @@ public class LeluService {
     public LeluPermitResponseDTO createOrUpdatePermitDevVersion(LeluPermitDTO permitDTO) throws LeluDeleteRouteWithSupervisionsException {
         LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
 
-        logger.debug("Map permit from: " + permitDTO);
+        logger.trace("Map permit from: " + permitDTO);
         PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
-        logger.debug("Permit mapped from LeLu model: {}", permitModel);
+        logger.trace("Permit mapped from LeLu model: {}", permitModel);
 
         // Fetch company from DB with business ID. If not found, insert new company.
         Integer companyId = getCompanyIdByBusinessId(permitModel.getCompany());
@@ -212,12 +212,22 @@ public class LeluService {
         Map<String, Integer> idOIDMap = getBridgeIdsWithOIDs(permitModel);
         for (RouteModel route : permitModel.getRoutes()) {
             for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
-                Integer bridgeId = idOIDMap.get(routeBridge.getBridge().getOid());
+                String oid = routeBridge.getBridge().getOid();
+                Integer bridgeId = idOIDMap.get(oid);
                 if (bridgeId != null) {
                     routeBridge.setBridgeId(bridgeId);
                 } else {
                     // TODO What to do if bridge is not found? Create bridge with LeLu data..?
-                    logger.warn("Bridge missing with oid {}", routeBridge.getBridge().getOid());
+                    //we get it from trex, but it might not be there if its Lelu by hand added so TODO
+                    logger.debug("Bridge missing with oid {} get from trex", routeBridge.getBridge().getOid());
+                    try {
+                        BridgeModel newBridge = trexService.getBridge(oid);
+                        Integer newBridgeId = bridgeRepository.createBridge(newBridge);
+                        routeBridge.setBridgeId(newBridgeId);
+                    } catch (TRexRestException e) {
+                        //TODO if its Lelu by hand added so create bridge with LeLu data..?
+                        logger.warn("Bridge missing with oid {} not found in trex", routeBridge.getBridge().getOid());
+                    }
                 }
             }
         }

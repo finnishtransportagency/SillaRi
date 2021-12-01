@@ -124,6 +124,7 @@ public class LeluController {
                     permitDTO.getRoutes().forEach(r -> r.getBridges().forEach(b -> getBridgeFromTrexToDB(b.getOid())));
                 });
 
+                logger.debug("LeLu savePermit returning");
                 return response;
             } catch (LeluPermitSaveException leluPermitSaveException) {
                 logger.error(leluPermitSaveException.getMessage());
