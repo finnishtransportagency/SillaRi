@@ -209,6 +209,10 @@ public class LeluService {
 
     private void matchRouteBridgesWithBridges(PermitModel permitModel) {
         // Get bridge IDs for unique bridges in routes
+        // What to do if bridge is not found?
+        // we get it from trex,
+        // but it might not be there if its Lelu by hand added so
+        // TODO then we create bridge with LeLu data..
         Map<String, Integer> idOIDMap = getBridgeIdsWithOIDs(permitModel);
         for (RouteModel route : permitModel.getRoutes()) {
             for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
@@ -217,23 +221,23 @@ public class LeluService {
                 if (bridgeId != null) {
                     routeBridge.setBridgeId(bridgeId);
                 } else {
-                    addTrexBridgeToDB(routeBridge, oid);
+                    routeBridge.setBridgeId(addTrexBridgeToDB(routeBridge, oid));
                 }
             }
         }
     }
 
-    private void addTrexBridgeToDB(RouteBridgeModel routeBridge, String oid) {
-        // TODO What to do if bridge is not found? Create bridge with LeLu data..?
-        //we get it from trex, but it might not be there if its Lelu by hand added so TODO
+    private Integer addTrexBridgeToDB(RouteBridgeModel routeBridge, String oid) {
+        
         logger.debug("Bridge missing with oid {} get from trex", routeBridge.getBridge().getOid());
         try {
             BridgeModel newBridge = trexService.getBridge(oid);
             Integer newBridgeId = bridgeRepository.createBridge(newBridge);
-            routeBridge.setBridgeId(newBridgeId);
+            return newBridgeId;
         } catch (TRexRestException e) {
             //TODO if its Lelu by hand added so create bridge with LeLu data..?
             logger.warn("Bridge missing with oid {} not found in trex", routeBridge.getBridge().getOid());
+            return null;
         }
     }
 
