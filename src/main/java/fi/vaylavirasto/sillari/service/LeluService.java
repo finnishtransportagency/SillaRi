@@ -87,7 +87,7 @@ public class LeluService {
         permitModel.setCompanyId(companyId);
 
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
-        produceBridgeDataForRouteBridges(permitModel);
+        produceBridgeDataForRouteBridges(permitModel.getRoutes());
         PermitModel oldPermitModel = getWholePermitModel(permitModel.getPermitNumber());
 
         if (oldPermitModel != null) {
@@ -150,7 +150,7 @@ public class LeluService {
         permitModel.setCompanyId(companyId);
 
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
-        produceBridgeDataForRouteBridges(permitModel);
+        produceBridgeDataForRouteBridges(permitModel.getRoutes());
 
         Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitModel.getPermitNumber(), permitModel.getLeluVersion());
 
@@ -207,14 +207,14 @@ public class LeluService {
     }
 
 
-    private void produceBridgeDataForRouteBridges(PermitModel permitModel) {
+    private void produceBridgeDataForRouteBridges(List<RouteModel> routes) {
         // Get bridge IDs for unique bridges in routes
         // What to do if bridge is not found?
         // we get it from trex,
         // but it might not be there if its Lelu by hand added so
         // TODO then we create bridge with LeLu data..
-        Map<String, Integer> idOIDMap = getBridgeIdsWithOIDs(permitModel);
-        for (RouteModel route : permitModel.getRoutes()) {
+        Map<String, Integer> idOIDMap = getBridgeIdsWithOIDs(routes);
+        for (RouteModel route : routes) {
             for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
                 String oid = routeBridge.getBridge().getOid();
                 Integer bridgeId = idOIDMap.get(oid);
@@ -241,9 +241,9 @@ public class LeluService {
         }
     }
 
-    private Map<String, Integer> getBridgeIdsWithOIDs(PermitModel permitModel) {
+    private Map<String, Integer> getBridgeIdsWithOIDs(List<RouteModel> routes) {
         List<String> allOIDs = new ArrayList<>();
-        for (RouteModel routeModel : permitModel.getRoutes()) {
+        for (RouteModel routeModel : routes) {
             allOIDs.addAll(routeModel.getRouteBridges().stream()
                     .map(routeBridge -> routeBridge.getBridge().getOid())
                     .collect(Collectors.toList()));
