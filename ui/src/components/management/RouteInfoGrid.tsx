@@ -216,21 +216,23 @@ const RouteInfoGrid = ({
                   value={selectedVehicle}
                   onIonChange={(e) => setTractorUnit(e.detail.value)}
                 >
-                  {vehicles.map((vehicle, index) => {
-                    const { type, identifier } = vehicle;
-                    const key = `vehicle_${index}`;
-                    return (
-                      <IonSelectOption key={key} value={vehicle}>
-                        {`${identifier ? identifier.toUpperCase() : ""} (${capitalizeFirstLetter(type)})`}
-                      </IonSelectOption>
-                    );
-                  })}
+                  {vehicles
+                    .filter((vehicle) => !!vehicle.identifier)
+                    .map((vehicle, index) => {
+                      const { type, identifier } = vehicle;
+                      const key = `vehicle_${index}`;
+                      return (
+                        <IonSelectOption key={key} value={vehicle}>
+                          {`${identifier.toUpperCase()} (${capitalizeFirstLetter(type)})`}
+                        </IonSelectOption>
+                      );
+                    })}
                 </IonSelect>
               )}
               {status !== TransportStatus.PLANNED && (
                 <IonText>
                   {selectedVehicle
-                    ? `${selectedVehicle.identifier} (${selectedVehicle.type})`
+                    ? `${selectedVehicle.identifier.toUpperCase()} (${capitalizeFirstLetter(selectedVehicle.type)})`
                     : t("management.transportDetail.routeInfo.tractorUnitNotSelected")}
                 </IonText>
               )}
