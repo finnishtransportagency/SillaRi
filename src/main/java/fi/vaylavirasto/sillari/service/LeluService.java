@@ -277,7 +277,7 @@ public class LeluService {
         String objectKey = "permitPdf/" + permitNumber + "_" + permitVersion + "/" + file.getOriginalFilename();
 
 
-        permitRepository.updatePermitPdf(permitId, objectKey);
+
         if (activeProfile.equals("local")) {
             // Save to local file system
             File outputFile = new File("/", file.getOriginalFilename());
@@ -290,12 +290,16 @@ public class LeluService {
         } else {
             // Upload to AWS
             try {
-                awss3Client.upload(objectKey, file.getBytes(), "application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET);
+                boolean success = awss3Client.upload(objectKey, file.getBytes(), "application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET, AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
+                if(!success){
+                    throw new LeluPermitPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             } catch (IOException e) {
                 logger.error("Error uploading file to aws." + e.getClass().getName() + " " + e.getMessage());
                 throw new LeluPermitPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
+        permitRepository.updatePermitPdf(permitId, objectKey);
 
         return new LeluPermiPdfResponseDTO(permitNumber, permitVersion, messageSource.getMessage("lelu.permit.pdf.upload.completed", null, Locale.ROOT));
 

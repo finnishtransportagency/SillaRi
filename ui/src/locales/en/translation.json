@@ -215,6 +215,15 @@
         "details": "Details",
         "modify": "Modify",
         "show": "Show"
+      },
+      "transportStatusLog": "Transport status log",
+      "logStatus": {
+        "unknown": "Information unknown",
+        "planned": "Planned",
+        "departed": "Transport departed",
+        "stopped": "Stopped",
+        "in_progress": "Driving",
+        "arrived": "Transport arrived"
       }
     },
     "transportDetail": {

@@ -6,3 +6,20 @@
 .routeGrid > ion-row {
   border-top: 2px solid var(--ion-color-base);
 }
+
+.routeGridStatus {
+  padding: 6px;
+}
+
+.routeGridStatus_departed,
+.routeGridStatus_in_progress {
+  background-color: var(--ion-color-success-25);
+}
+
+.routeGridStatus_stopped {
+  background-color: var(--ion-color-danger-25);
+}
+
+.routeGridStatus_arrived {
+  background-color: var(--ion-color-light);
+}
