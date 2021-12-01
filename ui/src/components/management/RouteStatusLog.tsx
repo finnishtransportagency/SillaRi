@@ -41,7 +41,9 @@ const RouteStatusLog = ({ isOpen, setOpen, statusHistory }: RouteStatusLogProps)
               const { status, time } = statusLog;
               const timeMoment = moment(time);
               const prevStatus = index > 0 ? history[index - 1] : undefined;
+              const nextStatus = index < history.length - 1 ? history[index + 1] : undefined;
               const { time: prevTime } = prevStatus || {};
+              const { time: nextTime } = nextStatus || {};
               const key = `statuslog_${index}`;
 
               return (
@@ -61,7 +63,10 @@ const RouteStatusLog = ({ isOpen, setOpen, statusHistory }: RouteStatusLogProps)
                             <IonText className="headingBoldText">{timeMoment.format(TIME_FORMAT_MIN)}</IonText>
                           </IonCol>
                         </IonRow>
-                        {(!prevTime || !moment(prevTime).isSame(timeMoment, "day") || index === history.length - 1) && (
+                        {(!prevTime ||
+                          !moment(prevTime).isSame(timeMoment, "day") ||
+                          !moment(nextTime).isSame(timeMoment, "day") ||
+                          index === history.length - 1) && (
                           <IonRow>
                             <IonCol>
                               <small>
