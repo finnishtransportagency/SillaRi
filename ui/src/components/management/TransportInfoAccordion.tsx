@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import CustomAccordion from "../common/CustomAccordion";
 import IPermit from "../../interfaces/IPermit";
+import { capitalizeFirstLetter } from "../../utils/stringUtils";
 
 interface TransportInfoAccordionProps {
   permit: IPermit;
@@ -46,12 +47,12 @@ const TransportInfoAccordion = ({ permit }: TransportInfoAccordionProps): JSX.El
                         <IonGrid className="ion-no-padding">
                           {vehicles.map((vehicle, index) => {
                             const key = `vehicle${index}`;
-                            const { type, identifier } = vehicle || {}; // TODO vehicle type in correct format for UI
+                            const { type, identifier } = vehicle || {};
 
                             return (
                               <IonRow key={key}>
                                 <IonCol>
-                                  <IonText>{`${type} ${identifier}`}</IonText>
+                                  <IonText>{`${capitalizeFirstLetter(type)} ${identifier ? identifier.toUpperCase() : ""}`}</IonText>
                                 </IonCol>
                               </IonRow>
                             );

@@ -161,7 +161,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
               <IonRow key={key}>
                 <IonCol size="15" size-lg="2" className="ion-padding">
                   <IonText className="headingText ion-hide-lg-up">{`${t("management.companySummary.route.tractorUnit")}: `}</IonText>
-                  <IonText>{tractorUnit}</IonText>
+                  <IonText>{tractorUnit ? tractorUnit.toUpperCase() : ""}</IonText>
                 </IonCol>
 
                 <IonCol size="15" size-lg="2" className="ion-padding">
