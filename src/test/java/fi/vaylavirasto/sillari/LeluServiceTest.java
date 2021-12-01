@@ -51,6 +51,8 @@ public class LeluServiceTest {
     private SupervisionRepository supervisionRepository;
     @Mock
     private AWSS3Client awss3Client;
+    @Mock
+    private TRexService trexService;
 
 
     @Autowired
