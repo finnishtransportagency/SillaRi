@@ -85,17 +85,17 @@
       "departurePoint": "Lähtöpiste",
       "arrivalPoint": "Päätepiste"
     },
-    "transportInfo": {
-      "title": "Kuljetuksen tiedot",
-      "registrationNumbers": "Rekisteritunnukset",
-      "dimensions": "Kuljetuksen mitat",
-      "height": "Korkeus maasta",
-      "width": "Leveys",
-      "length": "Pituus",
-      "transportTotalMass": "Kokonaismassa",
-      "axleWeightsDistances": "Akselipainot ja -välit"
-    },
     "bridgesToSupervise": "Valvottavat sillat"
+  },
+  "transportInfo": {
+    "title": "Kuljetusluvan tietoja",
+    "subtitle": "Ajoneuvot, enimmäismitat ja -massa",
+    "vehicles": "Luvan ajoneuvot",
+    "totalMass": "Suurin sallittu kokonaismassa",
+    "dimensions": "Kuljetuksen enimmäismitat",
+    "height": "Korkeus maasta",
+    "width": "Leveys",
+    "length": "Pituus"
   },
   "bridge": {
     "title": "Sillan tiedot",
@@ -247,16 +247,6 @@
         "showRouteOnMap": "Näytä reitti kartalla",
         "tractorUnitIdentifier": "Ajoneuvon rekisteritunnus (vetoauto)",
         "tractorUnitNotSelected": "Rekisteritunnus puuttuu"
-      },
-      "transportInfo": {
-        "title": "Kuljetusluvan tietoja",
-        "subtitle": "Ajoneuvot, enimmäismitat ja -massa",
-        "vehicles": "Luvan ajoneuvot",
-        "totalMass": "Suurin sallittu kokonaismassa",
-        "dimensions": "Kuljetuksen enimmäismitat",
-        "height": "Korkeus maasta",
-        "width": "Leveys",
-        "length": "Pituus"
       },
       "bridgeInfo": {
         "bridge": "Silta",

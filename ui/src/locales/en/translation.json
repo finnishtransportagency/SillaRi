@@ -84,17 +84,17 @@
       "departurePoint": "Departure point",
       "arrivalPoint": "Arrival point"
     },
-    "transportInfo": {
-      "title": "Transport information",
-      "registrationNumbers": "Registration numbers",
-      "dimensions": "Transport dimensions",
-      "height": "Height from the ground",
-      "width": "Width",
-      "length": "Length",
-      "transportTotalMass": "Total mass",
-      "axleWeightsDistances": "Axle weights and distances"
-    },
     "bridgesToSupervise": "Bridges to supervise"
+  },
+  "transportInfo": {
+    "title": "Transport permit information",
+    "subtitle": "Vehicles, maximum dimensions and mass",
+    "vehicles": "Vehicles in the permit",
+    "totalMass": "Max permitted total mass",
+    "dimensions": "Transport max dimensions",
+    "height": "Height from the ground",
+    "width": "Width",
+    "length": "Length"
   },
   "bridge": {
     "title": "Bridge information",
@@ -246,16 +246,6 @@
         "showRouteOnMap": "Show route on map",
         "tractorUnitIdentifier": "Vehicle registration number (tractor unit)",
         "tractorUnitNotSelected": "Registration number missing"
-      },
-      "transportInfo": {
-        "title": "Transport permit information",
-        "subtitle": "Vehicles, maximum dimensions and mass",
-        "vehicles": "Vehicles in the permit",
-        "totalMass": "Max permitted total mass",
-        "dimensions": "Transport max dimensions",
-        "height": "Height from the ground",
-        "width": "Width",
-        "length": "Length"
       },
       "bridgeInfo": {
         "bridge": "Bridge",

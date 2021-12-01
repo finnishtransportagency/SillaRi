@@ -1,9 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
-import CustomAccordion from "../common/CustomAccordion";
-import IPermit from "../../interfaces/IPermit";
-import { capitalizeFirstLetter } from "../../utils/stringUtils";
+import CustomAccordion from "./common/CustomAccordion";
+import IPermit from "../interfaces/IPermit";
+import { capitalizeFirstLetter } from "../utils/stringUtils";
 
 interface TransportInfoAccordionProps {
   permit: IPermit;
@@ -24,7 +24,7 @@ const TransportInfoAccordion = ({ permit }: TransportInfoAccordionProps): JSX.El
             <IonGrid className="ion-no-padding">
               <IonRow>
                 <IonCol>
-                  <IonText className="headingText">{t("management.transportDetail.transportInfo.title")}</IonText>
+                  <IonText>{t("transportInfo.title")}</IonText>
                 </IonCol>
               </IonRow>
             </IonGrid>
@@ -33,7 +33,7 @@ const TransportInfoAccordion = ({ permit }: TransportInfoAccordionProps): JSX.El
             <IonGrid className="ion-no-padding">
               <IonRow className="ion-margin">
                 <IonCol size="12" size-lg="6">
-                  <IonText className="headingText">{t("management.transportDetail.transportInfo.subtitle")}</IonText>
+                  <IonText className="headingText">{t("transportInfo.subtitle")}</IonText>
                 </IonCol>
               </IonRow>
               <IonRow>
@@ -41,7 +41,7 @@ const TransportInfoAccordion = ({ permit }: TransportInfoAccordionProps): JSX.El
                   <IonGrid className="ion-no-padding">
                     <IonRow className="ion-margin">
                       <IonCol size="12" size-sm="6">
-                        <IonText className="headingText">{t("management.transportDetail.transportInfo.vehicles")}</IonText>
+                        <IonText className="headingText">{t("transportInfo.vehicles")}</IonText>
                       </IonCol>
                       <IonCol size="12" size-sm="6">
                         <IonGrid className="ion-no-padding">
@@ -67,23 +67,23 @@ const TransportInfoAccordion = ({ permit }: TransportInfoAccordionProps): JSX.El
                   <IonGrid className="ion-no-padding">
                     <IonRow className="ion-margin">
                       <IonCol size="12" size-sm="6">
-                        <IonText className="headingText">{t("management.transportDetail.transportInfo.dimensions")}</IonText>
+                        <IonText className="headingText">{t("transportInfo.dimensions")}</IonText>
                       </IonCol>
                       <IonCol size="12" size-sm="6">
                         <IonGrid className="ion-no-padding">
                           <IonRow>
                             <IonCol>
-                              <IonText>{`${t("management.transportDetail.transportInfo.height")} ${height} m`}</IonText>
+                              <IonText>{`${t("transportInfo.height")} ${height} m`}</IonText>
                             </IonCol>
                           </IonRow>
                           <IonRow>
                             <IonCol>
-                              <IonText>{`${t("management.transportDetail.transportInfo.width")} ${width} m`}</IonText>
+                              <IonText>{`${t("transportInfo.width")} ${width} m`}</IonText>
                             </IonCol>
                           </IonRow>
                           <IonRow>
                             <IonCol>
-                              <IonText>{`${t("management.transportDetail.transportInfo.length")} ${length} m`}</IonText>
+                              <IonText>{`${t("transportInfo.length")} ${length} m`}</IonText>
                             </IonCol>
                           </IonRow>
                         </IonGrid>
@@ -92,7 +92,7 @@ const TransportInfoAccordion = ({ permit }: TransportInfoAccordionProps): JSX.El
 
                     <IonRow className="ion-margin">
                       <IonCol size="12" size-sm="6">
-                        <IonText className="headingText">{t("management.transportDetail.transportInfo.totalMass")}</IonText>
+                        <IonText className="headingText">{t("transportInfo.totalMass")}</IonText>
                       </IonCol>
                       <IonCol size="12" size-sm="6">
                         <IonText>{`${totalMass} t`}</IonText>

@@ -14,7 +14,7 @@ import { createRouteTransport, deleteRouteTransport, updateRouteTransport } from
 import { DATE_FORMAT, TransportStatus } from "../../utils/constants";
 import BridgeGrid from "./BridgeGrid";
 import RouteInfoGrid from "./RouteInfoGrid";
-import TransportInfoAccordion from "./TransportInfoAccordion";
+import TransportInfoAccordion from "../TransportInfoAccordion";
 import TransportPassword from "./TransportPassword";
 import IVehicle from "../../interfaces/IVehicle";
 
