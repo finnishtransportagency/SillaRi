@@ -13,7 +13,6 @@ import mapPoint from "../../theme/icons/map-point.svg";
 import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 import IPermit from "../../interfaces/IPermit";
 import IVehicle from "../../interfaces/IVehicle";
-import { capitalizeFirstLetter } from "../../utils/stringUtils";
 
 interface RouteInfoGridProps {
   routeTransportId: number;
@@ -223,7 +222,7 @@ const RouteInfoGrid = ({
                       const key = `vehicle_${index}`;
                       return (
                         <IonSelectOption key={key} value={vehicle}>
-                          {`${identifier.toUpperCase()} (${capitalizeFirstLetter(type)})`}
+                          {`${identifier.toUpperCase()} (${type.toLocaleLowerCase()})`}
                         </IonSelectOption>
                       );
                     })}
@@ -231,9 +230,7 @@ const RouteInfoGrid = ({
               )}
               {status !== TransportStatus.PLANNED && (
                 <IonText>
-                  {selectedVehicle
-                    ? `${selectedVehicle.identifier.toUpperCase()} (${capitalizeFirstLetter(selectedVehicle.type)})`
-                    : t("management.transportDetail.routeInfo.tractorUnitNotSelected")}
+                  {selectedVehicle ? selectedVehicle.identifier.toUpperCase() : t("management.transportDetail.routeInfo.tractorUnitNotSelected")}
                 </IonText>
               )}
             </IonCol>
