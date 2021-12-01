@@ -214,6 +214,15 @@
         "details": "(SV) Details",
         "modify": "(SV) Modify",
         "show": "(SV) Show"
+      },
+      "transportStatusLog": "(SV) Transport status log",
+      "logStatus": {
+        "unknown": "(SV) Information unknown",
+        "planned": "(SV) Planned",
+        "departed": "(SV) Transport departed",
+        "stopped": "(SV) Stopped",
+        "in_progress": "(SV) Driving",
+        "arrived": "(SV) Transport arrived"
       }
     },
     "transportDetail": {
