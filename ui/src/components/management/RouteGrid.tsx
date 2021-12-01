@@ -158,7 +158,15 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
           .sort((a, b) => b.id - a.id)
           .map((routeTransport, index) => {
             const key = `routetransport_${index}`;
-            const { id: routeTransportId, tractorUnit, currentTransportPassword, currentStatus, statusHistory = [], route, supervisions } = routeTransport;
+            const {
+              id: routeTransportId,
+              tractorUnit,
+              currentTransportPassword,
+              currentStatus,
+              statusHistory = [],
+              route,
+              supervisions,
+            } = routeTransport;
             const { name: routeName } = route || {};
             const { transportPassword } = currentTransportPassword || {};
             const { status } = currentStatus || {};
