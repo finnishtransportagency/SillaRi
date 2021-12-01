@@ -31,7 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.Locale;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 @RestController
@@ -113,9 +114,17 @@ public class LeluController {
             logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             try {
                 // Get Bridges From Trex To DB
-                permitDTO.getRoutes().forEach(r -> r.getBridges().forEach(b -> getBridgeFromTrexToDB(b.getOid())));
+
                 //TODO call non dev version when time
-                return leluService.createOrUpdatePermitDevVersion(permitDTO);
+                LeluPermitResponseDTO response = leluService.createOrUpdatePermitDevVersion(permitDTO);
+
+                //update bridges from trex in the background so we can response lelu quicker
+                ExecutorService executor = Executors.newWorkStealingPool();
+                executor.submit(() -> {
+                    permitDTO.getRoutes().forEach(r -> r.getBridges().forEach(b -> getBridgeFromTrexToDB(b.getOid())));
+                });
+
+                return response;
             } catch (LeluPermitSaveException leluPermitSaveException) {
                 logger.error(leluPermitSaveException.getMessage());
                 throw leluPermitSaveException;
