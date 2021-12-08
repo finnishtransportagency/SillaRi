@@ -96,6 +96,11 @@
     "width": "(SV) Width",
     "length": "(SV) Length"
   },
+  "bridgeCard": {
+    "plannedTime": "(SV) estimate",
+    "tractorUnit": "(SV) Tractor unit",
+    "tractorUnitMissing": "(SV) missing data"
+  },
   "bridge": {
     "title": "(SV) Bridge information",
     "identifier": "(SV) Identifier",

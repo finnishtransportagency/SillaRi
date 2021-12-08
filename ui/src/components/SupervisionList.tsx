@@ -31,7 +31,9 @@ const SupervisionList = ({ supervisionDays, noNetworkNoData }: SupervisionListPr
               <div className="listContainer">
                 {supervisionDay.supervisions.map((supervision: ISupervision, bIndex) => {
                   const bridgeKey = `bridge_${bIndex}`;
-                  return <BridgeCard key={bridgeKey} supervision={supervision} />;
+                  const { routeTransport } = supervision || {};
+
+                  return <BridgeCard key={bridgeKey} supervision={supervision} routeTransport={routeTransport} />;
                 })}
               </div>
             </Fragment>

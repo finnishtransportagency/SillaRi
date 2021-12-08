@@ -97,6 +97,11 @@
     "width": "Leveys",
     "length": "Pituus"
   },
+  "bridgeCard": {
+    "plannedTime": "arvio",
+    "tractorUnit": "Vetoauto",
+    "tractorUnitMissing": "tieto puuttuu"
+  },
   "bridge": {
     "title": "Sillan tiedot",
     "identifier": "Tunnus",

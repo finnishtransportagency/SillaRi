@@ -96,6 +96,11 @@
     "width": "Width",
     "length": "Length"
   },
+  "bridgeCard": {
+    "plannedTime": "estimate",
+    "tractorUnit": "Tractor unit",
+    "tractorUnitMissing": "missing data"
+  },
   "bridge": {
     "title": "Bridge information",
     "identifier": "Identifier",
