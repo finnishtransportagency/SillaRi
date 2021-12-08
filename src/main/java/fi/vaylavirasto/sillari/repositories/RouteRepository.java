@@ -29,13 +29,23 @@ public class RouteRepository {
                 .fetch(this::mapRouteRecordWithAddresses);
     }
 
-    public RouteModel getRoute(Long leluId) {
+    public RouteModel getRoute(Integer id) {
+        return dsl.select().from(TableAlias.route)
+                .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
+                .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
+                .where(TableAlias.route.ID.eq(id))
+                .fetchOne(this::mapRouteRecordWithAddresses);
+    }
+
+    public RouteModel getRouteWithLeluID(Long leluId) {
         return dsl.select().from(TableAlias.route)
                 .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
                 .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
                 .where(TableAlias.route.LELU_ID.eq(leluId))
-                .fetchOne(this::mapRouteRecordWithAddresses);
+                .fetchAny(this::mapRouteRecordWithAddresses);
     }
+
+
 
     private RouteModel mapRouteRecordWithAddresses(Record record) {
         RouteMapper routeMapper = new RouteMapper();

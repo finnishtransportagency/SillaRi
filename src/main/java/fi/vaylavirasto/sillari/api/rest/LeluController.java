@@ -218,7 +218,9 @@ public class LeluController {
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
-                return leluService.getWholeRoute(routeId);
+                var r =leluService.getWholeRoute(routeId);
+                        logger.debug("HELLO: " + r);
+                return r;
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 return null;

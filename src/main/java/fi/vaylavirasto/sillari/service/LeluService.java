@@ -323,7 +323,7 @@ public class LeluService {
     }
 
     public LeluRouteResponseDTO getWholeRoute(Long leluRouteId) {
-        RouteModel route = routeRepository.getRoute(leluRouteId);
+        RouteModel route = routeRepository.getRouteWithLeluID(leluRouteId);
         if (route != null) {
 
             List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(route.getId());
@@ -335,7 +335,7 @@ public class LeluService {
                 }
             }
         }
-
+        logger.debug("HELLO!: "+ route);
         return dtoMapper.fromModelToDTO(route);
     }
 
