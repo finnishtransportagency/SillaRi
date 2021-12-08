@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -24,7 +26,7 @@ public class LeluBridgeResponseDTO {
     private String roadAddress;
 
     @Schema(description = "Bridge supervision")
-    private LeluSupervisionDTO supervision;
+    private List<LeluSupervisionDTO> supervisions;
 
 
 }

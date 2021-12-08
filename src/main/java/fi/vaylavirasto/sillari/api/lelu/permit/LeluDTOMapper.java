@@ -60,15 +60,17 @@ public interface LeluDTOMapper {
 
 
 
-    @Mappings({
-            @Mapping(target = "oid", source = "dto.oid"),
-            @Mapping(target = "bridge.identifier", source = "dto.identifier"),
-            @Mapping(target = "bridge.name", source = "dto.name"),
-            @Mapping(target = "bridge.roadAddress", source = "dto.roadAddress"),
-            @Mapping(target = "crossingInstruction", source = "dto.additionalInfo")
-    })
+
     LeluSupervisionDTO fromModelToDTO(SupervisionModel model);
 
+
+    @Mappings({
+            @Mapping(target = "oid", source = "model.bridge.oid"),
+            @Mapping(target = "bridge.identifier", source = "model.bridge.identifier"),
+            @Mapping(target = "bridge.name", source = "model.bridge.name"),
+            @Mapping(target = "bridge.roadAddress", source = "model.bridge.roadAddress"),
+            @Mapping(target = "supervisions", source = "model.bridge.supervisions")
+    })
     LeluBridgeResponseDTO fromModelToDTO(RouteBridgeModel model);
 
     @Mappings({
