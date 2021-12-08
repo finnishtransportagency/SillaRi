@@ -55,8 +55,6 @@ public class LeluService {
     private String activeProfile;
 
 
-
-
     @Autowired
     public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
                        TRexService trexService) {
@@ -138,6 +136,8 @@ public class LeluService {
     }
 
 
+
+
     //TODO Will eplace createOrUpdatePermitDevVersion eventually.
     public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) throws LeluDeleteRouteWithSupervisionsException {
         LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
@@ -178,11 +178,11 @@ public class LeluService {
     }
 
     public LeluRouteGeometryResponseDTO uploadRouteGeometry(Long routeId, MultipartFile file) throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
-        logger.debug("uploadRouteGeometry: " + routeId + " " +  file.getName());
+        logger.debug("uploadRouteGeometry: " + routeId + " " + file.getName());
         List<RouteModel> routes = routeRepository.getRoutesWithLeluId(routeId);
 
-        if(routes == null || routes.isEmpty()){
-            logger.warn("Route not found with lelu id "+routeId);
+        if (routes == null || routes.isEmpty()) {
+            logger.warn("Route not found with lelu id " + routeId);
             throw new LeluRouteNotFoundException(messageSource.getMessage("lelu.route.not.found", null, Locale.ROOT));
         }
 
@@ -280,10 +280,9 @@ public class LeluService {
         }
 
         //check if there exists supervisions for permits's routes, then update is not allowed, need to create a new version
-        if(permitRepository.hasSupervisions(routeIdsToRemove)){
+        if (permitRepository.hasSupervisions(routeIdsToRemove)) {
             throw new LeluDeleteRouteWithSupervisionsException((messageSource.getMessage("lelu.route.has.supervisions", null, Locale.ROOT)));
-        }
-        else {
+        } else {
             permitRepository.updatePermit(permitModel, routeIdsToRemove);
         }
     }
@@ -294,7 +293,6 @@ public class LeluService {
             throw new LeluPermitPdfUploadException(messageSource.getMessage("lelu.permit.not.found", null, Locale.ROOT), HttpStatus.NOT_FOUND);
         }
         String objectKey = "permitPdf/" + permitNumber + "_" + permitVersion + "/" + file.getOriginalFilename();
-
 
 
         if (activeProfile.equals("local")) {
@@ -310,7 +308,7 @@ public class LeluService {
             // Upload to AWS
             try {
                 boolean success = awss3Client.upload(objectKey, file.getBytes(), "application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET, AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
-                if(!success){
+                if (!success) {
                     throw new LeluPermitPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             } catch (IOException e) {
@@ -324,8 +322,22 @@ public class LeluService {
 
     }
 
-    public LeluRouteResponseDTO getSupervisions(Long routeId) {
-        return supervisionRepository.getSupervisionsByRouteId(routeId);
+    public LeluRouteResponseDTO getWholeRoute(Long leluRouteId) {
+        RouteModel route = routeRepository.getRoute(leluRouteId);
+        if (route != null) {
 
+            List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(route.getId());
+            route.setRouteBridges(routeBridges);
+
+            if (routeBridges != null) {
+                for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
+                    routeBridge.setSupervisions(supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId()));
+                }
+            }
+        }
+
+        return dtoMapper.fromModelToDTO(route);
     }
+
+
 }

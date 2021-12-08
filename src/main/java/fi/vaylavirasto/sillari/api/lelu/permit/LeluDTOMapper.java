@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.api.lelu.permit;
 
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.util.DateMapper;
 import org.mapstruct.Mapper;
@@ -54,5 +55,5 @@ public interface LeluDTOMapper {
     })
     AddressModel fromDTOToModel(LeluAddressDTO dto);
 
-
+    LeluRouteResponseDTO fromModelToDTO(RouteModel modell);
 }

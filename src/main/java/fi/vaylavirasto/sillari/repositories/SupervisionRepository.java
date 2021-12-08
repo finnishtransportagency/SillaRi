@@ -1,6 +1,5 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.mapper.BridgeMapper;
 import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.mapper.SupervisionMapper;
@@ -41,12 +40,6 @@ public class SupervisionRepository {
                 .leftJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
                 .where(TableAlias.supervision.ID.eq(id))
                 .fetchOne(this::mapSupervisionWithRouteBridgeAndBridge);
-    }
-
-    public LeluRouteResponseDTO getSupervisionsByRouteId(Integer routeId) {
-        return dsl.select().from(TableAlias.supervision)
-                .where(TableAlias.supervision.ROUTE_ID.eq(routeId))
-                .fetch(new SupervisionMapper());
     }
 
     public List<SupervisionModel> getSupervisionsByRouteTransportId(Integer routeTransportId) {
@@ -187,6 +180,4 @@ public class SupervisionRepository {
                     .execute();
         });
     }
-
-
 }

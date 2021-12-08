@@ -29,11 +29,11 @@ public class RouteRepository {
                 .fetch(this::mapRouteRecordWithAddresses);
     }
 
-    public RouteModel getRoute(Integer id) {
+    public RouteModel getRoute(Long leluId) {
         return dsl.select().from(TableAlias.route)
                 .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
                 .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
-                .where(TableAlias.route.ID.eq(id))
+                .where(TableAlias.route.LELU_ID.eq(leluId))
                 .fetchOne(this::mapRouteRecordWithAddresses);
     }
 
