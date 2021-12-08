@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.service;
 
 
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
@@ -320,6 +321,10 @@ public class LeluService {
         permitRepository.updatePermitPdf(permitId, objectKey);
 
         return new LeluPermiPdfResponseDTO(permitNumber, permitVersion, messageSource.getMessage("lelu.permit.pdf.upload.completed", null, Locale.ROOT));
+
+    }
+
+    public LeluRouteResponseDTO getSupervisions(Long routeId) {
 
     }
 }
