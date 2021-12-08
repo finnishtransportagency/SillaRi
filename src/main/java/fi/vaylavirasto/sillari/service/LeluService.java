@@ -325,6 +325,7 @@ public class LeluService {
     }
 
     public LeluRouteResponseDTO getSupervisions(Long routeId) {
+        return supervisionRepository.getSupervisionsByRouteId(routeId);
 
     }
 }

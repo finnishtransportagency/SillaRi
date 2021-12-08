@@ -214,7 +214,7 @@ public class LeluController {
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
     })
     public LeluRouteResponseDTO getSupervisions(@RequestParam Long routeId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
-        logger.debug("Lelu getSupervisionStatuses " + routeId);
+        logger.debug("Lelu getSupervisions " + routeId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
