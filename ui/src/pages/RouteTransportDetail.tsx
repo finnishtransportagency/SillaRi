@@ -7,7 +7,7 @@ import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import RouteAccordion from "../components/RouteAccordion";
 import PermitDetailHeader from "../components/PermitDetailHeader";
-import PermitTransportAccordion from "../components/PermitTransportAccordion";
+import TransportInfoAccordion from "../components/TransportInfoAccordion";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import { useTypedSelector } from "../store/store";
@@ -58,7 +58,7 @@ const RouteTransportDetail = (): JSX.Element => {
           <>
             <PermitDetailHeader permit={permit as IPermit} />
             <RouteAccordion route={route as IRoute} />
-            <PermitTransportAccordion permit={permit as IPermit} />
+            <TransportInfoAccordion permit={permit as IPermit} />
 
             <BridgeCardList supervisions={supervisions} />
           </>

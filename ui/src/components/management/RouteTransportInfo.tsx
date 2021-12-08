@@ -14,8 +14,9 @@ import { createRouteTransport, deleteRouteTransport, updateRouteTransport } from
 import { DATE_FORMAT, TransportStatus } from "../../utils/constants";
 import BridgeGrid from "./BridgeGrid";
 import RouteInfoGrid from "./RouteInfoGrid";
-import TransportInfoAccordion from "./TransportInfoAccordion";
+import TransportInfoAccordion from "../TransportInfoAccordion";
 import TransportPassword from "./TransportPassword";
+import IVehicle from "../../interfaces/IVehicle";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -25,6 +26,8 @@ interface RouteTransportInfoProps {
   setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
   selectedRouteOption: IRoute;
   setSelectedRouteOption: Dispatch<SetStateAction<IRoute | undefined>>;
+  selectedVehicle: IVehicle | undefined;
+  setSelectedVehicle: Dispatch<SetStateAction<IVehicle | undefined>>;
   setToastMessage: Dispatch<SetStateAction<string>>;
 }
 
@@ -36,6 +39,8 @@ const RouteTransportInfo = ({
   setModifiedRouteTransportDetail,
   selectedRouteOption,
   setSelectedRouteOption,
+  selectedVehicle,
+  setSelectedVehicle,
   setToastMessage,
 }: RouteTransportInfoProps): JSX.Element => {
   const { t } = useTranslation();
@@ -44,7 +49,7 @@ const RouteTransportInfo = ({
   const queryClient = useQueryClient();
   const [present] = useIonAlert();
 
-  const { companyId, permitNumber, validStartDate, validEndDate, routes = [] } = permit || {};
+  const { companyId, permitNumber, validStartDate, validEndDate } = permit || {};
   const { currentStatus } = modifiedRouteTransportDetail || {};
   const { status } = currentStatus || {};
 
@@ -180,11 +185,13 @@ const RouteTransportInfo = ({
               <IonCol>
                 <RouteInfoGrid
                   routeTransportId={routeTransportId}
-                  permitRoutes={routes}
+                  permit={permit}
                   modifiedRouteTransportDetail={modifiedRouteTransportDetail}
                   setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
                   selectedRouteOption={selectedRouteOption}
                   setSelectedRouteOption={setSelectedRouteOption}
+                  selectedVehicle={selectedVehicle}
+                  setSelectedVehicle={setSelectedVehicle}
                 />
               </IonCol>
             </IonRow>
@@ -249,7 +256,7 @@ const RouteTransportInfo = ({
               color="primary"
               expand="block"
               size="large"
-              disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption}
+              disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption || !selectedVehicle}
               onClick={saveRouteTransportDetail}
             >
               <IonText>{t("common.buttons.save")}</IonText>

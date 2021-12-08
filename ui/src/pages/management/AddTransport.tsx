@@ -17,6 +17,7 @@ import { useTypedSelector } from "../../store/store";
 import { TransportStatus } from "../../utils/constants";
 import { onRetry } from "../../utils/backendData";
 import { getPermit, getSupervisors } from "../../utils/managementBackendData";
+import IVehicle from "../../interfaces/IVehicle";
 
 interface AddTransportProps {
   permitId: string;
@@ -29,6 +30,7 @@ const AddTransport = (): JSX.Element => {
 
   const [modifiedRouteTransportDetail, setModifiedRouteTransportDetail] = useState<IRouteTransport | undefined>(undefined);
   const [selectedRouteOption, setSelectedRouteOption] = useState<IRoute | undefined>(undefined);
+  const [selectedVehicle, setSelectedVehicle] = useState<IVehicle | undefined>(undefined);
 
   const management = useTypedSelector((state) => state.rootReducer);
   const {
@@ -51,6 +53,7 @@ const AddTransport = (): JSX.Element => {
         id: 0,
         routeId: 0,
         plannedDepartureTime: moment().toDate(),
+        tractorUnit: "",
         currentStatus: { status: TransportStatus.PLANNED } as IRouteTransportStatus,
       };
       setModifiedRouteTransportDetail(newRouteTransport);
@@ -76,6 +79,8 @@ const AddTransport = (): JSX.Element => {
             setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
             selectedRouteOption={selectedRouteOption as IRoute}
             setSelectedRouteOption={setSelectedRouteOption}
+            selectedVehicle={selectedVehicle}
+            setSelectedVehicle={setSelectedVehicle}
             setToastMessage={setToastMessage}
           />
         )}
