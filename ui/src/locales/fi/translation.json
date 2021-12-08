@@ -71,6 +71,9 @@
     "route": "Reitti"
   },
   "route": {
+    "departureTime": "Lähtöaika",
+    "plannedTime": "Arvioitu lähtöaika",
+    "tractorUnit": "Vetoauton rek.tunnus",
     "transportPermit": "Kuljetuslupa",
     "permitInfo": {
       "title": "Luvan tiedot",

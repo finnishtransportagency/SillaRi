@@ -70,6 +70,9 @@
     }
   },
   "route": {
+    "departureTime": "(SV) Departure time",
+    "plannedTime": "(SV) Planned departure time",
+    "tractorUnit": "(SV) Tractor unit identifier",
     "transportPermit": "(SV) Transport permit",
     "permitInfo": {
       "title": "(SV) Permit information",
