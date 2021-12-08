@@ -66,10 +66,10 @@ public interface LeluDTOMapper {
 
     @Mappings({
             @Mapping(target = "oid", source = "model.bridge.oid"),
-            @Mapping(target = "bridge.identifier", source = "model.bridge.identifier"),
-            @Mapping(target = "bridge.name", source = "model.bridge.name"),
-            @Mapping(target = "bridge.roadAddress", source = "model.bridge.roadAddress"),
-            @Mapping(target = "supervisions", source = "model.bridge.supervisions")
+            @Mapping(target = "identifier", source = "model.bridge.identifier"),
+            @Mapping(target = "name", source = "model.bridge.name"),
+            @Mapping(target = "roadAddress", source = "model.bridge.roadAddress"),
+            @Mapping(target = "supervisions", source = "model.supervisions")
     })
     LeluBridgeResponseDTO fromModelToDTO(RouteBridgeModel model);
 
