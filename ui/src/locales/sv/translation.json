@@ -70,6 +70,9 @@
     }
   },
   "route": {
+    "departureTime": "(SV) Departure time",
+    "plannedTime": "(SV) Planned departure time",
+    "tractorUnit": "(SV) Tractor unit identifier",
     "transportPermit": "(SV) Transport permit",
     "permitInfo": {
       "title": "(SV) Permit information",
@@ -95,6 +98,11 @@
     "height": "(SV) Height from the ground",
     "width": "(SV) Width",
     "length": "(SV) Length"
+  },
+  "bridgeCard": {
+    "estimate": "(SV) estimate",
+    "tractorUnit": "(SV) Tractor unit",
+    "tractorUnitMissing": "(SV) missing data"
   },
   "bridge": {
     "title": "(SV) Bridge information",

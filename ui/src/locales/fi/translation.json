@@ -71,6 +71,9 @@
     "route": "Reitti"
   },
   "route": {
+    "departureTime": "Lähtöaika",
+    "plannedTime": "Arvioitu lähtöaika",
+    "tractorUnit": "Vetoauton rek.tunnus",
     "transportPermit": "Kuljetuslupa",
     "permitInfo": {
       "title": "Luvan tiedot",
@@ -96,6 +99,11 @@
     "height": "Korkeus maasta",
     "width": "Leveys",
     "length": "Pituus"
+  },
+  "bridgeCard": {
+    "estimate": "arvio",
+    "tractorUnit": "Vetoauto",
+    "tractorUnitMissing": "tieto puuttuu"
   },
   "bridge": {
     "title": "Sillan tiedot",
