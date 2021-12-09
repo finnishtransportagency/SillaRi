@@ -58,6 +58,10 @@ public interface LeluDTOMapper {
     AddressModel fromDTOToModel(LeluAddressDTO dto);
 
 
+    @Mappings({
+            @Mapping(target = "supervisionStatus", source = "model.currentStatus"),
+            @Mapping(target = "reportId", source = "model.report.id"),
+    })
     LeluSupervisionDTO fromModelToDTO(SupervisionModel model);
 
     @Mappings({
