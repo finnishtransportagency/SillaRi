@@ -240,9 +240,12 @@ public class LeluController {
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
-                return null;
+                byte[] r =leluService.getSupervisionReportPDF(reportId);
+                logger.debug("HELLO: " + r);
+                return r;
             } catch (Exception e) {
                 logger.error(e.getMessage());
+                logger.error(e.getClass().getName());
                 return null;
             }
         } else {

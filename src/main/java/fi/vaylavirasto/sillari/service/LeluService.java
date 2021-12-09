@@ -16,8 +16,13 @@ import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,8 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -136,8 +140,6 @@ public class LeluService {
         }
         return oldPermitModel;
     }
-
-
 
 
     //TODO Will eplace createOrUpdatePermitDevVersion eventually.
@@ -342,9 +344,40 @@ public class LeluService {
                 }
             }
         }
-        logger.debug("HELLO!: "+ route);
+        logger.debug("HELLO!: " + route);
         return dtoMapper.fromModelToDTO(route);
     }
 
 
+    public byte[] getSupervisionReportPDF(Long reportId) {
+
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage();
+        document.addPage(page);
+        try {
+        PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+
+            contentStream.setFont(PDType1Font.COURIER, 12);
+
+            contentStream.beginText();
+            contentStream.showText("Hello World");
+            contentStream.endText();
+            contentStream.close();
+
+
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            document.save(byteArrayOutputStream);
+            InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+            document.close();
+
+            return IOUtils.toByteArray(inputStream);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
