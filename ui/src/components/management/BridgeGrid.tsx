@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
-import { IonCol, IonGrid, IonItem, IonLabel, IonRadio, IonRadioGroup, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
+import { IonCol, IonGrid, IonItem, IonLabel, IonRadio, IonRadioGroup, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import moment from "moment";
 import DatePicker from "../common/DatePicker";
@@ -11,6 +11,7 @@ import ISupervision from "../../interfaces/ISupervision";
 import ISupervisor from "../../interfaces/ISupervisor";
 import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 import "./BridgeGrid.css";
+import SupervisorSelect from "./SupervisorSelect";
 
 interface BridgeGridProps {
   supervisors: ISupervisor[];
@@ -81,25 +82,6 @@ const BridgeGrid = ({
       setModifiedRouteTransportDetail(newDetail);
     }
   };
-
-  const supervisorSelect = (supervision: ISupervision, priority: number, value?: ISupervisor) => (
-    <IonSelect
-      interface="action-sheet"
-      cancelText={t("common.buttons.back")}
-      value={value?.id}
-      onIonChange={(e) => setSupervisor(supervision, priority, e.detail.value)}
-    >
-      {supervisors.map((supervisor) => {
-        const { id, firstName, lastName } = supervisor;
-        const key = `supervisor_${id}`;
-        return (
-          <IonSelectOption key={key} value={id}>
-            {`${firstName} ${lastName}`}
-          </IonSelectOption>
-        );
-      })}
-    </IonSelect>
-  );
 
   // TODO - check bridge list sort order
   return (
@@ -213,7 +195,15 @@ const BridgeGrid = ({
                       <IonText>1.</IonText>
                     </IonCol>
                     <IonCol>
-                      {status === TransportStatus.PLANNED && supervisorSelect(supervision, 1, supervisor1)}
+                      {status === TransportStatus.PLANNED && (
+                        <SupervisorSelect
+                          supervisors={supervisors}
+                          supervision={supervision}
+                          priority={1}
+                          value={supervisor1}
+                          setSupervisor={setSupervisor}
+                        />
+                      )}
                       {status !== TransportStatus.PLANNED && <IonText>{`${firstName1} ${lastName1}`}</IonText>}
                     </IonCol>
                   </IonRow>
@@ -228,7 +218,15 @@ const BridgeGrid = ({
                       <IonText>2.</IonText>
                     </IonCol>
                     <IonCol>
-                      {status === TransportStatus.PLANNED && supervisorSelect(supervision, 2, supervisor2)}
+                      {status === TransportStatus.PLANNED && (
+                        <SupervisorSelect
+                          supervisors={supervisors}
+                          supervision={supervision}
+                          priority={2}
+                          value={supervisor2}
+                          setSupervisor={setSupervisor}
+                        />
+                      )}
                       {status !== TransportStatus.PLANNED && <IonText>{`${firstName2} ${lastName2}`}</IonText>}
                     </IonCol>
                   </IonRow>

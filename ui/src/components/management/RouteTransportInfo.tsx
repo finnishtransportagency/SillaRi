@@ -52,6 +52,7 @@ const RouteTransportInfo = ({
   const { companyId, permitNumber, validStartDate, validEndDate } = permit || {};
   const { currentStatus } = modifiedRouteTransportDetail || {};
   const { status } = currentStatus || {};
+  const { routeBridges = [] } = selectedRouteOption || {};
 
   // Set-up mutations for modifying data later
   // TODO - handle errors
@@ -206,7 +207,28 @@ const RouteTransportInfo = ({
               <>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    <IonText className="headingBoldText">{t("management.transportDetail.bridgesToSupervise")}</IonText>
+                    <IonText className="headingBoldText">{t("management.transportDetail.bridgeInfo.bridgeSupervisors")}</IonText>
+                  </IonCol>
+                </IonRow>
+                <IonRow className="ion-margin">
+                  <IonCol>
+                    <IonText className="headingText">{t("management.transportDetail.bridgeInfo.supervisor1")}</IonText>
+                  </IonCol>
+                  <IonCol>
+                    <IonText className="headingText">{t("management.transportDetail.bridgeInfo.supervisor2")}</IonText>
+                  </IonCol>
+                </IonRow>
+                <IonRow className="ion-margin">
+                  <IonCol>
+                    <IonText className="headingBoldText">TODO</IonText>
+                  </IonCol>
+                  <IonCol>
+                    <IonText className="headingBoldText">TODO</IonText>
+                  </IonCol>
+                </IonRow>
+                <IonRow className="ion-margin">
+                  <IonCol>
+                    <IonText className="headingBoldText">{`${t("management.transportDetail.bridgesToSupervise")} (${routeBridges.length})`}</IonText>
                   </IonCol>
                 </IonRow>
                 <IonRow className="ion-margin">
