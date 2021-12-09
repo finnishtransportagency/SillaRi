@@ -50,6 +50,8 @@ public class LeluServiceTest {
     @Mock
     private SupervisionRepository supervisionRepository;
     @Mock
+    private SupervisionStatusRepository supervisionStatusRepository;
+    @Mock
     private AWSS3Client awss3Client;
     @Mock
     private TRexService trexService;
@@ -71,7 +73,7 @@ public class LeluServiceTest {
 
 
     @InjectMocks
-    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository, messageSource, leluRouteUploadUtil, awss3Client, trexService);
+    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository,supervisionStatusRepository, messageSource, leluRouteUploadUtil, awss3Client, trexService);
 
     @Test
     public void testCreatePermitWithExistingCompany() {
