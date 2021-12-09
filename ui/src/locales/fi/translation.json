@@ -73,7 +73,6 @@
     "departureTime": "Lähtöaika",
     "plannedTime": "Arvioitu lähtöaika",
     "tractorUnit": "Vetoauton rek.tunnus",
-    "transportPermit": "Kuljetuslupa",
     "permitInfo": {
       "title": "Luvan tiedot",
       "permitNumber": "Luvan numero",

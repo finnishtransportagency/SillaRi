@@ -73,7 +73,6 @@
     "departureTime": "Departure time",
     "plannedTime": "Planned departure time",
     "tractorUnit": "Tractor unit identifier",
-    "transportPermit": "Transport permit",
     "permitInfo": {
       "title": "Permit information",
       "permitNumber": "Permit number",
