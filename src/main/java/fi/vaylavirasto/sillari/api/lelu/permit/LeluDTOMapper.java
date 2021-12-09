@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.api.lelu.permit;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluSupervisionDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluSupervisionStatus;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.util.DateMapper;
 import org.mapstruct.Mapper;
@@ -57,6 +58,12 @@ public interface LeluDTOMapper {
     })
     AddressModel fromDTOToModel(LeluAddressDTO dto);
 
+
+    @Mappings({
+            @Mapping(target = "reasonText", source = "model.reason"),
+            @Mapping(target = "modifiedDate", source = "model.time"),
+    })
+    LeluSupervisionStatus fromModelToDTO(SupervisionStatusModel model);
 
     @Mappings({
             @Mapping(target = "supervisionStatus", source = "model.currentStatus"),
