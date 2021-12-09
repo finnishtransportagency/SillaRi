@@ -58,11 +58,7 @@ public interface LeluDTOMapper {
     AddressModel fromDTOToModel(LeluAddressDTO dto);
 
 
-
-
-
     LeluSupervisionDTO fromModelToDTO(SupervisionModel model);
-
 
     @Mappings({
             @Mapping(target = "oid", source = "model.bridge.oid"),
