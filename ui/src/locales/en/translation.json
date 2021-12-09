@@ -194,6 +194,14 @@
     "sentOk": "Selected supervisions have been sent",
     "nothingToSend": "No supervision reports to send"
   },
+  "permitPdf": {
+    "title": "Transport permit",
+    "loading": "Loading PDF...",
+    "error": "Failed to load PDF file",
+    "noData": "No PDF file specified",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
+  },
   "management": {
     "companySummary": {
       "permitListTitle": "Transport permits and management",

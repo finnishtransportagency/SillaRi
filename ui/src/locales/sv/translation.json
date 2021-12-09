@@ -194,6 +194,14 @@
     "sentOk": "(SV) Selected supervisions have been sent",
     "nothingToSend": "(SV) No supervision reports to send"
   },
+  "permitPdf": {
+    "title": "(SV) Transport permit",
+    "loading": "(SV) Loading PDF...",
+    "error": "(SV) Failed to load PDF file",
+    "noData": "(SV) No PDF file specified",
+    "zoomIn": "(SV) Zoom in",
+    "zoomOut": "(SV) Zoom out"
+  },
   "management": {
     "companySummary": {
       "permitListTitle": "(SV) Transport permits and management",

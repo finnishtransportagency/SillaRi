@@ -195,6 +195,14 @@
     "sentOk": "Valitut valvonnat on lähetetty",
     "nothingToSend": "Ei lähetettäviä valvontaraportteja"
   },
+  "permitPdf": {
+    "title": "Kuljetuslupa",
+    "loading": "Ladataan PDF...",
+    "error": "PDF-tiedoston lataaminen epäonnistui",
+    "noData": "PDF-tiedostoa ei ole määritetty",
+    "zoomIn": "Lähennä",
+    "zoomOut": "Loitonna"
+  },
   "management": {
     "companySummary": {
       "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
