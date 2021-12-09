@@ -114,7 +114,6 @@
     "trafficSupervisors": {
       "title": "(SV) Traffic supervisors"
     },
-    "transportPermit": "(SV) Transport permit",
     "permitNumber": "(SV) Lupanumero",
     "conformsToPermit": "(SV) Transport conforms to permit",
     "startSupervision": "(SV) Start supervision",
@@ -135,7 +134,6 @@
   },
   "supervision": {
     "title": "(SV) Bridge supervision",
-    "transportPermit": "(SV) Transport permit",
     "permitNumber": "(SV) Permit number",
     "supervisionStarted": "(SV) Supervision started",
     "bridgeName": "(SV) Bridge details",

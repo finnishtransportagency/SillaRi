@@ -67,8 +67,7 @@
       "transportArrived": "Kuljetus päättynyt",
       "nextTransport": "Seuraava kuljetus",
       "estimatedDepartureTime": "arvioitu lähtöaika"
-    },
-    "route": "Reitti"
+    }
   },
   "route": {
     "departureTime": "Lähtöaika",
@@ -115,7 +114,6 @@
     "trafficSupervisors": {
       "title": "Liikenteenohjaajat"
     },
-    "transportPermit": "Kuljetuslupa",
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Kuljetus on luvanmukainen",
     "startSupervision": "Aloita valvonta",
@@ -136,7 +134,6 @@
   },
   "supervision": {
     "title": "Sillan valvonta",
-    "transportPermit": "Kuljetuslupa",
     "permitNumber": "Lupanumero",
     "supervisionStarted": "Valvonta aloitettu",
     "bridgeName": "Sillan tiedot",

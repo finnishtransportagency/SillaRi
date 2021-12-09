@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { IonButton, IonCheckbox, IonCol, IonGrid, IonItem, IonLabel, IonRow } from "@ionic/react";
 import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
-import file from "../theme/icons/file.svg";
 import { SupervisionStatus } from "../utils/constants";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
@@ -12,6 +11,7 @@ import { startSupervision } from "../utils/supervisionBackendData";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import SupervisionStatusInfo from "./SupervisionStatusInfo";
+import PermitLinkItem from "./PermitLinkItem";
 
 interface BridgeDetailFooterProps {
   permit: IPermit;
@@ -31,7 +31,6 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   });
 
   const { username: currentSupervisor = "" } = supervisorUser || {};
-  const { permitNumber } = permit || {};
   const { id: supervisionId, conformsToPermit = false, currentStatus, finishedTime } = supervision || {};
   const { status: supervisionStatus, time: statusTime, username: statusUser } = currentStatus || {};
 
@@ -81,10 +80,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
 
   return (
     <>
-      <IonItem className="itemIcon" detail detailIcon={file} lines="none">
-        <IonLabel className="headingText">{t("bridge.transportPermit")}</IonLabel>
-        <IonLabel>{permitNumber}</IonLabel>
-      </IonItem>
+      <PermitLinkItem permit={permit} />
 
       {!isLoadingSupervision && !supervisionId && <SupervisionStatusInfo color="danger" infoText={t("bridge.supervisionMissing")} />}
       {supervisionInProgress && <SupervisionStatusInfo color="success" infoText={t("bridge.supervisionStarted")} time={statusTime} />}

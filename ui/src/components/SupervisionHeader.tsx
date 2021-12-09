@@ -2,9 +2,11 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import Moment from "react-moment";
 import { IonItem, IonLabel } from "@ionic/react";
+import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
 import file from "../theme/icons/file.svg";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
+import PermitLinkItem from "./PermitLinkItem";
 
 interface SupervisionHeaderProps {
   supervision: ISupervision;
@@ -18,15 +20,12 @@ const SupervisionHeader = ({ supervision, isCrossingInstructionsIncluded }: Supe
   const { bridge, route } = routeBridge || {};
   const { name = "", identifier = "" } = bridge || {};
   const { permit } = route || {};
-  const { permitNumber = "" } = permit || {};
 
   // TODO - add crossing instructions link
   return (
     <>
-      <IonItem className="header itemIcon" detail detailIcon={file} lines="none">
-        <IonLabel className="headingText">{t("supervision.transportPermit")}</IonLabel>
-        <IonLabel>{permitNumber}</IonLabel>
-      </IonItem>
+      <PermitLinkItem permit={permit as IPermit} isHeader />
+
       <IonItem className="header itemIcon" detail detailIcon="" lines="none">
         <IonLabel className="headingText">{t("supervision.supervisionStarted")}</IonLabel>
         <IonLabel>{startedTime ? <Moment format={DATE_TIME_FORMAT_MIN}>{startedTime}</Moment> : ""}</IonLabel>

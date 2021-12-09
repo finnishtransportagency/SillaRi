@@ -114,7 +114,6 @@
     "trafficSupervisors": {
       "title": "Traffic supervisors"
     },
-    "transportPermit": "Transport permit",
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Transport conforms to permit",
     "startSupervision": "Start supervision",
@@ -135,7 +134,6 @@
   },
   "supervision": {
     "title": "Bridge supervision",
-    "transportPermit": "Transport permit",
     "permitNumber": "Permit number",
     "supervisionStarted": "Supervision started",
     "bridgeName": "Bridge details",
