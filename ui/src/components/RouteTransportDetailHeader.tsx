@@ -15,21 +15,21 @@ interface RouteTransportDetailHeaderProps {
 const RouteTransportDetailHeader = ({ routeTransport, permit }: RouteTransportDetailHeaderProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { tractorUnit = "", plannedDepartureTime } = routeTransport || {};
+  const { tractorUnit = "", departureTime, plannedDepartureTime } = routeTransport || {};
   const { permitNumber } = permit || {};
 
   return (
     <IonGrid className="ion-no-padding lightBackground">
       <IonRow className="ion-padding ion-align-items-center">
-        <IonCol>
-          <IonLabel className="headingText">{t("route.departureTime")}</IonLabel>
+        <IonCol size-md="3" size-lg="2">
+          <IonLabel className="headingText">{departureTime ? t("route.departureTime") : t("route.plannedTime")}</IonLabel>
         </IonCol>
         <IonCol>
-          <Moment format={DATE_TIME_FORMAT_MIN}>{plannedDepartureTime}</Moment>
+          <Moment format={DATE_TIME_FORMAT_MIN}>{departureTime ? departureTime : plannedDepartureTime}</Moment>
         </IonCol>
       </IonRow>
       <IonRow className="ion-padding ion-align-items-center">
-        <IonCol>
+        <IonCol size-md="3" size-lg="2">
           <IonLabel className="headingText">{t("route.tractorUnit")}</IonLabel>
         </IonCol>
         <IonCol>
@@ -37,7 +37,7 @@ const RouteTransportDetailHeader = ({ routeTransport, permit }: RouteTransportDe
         </IonCol>
       </IonRow>
       <IonRow className="ion-padding ion-align-items-center">
-        <IonCol>
+        <IonCol size-md="3" size-lg="2">
           <IonLabel className="headingText">{t("route.transportPermit")}</IonLabel>
         </IonCol>
         <IonCol>
