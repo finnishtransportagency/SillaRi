@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @RestController
 @Timed
 @RequestMapping("/permit")
@@ -43,6 +46,18 @@ public class PermitController {
         try {
             PermitModel permit = permitService.getPermitOfRouteTransport(routeTransportId);
             return ResponseEntity.ok().body(permit != null ? permit : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Get permit pdf")
+    @GetMapping(value = "/getpermitpdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public void getPermitPdf(HttpServletResponse response, @RequestParam String objectKey) throws IOException {
+        ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitPdf");
+        try {
+            permitService.getPermitPdf(response, objectKey);
         } finally {
             serviceMetric.end();
         }

@@ -7,8 +7,19 @@ import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 import java.util.ArrayList;
+import java.util.Base64;
 
 public class PermitMapper implements RecordMapper<Record, PermitModel> {
+    private boolean base64on;
+
+    public PermitMapper() {
+        this.base64on = false;
+    }
+
+    public PermitMapper(boolean base64on) {
+        this.base64on = base64on;
+    }
+
     @Nullable
     @Override
     public PermitModel map(Record record) {
@@ -22,6 +33,11 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         permitModel.setValidEndDate(record.get(TableAlias.permit.VALID_END_DATE));
         permitModel.setTransportTotalMass(record.get(TableAlias.permit.TRANSPORT_TOTAL_MASS));
         permitModel.setAdditionalDetails(record.get(TableAlias.permit.ADDITIONAL_DETAILS));
+        if (this.base64on) {
+            permitModel.setPdfObjectKey(Base64.getEncoder().encodeToString(record.get(TableAlias.permit.PDF_OBJECT_KEY).getBytes()));
+        } else {
+            permitModel.setPdfObjectKey(record.get(TableAlias.permit.PDF_OBJECT_KEY));
+        }
         permitModel.setRoutes(new ArrayList<>());
         return permitModel;
     }
