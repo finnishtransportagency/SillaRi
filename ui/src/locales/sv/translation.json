@@ -100,7 +100,7 @@
     "length": "(SV) Length"
   },
   "bridgeCard": {
-    "plannedTime": "(SV) estimate",
+    "estimate": "(SV) estimate",
     "tractorUnit": "(SV) Tractor unit",
     "tractorUnitMissing": "(SV) missing data"
   },

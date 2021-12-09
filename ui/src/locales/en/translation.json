@@ -100,7 +100,7 @@
     "length": "Length"
   },
   "bridgeCard": {
-    "plannedTime": "estimate",
+    "estimate": "estimate",
     "tractorUnit": "Tractor unit",
     "tractorUnitMissing": "missing data"
   },

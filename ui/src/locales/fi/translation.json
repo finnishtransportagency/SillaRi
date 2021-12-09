@@ -101,7 +101,7 @@
     "length": "Pituus"
   },
   "bridgeCard": {
-    "plannedTime": "arvio",
+    "estimate": "arvio",
     "tractorUnit": "Vetoauto",
     "tractorUnitMissing": "tieto puuttuu"
   },
