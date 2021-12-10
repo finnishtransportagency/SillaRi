@@ -24,7 +24,7 @@ const BridgeCard = ({ supervision, routeTransport }: BridgeCardProps): JSX.Eleme
   const tractorUnitMissing = `(${t("bridgeCard.tractorUnitMissing")})`;
 
   return (
-    <IonItem className="itemIcon" detail detailIcon={arrowRight} routerLink={`/bridgedetail/${supervisionId}`}>
+    <IonItem className="itemIcon iconLink" detail detailIcon={arrowRight} routerLink={`/bridgedetail/${supervisionId}`}>
       <IonLabel>
         <IonLabel className="headingText">
           <Moment format={TIME_FORMAT_MIN}>{statusPlanned ? plannedTime : startedTime}</Moment>

@@ -38,13 +38,11 @@
 .itemIcon {
   --detail-icon-opacity: 1;
   --detail-icon-font-size: 24px;
-  cursor: pointer;
 }
 
 .itemIconLarge {
   --detail-icon-opacity: 1;
   --detail-icon-font-size: 32px;
-  cursor: pointer;
 }
 
 .otherIcon {
@@ -56,6 +54,10 @@
 .otherIconLarge {
   opacity: 1;
   font-size: 32px;
+  cursor: pointer;
+}
+
+.iconLink {
   cursor: pointer;
 }
 

@@ -37,7 +37,7 @@ const SupervisionHeader = ({ supervision, isCrossingInstructionsIncluded }: Supe
         </IonLabel>
       </IonItem>
       {isCrossingInstructionsIncluded && (
-        <IonItem className="header itemIcon" detail detailIcon={file} lines="none">
+        <IonItem className="header itemIcon iconLink" detail detailIcon={file} lines="none">
           <IonLabel className="headingText">{t("supervision.crossingInstructions")}</IonLabel>
           <IonLabel>TODO</IonLabel>
         </IonItem>

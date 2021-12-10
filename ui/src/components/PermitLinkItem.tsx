@@ -17,7 +17,13 @@ const PermitLinkItem = ({ permit, isHeader }: PermitLinkItemProps): JSX.Element 
 
   return pdfObjectKey && pdfObjectKey.length > 0 ? (
     <>
-      <IonItem className={`${isHeader ? "header" : ""} itemIcon`} detail detailIcon={file} lines="none" onClick={() => setPermitPdfOpen(true)}>
+      <IonItem
+        className={`${isHeader ? "header" : ""} itemIcon iconLink`}
+        detail
+        detailIcon={file}
+        lines="none"
+        onClick={() => setPermitPdfOpen(true)}
+      >
         <IonLabel className="headingText">{t("permitPdf.title")}</IonLabel>
         <IonLabel>
           <IonText className="linkText">{permitNumber}</IonText>
