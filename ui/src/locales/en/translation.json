@@ -224,7 +224,7 @@
         "modify": "Modify",
         "show": "Show"
       },
-      "transportStatusLog": "Transport status log",
+      "transportStatusLog": "Transport tracking",
       "logStatus": {
         "unknown": "Information unknown",
         "planned": "Planned",
@@ -269,7 +269,7 @@
         "estimatedCrossingTime": "Estimated crossing time",
         "bridgeSupervisors": "Bridge supervisors",
         "ownSupervisor": "Own supervisors",
-        "contractor": "Area contractor",
+        "contractor": "Maintenance contractor",
         "bridgeSupervisor": "Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "Bridge supervisor (1.)",
         "supervisor2": "Backup supervisor (2.)"
@@ -278,7 +278,7 @@
     "supervisionType": {
       "unknown": "Information unknown",
       "own_supervisor": "Own supervisors",
-      "area_contractor": "Area contractor"
+      "area_contractor": "Maintenance contractor"
     },
     "transportStatus": {
       "unknown": "Information unknown",

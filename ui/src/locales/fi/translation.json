@@ -225,7 +225,7 @@
         "modify": "Muokkaa",
         "show": "Näytä"
       },
-      "transportStatusLog": "Kuljetuksen statusloki",
+      "transportStatusLog": "Kuljetuksen seuranta",
       "logStatus": {
         "unknown": "Tietoja puuttuu",
         "planned": "Suunniteltu",
@@ -270,7 +270,7 @@
         "estimatedCrossingTime": "Arvioitu ylitysaika",
         "bridgeSupervisors": "Sillanvalvojat",
         "ownSupervisor": "Omat valvojat",
-        "contractor": "Alueurakoitsija",
+        "contractor": "Hoitourakoitsija",
         "bridgeSupervisor": "Sillanvalvoja (1.) ja varavalvoja (2.)",
         "supervisor1": "Sillanvalvoja (1.)",
         "supervisor2": "Varavalvoja (2.)"
@@ -279,7 +279,7 @@
     "supervisionType": {
       "unknown": "Tietoja puuttuu",
       "own_supervisor": "Omat valvojat",
-      "area_contractor": "Alueurakoitsija"
+      "area_contractor": "Hoitourakoitsija"
     },
     "transportStatus": {
       "unknown": "Tietoja puuttuu",
@@ -307,7 +307,7 @@
       "estimatedDepartureTime": "Arvioitu lähtöaika",
       "departureTime": "Lähtöaika",
       "permitLabel": "Kuljetuslupa",
-      "transportStatusLabel": "Status",
+      "transportStatusLabel": "Tila",
       "statusInfo": {
         "planned": "Ajoa ei ole vielä aloitettu",
         "departed": "Ajo aloitettu",

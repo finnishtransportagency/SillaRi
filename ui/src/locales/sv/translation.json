@@ -224,7 +224,7 @@
         "modify": "(SV) Modify",
         "show": "(SV) Show"
       },
-      "transportStatusLog": "(SV) Transport status log",
+      "transportStatusLog": "(SV) Transport tracking",
       "logStatus": {
         "unknown": "(SV) Information unknown",
         "planned": "(SV) Planned",
@@ -269,7 +269,7 @@
         "estimatedCrossingTime": "(SV) Estimated crossing time",
         "bridgeSupervisors": "(SV) Bridge supervisors",
         "ownSupervisor": "(SV) Own supervisors",
-        "contractor": "(SV) Area contractor",
+        "contractor": "(SV) Maintenance contractor",
         "bridgeSupervisor": "(SV) Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "(SV) Bridge supervisor (1.)",
         "supervisor2": "(SV) Backup supervisor (2.)"
@@ -278,7 +278,7 @@
     "supervisionType": {
       "unknown": "(SV) Information unknown",
       "own_supervisor": "(SV) Own supervisors",
-      "area_contractor": "(SV) Area contractor"
+      "area_contractor": "(SV) Maintenance contractor"
     },
     "transportStatus": {
       "unknown": "(SV) Information unknown",
