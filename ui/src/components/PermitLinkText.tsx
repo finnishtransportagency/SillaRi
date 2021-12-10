@@ -11,7 +11,7 @@ const PermitLinkText = ({ permit }: PermitLinkTextProps): JSX.Element => {
   const [isPermitPdfOpen, setPermitPdfOpen] = useState<boolean>(false);
   const { permitNumber, pdfObjectKey = "" } = permit || {};
 
-  return pdfObjectKey.length > 0 ? (
+  return pdfObjectKey && pdfObjectKey.length > 0 ? (
     <>
       <IonText className="linkText" onClick={() => setPermitPdfOpen(true)}>
         {permitNumber}

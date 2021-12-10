@@ -33,10 +33,11 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         permitModel.setValidEndDate(record.get(TableAlias.permit.VALID_END_DATE));
         permitModel.setTransportTotalMass(record.get(TableAlias.permit.TRANSPORT_TOTAL_MASS));
         permitModel.setAdditionalDetails(record.get(TableAlias.permit.ADDITIONAL_DETAILS));
-        if (this.base64on) {
-            permitModel.setPdfObjectKey(Base64.getEncoder().encodeToString(record.get(TableAlias.permit.PDF_OBJECT_KEY).getBytes()));
+        String pdfObjectKey = record.get(TableAlias.permit.PDF_OBJECT_KEY);
+        if (this.base64on && pdfObjectKey != null) {
+            permitModel.setPdfObjectKey(Base64.getEncoder().encodeToString(pdfObjectKey.getBytes()));
         } else {
-            permitModel.setPdfObjectKey(record.get(TableAlias.permit.PDF_OBJECT_KEY));
+            permitModel.setPdfObjectKey(pdfObjectKey);
         }
         permitModel.setRoutes(new ArrayList<>());
         return permitModel;
