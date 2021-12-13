@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { MouseEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonModal, IonRow } from "@ionic/react";
 import { Document, Page } from "react-pdf";
@@ -31,14 +31,19 @@ const PermitPdfPreview = ({ pdfObjectKey, isOpen, setOpen }: PermitPdfPreviewPro
   let transformZoomIn: () => void;
   let transformZoomOut: () => void;
 
+  const closePreview = (evt: MouseEvent) => {
+    evt.stopPropagation();
+    setOpen(false);
+  };
+
   return (
     <IonModal cssClass="" isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
-      <IonItem color="primary">
+      <IonItem color="primary" onClick={(evt) => evt.stopPropagation()}>
         <IonLabel className="headingBoldText">{t("permitPdf.title")}</IonLabel>
-        <IonIcon className="otherIconLarge" slot="end" icon={close} onClick={() => setOpen(false)} />
+        <IonIcon className="otherIconLarge" slot="end" icon={close} onClick={(evt) => closePreview(evt as MouseEvent)} />
       </IonItem>
 
-      <IonContent ref={contentRef} scrollX={false} scrollY={false}>
+      <IonContent ref={contentRef} scrollX={false} scrollY={false} onClick={(evt) => evt.stopPropagation()}>
         <Document
           file={`${getOrigin()}/api/permit/getpermitpdf?objectKey=${pdfObjectKey}`}
           renderMode="svg"
@@ -64,7 +69,7 @@ const PermitPdfPreview = ({ pdfObjectKey, isOpen, setOpen }: PermitPdfPreviewPro
         </Document>
       </IonContent>
 
-      <IonItem lines="none">
+      <IonItem lines="none" onClick={(evt) => evt.stopPropagation()}>
         <IonGrid className="ion-no-padding">
           <IonRow>
             <IonCol className="ion-text-center">

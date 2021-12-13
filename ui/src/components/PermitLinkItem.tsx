@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { MouseEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IonItem, IonLabel, IonText } from "@ionic/react";
 import IPermit from "../interfaces/IPermit";
@@ -15,15 +15,14 @@ const PermitLinkItem = ({ permit, isHeader }: PermitLinkItemProps): JSX.Element 
   const [isPermitPdfOpen, setPermitPdfOpen] = useState<boolean>(false);
   const { permitNumber, pdfObjectKey = "" } = permit || {};
 
+  const openPreview = (evt: MouseEvent) => {
+    evt.stopPropagation();
+    setPermitPdfOpen(true);
+  };
+
   return pdfObjectKey && pdfObjectKey.length > 0 ? (
     <>
-      <IonItem
-        className={`${isHeader ? "header" : ""} itemIcon iconLink`}
-        detail
-        detailIcon={file}
-        lines="none"
-        onClick={() => setPermitPdfOpen(true)}
-      >
+      <IonItem className={`${isHeader ? "header" : ""} itemIcon iconLink`} detail detailIcon={file} lines="none" onClick={(evt) => openPreview(evt)}>
         <IonLabel className="headingText">{t("permitPdf.title")}</IonLabel>
         <IonLabel>
           <IonText className="linkText">{permitNumber}</IonText>
