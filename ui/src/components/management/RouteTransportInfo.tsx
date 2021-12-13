@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
@@ -49,6 +49,8 @@ const RouteTransportInfo = ({
   const history = useHistory();
   const queryClient = useQueryClient();
   const [present] = useIonAlert();
+  const [allBridgesSupervisor1, setAllBridgesSupervisor1] = useState<ISupervisor | undefined>(undefined);
+  const [allBridgesSupervisor2, setAllBridgesSupervisor2] = useState<ISupervisor | undefined>(undefined);
 
   const { companyId, permitNumber, validStartDate, validEndDate } = permit || {};
   const { currentStatus } = modifiedRouteTransportDetail || {};
@@ -115,7 +117,49 @@ const RouteTransportInfo = ({
   };
 
   const setSupervisor = (priority: number, supervisorId: number) => {
-    console.log(priority, supervisorId);
+    if (priority === 1) {
+      const supervisor1 = supervisors.find((s) => s.id === supervisorId) as ISupervisor;
+      setAllBridgesSupervisor1({ ...supervisor1, priority: 1 });
+    } else if (priority === 2) {
+      const supervisor2 = supervisors.find((s) => s.id === supervisorId) as ISupervisor;
+      setAllBridgesSupervisor2({ ...supervisor2, priority: 2 });
+    }
+  };
+
+  const addOrReplaceSupervisor = (currentSupervisors: ISupervisor[], selectedSupervisor: ISupervisor | undefined, priority: number): ISupervisor => {
+    // If new supervisor is not selected from dropdown, keep the old selection
+    const currentSupervisor = currentSupervisors.find((s) => s.priority === priority);
+    return selectedSupervisor !== undefined ? selectedSupervisor : ({ ...currentSupervisor } as ISupervisor);
+  };
+
+  const setSupervisorsToAllBridges = () => {
+    const { supervisions: currentSupervisions = [] } = modifiedRouteTransportDetail || {};
+
+    const newSupervisions = currentSupervisions.map((supervision) => {
+      const { supervisors: currentSupervisors = [] } = supervision || {};
+      const newSupervisors: ISupervisor[] = [];
+      newSupervisors.push(addOrReplaceSupervisor(currentSupervisors, allBridgesSupervisor1, 1));
+      newSupervisors.push(addOrReplaceSupervisor(currentSupervisors, allBridgesSupervisor2, 2));
+      return { ...supervision, supervisors: newSupervisors };
+    });
+
+    const newSupervisions2 = currentSupervisions.map((supervision, index) => {
+      if (index < 25) {
+        const { supervisors: currentSupervisors = [] } = supervision || {};
+        const newSupervisors: ISupervisor[] = [];
+        newSupervisors.push(addOrReplaceSupervisor(currentSupervisors, allBridgesSupervisor1, 1));
+        newSupervisors.push(addOrReplaceSupervisor(currentSupervisors, allBridgesSupervisor2, 2));
+        return { ...supervision, supervisors: newSupervisors };
+      } else {
+        return supervision;
+      }
+    });
+
+    const newRouteTransport: IRouteTransport = { ...modifiedRouteTransportDetail, supervisions: newSupervisions };
+
+    const newRouteTransport2: IRouteTransport = { ...modifiedRouteTransportDetail, supervisions: newSupervisions2 };
+    console.log(newRouteTransport2);
+    setModifiedRouteTransportDetail(newRouteTransport2); //TODO maximum update depth exceeded error
   };
 
   return (
@@ -225,13 +269,13 @@ const RouteTransportInfo = ({
                 </IonRow>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    <SupervisorSelect supervisors={supervisors} priority={1} setSupervisor={setSupervisor} />
+                    <SupervisorSelect supervisors={supervisors} priority={1} value={allBridgesSupervisor1} setSupervisor={setSupervisor} />
                   </IonCol>
                   <IonCol>
-                    <SupervisorSelect supervisors={supervisors} priority={2} setSupervisor={setSupervisor} />
+                    <SupervisorSelect supervisors={supervisors} priority={2} value={allBridgesSupervisor2} setSupervisor={setSupervisor} />
                   </IonCol>
                   <IonCol>
-                    <IonButton color="secondary" expand="block">
+                    <IonButton color="secondary" expand="block" onClick={() => setSupervisorsToAllBridges()}>
                       {t("management.transportDetail.bridgeInfo.copySupervisor")}
                     </IonButton>
                   </IonCol>
