@@ -62,8 +62,8 @@ const BridgeGrid = ({
     }
   };
 
-  const setSupervisor = (supervision: ISupervision, priority: number, supervisorId: number) => {
-    if (modifiedRouteTransportDetail) {
+  const setSupervisor = (priority: number, supervisorId: number, supervision?: ISupervision) => {
+    if (supervision && modifiedRouteTransportDetail) {
       const supervisor = supervisors.find((s) => s.id === supervisorId) as ISupervisor;
       const { supervisors: supervisionSupervisors = [] } = supervision;
 

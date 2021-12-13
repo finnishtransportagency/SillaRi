@@ -17,6 +17,7 @@ import RouteInfoGrid from "./RouteInfoGrid";
 import TransportInfoAccordion from "../TransportInfoAccordion";
 import TransportPassword from "./TransportPassword";
 import IVehicle from "../../interfaces/IVehicle";
+import SupervisorSelect from "./SupervisorSelect";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -111,6 +112,10 @@ const RouteTransportInfo = ({
         buttons: [{ text: t("common.answer.yes"), handler: () => routeTransportDeleteMutation.mutate(routeTransportId) }, t("common.answer.no")],
       });
     }
+  };
+
+  const setSupervisor = (priority: number, supervisorId: number) => {
+    console.log(priority, supervisorId);
   };
 
   return (
@@ -220,10 +225,15 @@ const RouteTransportInfo = ({
                 </IonRow>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    <IonText className="headingBoldText">TODO</IonText>
+                    <SupervisorSelect supervisors={supervisors} priority={1} setSupervisor={setSupervisor} />
                   </IonCol>
                   <IonCol>
-                    <IonText className="headingBoldText">TODO</IonText>
+                    <SupervisorSelect supervisors={supervisors} priority={2} setSupervisor={setSupervisor} />
+                  </IonCol>
+                  <IonCol>
+                    <IonButton color="secondary" expand="block">
+                      {t("management.transportDetail.bridgeInfo.copySupervisor")}
+                    </IonButton>
                   </IonCol>
                 </IonRow>
                 <IonRow className="ion-margin">

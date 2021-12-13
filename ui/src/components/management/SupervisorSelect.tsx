@@ -6,10 +6,10 @@ import { useTranslation } from "react-i18next";
 
 interface SupervisorSelectProps {
   supervisors: ISupervisor[];
-  supervision: ISupervision;
+  supervision?: ISupervision;
   priority: number;
   value?: ISupervisor;
-  setSupervisor: (supervision: ISupervision, priority: number, supervisorId: number) => void;
+  setSupervisor: (priority: number, supervisorId: number, supervision?: ISupervision) => void;
 }
 
 const SupervisorSelect = ({ supervisors, supervision, priority, value, setSupervisor }: SupervisorSelectProps): JSX.Element => {
@@ -20,7 +20,7 @@ const SupervisorSelect = ({ supervisors, supervision, priority, value, setSuperv
       interface="action-sheet"
       cancelText={t("common.buttons.back")}
       value={value?.id}
-      onIonChange={(e) => setSupervisor(supervision, priority, e.detail.value)}
+      onIonChange={(e) => (supervision ? setSupervisor(priority, e.detail.value, supervision) : setSupervisor(priority, e.detail.value))}
     >
       {supervisors.map((supervisor) => {
         const { id, firstName, lastName } = supervisor;
