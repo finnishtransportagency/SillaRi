@@ -21,11 +21,12 @@ import {
 import { useTypedSelector } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
-import file from "../theme/icons/file.svg";
+import PermitLinkItem from "../components/PermitLinkItem";
+import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
+import IPermit from "../interfaces/IPermit";
 import { onRetry } from "../utils/backendData";
 import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
 import { SupervisionStatus } from "../utils/constants";
-import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 
 interface DenyCrossingProps {
   supervisionId: string;
@@ -72,7 +73,6 @@ const DenyCrossing = (): JSX.Element => {
   const { route, bridge } = routeBridge || {};
   const { name = "", identifier = "" } = bridge || {};
   const { permit } = route || {};
-  const { permitNumber = "" } = permit || {};
 
   const supervisionPending =
     !isLoadingSupervision && (supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED);
@@ -110,11 +110,9 @@ const DenyCrossing = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <>
-            <IonItem className="header itemIcon" detail detailIcon={file} lines="none">
-              <IonLabel className="headingText">{t("supervision.transportPermit")}</IonLabel>
-              <IonLabel className="iconText">{permitNumber}</IonLabel>
-            </IonItem>
-            <IonItem className="header" lines="none">
+            <PermitLinkItem permit={permit as IPermit} isHeader />
+
+            <IonItem className="header" lines="none" detail detailIcon="">
               <IonLabel className="headingText">{t("supervision.bridgeName")}</IonLabel>
               <IonLabel>
                 {name} | {identifier}

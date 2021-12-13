@@ -22,7 +22,7 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
   const transportDeparted = status && status !== TransportStatus.PLANNED;
 
   return (
-    <IonItem className="itemIcon" detail detailIcon={arrowRight} routerLink={`/routetransportdetail/${routeTransportId}`}>
+    <IonItem className="itemIcon iconLink" detail detailIcon={arrowRight} routerLink={`/routetransportdetail/${routeTransportId}`}>
       <IonLabel>
         <IonLabel className="headingText">
           <Moment format={DATE_TIME_FORMAT_MIN}>{transportDeparted ? departureTime : plannedDepartureTime}</Moment>

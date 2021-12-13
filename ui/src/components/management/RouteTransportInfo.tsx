@@ -13,6 +13,7 @@ import { onRetry } from "../../utils/backendData";
 import { createRouteTransport, deleteRouteTransport, updateRouteTransport } from "../../utils/managementBackendData";
 import { DATE_FORMAT, TransportStatus } from "../../utils/constants";
 import BridgeGrid from "./BridgeGrid";
+import PermitLinkText from "../PermitLinkText";
 import RouteInfoGrid from "./RouteInfoGrid";
 import TransportInfoAccordion from "../TransportInfoAccordion";
 import TransportPassword from "./TransportPassword";
@@ -49,7 +50,7 @@ const RouteTransportInfo = ({
   const queryClient = useQueryClient();
   const [present] = useIonAlert();
 
-  const { companyId, permitNumber, validStartDate, validEndDate } = permit || {};
+  const { companyId, validStartDate, validEndDate } = permit || {};
   const { currentStatus } = modifiedRouteTransportDetail || {};
   const { status } = currentStatus || {};
 
@@ -122,7 +123,7 @@ const RouteTransportInfo = ({
                 <IonText className="headingText">{t("management.transportDetail.transportPermit")}</IonText>
               </IonCol>
               <IonCol size="12" size-sm="8" size-lg="7">
-                <IonText>{permitNumber}</IonText>
+                <PermitLinkText permit={permit} />
               </IonCol>
             </IonRow>
           </IonGrid>

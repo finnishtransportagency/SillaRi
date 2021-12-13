@@ -73,7 +73,6 @@
     "departureTime": "Departure time",
     "plannedTime": "Planned departure time",
     "tractorUnit": "Tractor unit identifier",
-    "transportPermit": "Transport permit",
     "permitInfo": {
       "title": "Permit information",
       "permitNumber": "Permit number",
@@ -114,7 +113,6 @@
     "trafficSupervisors": {
       "title": "Traffic supervisors"
     },
-    "transportPermit": "Transport permit",
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Transport conforms to permit",
     "startSupervision": "Start supervision",
@@ -135,7 +133,6 @@
   },
   "supervision": {
     "title": "Bridge supervision",
-    "transportPermit": "Transport permit",
     "permitNumber": "Permit number",
     "supervisionStarted": "Supervision started",
     "bridgeName": "Bridge details",
@@ -193,6 +190,14 @@
     "sendSelected": "Send selected",
     "sentOk": "Selected supervisions have been sent",
     "nothingToSend": "No supervision reports to send"
+  },
+  "permitPdf": {
+    "title": "Transport permit",
+    "loading": "Loading PDF...",
+    "error": "Failed to load PDF file",
+    "noData": "No PDF file specified",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
   },
   "management": {
     "companySummary": {

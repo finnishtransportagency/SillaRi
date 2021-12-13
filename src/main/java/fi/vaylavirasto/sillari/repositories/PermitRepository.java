@@ -29,7 +29,7 @@ public class PermitRepository {
     public List<PermitModel> getPermitsByCompanyId(Integer companyId) {
         return dsl.select().from(TableAlias.permit)
                 .where(TableAlias.permit.COMPANY_ID.eq(companyId))
-                .fetch(new PermitMapper());
+                .fetch(new PermitMapper(true));
     }
 
     public PermitModel getPermit(Integer id) {
@@ -73,7 +73,7 @@ public class PermitRepository {
     }
 
     private PermitModel mapPermitRecordWithAxleChartAndDimensions(Record record) {
-        PermitMapper permitMapper = new PermitMapper();
+        PermitMapper permitMapper = new PermitMapper(true);
         PermitModel permit = permitMapper.map(record);
         if (permit != null) {
             AxleChartMapper axleChartMapper = new AxleChartMapper();

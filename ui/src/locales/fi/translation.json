@@ -67,14 +67,12 @@
       "transportArrived": "Kuljetus päättynyt",
       "nextTransport": "Seuraava kuljetus",
       "estimatedDepartureTime": "arvioitu lähtöaika"
-    },
-    "route": "Reitti"
+    }
   },
   "route": {
     "departureTime": "Lähtöaika",
     "plannedTime": "Arvioitu lähtöaika",
     "tractorUnit": "Vetoauton rek.tunnus",
-    "transportPermit": "Kuljetuslupa",
     "permitInfo": {
       "title": "Luvan tiedot",
       "permitNumber": "Luvan numero",
@@ -115,7 +113,6 @@
     "trafficSupervisors": {
       "title": "Liikenteenohjaajat"
     },
-    "transportPermit": "Kuljetuslupa",
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Kuljetus on luvanmukainen",
     "startSupervision": "Aloita valvonta",
@@ -136,7 +133,6 @@
   },
   "supervision": {
     "title": "Sillan valvonta",
-    "transportPermit": "Kuljetuslupa",
     "permitNumber": "Lupanumero",
     "supervisionStarted": "Valvonta aloitettu",
     "bridgeName": "Sillan tiedot",
@@ -194,6 +190,14 @@
     "sendSelected": "Lähetä valitut",
     "sentOk": "Valitut valvonnat on lähetetty",
     "nothingToSend": "Ei lähetettäviä valvontaraportteja"
+  },
+  "permitPdf": {
+    "title": "Kuljetuslupa",
+    "loading": "Ladataan PDF...",
+    "error": "PDF-tiedoston lataaminen epäonnistui",
+    "noData": "PDF-tiedostoa ei ole määritetty",
+    "zoomIn": "Lähennä",
+    "zoomOut": "Loitonna"
   },
   "management": {
     "companySummary": {
