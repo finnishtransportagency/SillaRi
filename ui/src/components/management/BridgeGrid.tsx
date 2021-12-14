@@ -102,7 +102,7 @@ const BridgeGrid = ({
         .sort((a, b) => a.routeBridgeId - b.routeBridgeId)
         .map((supervision, index) => {
           const routeBridge = routeBridges.find((rb) => rb.id === supervision.routeBridgeId);
-          const { bridge } = routeBridge || {};
+          const { id: routeBridgeId, bridge } = routeBridge || {};
           const { identifier, name } = bridge || {};
           const bridgeName = `${identifier} - ${name}`;
 
@@ -197,6 +197,7 @@ const BridgeGrid = ({
                     <IonCol>
                       {status === TransportStatus.PLANNED && (
                         <SupervisorSelect
+                          key={`${routeBridgeId}-${1}-${supervisor1?.id}`}
                           supervisors={supervisors}
                           supervision={supervision}
                           priority={1}
@@ -220,6 +221,7 @@ const BridgeGrid = ({
                     <IonCol>
                       {status === TransportStatus.PLANNED && (
                         <SupervisorSelect
+                          key={`${routeBridgeId}-${2}-${supervisor2?.id}`}
                           supervisors={supervisors}
                           supervision={supervision}
                           priority={2}
