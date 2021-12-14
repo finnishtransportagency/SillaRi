@@ -1,6 +1,6 @@
 import ISupervisor from "../../interfaces/ISupervisor";
 import { useTranslation } from "react-i18next";
-import { IonButton, IonCol, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonLabel, IonRow, IonText } from "@ionic/react";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import SupervisorSelect from "./SupervisorSelect";
 import IRouteTransport from "../../interfaces/IRouteTransport";
@@ -60,21 +60,23 @@ const MultiSupervisorsSelection = ({
         </IonCol>
       </IonRow>
       <IonRow className="ion-margin">
-        <IonCol>
-          <IonText className="headingText">{t("management.transportDetail.bridgeInfo.supervisor1")}</IonText>
+        <IonCol size-lg="4" size-sm="6" size-xs="12">
+          <IonRow>
+            <IonCol>
+              <IonLabel className="headingText">{t("management.transportDetail.bridgeInfo.supervisor1")}</IonLabel>
+              <SupervisorSelect key="bridges-1" supervisors={supervisors} priority={1} value={selectedSupervisor1} setSupervisor={setSupervisor} />
+            </IonCol>
+          </IonRow>
         </IonCol>
-        <IonCol>
-          <IonText className="headingText">{t("management.transportDetail.bridgeInfo.supervisor2")}</IonText>
+        <IonCol size-lg="4" size-sm="6" size-xs="12">
+          <IonRow>
+            <IonCol>
+              <IonLabel className="headingText">{t("management.transportDetail.bridgeInfo.supervisor2")}</IonLabel>
+              <SupervisorSelect key="bridges-2" supervisors={supervisors} priority={2} value={selectedSupervisor2} setSupervisor={setSupervisor} />
+            </IonCol>
+          </IonRow>
         </IonCol>
-      </IonRow>
-      <IonRow className="ion-margin">
-        <IonCol>
-          <SupervisorSelect key="bridges-1" supervisors={supervisors} priority={1} value={selectedSupervisor1} setSupervisor={setSupervisor} />
-        </IonCol>
-        <IonCol>
-          <SupervisorSelect key="bridges-2" supervisors={supervisors} priority={2} value={selectedSupervisor2} setSupervisor={setSupervisor} />
-        </IonCol>
-        <IonCol>
+        <IonCol size-lg="4" size-sm="6" size-xs="12" className="ion-align-self-end">
           <IonButton color="secondary" expand="block" onClick={() => setSupervisorsToAllBridges()}>
             {t("management.transportDetail.bridgeInfo.copySupervisor")}
           </IonButton>
