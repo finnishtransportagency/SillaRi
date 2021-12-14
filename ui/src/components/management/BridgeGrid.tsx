@@ -65,7 +65,8 @@ const BridgeGrid = ({
   const setSupervisor = (priority: number, supervisorId: number, supervision?: ISupervision) => {
     if (supervision && modifiedRouteTransportDetail) {
       const supervisor = supervisors.find((s) => s.id === supervisorId) as ISupervisor;
-      const { supervisors: supervisionSupervisors = [] } = supervision;
+      const { supervisors: supervisionSupervisors = [], routeBridgeId } = supervision;
+      console.log("routeBridgeId", routeBridgeId, "supervisor", supervisor);
 
       // Add the selected supervisor for this route bridge id and priority to the supervisors array in place of the existing one if one exists
       const modifiedSupervisionSupervisors = supervisionSupervisors.reduce(
@@ -76,7 +77,7 @@ const BridgeGrid = ({
       );
 
       const modifiedSupervision: ISupervision = { ...supervision, supervisors: modifiedSupervisionSupervisors };
-      const modifiedSupervisions = modifySupervisions(supervision.routeBridgeId, modifiedSupervision);
+      const modifiedSupervisions = modifySupervisions(routeBridgeId, modifiedSupervision);
 
       const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, supervisions: modifiedSupervisions };
       setModifiedRouteTransportDetail(newDetail);
@@ -196,8 +197,11 @@ const BridgeGrid = ({
                     </IonCol>
                     <IonCol>
                       {status === TransportStatus.PLANNED && (
+                        // Added key for SupervisorSelect as a workaround for bug: https://github.com/ionic-team/ionic-framework/issues/20106
+                        // which causes infinite loops when supervisors are updated from setAllBridgesSupervisor
+                        // (onIonChange event is triggered from supervision changes in state. Key change creates a new instance of the select.)
                         <SupervisorSelect
-                          key={`${routeBridgeId}-${1}-${supervisor1?.id}`}
+                          key={`${routeBridgeId}-${supervisor1?.priority}-${supervisor1?.id}`}
                           supervisors={supervisors}
                           supervision={supervision}
                           priority={1}
@@ -221,7 +225,7 @@ const BridgeGrid = ({
                     <IonCol>
                       {status === TransportStatus.PLANNED && (
                         <SupervisorSelect
-                          key={`${routeBridgeId}-${2}-${supervisor2?.id}`}
+                          key={`${routeBridgeId}-${supervisor2?.priority}-${supervisor2?.id}`}
                           supervisors={supervisors}
                           supervision={supervision}
                           priority={2}

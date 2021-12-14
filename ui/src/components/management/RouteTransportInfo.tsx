@@ -143,23 +143,8 @@ const RouteTransportInfo = ({
       return { ...supervision, supervisors: newSupervisors };
     });
 
-    const newSupervisions2 = currentSupervisions.map((supervision, index) => {
-      if (index < 25) {
-        const { supervisors: currentSupervisors = [] } = supervision || {};
-        const newSupervisors: ISupervisor[] = [];
-        newSupervisors.push(addOrReplaceSupervisor(currentSupervisors, allBridgesSupervisor1, 1));
-        newSupervisors.push(addOrReplaceSupervisor(currentSupervisors, allBridgesSupervisor2, 2));
-        return { ...supervision, supervisors: newSupervisors };
-      } else {
-        return supervision;
-      }
-    });
-
     const newRouteTransport: IRouteTransport = { ...modifiedRouteTransportDetail, supervisions: newSupervisions };
-
-    const newRouteTransport2: IRouteTransport = { ...modifiedRouteTransportDetail, supervisions: newSupervisions2 };
-    console.log(newRouteTransport2);
-    setModifiedRouteTransportDetail(newRouteTransport2); //TODO maximum update depth exceeded error
+    setModifiedRouteTransportDetail(newRouteTransport);
   };
 
   return (
