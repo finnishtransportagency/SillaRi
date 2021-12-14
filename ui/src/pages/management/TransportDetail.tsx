@@ -53,7 +53,7 @@ const TransportDetail = (): JSX.Element => {
       refetchOnWindowFocus: false,
     }
   );
-  const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry });
+  const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry, refetchOnWindowFocus: false });
 
   const { routeId, tractorUnit } = selectedRouteTransportDetail || {};
 
