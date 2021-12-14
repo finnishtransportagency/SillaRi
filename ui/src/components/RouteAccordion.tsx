@@ -27,7 +27,7 @@ const RouteAccordion = ({ route, isPanelOpen }: RouteAccordionProps): JSX.Elemen
           isPanelOpen,
           panel: (
             <div>
-              <IonItem className="itemIcon" detail detailIcon={mapRoute} routerLink={`/routemap/${routeId}`}>
+              <IonItem className="itemIcon iconLink" detail detailIcon={mapRoute} routerLink={`/routemap/${routeId}`}>
                 <IonLabel className="headingText">{t("route.routeInfo.route")}</IonLabel>
                 <IonText className="linkText">{t("route.routeInfo.showRouteOnMap")}</IonText>
               </IonItem>

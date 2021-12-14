@@ -11,26 +11,33 @@ import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import mapPoint from "../../theme/icons/map-point.svg";
 import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
+import IPermit from "../../interfaces/IPermit";
+import IVehicle from "../../interfaces/IVehicle";
 
 interface RouteInfoGridProps {
   routeTransportId: number;
-  permitRoutes: IRoute[];
+  permit: IPermit;
   modifiedRouteTransportDetail: IRouteTransport;
   setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
   selectedRouteOption: IRoute;
   setSelectedRouteOption: Dispatch<SetStateAction<IRoute | undefined>>;
+  selectedVehicle: IVehicle | undefined;
+  setSelectedVehicle: Dispatch<SetStateAction<IVehicle | undefined>>;
 }
 
 const RouteInfoGrid = ({
   routeTransportId,
-  permitRoutes = [],
+  permit,
   modifiedRouteTransportDetail,
   setModifiedRouteTransportDetail,
   selectedRouteOption,
   setSelectedRouteOption,
+  selectedVehicle,
+  setSelectedVehicle,
 }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
 
+  const { routes: permitRoutes = [], vehicles = [] } = permit || {};
   const { plannedDepartureTime, currentStatus } = modifiedRouteTransportDetail || {};
   const { status } = currentStatus || {};
   const { id: selectedRouteId, name: selectedRouteName, departureAddress, arrivalAddress } = selectedRouteOption || {};
@@ -42,6 +49,14 @@ const RouteInfoGrid = ({
   const setPlannedDepartureTime = (dateTime: Date) => {
     if (modifiedRouteTransportDetail) {
       const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: dateTime };
+      setModifiedRouteTransportDetail(newDetail);
+    }
+  };
+
+  const setTractorUnit = (vehicle: IVehicle) => {
+    setSelectedVehicle(vehicle);
+    if (modifiedRouteTransportDetail) {
+      const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, tractorUnit: vehicle.identifier };
       setModifiedRouteTransportDetail(newDetail);
     }
   };
@@ -182,6 +197,45 @@ const RouteInfoGrid = ({
             </IonRow>
           </IonGrid>
         </IonCol>
+      </IonRow>
+
+      <IonRow className="ion-margin-top">
+        <IonGrid className="ion-no-padding">
+          <IonRow className="ion-margin-top">
+            <IonCol size="12" size-lg="12">
+              <IonText className="headingText">{t("management.transportDetail.routeInfo.tractorUnitIdentifier")}</IonText>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol size="12" size-lg="4">
+              {status === TransportStatus.PLANNED && (
+                <IonSelect
+                  interface="action-sheet"
+                  cancelText={t("common.buttons.back")}
+                  value={selectedVehicle}
+                  onIonChange={(e) => setTractorUnit(e.detail.value)}
+                >
+                  {vehicles
+                    .filter((vehicle) => !!vehicle.identifier)
+                    .map((vehicle, index) => {
+                      const { type, identifier } = vehicle;
+                      const key = `vehicle_${index}`;
+                      return (
+                        <IonSelectOption key={key} value={vehicle}>
+                          {`${identifier.toUpperCase()} (${type.toLocaleLowerCase()})`}
+                        </IonSelectOption>
+                      );
+                    })}
+                </IonSelect>
+              )}
+              {status !== TransportStatus.PLANNED && (
+                <IonText>
+                  {selectedVehicle ? selectedVehicle.identifier.toUpperCase() : t("management.transportDetail.routeInfo.tractorUnitNotSelected")}
+                </IonText>
+              )}
+            </IonCol>
+          </IonRow>
+        </IonGrid>
       </IonRow>
     </IonGrid>
   );

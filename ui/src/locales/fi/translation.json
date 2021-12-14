@@ -67,11 +67,12 @@
       "transportArrived": "Kuljetus päättynyt",
       "nextTransport": "Seuraava kuljetus",
       "estimatedDepartureTime": "arvioitu lähtöaika"
-    },
-    "route": "Reitti"
+    }
   },
   "route": {
-    "transportPermit": "Kuljetuslupa",
+    "departureTime": "Lähtöaika",
+    "plannedTime": "Arvioitu lähtöaika",
+    "tractorUnit": "Vetoauton rek.tunnus",
     "permitInfo": {
       "title": "Luvan tiedot",
       "permitNumber": "Luvan numero",
@@ -85,17 +86,22 @@
       "departurePoint": "Lähtöpiste",
       "arrivalPoint": "Päätepiste"
     },
-    "transportInfo": {
-      "title": "Kuljetuksen tiedot",
-      "registrationNumbers": "Rekisteritunnukset",
-      "dimensions": "Kuljetuksen mitat",
-      "height": "Korkeus maasta",
-      "width": "Leveys",
-      "length": "Pituus",
-      "transportTotalMass": "Kokonaismassa",
-      "axleWeightsDistances": "Akselipainot ja -välit"
-    },
     "bridgesToSupervise": "Valvottavat sillat"
+  },
+  "transportInfo": {
+    "title": "Kuljetusluvan tietoja",
+    "subtitle": "Ajoneuvot, enimmäismitat ja -massa",
+    "vehicles": "Luvan ajoneuvot",
+    "totalMass": "Suurin sallittu kokonaismassa",
+    "dimensions": "Kuljetuksen enimmäismitat",
+    "height": "Korkeus maasta",
+    "width": "Leveys",
+    "length": "Pituus"
+  },
+  "bridgeCard": {
+    "estimate": "arvio",
+    "tractorUnit": "Vetoauto",
+    "tractorUnitMissing": "tieto puuttuu"
   },
   "bridge": {
     "title": "Sillan tiedot",
@@ -107,7 +113,6 @@
     "trafficSupervisors": {
       "title": "Liikenteenohjaajat"
     },
-    "transportPermit": "Kuljetuslupa",
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Kuljetus on luvanmukainen",
     "startSupervision": "Aloita valvonta",
@@ -128,7 +133,6 @@
   },
   "supervision": {
     "title": "Sillan valvonta",
-    "transportPermit": "Kuljetuslupa",
     "permitNumber": "Lupanumero",
     "supervisionStarted": "Valvonta aloitettu",
     "bridgeName": "Sillan tiedot",
@@ -187,6 +191,14 @@
     "sentOk": "Valitut valvonnat on lähetetty",
     "nothingToSend": "Ei lähetettäviä valvontaraportteja"
   },
+  "permitPdf": {
+    "title": "Kuljetuslupa",
+    "loading": "Ladataan PDF...",
+    "error": "PDF-tiedoston lataaminen epäonnistui",
+    "noData": "PDF-tiedostoa ei ole määritetty",
+    "zoomIn": "Lähennä",
+    "zoomOut": "Loitonna"
+  },
   "management": {
     "companySummary": {
       "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
@@ -204,6 +216,7 @@
       },
       "route": {
         "id": "ID",
+        "tractorUnit": "Vetoauto",
         "route": "Reitti",
         "supervision": "Sillanvalvonta",
         "time": "Ajankohta",
@@ -216,7 +229,7 @@
         "modify": "Muokkaa",
         "show": "Näytä"
       },
-      "transportStatusLog": "Kuljetuksen statusloki",
+      "transportStatusLog": "Kuljetuksen seuranta",
       "logStatus": {
         "unknown": "Tietoja puuttuu",
         "planned": "Suunniteltu",
@@ -252,22 +265,16 @@
         "route": "Reitti",
         "origin": "Lähtöpaikka",
         "destination": "Määräpaikka",
-        "showRouteOnMap": "Näytä reitti kartalla"
-      },
-      "transportInfo": {
-        "title": "Enimmäismitat ja -massat",
-        "totalMass": "Kokonaismassa",
-        "dimensions": "Kuljetuksen mitat",
-        "height": "Korkeus maasta",
-        "width": "Leveys",
-        "length": "Pituus"
+        "showRouteOnMap": "Näytä reitti kartalla",
+        "tractorUnitIdentifier": "Ajoneuvon rekisteritunnus (vetoauto)",
+        "tractorUnitNotSelected": "Rekisteritunnus puuttuu"
       },
       "bridgeInfo": {
         "bridge": "Silta",
         "estimatedCrossingTime": "Arvioitu ylitysaika",
         "bridgeSupervisors": "Sillanvalvojat",
         "ownSupervisor": "Omat valvojat",
-        "contractor": "Alueurakoitsija",
+        "contractor": "Hoitourakoitsija",
         "bridgeSupervisor": "Sillanvalvoja (1.) ja varavalvoja (2.)",
         "supervisor1": "Sillanvalvoja (1.)",
         "supervisor2": "Varavalvoja (2.)"
@@ -276,7 +283,7 @@
     "supervisionType": {
       "unknown": "Tietoja puuttuu",
       "own_supervisor": "Omat valvojat",
-      "area_contractor": "Alueurakoitsija"
+      "area_contractor": "Hoitourakoitsija"
     },
     "transportStatus": {
       "unknown": "Tietoja puuttuu",
@@ -304,7 +311,7 @@
       "estimatedDepartureTime": "Arvioitu lähtöaika",
       "departureTime": "Lähtöaika",
       "permitLabel": "Kuljetuslupa",
-      "transportStatusLabel": "Status",
+      "transportStatusLabel": "Tila",
       "statusInfo": {
         "planned": "Ajoa ei ole vielä aloitettu",
         "departed": "Ajo aloitettu",

@@ -104,10 +104,10 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   return (
     <IonGrid className="routeGrid ion-no-padding">
       <IonRow className="lightBackground ion-hide-lg-down">
-        <IonCol size="15" size-lg="1" className="ion-padding">
-          <IonText>{t("management.companySummary.route.id").toUpperCase()}</IonText>
+        <IonCol size="15" size-lg="2" className="ion-padding">
+          <IonText>{t("management.companySummary.route.tractorUnit").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="15" size-lg="3" className="ion-padding">
+        <IonCol size="15" size-lg="2" className="ion-padding">
           <IonText>{t("management.companySummary.route.route").toUpperCase()}</IonText>
         </IonCol>
         <IonCol size="15" size-lg="3" className="ion-padding">
@@ -158,7 +158,15 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
           .sort((a, b) => b.id - a.id)
           .map((routeTransport, index) => {
             const key = `routetransport_${index}`;
-            const { id: routeTransportId, currentTransportPassword, currentStatus, statusHistory = [], route, supervisions } = routeTransport;
+            const {
+              id: routeTransportId,
+              tractorUnit,
+              currentTransportPassword,
+              currentStatus,
+              statusHistory = [],
+              route,
+              supervisions,
+            } = routeTransport;
             const { name: routeName } = route || {};
             const { transportPassword } = currentTransportPassword || {};
             const { status } = currentStatus || {};
@@ -169,12 +177,12 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
 
             return (
               <IonRow key={key}>
-                <IonCol size="15" size-lg="1" className="ion-padding">
-                  <IonText className="headingText ion-hide-lg-up">{`${t("management.companySummary.route.id")}: `}</IonText>
-                  <IonText>{routeTransportId}</IonText>
+                <IonCol size="15" size-lg="2" className="ion-padding">
+                  <IonText className="headingText ion-hide-lg-up">{`${t("management.companySummary.route.tractorUnit")}: `}</IonText>
+                  <IonText>{tractorUnit ? tractorUnit.toUpperCase() : ""}</IonText>
                 </IonCol>
 
-                <IonCol size="15" size-lg="3" className="ion-padding">
+                <IonCol size="15" size-lg="2" className="ion-padding">
                   <IonGrid className="ion-no-padding">
                     <IonRow>
                       <IonCol size="12" className="ion-hide-lg-up">

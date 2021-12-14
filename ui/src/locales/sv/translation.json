@@ -70,7 +70,9 @@
     }
   },
   "route": {
-    "transportPermit": "(SV) Transport permit",
+    "departureTime": "(SV) Departure time",
+    "plannedTime": "(SV) Planned departure time",
+    "tractorUnit": "(SV) Tractor unit identifier",
     "permitInfo": {
       "title": "(SV) Permit information",
       "permitNumber": "(SV) Permit number",
@@ -84,17 +86,22 @@
       "departurePoint": "(SV) Departure point",
       "arrivalPoint": "(SV) Arrival point"
     },
-    "transportInfo": {
-      "title": "(SV) Transport information",
-      "registrationNumbers": "(SV) Registration numbers",
-      "dimensions": "(SV) Transport dimensions",
-      "height": "(SV) Height from the ground",
-      "width": "(SV) Width",
-      "length": "(SV) Length",
-      "transportTotalMass": "(SV) Total mass",
-      "axleWeightsDistances": "(SV) Axle weights and distances"
-    },
     "bridgesToSupervise": "(SV) Bridges to supervise"
+  },
+  "transportInfo": {
+    "title": "(SV) Transport permit information",
+    "subtitle": "(SV) Vehicles, maximum dimensions and mass",
+    "vehicles": "(SV) Vehicles in the permit",
+    "totalMass": "(SV) Max permitted total mass",
+    "dimensions": "(SV) Transport max dimensions",
+    "height": "(SV) Height from the ground",
+    "width": "(SV) Width",
+    "length": "(SV) Length"
+  },
+  "bridgeCard": {
+    "estimate": "(SV) estimate",
+    "tractorUnit": "(SV) Tractor unit",
+    "tractorUnitMissing": "(SV) missing data"
   },
   "bridge": {
     "title": "(SV) Bridge information",
@@ -106,7 +113,6 @@
     "trafficSupervisors": {
       "title": "(SV) Traffic supervisors"
     },
-    "transportPermit": "(SV) Transport permit",
     "permitNumber": "(SV) Lupanumero",
     "conformsToPermit": "(SV) Transport conforms to permit",
     "startSupervision": "(SV) Start supervision",
@@ -127,7 +133,6 @@
   },
   "supervision": {
     "title": "(SV) Bridge supervision",
-    "transportPermit": "(SV) Transport permit",
     "permitNumber": "(SV) Permit number",
     "supervisionStarted": "(SV) Supervision started",
     "bridgeName": "(SV) Bridge details",
@@ -186,6 +191,14 @@
     "sentOk": "(SV) Selected supervisions have been sent",
     "nothingToSend": "(SV) No supervision reports to send"
   },
+  "permitPdf": {
+    "title": "(SV) Transport permit",
+    "loading": "(SV) Loading PDF...",
+    "error": "(SV) Failed to load PDF file",
+    "noData": "(SV) No PDF file specified",
+    "zoomIn": "(SV) Zoom in",
+    "zoomOut": "(SV) Zoom out"
+  },
   "management": {
     "companySummary": {
       "permitListTitle": "(SV) Transport permits and management",
@@ -203,6 +216,7 @@
       },
       "route": {
         "id": "(SV) ID",
+        "tractorUnit": "(SV) Tractor unit",
         "route": "(SV) Route",
         "supervision": "(SV) Supervision",
         "time": "(SV) Time",
@@ -215,7 +229,7 @@
         "modify": "(SV) Modify",
         "show": "(SV) Show"
       },
-      "transportStatusLog": "(SV) Transport status log",
+      "transportStatusLog": "(SV) Transport tracking",
       "logStatus": {
         "unknown": "(SV) Information unknown",
         "planned": "(SV) Planned",
@@ -251,22 +265,16 @@
         "route": "(SV) Route",
         "origin": "(SV) Origin",
         "destination": "(SV) Destination",
-        "showRouteOnMap": "(SV) Show route on map"
-      },
-      "transportInfo": {
-        "title": "(SV) Maximum dimensions and mass",
-        "totalMass": "(SV) Total mass",
-        "dimensions": "(SV) Transport dimensions",
-        "height": "(SV) Height from the ground",
-        "width": "(SV) Width",
-        "length": "(SV) Length"
+        "showRouteOnMap": "(SV) Show route on map",
+        "tractorUnitIdentifier": "(SV) Vehicle registration number (tractor unit)",
+        "tractorUnitNotSelected": "(SV) Registration number missing"
       },
       "bridgeInfo": {
         "bridge": "(SV) Bridge",
         "estimatedCrossingTime": "(SV) Estimated crossing time",
         "bridgeSupervisors": "(SV) Bridge supervisors",
         "ownSupervisor": "(SV) Own supervisors",
-        "contractor": "(SV) Area contractor",
+        "contractor": "(SV) Maintenance contractor",
         "bridgeSupervisor": "(SV) Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "(SV) Bridge supervisor (1.)",
         "supervisor2": "(SV) Backup supervisor (2.)"
@@ -275,7 +283,7 @@
     "supervisionType": {
       "unknown": "(SV) Information unknown",
       "own_supervisor": "(SV) Own supervisors",
-      "area_contractor": "(SV) Area contractor"
+      "area_contractor": "(SV) Maintenance contractor"
     },
     "transportStatus": {
       "unknown": "(SV) Information unknown",

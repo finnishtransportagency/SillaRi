@@ -22,6 +22,8 @@ public class SupervisionService {
     @Autowired
     SupervisionImageRepository supervisionImageRepository;
     @Autowired
+    RouteTransportRepository routeTransportRepository;
+    @Autowired
     RouteRepository routeRepository;
     @Autowired
     PermitRepository permitRepository;
@@ -60,6 +62,7 @@ public class SupervisionService {
         for (SupervisionModel supervision : supervisions) {
             // Sets also current status and status timestamps
             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+            supervision.setRouteTransport(routeTransportRepository.getRouteTransportById(supervision.getRouteTransportId()));
         }
         return supervisions;
     }

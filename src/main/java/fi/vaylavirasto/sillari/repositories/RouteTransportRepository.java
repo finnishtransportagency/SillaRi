@@ -46,12 +46,12 @@ public class RouteTransportRepository {
     }
 
     public List<RouteTransportModel> getRouteTransportsOfSupervisor(String username) {
-        return dsl.select(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME)
+        return dsl.select(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME, TableAlias.routeTransport.TRACTOR_UNIT)
                 .from(TableAlias.routeTransport)
                 .innerJoin(TableAlias.supervision).on(TableAlias.routeTransport.ID.eq(TableAlias.supervision.ROUTE_TRANSPORT_ID))
                 .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
                 .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
-                .groupBy(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME)
+                .groupBy(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME, TableAlias.routeTransport.TRACTOR_UNIT)
                 .fetch(new RouteTransportMapper());
     }
 
@@ -61,10 +61,12 @@ public class RouteTransportRepository {
 
             Record1<Integer> routeTransportIdResult = ctx.insertInto(TableAlias.routeTransport,
                             TableAlias.routeTransport.ROUTE_ID,
-                            TableAlias.routeTransport.PLANNED_DEPARTURE_TIME
+                            TableAlias.routeTransport.PLANNED_DEPARTURE_TIME,
+                            TableAlias.routeTransport.TRACTOR_UNIT
                     ).values(
                             routeTransportModel.getRouteId(),
-                            routeTransportModel.getPlannedDepartureTime()
+                            routeTransportModel.getPlannedDepartureTime(),
+                            routeTransportModel.getTractorUnit()
                     )
                     .returningResult(TableAlias.routeTransport.ID)
                     .fetchOne(); // Execute and return zero or one record
@@ -93,6 +95,7 @@ public class RouteTransportRepository {
             ctx.update(TableAlias.routeTransport)
                     .set(TableAlias.routeTransport.ROUTE_ID, routeTransportModel.getRouteId())
                     .set(TableAlias.routeTransport.PLANNED_DEPARTURE_TIME, routeTransportModel.getPlannedDepartureTime())
+                    .set(TableAlias.routeTransport.TRACTOR_UNIT, routeTransportModel.getTractorUnit())
                     .where(TableAlias.routeTransport.ID.eq(routeTransportModel.getId()))
                     .execute();
 
@@ -111,6 +114,7 @@ public class RouteTransportRepository {
             ctx.update(TableAlias.routeTransport)
                     .set(TableAlias.routeTransport.ROUTE_ID, routeTransportModel.getRouteId())
                     .set(TableAlias.routeTransport.PLANNED_DEPARTURE_TIME, routeTransportModel.getPlannedDepartureTime())
+                    .set(TableAlias.routeTransport.TRACTOR_UNIT, routeTransportModel.getTractorUnit())
                     .where(TableAlias.routeTransport.ID.eq(routeTransportModel.getId()))
                     .execute();
 

@@ -14,4 +14,5 @@ export default interface IPermit {
   vehicles: IVehicle[];
   axleChart: IAxleChart;
   transportTotalMass: number;
+  pdfObjectKey: string;
 }

@@ -70,7 +70,9 @@
     }
   },
   "route": {
-    "transportPermit": "Transport permit",
+    "departureTime": "Departure time",
+    "plannedTime": "Planned departure time",
+    "tractorUnit": "Tractor unit identifier",
     "permitInfo": {
       "title": "Permit information",
       "permitNumber": "Permit number",
@@ -84,17 +86,22 @@
       "departurePoint": "Departure point",
       "arrivalPoint": "Arrival point"
     },
-    "transportInfo": {
-      "title": "Transport information",
-      "registrationNumbers": "Registration numbers",
-      "dimensions": "Transport dimensions",
-      "height": "Height from the ground",
-      "width": "Width",
-      "length": "Length",
-      "transportTotalMass": "Total mass",
-      "axleWeightsDistances": "Axle weights and distances"
-    },
     "bridgesToSupervise": "Bridges to supervise"
+  },
+  "transportInfo": {
+    "title": "Transport permit information",
+    "subtitle": "Vehicles, maximum dimensions and mass",
+    "vehicles": "Vehicles in the permit",
+    "totalMass": "Max permitted total mass",
+    "dimensions": "Transport max dimensions",
+    "height": "Height from the ground",
+    "width": "Width",
+    "length": "Length"
+  },
+  "bridgeCard": {
+    "estimate": "estimate",
+    "tractorUnit": "Tractor unit",
+    "tractorUnitMissing": "missing data"
   },
   "bridge": {
     "title": "Bridge information",
@@ -106,7 +113,6 @@
     "trafficSupervisors": {
       "title": "Traffic supervisors"
     },
-    "transportPermit": "Transport permit",
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Transport conforms to permit",
     "startSupervision": "Start supervision",
@@ -127,7 +133,6 @@
   },
   "supervision": {
     "title": "Bridge supervision",
-    "transportPermit": "Transport permit",
     "permitNumber": "Permit number",
     "supervisionStarted": "Supervision started",
     "bridgeName": "Bridge details",
@@ -186,6 +191,14 @@
     "sentOk": "Selected supervisions have been sent",
     "nothingToSend": "No supervision reports to send"
   },
+  "permitPdf": {
+    "title": "Transport permit",
+    "loading": "Loading PDF...",
+    "error": "Failed to load PDF file",
+    "noData": "No PDF file specified",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
+  },
   "management": {
     "companySummary": {
       "permitListTitle": "Transport permits and management",
@@ -203,6 +216,7 @@
       },
       "route": {
         "id": "ID",
+        "tractorUnit": "Tractor unit",
         "route": "Route",
         "supervision": "Supervision",
         "time": "Time",
@@ -215,7 +229,7 @@
         "modify": "Modify",
         "show": "Show"
       },
-      "transportStatusLog": "Transport status log",
+      "transportStatusLog": "Transport tracking",
       "logStatus": {
         "unknown": "Information unknown",
         "planned": "Planned",
@@ -251,22 +265,16 @@
         "route": "Route",
         "origin": "Origin",
         "destination": "Destination",
-        "showRouteOnMap": "Show route on map"
-      },
-      "transportInfo": {
-        "title": "Maximum dimensions and mass",
-        "totalMass": "Total mass",
-        "dimensions": "Transport dimensions",
-        "height": "Height from the ground",
-        "width": "Width",
-        "length": "Length"
+        "showRouteOnMap": "Show route on map",
+        "tractorUnitIdentifier": "Vehicle registration number (tractor unit)",
+        "tractorUnitNotSelected": "Registration number missing"
       },
       "bridgeInfo": {
         "bridge": "Bridge",
         "estimatedCrossingTime": "Estimated crossing time",
         "bridgeSupervisors": "Bridge supervisors",
         "ownSupervisor": "Own supervisors",
-        "contractor": "Area contractor",
+        "contractor": "Maintenance contractor",
         "bridgeSupervisor": "Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "Bridge supervisor (1.)",
         "supervisor2": "Backup supervisor (2.)"
@@ -275,7 +283,7 @@
     "supervisionType": {
       "unknown": "Information unknown",
       "own_supervisor": "Own supervisors",
-      "area_contractor": "Area contractor"
+      "area_contractor": "Maintenance contractor"
     },
     "transportStatus": {
       "unknown": "Information unknown",
