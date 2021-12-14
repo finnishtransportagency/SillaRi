@@ -60,7 +60,7 @@ const MultiSupervisorsSelection = ({
         </IonCol>
       </IonRow>
       <IonRow className="ion-margin">
-        <IonCol size-lg="4" size-sm="6" size-xs="12">
+        <IonCol size-lg="4" size-sm="5" size-xs="12" className="ion-margin-end">
           <IonRow>
             <IonCol>
               <IonLabel className="headingText">{t("management.transportDetail.bridgeInfo.supervisor1")}</IonLabel>
@@ -68,7 +68,7 @@ const MultiSupervisorsSelection = ({
             </IonCol>
           </IonRow>
         </IonCol>
-        <IonCol size-lg="4" size-sm="6" size-xs="12">
+        <IonCol size-lg="4" size-sm="5" size-xs="12" className="ion-margin-end">
           <IonRow>
             <IonCol>
               <IonLabel className="headingText">{t("management.transportDetail.bridgeInfo.supervisor2")}</IonLabel>
@@ -76,8 +76,8 @@ const MultiSupervisorsSelection = ({
             </IonCol>
           </IonRow>
         </IonCol>
-        <IonCol size-lg="4" size-sm="6" size-xs="12" className="ion-align-self-end">
-          <IonButton color="secondary" expand="block" onClick={() => setSupervisorsToAllBridges()}>
+        <IonCol size-lg="auto" size-sm="5" size-xs="12" className="ion-align-self-end">
+          <IonButton className="ion-margin-top" color="secondary" expand="block" onClick={() => setSupervisorsToAllBridges()}>
             {t("management.transportDetail.bridgeInfo.copySupervisor")}
           </IonButton>
         </IonCol>
