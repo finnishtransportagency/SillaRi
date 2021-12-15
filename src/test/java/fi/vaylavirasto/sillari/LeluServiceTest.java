@@ -2,10 +2,12 @@ package fi.vaylavirasto.sillari;
 
 import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.lelu.permit.*;
+import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.LeluRouteUploadUtil;
 import fi.vaylavirasto.sillari.service.LeluService;
+import fi.vaylavirasto.sillari.service.trex.TRexService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -14,7 +16,6 @@ import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
@@ -48,15 +49,19 @@ public class LeluServiceTest {
     private BridgeRepository bridgeRepository;
     @Mock
     private SupervisionRepository supervisionRepository;
+    @Mock
+    private AWSS3Client awss3Client;
+    @Mock
+    private TRexService trexService;
+
 
     @Autowired
     private MessageSource messageSource;
 
     @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
     private LeluRouteUploadUtil leluRouteUploadUtil;
+
+
 
 
     @Captor
@@ -64,8 +69,9 @@ public class LeluServiceTest {
     @Captor
     ArgumentCaptor<List<Integer>> routeIdsToDeleteCaptor;
 
+
     @InjectMocks
-    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository, messageSource, leluRouteUploadUtil);
+    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository, messageSource, leluRouteUploadUtil, awss3Client, trexService);
 
     @Test
     public void testCreatePermitWithExistingCompany() {

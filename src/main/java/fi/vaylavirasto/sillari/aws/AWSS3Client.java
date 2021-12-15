@@ -23,14 +23,17 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
-import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class AWSS3Client {
     private static final Logger logger = LogManager.getLogger();
+    public static final String SILLARI_PHOTOS_ROLE_SESSION_NAME = "SILLARI-PHOTOS";
+    public static final String SILLARI_PERMITS_ROLE_SESSION_NAME = "SILLARI-PERMITS";
     private AmazonS3 s3Client=null;
-    private static final String bucketName = "sillari-photos";
+    public static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
+    public static final String SILLARI_PHOTOS_BUCKET_TEST = "sillari-photos-test";
+    public static final String SILLARI_PERMIT_PDF_BUCKET = "sillari-permits";
     private final String roleArn;
     private String accessKey;
     private String secretKey;
@@ -38,6 +41,7 @@ public class AWSS3Client {
     private AssumeRoleResult roleResponse = null;
 
     public AWSS3Client() {
+
         environment = System.getenv("environment");
         if("localhost".equals(environment)) {
             accessKey = System.getenv("accessKey");
@@ -46,7 +50,16 @@ public class AWSS3Client {
         roleArn = System.getenv("roleArn");
     }
 
-    private void init() {
+    public String getPhotoBucketName(){
+        if("test".equals(environment)) {
+            return SILLARI_PHOTOS_BUCKET_TEST;
+        }
+        else{
+            return SILLARI_PHOTOS_BUCKET_DEV;
+        }
+    }
+
+    private void init(String sillariPhotosRoleSessionName) {
         if(roleResponse != null) {
             long now = new Date().getTime();
             if(roleResponse.getCredentials().getExpiration().getTime() < now + 60*1000L) {
@@ -71,7 +84,7 @@ public class AWSS3Client {
 
             AssumeRoleRequest roleRequest = new AssumeRoleRequest()
                     .withRoleArn(roleArn)
-                    .withRoleSessionName("SILLARI-PHOTOS");
+                    .withRoleSessionName(sillariPhotosRoleSessionName);
 
             roleResponse = stsClient.assumeRole(roleRequest);
             Credentials myCreds = roleResponse.getCredentials();
@@ -90,24 +103,25 @@ public class AWSS3Client {
         }
     }
 
-    public boolean upload(String key, byte photo[], long length, String contenttype) {
+    public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName) {
         try {
-            init();
-            ByteArrayInputStream byteInputStream = new ByteArrayInputStream(photo);
+            init(sillariPhotosRoleSessionName);
+            ByteArrayInputStream byteInputStream = new ByteArrayInputStream(bytes);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contenttype);
-            metadata.setContentLength(length);
+            metadata.setContentLength(bytes.length);
             PutObjectRequest request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
             s3Client.putObject(request);
         } catch(Exception e) {
             logger.error(e);
+            return false;
         }
-        return false;
+        return true;
     }
 
-    public byte[] download(String objectKey) {
+    public byte[] download(String objectKey, String bucketName) {
         try {
-            init();
+            init(SILLARI_PHOTOS_ROLE_SESSION_NAME);
             GetObjectRequest request = new GetObjectRequest(bucketName, objectKey);
             S3Object object = s3Client.getObject(request);
             return IOUtils.toByteArray(object.getObjectContent());
@@ -117,13 +131,15 @@ public class AWSS3Client {
         return null;
     }
 
-    public void delete(String objectKey) {
+    public void delete(String objectKey, String bucketName) {
         try {
-            init();
+            init(SILLARI_PHOTOS_ROLE_SESSION_NAME);
             DeleteObjectRequest request = new DeleteObjectRequest(bucketName, objectKey);
             s3Client.deleteObject(request);
         } catch(Exception e) {
             logger.error(e);
         }
     }
+
+
 }

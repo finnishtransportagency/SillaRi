@@ -11,6 +11,7 @@ public class RouteTransportModel {
     private Integer id;
     private Integer routeId;
     private OffsetDateTime plannedDepartureTime;
+    private String tractorUnit;
 
     private RouteTransportStatusModel currentStatus;
     private List<RouteTransportStatusModel> statusHistory;

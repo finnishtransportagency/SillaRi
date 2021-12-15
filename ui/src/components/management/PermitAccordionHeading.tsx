@@ -5,8 +5,10 @@ import { useDispatch } from "react-redux";
 import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import IPermit from "../../interfaces/IPermit";
-import { getRouteTransportsOfPermit, onRetry } from "../../utils/managementBackendData";
+import { onRetry } from "../../utils/backendData";
+import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
+import PermitLinkText from "../PermitLinkText";
 
 interface PermitAccordionHeadingProps {
   permit: IPermit;
@@ -16,7 +18,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps): JSX.El
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { id: permitId, permitNumber, validStartDate, validEndDate } = permit;
+  const { id: permitId, validStartDate, validEndDate } = permit;
 
   const { data: routeTransportList } = useQuery(
     ["getRouteTransportsOfPermit", permitId],
@@ -33,7 +35,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps): JSX.El
           <IonGrid className="ion-no-padding">
             <IonRow>
               <IonCol>
-                <IonText className="headingText">{permitNumber}</IonText>
+                <PermitLinkText permit={permit} className="headingText" />
               </IonCol>
             </IonRow>
             <IonRow>

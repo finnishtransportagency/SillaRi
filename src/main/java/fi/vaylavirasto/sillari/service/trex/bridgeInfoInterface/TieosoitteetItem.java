@@ -2,8 +2,10 @@ package fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.ToString;
 
 public @Data
+@ToString
 class TieosoitteetItem {
 
     @JsonProperty("tieosa")

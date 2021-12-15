@@ -1,0 +1,21 @@
+.logIcon {
+  opacity: 1;
+  font-size: 16px;
+  cursor: default;
+  outline: 1px solid black;
+  padding: 4px;
+  border-radius: 16px;
+}
+
+.logIconLarge {
+  opacity: 1;
+  font-size: 24px;
+  cursor: default;
+  outline: 1px solid black;
+  padding: 8px;
+  border-radius: 24px;
+}
+
+.verticalLine {
+  border-left: 1px solid black;
+}

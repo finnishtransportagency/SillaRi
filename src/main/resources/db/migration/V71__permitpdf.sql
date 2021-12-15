@@ -1,0 +1,1 @@
+alter table sillari.permit add column if not exists pdf_object_key text;

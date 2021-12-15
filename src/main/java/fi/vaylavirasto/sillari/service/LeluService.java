@@ -1,26 +1,34 @@
 package fi.vaylavirasto.sillari.service;
 
 
-import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
+import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
+import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
-import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
+import fi.vaylavirasto.sillari.aws.AWSS3Client;
+import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
+import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
+import fi.vaylavirasto.sillari.service.trex.TRexService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -39,10 +47,18 @@ public class LeluService {
     private SupervisionRepository supervisionRepository;
     private final MessageSource messageSource;
     private LeluRouteUploadUtil leluRouteUploadUtil;
+    private AWSS3Client awss3Client;
+    private final TRexService trexService;
+
+    @Value("${spring.profiles.active:Unknown}")
+    private String activeProfile;
+
+
+
 
     @Autowired
-    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil
-    ) {
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
+                       TRexService trexService) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
         this.routeRepository = routeRepository;
@@ -51,6 +67,8 @@ public class LeluService {
         this.messageSource = messageSource;
         this.leluRouteUploadUtil = leluRouteUploadUtil;
         this.supervisionRepository = supervisionRepository;
+        this.awss3Client = awss3Client;
+        this.trexService = trexService;
     }
 
     // TODO
@@ -60,16 +78,16 @@ public class LeluService {
     public LeluPermitResponseDTO createOrUpdatePermitDevVersion(LeluPermitDTO permitDTO) throws LeluDeleteRouteWithSupervisionsException {
         LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
 
-        logger.debug("Map permit from: " + permitDTO);
+        logger.trace("Map permit from: " + permitDTO);
         PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
-        logger.debug("Permit mapped from LeLu model: {}", permitModel);
+        logger.trace("Permit mapped from LeLu model: {}", permitModel);
 
         // Fetch company from DB with business ID. If not found, insert new company.
         Integer companyId = getCompanyIdByBusinessId(permitModel.getCompany());
         permitModel.setCompanyId(companyId);
 
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
-        setBridgeIdsToRouteBridges(permitModel);
+        produceBridgeDataForRouteBridges(permitModel.getRoutes());
         PermitModel oldPermitModel = getWholePermitModel(permitModel.getPermitNumber());
 
         if (oldPermitModel != null) {
@@ -84,7 +102,7 @@ public class LeluService {
             response.setStatus(LeluPermitStatus.CREATED);
             return response;
         } else {
-            logger.debug("Permit not found with id create new", permitModel.getPermitNumber());
+            logger.debug("Permit not found with id {}, create new", permitModel.getPermitNumber());
 
             // Insert new permit and all child records
             // Missing route addresses (not yet in lelu model)
@@ -132,7 +150,7 @@ public class LeluService {
         permitModel.setCompanyId(companyId);
 
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
-        setBridgeIdsToRouteBridges(permitModel);
+        produceBridgeDataForRouteBridges(permitModel.getRoutes());
 
         Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitModel.getPermitNumber(), permitModel.getLeluVersion());
 
@@ -189,25 +207,43 @@ public class LeluService {
     }
 
 
-    private void setBridgeIdsToRouteBridges(PermitModel permitModel) {
+    private void produceBridgeDataForRouteBridges(List<RouteModel> routes) {
         // Get bridge IDs for unique bridges in routes
-        Map<String, Integer> idOIDMap = getBridgeIdsWithOIDs(permitModel);
-        for (RouteModel route : permitModel.getRoutes()) {
+        // What to do if bridge is not found?
+        // we get it from trex,
+        // but it might not be there if its Lelu by hand added so
+        // TODO then we create bridge with LeLu data..
+        Map<String, Integer> idOIDMap = getBridgeIdsWithOIDs(routes);
+        for (RouteModel route : routes) {
             for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
-                Integer bridgeId = idOIDMap.get(routeBridge.getBridge().getOid());
+                String oid = routeBridge.getBridge().getOid();
+                Integer bridgeId = idOIDMap.get(oid);
                 if (bridgeId != null) {
                     routeBridge.setBridgeId(bridgeId);
                 } else {
-                    // TODO What to do if bridge is not found?
-                    logger.warn("Bridge missing from db with oid {}", routeBridge.getBridge().getOid());
+                    routeBridge.setBridgeId(addTrexBridgeToDB(routeBridge, oid));
                 }
             }
         }
     }
 
-    private Map<String, Integer> getBridgeIdsWithOIDs(PermitModel permitModel) {
+    private Integer addTrexBridgeToDB(RouteBridgeModel routeBridge, String oid) {
+
+        logger.debug("Bridge missing with oid {} get from trex", routeBridge.getBridge().getOid());
+        try {
+            BridgeModel newBridge = trexService.getBridge(oid);
+            Integer newBridgeId = bridgeRepository.createBridge(newBridge);
+            return newBridgeId;
+        } catch (TRexRestException e) {
+            //TODO if its Lelu by hand added so create bridge with LeLu data..?
+            logger.warn("Bridge missing with oid {} not found in trex", routeBridge.getBridge().getOid());
+            return null;
+        }
+    }
+
+    private Map<String, Integer> getBridgeIdsWithOIDs(List<RouteModel> routes) {
         List<String> allOIDs = new ArrayList<>();
-        for (RouteModel routeModel : permitModel.getRoutes()) {
+        for (RouteModel routeModel : routes) {
             allOIDs.addAll(routeModel.getRouteBridges().stream()
                     .map(routeBridge -> routeBridge.getBridge().getOid())
                     .collect(Collectors.toList()));
@@ -251,4 +287,39 @@ public class LeluService {
         }
     }
 
+    public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) throws LeluPermitPdfUploadException {
+        Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitNumber, permitVersion);
+        if (permitId == null) {
+            throw new LeluPermitPdfUploadException(messageSource.getMessage("lelu.permit.not.found", null, Locale.ROOT), HttpStatus.NOT_FOUND);
+        }
+        String objectKey = "permitPdf/" + permitNumber + "_" + permitVersion + "/" + file.getOriginalFilename();
+
+
+
+        if (activeProfile.equals("local")) {
+            // Save to local file system
+            File outputFile = new File("/", file.getOriginalFilename());
+            try {
+                Files.write(outputFile.toPath(), file.getBytes());
+            } catch (IOException e) {
+                logger.error("Error writing file." + e.getClass().getName() + " " + e.getMessage());
+                throw new LeluPermitPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            // Upload to AWS
+            try {
+                boolean success = awss3Client.upload(objectKey, file.getBytes(), "application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET, AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
+                if(!success){
+                    throw new LeluPermitPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            } catch (IOException e) {
+                logger.error("Error uploading file to aws." + e.getClass().getName() + " " + e.getMessage());
+                throw new LeluPermitPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        permitRepository.updatePermitPdf(permitId, objectKey);
+
+        return new LeluPermiPdfResponseDTO(permitNumber, permitVersion, messageSource.getMessage("lelu.permit.pdf.upload.completed", null, Locale.ROOT));
+
+    }
 }

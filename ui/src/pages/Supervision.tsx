@@ -12,7 +12,8 @@ import SupervisionObservations from "../components/SupervisionObservations";
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector } from "../store/store";
-import { cancelSupervision, deleteSupervisionImages, getSupervision, onRetry, updateSupervisionReport } from "../utils/supervisionBackendData";
+import { onRetry } from "../utils/backendData";
+import { cancelSupervision, deleteSupervisionImages, getSupervision, updateSupervisionReport } from "../utils/supervisionBackendData";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { SupervisionStatus } from "../utils/constants";
 import { reportHasUnsavedChanges } from "../utils/supervisionUtil";
@@ -30,7 +31,7 @@ const Supervision = (): JSX.Element => {
   const { supervisionId = "0" } = useParams<SupervisionProps>();
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.supervisionReducer);
+  } = useTypedSelector((state) => state.rootReducer);
 
   const [modifiedReport, setModifiedReport] = useState<ISupervisionReport | undefined>(undefined);
   const [present] = useIonAlert();

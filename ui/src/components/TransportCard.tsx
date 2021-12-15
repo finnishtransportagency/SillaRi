@@ -15,26 +15,21 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
 
   const { id: routeTransportId, currentStatus, departureTime, plannedDepartureTime, route } = transport || {};
 
-  const { departureAddress, arrivalAddress, permit } = route || {};
-  const { streetAddress: departureStreetAddress } = departureAddress || {};
-  const { streetAddress: arrivalStreetAddress } = arrivalAddress || {};
+  const { permit, name: routeName } = route || {};
   const { permitNumber } = permit || {};
 
   const { status } = currentStatus || {};
   const transportDeparted = status && status !== TransportStatus.PLANNED;
 
   return (
-    <IonItem className="itemIcon" detail detailIcon={arrowRight} routerLink={`/routetransportdetail/${routeTransportId}`}>
+    <IonItem className="itemIcon iconLink" detail detailIcon={arrowRight} routerLink={`/routetransportdetail/${routeTransportId}`}>
       <IonLabel>
         <IonLabel className="headingText">
           <Moment format={DATE_TIME_FORMAT_MIN}>{transportDeparted ? departureTime : plannedDepartureTime}</Moment>
           {!transportDeparted && <IonText>{` (${t("company.transport.estimatedDepartureTime")})`}</IonText>}
         </IonLabel>
         <IonLabel>
-          <small>{departureStreetAddress}</small>
-        </IonLabel>
-        <IonLabel>
-          <small>{arrivalStreetAddress}</small>
+          <small>{routeName}</small>
         </IonLabel>
         <IonLabel>
           <small>{`${t("company.transportPermit")} ${permitNumber}`}</small>

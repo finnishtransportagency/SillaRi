@@ -6,15 +6,17 @@ import { IonContent, IonPage } from "@ionic/react";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import RouteAccordion from "../components/RouteAccordion";
-import PermitDetailHeader from "../components/PermitDetailHeader";
-import PermitTransportAccordion from "../components/PermitTransportAccordion";
+import RouteTransportDetailHeader from "../components/RouteTransportDetailHeader";
+import TransportInfoAccordion from "../components/TransportInfoAccordion";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import { useTypedSelector } from "../store/store";
-import { getRouteTransportOfSupervisor, onRetry } from "../utils/supervisionBackendData";
+import { onRetry } from "../utils/backendData";
+import { getRouteTransportOfSupervisor } from "../utils/supervisionBackendData";
 import BridgeCardList from "../components/BridgeCardList";
 import { filterFinishedSupervisions } from "../utils/supervisionUtil";
 import ISupervision from "../interfaces/ISupervision";
+import IRouteTransport from "../interfaces/IRouteTransport";
 
 interface RouteTransportDetailProps {
   routeTransportId: string;
@@ -25,7 +27,7 @@ const RouteTransportDetail = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.supervisionReducer);
+  } = useTypedSelector((state) => state.rootReducer);
 
   const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
   const [supervisions, setSupervisions] = useState<ISupervision[]>([]);
@@ -55,9 +57,9 @@ const RouteTransportDetail = (): JSX.Element => {
           <NoNetworkNoData />
         ) : (
           <>
-            <PermitDetailHeader permit={permit as IPermit} />
+            <RouteTransportDetailHeader permit={permit as IPermit} routeTransport={routeTransport as IRouteTransport} />
             <RouteAccordion route={route as IRoute} />
-            <PermitTransportAccordion permit={permit as IPermit} />
+            <TransportInfoAccordion permit={permit as IPermit} />
 
             <BridgeCardList supervisions={supervisions} />
           </>

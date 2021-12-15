@@ -7,12 +7,15 @@ import { IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/re
 import moment from "moment";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
+import PermitLinkText from "../../components/PermitLinkText";
 import RouteAccordion from "../../components/RouteAccordion";
 import TransportStatusGrid from "../../components/management/TransportStatusGrid";
+import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import { useTypedSelector } from "../../store/store";
-import { getPermitOfRouteTransport, getRouteTransport, onRetry } from "../../utils/managementBackendData";
+import { onRetry } from "../../utils/backendData";
+import { getPermitOfRouteTransport, getRouteTransport } from "../../utils/managementBackendData";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 
 interface TransportProps {
@@ -23,7 +26,7 @@ const Transport = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const management = useTypedSelector((state) => state.managementReducer);
+  const management = useTypedSelector((state) => state.rootReducer);
 
   const {
     networkStatus: { isFailed = {} },
@@ -49,7 +52,6 @@ const Transport = (): JSX.Element => {
   );
 
   const { plannedDepartureTime, route, currentStatus, statusHistory = [] } = selectedRouteTransportDetail || {};
-  const { permitNumber } = selectedPermitDetail || {};
   const { name: routeName } = route || {};
   const { status, time } = currentStatus || {};
 
@@ -93,7 +95,7 @@ const Transport = (): JSX.Element => {
                   <IonText className="headingText">{t("transports.transport.permitLabel")}</IonText>
                 </IonCol>
                 <IonCol size="12" size-sm="9" size-lg="10">
-                  <IonText>{permitNumber}</IonText>
+                  <PermitLinkText permit={selectedPermitDetail as IPermit} />
                 </IonCol>
               </IonRow>
 

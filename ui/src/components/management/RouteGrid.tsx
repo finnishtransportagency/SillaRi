@@ -6,10 +6,13 @@ import { Link } from "react-router-dom";
 import { IonCol, IonGrid, IonIcon, IonRow, IonText, useIonPopover } from "@ionic/react";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
+import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
 import ISupervision from "../../interfaces/ISupervision";
 import close from "../../theme/icons/close.svg";
-import { getRouteTransportsOfPermit, onRetry } from "../../utils/managementBackendData";
+import { onRetry } from "../../utils/backendData";
+import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
+import RouteStatusLog from "./RouteStatusLog";
 import "./RouteGrid.css";
 
 interface RouteGridProps {
@@ -21,8 +24,11 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const [isStatusLogOpen, setStatusLogOpen] = useState<boolean>(false);
+  const [statusLog, setStatusLog] = useState<IRouteTransportStatus[]>([]);
+
   const [popoverText, setPopoverText] = useState("");
-  const [present, dismiss] = useIonPopover(
+  const [presentPassword, dismissPassword] = useIonPopover(
     <IonGrid>
       <IonRow>
         <IonCol>
@@ -34,7 +40,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
             icon={close}
             onClick={() => {
               setPopoverText("");
-              dismiss();
+              dismissPassword();
             }}
           />
         </IonCol>
@@ -43,7 +49,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
     {
       onHide: () => {
         setPopoverText("");
-        dismiss();
+        dismissPassword();
       },
     }
   );
@@ -84,19 +90,24 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   const showPassword = (evt: MouseEvent, password?: string) => {
     if (password) {
       setPopoverText(password);
-      present({
+      presentPassword({
         event: evt.nativeEvent,
       });
     }
   };
 
+  const showStatusLog = (isOpen: boolean, statusHistory?: IRouteTransportStatus[]) => {
+    setStatusLog(statusHistory || []);
+    setStatusLogOpen(isOpen);
+  };
+
   return (
     <IonGrid className="routeGrid ion-no-padding">
       <IonRow className="lightBackground ion-hide-lg-down">
-        <IonCol size="15" size-lg="1" className="ion-padding">
-          <IonText>{t("management.companySummary.route.id").toUpperCase()}</IonText>
+        <IonCol size="15" size-lg="2" className="ion-padding">
+          <IonText>{t("management.companySummary.route.tractorUnit").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="15" size-lg="3" className="ion-padding">
+        <IonCol size="15" size-lg="2" className="ion-padding">
           <IonText>{t("management.companySummary.route.route").toUpperCase()}</IonText>
         </IonCol>
         <IonCol size="15" size-lg="3" className="ion-padding">
@@ -147,7 +158,15 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
           .sort((a, b) => b.id - a.id)
           .map((routeTransport, index) => {
             const key = `routetransport_${index}`;
-            const { id: routeTransportId, currentTransportPassword, currentStatus, route, supervisions } = routeTransport;
+            const {
+              id: routeTransportId,
+              tractorUnit,
+              currentTransportPassword,
+              currentStatus,
+              statusHistory = [],
+              route,
+              supervisions,
+            } = routeTransport;
             const { name: routeName } = route || {};
             const { transportPassword } = currentTransportPassword || {};
             const { status } = currentStatus || {};
@@ -158,12 +177,12 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
 
             return (
               <IonRow key={key}>
-                <IonCol size="15" size-lg="1" className="ion-padding">
-                  <IonText className="headingText ion-hide-lg-up">{`${t("management.companySummary.route.id")}: `}</IonText>
-                  <IonText>{routeTransportId}</IonText>
+                <IonCol size="15" size-lg="2" className="ion-padding">
+                  <IonText className="headingText ion-hide-lg-up">{`${t("management.companySummary.route.tractorUnit")}: `}</IonText>
+                  <IonText>{tractorUnit ? tractorUnit.toUpperCase() : ""}</IonText>
                 </IonCol>
 
-                <IonCol size="15" size-lg="3" className="ion-padding">
+                <IonCol size="15" size-lg="2" className="ion-padding">
                   <IonGrid className="ion-no-padding">
                     <IonRow>
                       <IonCol size="12" className="ion-hide-lg-up">
@@ -228,7 +247,14 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                         <IonText className="headingText">{t("management.companySummary.route.status")}</IonText>
                       </IonCol>
                       <IonCol size="7" size-sm="9" size-lg="12">
-                        <IonText>{statusText}</IonText>
+                        {status !== TransportStatus.PLANNED && (
+                          <IonText
+                            className={`linkText routeGridStatus routeGridStatus_${status?.toLowerCase()}`}
+                            onClick={() => showStatusLog(true, statusHistory)}
+                          >
+                            {statusText}
+                          </IonText>
+                        )}
                       </IonCol>
                     </IonRow>
                   </IonGrid>
@@ -251,6 +277,8 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
               </IonRow>
             );
           })}
+
+      {isStatusLogOpen && <RouteStatusLog isOpen={isStatusLogOpen} setOpen={setStatusLogOpen} statusHistory={statusLog} />}
     </IonGrid>
   );
 };

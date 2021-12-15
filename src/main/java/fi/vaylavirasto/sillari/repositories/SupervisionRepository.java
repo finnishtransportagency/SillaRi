@@ -72,7 +72,7 @@ public class SupervisionRepository {
                 .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
                 .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
                 .and(TableAlias.routeTransport.ID.eq(routeTransportId))
-                .orderBy(TableAlias.supervision.PLANNED_TIME) // TODO change to routeBridge.bridgeOrder when it's added to Lelu API
+                .orderBy(TableAlias.routeBridge.ORDINAL)
                 .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
     }
 
@@ -136,8 +136,6 @@ public class SupervisionRepository {
                 supervisorRepository.insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
             });
 
-            supervisionStatusRepository.insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.PLANNED);
-
             return supervisionId;
         });
     }
@@ -167,19 +165,6 @@ public class SupervisionRepository {
                     .set(TableAlias.supervision.CONFORMS_TO_PERMIT, conformsToPermit)
                     .where(TableAlias.supervision.ID.eq(supervisionId))
                     .execute();
-        });
-    }
-
-    public void updateSupervision(Integer supervisionId, String denyCrossingReason) {
-        dsl.transaction(configuration -> {
-            DSLContext ctx = DSL.using(configuration);
-
-            ctx.update(TableAlias.supervision)
-                    .set(TableAlias.supervision.DENY_CROSSING_REASON, denyCrossingReason)
-                    .where(TableAlias.supervision.ID.eq(supervisionId))
-                    .execute();
-
-            supervisionStatusRepository.insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.CROSSING_DENIED);
         });
     }
 

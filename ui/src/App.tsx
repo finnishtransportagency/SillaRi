@@ -103,8 +103,8 @@ const App: React.FC = () => {
       Object.keys(cookies).forEach((key) => {
         Cookies.remove(key);
       });
+      window.location.reload();
     });
-    window.location.reload();
   };
 
   return (

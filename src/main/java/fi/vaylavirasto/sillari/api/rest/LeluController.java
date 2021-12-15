@@ -2,13 +2,16 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
-import fi.vaylavirasto.sillari.api.rest.error.APIVersionException;
-import fi.vaylavirasto.sillari.api.rest.error.LeluPermitSaveException;
-import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
-import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
+import fi.vaylavirasto.sillari.api.rest.error.*;
+import fi.vaylavirasto.sillari.api.rest.error.*;
+import fi.vaylavirasto.sillari.model.BridgeModel;
+import fi.vaylavirasto.sillari.service.BridgeService;
 import fi.vaylavirasto.sillari.service.LeluService;
+import fi.vaylavirasto.sillari.service.PermitService;
+import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -28,6 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 @RestController
@@ -40,12 +45,17 @@ public class LeluController {
     @Value("${sillari.lelu.version}")
     private String currentApiVersion;
 
+
     private final LeluService leluService;
+    private final TRexService trexService;
+    private final BridgeService bridgeService;
     private final MessageSource messageSource;
 
     @Autowired
-    public LeluController(LeluService leluService, MessageSource messageSource) {
+    public LeluController(LeluService leluService, TRexService trexService, BridgeService bridgeService, MessageSource messageSource) {
         this.leluService = leluService;
+        this.trexService = trexService;
+        this.bridgeService = bridgeService;
         this.messageSource = messageSource;
     }
 
@@ -103,8 +113,19 @@ public class LeluController {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             try {
-                //TODO call non ddev version when time
-                return leluService.createOrUpdatePermitDevVersion(permitDTO);
+                // Get Bridges From Trex To DB
+
+                //TODO call non dev version when time
+                LeluPermitResponseDTO response = leluService.createOrUpdatePermitDevVersion(permitDTO);
+
+                //update bridges from trex in the background so we can response lelu quicker
+                ExecutorService executor = Executors.newWorkStealingPool();
+                executor.submit(() -> {
+                    permitDTO.getRoutes().forEach(r -> r.getBridges().forEach(b -> getBridgeFromTrexToDB(b.getOid())));
+                });
+
+                logger.debug("LeLu savePermit returning");
+                return response;
             } catch (LeluPermitSaveException leluPermitSaveException) {
                 logger.error(leluPermitSaveException.getMessage());
                 throw leluPermitSaveException;
@@ -115,6 +136,20 @@ public class LeluController {
             }
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
+        }
+    }
+
+
+    private void getBridgeFromTrexToDB(String oid) {
+        logger.debug("get bridge {}", oid);
+        try {
+            BridgeModel bridge = trexService.getBridge(oid);
+            bridgeService.createOrUpdateBridge(bridge);
+            logger.debug("bridge inserted or updated: {}", bridge);
+        } catch (TRexRestException e) {
+            logger.warn("Trex fail getting bridge: {}", oid, e);
+        } catch (Exception e) {
+            logger.error("Fail getBridgeFromTrexToDB", e);
         }
     }
 
@@ -139,6 +174,27 @@ public class LeluController {
         logger.debug("FILE contenttype:" + file.getContentType());
         return leluService.uploadRouteGeometry(routeId, file);
     }
+
+    @PostMapping(value = "/uploadpermitpdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseBody
+    @Operation(summary = "Uploads the permit pdf to a permit",
+            description = "Uploads the permit pdf to an existing permit.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400 BAD_REQUEST", description = "File is empty."),
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Permit not found with provided number and version."),
+            @ApiResponse(responseCode = "500 INTERNAL_SERVER_ERROR", description = "Error uploading file.")
+    })
+    public LeluPermiPdfResponseDTO uploadPermitPdf(@RequestParam(required = true) String permitNumber, @RequestParam(required = true) Integer permitVersion,
+                                                   @RequestPart("file") MultipartFile file)
+            throws LeluPermitPdfUploadException {
+        logger.debug("Lelu uploadpermitpdf {}", permitNumber);
+        logger.debug("FILE name:" + file.getName());
+        logger.debug("FILE OriginalFilename:" + file.getOriginalFilename());
+        logger.debug("FILE size:" + file.getSize());
+        logger.debug("FILE contenttype:" + file.getContentType());
+        return leluService.uploadPermitPdf(permitNumber, permitVersion, file);
+    }
+
 
     @RequestMapping(value = "/uploadroutegeometry2", method = RequestMethod.POST)
     @ResponseBody

@@ -5,7 +5,8 @@ import { useDispatch } from "react-redux";
 import { IonBadge, IonButton, IonHeader, IonIcon, IonToolbar, IonButtons, IonMenuButton, IonTitle } from "@ionic/react";
 import { arrowBackOutline, cloudDownloadOutline, cloudOfflineOutline, cloudOutline, cloudUploadOutline } from "ionicons/icons";
 import outgoing from "../theme/icons/outgoing_white_no_badge.svg";
-import { getSupervisionSendingList, onRetry } from "../utils/supervisionBackendData";
+import { onRetry } from "../utils/backendData";
+import { getSupervisionSendingList } from "../utils/supervisionBackendData";
 import SendingList from "./SendingList";
 
 interface HeaderProps {

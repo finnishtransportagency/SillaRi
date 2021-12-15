@@ -2,7 +2,6 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.SupervisionReportMapper;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
-import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,8 +70,6 @@ public class SupervisionReportRepository {
                         )
                         .returningResult(TableAlias.supervisionReport.ID)
                         .fetchOne(); // Execute and return zero or one record
-
-                supervisionStatusRepository.insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.IN_PROGRESS);
             }
 
             return supervisionReportIdResult != null ? supervisionReportIdResult.value1() : null;
@@ -109,8 +106,6 @@ public class SupervisionReportRepository {
             ctx.delete(TableAlias.supervisionReport)
                     .where(TableAlias.supervisionReport.SUPERVISION_ID.eq(supervisionId))
                     .execute();
-
-            supervisionStatusRepository.insertSupervisionStatus(ctx, supervisionId, SupervisionStatusType.CANCELLED);
         });
     }
 

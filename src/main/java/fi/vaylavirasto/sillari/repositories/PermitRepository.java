@@ -29,7 +29,7 @@ public class PermitRepository {
     public List<PermitModel> getPermitsByCompanyId(Integer companyId) {
         return dsl.select().from(TableAlias.permit)
                 .where(TableAlias.permit.COMPANY_ID.eq(companyId))
-                .fetch(new PermitMapper());
+                .fetch(new PermitMapper(true));
     }
 
     public PermitModel getPermit(Integer id) {
@@ -73,7 +73,7 @@ public class PermitRepository {
     }
 
     private PermitModel mapPermitRecordWithAxleChartAndDimensions(Record record) {
-        PermitMapper permitMapper = new PermitMapper();
+        PermitMapper permitMapper = new PermitMapper(true);
         PermitModel permit = permitMapper.map(record);
         if (permit != null) {
             AxleChartMapper axleChartMapper = new AxleChartMapper();
@@ -304,23 +304,28 @@ public class PermitRepository {
         return departureAddressId;
     }
 
-    private void insertRouteBridges(DSLContext ctx, RouteModel routeModel) {
-        List<RouteBridgeModel> routeBridges = routeModel.getRouteBridges();
+    private void insertRouteBridges(DSLContext ctx, RouteModel route) {
+        List<RouteBridgeModel> routeBridges = route.getRouteBridges();
 
-        for (RouteBridgeModel routeBridgeModel : routeBridges) {
-            if (routeBridgeModel.getBridgeId() != null) {
-                routeBridgeModel.setRouteId(routeModel.getId());
+        for (int i = 0; i < routeBridges.size(); i++) {
+            RouteBridgeModel routeBridge = routeBridges.get(i);
+
+            if (routeBridge.getBridgeId() != null) {
+                routeBridge.setRouteId(route.getId());
+                routeBridge.setOrdinal(i + 1);
 
                 ctx.insertInto(TableAlias.routeBridge,
                                 TableAlias.routeBridge.ROUTE_ID,
                                 TableAlias.routeBridge.BRIDGE_ID,
+                                TableAlias.routeBridge.ORDINAL,
                                 TableAlias.routeBridge.CROSSING_INSTRUCTION,
                                 TableAlias.routeBridge.CONTRACT_NUMBER
                         ).values(
-                                routeBridgeModel.getRouteId(),
-                                routeBridgeModel.getBridgeId(),
-                                routeBridgeModel.getCrossingInstruction(),
-                                routeBridgeModel.getContractNumber())
+                                routeBridge.getRouteId(),
+                                routeBridge.getBridgeId(),
+                                routeBridge.getOrdinal(),
+                                routeBridge.getCrossingInstruction(),
+                                routeBridge.getContractNumber())
                         .execute();
             } else {
                 logger.warn("BridgeId missing for routeBridge, cannot insert");
@@ -413,6 +418,18 @@ public class PermitRepository {
                     insertRouteAndRouteBridges(ctx, routeModel);
                 }
             }
+
+        });
+    }
+
+    public void updatePermitPdf(Integer permitId, String pdfObjectKey) throws DataAccessException {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            ctx.update(TableAlias.permit)
+                    .set(TableAlias.permit.PDF_OBJECT_KEY, pdfObjectKey)
+                    .where(TableAlias.permit.ID.eq(permitId))
+                    .execute();
 
         });
     }

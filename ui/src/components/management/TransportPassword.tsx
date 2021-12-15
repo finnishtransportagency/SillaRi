@@ -5,7 +5,8 @@ import { useDispatch } from "react-redux";
 import { IonButton, IonCol, IonGrid, IonRow, IonText, useIonAlert } from "@ionic/react";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import { TransportStatus } from "../../utils/constants";
-import { generateNewRouteTransportPassword, onRetry } from "../../utils/managementBackendData";
+import { onRetry } from "../../utils/backendData";
+import { generateNewRouteTransportPassword } from "../../utils/managementBackendData";
 import "./TransportPassword.css";
 
 interface TransportPasswordProps {

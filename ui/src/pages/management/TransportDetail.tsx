@@ -13,7 +13,9 @@ import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervisor from "../../interfaces/ISupervisor";
 import { useTypedSelector } from "../../store/store";
-import { getPermitOfRouteTransport, getRouteTransport, getSupervisors, onRetry } from "../../utils/managementBackendData";
+import { onRetry } from "../../utils/backendData";
+import { getPermitOfRouteTransport, getRouteTransport, getSupervisors } from "../../utils/managementBackendData";
+import IVehicle from "../../interfaces/IVehicle";
 
 interface TransportDetailProps {
   routeTransportId: string;
@@ -26,8 +28,9 @@ const TransportDetail = (): JSX.Element => {
 
   const [modifiedRouteTransportDetail, setModifiedRouteTransportDetail] = useState<IRouteTransport | undefined>(undefined);
   const [selectedRouteOption, setSelectedRouteOption] = useState<IRoute | undefined>(undefined);
+  const [selectedVehicle, setSelectedVehicle] = useState<IVehicle | undefined>(undefined);
 
-  const management = useTypedSelector((state) => state.managementReducer);
+  const management = useTypedSelector((state) => state.rootReducer);
   const {
     networkStatus: { isFailed = {} },
   } = management;
@@ -52,7 +55,7 @@ const TransportDetail = (): JSX.Element => {
   );
   const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry });
 
-  const { routeId } = selectedRouteTransportDetail || {};
+  const { routeId, tractorUnit } = selectedRouteTransportDetail || {};
 
   useEffect(() => {
     // Copy the saved details for later modifying
@@ -73,7 +76,7 @@ const TransportDetail = (): JSX.Element => {
       };
       setModifiedRouteTransportDetail(modifiedRouteTransport);
     }
-  }, [isLoadingTransport, selectedRouteTransportDetail, routeTransportId, dispatch]);
+  }, [isLoadingTransport, selectedRouteTransportDetail]);
 
   useEffect(() => {
     if (!isLoadingPermit && !!routeId && routeId > 0) {
@@ -83,7 +86,19 @@ const TransportDetail = (): JSX.Element => {
         setSelectedRouteOption(selectedRoute);
       }
     }
-  }, [isLoadingPermit, selectedPermitDetail, routeId, routeTransportId, dispatch]);
+  }, [isLoadingPermit, selectedPermitDetail, routeId]);
+
+  useEffect(() => {
+    // If tractor unit is saved for the transport, set it selected
+    if (!isLoadingTransport && !isLoadingPermit && tractorUnit) {
+      const { vehicles = [] } = selectedPermitDetail || {};
+
+      const selectedTractorUnit = vehicles.find((vehicle) => vehicle.identifier === tractorUnit);
+      if (selectedTractorUnit) {
+        setSelectedVehicle(selectedTractorUnit);
+      }
+    }
+  }, [isLoadingPermit, isLoadingTransport, selectedPermitDetail, tractorUnit]);
 
   const noNetworkNoData =
     (isFailed.getRouteTransport && selectedRouteTransportDetail === undefined) ||
@@ -108,6 +123,8 @@ const TransportDetail = (): JSX.Element => {
             setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
             selectedRouteOption={selectedRouteOption as IRoute}
             setSelectedRouteOption={setSelectedRouteOption}
+            selectedVehicle={selectedVehicle}
+            setSelectedVehicle={setSelectedVehicle}
             setToastMessage={setToastMessage}
           />
         )}
