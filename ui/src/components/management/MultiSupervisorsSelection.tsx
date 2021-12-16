@@ -32,7 +32,8 @@ const MultiSupervisorsSelection = ({
   };
 
   const addOrReplaceSupervisor = (currentSupervisors: ISupervisor[], selectedSupervisor: ISupervisor | undefined, priority: number): ISupervisor => {
-    // If new supervisor is not selected from dropdown, keep the old selection
+    // If the new supervisor is not selected from dropdown, do not replace existing supervisors with the empty one.
+    // This might happen when 1.supervisor is selected, but 2.supervisor left empty.
     const currentSupervisor = currentSupervisors.find((s) => s.priority === priority);
     return selectedSupervisor !== undefined ? selectedSupervisor : ({ ...currentSupervisor } as ISupervisor);
   };
