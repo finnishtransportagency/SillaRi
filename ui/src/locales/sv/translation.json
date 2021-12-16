@@ -277,7 +277,8 @@
         "contractor": "(SV) Maintenance contractor",
         "bridgeSupervisor": "(SV) Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "(SV) Bridge supervisor (1.)",
-        "supervisor2": "(SV) Backup supervisor (2.)"
+        "supervisor2": "(SV) Backup supervisor (2.)",
+        "copySupervisor": "(SV) Copy to all bridges"
       }
     },
     "supervisionType": {

@@ -18,6 +18,7 @@ import RouteInfoGrid from "./RouteInfoGrid";
 import TransportInfoAccordion from "../TransportInfoAccordion";
 import TransportPassword from "./TransportPassword";
 import IVehicle from "../../interfaces/IVehicle";
+import MultiSupervisorsSelection from "./MultiSupervisorsSelection";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -53,6 +54,7 @@ const RouteTransportInfo = ({
   const { companyId, validStartDate, validEndDate } = permit || {};
   const { currentStatus } = modifiedRouteTransportDetail || {};
   const { status } = currentStatus || {};
+  const { routeBridges = [] } = selectedRouteOption || {};
 
   // Set-up mutations for modifying data later
   // TODO - handle errors
@@ -203,11 +205,19 @@ const RouteTransportInfo = ({
               </IonCol>
             </IonRow>
 
+            {selectedRouteOption && status === TransportStatus.PLANNED && (
+              <MultiSupervisorsSelection
+                supervisors={supervisors}
+                modifiedRouteTransportDetail={modifiedRouteTransportDetail}
+                setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+              />
+            )}
+
             {selectedRouteOption && (
               <>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    <IonText className="headingBoldText">{t("management.transportDetail.bridgesToSupervise")}</IonText>
+                    <IonText className="headingBoldText">{`${t("management.transportDetail.bridgesToSupervise")} (${routeBridges.length})`}</IonText>
                   </IonCol>
                 </IonRow>
                 <IonRow className="ion-margin">

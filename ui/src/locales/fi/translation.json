@@ -277,7 +277,8 @@
         "contractor": "Hoitourakoitsija",
         "bridgeSupervisor": "Sillanvalvoja (1.) ja varavalvoja (2.)",
         "supervisor1": "Sillanvalvoja (1.)",
-        "supervisor2": "Varavalvoja (2.)"
+        "supervisor2": "Varavalvoja (2.)",
+        "copySupervisor": "Kopioi kaikille silloille"
       }
     },
     "supervisionType": {
