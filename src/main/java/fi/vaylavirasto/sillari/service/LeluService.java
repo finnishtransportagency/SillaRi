@@ -59,7 +59,6 @@ public class LeluService {
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
 
-
     @Autowired
     public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, SupervisionStatusRepository supervisionStatusRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
                        TRexService trexService) {
@@ -349,35 +348,4 @@ public class LeluService {
     }
 
 
-    public byte[] getSupervisionReportPDF(Long reportId) {
-
-        PDDocument document = new PDDocument();
-        PDPage page = new PDPage();
-        document.addPage(page);
-        try {
-        PDPageContentStream contentStream = new PDPageContentStream(document, page);
-
-
-            contentStream.setFont(PDType1Font.COURIER, 12);
-
-            contentStream.beginText();
-            contentStream.showText("Hello World");
-            contentStream.endText();
-            contentStream.close();
-
-
-
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            document.save(byteArrayOutputStream);
-            InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-            document.close();
-
-            return IOUtils.toByteArray(inputStream);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 }

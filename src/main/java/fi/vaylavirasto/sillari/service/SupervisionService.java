@@ -1,16 +1,29 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.auth.SillariUser;
+import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
 public class SupervisionService {
+    private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     SupervisionRepository supervisionRepository;
     @Autowired
@@ -27,6 +40,8 @@ public class SupervisionService {
     RouteRepository routeRepository;
     @Autowired
     PermitRepository permitRepository;
+    @Autowired
+    AWSS3Client awss3Client;
 
     public SupervisionModel getSupervision(Integer supervisionId) {
         SupervisionModel supervision = supervisionRepository.getSupervisionById(supervisionId);
@@ -132,7 +147,51 @@ public class SupervisionService {
     public SupervisionModel completeSupervision(Integer supervisionId, SillariUser user) {
         SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.REPORT_SIGNED, OffsetDateTime.now(), user.getUsername());
         supervisionStatusRepository.insertSupervisionStatus(status);
+        try {
+            SupervisionModel supervision = getSupervision(supervisionId);
+            byte[] pdf = generateReportPDF(supervision.getReport());
+            String objectKey = "" + supervisionId;
+            boolean success = awss3Client.upload(objectKey, pdf, "application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET, AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
+            if (!success) {
+               // throw new LeluPermitPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
+                logger.error("Error uploading file to aws.");
+            }
+        } catch (Exception e) {
+            logger.error("Error uploading file to aws." + e.getClass().getName() + " " + e.getMessage());
+           // throw new LeluPermitPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return getSupervision(supervisionId);
+    }
+
+    public byte[] generateReportPDF(SupervisionReportModel report) {
+
+            PDDocument document = new PDDocument();
+            PDPage page = new PDPage();
+            document.addPage(page);
+            try {
+                PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+                contentStream.setFont(PDType1Font.COURIER, 12);
+
+                contentStream.beginText();
+                contentStream.showText("Hello World");
+                contentStream.endText();
+                contentStream.close();
+
+
+
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                document.save(byteArrayOutputStream);
+                InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                document.close();
+
+                return IOUtils.toByteArray(inputStream);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
     }
 
     // Deletes the report and adds the status CANCELLED

@@ -8,9 +8,11 @@ import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.model.BridgeModel;
+import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.service.BridgeService;
 import fi.vaylavirasto.sillari.service.LeluService;
 import fi.vaylavirasto.sillari.service.PermitService;
+import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,6 +52,9 @@ public class LeluController {
     private final TRexService trexService;
     private final BridgeService bridgeService;
     private final MessageSource messageSource;
+
+    @Autowired
+    SupervisionService supervisionService;
 
     @Autowired
     public LeluController(LeluService leluService, TRexService trexService, BridgeService bridgeService, MessageSource messageSource) {
@@ -240,9 +245,33 @@ public class LeluController {
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
-                byte[] r =leluService.getSupervisionReportPDF(reportId);
-                logger.debug("HELLO: " + r);
-                return r;
+
+                logger.debug("HELLO: " );
+                return null;
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                logger.error(e.getClass().getName());
+                return null;
+            }
+        } else {
+            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
+        }
+    }
+
+
+    @GetMapping(value = "/DEV_supervisionReport", produces = MediaType.APPLICATION_PDF_VALUE)
+    @ResponseBody
+    @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
+    @ApiResponses(value = {  @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class)))) })
+    public byte[] createSupervisionReport(@RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+        logger.debug("Lelu getReport " + reportId);
+
+        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
+            try {
+                SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(reportId));
+                byte[] reportPDF =supervisionService.generateReportPDF(supervision.getReport());
+                logger.debug("HELLO: " + reportPDF);
+                return reportPDF;
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 logger.error(e.getClass().getName());
