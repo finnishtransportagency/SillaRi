@@ -29,9 +29,9 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
 
   const [popoverText, setPopoverText] = useState("");
   const [presentPassword, dismissPassword] = useIonPopover(
-    <IonGrid>
+    <IonGrid className="ion-no-margin">
       <IonRow>
-        <IonCol>
+        <IonCol size="10">
           <IonText>{popoverText}</IonText>
         </IonCol>
         <IonCol size="2">
