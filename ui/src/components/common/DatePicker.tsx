@@ -19,7 +19,6 @@ const DatePicker = ({ className, value, onChange }: DatePickerProps): JSX.Elemen
   return (
     <IonItem lines="none" className={`datePicker ${className || ""}`}>
       <IonDatetime
-        displayFormat="DD.MM.YYYY"
         doneText={t("common.buttons.done")}
         cancelText={t("common.buttons.back")}
         value={moment(value).toISOString()}

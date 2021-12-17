@@ -16,7 +16,6 @@ const TimePicker = ({ className, value, onChange }: TimePickerProps): JSX.Elemen
   return (
     <IonItem lines="none" className={`timePicker ${className || ""}`}>
       <IonDatetime
-        displayFormat="HH:mm"
         doneText={t("common.buttons.done")}
         cancelText={t("common.buttons.back")}
         value={moment(value).toISOString()}
