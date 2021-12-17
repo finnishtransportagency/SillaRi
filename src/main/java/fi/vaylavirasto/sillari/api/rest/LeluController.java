@@ -269,7 +269,7 @@ public class LeluController {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
                 SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(reportId));
-                byte[] reportPDF =supervisionService.generateReportPDF(supervision.getReport());
+                byte[] reportPDF =supervisionService.generateReportPDF(supervision);
                 logger.debug("HELLO: " + reportPDF);
                 return reportPDF;
             } catch (Exception e) {

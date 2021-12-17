@@ -149,49 +149,59 @@ public class SupervisionService {
         supervisionStatusRepository.insertSupervisionStatus(status);
         try {
             SupervisionModel supervision = getSupervision(supervisionId);
-            byte[] pdf = generateReportPDF(supervision.getReport());
+            byte[] pdf = generateReportPDF(supervision);
             String objectKey = "" + supervisionId;
             boolean success = awss3Client.upload(objectKey, pdf, "application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET, AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
             if (!success) {
-               // throw new LeluPermitPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
+                // throw new LeluPermitPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
                 logger.error("Error uploading file to aws.");
             }
         } catch (Exception e) {
             logger.error("Error uploading file to aws." + e.getClass().getName() + " " + e.getMessage());
-           // throw new LeluPermitPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            // throw new LeluPermitPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return getSupervision(supervisionId);
     }
 
-    public byte[] generateReportPDF(SupervisionReportModel report) {
+    public byte[] generateReportPDF(SupervisionModel supervision) {
 
-            PDDocument document = new PDDocument();
-            PDPage page = new PDPage();
-            document.addPage(page);
-            try {
-                PDPageContentStream contentStream = new PDPageContentStream(document, page);
+        PermitModel permit = supervision.getRouteBridge().getRoute().getPermit();
 
-                contentStream.setFont(PDType1Font.COURIER, 12);
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage();
+        document.addPage(page);
+        try {
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
-                contentStream.beginText();
-                contentStream.showText("Hello World");
-                contentStream.endText();
-                contentStream.close();
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.COURIER, 16);
 
 
+            contentStream.setLeading(12 * 1.2f);
+            contentStream.newLineAtOffset(50, 600);
 
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                document.save(byteArrayOutputStream);
-                InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-                document.close();
+            contentStream.showText("Sillanvalvontaraportti");
+            contentStream.newLine();
+            contentStream.setFont(PDType1Font.COURIER, 12);
 
-                return IOUtils.toByteArray(inputStream);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            contentStream.showText("Lupanumero: " + permit.getPermitNumber());
+            contentStream.endText();
+            contentStream.close();
 
-            return null;
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            document.save(byteArrayOutputStream);
+            InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+            document.close();
+
+            return IOUtils.toByteArray(inputStream);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     // Deletes the report and adds the status CANCELLED
