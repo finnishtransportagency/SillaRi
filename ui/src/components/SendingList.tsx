@@ -51,7 +51,7 @@ const SendingList = ({ isOpen, setOpen, supervisionList }: SendingListProps): JS
   };
 
   return (
-    <IonModal cssClass="" isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
+    <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
       <IonItem color="primary">
         <IonLabel className="headingBoldText">{t("sendingList.title")}</IonLabel>
         <IonIcon className="otherIconLarge" slot="end" icon={close} onClick={() => setOpen(false)} />

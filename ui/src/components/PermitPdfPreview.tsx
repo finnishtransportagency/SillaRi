@@ -37,7 +37,7 @@ const PermitPdfPreview = ({ pdfObjectKey, isOpen, setOpen }: PermitPdfPreviewPro
   };
 
   return (
-    <IonModal cssClass="" isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
+    <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
       <IonItem color="primary" onClick={(evt) => evt.stopPropagation()}>
         <IonLabel className="headingBoldText">{t("permitPdf.title")}</IonLabel>
         <IonIcon className="otherIconLarge" slot="end" icon={close} onClick={(evt) => closePreview(evt as MouseEvent)} />

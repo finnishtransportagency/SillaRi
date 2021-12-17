@@ -11,7 +11,7 @@ interface ImagePreviewProps {
 
 const ImagePreview = ({ imageUrl, isOpen, setIsOpen }: ImagePreviewProps): JSX.Element => {
   return (
-    <IonPopover cssClass="imagePreview" isOpen={isOpen} onDidDismiss={() => setIsOpen(false)}>
+    <IonPopover isOpen={isOpen} onDidDismiss={() => setIsOpen(false)}>
       <IonImg src={imageUrl} onClick={() => setIsOpen(false)} />
       <IonFab vertical="top" horizontal="end" slot="fixed">
         <IonFabButton color="light" onClick={() => setIsOpen(false)}>
