@@ -9,5 +9,6 @@ export default interface IRouteBridge {
   route: IRoute;
   bridge: IBridge;
   crossingInstruction?: string;
+  contractNumber: number;
   supervisions: ISupervision[];
 }

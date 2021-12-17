@@ -102,7 +102,7 @@ const BridgeGrid = ({
         .sort((a, b) => a.routeBridgeId - b.routeBridgeId)
         .map((supervision, index) => {
           const routeBridge = routeBridges.find((rb) => rb.id === supervision.routeBridgeId);
-          const { id: routeBridgeId, bridge } = routeBridge || {};
+          const { id: routeBridgeId, bridge, contractNumber = 0 } = routeBridge || {};
           const { identifier, name } = bridge || {};
           const bridgeName = `${identifier} - ${name}`;
 
@@ -124,6 +124,14 @@ const BridgeGrid = ({
                       <IonText className="headingText ion-hide-lg-up">{bridgeName}</IonText>
                     </IonCol>
                   </IonRow>
+
+                  {contractNumber && (
+                    <IonRow className="ion-margin-top">
+                      <IonCol>
+                        <IonText>{`${t("management.transportDetail.bridgeInfo.contractNumber")}: ${contractNumber}`}</IonText>
+                      </IonCol>
+                    </IonRow>
+                  )}
                 </IonGrid>
               </IonCol>
 

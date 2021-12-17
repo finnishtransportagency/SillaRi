@@ -275,6 +275,7 @@
         "bridgeSupervisors": "(SV) Bridge supervisors",
         "ownSupervisor": "(SV) Own supervisors",
         "contractor": "(SV) Maintenance contractor",
+        "contractNumber": "(SV) Contract number",
         "bridgeSupervisor": "(SV) Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "(SV) Bridge supervisor (1.)",
         "supervisor2": "(SV) Backup supervisor (2.)",
