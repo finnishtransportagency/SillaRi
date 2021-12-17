@@ -114,6 +114,13 @@ ion-label {
   white-space: normal !important;
 }
 
+ion-popover {
+  --width: 90%;
+  --min-width: 200px;
+  --max-width: 1000px;
+  --offset-y: -45%;
+}
+
 /** Additional Vayla colors **/
 .ion-color-teal {
   --ion-color-base: var(--ion-color-teal);

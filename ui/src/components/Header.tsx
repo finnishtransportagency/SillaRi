@@ -64,9 +64,7 @@ const Header = ({ title, somethingFailed, includeSendingList, confirmGoBack }: H
           )}
         </IonButtons>
 
-        {includeSendingList && isSendingListOpen && (
-          <SendingList isOpen={isSendingListOpen} setOpen={setSendingListOpen} supervisionList={supervisionList} />
-        )}
+        {includeSendingList && <SendingList isOpen={isSendingListOpen} setOpen={setSendingListOpen} supervisionList={supervisionList} />}
       </IonToolbar>
     </IonHeader>
   );

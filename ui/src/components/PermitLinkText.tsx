@@ -23,7 +23,7 @@ const PermitLinkText = ({ permit, className }: PermitLinkTextProps): JSX.Element
         {permitNumber}
       </IonText>
 
-      {isPermitPdfOpen && <PermitPdfPreview pdfObjectKey={pdfObjectKey} isOpen={isPermitPdfOpen} setOpen={setPermitPdfOpen} />}
+      <PermitPdfPreview pdfObjectKey={pdfObjectKey} isOpen={isPermitPdfOpen} setOpen={setPermitPdfOpen} />
     </>
   ) : (
     <IonText>{permitNumber}</IonText>
