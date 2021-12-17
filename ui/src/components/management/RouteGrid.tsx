@@ -11,7 +11,7 @@ import ISupervision from "../../interfaces/ISupervision";
 import close from "../../theme/icons/close.svg";
 import { onRetry } from "../../utils/backendData";
 import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
-import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
+import { DATE_TIME_FORMAT_MIN, SupervisorType, TransportStatus } from "../../utils/constants";
 import RouteStatusLog from "./RouteStatusLog";
 import "./RouteGrid.css";
 
@@ -67,7 +67,14 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   const supervisionText = (supervisions?: ISupervision[]) => {
     // Get the unique non-null supervisor types and map them to translated text
     if (supervisions) {
-      const supervisorTypes = supervisions.map((supervision) => supervision.supervisorType).filter((v, i, a) => v && a.indexOf(v) === i);
+      const supervisorTypes = supervisions
+        .map((supervision) => {
+          const { routeBridge } = supervision;
+          const { contractNumber = 0 } = routeBridge || {};
+          return contractNumber > 0 ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR;
+        })
+        .filter((v, i, a) => v && a.indexOf(v) === i);
+
       return supervisorTypes.length > 0
         ? supervisorTypes.map((st) => t(`management.supervisionType.${st.toLowerCase()}`)).join(", ")
         : t("management.supervisionType.unknown");

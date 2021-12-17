@@ -70,14 +70,14 @@ const RouteInfoGrid = ({
         // This is a new route transport, so make sure supervision details are available for BridgeGrid
         const { routeBridges = [] } = selectedRoute || {};
         const newSupervisions: ISupervision[] = routeBridges.map((routeBridge) => {
-          const { id: routeBridgeId } = routeBridge;
+          const { id: routeBridgeId, contractNumber = 0 } = routeBridge;
           return {
             id: 0,
             routeBridgeId,
             routeTransportId,
             plannedTime: moment().toDate(),
             conformsToPermit: false,
-            supervisorType: SupervisorType.OWN_SUPERVISOR,
+            supervisorType: contractNumber > 0 ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR,
             supervisors: [],
           };
         });
