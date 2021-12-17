@@ -18,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -165,7 +166,9 @@ public class SupervisionService {
 
     public byte[] generateReportPDF(SupervisionModel supervision) {
 
-        PermitModel permit = supervision.getRouteBridge().getRoute().getPermit();
+        BridgeModel bridge = supervision.getRouteBridge().getBridge();
+        RouteModel route = supervision.getRouteBridge().getRoute();
+        PermitModel permit = route.getPermit();
 
         PDDocument document = new PDDocument();
         PDPage page = new PDPage();
@@ -184,9 +187,30 @@ public class SupervisionService {
             contentStream.newLine();
             contentStream.setFont(PDType1Font.COURIER, 12);
 
-
+            contentStream.newLine();
             contentStream.showText("Lupanumero: " + permit.getPermitNumber());
+
+            contentStream.newLine();
+            contentStream.showText("Reitin nimi: " + route.getName());
+
+            contentStream.newLine();
+            contentStream.showText("Valvonta aloitettu: " + supervision.getCurrentStatus().getTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));  //TODO
+
+            contentStream.newLine();
+            contentStream.showText("Silta: " + bridge.getName()+" | "+ bridge.getIdentifier()+" | "+ bridge.getOid());
+
+            contentStream.newLine();
+            contentStream.showText("Tieosoite: " + bridge.getRoadAddress());
+
+            contentStream.newLine();
+            contentStream.showText("Kuittauksen ajankohta: "
+                    + supervision.getStatusHistory().stream()
+                    .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(SupervisionStatusType.REPORT_SIGNED))
+                    .findFirst().orElseThrow().getTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
             contentStream.endText();
+
+
             contentStream.close();
 
 

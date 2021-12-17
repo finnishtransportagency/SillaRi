@@ -81,8 +81,8 @@ public class PermitService {
     }
 
     public void getPermitPdf(HttpServletResponse response, @RequestParam String objectKey) throws IOException {
-        String decodedKey = new String(Base64.getDecoder().decode(objectKey));
-
+       // String decodedKey = new String(Base64.getDecoder().decode(objectKey));
+        String decodedKey =objectKey;
         if (activeProfile.equals("local")) {
             // Get from local file system
             String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
