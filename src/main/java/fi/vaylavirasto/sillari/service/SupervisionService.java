@@ -193,8 +193,16 @@ public class SupervisionService {
             contentStream.newLine();
             contentStream.showText("Reitin nimi: " + route.getName());
 
+            String supervisionTime = "-";
+            try{
+                supervisionTime = supervision.getStatusHistory().stream()
+                        .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(SupervisionStatusType.IN_PROGRESS))
+                        .findFirst().orElseThrow().getTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            }catch (Exception e){
+                logger.debug("caugth: " + e.getClass().getName()+ e.getMessage());
+            }
             contentStream.newLine();
-            contentStream.showText("Valvonta aloitettu: " + supervision.getCurrentStatus().getTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));  //TODO
+            contentStream.showText("Valvonta aloitettu: " + supervisionTime);
 
             contentStream.newLine();
             contentStream.showText("Silta: " + bridge.getName()+" | "+ bridge.getIdentifier()+" | "+ bridge.getOid());
@@ -202,11 +210,16 @@ public class SupervisionService {
             contentStream.newLine();
             contentStream.showText("Tieosoite: " + bridge.getRoadAddress());
 
+            String signTime = "-";
+            try{
+                signTime = supervision.getStatusHistory().stream()
+                        .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(SupervisionStatusType.REPORT_SIGNED))
+                        .findFirst().orElseThrow().getTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            }catch (Exception e){
+                logger.debug("caugth: " + e.getClass().getName()+ e.getMessage());
+            }
             contentStream.newLine();
-            contentStream.showText("Kuittauksen ajankohta: "
-                    + supervision.getStatusHistory().stream()
-                    .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(SupervisionStatusType.REPORT_SIGNED))
-                    .findFirst().orElseThrow().getTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+            contentStream.showText("Kuittauksen ajankohta: " + signTime);
 
             contentStream.endText();
 
