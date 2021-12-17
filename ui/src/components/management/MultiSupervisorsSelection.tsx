@@ -31,11 +31,15 @@ const MultiSupervisorsSelection = ({
     }
   };
 
-  const addOrReplaceSupervisor = (currentSupervisors: ISupervisor[], selectedSupervisor: ISupervisor | undefined, priority: number): ISupervisor => {
+  const addOrReplaceSupervisor = (
+    currentSupervisors: ISupervisor[],
+    selectedSupervisor: ISupervisor | undefined,
+    priority: number
+  ): ISupervisor | undefined => {
     // If the new supervisor is not selected from dropdown, do not replace existing supervisors with the empty one.
     // This might happen when 1.supervisor is selected, but 2.supervisor left empty.
     const currentSupervisor = currentSupervisors.find((s) => s.priority === priority);
-    return selectedSupervisor !== undefined ? selectedSupervisor : ({ ...currentSupervisor } as ISupervisor);
+    return selectedSupervisor !== undefined ? selectedSupervisor : currentSupervisor;
   };
 
   const setSupervisorsToAllBridges = () => {
@@ -43,9 +47,11 @@ const MultiSupervisorsSelection = ({
 
     const newSupervisions = currentSupervisions.map((supervision) => {
       const { supervisors: currentSupervisors = [] } = supervision || {};
-      const newSupervisors: ISupervisor[] = [];
-      newSupervisors.push(addOrReplaceSupervisor(currentSupervisors, selectedSupervisor1, 1));
-      newSupervisors.push(addOrReplaceSupervisor(currentSupervisors, selectedSupervisor2, 2));
+
+      // If a supervisor is undefined, don't include it in the supervisors array, otherwise the backend throws a not-null constraint violation
+      const newSupervisor1 = addOrReplaceSupervisor(currentSupervisors, selectedSupervisor1, 1);
+      const newSupervisor2 = addOrReplaceSupervisor(currentSupervisors, selectedSupervisor2, 2);
+      const newSupervisors: ISupervisor[] = [...(newSupervisor1 ? [newSupervisor1] : []), ...(newSupervisor2 ? [newSupervisor2] : [])];
       return { ...supervision, supervisors: newSupervisors };
     });
 
