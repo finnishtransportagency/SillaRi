@@ -11,6 +11,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -168,11 +169,15 @@ public class SupervisionService {
 
         BridgeModel bridge = supervision.getRouteBridge().getBridge();
         RouteModel route = supervision.getRouteBridge().getRoute();
+        SupervisionReportModel report = supervision.getReport();
         PermitModel permit = route.getPermit();
+        SupervisorModel supervisor = ((supervision.getSupervisors()==null || supervision.getSupervisors().isEmpty())?null: supervision.getSupervisors().get(0));
+
 
         PDDocument document = new PDDocument();
         PDPage page = new PDPage();
         document.addPage(page);
+
         try {
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
@@ -194,32 +199,70 @@ public class SupervisionService {
             contentStream.showText("Reitin nimi: " + route.getName());
 
             String supervisionTime = "-";
-            try{
-                supervisionTime = supervision.getStatusHistory().stream()
-                        .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(SupervisionStatusType.IN_PROGRESS))
-                        .findFirst().orElseThrow().getTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            }catch (Exception e){
-                logger.debug("caugth: " + e.getClass().getName()+ e.getMessage());
+            try {
+                supervisionTime = formatStatusDate(supervision, SupervisionStatusType.IN_PROGRESS);
+            } catch (Exception e) {
+                logger.debug("caugth: " + e.getClass().getName() + e.getMessage());
             }
             contentStream.newLine();
             contentStream.showText("Valvonta aloitettu: " + supervisionTime);
 
             contentStream.newLine();
-            contentStream.showText("Silta: " + bridge.getName()+" | "+ bridge.getIdentifier()+" | "+ bridge.getOid());
+            contentStream.showText("Silta: " + bridge.getName() + " | " + bridge.getIdentifier() + " | " + bridge.getOid());
 
             contentStream.newLine();
-            contentStream.showText("Tieosoite: " + bridge.getRoadAddress());
+            contentStream.showText("Tieosoite: " + (bridge.getRoadAddress() == null ? "-" : bridge.getRoadAddress()));
 
             String signTime = "-";
-            try{
-                signTime = supervision.getStatusHistory().stream()
-                        .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(SupervisionStatusType.REPORT_SIGNED))
-                        .findFirst().orElseThrow().getTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            }catch (Exception e){
-                logger.debug("caugth: " + e.getClass().getName()+ e.getMessage());
+            try {
+                signTime = formatStatusDate(supervision, SupervisionStatusType.REPORT_SIGNED);
+            } catch (Exception e) {
+                logger.debug("caugth: " + e.getClass().getName() + e.getMessage());
             }
             contentStream.newLine();
             contentStream.showText("Kuittauksen ajankohta: " + signTime);
+
+            contentStream.newLine();
+            contentStream.showText("Sillanvalvoja: " + ((supervisor==null)?"-": supervisor.getFirstName() +" " + supervisor.getLastName()));
+
+            contentStream.newLine();
+            contentStream.newLine();
+            contentStream.setFont(PDType1Font.COURIER, 14);
+            contentStream.showText("Havainnot");
+
+
+            contentStream.newLine();
+            contentStream.setFont(PDType1Font.COURIER, 12);
+            contentStream.showText("Ajolinjaa on noudatettu: " + (report.getDrivingLineOk()?"kyllä":"ei"));
+
+            contentStream.newLine();
+            contentStream.showText("Miksi ajolinjaa ei noudatettu: " + report.getDrivingLineInfo());
+
+            contentStream.newLine();
+            contentStream.showText("Ajonopeus on hyväksytty: " + (report.getSpeedLimitOk()?"kyllä":"ei"));
+
+            contentStream.newLine();
+            contentStream.showText("Miksi ajonopeutta ei hyväksytä " + report.getSpeedLimitInfo());
+
+            contentStream.newLine();
+            contentStream.showText("Poikkeavia havaintoja: " + (report.getAnomalies()?"kyllä":"ei"));
+
+            contentStream.newLine();
+            contentStream.showText("Liikuntasauman rikkoutuminen " + (report.getJointDamage()?"kyllä":"ei"));
+
+            contentStream.newLine();
+            contentStream.showText("Pysyvä taipuma tai muu siirtymä " + (report.getBendOrDisplacement()?"kyllä":"ei"));
+
+            contentStream.newLine();
+            contentStream.showText("Jotain muuta, mitä? " + (report.getOtherObservations()?"kyllä":"ei"));
+
+            contentStream.newLine();
+            contentStream.showText("Lisätiedot: " + report.getOtherObservationsInfo());
+
+            contentStream.newLine();
+            contentStream.newLine();
+            report.get
+            contentStream.showText("Lisätiedot: " + report.getOtherObservationsInfo());
 
             contentStream.endText();
 
@@ -239,6 +282,14 @@ public class SupervisionService {
         }
 
         return null;
+    }
+
+    @NotNull
+    private String formatStatusDate(SupervisionModel supervision, SupervisionStatusType supervisionStatusType) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+        return supervision.getStatusHistory().stream()
+                .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(supervisionStatusType))
+                .findFirst().orElseThrow().getTime().format(formatter);
     }
 
     // Deletes the report and adds the status CANCELLED
