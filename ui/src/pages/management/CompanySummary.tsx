@@ -55,17 +55,19 @@ const CompanySummary = (): JSX.Element => {
                   <IonRow>
                     <IonCol>
                       <CustomAccordion
-                        items={permits.map((permit, index) => {
-                          const key = `permit_${index}`;
+                        items={permits
+                          .sort((a, b) => a.permitNumber.localeCompare(b.permitNumber))
+                          .map((permit, index) => {
+                            const key = `permit_${index}`;
 
-                          return {
-                            uuid: key,
-                            // headingColor: "primary",
-                            heading: <PermitAccordionHeading permit={permit} />,
-                            isPanelOpen: index === 0,
-                            panel: <PermitAccordionPanel permit={permit} />,
-                          };
-                        })}
+                            return {
+                              uuid: key,
+                              // headingColor: "primary",
+                              heading: <PermitAccordionHeading permit={permit} />,
+                              isPanelOpen: index === 0,
+                              panel: <PermitAccordionPanel permit={permit} />,
+                            };
+                          })}
                       />
                     </IonCol>
                   </IonRow>
