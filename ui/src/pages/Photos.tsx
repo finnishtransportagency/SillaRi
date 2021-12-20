@@ -120,7 +120,7 @@ const Photos = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={t("main.header.title")} confirmGoBack={saveImages} />
-      <IonContent fullscreen>
+      <IonContent>
         <IonListHeader>
           <IonLabel>
             {t("camera.listLabel")} ({allImagesAmount} {t("camera.listLabelPcs")})

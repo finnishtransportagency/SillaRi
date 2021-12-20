@@ -53,7 +53,7 @@ const CompanySummary = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={name} somethingFailed={isFailed.getCompany} />
-      <IonContent fullscreen color="light">
+      <IonContent color="light">
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (
