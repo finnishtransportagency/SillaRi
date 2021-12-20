@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import IPermit from "../../interfaces/IPermit";
+import { actions } from "../../store/rootSlice";
 import { onRetry } from "../../utils/backendData";
 import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
@@ -59,6 +60,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps): JSX.El
             size="large"
             routerLink={`/management/addTransport/${permitId}`}
             onClick={(evt) => {
+              dispatch({ type: actions.SET_MANAGEMENT_PERMIT_ID, payload: permitId });
               evt.stopPropagation();
             }}
           >

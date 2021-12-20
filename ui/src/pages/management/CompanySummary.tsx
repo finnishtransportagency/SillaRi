@@ -24,6 +24,7 @@ const CompanySummary = (): JSX.Element => {
   const management = useTypedSelector((state) => state.rootReducer);
   const {
     networkStatus: { isFailed = {} },
+    selectedManagementPermitId,
   } = management;
   const { companyId = "0" } = useParams<CompanySummaryProps>();
 
@@ -58,13 +59,14 @@ const CompanySummary = (): JSX.Element => {
                         items={permits
                           .sort((a, b) => a.permitNumber.localeCompare(b.permitNumber))
                           .map((permit, index) => {
+                            const { id: permitId } = permit;
                             const key = `permit_${index}`;
 
                             return {
                               uuid: key,
                               // headingColor: "primary",
                               heading: <PermitAccordionHeading permit={permit} />,
-                              isPanelOpen: index === 0,
+                              isPanelOpen: selectedManagementPermitId ? selectedManagementPermitId === permitId : index === 0,
                               panel: <PermitAccordionPanel permit={permit} />,
                             };
                           })}

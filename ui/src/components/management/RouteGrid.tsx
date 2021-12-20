@@ -8,6 +8,7 @@ import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
 import ISupervision from "../../interfaces/ISupervision";
+import { actions } from "../../store/rootSlice";
 import close from "../../theme/icons/close.svg";
 import { onRetry } from "../../utils/backendData";
 import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
@@ -267,7 +268,12 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                         <IonText className="headingText">{t("management.companySummary.route.action")}</IonText>
                       </IonCol>
                       <IonCol size="7" size-sm="9" size-lg="12">
-                        <Link to={`/management/transportDetail/${routeTransportId}`}>
+                        <Link
+                          to={`/management/transportDetail/${routeTransportId}`}
+                          onClick={() => {
+                            dispatch({ type: actions.SET_MANAGEMENT_PERMIT_ID, payload: permitId });
+                          }}
+                        >
                           <IonText className="linkText">{action}</IonText>
                         </Link>
                       </IonCol>
