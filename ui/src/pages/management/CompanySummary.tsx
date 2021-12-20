@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
@@ -36,6 +36,20 @@ const CompanySummary = (): JSX.Element => {
 
   const noNetworkNoData = isFailed.getCompany && selectedCompanyDetail === undefined;
 
+  const [elementRefs] = useState<{ [permitId: number]: HTMLIonGridElement }>({});
+
+  const setRef = (permitId: number, element: HTMLIonGridElement) => {
+    // Store a ref to the accordion heading for this permit
+    elementRefs[permitId] = element;
+  };
+
+  useEffect(() => {
+    if (selectedManagementPermitId && elementRefs[selectedManagementPermitId]) {
+      // Scroll to the previously opened permit
+      elementRefs[selectedManagementPermitId].scrollIntoView();
+    }
+  }, [selectedManagementPermitId, elementRefs]);
+
   return (
     <IonPage>
       <Header title={name} somethingFailed={isFailed.getCompany} />
@@ -65,7 +79,7 @@ const CompanySummary = (): JSX.Element => {
                             return {
                               uuid: key,
                               // headingColor: "primary",
-                              heading: <PermitAccordionHeading permit={permit} />,
+                              heading: <PermitAccordionHeading ref={(el: HTMLIonGridElement) => setRef(permitId, el)} permit={permit} />,
                               isPanelOpen: selectedManagementPermitId ? selectedManagementPermitId === permitId : index === 0,
                               panel: <PermitAccordionPanel permit={permit} />,
                             };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ForwardedRef, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
@@ -15,7 +15,7 @@ interface PermitAccordionHeadingProps {
   permit: IPermit;
 }
 
-const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps): JSX.Element => {
+const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: ForwardedRef<HTMLIonGridElement>): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -30,7 +30,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps): JSX.El
   );
 
   return (
-    <IonGrid className="ion-no-padding">
+    <IonGrid className="ion-no-padding" ref={ref}>
       <IonRow className="ion-margin ion-align-items-center">
         <IonCol>
           <IonGrid className="ion-no-padding">
@@ -72,4 +72,4 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps): JSX.El
   );
 };
 
-export default PermitAccordionHeading;
+export default forwardRef<HTMLIonGridElement, PermitAccordionHeadingProps>(PermitAccordionHeading);
