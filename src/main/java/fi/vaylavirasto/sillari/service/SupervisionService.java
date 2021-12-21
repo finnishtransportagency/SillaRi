@@ -193,7 +193,7 @@ public class SupervisionService {
 
 
             contentStream.setLeading(12 * 1.2f);
-            contentStream.newLineAtOffset(50, 600);
+            contentStream.newLineAtOffset(50, 750);
 
             contentStream.showText("Sillanvalvontaraportti");
             contentStream.newLine();
@@ -268,34 +268,38 @@ public class SupervisionService {
 
             contentStream.newLine();
             contentStream.showText("Jotain muuta, mitä? " + (report.getOtherObservations() ? "kyllä" : "ei"));
+            contentStream.newLine();
+            contentStream.showText((report.getOtherObservationsInfo() == null || report.getOtherObservationsInfo().isEmpty()) ? "" : report.getOtherObservationsInfo());
+            contentStream.newLine();
+            contentStream.showText((report.getAnomaliesDescription() == null || report.getAnomaliesDescription().isEmpty()) ? "" : report.getAnomaliesDescription());
 
             contentStream.newLine();
-            contentStream.showText("Lisätiedot: " + report.getOtherObservationsInfo());
+            contentStream.showText("Lisätiedot: " + report.getAdditionalInfo());
+            contentStream.endText();
+            contentStream.close();
 
-            contentStream.newLine();
-            contentStream.newLine();
-
-            logger.debug("supervision.getImages()" + supervision.getImages());
-            logger.debug("images" + images.size());
-
-            contentStream.newLine();
 
 
             int imageCount = ((images == null || images.isEmpty()) ? 0 : images.size());
-            logger.debug("imagesC" + imageCount);
 
             if (imageCount > 0) {
+                PDPage pageTwo = new PDPage();
+                document.addPage(pageTwo);
+                contentStream = new PDPageContentStream(document, pageTwo);
+                contentStream.beginText();
+                contentStream.setFont(PDType1Font.COURIER, 12);
                 contentStream.showText("Kuvat (" + imageCount + "kpl)");
                 contentStream.newLine();
                 contentStream.endText();
 
                 handleImages(contentStream, supervision.getImages(), document);
+                contentStream.close();
             } else {
-                contentStream.endText();
+
             }
 
 
-            contentStream.close();
+
 
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -313,10 +317,11 @@ public class SupervisionService {
     }
 
     private void handleImages(PDPageContentStream contentStream, List<SupervisionImageModel> images, PDDocument document) {
-        images.forEach(image -> {
+        int y = 400;
+        for (SupervisionImageModel image : images) {
             String objectKey = image.getObjectKey();
             String decodedKey = new String(Base64.getDecoder().decode(objectKey));
-            logger.debug("decodedKey"+decodedKey);
+            logger.debug("decodedKey" + decodedKey);
             if (activeProfile.equals("local")) {
                 // Get from local file system
                 String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
@@ -330,18 +335,24 @@ public class SupervisionService {
                         e.printStackTrace();
                     }
 
-                    float scale = 1f;
+                    final float DESIRED_PHOTO_WIDTH = 300;
+                    final float ratio = pdImage.getWidth() / DESIRED_PHOTO_WIDTH;
+                    final float newHeight = pdImage.getHeight() / ratio;
+
                     try {
-                        contentStream.drawImage(pdImage, 20, 20, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
+                        contentStream.drawImage(pdImage, 20, y, DESIRED_PHOTO_WIDTH, newHeight);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    y -= 200;
                     logger.debug("drew");
+                } else {
+                    logger.debug("file no");
                 }
             } else {
                 logger.debug("not local");
             }
-        });
+        }
     }
 
     @NotNull
