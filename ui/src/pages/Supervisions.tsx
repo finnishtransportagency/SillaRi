@@ -9,18 +9,26 @@ import { useTypedSelector } from "../store/store";
 import { onRetry } from "../utils/backendData";
 import { getCompanyTransportsList, getSupervisionList } from "../utils/supervisionBackendData";
 import SupervisionList from "../components/SupervisionList";
-import "./Home.css";
+import "./Supervisions.css";
 import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import { filterFinishedSupervisions, groupSupervisionsByDate } from "../utils/supervisionUtil";
+import { useHistory, useParams } from "react-router-dom";
 
-const Home = (): JSX.Element => {
+interface SupervisionsProps {
+  tabId: string;
+}
+
+const Supervisions = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const history = useHistory();
+
+  const { tabId = "0" } = useParams<SupervisionsProps>();
 
   const slidesRef = useRef<HTMLIonSlidesElement>(null);
 
-  const [currentSegment, setCurrentSegment] = useState<string>("0");
+  const [currentSegment, setCurrentSegment] = useState<string>(tabId);
   const [supervisionDays, setSupervisionDays] = useState<ISupervisionDay[]>([]);
 
   const {
@@ -52,6 +60,7 @@ const Home = (): JSX.Element => {
     if (slidesRef.current) {
       const newSlideIndex = await slidesRef.current.getActiveIndex();
       setCurrentSegment(String(newSlideIndex));
+      history.replace(`/supervisions/${newSlideIndex}`);
     }
   };
 
@@ -86,4 +95,4 @@ const Home = (): JSX.Element => {
   );
 };
 
-export default Home;
+export default Supervisions;
