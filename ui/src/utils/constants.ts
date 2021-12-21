@@ -26,3 +26,8 @@ export enum TransportStatus {
   IN_PROGRESS = "IN_PROGRESS",
   ARRIVED = "ARRIVED",
 }
+
+export enum SupervisionListType {
+  TRANSPORT = "TRANSPORT",
+  BRIDGE = "BRIDGE",
+}

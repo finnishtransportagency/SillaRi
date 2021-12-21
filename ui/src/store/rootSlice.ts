@@ -6,6 +6,7 @@ import INetworkStatus from "../interfaces/INetworkStatus";
 interface IStateProps {
   networkStatus: INetworkStatus;
   selectedManagementPermitId?: number;
+  selectedSupervisionListType?: string;
 }
 
 const initialState: IStateProps = {
@@ -13,10 +14,11 @@ const initialState: IStateProps = {
     isFailed: {},
   },
   selectedManagementPermitId: undefined,
+  selectedSupervisionListType: undefined,
 };
 
-const managementSlice = createSlice({
-  name: "management",
+const rootSlice = createSlice({
+  name: "root",
   initialState,
   reducers: {
     SET_FAILED_QUERY: (state, action: PayloadAction<IFailedQuery>) => {
@@ -27,8 +29,12 @@ const managementSlice = createSlice({
       // console.log("SET_MANAGEMENT_PERMIT_ID", action.payload);
       return { ...state, selectedManagementPermitId: action.payload };
     },
+    SET_SUPERVISION_LIST_TYPE: (state, action: PayloadAction<string | undefined>) => {
+      console.log("SET_SUPERVISION_LIST_TYPE", action.payload);
+      return { ...state, selectedSupervisionListType: action.payload };
+    },
   },
 });
 
-export const { actions } = managementSlice;
-export default managementSlice;
+export const { actions } = rootSlice;
+export default rootSlice;
