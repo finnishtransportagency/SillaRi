@@ -42,11 +42,10 @@
     }
   },
   "camera": {
-    "takePhotoButtonLabel": "Ta bild",
-    "listLabel": "Bilderna",
-    "listLabelPcs": "st",
+    "takePhotoButtonLabel": "(SV) Add photos",
+    "listLabel": "(SV) Photos",
     "item": {
-      "deleteButtonLabel": "Ta bort"
+      "deleteButtonLabel": "(SV) Delete image"
     }
   },
   "SidebarMenu": {
