@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import CustomSelect from "../common/CustomSelect";
 import RouteGrid from "./RouteGrid";
 import IPermit from "../../interfaces/IPermit";
+import { actions } from "../../store/rootSlice";
 
 interface PermitAccordionPanelProps {
   permit: IPermit;
@@ -11,6 +13,7 @@ interface PermitAccordionPanelProps {
 
 const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const [transportFilter, setTransportFilter] = useState<string>("");
 
@@ -27,6 +30,7 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
             size="large"
             routerLink={`/management/addTransport/${permitId}`}
             onClick={(evt) => {
+              dispatch({ type: actions.SET_MANAGEMENT_PERMIT_ID, payload: permitId });
               evt.stopPropagation();
             }}
           >

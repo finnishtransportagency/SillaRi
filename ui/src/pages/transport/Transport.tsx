@@ -64,7 +64,7 @@ const Transport = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={routeName ?? ""} somethingFailed={isFailed.getRouteTransport || isFailed.getPermitOfRouteTransport} />
-      <IonContent fullscreen color="light">
+      <IonContent color="light">
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (

@@ -118,7 +118,7 @@ const Photos = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={t("supervision.photos")} confirmGoBack={saveImages} />
-      <IonContent fullscreen>
+      <IonContent>
         <IonList>
           {images &&
             images.length > 0 &&

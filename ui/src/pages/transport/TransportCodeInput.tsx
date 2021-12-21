@@ -35,7 +35,7 @@ const TransportCodeForm = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={t("transports.transportCodeInput.header.title")} />
-      <IonContent fullscreen color="light">
+      <IonContent color="light">
         <IonGrid className="ion-no-padding" fixed>
           <IonRow>
             <IonCol size="12" className="ion-padding">
