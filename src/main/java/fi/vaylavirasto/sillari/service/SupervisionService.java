@@ -10,16 +10,17 @@ import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -44,6 +45,12 @@ public class SupervisionService {
     PermitRepository permitRepository;
     @Autowired
     AWSS3Client awss3Client;
+    @Autowired
+    SupervisionImageService supervisionImageService;
+
+    @Value("${spring.profiles.active:Unknown}")
+    private String activeProfile;
+
 
     public SupervisionModel getSupervision(Integer supervisionId) {
         SupervisionModel supervision = supervisionRepository.getSupervisionById(supervisionId);
@@ -171,8 +178,8 @@ public class SupervisionService {
         RouteModel route = supervision.getRouteBridge().getRoute();
         SupervisionReportModel report = supervision.getReport();
         PermitModel permit = route.getPermit();
-        SupervisorModel supervisor = ((supervision.getSupervisors()==null || supervision.getSupervisors().isEmpty())?null: supervision.getSupervisors().get(0));
-
+        SupervisorModel supervisor = ((supervision.getSupervisors() == null || supervision.getSupervisors().isEmpty()) ? null : supervision.getSupervisors().get(0));
+        var images = supervisionImageService.getSupervisionImages(supervision.getId());
 
         PDDocument document = new PDDocument();
         PDPage page = new PDPage();
@@ -223,40 +230,44 @@ public class SupervisionService {
             contentStream.showText("Kuittauksen ajankohta: " + signTime);
 
             contentStream.newLine();
-            contentStream.showText("Sillanvalvoja: " + ((supervisor==null)?"-": supervisor.getFirstName() +" " + supervisor.getLastName()));
+            contentStream.showText("Sillanvalvoja: " + ((supervisor == null) ? "-" : supervisor.getFirstName() + " " + supervisor.getLastName()));
 
             contentStream.newLine();
             contentStream.newLine();
             contentStream.setFont(PDType1Font.COURIER, 14);
             contentStream.showText("Havainnot");
-
+            contentStream.newLine();
 
             contentStream.newLine();
             contentStream.setFont(PDType1Font.COURIER, 12);
-            contentStream.showText("Ajolinjaa on noudatettu: " + (report.getDrivingLineOk()?"kyllä":"ei"));
+            contentStream.showText("Ajolinjaa on noudatettu: " + (report.getDrivingLineOk() ? "kyllä" : "ei"));
 
             contentStream.newLine();
             contentStream.showText("Miksi ajolinjaa ei noudatettu: " + report.getDrivingLineInfo());
+            contentStream.newLine();
+            contentStream.showText((report.getDrivingLineInfo() == null || report.getDrivingLineInfo().isEmpty()) ? "-" : report.getDrivingLineInfo());
+            contentStream.newLine();
 
             contentStream.newLine();
-            contentStream.showText("Ajonopeus on hyväksytty: " + (report.getSpeedLimitOk()?"kyllä":"ei"));
+            contentStream.showText("Ajonopeus on hyväksytty: " + (report.getSpeedLimitOk() ? "kyllä" : "ei"));
 
             contentStream.newLine();
             contentStream.showText("Miksi ajonopeutta ei hyväksytä: ");
             contentStream.newLine();
-            contentStream.showText((report.getSpeedLimitInfo()==null || report.getSpeedLimitInfo().isEmpty())?"-":report.getSpeedLimitInfo());
+            contentStream.showText((report.getSpeedLimitInfo() == null || report.getSpeedLimitInfo().isEmpty()) ? "-" : report.getSpeedLimitInfo());
 
             contentStream.newLine();
-            contentStream.showText("Poikkeavia havaintoja: " + (report.getAnomalies()?"kyllä":"ei"));
+            contentStream.newLine();
+            contentStream.showText("Poikkeavia havaintoja: " + (report.getAnomalies() ? "kyllä" : "ei"));
 
             contentStream.newLine();
-            contentStream.showText("Liikuntasauman rikkoutuminen " + (report.getJointDamage()?"kyllä":"ei"));
+            contentStream.showText("Liikuntasauman rikkoutuminen: " + (report.getJointDamage() ? "kyllä" : "ei"));
 
             contentStream.newLine();
-            contentStream.showText("Pysyvä taipuma tai muu siirtymä " + (report.getBendOrDisplacement()?"kyllä":"ei"));
+            contentStream.showText("Pysyvä taipuma tai muu siirtymä: " + (report.getBendOrDisplacement() ? "kyllä" : "ei"));
 
             contentStream.newLine();
-            contentStream.showText("Jotain muuta, mitä? " + (report.getOtherObservations()?"kyllä":"ei"));
+            contentStream.showText("Jotain muuta, mitä? " + (report.getOtherObservations() ? "kyllä" : "ei"));
 
             contentStream.newLine();
             contentStream.showText("Lisätiedot: " + report.getOtherObservationsInfo());
@@ -264,9 +275,24 @@ public class SupervisionService {
             contentStream.newLine();
             contentStream.newLine();
 
-            contentStream.showText("Kuvat: " + report.getOtherObservationsInfo());
+            logger.debug("supervision.getImages()" + supervision.getImages());
+            logger.debug("images" + images.size());
 
-            contentStream.endText();
+            contentStream.newLine();
+
+
+            int imageCount = ((images == null || images.isEmpty()) ? 0 : images.size());
+            logger.debug("imagesC" + imageCount);
+
+            if (imageCount > 0) {
+                contentStream.showText("Kuvat (" + imageCount + "kpl)");
+                contentStream.newLine();
+                contentStream.endText();
+
+                handleImages(contentStream, supervision.getImages(), document);
+            } else {
+                contentStream.endText();
+            }
 
 
             contentStream.close();
@@ -284,6 +310,38 @@ public class SupervisionService {
         }
 
         return null;
+    }
+
+    private void handleImages(PDPageContentStream contentStream, List<SupervisionImageModel> images, PDDocument document) {
+        images.forEach(image -> {
+            String objectKey = image.getObjectKey();
+            String decodedKey = new String(Base64.getDecoder().decode(objectKey));
+            logger.debug("decodedKey"+decodedKey);
+            if (activeProfile.equals("local")) {
+                // Get from local file system
+                String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
+
+                File inputFile = new File("/", filename);
+                if (inputFile.exists()) {
+                    PDImageXObject pdImage = null;
+                    try {
+                        pdImage = PDImageXObject.createFromFile(inputFile.getPath(), document);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    float scale = 1f;
+                    try {
+                        contentStream.drawImage(pdImage, 20, 20, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    logger.debug("drew");
+                }
+            } else {
+                logger.debug("not local");
+            }
+        });
     }
 
     @NotNull
