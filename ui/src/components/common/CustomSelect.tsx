@@ -38,6 +38,10 @@ const CustomSelect = ({ options, selectedValue, onChange }: CustomSelectProps): 
           borderColor: "var(--ion-color-base)",
           borderWidth: "2px",
         }),
+        menu: (provided) => ({
+          ...provided,
+          zIndex: 999,
+        }),
       }}
       components={{ DropdownIndicator }}
       options={options}
