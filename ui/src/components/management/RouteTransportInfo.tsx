@@ -1,16 +1,21 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, MouseEvent, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { IonButton, IonCol, IonGrid, IonItemDivider, IonRow, IonText, useIonAlert } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonItemDivider, IonRow, IonText, useIonAlert, useIonPopover } from "@ionic/react";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervisor from "../../interfaces/ISupervisor";
 import { onRetry } from "../../utils/backendData";
-import { createRouteTransport, deleteRouteTransport, updateRouteTransport } from "../../utils/managementBackendData";
+import {
+  createRouteTransport,
+  deleteRouteTransport,
+  generateNewRouteTransportPassword,
+  updateRouteTransport,
+} from "../../utils/managementBackendData";
 import { DATE_FORMAT, TransportStatus } from "../../utils/constants";
 import BridgeGrid from "./BridgeGrid";
 import PermitLinkText from "../PermitLinkText";
@@ -91,6 +96,20 @@ const RouteTransportInfo = ({
       history.replace(`/management/${companyId}`);
     },
   });
+  const routeTransportPasswordMutation = useMutation(
+    (routeTransportIdToGenerate: number) => generateNewRouteTransportPassword(routeTransportIdToGenerate, dispatch),
+    {
+      retry: onRetry,
+      onSuccess: (data) => {
+        // Update the password in the modified details
+        const newDetail: IRouteTransport = {
+          ...modifiedRouteTransportDetail,
+          currentTransportPassword: data,
+        };
+        setModifiedRouteTransportDetail(newDetail);
+      },
+    }
+  );
 
   const { isLoading: isSendingTransportUpdate } = routeTransportUpdateMutation;
   const { isLoading: isDeletingTransport } = routeTransportDeleteMutation;
@@ -113,6 +132,27 @@ const RouteTransportInfo = ({
         buttons: [{ text: t("common.answer.yes"), handler: () => routeTransportDeleteMutation.mutate(routeTransportId) }, t("common.answer.no")],
       });
     }
+  };
+
+  const [presentPassword, dismissPassword] = useIonPopover(
+    <TransportPassword
+      routeTransportId={routeTransportId}
+      modifiedRouteTransportDetail={modifiedRouteTransportDetail}
+      isSendingTransportUpdate={isSendingTransportUpdate}
+      routeTransportPasswordMutation={routeTransportPasswordMutation}
+      dismissPassword={() => dismissPassword()}
+    />,
+    {
+      onHide: () => {
+        dismissPassword();
+      },
+    }
+  );
+
+  const showPassword = (evt: MouseEvent) => {
+    presentPassword({
+      event: evt.nativeEvent,
+    });
   };
 
   return (
@@ -173,13 +213,13 @@ const RouteTransportInfo = ({
 
             {!!routeTransportId && routeTransportId > 0 && (
               <IonRow className="ion-margin">
-                <IonCol>
-                  <TransportPassword
-                    routeTransportId={routeTransportId}
-                    modifiedRouteTransportDetail={modifiedRouteTransportDetail}
-                    setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-                    isSendingTransportUpdate={isSendingTransportUpdate}
-                  />
+                <IonCol size="8" size-sm="4" size-lg="3" size-xl="2">
+                  <IonText>{t("management.transportDetail.password")}</IonText>
+                </IonCol>
+                <IonCol size="4" size-sm="8" size-lg="9" size-xl="10">
+                  <IonText className="linkText" onClick={(evt) => showPassword(evt)}>
+                    {t("management.companySummary.action.show")}
+                  </IonText>
                 </IonCol>
               </IonRow>
             )}

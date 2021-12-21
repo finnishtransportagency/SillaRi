@@ -1,9 +1,10 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { IonCol, IonGrid, IonIcon, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
+import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import moment from "moment";
+import CustomSelect from "../common/CustomSelect";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
 import IRoute from "../../interfaces/IRoute";
@@ -53,9 +54,10 @@ const RouteInfoGrid = ({
     }
   };
 
-  const setTractorUnit = (vehicle: IVehicle) => {
+  const setTractorUnit = (vehicleId: number) => {
+    const vehicle = vehicles.find((v) => v.id === vehicleId);
     setSelectedVehicle(vehicle);
-    if (modifiedRouteTransportDetail) {
+    if (modifiedRouteTransportDetail && vehicle) {
       const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, tractorUnit: vehicle.identifier };
       setModifiedRouteTransportDetail(newDetail);
     }
@@ -70,14 +72,14 @@ const RouteInfoGrid = ({
         // This is a new route transport, so make sure supervision details are available for BridgeGrid
         const { routeBridges = [] } = selectedRoute || {};
         const newSupervisions: ISupervision[] = routeBridges.map((routeBridge) => {
-          const { id: routeBridgeId } = routeBridge;
+          const { id: routeBridgeId, contractNumber = 0 } = routeBridge;
           return {
             id: 0,
             routeBridgeId,
             routeTransportId,
             plannedTime: moment().toDate(),
             conformsToPermit: false,
-            supervisorType: SupervisorType.OWN_SUPERVISOR,
+            supervisorType: contractNumber > 0 ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR,
             supervisors: [],
           };
         });
@@ -137,23 +139,14 @@ const RouteInfoGrid = ({
             <IonRow>
               <IonCol>
                 {status === TransportStatus.PLANNED && (
-                  <IonSelect
-                    interface="action-sheet"
-                    cancelText={t("common.buttons.back")}
-                    value={selectedRouteId}
-                    onIonChange={(e) => selectRoute(e.detail.value)}
-                  >
-                    {permitRoutes.map((route, index) => {
-                      const { id, name } = route;
-                      const key = `route_${index}`;
-
-                      return (
-                        <IonSelectOption key={key} value={id}>
-                          {name}
-                        </IonSelectOption>
-                      );
+                  <CustomSelect
+                    options={permitRoutes.map((route) => {
+                      const { id: routeId, name } = route;
+                      return { value: routeId, label: name };
                     })}
-                  </IonSelect>
+                    selectedValue={selectedRouteId}
+                    onChange={(routeId) => selectRoute(routeId as number)}
+                  />
                 )}
                 {status !== TransportStatus.PLANNED && <IonText>{selectedRouteName}</IonText>}
               </IonCol>
@@ -209,24 +202,16 @@ const RouteInfoGrid = ({
           <IonRow>
             <IonCol size="12" size-lg="4">
               {status === TransportStatus.PLANNED && (
-                <IonSelect
-                  interface="action-sheet"
-                  cancelText={t("common.buttons.back")}
-                  value={selectedVehicle}
-                  onIonChange={(e) => setTractorUnit(e.detail.value)}
-                >
-                  {vehicles
+                <CustomSelect
+                  options={vehicles
                     .filter((vehicle) => !!vehicle.identifier)
-                    .map((vehicle, index) => {
-                      const { type, identifier } = vehicle;
-                      const key = `vehicle_${index}`;
-                      return (
-                        <IonSelectOption key={key} value={vehicle}>
-                          {`${identifier.toUpperCase()} (${type.toLocaleLowerCase()})`}
-                        </IonSelectOption>
-                      );
+                    .map((vehicle) => {
+                      const { id: vehicleId, type, identifier } = vehicle;
+                      return { value: vehicleId, label: `${identifier.toUpperCase()} (${type.toLocaleLowerCase()})` };
                     })}
-                </IonSelect>
+                  selectedValue={selectedVehicle?.id}
+                  onChange={(vehicleId) => setTractorUnit(vehicleId as number)}
+                />
               )}
               {status !== TransportStatus.PLANNED && (
                 <IonText>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IonButton, IonCol, IonGrid, IonRow, IonSelect, IonSelectOption, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
+import CustomSelect from "../common/CustomSelect";
 import RouteGrid from "./RouteGrid";
 import IPermit from "../../interfaces/IPermit";
 
@@ -39,17 +40,16 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
                 <IonText>{`${t("management.companySummary.filter.show")}: `}</IonText>
               </IonCol>
               <IonCol size="8" size-sm="8">
-                <IonSelect
-                  interface="action-sheet"
-                  cancelText={t("common.buttons.back")}
-                  value={transportFilter}
-                  onIonChange={(e) => setTransportFilter(e.detail.value)}
-                >
-                  <IonSelectOption value="">{t("management.companySummary.filter.status.all")}</IonSelectOption>
-                  <IonSelectOption value="planned">{t("management.companySummary.filter.status.planned")}</IonSelectOption>
-                  <IonSelectOption value="in_progress">{t("management.companySummary.filter.status.in_progress")}</IonSelectOption>
-                  <IonSelectOption value="completed">{t("management.companySummary.filter.status.completed")}</IonSelectOption>
-                </IonSelect>
+                <CustomSelect
+                  options={[
+                    { value: "", label: t("management.companySummary.filter.status.all") },
+                    { value: "planned", label: t("management.companySummary.filter.status.planned") },
+                    { value: "in_progress", label: t("management.companySummary.filter.status.in_progress") },
+                    { value: "completed", label: t("management.companySummary.filter.status.completed") },
+                  ]}
+                  selectedValue={transportFilter}
+                  onChange={(status) => setTransportFilter(status as string)}
+                />
               </IonCol>
             </IonRow>
           </IonGrid>

@@ -44,8 +44,10 @@ public class SupervisionRepository {
 
     public List<SupervisionModel> getSupervisionsByRouteTransportId(Integer routeTransportId) {
         return dsl.select().from(TableAlias.supervision)
+                .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
+                .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
                 .where(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(routeTransportId))
-                .fetch(new SupervisionMapper());
+                .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
     }
 
     public List<SupervisionModel> getSupervisionsByRouteBridgeId(Integer routeBridgeId) {

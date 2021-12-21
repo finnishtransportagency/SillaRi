@@ -1,6 +1,6 @@
 {
     "eslint.options": {
-        "configFile": ".eslintrc.json"
+        "overrideConfigFile": ".eslintrc.json"
     },
     "stylelint.options": {
         "configFile": ".stylelintrc.json"
