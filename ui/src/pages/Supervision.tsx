@@ -173,7 +173,7 @@ const Supervision = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} includeSendingList confirmGoBack={confirmGoBack} />
-      <IonContent fullscreen>
+      <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (

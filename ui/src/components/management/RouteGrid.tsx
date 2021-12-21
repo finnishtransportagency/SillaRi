@@ -8,10 +8,11 @@ import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
 import ISupervision from "../../interfaces/ISupervision";
+import { actions } from "../../store/rootSlice";
 import close from "../../theme/icons/close.svg";
 import { onRetry } from "../../utils/backendData";
 import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
-import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
+import { DATE_TIME_FORMAT_MIN, SupervisorType, TransportStatus } from "../../utils/constants";
 import RouteStatusLog from "./RouteStatusLog";
 import "./RouteGrid.css";
 
@@ -29,9 +30,9 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
 
   const [popoverText, setPopoverText] = useState("");
   const [presentPassword, dismissPassword] = useIonPopover(
-    <IonGrid>
+    <IonGrid className="ion-no-margin">
       <IonRow>
-        <IonCol>
+        <IonCol size="10">
           <IonText>{popoverText}</IonText>
         </IonCol>
         <IonCol size="2">
@@ -67,7 +68,14 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   const supervisionText = (supervisions?: ISupervision[]) => {
     // Get the unique non-null supervisor types and map them to translated text
     if (supervisions) {
-      const supervisorTypes = supervisions.map((supervision) => supervision.supervisorType).filter((v, i, a) => v && a.indexOf(v) === i);
+      const supervisorTypes = supervisions
+        .map((supervision) => {
+          const { routeBridge } = supervision;
+          const { contractNumber = 0 } = routeBridge || {};
+          return contractNumber > 0 ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR;
+        })
+        .filter((v, i, a) => v && a.indexOf(v) === i);
+
       return supervisorTypes.length > 0
         ? supervisorTypes.map((st) => t(`management.supervisionType.${st.toLowerCase()}`)).join(", ")
         : t("management.supervisionType.unknown");
@@ -267,7 +275,12 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                         <IonText className="headingText">{t("management.companySummary.route.action")}</IonText>
                       </IonCol>
                       <IonCol size="7" size-sm="9" size-lg="12">
-                        <Link to={`/management/transportDetail/${routeTransportId}`}>
+                        <Link
+                          to={`/management/transportDetail/${routeTransportId}`}
+                          onClick={() => {
+                            dispatch({ type: actions.SET_MANAGEMENT_PERMIT_ID, payload: permitId });
+                          }}
+                        >
                           <IonText className="linkText">{action}</IonText>
                         </Link>
                       </IonCol>
