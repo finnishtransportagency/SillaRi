@@ -42,11 +42,10 @@
     }
   },
   "camera": {
-    "takePhotoButtonLabel": "Take photo",
-    "listLabel": "Images",
-    "listLabelPcs": "pcs",
+    "takePhotoButtonLabel": "Add photos",
+    "listLabel": "Photos",
     "item": {
-      "deleteButtonLabel": "Delete"
+      "deleteButtonLabel": "Delete image"
     }
   },
   "SidebarMenu": {

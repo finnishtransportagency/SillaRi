@@ -42,11 +42,10 @@
     }
   },
   "camera": {
-    "takePhotoButtonLabel": "Ota kuva",
-    "listLabel": "Kuvat",
-    "listLabelPcs": "kpl",
+    "takePhotoButtonLabel": "Lisää valokuvia",
+    "listLabel": "Valokuvia",
     "item": {
-      "deleteButtonLabel": "Poista"
+      "deleteButtonLabel": "Poista kuva"
     }
   },
   "SidebarMenu": {
