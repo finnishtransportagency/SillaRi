@@ -5,12 +5,14 @@ import INetworkStatus from "../interfaces/INetworkStatus";
 
 interface IStateProps {
   networkStatus: INetworkStatus;
+  selectedManagementPermitId?: number;
 }
 
 const initialState: IStateProps = {
   networkStatus: {
     isFailed: {},
   },
+  selectedManagementPermitId: undefined,
 };
 
 const managementSlice = createSlice({
@@ -20,6 +22,10 @@ const managementSlice = createSlice({
     SET_FAILED_QUERY: (state, action: PayloadAction<IFailedQuery>) => {
       // console.log("SET_FAILED_QUERY", action.payload);
       return { ...state, networkStatus: { ...state.networkStatus, isFailed: { ...state.networkStatus.isFailed, ...action.payload } } };
+    },
+    SET_MANAGEMENT_PERMIT_ID: (state, action: PayloadAction<number | undefined>) => {
+      // console.log("SET_MANAGEMENT_PERMIT_ID", action.payload);
+      return { ...state, selectedManagementPermitId: action.payload };
     },
   },
 });
