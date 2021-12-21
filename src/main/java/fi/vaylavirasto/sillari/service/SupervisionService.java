@@ -242,7 +242,9 @@ public class SupervisionService {
             contentStream.showText("Ajonopeus on hyväksytty: " + (report.getSpeedLimitOk()?"kyllä":"ei"));
 
             contentStream.newLine();
-            contentStream.showText("Miksi ajonopeutta ei hyväksytä " + report.getSpeedLimitInfo());
+            contentStream.showText("Miksi ajonopeutta ei hyväksytä: ");
+            contentStream.newLine();
+            contentStream.showText((report.getSpeedLimitInfo()==null || report.getSpeedLimitInfo().isEmpty())?"-":report.getSpeedLimitInfo());
 
             contentStream.newLine();
             contentStream.showText("Poikkeavia havaintoja: " + (report.getAnomalies()?"kyllä":"ei"));
@@ -261,8 +263,8 @@ public class SupervisionService {
 
             contentStream.newLine();
             contentStream.newLine();
-            report.get
-            contentStream.showText("Lisätiedot: " + report.getOtherObservationsInfo());
+
+            contentStream.showText("Kuvat: " + report.getOtherObservationsInfo());
 
             contentStream.endText();
 
