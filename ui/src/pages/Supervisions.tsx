@@ -1,9 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import type { SegmentChangeEventDetail } from "@ionic/core";
-import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton, IonSlide, IonSlides } from "@ionic/react";
+import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton } from "@ionic/react";
 import Header from "../components/Header";
 import { useTypedSelector } from "../store/store";
 import { onRetry } from "../utils/backendData";
@@ -25,8 +25,6 @@ const Supervisions = (): JSX.Element => {
   const history = useHistory();
 
   const { tabId = "0" } = useParams<SupervisionsProps>();
-
-  const slidesRef = useRef<HTMLIonSlidesElement>(null);
 
   const [currentSegment, setCurrentSegment] = useState<string>(tabId);
   const [supervisionDays, setSupervisionDays] = useState<ISupervisionDay[]>([]);
@@ -50,17 +48,11 @@ const Supervisions = (): JSX.Element => {
     },
   });
 
-  const changeSlide = (evt: CustomEvent<SegmentChangeEventDetail>) => {
-    if (slidesRef.current) {
-      slidesRef.current.slideTo(Number(evt.detail.value));
-    }
-  };
-
-  const changeSegment = async () => {
-    if (slidesRef.current) {
-      const newSlideIndex = await slidesRef.current.getActiveIndex();
-      setCurrentSegment(String(newSlideIndex));
-      history.replace(`/supervisions/${newSlideIndex}`);
+  const changeSegment = (evt: CustomEvent<SegmentChangeEventDetail>) => {
+    const newValue = evt.detail.value;
+    if (newValue !== undefined) {
+      setCurrentSegment(newValue);
+      history.replace(`/supervisions/${newValue}`);
     }
   };
 
@@ -73,7 +65,7 @@ const Supervisions = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={t("main.header.title")} somethingFailed={isFailed.getCompanyTransportsList || isFailed.getSupervisionList} includeSendingList />
-      <IonSegment className="mainSegment" value={currentSegment} onIonChange={changeSlide}>
+      <IonSegment className="mainSegment" value={currentSegment} onIonChange={changeSegment}>
         <IonSegmentButton className="mainSegmentButton" value="0">
           <IonLabel>{`${t("main.tab.transports")} (${transportsCount})`}</IonLabel>
         </IonSegmentButton>
@@ -82,14 +74,8 @@ const Supervisions = (): JSX.Element => {
         </IonSegmentButton>
       </IonSegment>
       <IonContent>
-        <IonSlides ref={slidesRef} onIonSlideDidChange={changeSegment}>
-          <IonSlide>
-            <CompanyTransportsAccordion companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />
-          </IonSlide>
-          <IonSlide>
-            <SupervisionList supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} />
-          </IonSlide>
-        </IonSlides>
+        {currentSegment === "0" && <CompanyTransportsAccordion companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />}
+        {currentSegment === "1" && <SupervisionList supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} />}
       </IonContent>
     </IonPage>
   );
