@@ -174,6 +174,7 @@ public class SupervisionService {
 
     public byte[] generateReportPDF(SupervisionModel supervision) {
 
+
         BridgeModel bridge = supervision.getRouteBridge().getBridge();
         RouteModel route = supervision.getRouteBridge().getRoute();
         SupervisionReportModel report = supervision.getReport();
@@ -185,6 +186,12 @@ public class SupervisionService {
         PDPage page = new PDPage();
         document.addPage(page);
 
+        final float pageHeight =  page.getMediaBox().getHeight();
+        final float pageWidth =  page.getMediaBox().getWidth();
+
+        logger.debug("pageHeight: " + pageHeight);
+
+        float y = pageHeight - 50;
         try {
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
@@ -193,7 +200,7 @@ public class SupervisionService {
 
 
             contentStream.setLeading(12 * 1.2f);
-            contentStream.newLineAtOffset(50, 750);
+            contentStream.newLineAtOffset(50, y);
 
             contentStream.showText("Sillanvalvontaraportti");
             contentStream.newLine();
