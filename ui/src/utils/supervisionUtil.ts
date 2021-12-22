@@ -2,7 +2,6 @@ import ISupervision from "../interfaces/ISupervision";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import moment from "moment";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
-import { SupervisionStatus } from "./constants";
 
 export const groupSupervisionsByDate = (supervisions: ISupervision[] | undefined): ISupervisionDay[] => {
   const supervisionDays: ISupervisionDay[] = [];

@@ -81,6 +81,7 @@ const RouteInfoGrid = ({
             conformsToPermit: false,
             supervisorType: contractNumber > 0 ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR,
             supervisors: [],
+            routeBridge: routeBridge,
           };
         });
         const newDetail: IRouteTransport = {
