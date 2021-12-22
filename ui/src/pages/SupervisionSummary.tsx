@@ -95,7 +95,7 @@ const SupervisionSummary = (): JSX.Element => {
   };
 
   const confirmGoBack = (): void => {
-    if (supervisionStatus !== SupervisionStatus.FINISHED) {
+    if (supervisionStatus !== SupervisionStatus.FINISHED && supervisionStatus !== SupervisionStatus.REPORT_SIGNED) {
       showConfirmLeavePage();
     } else {
       history.goBack();
