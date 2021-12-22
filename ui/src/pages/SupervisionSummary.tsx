@@ -45,11 +45,10 @@ const SupervisionSummary = (): JSX.Element => {
   const returnToSupervisionList = () => {
     // Go back to bridge supervision listing on either SupervisionList or RouteTransportDetail page
     // If selectedSupervisionListType is not set, go to supervisions main page
-    console.log("selectedSupervisionListType", selectedSupervisionListType);
     if (selectedSupervisionListType === SupervisionListType.BRIDGE) {
       history.push("/supervisions/1");
     } else if (selectedSupervisionListType === SupervisionListType.TRANSPORT) {
-      history.push("/supervisions/0");
+      history.push("/supervisions/0"); // Go through main page so back button works as expected on RouteTransportDetail page
       history.push(`/routeTransportDetail/${routeTransportId}`);
     } else {
       history.push("/supervisions");
