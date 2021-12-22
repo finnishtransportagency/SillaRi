@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
@@ -14,8 +14,6 @@ import { useTypedSelector } from "../store/store";
 import { onRetry } from "../utils/backendData";
 import { getRouteTransportOfSupervisor } from "../utils/supervisionBackendData";
 import BridgeCardList from "../components/BridgeCardList";
-import { filterFinishedSupervisions } from "../utils/supervisionUtil";
-import ISupervision from "../interfaces/ISupervision";
 import IRouteTransport from "../interfaces/IRouteTransport";
 
 interface RouteTransportDetailProps {
@@ -30,21 +28,16 @@ const RouteTransportDetail = (): JSX.Element => {
   } = useTypedSelector((state) => state.rootReducer);
 
   const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
-  const [supervisions, setSupervisions] = useState<ISupervision[]>([]);
 
   const { data: routeTransport } = useQuery(
     ["getRouteTransportOfSupervisor", routeTransportId],
     () => getRouteTransportOfSupervisor(Number(routeTransportId), dispatch),
     {
       retry: onRetry,
-      onSuccess: (data) => {
-        const { supervisions: routeTransportSupervisions } = data || {};
-        setSupervisions(filterFinishedSupervisions(routeTransportSupervisions));
-      },
     }
   );
 
-  const { route } = routeTransport || {};
+  const { route, supervisions = [] } = routeTransport || {};
   const { name = "", permit } = route || {};
 
   const noNetworkNoData = isFailed.getRouteTransportOfSupervisor && routeTransport === undefined;
