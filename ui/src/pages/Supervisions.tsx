@@ -12,7 +12,7 @@ import SupervisionList from "../components/SupervisionList";
 import "./Supervisions.css";
 import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
-import { filterFinishedSupervisions, groupSupervisionsByDate } from "../utils/supervisionUtil";
+import { filterFinishedSupervisions, groupSupervisionsByDate, sortSupervisionsByTimeAndBridgeOrder } from "../utils/supervisionUtil";
 import { useHistory, useParams } from "react-router-dom";
 
 interface SupervisionsProps {
@@ -43,6 +43,7 @@ const Supervisions = (): JSX.Element => {
       if (data && data.length > 0) {
         const filteredSupervisions = filterFinishedSupervisions(data);
         const groupedSupervisions = groupSupervisionsByDate(filteredSupervisions);
+        groupedSupervisions.forEach((s) => sortSupervisionsByTimeAndBridgeOrder(s.supervisions));
         setSupervisionDays(groupedSupervisions);
       }
     },

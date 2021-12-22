@@ -2,8 +2,6 @@ import ISupervision from "../interfaces/ISupervision";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import moment from "moment";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
-import IImageItem from "../interfaces/IImageItem";
-import ISupervisionImage from "../interfaces/ISupervisionImage";
 import { SupervisionStatus } from "./constants";
 
 export const groupSupervisionsByDate = (supervisions: ISupervision[] | undefined): ISupervisionDay[] => {
@@ -37,6 +35,26 @@ export const filterFinishedSupervisions = (supervisions: ISupervision[] | undefi
   return [];
 };
 
+export const sortSupervisionsByTimeAndBridgeOrder = (supervisions: ISupervision[] | undefined) => {
+  if (supervisions && supervisions.length > 0) {
+    supervisions.sort((a, b) => {
+      const timeDiff = moment(a.plannedTime).diff(moment(b.plannedTime), "minutes");
+      if (timeDiff === 0) {
+        // Sort supervisions with the same planned time by first routeTransport and then bridge ordinal
+        const { routeBridge: bridgeA, routeTransportId: transportA } = a;
+        const { routeBridge: bridgeB, routeTransportId: transportB } = b;
+        if (transportA === transportB) {
+          const { ordinal: ordinalA = -1 } = bridgeA || {};
+          const { ordinal: ordinalB = -1 } = bridgeB || {};
+          return ordinalA - ordinalB;
+        }
+        return transportA - transportB;
+      }
+      return timeDiff;
+    });
+  }
+};
+
 export const reportHasUnsavedChanges = (modified: ISupervisionReport | undefined, saved: ISupervisionReport | undefined): boolean => {
   if (modified === undefined) {
     return false;
@@ -63,11 +81,4 @@ export const reportHasUnsavedChanges = (modified: ISupervisionReport | undefined
         modified.otherObservations !== saved.otherObservations ||
         (modified.otherObservations && modified.otherObservationsInfo !== saved.otherObservationsInfo)))
   );
-};
-
-export const filterUnsavedImages = (cameraImages: IImageItem[], savedImages: ISupervisionImage[]): IImageItem[] => {
-  return cameraImages.reduce((acc: IImageItem[], image) => {
-    const isImageSaved = savedImages.some((savedImage) => savedImage.filename === image.filename);
-    return isImageSaved ? acc : [...acc, image];
-  }, []);
 };

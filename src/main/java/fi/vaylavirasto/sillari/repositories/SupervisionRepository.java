@@ -62,7 +62,9 @@ public class SupervisionRepository {
                 .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
                 .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
                 .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
-                .orderBy(TableAlias.supervision.PLANNED_TIME)
+                // Order by planned time takes also seconds and milliseconds into account, when we want to sort by route transport and ordinal
+                // when planned time is the same in MINUTES. Sort in UI instead.
+                //.orderBy(TableAlias.supervision.PLANNED_TIME, TableAlias.supervision.ROUTE_TRANSPORT_ID, TableAlias.routeBridge.ORDINAL)
                 .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
     }
 
