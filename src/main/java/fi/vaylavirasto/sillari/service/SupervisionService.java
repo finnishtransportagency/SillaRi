@@ -288,6 +288,7 @@ public class SupervisionService {
                 contentStream = new PDPageContentStream(document, pageTwo);
                 contentStream.beginText();
                 contentStream.setFont(PDType1Font.COURIER, 12);
+                contentStream.newLineAtOffset(50, 750);
                 contentStream.showText("Kuvat (" + imageCount + "kpl)");
                 contentStream.newLine();
                 contentStream.endText();
@@ -317,7 +318,7 @@ public class SupervisionService {
     }
 
     private void handleImages(PDPageContentStream contentStream, List<SupervisionImageModel> images, PDDocument document) {
-        int y = 400;
+        int y = 450;
         for (SupervisionImageModel image : images) {
             String objectKey = image.getObjectKey();
             String decodedKey = new String(Base64.getDecoder().decode(objectKey));
@@ -335,7 +336,7 @@ public class SupervisionService {
                         e.printStackTrace();
                     }
 
-                    final float DESIRED_PHOTO_WIDTH = 300;
+                    final float DESIRED_PHOTO_WIDTH = 150;
                     final float ratio = pdImage.getWidth() / DESIRED_PHOTO_WIDTH;
                     final float newHeight = pdImage.getHeight() / ratio;
 
