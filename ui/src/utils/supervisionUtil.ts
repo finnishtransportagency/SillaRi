@@ -25,16 +25,6 @@ export const groupSupervisionsByDate = (supervisions: ISupervision[] | undefined
   return supervisionDays;
 };
 
-export const filterFinishedSupervisions = (supervisions: ISupervision[] | undefined): ISupervision[] => {
-  const visibleStatusTypes = [SupervisionStatus.PLANNED, SupervisionStatus.IN_PROGRESS, SupervisionStatus.CANCELLED];
-  if (supervisions && supervisions.length > 0) {
-    return supervisions.filter((supervision) => {
-      return supervision.currentStatus && visibleStatusTypes.includes(supervision.currentStatus.status);
-    });
-  }
-  return [];
-};
-
 export const sortSupervisionsByTimeAndBridgeOrder = (supervisions: ISupervision[] | undefined) => {
   if (supervisions && supervisions.length > 0) {
     supervisions.sort((a, b) => {

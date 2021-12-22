@@ -9,6 +9,7 @@ import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -19,9 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static org.jooq.impl.DSL.exists;
-import static org.jooq.impl.DSL.notExists;
-import static org.jooq.impl.DSL.selectOne;
+import static org.jooq.impl.DSL.*;
 
 @Repository
 public class SupervisionRepository {
@@ -62,6 +61,7 @@ public class SupervisionRepository {
                 .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
                 .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
                 .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
+                .and(supervisionNotCompleted())
                 // Order by planned time takes also seconds and milliseconds into account, when we want to sort by route transport and ordinal
                 // when planned time is the same in MINUTES. Sort in UI instead.
                 //.orderBy(TableAlias.supervision.PLANNED_TIME, TableAlias.supervision.ROUTE_TRANSPORT_ID, TableAlias.routeBridge.ORDINAL)
@@ -76,8 +76,17 @@ public class SupervisionRepository {
                 .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
                 .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
                 .and(TableAlias.routeTransport.ID.eq(routeTransportId))
+                .and(supervisionNotCompleted())
                 .orderBy(TableAlias.routeBridge.ORDINAL)
                 .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
+    }
+
+    private Condition supervisionNotCompleted() {
+        return notExists(selectOne().from(TableAlias.supervisionStatus
+                .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)
+                        .and((TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.FINISHED.toString()))
+                                .or(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.CROSSING_DENIED.toString()))
+                                .or(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.REPORT_SIGNED.toString()))))));
     }
 
     public List<SupervisionModel> getFinishedButUnsignedSupervisionsBySupervisorUsername(String username) {
