@@ -28,7 +28,7 @@ const Header = ({ title, somethingFailed, includeSendingList, confirmGoBack }: H
     enabled: includeSendingList,
   });
 
-  const canGoBack = pathname !== "/supervision" && pathname !== "/transport" && pathname !== "/management/1";
+  const canGoBack = !pathname.includes("/supervisions") && pathname !== "/transport" && pathname !== "/management/1";
 
   const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : history.goBack;
 

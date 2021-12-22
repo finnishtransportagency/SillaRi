@@ -4,7 +4,7 @@ import { IonApp, IonButton, IonContent, setupConfig } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
-import Home from "./pages/Home";
+import Supervisions from "./pages/Supervisions";
 import Settings from "./pages/Settings";
 import Map from "./pages/Map";
 import Supervision from "./pages/Supervision";
@@ -59,7 +59,7 @@ const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
-  const [homePage, setHomePage] = useState<string>("/supervision");
+  const [homePage, setHomePage] = useState<string>("/supervisions");
   const [errorMsg, setErrorMsg] = useState<string>();
 
   useEffect(() => {
@@ -71,7 +71,7 @@ const App: React.FC = () => {
           const responseData = await userDataResponse.json();
           if (responseData.roles.length > 0) {
             if (responseData.roles.includes("SILLARI_SILLANVALVOJA")) {
-              setHomePage("/supervision");
+              setHomePage("/supervisions");
             } else if (responseData.roles.includes("SILLARI_AJOJARJESTELIJA")) {
               setHomePage("/management/1");
             } else if (responseData.roles.includes("SILLARI_KULJETTAJA")) {
@@ -128,7 +128,9 @@ const App: React.FC = () => {
             <SidebarMenu roles={userData.roles} />
             <IonContent id="MainContent">
               <Switch>
-                <Route path="/supervision" component={Home} exact />
+                <Route path="/supervisions" component={Supervisions} exact />
+                {/*Optional params not supported in react-router v6, have to declare two routes for both options to work*/}
+                <Route path="/supervisions/:tabId" component={Supervisions} exact />
                 <Route path="/bridgemap/:routeBridgeId" component={Map} exact />
                 <Route path="/routemap/:routeId" component={Map} exact />
                 <Route path="/routeTransportDetail/:routeTransportId" component={RouteTransportDetail} exact />

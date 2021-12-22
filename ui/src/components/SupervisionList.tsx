@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import { IonItem, IonLabel } from "@ionic/react";
 import NoNetworkNoData from "./NoNetworkNoData";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
-import { DATE_FORMAT } from "../utils/constants";
+import { DATE_FORMAT, SupervisionListType } from "../utils/constants";
 import Moment from "react-moment";
 import BridgeCard from "./BridgeCard";
 import ISupervision from "../interfaces/ISupervision";
@@ -13,6 +13,8 @@ interface SupervisionListProps {
 }
 
 const SupervisionList = ({ supervisionDays, noNetworkNoData }: SupervisionListProps): JSX.Element => {
+  const supervisionListType = SupervisionListType.BRIDGE;
+
   return (
     <div className="listContainer">
       {noNetworkNoData ? (
@@ -33,7 +35,9 @@ const SupervisionList = ({ supervisionDays, noNetworkNoData }: SupervisionListPr
                   const bridgeKey = `bridge_${bIndex}`;
                   const { routeTransport } = supervision || {};
 
-                  return <BridgeCard key={bridgeKey} supervision={supervision} routeTransport={routeTransport} />;
+                  return (
+                    <BridgeCard key={bridgeKey} supervision={supervision} routeTransport={routeTransport} supervisionListType={supervisionListType} />
+                  );
                 })}
               </div>
             </Fragment>
