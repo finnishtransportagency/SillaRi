@@ -49,6 +49,7 @@ const SupervisionSummary = (): JSX.Element => {
     if (selectedSupervisionListType === SupervisionListType.BRIDGE) {
       history.push("/supervisions/1");
     } else if (selectedSupervisionListType === SupervisionListType.TRANSPORT) {
+      history.push("/supervisions/0");
       history.push(`/routeTransportDetail/${routeTransportId}`);
     } else {
       history.push("/supervisions");
