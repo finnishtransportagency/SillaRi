@@ -14,6 +14,7 @@ import fi.vaylavirasto.sillari.service.LeluService;
 import fi.vaylavirasto.sillari.service.PermitService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
+import fi.vaylavirasto.sillari.util.PDFGenerator;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -55,6 +56,9 @@ public class LeluController {
 
     @Autowired
     SupervisionService supervisionService;
+
+    @Autowired
+    PDFGenerator pdfGenerator;
 
     @Autowired
     public LeluController(LeluService leluService, TRexService trexService, BridgeService bridgeService, MessageSource messageSource) {
@@ -269,7 +273,7 @@ public class LeluController {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
                 SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(reportId));
-                byte[] reportPDF =supervisionService.generateReportPDF(supervision);
+                byte[] reportPDF = pdfGenerator.generateReportPDF(supervision);
                 logger.debug("HELLO: " + reportPDF);
                 return reportPDF;
             } catch (Exception e) {
