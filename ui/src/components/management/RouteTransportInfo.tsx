@@ -266,7 +266,6 @@ const RouteTransportInfo = ({
                       supervisors={supervisors}
                       modifiedRouteTransportDetail={modifiedRouteTransportDetail}
                       setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-                      selectedRouteOption={selectedRouteOption}
                     />
                   </IonCol>
                 </IonRow>

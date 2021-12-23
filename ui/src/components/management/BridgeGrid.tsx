@@ -5,7 +5,6 @@ import Moment from "react-moment";
 import moment from "moment";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
-import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import ISupervisor from "../../interfaces/ISupervisor";
@@ -17,20 +16,13 @@ interface BridgeGridProps {
   supervisors: ISupervisor[];
   modifiedRouteTransportDetail: IRouteTransport;
   setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
-  selectedRouteOption: IRoute;
 }
 
-const BridgeGrid = ({
-  supervisors = [],
-  modifiedRouteTransportDetail,
-  setModifiedRouteTransportDetail,
-  selectedRouteOption,
-}: BridgeGridProps): JSX.Element => {
+const BridgeGrid = ({ supervisors = [], modifiedRouteTransportDetail, setModifiedRouteTransportDetail }: BridgeGridProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { supervisions = [], currentStatus } = modifiedRouteTransportDetail || {};
   const { status } = currentStatus || {};
-  const { routeBridges = [] } = selectedRouteOption || {};
 
   const modifySupervisions = (routeBridgeId: number, modifiedSupervision: ISupervision) => {
     // Add the modified supervision for this route bridge id to the supervisions array in place of the existing one
@@ -73,7 +65,6 @@ const BridgeGrid = ({
     }
   };
 
-  // TODO - check bridge list sort order
   return (
     <IonGrid className="bridgeGrid ion-no-padding">
       <IonRow className="lightBackground ion-hide-lg-down">
@@ -89,9 +80,14 @@ const BridgeGrid = ({
       </IonRow>
 
       {[...supervisions]
-        .sort((a, b) => a.routeBridgeId - b.routeBridgeId)
+        // Sort by routeBridge.ordinal (order of bridges on the route)
+        .sort((a, b) => {
+          const { ordinal: ordinalA = -1 } = a.routeBridge || {};
+          const { ordinal: ordinalB = -1 } = b.routeBridge || {};
+          return ordinalA - ordinalB;
+        })
         .map((supervision, index) => {
-          const routeBridge = routeBridges.find((rb) => rb.id === supervision.routeBridgeId);
+          const { routeBridge } = supervision || {};
           const { id: routeBridgeId, bridge, contractNumber = 0 } = routeBridge || {};
           const { identifier, name } = bridge || {};
           const bridgeName = `${identifier} - ${name}`;
