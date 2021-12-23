@@ -298,6 +298,11 @@ public class SupervisionService {
 
             newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Lisätiedot: " + report.getAdditionalInfo());
+
+            contentStream.moveTo(50, 50);
+            contentStream.newLine();
+            contentStream.showText("HELLOOOO");
+
             contentStream.endText();
             contentStream.close();
 
@@ -338,7 +343,7 @@ public class SupervisionService {
 
     private void newLineAtOffset(PDPageContentStream contentStream, int tx, float lineSpacing) throws IOException {
         contentStream.newLineAtOffset(tx, lineSpacing);
-        y-=lineSpacing;
+        y+=lineSpacing;
         logger.debug(""+y);
     }
 
