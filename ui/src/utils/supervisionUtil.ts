@@ -29,7 +29,7 @@ export const sortSupervisionsByTimeAndBridgeOrder = (supervisions: ISupervision[
     supervisions.sort((a, b) => {
       const timeDiff = moment(a.plannedTime).diff(moment(b.plannedTime), "minutes");
       if (timeDiff === 0) {
-        // Sort supervisions with the same planned time by first routeTransport and then bridge ordinal
+        // Sort supervisions with the same planned time by first routeTransportId and then bridge ordinal
         const { routeBridge: bridgeA, routeTransportId: transportA } = a;
         const { routeBridge: bridgeB, routeTransportId: transportB } = b;
         if (transportA === transportB) {

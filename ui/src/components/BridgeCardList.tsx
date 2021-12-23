@@ -12,12 +12,13 @@ interface BridgeCardListProps {
 const BridgeCardList = ({ supervisions }: BridgeCardListProps): JSX.Element => {
   const { t } = useTranslation();
   const supervisionListType = SupervisionListType.TRANSPORT;
+  const count = supervisions.length;
 
   return (
     <>
       <IonItem className="header" lines="none">
         <IonLabel>
-          <IonLabel>{t("route.bridgesToSupervise").toUpperCase()}</IonLabel>
+          <IonLabel>{`${t("route.bridgesToSupervise").toUpperCase()} (${count})`}</IonLabel>
         </IonLabel>
       </IonItem>
 
