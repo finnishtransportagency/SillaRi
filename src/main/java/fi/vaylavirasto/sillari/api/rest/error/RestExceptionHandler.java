@@ -48,19 +48,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return createErrorResponse(status, null, errors);
     }
 
-    // JSON parse exceptions (Spring @RequestBody)
-    @Override
-    @NonNull
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
-                                                                  @NonNull HttpHeaders headers,
-                                                                  @NonNull HttpStatus status,
-                                                                  @NonNull WebRequest request) {
-        logger.warn("HttpMessageNotReadableException 'request':'{}', 'input':'{}'", request, ex.getMessage());
-        // Get only the first segment of the message to not include nested exceptions
-        String truncatedMsg = ex.getMessage() != null ? ex.getMessage().split(";")[0] : null;
-        return createErrorResponse(status, truncatedMsg, null);
-    }
-
     // Let Spring handle the exception, we just override the status code
     @ExceptionHandler(Exception.class)
     public void other(Exception ex, HttpServletResponse response) throws IOException {
