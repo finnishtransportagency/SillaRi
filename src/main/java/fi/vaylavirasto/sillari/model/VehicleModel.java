@@ -6,5 +6,6 @@ public class VehicleModel {
     private Integer id;
     private Integer permitId;
     private String type;
+    private VehicleRole role;
     private String identifier;
 }
