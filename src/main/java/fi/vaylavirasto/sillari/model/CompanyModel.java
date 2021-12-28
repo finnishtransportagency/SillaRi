@@ -1,12 +1,13 @@
 package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
 
 @Data
+@ToString(callSuper = true)
 public class CompanyModel extends BaseModel {
     private Integer id;
     private String name;
