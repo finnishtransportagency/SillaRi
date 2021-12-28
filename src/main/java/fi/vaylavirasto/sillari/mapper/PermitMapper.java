@@ -23,23 +23,25 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
     @Nullable
     @Override
     public PermitModel map(Record record) {
-        PermitModel permitModel = new PermitModel();
-        permitModel.setId(record.get(TableAlias.permit.ID));
-        permitModel.setCompanyId(record.get(TableAlias.permit.COMPANY_ID));
-        permitModel.setPermitNumber(record.get(TableAlias.permit.PERMIT_NUMBER));
-        permitModel.setLeluVersion(record.get(TableAlias.permit.LELU_VERSION));
-        permitModel.setLeluLastModifiedDate(record.get(TableAlias.permit.LELU_LAST_MODIFIED_DATE));
-        permitModel.setValidStartDate(record.get(TableAlias.permit.VALID_START_DATE));
-        permitModel.setValidEndDate(record.get(TableAlias.permit.VALID_END_DATE));
-        permitModel.setTransportTotalMass(record.get(TableAlias.permit.TRANSPORT_TOTAL_MASS));
-        permitModel.setAdditionalDetails(record.get(TableAlias.permit.ADDITIONAL_DETAILS));
+        PermitModel model = new PermitModel();
+        model.setId(record.get(TableAlias.permit.ID));
+        model.setCompanyId(record.get(TableAlias.permit.COMPANY_ID));
+        model.setPermitNumber(record.get(TableAlias.permit.PERMIT_NUMBER));
+        model.setLeluVersion(record.get(TableAlias.permit.LELU_VERSION));
+        model.setLeluLastModifiedDate(record.get(TableAlias.permit.LELU_LAST_MODIFIED_DATE));
+        model.setValidStartDate(record.get(TableAlias.permit.VALID_START_DATE));
+        model.setValidEndDate(record.get(TableAlias.permit.VALID_END_DATE));
+        model.setTransportTotalMass(record.get(TableAlias.permit.TRANSPORT_TOTAL_MASS));
+        model.setAdditionalDetails(record.get(TableAlias.permit.ADDITIONAL_DETAILS));
         String pdfObjectKey = record.get(TableAlias.permit.PDF_OBJECT_KEY);
         if (this.base64on && pdfObjectKey != null) {
-            permitModel.setPdfObjectKey(Base64.getEncoder().encodeToString(pdfObjectKey.getBytes()));
+            model.setPdfObjectKey(Base64.getEncoder().encodeToString(pdfObjectKey.getBytes()));
         } else {
-            permitModel.setPdfObjectKey(pdfObjectKey);
+            model.setPdfObjectKey(pdfObjectKey);
         }
-        permitModel.setRoutes(new ArrayList<>());
-        return permitModel;
+        model.setRowCreatedTime(record.get(TableAlias.permit.ROW_CREATED_TIME));
+        model.setRowUpdatedTime(record.get(TableAlias.permit.ROW_UPDATED_TIME));
+        model.setRoutes(new ArrayList<>());
+        return model;
     }
 }

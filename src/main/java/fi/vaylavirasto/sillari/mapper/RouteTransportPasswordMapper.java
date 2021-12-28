@@ -10,12 +10,14 @@ public class RouteTransportPasswordMapper implements RecordMapper<Record, RouteT
     @Nullable
     @Override
     public RouteTransportPasswordModel map(Record record) {
-        RouteTransportPasswordModel rtpm = new RouteTransportPasswordModel();
-        rtpm.setId(record.get(TableAlias.routeTransportPassword.ID));
-        rtpm.setRouteTransportId(record.get(TableAlias.routeTransportPassword.ROUTE_TRANSPORT_ID));
-        rtpm.setTransportPassword(record.get(TableAlias.routeTransportPassword.TRANSPORT_PASSWORD));
-        rtpm.setValidFrom(record.get(TableAlias.routeTransportPassword.VALID_FROM));
-        rtpm.setValidTo(record.get(TableAlias.routeTransportPassword.VALID_TO));
-        return rtpm;
+        RouteTransportPasswordModel model = new RouteTransportPasswordModel();
+        model.setId(record.get(TableAlias.routeTransportPassword.ID));
+        model.setRouteTransportId(record.get(TableAlias.routeTransportPassword.ROUTE_TRANSPORT_ID));
+        model.setTransportPassword(record.get(TableAlias.routeTransportPassword.TRANSPORT_PASSWORD));
+        model.setValidFrom(record.get(TableAlias.routeTransportPassword.VALID_FROM));
+        model.setValidTo(record.get(TableAlias.routeTransportPassword.VALID_TO));
+        model.setRowCreatedTime(record.get(TableAlias.routeTransportPassword.ROW_CREATED_TIME));
+        model.setRowUpdatedTime(record.get(TableAlias.routeTransportPassword.ROW_UPDATED_TIME));
+        return model;
     }
 }

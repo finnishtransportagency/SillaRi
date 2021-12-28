@@ -17,6 +17,8 @@ public class RouteBridgeMapper implements RecordMapper<Record, RouteBridgeModel>
         model.setOrdinal(record.get(TableAlias.routeBridge.ORDINAL));
         model.setCrossingInstruction(record.get(TableAlias.routeBridge.CROSSING_INSTRUCTION));
         model.setContractNumber(record.get(TableAlias.routeBridge.CONTRACT_NUMBER));
+        model.setRowCreatedTime(record.get(TableAlias.routeBridge.ROW_CREATED_TIME));
+        model.setRowUpdatedTime(record.get(TableAlias.routeBridge.ROW_UPDATED_TIME));
         return model;
     }
 }
