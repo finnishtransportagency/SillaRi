@@ -117,7 +117,7 @@ public class LeluServiceTest {
 
         Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(2);
-        Mockito.when(permitRepository.hasSupervisions(Mockito.any(List.class))).thenReturn(false);
+        Mockito.when(permitRepository.hasSupervisions(Mockito.anyList())).thenReturn(false);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
         LeluPermitResponseDTO response = null;
@@ -211,8 +211,8 @@ public class LeluServiceTest {
         permit.setCustomer(new LeluCustomerDTO("Yritys Y", "1234567-8"));
 
         List<LeluVehicleDTO> vehicles = new ArrayList<>();
-        LeluVehicleDTO vehicle1 = new LeluVehicleDTO("kuorma-auto", "ABC-123");
-        LeluVehicleDTO vehicle2 = new LeluVehicleDTO("puoliperävaunu", "BCD-234");
+        LeluVehicleDTO vehicle1 = new LeluVehicleDTO("kuorma-auto", VehicleRole.TRUCK, "ABC-123");
+        LeluVehicleDTO vehicle2 = new LeluVehicleDTO("puoliperävaunu", VehicleRole.TRAILER, "BCD-234");
         vehicles.add(vehicle1);
         vehicles.add(vehicle2);
         permit.setVehicles(vehicles);
@@ -330,8 +330,10 @@ public class LeluServiceTest {
         assertEquals(2, permitModel.getVehicles().size());
         assertEquals("kuorma-auto", permitModel.getVehicles().get(0).getType());
         assertEquals("ABC-123", permitModel.getVehicles().get(0).getIdentifier());
+        assertEquals(VehicleRole.TRUCK, permitModel.getVehicles().get(0).getRole());
         assertEquals("puoliperävaunu", permitModel.getVehicles().get(1).getType());
         assertEquals("BCD-234", permitModel.getVehicles().get(1).getIdentifier());
+        assertEquals(VehicleRole.TRAILER, permitModel.getVehicles().get(1).getRole());
 
         assertNotNull(permitModel.getAxleChart());
         assertEquals(14, permitModel.getAxleChart().getAxles().size());

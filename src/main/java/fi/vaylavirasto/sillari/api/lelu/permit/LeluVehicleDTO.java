@@ -27,8 +27,9 @@ public class LeluVehicleDTO {
     public LeluVehicleDTO() {
     }
 
-    public LeluVehicleDTO(String type, String identifier) {
+    public LeluVehicleDTO(String type, VehicleRole role, String identifier) {
         this.type = type;
+        this.role = role;
         this.identifier = identifier;
     }
 
