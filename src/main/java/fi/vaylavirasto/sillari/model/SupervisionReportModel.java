@@ -1,11 +1,13 @@
 package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
 
 @Data
-public class SupervisionReportModel {
+@EqualsAndHashCode(callSuper = false)
+public class SupervisionReportModel extends BaseModel {
     private Integer id;
     private Integer supervisionId;
     private Boolean drivingLineOk;

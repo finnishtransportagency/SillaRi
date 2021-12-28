@@ -1,9 +1,11 @@
 package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class SupervisorModel {
+@EqualsAndHashCode(callSuper = false)
+public class SupervisorModel extends BaseModel {
     private Integer id;
     private String firstName;
     private String lastName;

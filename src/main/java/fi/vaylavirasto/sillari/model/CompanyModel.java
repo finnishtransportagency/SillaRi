@@ -1,12 +1,13 @@
 package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 import java.util.Objects;
 
 @Data
-public class CompanyModel {
+public class CompanyModel extends BaseModel {
     private Integer id;
     private String name;
     private String businessId;

@@ -1,8 +1,10 @@
 package fi.vaylavirasto.sillari.model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class VehicleModel {
+@EqualsAndHashCode(callSuper = false)
+public class VehicleModel extends BaseModel {
     private Integer id;
     private Integer permitId;
     private String type;

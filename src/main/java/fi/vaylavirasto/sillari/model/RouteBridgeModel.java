@@ -1,11 +1,13 @@
 package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 @Data
-public class RouteBridgeModel {
+@EqualsAndHashCode(callSuper = false)
+public class RouteBridgeModel extends BaseModel {
     private Integer id;
     private Integer routeId;
     private Integer bridgeId;

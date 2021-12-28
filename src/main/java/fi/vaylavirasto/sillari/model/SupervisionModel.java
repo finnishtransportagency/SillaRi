@@ -1,13 +1,15 @@
 package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
 
 @Data
-public class SupervisionModel {
+@EqualsAndHashCode(callSuper = false)
+public class SupervisionModel extends BaseModel {
     private Integer id;
     private Integer routeBridgeId;
     private Integer routeTransportId;
