@@ -266,7 +266,8 @@
         "destination": "(SV) Destination",
         "showRouteOnMap": "(SV) Show route on map",
         "tractorUnitIdentifier": "(SV) Vehicle registration number (tractor unit)",
-        "tractorUnitNotSelected": "(SV) Registration number missing"
+        "tractorUnitNotSelected": "(SV) Registration number missing",
+        "pushingVehicle": "(SV) additional or pushing vehicle"
       },
       "bridgeInfo": {
         "bridge": "(SV) Bridge",
