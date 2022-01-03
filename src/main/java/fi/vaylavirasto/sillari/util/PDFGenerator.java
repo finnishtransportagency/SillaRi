@@ -20,6 +20,7 @@ import java.io.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PDFGenerator {
@@ -69,13 +70,13 @@ public class PDFGenerator {
 
             contentStream.showText("Sillanvalvontaraportti");
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.setFont(PDType1Font.COURIER, 12);
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Lupanumero: " + permit.getPermitNumber());
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Reitin nimi: " + route.getName());
 
             String supervisionTime = "-";
@@ -84,13 +85,13 @@ public class PDFGenerator {
             } catch (Exception e) {
                 logger.debug("caugth: " + e.getClass().getName() + e.getMessage());
             }
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Valvonta aloitettu: " + supervisionTime);
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Silta: " + bridge.getName() + " | " + bridge.getIdentifier() + " | " + bridge.getOid());
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Tieosoite: " + (bridge.getRoadAddress() == null ? "-" : bridge.getRoadAddress()));
 
             String signTime = "-";
@@ -99,72 +100,65 @@ public class PDFGenerator {
             } catch (Exception e) {
                 logger.debug("caugth: " + e.getClass().getName() + e.getMessage());
             }
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Kuittauksen ajankohta: " + signTime);
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Sillanvalvoja: " + ((supervisor == null) ? "-" : supervisor.getFirstName() + " " + supervisor.getLastName()));
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.setFont(PDType1Font.COURIER, 14);
             contentStream.showText("Havainnot");
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.setFont(PDType1Font.COURIER, 12);
             contentStream.showText("Ajolinjaa on noudatettu: " + (report.getDrivingLineOk() ? "kyllä" : "ei"));
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Miksi ajolinjaa ei noudatettu: ");
-            newLineAtOffset(contentStream, 0, -lineSpacing);
-
-            var abc = new Abc();
-            myList.forEach(line -> {
-                methodThatChangesAbc();
-                //abc still old abc
-            });
-
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
 
             if (report.getDrivingLineInfo() != null && !report.getDrivingLineInfo().isEmpty()) {
-                WordUtils.wrap(report.getDrivingLineInfo(), 70).lines().forEach(line -> {
+                for(var line: WordUtils.wrap(report.getDrivingLineInfo(), 70).lines().collect(Collectors.toList())){
                     try {
                         logger.debug("HELLO: " + line);
                         contentStream.showText(line);
-                        newLineAtOffset(contentStream, 0, -lineSpacing);
+                        contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                });
+                };
             }
 
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Ajonopeus on hyväksytty: " + (report.getSpeedLimitOk() ? "kyllä" : "ei"));
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Miksi ajonopeutta ei hyväksytä: ");
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText((report.getSpeedLimitInfo() == null || report.getSpeedLimitInfo().isEmpty()) ? "-" : report.getSpeedLimitInfo());
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Poikkeavia havaintoja: " + (report.getAnomalies() ? "kyllä" : "ei"));
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Liikuntasauman rikkoutuminen: " + (report.getJointDamage() ? "kyllä" : "ei"));
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Pysyvä taipuma tai muu siirtymä: " + (report.getBendOrDisplacement() ? "kyllä" : "ei"));
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Jotain muuta, mitä? " + (report.getOtherObservations() ? "kyllä" : "ei"));
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText((report.getOtherObservationsInfo() == null || report.getOtherObservationsInfo().isEmpty()) ? "" : report.getOtherObservationsInfo());
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText((report.getAnomaliesDescription() == null || report.getAnomaliesDescription().isEmpty()) ? "" : report.getAnomaliesDescription());
 
-            newLineAtOffset(contentStream, 0, -lineSpacing);
+            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
             contentStream.showText("Lisätiedot: " + report.getAdditionalInfo());
 
 
@@ -180,9 +174,9 @@ public class PDFGenerator {
                 PDPageContentStream contentStream2 = new PDPageContentStream(document, pageTwo);
                 contentStream2.beginText();
                 contentStream2.setFont(PDType1Font.COURIER, 12);
-                newLineAtOffset(contentStream2, 50, 750);
+                contentStream2 = newLineAtOffset(contentStream2, 50, 750);
                 contentStream2.showText("Kuvat (" + imageCount + "kpl)");
-                newLineAtOffset(contentStream2, 0, -lineSpacing);
+                contentStream2 = newLineAtOffset(contentStream2, 0, -lineSpacing);
                 contentStream2.endText();
 
                 handleImages(contentStream2, supervision.getImages(), document);
@@ -205,13 +199,16 @@ public class PDFGenerator {
         return null;
     }
 
-    private void newLineAtOffset(PDPageContentStream contentStream, int tx, float lineSpacing) throws IOException {
+    private PDPageContentStream newLineAtOffset(PDPageContentStream contentStream, int tx, float lineSpacing) throws IOException {
         contentStream.newLineAtOffset(tx, lineSpacing);
         y += lineSpacing;
         if (y < 20) {
-            newPage(contentStream);
+            y=750;
+            return newPage(contentStream);
+
         }
         logger.debug("" + y);
+        return contentStream;
     }
 
     private void handleImages(PDPageContentStream contentStream, List<SupervisionImageModel> images, PDDocument document) {
@@ -253,19 +250,24 @@ public class PDFGenerator {
         }
     }
 
-    private void newPage(PDPageContentStream contentStream) {
+    private PDPageContentStream newPage(PDPageContentStream contentStream) {
         try {
+            contentStream.showText("HELLO1");
             contentStream.endText();
+            contentStream.close();
 
             PDPage page = new PDPage();
             document.addPage(page);
-            contentStream = new PDPageContentStream(document, page);
-            contentStream.beginText();
-            contentStream.setFont(PDType1Font.COURIER, 12);
-            contentStream.showText("HELLO");
+            PDPageContentStream contentStream2 = new PDPageContentStream(document, page);
+            contentStream2.beginText();
+            contentStream2.setFont(PDType1Font.COURIER, 12);
+            contentStream2.newLineAtOffset(50, y);
+            contentStream2.showText("HELLO");
+            return contentStream2;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return contentStream;
     }
 
     @NotNull
