@@ -6,12 +6,11 @@ import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
-import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.service.BridgeService;
 import fi.vaylavirasto.sillari.service.LeluService;
-import fi.vaylavirasto.sillari.service.PermitService;
+import fi.vaylavirasto.sillari.service.SupervisionImageService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.util.PDFGenerator;
@@ -58,7 +57,10 @@ public class LeluController {
     SupervisionService supervisionService;
 
     @Autowired
-    PDFGenerator pdfGenerator;
+    SupervisionImageService supervisionImageService;
+
+    @Value("${spring.profiles.active:Unknown}")
+    private String activeProfile;
 
     @Autowired
     public LeluController(LeluService leluService, TRexService trexService, BridgeService bridgeService, MessageSource messageSource) {
@@ -273,7 +275,9 @@ public class LeluController {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
                 SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(reportId));
-                byte[] reportPDF = pdfGenerator.generateReportPDF(supervision);
+                supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
+                PDFGenerator pdfGenerator = new PDFGenerator(supervision, activeProfile.equals("local"));
+                byte[] reportPDF = pdfGenerator.generateReportPDF();
                 logger.debug("HELLO: " + reportPDF);
                 return reportPDF;
             } catch (Exception e) {

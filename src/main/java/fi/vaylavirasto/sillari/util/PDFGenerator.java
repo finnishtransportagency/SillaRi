@@ -1,7 +1,6 @@
 package fi.vaylavirasto.sillari.util;
 
 import fi.vaylavirasto.sillari.model.*;
-import fi.vaylavirasto.sillari.service.SupervisionImageService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
@@ -12,9 +11,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.time.format.DateTimeFormatter;
@@ -22,21 +19,24 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+
 public class PDFGenerator {
     private static final Logger logger = LogManager.getLogger();
+    private final SupervisionModel supervision;
+    private final boolean isLocal;
 
-    @Autowired
-    SupervisionImageService supervisionImageService;
 
-    @Value("${spring.profiles.active:Unknown}")
-    private String activeProfile;
     private PDDocument document;
 
 
     private float y;
 
-    public byte[] generateReportPDF(SupervisionModel supervision) {
+    public PDFGenerator(SupervisionModel supervision, boolean isLocal) {
+        this.supervision = supervision;
+        this.isLocal = isLocal;
+    }
+
+    public byte[] generateReportPDF() {
 
 
         BridgeModel bridge = supervision.getRouteBridge().getBridge();
@@ -44,7 +44,7 @@ public class PDFGenerator {
         SupervisionReportModel report = supervision.getReport();
         PermitModel permit = route.getPermit();
         SupervisorModel supervisor = ((supervision.getSupervisors() == null || supervision.getSupervisors().isEmpty()) ? null : supervision.getSupervisors().get(0));
-        var images = supervisionImageService.getSupervisionImages(supervision.getId());
+        var images = supervision.getImages();
 
         document = new PDDocument();
         PDPage page = new PDPage();
@@ -217,7 +217,7 @@ public class PDFGenerator {
             String objectKey = image.getObjectKey();
             String decodedKey = new String(Base64.getDecoder().decode(objectKey));
             logger.debug("decodedKey" + decodedKey);
-            if (activeProfile.equals("local")) {
+            if (isLocal) {
                 // Get from local file system
                 String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
 

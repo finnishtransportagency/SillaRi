@@ -41,8 +41,6 @@ public class SupervisionService {
     AWSS3Client awss3Client;
     @Autowired
     SupervisionImageService supervisionImageService;
-    @Autowired
-    PDFGenerator pdfGenerator;
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
@@ -155,7 +153,9 @@ public class SupervisionService {
         supervisionStatusRepository.insertSupervisionStatus(status);
         try {
             SupervisionModel supervision = getSupervision(supervisionId);
-            byte[] pdf = pdfGenerator.generateReportPDF(supervision);
+            supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
+            PDFGenerator pdfGenerator = new PDFGenerator(supervision, activeProfile.equals("local"));
+            byte[] pdf = pdfGenerator.generateReportPDF();
             String objectKey = "" + supervisionId;
             boolean success = awss3Client.upload(objectKey, pdf, "application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET, AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
             if (!success) {
