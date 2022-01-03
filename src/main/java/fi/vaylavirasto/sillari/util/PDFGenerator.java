@@ -11,7 +11,6 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.*;
 import java.time.format.DateTimeFormatter;
@@ -21,15 +20,19 @@ import java.util.stream.Collectors;
 
 
 public class PDFGenerator {
+    public static final int TOP_MARGIN = 50;
     private static final Logger logger = LogManager.getLogger();
     private final SupervisionModel supervision;
     private final boolean isLocal;
 
 
     private PDDocument document;
-
+    private PDPageContentStream contentStream;
 
     private float y;
+    private static final float LINE_SPACING = 15;
+    private PDPage page;
+
 
     public PDFGenerator(SupervisionModel supervision, boolean isLocal) {
         this.supervision = supervision;
@@ -47,19 +50,15 @@ public class PDFGenerator {
         var images = supervision.getImages();
 
         document = new PDDocument();
-        PDPage page = new PDPage();
+        page = new PDPage();
         document.addPage(page);
 
-        final float pageHeight = page.getMediaBox().getHeight();
-        final float pageWidth = page.getMediaBox().getWidth();
+        y = page.getMediaBox().getHeight() - TOP_MARGIN;
 
-        logger.debug("pageHeight: " + pageHeight);
-
-        y = pageHeight - 50;
-        float lineSpacing = 15;
 
         try {
-            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+            contentStream = new PDPageContentStream(document, page);
 
             contentStream.beginText();
             contentStream.setFont(PDType1Font.COURIER, 16);
@@ -70,13 +69,13 @@ public class PDFGenerator {
 
             contentStream.showText("Sillanvalvontaraportti");
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.setFont(PDType1Font.COURIER, 12);
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Lupanumero: " + permit.getPermitNumber());
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Reitin nimi: " + route.getName());
 
             String supervisionTime = "-";
@@ -85,13 +84,13 @@ public class PDFGenerator {
             } catch (Exception e) {
                 logger.debug("caugth: " + e.getClass().getName() + e.getMessage());
             }
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Valvonta aloitettu: " + supervisionTime);
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Silta: " + bridge.getName() + " | " + bridge.getIdentifier() + " | " + bridge.getOid());
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Tieosoite: " + (bridge.getRoadAddress() == null ? "-" : bridge.getRoadAddress()));
 
             String signTime = "-";
@@ -100,32 +99,32 @@ public class PDFGenerator {
             } catch (Exception e) {
                 logger.debug("caugth: " + e.getClass().getName() + e.getMessage());
             }
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Kuittauksen ajankohta: " + signTime);
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Sillanvalvoja: " + ((supervisor == null) ? "-" : supervisor.getFirstName() + " " + supervisor.getLastName()));
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
+            newLine();
             contentStream.setFont(PDType1Font.COURIER, 14);
             contentStream.showText("Havainnot");
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.setFont(PDType1Font.COURIER, 12);
             contentStream.showText("Ajolinjaa on noudatettu: " + (report.getDrivingLineOk() ? "kyllä" : "ei"));
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Miksi ajolinjaa ei noudatettu: ");
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
 
             if (report.getDrivingLineInfo() != null && !report.getDrivingLineInfo().isEmpty()) {
                 for(var line: WordUtils.wrap(report.getDrivingLineInfo(), 70).lines().collect(Collectors.toList())){
                     try {
                         logger.debug("HELLO: " + line);
                         contentStream.showText(line);
-                        contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+                        newLine();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -133,32 +132,32 @@ public class PDFGenerator {
             }
 
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Ajonopeus on hyväksytty: " + (report.getSpeedLimitOk() ? "kyllä" : "ei"));
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Miksi ajonopeutta ei hyväksytä: ");
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText((report.getSpeedLimitInfo() == null || report.getSpeedLimitInfo().isEmpty()) ? "-" : report.getSpeedLimitInfo());
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
+            newLine();
             contentStream.showText("Poikkeavia havaintoja: " + (report.getAnomalies() ? "kyllä" : "ei"));
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Liikuntasauman rikkoutuminen: " + (report.getJointDamage() ? "kyllä" : "ei"));
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Pysyvä taipuma tai muu siirtymä: " + (report.getBendOrDisplacement() ? "kyllä" : "ei"));
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Jotain muuta, mitä? " + (report.getOtherObservations() ? "kyllä" : "ei"));
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText((report.getOtherObservationsInfo() == null || report.getOtherObservationsInfo().isEmpty()) ? "" : report.getOtherObservationsInfo());
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText((report.getAnomaliesDescription() == null || report.getAnomaliesDescription().isEmpty()) ? "" : report.getAnomaliesDescription());
 
-            contentStream = newLineAtOffset(contentStream, 0, -lineSpacing);
+            newLine();
             contentStream.showText("Lisätiedot: " + report.getAdditionalInfo());
 
 
@@ -169,18 +168,18 @@ public class PDFGenerator {
             int imageCount = ((images == null || images.isEmpty()) ? 0 : images.size());
 
             if (imageCount > 0) {
-                PDPage pageTwo = new PDPage();
-                document.addPage(pageTwo);
-                PDPageContentStream contentStream2 = new PDPageContentStream(document, pageTwo);
-                contentStream2.beginText();
-                contentStream2.setFont(PDType1Font.COURIER, 12);
-                contentStream2 = newLineAtOffset(contentStream2, 50, 750);
-                contentStream2.showText("Kuvat (" + imageCount + "kpl)");
-                contentStream2 = newLineAtOffset(contentStream2, 0, -lineSpacing);
-                contentStream2.endText();
+                page = new PDPage();
+                document.addPage(page);
+                contentStream = new PDPageContentStream(document, page);
+                contentStream.beginText();
+                contentStream.setFont(PDType1Font.COURIER, 12);
+                newLine();
+                contentStream.showText("Kuvat (" + imageCount + "kpl)");
+        newLine();
+                contentStream.endText();
 
-                handleImages(contentStream2, supervision.getImages(), document);
-                contentStream2.close();
+                handleImages(contentStream, supervision.getImages(), document);
+                contentStream.close();
             } else {
 
             }
@@ -199,16 +198,34 @@ public class PDFGenerator {
         return null;
     }
 
-    private PDPageContentStream newLineAtOffset(PDPageContentStream contentStream, int tx, float lineSpacing) throws IOException {
-        contentStream.newLineAtOffset(tx, lineSpacing);
-        y += lineSpacing;
+    private void newLine() throws IOException {
+        contentStream.newLineAtOffset(0, -LINE_SPACING);
+        y -= LINE_SPACING;
         if (y < 20) {
-            y=750;
-            return newPage(contentStream);
-
+            y = page.getMediaBox().getHeight() - TOP_MARGIN;
+            newPage();
         }
         logger.debug("" + y);
-        return contentStream;
+    }
+
+    private void newPage() {
+        try {
+            contentStream.showText("HELLO1");
+            contentStream.endText();
+            contentStream.close();
+
+            page = new PDPage();
+            document.addPage(page);
+            contentStream = new PDPageContentStream(document, page);
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.COURIER, 12);
+            contentStream.newLineAtOffset(50, y);
+            contentStream.showText("HELLO");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void handleImages(PDPageContentStream contentStream, List<SupervisionImageModel> images, PDDocument document) {
@@ -250,25 +267,7 @@ public class PDFGenerator {
         }
     }
 
-    private PDPageContentStream newPage(PDPageContentStream contentStream) {
-        try {
-            contentStream.showText("HELLO1");
-            contentStream.endText();
-            contentStream.close();
 
-            PDPage page = new PDPage();
-            document.addPage(page);
-            PDPageContentStream contentStream2 = new PDPageContentStream(document, page);
-            contentStream2.beginText();
-            contentStream2.setFont(PDType1Font.COURIER, 12);
-            contentStream2.newLineAtOffset(50, y);
-            contentStream2.showText("HELLO");
-            return contentStream2;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return contentStream;
-    }
 
     @NotNull
     private String formatStatusDate(SupervisionModel supervision, SupervisionStatusType supervisionStatusType) {
