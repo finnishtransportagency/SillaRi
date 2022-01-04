@@ -120,7 +120,7 @@ public class PDFGenerator {
             newLine();
 
             if (report.getDrivingLineInfo() != null && !report.getDrivingLineInfo().isEmpty()) {
-                for(var line: WordUtils.wrap(report.getDrivingLineInfo(), 70).lines().collect(Collectors.toList())){
+                for (var line : WordUtils.wrap(report.getDrivingLineInfo(), 70).lines().collect(Collectors.toList())) {
                     try {
                         logger.debug("HELLO: " + line);
                         contentStream.showText(line);
@@ -128,7 +128,8 @@ public class PDFGenerator {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                };
+                }
+                ;
             }
 
 
@@ -168,14 +169,9 @@ public class PDFGenerator {
             int imageCount = ((images == null || images.isEmpty()) ? 0 : images.size());
 
             if (imageCount > 0) {
-                page = new PDPage();
-                document.addPage(page);
-                contentStream = new PDPageContentStream(document, page);
-                contentStream.beginText();
-                contentStream.setFont(PDType1Font.COURIER, 12);
-                newLine();
+                newPage();
                 contentStream.showText("Kuvat (" + imageCount + "kpl)");
-        newLine();
+                newLine();
                 contentStream.endText();
 
                 handleImages(contentStream, supervision.getImages(), document);
@@ -202,25 +198,32 @@ public class PDFGenerator {
         contentStream.newLineAtOffset(0, -LINE_SPACING);
         y -= LINE_SPACING;
         if (y < 20) {
-            y = page.getMediaBox().getHeight() - TOP_MARGIN;
             newPage();
         }
         logger.debug("" + y);
     }
 
     private void newPage() {
+        y = page.getMediaBox().getHeight() - TOP_MARGIN;
         try {
-            contentStream.showText("HELLO1");
-            contentStream.endText();
-            contentStream.close();
 
+            contentStream.endText();
+        } catch (IllegalStateException | IOException e) {
+            //might be ended and closed already
+        }try {
+            contentStream.close();
+        } catch (IllegalStateException | IOException e) {
+            //might be ended and closed already
+        }
+
+        try {
             page = new PDPage();
             document.addPage(page);
             contentStream = new PDPageContentStream(document, page);
             contentStream.beginText();
             contentStream.setFont(PDType1Font.COURIER, 12);
             contentStream.newLineAtOffset(50, y);
-            contentStream.showText("HELLO");
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -228,8 +231,31 @@ public class PDFGenerator {
 
     }
 
+    private void newImagePage() {
+        y = page.getMediaBox().getHeight() - TOP_MARGIN;
+        try {
+
+            contentStream.endText();
+        } catch (IllegalStateException | IOException e) {
+            //might be ended and closed already
+        }try {
+            contentStream.close();
+        } catch (IllegalStateException | IOException e) {
+            //might be ended and closed already
+        }
+
+        try {
+            page = new PDPage();
+            document.addPage(page);
+            contentStream = new PDPageContentStream(document, page);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void handleImages(PDPageContentStream contentStream, List<SupervisionImageModel> images, PDDocument document) {
-        int y = 450;
+
         for (SupervisionImageModel image : images) {
             String objectKey = image.getObjectKey();
             String decodedKey = new String(Base64.getDecoder().decode(objectKey));
@@ -250,28 +276,33 @@ public class PDFGenerator {
                     final float MAX_PHOTO_WIDTH = page.getMediaBox().getWidth() - 40;
                     final float MAX_PHOTO_HEIGHT = page.getMediaBox().getHeight() - 40;
 
-                    float newWidth= pdImage.getWidth();
+                    float newWidth = pdImage.getWidth();
                     float newHeight = pdImage.getHeight();
 
-                    if(pdImage.getWidth() > MAX_PHOTO_WIDTH){
+                    if (pdImage.getWidth() > MAX_PHOTO_WIDTH) {
                         final float ratio = pdImage.getWidth() / MAX_PHOTO_WIDTH;
                         newWidth = MAX_PHOTO_WIDTH;
                         newHeight = pdImage.getHeight() / ratio;
                     }
 
-                    if(newHeight > MAX_PHOTO_HEIGHT){
+                    if (newHeight > MAX_PHOTO_HEIGHT) {
                         final float ratio = pdImage.getHeight() / MAX_PHOTO_HEIGHT;
                         newWidth = newWidth / ratio;
                         newHeight = MAX_PHOTO_HEIGHT;
                     }
 
+                    y -= 20 + newHeight;
+                    logger.debug("Hello y: " +y);
+                    if(y <= 20 ){
 
+                        newImagePage();
+                    }
                     try {
                         contentStream.drawImage(pdImage, 20, y, newWidth, newHeight);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    y -= 200;
+
                     logger.debug("drew");
                 } else {
                     logger.debug("file no");
@@ -281,7 +312,6 @@ public class PDFGenerator {
             }
         }
     }
-
 
 
     @NotNull
