@@ -247,12 +247,27 @@ public class PDFGenerator {
                         e.printStackTrace();
                     }
 
-                    final float DESIRED_PHOTO_WIDTH = 150;
-                    final float ratio = pdImage.getWidth() / DESIRED_PHOTO_WIDTH;
-                    final float newHeight = pdImage.getHeight() / ratio;
+                    final float MAX_PHOTO_WIDTH = page.getMediaBox().getWidth() - 40;
+                    final float MAX_PHOTO_HEIGHT = page.getMediaBox().getHeight() - 40;
+
+                    float newWidth= pdImage.getWidth();
+                    float newHeight = pdImage.getHeight();
+
+                    if(pdImage.getWidth() > MAX_PHOTO_WIDTH){
+                        final float ratio = pdImage.getWidth() / MAX_PHOTO_WIDTH;
+                        newWidth = MAX_PHOTO_WIDTH;
+                        newHeight = pdImage.getHeight() / ratio;
+                    }
+
+                    if(newHeight > MAX_PHOTO_HEIGHT){
+                        final float ratio = pdImage.getHeight() / MAX_PHOTO_HEIGHT;
+                        newWidth = newWidth / ratio;
+                        newHeight = MAX_PHOTO_HEIGHT;
+                    }
+
 
                     try {
-                        contentStream.drawImage(pdImage, 20, y, DESIRED_PHOTO_WIDTH, newHeight);
+                        contentStream.drawImage(pdImage, 20, y, newWidth, newHeight);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
