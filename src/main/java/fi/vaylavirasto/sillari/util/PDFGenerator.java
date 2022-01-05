@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.util;
 
+import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.WordUtils;
@@ -11,6 +12,9 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.*;
 import java.time.format.DateTimeFormatter;
@@ -18,12 +22,16 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Component
+@RequestScope
 public class PDFGenerator {
+    @Autowired
+    AWSS3Client awss3Client;
+
     public static final int TOP_MARGIN = 50;
     private static final Logger logger = LogManager.getLogger();
-    private final SupervisionModel supervision;
-    private final boolean isLocal;
+    private SupervisionModel supervision;
+    private  boolean isLocal;
 
 
     private PDDocument document;
@@ -33,14 +41,12 @@ public class PDFGenerator {
     private static final float LINE_SPACING = 15;
     private PDPage page;
 
-
-    public PDFGenerator(SupervisionModel supervision, boolean isLocal) {
-        this.supervision = supervision;
-        this.isLocal = isLocal;
+    public PDFGenerator() {
     }
 
-    public byte[] generateReportPDF() {
-
+    public byte[] generateReportPDF(SupervisionModel supervision, boolean isLocal) {
+        this.supervision = supervision;
+        this.isLocal = isLocal;
 
         BridgeModel bridge = supervision.getRouteBridge().getBridge();
         RouteModel route = supervision.getRouteBridge().getRoute();
@@ -199,6 +205,7 @@ public class PDFGenerator {
         }
         logger.debug("" + y);
     }
+
     private void newPage() {
         y = page.getMediaBox().getHeight() - TOP_MARGIN;
         try {
@@ -206,7 +213,8 @@ public class PDFGenerator {
             contentStream.endText();
         } catch (IllegalStateException | IOException e) {
             //might be ended and closed already
-        }try {
+        }
+        try {
             contentStream.close();
         } catch (IllegalStateException | IOException e) {
             //might be ended and closed already
@@ -228,9 +236,6 @@ public class PDFGenerator {
     }
 
 
-
-
-
     private void newImagePage() {
         y = page.getMediaBox().getHeight() - TOP_MARGIN;
         try {
@@ -239,7 +244,8 @@ public class PDFGenerator {
         } catch (IllegalStateException | IOException e) {
             logger.debug("allready ended");
             //might be ended and closed already
-        }try {
+        }
+        try {
             contentStream.close();
         } catch (IllegalStateException | IOException e) {
             logger.debug("allready closed");
@@ -261,65 +267,76 @@ public class PDFGenerator {
         for (SupervisionImageModel image : images) {
             String objectKey = image.getObjectKey();
             String decodedKey = new String(Base64.getDecoder().decode(objectKey));
+            PDImageXObject pdImage = null;
+
+            String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
 
             if (isLocal) {
                 // Get from local file system
-                String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
-
                 File inputFile = new File("/", filename);
                 if (inputFile.exists()) {
-                    PDImageXObject pdImage = null;
+
                     try {
                         pdImage = PDImageXObject.createFromFile(inputFile.getPath(), document);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                    final float MAX_PHOTO_WIDTH = page.getMediaBox().getWidth() - 60;
-                    final float MAX_PHOTO_HEIGHT = page.getMediaBox().getHeight() - 40;
-
-                    float newWidth = pdImage.getWidth();
-                    float newHeight = pdImage.getHeight();
-
-                    if (pdImage.getWidth() > MAX_PHOTO_WIDTH) {
-                        final float ratio = pdImage.getWidth() / MAX_PHOTO_WIDTH;
-                        newWidth = MAX_PHOTO_WIDTH;
-                        newHeight = pdImage.getHeight() / ratio;
-                    }
-
-                    if (newHeight > MAX_PHOTO_HEIGHT) {
-                        final float ratio = pdImage.getHeight() / MAX_PHOTO_HEIGHT;
-                        newWidth = newWidth / ratio;
-                        newHeight = MAX_PHOTO_HEIGHT;
-                    }
-
-                    y -= 20 + newHeight;
-                    if(y <= 20 ){
-                        newImagePage();
-                        y -= 20 + newHeight;
-                    }
-                    try {
-                        contentStream.beginText();
-                        contentStream.setFont(PDType1Font.COURIER, 12);
-                        contentStream.newLineAtOffset(50, y - 20);
-                        contentStream.showText("KUVA");
-                        contentStream.endText();
-                        logger.debug("Drawing image at y:" +y);
-                        contentStream.drawImage(pdImage, 30, y, newWidth, newHeight);
-                        y -= 20;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
                 } else {
                     logger.debug("file no");
                 }
             } else {
-                logger.debug("not local");
+                //from aws s3
+                byte[] imageBytes = awss3Client.download(decodedKey, awss3Client.getPhotoBucketName());
+                if (imageBytes != null) {
+                    try {
+                        pdImage = PDImageXObject.createFromByteArray(document, imageBytes, filename);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        }
+
+
+            final float MAX_PHOTO_WIDTH = page.getMediaBox().getWidth() - 60;
+            final float MAX_PHOTO_HEIGHT = page.getMediaBox().getHeight() - 40;
+
+            float newWidth = pdImage.getWidth();
+            float newHeight = pdImage.getHeight();
+
+            if (pdImage.getWidth() > MAX_PHOTO_WIDTH) {
+                final float ratio = pdImage.getWidth() / MAX_PHOTO_WIDTH;
+                newWidth = MAX_PHOTO_WIDTH;
+                newHeight = pdImage.getHeight() / ratio;
+            }
+
+            if (newHeight > MAX_PHOTO_HEIGHT) {
+                final float ratio = pdImage.getHeight() / MAX_PHOTO_HEIGHT;
+                newWidth = newWidth / ratio;
+                newHeight = MAX_PHOTO_HEIGHT;
+            }
+
+            y -= 20 + newHeight;
+            if (y <= 20) {
+                newImagePage();
+                y -= 20 + newHeight;
+            }
+            try {
+                contentStream.beginText();
+                contentStream.setFont(PDType1Font.COURIER, 12);
+                contentStream.newLineAtOffset(50, y - 20);
+                contentStream.showText("KUVA");
+                contentStream.endText();
+                logger.debug("Drawing image at y:" + y);
+                contentStream.drawImage(pdImage, 30, y, newWidth, newHeight);
+                y -= 20;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
     }
+
+}
 
 
     @NotNull

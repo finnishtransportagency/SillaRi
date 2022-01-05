@@ -154,8 +154,8 @@ public class SupervisionService {
         try {
             SupervisionModel supervision = getSupervision(supervisionId);
             supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
-            PDFGenerator pdfGenerator = new PDFGenerator(supervision, activeProfile.equals("local"));
-            byte[] pdf = pdfGenerator.generateReportPDF();
+            PDFGenerator pdfGenerator = new PDFGenerator();
+            byte[] pdf = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
             String objectKey = "" + supervisionId;
             boolean success = awss3Client.upload(objectKey, pdf, "application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET, AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
             if (!success) {

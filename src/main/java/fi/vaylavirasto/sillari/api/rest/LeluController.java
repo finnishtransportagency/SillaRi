@@ -43,6 +43,8 @@ public class LeluController {
     private static final Logger logger = LogManager.getLogger();
     private static final String LELU_API_VERSION_HEADER_NAME = "lelu-api-accept-version";
 
+    @Autowired
+    PDFGenerator pdfGenerator;
 
     @Value("${sillari.lelu.version}")
     private String currentApiVersion;
@@ -276,9 +278,9 @@ public class LeluController {
             try {
                 SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(reportId));
                 supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
-                PDFGenerator pdfGenerator = new PDFGenerator(supervision, activeProfile.equals("local"));
-                byte[] reportPDF = pdfGenerator.generateReportPDF();
-                logger.debug("HELLO: " + reportPDF);
+
+                byte[] reportPDF = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
+
                 return reportPDF;
             } catch (Exception e) {
                 logger.error(e.getMessage());
