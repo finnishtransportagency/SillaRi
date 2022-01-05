@@ -261,7 +261,7 @@ public class PDFGenerator {
         for (SupervisionImageModel image : images) {
             String objectKey = image.getObjectKey();
             String decodedKey = new String(Base64.getDecoder().decode(objectKey));
-            logger.debug("decodedKey" + decodedKey);
+
             if (isLocal) {
                 // Get from local file system
                 String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
@@ -294,13 +294,9 @@ public class PDFGenerator {
                     }
 
                     y -= 20 + newHeight;
-                    logger.debug("Hello y: " +y);
-
                     if(y <= 20 ){
-                        logger.debug("new page do: " + contentStream.toString());
                         newImagePage();
                         y -= 20 + newHeight;
-                        logger.debug("new page done: " + contentStream.toString());
                     }
                     try {
                         contentStream.beginText();
@@ -315,7 +311,7 @@ public class PDFGenerator {
                         e.printStackTrace();
                     }
 
-                    logger.debug("drew");
+
                 } else {
                     logger.debug("file no");
                 }
