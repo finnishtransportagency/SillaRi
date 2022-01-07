@@ -13,13 +13,16 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Component
@@ -28,9 +31,11 @@ public class PDFGenerator {
     @Autowired
     AWSS3Client awss3Client;
 
+    @Autowired
+    MessageSource messageSource;
+
     public static final int TOP_MARGIN = 50;
     private static final Logger logger = LogManager.getLogger();
-    private SupervisionModel supervision;
     private  boolean isLocal;
 
 
@@ -45,7 +50,6 @@ public class PDFGenerator {
     }
 
     public byte[] generateReportPDF(SupervisionModel supervision, boolean isLocal) {
-        this.supervision = supervision;
         this.isLocal = isLocal;
 
         BridgeModel bridge = supervision.getRouteBridge().getBridge();
@@ -73,16 +77,16 @@ public class PDFGenerator {
             contentStream.setLeading(12 * 1.2f);
             contentStream.newLineAtOffset(50, y);
 
-            contentStream.showText("Sillanvalvontaraportti");
+            contentStream.showText(messageSource.getMessage("supervision.pdf.sillanvalvontaraportti",null, Locale.ROOT));
 
             newLine();
             contentStream.setFont(PDType1Font.COURIER, 12);
 
             newLine();
-            contentStream.showText("Lupanumero: " + permit.getPermitNumber());
+            contentStream.showText(messageSource.getMessage("supervision.pdf.lupanumero",null, Locale.ROOT) + permit.getPermitNumber());
 
             newLine();
-            contentStream.showText("Reitin nimi: " + route.getName());
+            contentStream.showText(messageSource.getMessage("supervision.pdf.reitin.nimi",null, Locale.ROOT) + route.getName());
 
             String supervisionTime = "-";
             try {
@@ -91,13 +95,13 @@ public class PDFGenerator {
                 logger.debug("caugth: " + e.getClass().getName() + e.getMessage());
             }
             newLine();
-            contentStream.showText("Valvonta aloitettu: " + supervisionTime);
+            contentStream.showText(messageSource.getMessage("supervision.pdf.valvonta.aloitettu",null, Locale.ROOT) + supervisionTime);
 
             newLine();
-            contentStream.showText("Silta: " + bridge.getName() + " | " + bridge.getIdentifier() + " | " + bridge.getOid());
+            contentStream.showText(messageSource.getMessage("supervision.pdf.silta",null, Locale.ROOT) + bridge.getName() + " | " + bridge.getIdentifier() + " | " + bridge.getOid());
 
             newLine();
-            contentStream.showText("Tieosoite: " + (bridge.getRoadAddress() == null ? "-" : bridge.getRoadAddress()));
+            contentStream.showText(messageSource.getMessage("supervision.pdf.tieosoite",null, Locale.ROOT) + (bridge.getRoadAddress() == null ? "-" : bridge.getRoadAddress()));
 
             String signTime = "-";
             try {
@@ -106,23 +110,23 @@ public class PDFGenerator {
                 logger.debug("caugth: " + e.getClass().getName() + e.getMessage());
             }
             newLine();
-            contentStream.showText("Kuittauksen ajankohta: " + signTime);
+            contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.kuittauksen.ajankohta.0", null, Locale.ROOT), signTime));
 
             newLine();
-            contentStream.showText("Sillanvalvoja: " + ((supervisor == null) ? "-" : supervisor.getFirstName() + " " + supervisor.getLastName()));
+            contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.sillanvalvoja.2.choice.0.1.0.1", null, Locale.ROOT), supervisor.getFirstName(), supervisor.getLastName(), (supervisor == null) ? 0 : 1));
 
             newLine();
             newLine();
             contentStream.setFont(PDType1Font.COURIER, 14);
-            contentStream.showText("Havainnot");
+            contentStream.showText(messageSource.getMessage("supervision.pdf.havainnot", null, Locale.ROOT));
             newLine();
 
             newLine();
             contentStream.setFont(PDType1Font.COURIER, 12);
-            contentStream.showText("Ajolinjaa on noudatettu: " + (report.getDrivingLineOk() ? "kyllä" : "ei"));
+            contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.ajolinjaa.on.noudatettu.0.choice.0.kylla.1.ei", null, Locale.ROOT), report.getDrivingLineOk() ? 0 : 1));
 
             newLine();
-            contentStream.showText("Miksi ajolinjaa ei noudatettu: ");
+            contentStream.showText(messageSource.getMessage("supervision.pdf.miksi.ajolinjaa.ei.noudatettu", null, Locale.ROOT));
             newLine();
 
             if (report.getDrivingLineInfo() != null && !report.getDrivingLineInfo().isEmpty()) {
@@ -139,32 +143,34 @@ public class PDFGenerator {
 
 
             newLine();
-            contentStream.showText("Ajonopeus on hyväksytty: " + (report.getSpeedLimitOk() ? "kyllä" : "ei"));
+            logger.debug(messageSource.getMessage("supervision.pdf.ajonopeus.on.hyvaksytty.0.choice.0.kylla.1.ei", null, Locale.ROOT));
+            logger.debug(MessageFormat.format(messageSource.getMessage("supervision.pdf.ajonopeus.on.hyvaksytty.0.choice.0.kylla.1.ei", null, Locale.ROOT), report.getSpeedLimitOk() ? 0 : 1));
+            contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.ajonopeus.on.hyvaksytty.0.choice.0.kylla.1.ei", null, Locale.ROOT), report.getSpeedLimitOk() ? 0 : 1));
 
             newLine();
-            contentStream.showText("Miksi ajonopeutta ei hyväksytä: ");
+            contentStream.showText(messageSource.getMessage("supervision.pdf.miksi.ajonopeutta.ei.hyvaksyta", null, Locale.ROOT));
             newLine();
             contentStream.showText((report.getSpeedLimitInfo() == null || report.getSpeedLimitInfo().isEmpty()) ? "-" : report.getSpeedLimitInfo());
 
             newLine();
             newLine();
-            contentStream.showText("Poikkeavia havaintoja: " + (report.getAnomalies() ? "kyllä" : "ei"));
+            contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.poikkeavia.havaintoja.0.choice.0.kylla.1.ei", null, Locale.ROOT), report.getAnomalies() ? 0 : 1));
 
             newLine();
-            contentStream.showText("Liikuntasauman rikkoutuminen: " + (report.getJointDamage() ? "kyllä" : "ei"));
+            contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.liikuntasauman.rikkoutuminen.0.choice.0.kylla.1.ei", null, Locale.ROOT), report.getJointDamage() ? 0 : 1));
 
             newLine();
-            contentStream.showText("Pysyvä taipuma tai muu siirtymä: " + (report.getBendOrDisplacement() ? "kyllä" : "ei"));
+            contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.pysyva.taipuma.tai.muu.siirtyma.0.choice.0.kylla.1.ei", null, Locale.ROOT), report.getBendOrDisplacement() ? 0 : 1));
 
             newLine();
-            contentStream.showText("Jotain muuta, mitä? " + (report.getOtherObservations() ? "kyllä" : "ei"));
+            contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.jotain.muuta.mita.0.choice.0.kylla.1.ei", null, Locale.ROOT), report.getOtherObservations() ? 0 : 1));
             newLine();
             contentStream.showText((report.getOtherObservationsInfo() == null || report.getOtherObservationsInfo().isEmpty()) ? "" : report.getOtherObservationsInfo());
             newLine();
             contentStream.showText((report.getAnomaliesDescription() == null || report.getAnomaliesDescription().isEmpty()) ? "" : report.getAnomaliesDescription());
 
             newLine();
-            contentStream.showText("Lisätiedot: " + report.getAdditionalInfo());
+            contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.lisatiedot.0", null, Locale.ROOT), report.getAdditionalInfo()));
 
 
             contentStream.endText();
@@ -175,7 +181,7 @@ public class PDFGenerator {
 
             if (imageCount > 0) {
                 newPage();
-                contentStream.showText("Kuvat (" + imageCount + "kpl)");
+                contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.kuvat.0.kpl", null, Locale.ROOT), imageCount));
                 newLine();
                 contentStream.endText();
 
