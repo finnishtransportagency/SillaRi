@@ -77,6 +77,8 @@ public class PDFGenerator {
             contentStream.setLeading(12 * 1.2f);
             contentStream.newLineAtOffset(50, y);
 
+            logger.debug("messageso: + "+messageSource);
+            logger.debug("messageso: + "+messageSource.getMessage("supervision.pdf.sillanvalvontaraportti",null, Locale.ROOT));
             contentStream.showText(messageSource.getMessage("supervision.pdf.sillanvalvontaraportti",null, Locale.ROOT));
 
             newLine();

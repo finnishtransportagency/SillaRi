@@ -234,9 +234,8 @@ public class LeluController {
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
-                var r =leluService.getWholeRoute(routeId);
-                        logger.debug("HELLO: " + r);
-                return r;
+                LeluRouteResponseDTO route =leluService.getWholeRoute(routeId);
+                return route;
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 return null;
@@ -265,6 +264,8 @@ public class LeluController {
         }
     }
 
+
+    //different way to return pdf; which is nicer?
     @GetMapping(value = "/supervisionReport2", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseBody
     @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
@@ -275,7 +276,7 @@ public class LeluController {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitPdf");
             try {
-                return supervisionService.getSupervisionPdf2(response, reportId);
+                return supervisionService.getSupervisionPdf2(reportId);
             } finally {
                 serviceMetric.end();
             }
@@ -299,7 +300,7 @@ public class LeluController {
                 supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
 
                 byte[] reportPDF = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
-                supervisionService.savePdf(reportPDF,supervision.getReport().get.getId());
+                supervisionService.savePdf(reportPDF,supervision.getReport().getId());
                 return reportPDF;
             } catch (Exception e) {
                 logger.error(e.getMessage());

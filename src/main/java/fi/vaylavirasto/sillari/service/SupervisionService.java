@@ -45,10 +45,12 @@ public class SupervisionService {
     AWSS3Client awss3Client;
     @Autowired
     SupervisionImageService supervisionImageService;
+    @Autowired
+    private PDFGenerator pdfGenerator;
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
-    private PDDocument document;
+
 
 
     public SupervisionModel getSupervision(Integer supervisionId) {
@@ -158,14 +160,10 @@ public class SupervisionService {
         try {
             SupervisionModel supervision = getSupervision(supervisionId);
             supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
-            PDFGenerator pdfGenerator = new PDFGenerator();
             byte[] pdf = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
+            savePdf(pdf, supervision.getReport().getId());
             String objectKey = "" + supervisionId;
-            boolean success = awss3Client.upload(objectKey, pdf, "application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET, AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
-            if (!success) {
-                // throw new LeluPermitPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
-                logger.error("Error uploading file to aws.");
-            }
+
         } catch (Exception e) {
             logger.error("Error uploading file to aws." + e.getClass().getName() + " " + e.getMessage());
             // throw new LeluPermitPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -192,8 +190,8 @@ public class SupervisionService {
         return getSupervision(supervisionReportModel.getSupervisionId());
     }
 
-    public byte[] getSupervisionPdf2(HttpServletResponse response, Long reportId) throws IOException {
-
+    //different way to return pdf; which is nicer?
+    public byte[] getSupervisionPdf2(Long reportId) throws IOException {
         String objectKey =""+reportId;
         if (activeProfile.equals("local")) {
             // Get from local file system
@@ -210,14 +208,7 @@ public class SupervisionService {
         } else {
             // Get from AWS
             byte[] pdf = awss3Client.download(objectKey, AWSS3Client.SILLARI_SUPERVISION_PDF_BUCKET);
-            if (pdf != null) {
-                response.setContentType("application/pdf");
-                OutputStream out = response.getOutputStream();
-                ByteArrayInputStream in = new ByteArrayInputStream(pdf);
-                IOUtils.copy(in, out);
-                out.close();
-                in.close();
-            }
+            return pdf;
         }
         return null;
     }
@@ -253,7 +244,7 @@ public class SupervisionService {
     }
 
     public void savePdf(byte[] reportPDF, int reportId) throws LeluPdfUploadException {
-        logger.debug("save pfd: " + reportId);
+        logger.debug("save pdf: " + reportId);
         String objectKey = "" + reportId;
         if (activeProfile.equals("local")) {
             // Save to local file system
