@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.api.rest;
 
+import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
@@ -31,7 +32,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.*;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -199,7 +202,7 @@ public class LeluController {
     })
     public LeluPermiPdfResponseDTO uploadPermitPdf(@RequestParam(required = true) String permitNumber, @RequestParam(required = true) Integer permitVersion,
                                                    @RequestPart("file") MultipartFile file)
-            throws LeluPermitPdfUploadException {
+            throws LeluPdfUploadException {
         logger.debug("Lelu uploadpermitpdf {}", permitNumber);
         logger.debug("FILE name:" + file.getName());
         logger.debug("FILE OriginalFilename:" + file.getOriginalFilename());
@@ -245,25 +248,41 @@ public class LeluController {
 
 
     @GetMapping(value = "/supervisionReport", produces = MediaType.APPLICATION_PDF_VALUE)
-    @ResponseBody
     @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
     @ApiResponses(value = {  @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class)))) })
-    public byte[] getSupervisionReport(@RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+    public void getSupervisionReport(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, IOException {
         logger.debug("Lelu getReport " + reportId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
+            ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitPdf");
             try {
-
-                logger.debug("HELLO: " );
-                return null;
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                logger.error(e.getClass().getName());
-                return null;
+                supervisionService.getSupervisionPdf(response, reportId);
+            } finally {
+                serviceMetric.end();
             }
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
         }
+    }
+
+    @GetMapping(value = "/supervisionReport2", produces = MediaType.APPLICATION_PDF_VALUE)
+    @ResponseBody
+    @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
+    @ApiResponses(value = {  @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class)))) })
+    public byte[]  getSupervisionReport2(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, IOException {
+        logger.debug("Lelu getReport " + reportId);
+
+        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
+            ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitPdf");
+            try {
+                return supervisionService.getSupervisionPdf2(response, reportId);
+            } finally {
+                serviceMetric.end();
+            }
+        } else {
+            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
+        }
+
     }
 
 
@@ -280,7 +299,7 @@ public class LeluController {
                 supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
 
                 byte[] reportPDF = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
-
+                supervisionService.savePdf(reportPDF,supervision.getReport().get.getId());
                 return reportPDF;
             } catch (Exception e) {
                 logger.error(e.getMessage());

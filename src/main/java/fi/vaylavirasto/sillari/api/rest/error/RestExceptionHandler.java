@@ -71,8 +71,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handleCustomException(ex.getMessage(), ex.getStatusCode());
     }
 
-    @ExceptionHandler(LeluPermitPdfUploadException.class)
-    public ResponseEntity<Object> leluPermitPdfUploadException(LeluPermitPdfUploadException ex) {
+    @ExceptionHandler(LeluPdfUploadException.class)
+    public ResponseEntity<Object> leluPermitPdfUploadException(LeluPdfUploadException ex) {
         logger.error("LeluPermitPdfUploadException 'reason':'{}'", ex.getMessage());
         return handleCustomException(ex.getMessage(), ex.getStatusCode());
     }

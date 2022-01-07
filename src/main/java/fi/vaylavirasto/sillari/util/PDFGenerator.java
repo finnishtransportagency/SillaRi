@@ -269,8 +269,9 @@ public class PDFGenerator {
     }
 
     private void handleImages(List<SupervisionImageModel> images, PDDocument document) {
-
+int n=0;
         for (SupervisionImageModel image : images) {
+        n++;
             String objectKey = image.getObjectKey();
             String decodedKey = new String(Base64.getDecoder().decode(objectKey));
             PDImageXObject pdImage = null;
@@ -330,7 +331,7 @@ public class PDFGenerator {
                 contentStream.beginText();
                 contentStream.setFont(PDType1Font.COURIER, 12);
                 contentStream.newLineAtOffset(50, y - 20);
-                contentStream.showText("KUVA");
+                contentStream.showText(messageSource.getMessage("kuva",null, Locale.ROOT) + n + ". " + image.getTaken());
                 contentStream.endText();
                 logger.debug("Drawing image at y:" + y);
                 contentStream.drawImage(pdImage, 30, y, newWidth, newHeight);
