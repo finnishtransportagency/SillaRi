@@ -52,7 +52,6 @@ public class SupervisionService {
     private String activeProfile;
 
 
-
     public SupervisionModel getSupervision(Integer supervisionId) {
         SupervisionModel supervision = supervisionRepository.getSupervisionById(supervisionId);
         if (supervision != null) {
@@ -157,22 +156,19 @@ public class SupervisionService {
     public SupervisionModel completeSupervision(Integer supervisionId, SillariUser user) {
         SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.REPORT_SIGNED, OffsetDateTime.now(), user.getUsername());
         supervisionStatusRepository.insertSupervisionStatus(status);
-        try {
-            SupervisionModel supervision = getSupervision(supervisionId);
-            supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
-            byte[] pdf = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
-            savePdf(pdf, supervision.getReport().getId());
-            String objectKey = "" + supervisionId;
 
-        } catch (Exception e) {
-            logger.error("Error uploading file to aws." + e.getClass().getName() + " " + e.getMessage());
-            // throw new LeluPermitPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        SupervisionModel supervision = getSupervision(supervisionId);
+        supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
+        byte[] pdf = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
+        try {
+            savePdf(pdf, supervision.getReport().getId());
+        } catch (LeluPdfUploadException e) {
+            e.printStackTrace();
         }
+
+
         return getSupervision(supervisionId);
     }
-
-
-
 
 
     // Deletes the report and adds the status CANCELLED
@@ -192,7 +188,7 @@ public class SupervisionService {
 
     //different way to return pdf; which is nicer?
     public byte[] getSupervisionPdf2(Long reportId) throws IOException {
-        String objectKey =""+reportId;
+        String objectKey = "" + reportId;
         if (activeProfile.equals("local")) {
             // Get from local file system
             String filename = objectKey + ".pdf";
@@ -201,8 +197,7 @@ public class SupervisionService {
             if (inputFile.exists()) {
                 FileInputStream in = new FileInputStream(inputFile);
                 return in.readAllBytes();
-            }
-            else{
+            } else {
                 logger.error("no file");
             }
         } else {
@@ -215,7 +210,7 @@ public class SupervisionService {
 
     public void getSupervisionPdf(HttpServletResponse response, Long reportId) throws IOException {
 
-        String objectKey =""+reportId;
+        String objectKey = "" + reportId;
         if (activeProfile.equals("local")) {
             // Get from local file system
             String filename = objectKey + ".pdf";
@@ -265,7 +260,6 @@ public class SupervisionService {
             }
         }
     }
-
 
 
 }
