@@ -194,17 +194,25 @@ public class PermitRepository {
     private void insertVehicles(DSLContext ctx, PermitModel permitModel) {
         List<VehicleModel> vehicles = permitModel.getVehicles();
 
-        for (VehicleModel vehicleModel : vehicles) {
-            vehicleModel.setPermitId(permitModel.getId());
+        for (int i = 0; i < vehicles.size(); i++) {
+            VehicleModel vehicle = vehicles.get(i);
+
+            vehicle.setPermitId(permitModel.getId());
+            vehicle.setOrdinal(i + 1);
+            String vehicleRole = vehicle.getRole() != null ? vehicle.getRole().toString() : null;
 
             ctx.insertInto(TableAlias.vehicle,
                             TableAlias.vehicle.PERMIT_ID,
+                            TableAlias.vehicle.ORDINAL,
                             TableAlias.vehicle.TYPE,
+                            TableAlias.vehicle.ROLE,
                             TableAlias.vehicle.IDENTIFIER
                     ).values(
-                            vehicleModel.getPermitId(),
-                            vehicleModel.getType(),
-                            vehicleModel.getIdentifier())
+                            vehicle.getPermitId(),
+                            vehicle.getOrdinal(),
+                            vehicle.getType(),
+                            vehicleRole,
+                            vehicle.getIdentifier())
                     .execute();
         }
     }

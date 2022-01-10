@@ -27,6 +27,12 @@ export enum TransportStatus {
   ARRIVED = "ARRIVED",
 }
 
+export enum VehicleRole {
+  TRUCK = "TRUCK",
+  TRAILER = "TRAILER",
+  PUSHING_VEHICLE = "PUSHING_VEHICLE",
+}
+
 export enum SupervisionListType {
   TRANSPORT = "TRANSPORT",
   BRIDGE = "BRIDGE",

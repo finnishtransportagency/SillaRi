@@ -22,6 +22,7 @@ public class VehicleRepository {
     public List<VehicleModel> getVehiclesOfPermit(Integer permitID) {
         return dsl.select().from(TableAlias.vehicle)
                 .where(TableAlias.vehicle.PERMIT_ID.eq(permitID))
+                .orderBy(TableAlias.vehicle.ORDINAL)
                 .fetch(new VehicleMapper());
     }
 }

@@ -266,7 +266,8 @@
         "destination": "Määräpaikka",
         "showRouteOnMap": "Näytä reitti kartalla",
         "tractorUnitIdentifier": "Ajoneuvon rekisteritunnus (vetoauto)",
-        "tractorUnitNotSelected": "Rekisteritunnus puuttuu"
+        "tractorUnitNotSelected": "Rekisteritunnus puuttuu",
+        "pushingVehicle": "lisä- tai työntöauto"
       },
       "bridgeInfo": {
         "bridge": "Silta",
