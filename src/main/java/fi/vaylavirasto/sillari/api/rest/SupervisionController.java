@@ -151,7 +151,7 @@ public class SupervisionController {
     }
 
     @Operation(summary = "Complete supervisions")
-    @PostMapping(value = "/completesupervisions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/completesupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public ResponseEntity<?> completeSupervisions(@RequestParam List<Integer> supervisionIds) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "completeSupervisions");

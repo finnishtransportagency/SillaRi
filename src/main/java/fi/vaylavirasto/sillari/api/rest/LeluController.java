@@ -145,8 +145,7 @@ public class LeluController {
             } catch (LeluPermitSaveException leluPermitSaveException) {
                 logger.error(leluPermitSaveException.getMessage());
                 throw leluPermitSaveException;
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 logger.error(e.getMessage());
                 throw new LeluPermitSaveException(messageSource.getMessage("lelu.permit.save.failed", null, Locale.ROOT) + " " + e.getClass().getName() + " " + e.getMessage());
             }
@@ -221,6 +220,17 @@ public class LeluController {
         return leluService.uploadRouteGeometry(routeId, file);
     }
 
+
+    /**
+     * Get supervisions of a route.
+     * Lelu uses this to see which supervision have report generated (status COMPLETED)
+     * and gets the report pdf:s with /supervisionReport
+     *
+     * @param routeId
+     * @param apiVersion
+     * @return
+     * @throws APIVersionException
+     */
     @RequestMapping(value = "/supervisions", method = RequestMethod.GET)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
@@ -234,7 +244,7 @@ public class LeluController {
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
-                LeluRouteResponseDTO route =leluService.getWholeRoute(routeId);
+                LeluRouteResponseDTO route = leluService.getWholeRoute(routeId);
                 return route;
             } catch (Exception e) {
                 logger.error(e.getMessage());
@@ -246,9 +256,21 @@ public class LeluController {
     }
 
 
+
+    /**
+     * get the pdf supervision report from S3 (disk on dev localhost).
+     * Lelu calls this after getting SIGNED-status of a report from /supervisions.
+     * The report has been generated and status set to SIGNED when  /completesupervision has happened in app
+     *
+     * @param response
+     * @param reportId   This is actually technically supervision id but is called reportId in the lelu-interface.
+     * @param apiVersion
+     * @throws APIVersionException
+     * @throws IOException
+     */
     @GetMapping(value = "/supervisionReport", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
-    @ApiResponses(value = {  @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class)))) })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
     public void getSupervisionReport(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, IOException {
         logger.debug("Lelu getReport " + reportId);
 
@@ -269,8 +291,8 @@ public class LeluController {
     @GetMapping(value = "/supervisionReport2", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseBody
     @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
-    @ApiResponses(value = {  @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class)))) })
-    public byte[]  getSupervisionReport2(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, IOException {
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
+    public byte[] getSupervisionReport2(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, IOException {
         logger.debug("Lelu getReport " + reportId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
@@ -287,20 +309,21 @@ public class LeluController {
     }
 
 
+    //for testing and deving; generate report for given supervision id; save to local disk or S3; retunr pdf in rst response
     @GetMapping(value = "/DEV_supervisionReport", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseBody
     @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
-    @ApiResponses(value = {  @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class)))) })
-    public byte[] createSupervisionReport(@RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
-        logger.debug("Lelu getReport " + reportId);
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
+    public byte[] createSupervisionReport(@RequestParam Long supervisionId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+        logger.debug("Lelu getReport " + supervisionId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
-                SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(reportId));
+                SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(supervisionId));
                 supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
 
                 byte[] reportPDF = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
-                supervisionService.savePdf(reportPDF,supervision.getReport().getId());
+                supervisionService.savePdf(reportPDF, supervision.getReport().getId());
                 return reportPDF;
             } catch (Exception e) {
                 logger.error(e.getMessage());
