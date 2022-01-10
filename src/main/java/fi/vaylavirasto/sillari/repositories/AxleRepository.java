@@ -21,6 +21,7 @@ public class AxleRepository {
     public List<AxleModel> getAxlesOfChart(Integer axleChartID) {
         return dsl.select().from(TableAlias.axle)
                 .where(TableAlias.axle.AXLE_CHART_ID.eq(axleChartID))
+                .orderBy(TableAlias.axle.AXLE_NUMBER)
                 .fetch(new AxleMapper());
     }
 }

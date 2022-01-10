@@ -33,6 +33,9 @@ public class SupervisorRepository {
                     SupervisorModel supervisor = supervisorMapper.map(record);
                     if (supervisor != null) {
                         supervisor.setPriority(record.get(TableAlias.supervisionSupervisor.PRIORITY));
+                        // Supervisor created and updated timestamps overridden by supervisionSupervisor
+                        supervisor.setRowCreatedTime(record.get(TableAlias.supervisionSupervisor.ROW_CREATED_TIME));
+                        supervisor.setRowUpdatedTime(record.get(TableAlias.supervisionSupervisor.ROW_UPDATED_TIME));
                     }
                     return supervisor;
                 });

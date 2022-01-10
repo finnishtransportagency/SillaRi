@@ -10,7 +10,7 @@ const Map = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={t("main.header.title")} />
-      <IonContent fullscreen>
+      <IonContent>
         <MapContainer />
       </IonContent>
     </IonPage>

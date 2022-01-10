@@ -10,12 +10,14 @@ public class TransportDimensionsMapper implements RecordMapper<Record, Transport
     @Nullable
     @Override
     public TransportDimensionsModel map(Record record) {
-        TransportDimensionsModel transportDimensionsModel = new TransportDimensionsModel();
-        transportDimensionsModel.setId(record.get(TableAlias.transportDimensions.ID));
-        transportDimensionsModel.setPermitId(record.get(TableAlias.transportDimensions.PERMIT_ID));
-        transportDimensionsModel.setHeight(record.get(TableAlias.transportDimensions.HEIGHT));
-        transportDimensionsModel.setWidth(record.get(TableAlias.transportDimensions.WIDTH));
-        transportDimensionsModel.setLength(record.get(TableAlias.transportDimensions.LENGTH));
-        return transportDimensionsModel;
+        TransportDimensionsModel model = new TransportDimensionsModel();
+        model.setId(record.get(TableAlias.transportDimensions.ID));
+        model.setPermitId(record.get(TableAlias.transportDimensions.PERMIT_ID));
+        model.setHeight(record.get(TableAlias.transportDimensions.HEIGHT));
+        model.setWidth(record.get(TableAlias.transportDimensions.WIDTH));
+        model.setLength(record.get(TableAlias.transportDimensions.LENGTH));
+        model.setRowCreatedTime(record.get(TableAlias.transportDimensions.ROW_CREATED_TIME));
+        model.setRowUpdatedTime(record.get(TableAlias.transportDimensions.ROW_UPDATED_TIME));
+        return model;
     }
 }

@@ -42,11 +42,10 @@
     }
   },
   "camera": {
-    "takePhotoButtonLabel": "Ta bild",
-    "listLabel": "Bilderna",
-    "listLabelPcs": "st",
+    "takePhotoButtonLabel": "(SV) Add photos",
+    "listLabel": "(SV) Photos",
     "item": {
-      "deleteButtonLabel": "Ta bort"
+      "deleteButtonLabel": "(SV) Delete image"
     }
   },
   "SidebarMenu": {
@@ -267,7 +266,8 @@
         "destination": "(SV) Destination",
         "showRouteOnMap": "(SV) Show route on map",
         "tractorUnitIdentifier": "(SV) Vehicle registration number (tractor unit)",
-        "tractorUnitNotSelected": "(SV) Registration number missing"
+        "tractorUnitNotSelected": "(SV) Registration number missing",
+        "pushingVehicle": "(SV) additional or pushing vehicle"
       },
       "bridgeInfo": {
         "bridge": "(SV) Bridge",
@@ -275,9 +275,11 @@
         "bridgeSupervisors": "(SV) Bridge supervisors",
         "ownSupervisor": "(SV) Own supervisors",
         "contractor": "(SV) Maintenance contractor",
+        "contractNumber": "(SV) Contract number",
         "bridgeSupervisor": "(SV) Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "(SV) Bridge supervisor (1.)",
-        "supervisor2": "(SV) Backup supervisor (2.)"
+        "supervisor2": "(SV) Backup supervisor (2.)",
+        "copySupervisor": "(SV) Copy to all bridges"
       }
     },
     "supervisionType": {

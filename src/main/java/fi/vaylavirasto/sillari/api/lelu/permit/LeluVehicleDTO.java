@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.api.lelu.permit;
 
+import fi.vaylavirasto.sillari.model.VehicleRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,9 @@ public class LeluVehicleDTO {
     @Schema(description = "Vehicle type", required = true, example = "kuorma-auto")
     private String type;
 
+    @Schema(description = "Vehicle role", example = "TRUCK")
+    private VehicleRole role;
+
     @NotBlank(message = "{vehicle.identifier.not.blank}")
     @Schema(description = "Registration number", required = true, example = "ABC-123")
     private String identifier;
@@ -23,8 +27,9 @@ public class LeluVehicleDTO {
     public LeluVehicleDTO() {
     }
 
-    public LeluVehicleDTO(String type, String identifier) {
+    public LeluVehicleDTO(String type, VehicleRole role, String identifier) {
         this.type = type;
+        this.role = role;
         this.identifier = identifier;
     }
 

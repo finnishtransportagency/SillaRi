@@ -1,11 +1,15 @@
 package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.List;
 
 @Data
-public class RouteModel {
+@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+public class RouteModel extends BaseModel {
     private Integer id;
     private Integer permitId;
     private Integer departureAddressId;

@@ -42,11 +42,10 @@
     }
   },
   "camera": {
-    "takePhotoButtonLabel": "Take photo",
-    "listLabel": "Images",
-    "listLabelPcs": "pcs",
+    "takePhotoButtonLabel": "Add photos",
+    "listLabel": "Photos",
     "item": {
-      "deleteButtonLabel": "Delete"
+      "deleteButtonLabel": "Delete image"
     }
   },
   "SidebarMenu": {
@@ -267,7 +266,8 @@
         "destination": "Destination",
         "showRouteOnMap": "Show route on map",
         "tractorUnitIdentifier": "Vehicle registration number (tractor unit)",
-        "tractorUnitNotSelected": "Registration number missing"
+        "tractorUnitNotSelected": "Registration number missing",
+        "pushingVehicle": "additional or pushing vehicle"
       },
       "bridgeInfo": {
         "bridge": "Bridge",
@@ -275,9 +275,11 @@
         "bridgeSupervisors": "Bridge supervisors",
         "ownSupervisor": "Own supervisors",
         "contractor": "Maintenance contractor",
+        "contractNumber": "Contract number",
         "bridgeSupervisor": "Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "Bridge supervisor (1.)",
-        "supervisor2": "Backup supervisor (2.)"
+        "supervisor2": "Backup supervisor (2.)",
+        "copySupervisor": "Copy to all bridges"
       }
     },
     "supervisionType": {

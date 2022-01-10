@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IonButton, IonContent, IonFab, IonIcon, IonLabel, IonList, IonListHeader, IonPage } from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonFooter, IonGrid, IonIcon, IonList, IonPage, IonRow } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Camera, CameraSource, CameraResultType } from "@capacitor/camera";
@@ -114,18 +114,11 @@ const Photos = (): JSX.Element => {
     history.goBack();
   };
 
-  const allImagesAmount = (images ? images.length : 0) + (savedImages ? savedImages.length : 0);
-
   // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
   return (
     <IonPage>
-      <Header title={t("main.header.title")} confirmGoBack={saveImages} />
-      <IonContent fullscreen>
-        <IonListHeader>
-          <IonLabel>
-            {t("camera.listLabel")} ({allImagesAmount} {t("camera.listLabelPcs")})
-          </IonLabel>
-        </IonListHeader>
+      <Header title={t("supervision.photos")} confirmGoBack={saveImages} />
+      <IonContent>
         <IonList>
           {images &&
             images.length > 0 &&
@@ -177,14 +170,20 @@ const Photos = (): JSX.Element => {
         </IonList>
 
         <ImagePreview imageUrl={imagePreviewUrl} isOpen={isImagePreviewOpen} setIsOpen={() => showImage(false)} />
-
-        <IonFab slot="fixed" horizontal="end" vertical="bottom">
-          <IonButton expand="block" size="large" onClick={() => takePicture()}>
-            <IonIcon className="otherIcon" icon={camera} slot="start" />
-            {t("camera.takePhotoButtonLabel")}
-          </IonButton>
-        </IonFab>
       </IonContent>
+
+      <IonFooter className="lightBackground">
+        <IonGrid>
+          <IonRow>
+            <IonCol className="ion-text-center">
+              <IonButton color="secondary" expand="block" size="large" onClick={() => takePicture()}>
+                <IonIcon className="otherIcon" icon={camera} slot="start" />
+                {t("camera.takePhotoButtonLabel")}
+              </IonButton>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+      </IonFooter>
     </IonPage>
   );
 };

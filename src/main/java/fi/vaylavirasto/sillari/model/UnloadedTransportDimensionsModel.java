@@ -1,11 +1,15 @@
 package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
 @Data
-public class UnloadedTransportDimensionsModel {
+@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+public class UnloadedTransportDimensionsModel extends BaseModel {
     private Integer id;
     private Integer permitId;
     private BigDecimal height;

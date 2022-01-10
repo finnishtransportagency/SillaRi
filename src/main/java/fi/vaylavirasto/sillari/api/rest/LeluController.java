@@ -29,6 +29,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -75,6 +77,16 @@ public class LeluController {
         this.messageSource = messageSource;
     }
 
+    // Handle JSON parse exceptions (thrown through @RequestBody)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleException(HttpMessageNotReadableException ex) {
+        logger.warn("HttpMessageNotReadableException 'message':'{}'", ex.getMessage());
+        // Get only the first segment of the message to not include nested exceptions
+        String truncatedMsg = ex.getMessage() != null ? ex.getMessage().split(";")[0] : null;
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(truncatedMsg);
+    }
+
+
     @RequestMapping(value = "/apiVersion", method = RequestMethod.GET)
     @Operation(summary = "Return currently valid API version")
     public String apiVersion() {
@@ -113,9 +125,8 @@ public class LeluController {
         return "Hello LeLu! SillaRi got post: " + body;
     }
 
-    @RequestMapping(value = "/permit", method = RequestMethod.POST)
+    @PostMapping(value = "/permit")
     @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Create or update permit", description = "Adds a new permit from LeLu to SillaRi. " +
             "If the same permit number is already found in SillaRi, updates that permit with the provided data. " +
             "If permit is updated, updates routes found with same LeLu ID, adds new routes and deletes routes that are no longer included in the permit. " +
@@ -125,14 +136,14 @@ public class LeluController {
             @ApiResponse(responseCode = "200 OK", description = "Permit saved/updated"),
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
     })
-    public LeluPermitResponseDTO savePermit(@Valid @RequestBody LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPermitSaveException {
+    public ResponseEntity<LeluPermitResponseDTO> savePermit(@Valid @RequestBody LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPermitSaveException {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             try {
                 // Get Bridges From Trex To DB
 
                 //TODO call non dev version when time
-                LeluPermitResponseDTO response = leluService.createOrUpdatePermitDevVersion(permitDTO);
+                LeluPermitResponseDTO permit = leluService.createOrUpdatePermitDevVersion(permitDTO);
 
                 //update bridges from trex in the background so we can response lelu quicker
                 ExecutorService executor = Executors.newWorkStealingPool();
@@ -141,7 +152,7 @@ public class LeluController {
                 });
 
                 logger.debug("LeLu savePermit returning");
-                return response;
+                return ResponseEntity.ok(permit);
             } catch (LeluPermitSaveException leluPermitSaveException) {
                 logger.error(leluPermitSaveException.getMessage());
                 throw leluPermitSaveException;

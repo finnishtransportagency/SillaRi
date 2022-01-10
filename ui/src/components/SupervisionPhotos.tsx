@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import camera from "../theme/icons/camera_white.svg";
 import lane from "../theme/icons/lane_white.svg";
 import ImageThumbnailRow from "./ImageThumbnailRow";
@@ -31,6 +31,11 @@ const SupervisionPhotos = ({ images = [], headingKey, disabled, isButtonsInclude
 
       <IonGrid>
         <ImageThumbnailRow images={images} />
+        <IonRow>
+          <IonCol>
+            <IonText>{`${t("camera.listLabel")}: ${images ? images.length : 0}`}</IonText>
+          </IonCol>
+        </IonRow>
       </IonGrid>
 
       {isButtonsIncluded && (

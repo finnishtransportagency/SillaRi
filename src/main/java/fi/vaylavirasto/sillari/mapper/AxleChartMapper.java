@@ -12,10 +12,12 @@ public class AxleChartMapper implements RecordMapper<Record, AxleChartModel> {
     @Nullable
     @Override
     public AxleChartModel map(Record record) {
-        AxleChartModel axleChartModel = new AxleChartModel();
-        axleChartModel.setId(record.get(TableAlias.axleChart.ID));
-        axleChartModel.setPermitId(record.get(TableAlias.axleChart.PERMIT_ID));
-        axleChartModel.setAxles(new ArrayList<>());
-        return axleChartModel;
+        AxleChartModel model = new AxleChartModel();
+        model.setId(record.get(TableAlias.axleChart.ID));
+        model.setPermitId(record.get(TableAlias.axleChart.PERMIT_ID));
+        model.setRowCreatedTime(record.get(TableAlias.axleChart.ROW_CREATED_TIME));
+        model.setRowUpdatedTime(record.get(TableAlias.axleChart.ROW_UPDATED_TIME));
+        model.setAxles(new ArrayList<>());
+        return model;
     }
 }

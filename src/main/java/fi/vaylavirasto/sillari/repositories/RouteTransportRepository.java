@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.RouteTransportMapper;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
+import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import fi.vaylavirasto.sillari.model.TransportStatusType;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+
+import static org.jooq.impl.DSL.notExists;
+import static org.jooq.impl.DSL.selectOne;
 
 @Repository
 public class RouteTransportRepository {
@@ -51,6 +55,12 @@ public class RouteTransportRepository {
                 .innerJoin(TableAlias.supervision).on(TableAlias.routeTransport.ID.eq(TableAlias.supervision.ROUTE_TRANSPORT_ID))
                 .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
                 .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
+                // Ignore routeTransports with only completed supervisions
+                .and(notExists(selectOne().from(TableAlias.supervisionStatus
+                        .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)
+                                .and((TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.FINISHED.toString()))
+                                        .or(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.CROSSING_DENIED.toString()))
+                                        .or(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.REPORT_SIGNED.toString())))))))
                 .groupBy(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME, TableAlias.routeTransport.TRACTOR_UNIT)
                 .fetch(new RouteTransportMapper());
     }
