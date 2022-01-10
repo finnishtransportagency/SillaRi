@@ -8,6 +8,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,6 +29,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Autowired
     private MessageSource messageSource;
 
+    // Validation errors (javax.validation.constraints)
     @Override
     @NonNull
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
@@ -62,31 +64,31 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(LeluPermitSaveException.class)
     public ResponseEntity<Object> leluPermitSaveException(LeluPermitSaveException ex) {
         logger.error("LeluPermitSaveException 'id':'{}'", ex.getMessage());
-        return handleCustomException(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return handleCustomException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     @ExceptionHandler(LeluRouteGeometryUploadException.class)
     public ResponseEntity<Object> leluRouteGeometryUploadException(LeluRouteGeometryUploadException ex) {
         logger.error("LeluRouteGeometryUploadException 'reason':'{}'", ex.getMessage());
-        return handleCustomException(ex.getMessage(), ex.getStatusCode());
+        return handleCustomException(ex.getStatusCode(), ex.getMessage());
     }
 
     @ExceptionHandler(LeluPermitPdfUploadException.class)
     public ResponseEntity<Object> leluPermitPdfUploadException(LeluPermitPdfUploadException ex) {
         logger.error("LeluPermitPdfUploadException 'reason':'{}'", ex.getMessage());
-        return handleCustomException(ex.getMessage(), ex.getStatusCode());
+        return handleCustomException(ex.getStatusCode(), ex.getMessage());
     }
 
     @ExceptionHandler(LeluRouteNotFoundException.class)
     public ResponseEntity<Object> leluRouteNotFoundException(LeluRouteNotFoundException ex) {
         logger.error("LeluRouteNotFoundException 'reason':'{}'", ex.getMessage());
-        return handleCustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return handleCustomException(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(LeluDeleteRouteWithSupervisionsException.class)
     public ResponseEntity<Object> leluDeleteRouteWithSupervisionsException(LeluDeleteRouteWithSupervisionsException ex) {
         logger.error("LeluDeleteRouteWithSupervisionsException 'reason':'{}'", ex.getMessage());
-        return handleCustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return handleCustomException(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(APIVersionException.class)
@@ -113,7 +115,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         logger.error("TRexRestException 'statusCode':{}, 'originalMessage':'{}', 'newMessage':'{}'", ex.getStatusCode().value(), ex.getMessage(), message);
-        return handleCustomException(message, ex.getStatusCode());
+        return handleCustomException(ex.getStatusCode(), message);
+    }
+
+    private ResponseEntity<Object> handleCustomException(HttpStatus status, String message) {
+        return createErrorResponse(status, message, null);
     }
 
     private ResponseEntity<Object> createErrorResponse(HttpStatus status, String message, List<String> errors) {
@@ -126,14 +132,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         if (errors != null && !errors.isEmpty()) {
             body.put("errors", errors);
         }
-        return new ResponseEntity<>(body, status);
-    }
-
-    private ResponseEntity<Object> handleCustomException(String message, HttpStatus status) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", new Date());
-        body.put("status", status.value());
-        body.put("message", message);
         return new ResponseEntity<>(body, status);
     }
 

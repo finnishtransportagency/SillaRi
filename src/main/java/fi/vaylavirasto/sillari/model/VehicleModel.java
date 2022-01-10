@@ -9,6 +9,8 @@ import lombok.ToString;
 public class VehicleModel extends BaseModel {
     private Integer id;
     private Integer permitId;
+    private Integer ordinal;
     private String type;
+    private VehicleRole role;
     private String identifier;
 }

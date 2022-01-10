@@ -11,7 +11,7 @@ import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import mapPoint from "../../theme/icons/map-point.svg";
-import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
+import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, TransportStatus, VehicleRole } from "../../utils/constants";
 import IPermit from "../../interfaces/IPermit";
 import IVehicle from "../../interfaces/IVehicle";
 
@@ -205,10 +205,14 @@ const RouteInfoGrid = ({
               {status === TransportStatus.PLANNED && (
                 <CustomSelect
                   options={vehicles
-                    .filter((vehicle) => !!vehicle.identifier)
+                    .filter((vehicle) => !!vehicle.identifier && (!vehicle.role || vehicle.role !== VehicleRole.TRAILER))
                     .map((vehicle) => {
-                      const { id: vehicleId, type, identifier } = vehicle;
-                      return { value: vehicleId, label: `${identifier.toUpperCase()} (${type.toLocaleLowerCase()})` };
+                      const { id: vehicleId, identifier, role } = vehicle;
+                      const isPushingVehicle = role && role === VehicleRole.PUSHING_VEHICLE;
+                      const vehicleLabel = isPushingVehicle
+                        ? `${identifier.toUpperCase()} (${t("management.transportDetail.routeInfo.pushingVehicle")})`
+                        : identifier.toUpperCase();
+                      return { value: vehicleId, label: vehicleLabel };
                     })}
                   selectedValue={selectedVehicle?.id}
                   onChange={(vehicleId) => setTractorUnit(vehicleId as number)}
