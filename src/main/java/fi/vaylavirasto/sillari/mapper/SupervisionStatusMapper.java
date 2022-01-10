@@ -12,13 +12,15 @@ public class SupervisionStatusMapper implements RecordMapper<Record, Supervision
     @Nullable
     @Override
     public SupervisionStatusModel map(Record record) {
-        SupervisionStatusModel supervisionStatusModel = new SupervisionStatusModel();
-        supervisionStatusModel.setId(record.get(TableAlias.supervisionStatus.ID));
-        supervisionStatusModel.setSupervisionId(record.get(TableAlias.supervisionStatus.SUPERVISION_ID));
-        supervisionStatusModel.setStatus(record.get(TableAlias.supervisionStatus.STATUS, new SupervisionStatusTypeConverter(String.class, SupervisionStatusType.class)));
-        supervisionStatusModel.setTime(record.get(TableAlias.supervisionStatus.TIME));
-        supervisionStatusModel.setReason(record.get(TableAlias.supervisionStatus.REASON));
-        supervisionStatusModel.setUsername(record.get(TableAlias.supervisionStatus.USERNAME));
-        return supervisionStatusModel;
+        SupervisionStatusModel model = new SupervisionStatusModel();
+        model.setId(record.get(TableAlias.supervisionStatus.ID));
+        model.setSupervisionId(record.get(TableAlias.supervisionStatus.SUPERVISION_ID));
+        model.setStatus(record.get(TableAlias.supervisionStatus.STATUS, new SupervisionStatusTypeConverter(String.class, SupervisionStatusType.class)));
+        model.setTime(record.get(TableAlias.supervisionStatus.TIME));
+        model.setReason(record.get(TableAlias.supervisionStatus.REASON));
+        model.setUsername(record.get(TableAlias.supervisionStatus.USERNAME));
+        model.setRowCreatedTime(record.get(TableAlias.supervisionStatus.ROW_CREATED_TIME));
+        model.setRowUpdatedTime(record.get(TableAlias.supervisionStatus.ROW_UPDATED_TIME));
+        return model;
     }
 }

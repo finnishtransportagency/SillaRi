@@ -23,19 +23,21 @@ public class SupervisionImageMapper implements RecordMapper<Record, SupervisionI
     @Nullable
     @Override
     public SupervisionImageModel map(Record record) {
-        SupervisionImageModel supervisionImageModel = new SupervisionImageModel();
-        supervisionImageModel.setId(record.get(TableAlias.supervisionImage.ID));
-        supervisionImageModel.setSupervisionId(record.get(TableAlias.supervisionImage.SUPERVISION_ID));
+        SupervisionImageModel model = new SupervisionImageModel();
+        model.setId(record.get(TableAlias.supervisionImage.ID));
+        model.setSupervisionId(record.get(TableAlias.supervisionImage.SUPERVISION_ID));
         if (this.base64on) {
-            supervisionImageModel.setObjectKey(Base64.getEncoder().encodeToString(record.get(TableAlias.supervisionImage.OBJECT_KEY).getBytes()));
+            model.setObjectKey(Base64.getEncoder().encodeToString(record.get(TableAlias.supervisionImage.OBJECT_KEY).getBytes()));
         } else {
-            supervisionImageModel.setObjectKey(record.get(TableAlias.supervisionImage.OBJECT_KEY));
+            model.setObjectKey(record.get(TableAlias.supervisionImage.OBJECT_KEY));
         }
-        supervisionImageModel.setFilename(record.get(TableAlias.supervisionImage.FILENAME));
+        model.setFilename(record.get(TableAlias.supervisionImage.FILENAME));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
-        supervisionImageModel.setTaken(record.get(TableAlias.supervisionImage.TAKEN).format(formatter));
-        supervisionImageModel.setMimetype("");
-        supervisionImageModel.setEncoding("");
-        return supervisionImageModel;
+        model.setTaken(record.get(TableAlias.supervisionImage.TAKEN).format(formatter));
+        model.setMimetype("");
+        model.setEncoding("");
+        model.setRowCreatedTime(record.get(TableAlias.supervisionImage.ROW_CREATED_TIME));
+        model.setRowUpdatedTime(record.get(TableAlias.supervisionImage.ROW_UPDATED_TIME));
+        return model;
     }
 }

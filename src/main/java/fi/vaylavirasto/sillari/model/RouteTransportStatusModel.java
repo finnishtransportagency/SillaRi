@@ -1,11 +1,15 @@
 package fi.vaylavirasto.sillari.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.OffsetDateTime;
 
 @Data
-public class RouteTransportStatusModel {
+@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+public class RouteTransportStatusModel extends BaseModel {
     private Integer id;
     private Integer routeTransportId;
     private TransportStatusType status;

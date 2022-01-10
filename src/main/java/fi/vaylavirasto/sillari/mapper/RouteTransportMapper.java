@@ -12,13 +12,15 @@ public class RouteTransportMapper implements RecordMapper<Record, RouteTransport
     @Nullable
     @Override
     public RouteTransportModel map(Record record) {
-        RouteTransportModel routeTransportModel = new RouteTransportModel();
-        routeTransportModel.setId(record.get(TableAlias.routeTransport.ID));
-        routeTransportModel.setRouteId(record.get(TableAlias.routeTransport.ROUTE_ID));
-        routeTransportModel.setPlannedDepartureTime(record.get(TableAlias.routeTransport.PLANNED_DEPARTURE_TIME));
-        routeTransportModel.setTractorUnit(record.get(TableAlias.routeTransport.TRACTOR_UNIT));
-        routeTransportModel.setStatusHistory(new ArrayList<>());
-        routeTransportModel.setSupervisions(new ArrayList<>());
-        return routeTransportModel;
+        RouteTransportModel model = new RouteTransportModel();
+        model.setId(record.get(TableAlias.routeTransport.ID));
+        model.setRouteId(record.get(TableAlias.routeTransport.ROUTE_ID));
+        model.setPlannedDepartureTime(record.get(TableAlias.routeTransport.PLANNED_DEPARTURE_TIME));
+        model.setTractorUnit(record.get(TableAlias.routeTransport.TRACTOR_UNIT));
+        model.setRowCreatedTime(record.get(TableAlias.routeTransport.ROW_CREATED_TIME));
+        model.setRowUpdatedTime(record.get(TableAlias.routeTransport.ROW_UPDATED_TIME));
+        model.setStatusHistory(new ArrayList<>());
+        model.setSupervisions(new ArrayList<>());
+        return model;
     }
 }
