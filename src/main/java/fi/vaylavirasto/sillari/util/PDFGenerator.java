@@ -56,8 +56,9 @@ public class PDFGenerator {
         RouteModel route = supervision.getRouteBridge().getRoute();
         SupervisionReportModel report = supervision.getReport();
         PermitModel permit = route.getPermit();
+        // TODO get the supervisor who has finished the report
         SupervisorModel supervisor = ((supervision.getSupervisors() == null || supervision.getSupervisors().isEmpty()) ? null : supervision.getSupervisors().get(0));
-        var images = supervision.getImages();
+        List<SupervisionImageModel> images = supervision.getImages();
 
         document = new PDDocument();
         page = new PDPage();
@@ -77,8 +78,6 @@ public class PDFGenerator {
             contentStream.setLeading(12 * 1.2f);
             contentStream.newLineAtOffset(50, y);
 
-            logger.debug("messageso: + "+messageSource);
-            logger.debug("messageso: + "+messageSource.getMessage("supervision.pdf.sillanvalvontaraportti",null, Locale.ROOT));
             contentStream.showText(messageSource.getMessage("supervision.pdf.sillanvalvontaraportti",null, Locale.ROOT));
 
             newLine();
@@ -90,12 +89,8 @@ public class PDFGenerator {
             newLine();
             contentStream.showText(messageSource.getMessage("supervision.pdf.reitin.nimi",null, Locale.ROOT) + route.getName());
 
-            String supervisionTime = "-";
-            try {
-                supervisionTime = formatStatusDate(supervision, SupervisionStatusType.IN_PROGRESS);
-            } catch (Exception e) {
-                logger.debug("caugth: " + e.getClass().getName() + e.getMessage());
-            }
+            String supervisionTime = formatStatusDate(supervision, SupervisionStatusType.IN_PROGRESS);
+
             newLine();
             contentStream.showText(messageSource.getMessage("supervision.pdf.valvonta.aloitettu",null, Locale.ROOT) + supervisionTime);
 
@@ -105,17 +100,15 @@ public class PDFGenerator {
             newLine();
             contentStream.showText(messageSource.getMessage("supervision.pdf.tieosoite",null, Locale.ROOT) + (bridge.getRoadAddress() == null ? "-" : bridge.getRoadAddress()));
 
-            String signTime = "-";
-            try {
-                signTime = formatStatusDate(supervision, SupervisionStatusType.REPORT_SIGNED);
-            } catch (Exception e) {
-                logger.debug("caugth: " + e.getClass().getName() + e.getMessage());
-            }
+            String signTime = formatStatusDate(supervision, SupervisionStatusType.REPORT_SIGNED);
+
             newLine();
             contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.kuittauksen.ajankohta.0", null, Locale.ROOT), signTime));
 
             newLine();
-            contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.sillanvalvoja.2.choice.0.1.0.1", null, Locale.ROOT), supervisor.getFirstName(), supervisor.getLastName(), (supervisor == null) ? 0 : 1));
+            String supervisorFirstName = supervisor != null ? supervisor.getFirstName() : "";
+            String supervisorLastName = supervisor != null ? supervisor.getLastName() : "";
+            contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.sillanvalvoja.2.choice.0.1.0.1", null, Locale.ROOT), supervisorFirstName, supervisorLastName, (supervisor == null) ? 0 : 1));
 
             newLine();
             newLine();
@@ -132,21 +125,18 @@ public class PDFGenerator {
             newLine();
 
             if (report.getDrivingLineInfo() != null && !report.getDrivingLineInfo().isEmpty()) {
-                for (var line : WordUtils.wrap(report.getDrivingLineInfo(), 70).lines().collect(Collectors.toList())) {
+                for (String line : WordUtils.wrap(report.getDrivingLineInfo(), 70).lines().collect(Collectors.toList())) {
                     try {
-                        logger.debug("HELLO: " + line);
                         contentStream.showText(line);
                         newLine();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.debug("caught: " + e.getClass().getName() + e.getMessage());
                     }
                 }
             }
 
 
             newLine();
-            logger.debug(messageSource.getMessage("supervision.pdf.ajonopeus.on.hyvaksytty.0.choice.0.kylla.1.ei", null, Locale.ROOT));
-            logger.debug(MessageFormat.format(messageSource.getMessage("supervision.pdf.ajonopeus.on.hyvaksytty.0.choice.0.kylla.1.ei", null, Locale.ROOT), report.getSpeedLimitOk() ? 0 : 1));
             contentStream.showText(MessageFormat.format(messageSource.getMessage("supervision.pdf.ajonopeus.on.hyvaksytty.0.choice.0.kylla.1.ei", null, Locale.ROOT), report.getSpeedLimitOk() ? 0 : 1));
 
             newLine();
@@ -199,7 +189,8 @@ public class PDFGenerator {
             return IOUtils.toByteArray(inputStream);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // TODO what to do?
+            logger.error("PDF generation failed: " + e.getClass().getName() + e.getMessage());
         }
 
         return null;
@@ -211,20 +202,18 @@ public class PDFGenerator {
         if (y < 20) {
             newPage();
         }
-        logger.debug("" + y);
     }
 
     private void newPage() {
         y = page.getMediaBox().getHeight() - TOP_MARGIN;
         try {
-
             contentStream.endText();
-        } catch (IllegalStateException | IOException e) {
+        } catch (IllegalStateException | IOException ignored) {
             //might be ended and closed already
         }
         try {
             contentStream.close();
-        } catch (IllegalStateException | IOException e) {
+        } catch (IllegalStateException | IOException ignored) {
             //might be ended and closed already
         }
 
@@ -238,7 +227,7 @@ public class PDFGenerator {
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("New page failed: " + e.getClass().getName() + e.getMessage());
         }
 
     }
@@ -247,16 +236,13 @@ public class PDFGenerator {
     private void newImagePage() {
         y = page.getMediaBox().getHeight() - TOP_MARGIN;
         try {
-
             contentStream.endText();
-        } catch (IllegalStateException | IOException e) {
-            logger.debug("allready ended");
+        } catch (IllegalStateException | IOException ignored) {
             //might be ended and closed already
         }
         try {
             contentStream.close();
-        } catch (IllegalStateException | IOException e) {
-            logger.debug("allready closed");
+        } catch (IllegalStateException | IOException ignored) {
             //might be ended and closed already
         }
 
@@ -265,15 +251,15 @@ public class PDFGenerator {
             document.addPage(page);
             contentStream = new PDPageContentStream(document, page);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("New image page failed: " + e.getClass().getName() + e.getMessage());
         }
 
     }
 
     private void handleImages(List<SupervisionImageModel> images, PDDocument document) {
-int n=0;
+        int n = 0;
         for (SupervisionImageModel image : images) {
-        n++;
+            n++;
             String objectKey = image.getObjectKey();
             String decodedKey = new String(Base64.getDecoder().decode(objectKey));
             PDImageXObject pdImage = null;
@@ -288,10 +274,10 @@ int n=0;
                     try {
                         pdImage = PDImageXObject.createFromFile(inputFile.getPath(), document);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.error("Local image creation failed: " + e.getClass().getName() + e.getMessage());
                     }
                 } else {
-                    logger.debug("file no");
+                    logger.debug("No local input file");
                 }
             } else {
                 //from aws s3
@@ -300,7 +286,7 @@ int n=0;
                     try {
                         pdImage = PDImageXObject.createFromByteArray(document, imageBytes, filename);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.error("Image creation from AWS failed: " + e.getClass().getName() + e.getMessage());
                     }
                 }
             }
@@ -309,17 +295,20 @@ int n=0;
             final float MAX_PHOTO_WIDTH = page.getMediaBox().getWidth() - 60;
             final float MAX_PHOTO_HEIGHT = page.getMediaBox().getHeight() - 40;
 
-            float newWidth = pdImage.getWidth();
-            float newHeight = pdImage.getHeight();
+            float imageWidth = pdImage != null ? pdImage.getWidth() : 0;
+            float imageHeight = pdImage != null ? pdImage.getHeight() : 0;
 
-            if (pdImage.getWidth() > MAX_PHOTO_WIDTH) {
-                final float ratio = pdImage.getWidth() / MAX_PHOTO_WIDTH;
+            float newWidth = imageWidth;
+            float newHeight = imageHeight;
+
+            if (imageWidth > MAX_PHOTO_WIDTH) {
+                final float ratio = imageWidth / MAX_PHOTO_WIDTH;
                 newWidth = MAX_PHOTO_WIDTH;
-                newHeight = pdImage.getHeight() / ratio;
+                newHeight = imageHeight / ratio;
             }
 
             if (newHeight > MAX_PHOTO_HEIGHT) {
-                final float ratio = pdImage.getHeight() / MAX_PHOTO_HEIGHT;
+                final float ratio = imageHeight / MAX_PHOTO_HEIGHT;
                 newWidth = newWidth / ratio;
                 newHeight = MAX_PHOTO_HEIGHT;
             }
@@ -335,11 +324,11 @@ int n=0;
                 contentStream.newLineAtOffset(50, y - 20);
                 contentStream.showText(messageSource.getMessage("kuva",null, Locale.ROOT) + n + ". " + image.getTaken());
                 contentStream.endText();
-                logger.debug("Drawing image at y:" + y);
+
                 contentStream.drawImage(pdImage, 30, y, newWidth, newHeight);
                 y -= 20;
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Draw image failed: " + e.getClass().getName() + e.getMessage());
             }
 
 
@@ -350,10 +339,15 @@ int n=0;
 
     @NotNull
     private String formatStatusDate(SupervisionModel supervision, SupervisionStatusType supervisionStatusType) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
-        return supervision.getStatusHistory().stream()
-                .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(supervisionStatusType))
-                .findFirst().orElseThrow().getTime().format(formatter);
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+            return supervision.getStatusHistory().stream()
+                    .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(supervisionStatusType))
+                    .findFirst().orElseThrow().getTime().format(formatter);
+        } catch (Exception e) {
+            logger.debug("caught: " + e.getClass().getName() + e.getMessage());
+            return "-";
+        }
     }
 
 
