@@ -322,7 +322,7 @@ public class PDFGenerator {
                 contentStream.beginText();
                 contentStream.setFont(PDType1Font.COURIER, 12);
                 contentStream.newLineAtOffset(50, y - 20);
-                contentStream.showText(messageSource.getMessage("kuva",null, Locale.ROOT) + n + ". " + image.getTaken());
+                contentStream.showText(messageSource.getMessage("supervision.pdf.kuva",null, Locale.ROOT) + n + ". " + image.getTaken());
                 contentStream.endText();
 
                 contentStream.drawImage(pdImage, 30, y, newWidth, newHeight);
