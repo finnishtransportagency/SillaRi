@@ -51,6 +51,12 @@ public class LeluController {
     @Autowired
     PDFGenerator pdfGenerator;
 
+    @Autowired
+    SupervisionImageService supervisionImageService;
+
+    @Value("${spring.profiles.active:Unknown}")
+    private String activeProfile;
+
     @Value("${sillari.lelu.version}")
     private String currentApiVersion;
 
@@ -59,22 +65,16 @@ public class LeluController {
     private final TRexService trexService;
     private final BridgeService bridgeService;
     private final MessageSource messageSource;
+    private final SupervisionService supervisionService;
 
     @Autowired
-    SupervisionService supervisionService;
-
-    @Autowired
-    SupervisionImageService supervisionImageService;
-
-    @Value("${spring.profiles.active:Unknown}")
-    private String activeProfile;
-
-    @Autowired
-    public LeluController(LeluService leluService, TRexService trexService, BridgeService bridgeService, MessageSource messageSource) {
+    public LeluController(LeluService leluService, TRexService trexService, BridgeService bridgeService, MessageSource messageSource, SupervisionService supervisionService) {
         this.leluService = leluService;
         this.trexService = trexService;
         this.bridgeService = bridgeService;
         this.messageSource = messageSource;
+        this.supervisionService = supervisionService;
+
     }
 
     // Handle JSON parse exceptions (thrown through @RequestBody)
