@@ -321,7 +321,7 @@ public class LeluController {
     }
 
 
-    //for testing and deving; generate report for given supervision id; save to local disk or S3; retunr pdf in rst response
+    //for testing and deving; generate report for given supervision id; save to local disk or S3; return pdf in rest response
     @GetMapping(value = "/DEV_supervisionReport", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseBody
     @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
