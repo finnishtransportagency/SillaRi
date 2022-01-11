@@ -234,10 +234,11 @@ public class LeluController {
 
     /**
      * Get supervisions of a route.
-     * Lelu uses this to see which supervision have report generated (status COMPLETED)
+     * Lelu uses this to see which supervision have report generated (status REPORT_SIGNED)
      * and gets the report pdf:s with /supervisionReport
      *
      * @param routeId
+     * @param apiVersion
      * @param apiVersion
      * @return
      * @throws APIVersionException
@@ -270,8 +271,8 @@ public class LeluController {
 
     /**
      * get the pdf supervision report from S3 (disk on dev localhost).
-     * Lelu calls this after getting SIGNED-status of a report from /supervisions.
-     * The report has been generated and status set to SIGNED when  /completesupervision has happened in app
+     * Lelu calls this after getting REPORT_SIGNED-status of a report from /supervisions.
+     * The report has been generated and status set to REPORT_SIGNED when  /completesupervision has happened in app
      *
      * @param response
      * @param reportId   This is actually technically supervision id but is called reportId in the lelu-interface.
