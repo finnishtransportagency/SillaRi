@@ -1,6 +1,5 @@
 package fi.vaylavirasto.sillari.api.rest;
 
-import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
@@ -34,7 +33,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
 import java.util.Locale;
@@ -48,12 +46,6 @@ public class LeluController {
     private static final Logger logger = LogManager.getLogger();
     private static final String LELU_API_VERSION_HEADER_NAME = "lelu-api-accept-version";
 
-    @Autowired
-    PDFGenerator pdfGenerator;
-
-    @Autowired
-    SupervisionImageService supervisionImageService;
-
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
 
@@ -66,6 +58,12 @@ public class LeluController {
     private final BridgeService bridgeService;
     private final MessageSource messageSource;
     private final SupervisionService supervisionService;
+
+    // TODO remove when generateSupervisionReport is no longer needed
+    @Autowired
+    PDFGenerator pdfGenerator;
+    @Autowired
+    SupervisionImageService supervisionImageService;
 
     @Autowired
     public LeluController(LeluService leluService, TRexService trexService, BridgeService bridgeService, MessageSource messageSource, SupervisionService supervisionService) {
@@ -268,30 +266,34 @@ public class LeluController {
     }
 
 
-
     /**
-     * get the pdf supervision report from S3 (disk on dev localhost).
-     * Lelu calls this after getting REPORT_SIGNED-status of a report from /supervisions.
-     * The report has been generated and status set to REPORT_SIGNED when  /completesupervision has happened in app
+     * Get the pdf supervision report from S3 (disk on dev localhost).
+     * LeLu calls this after getting REPORT_SIGNED-status of a report from /supervisions.
+     * The report has been generated and status set to REPORT_SIGNED when /completesupervisions has happened in app
      *
-     * @param response
-     * @param reportId   This is actually technically supervision id but is called reportId in the lelu-interface.
-     * @param apiVersion
-     * @throws APIVersionException
-     * @throws IOException
+     * @param reportId   This is actually technically supervision id but is called reportId in the LeLu-interface.
+     * @param apiVersion requested LeLu API version
+     * @throws APIVersionException when requested API version does not correspond to the current version
+     * @throws LeluPdfDownloadException when file download fails
+     * @return PDF file as byte[]
      */
-    @GetMapping(value = "/supervisionReport", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/supervisionreport", produces = MediaType.APPLICATION_PDF_VALUE)
+    @ResponseBody
     @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
-    public void getSupervisionReport(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, IOException {
-        logger.debug("Lelu getReport " + reportId);
+    public byte[] getSupervisionReport(@RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPdfDownloadException {
+        logger.debug("LeLu getReport " + reportId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
-            ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitPdf");
             try {
-                supervisionService.getSupervisionPdf(response, reportId);
-            } finally {
-                serviceMetric.end();
+                byte[] file = supervisionService.getSupervisionPdf(reportId);
+                if (file != null) {
+                    return file;
+                } else {
+                    throw new LeluPdfDownloadException(messageSource.getMessage("lelu.supervision.pdf.download.failed", null, Locale.ROOT), HttpStatus.NOT_FOUND);
+                }
+            } catch (IOException e) {
+                throw new LeluPdfDownloadException("Error downloading pdf file", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
@@ -299,48 +301,33 @@ public class LeluController {
     }
 
 
-    //different way to return pdf; which is nicer?
-    @GetMapping(value = "/supervisionReport2", produces = MediaType.APPLICATION_PDF_VALUE)
+    // TODO remove after old test supervisions have pdf created or move to some test tools controller
+    // For testing purposes only; generate report for given supervision id; save to local disk or S3; return pdf in rest response
+    @GetMapping(value = "/generatereportpdf", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseBody
-    @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
+    @Operation(summary = "Generate bridge supervision report pdf by report id acquired from /lelu/supervisions. Use with GET request in browser to open PDF.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
-    public byte[] getSupervisionReport2(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, IOException {
-        logger.debug("Lelu getReport " + reportId);
-
-        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
-            ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitPdf");
-            try {
-                return supervisionService.getSupervisionPdf2(reportId);
-            } finally {
-                serviceMetric.end();
-            }
-        } else {
-            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
-        }
-
-    }
-
-
-    //for testing and deving; generate report for given supervision id; save to local disk or S3; return pdf in rest response
-    @GetMapping(value = "/DEV_supervisionReport", produces = MediaType.APPLICATION_PDF_VALUE)
-    @ResponseBody
-    @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
-    public byte[] createSupervisionReport(@RequestParam Long supervisionId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
-        logger.debug("Lelu getReport " + supervisionId);
+    public byte[] generateSupervisionReport(@RequestParam Long supervisionId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPdfUploadException {
+        logger.debug("Lelu generateReport " + supervisionId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
                 SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(supervisionId));
-                supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
+                if (supervision != null) {
+                    supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
 
-                byte[] reportPDF = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
-                supervisionService.savePdf(reportPDF, supervision.getReport().getId());
-                return reportPDF;
+                    byte[] reportPDF = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
+                    supervisionService.savePdf(reportPDF, supervision.getReport().getId());
+                    return reportPDF;
+                } else {
+                    throw new LeluPdfUploadException("Supervision not found with id " + supervisionId, HttpStatus.NOT_FOUND);
+                }
+            } catch (LeluPdfUploadException e) {
+                throw e;
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 logger.error(e.getClass().getName());
-                return null;
+                throw new LeluPdfUploadException("Error generating pdf file", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);

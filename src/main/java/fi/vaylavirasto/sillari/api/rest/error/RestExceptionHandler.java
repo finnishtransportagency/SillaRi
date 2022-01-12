@@ -79,6 +79,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handleCustomException(ex.getStatusCode(), ex.getMessage());
     }
 
+    @ExceptionHandler(LeluPdfDownloadException.class)
+    public ResponseEntity<Object> leluPermitPdfDownloadException(LeluPdfDownloadException ex) {
+        logger.error("LeluPdfDownloadException 'reason':'{}'", ex.getMessage());
+        return handleCustomException(ex.getStatusCode(), ex.getMessage());
+    }
+
     @ExceptionHandler(LeluRouteNotFoundException.class)
     public ResponseEntity<Object> leluRouteNotFoundException(LeluRouteNotFoundException ex) {
         logger.error("LeluRouteNotFoundException 'reason':'{}'", ex.getMessage());

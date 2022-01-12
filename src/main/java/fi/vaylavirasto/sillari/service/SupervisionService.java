@@ -1,6 +1,5 @@
 package fi.vaylavirasto.sillari.service;
 
-import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.api.rest.error.LeluPdfUploadException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
@@ -9,13 +8,11 @@ import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.util.PDFGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
 import java.time.OffsetDateTime;
@@ -187,8 +184,7 @@ public class SupervisionService {
         return getSupervision(supervisionReportModel.getSupervisionId());
     }
 
-    //different way to return pdf; which is nicer?
-    public byte[] getSupervisionPdf2(Long reportId) throws IOException {
+    public byte[] getSupervisionPdf(Long reportId) throws IOException {
         String objectKey = "" + reportId;
         if (activeProfile.equals("local")) {
             // Get from local file system
@@ -203,40 +199,9 @@ public class SupervisionService {
             }
         } else {
             // Get from AWS
-            byte[] pdf = awss3Client.download(objectKey, AWSS3Client.SILLARI_SUPERVISION_PDF_BUCKET);
-            return pdf;
+            return awss3Client.download(objectKey, AWSS3Client.SILLARI_SUPERVISION_PDF_BUCKET);
         }
         return null;
-    }
-
-    public void getSupervisionPdf(HttpServletResponse response, Long reportId) throws IOException {
-
-        String objectKey = "" + reportId;
-        if (activeProfile.equals("local")) {
-            // Get from local file system
-            String filename = objectKey + ".pdf";
-
-            File inputFile = new File("/", filename);
-            if (inputFile.exists()) {
-                response.setContentType("application/pdf");
-                OutputStream out = response.getOutputStream();
-                FileInputStream in = new FileInputStream(inputFile);
-                IOUtils.copy(in, out);
-                out.close();
-                in.close();
-            }
-        } else {
-            // Get from AWS
-            byte[] pdf = awss3Client.download(objectKey, AWSS3Client.SILLARI_SUPERVISION_PDF_BUCKET);
-            if (pdf != null) {
-                response.setContentType("application/pdf");
-                OutputStream out = response.getOutputStream();
-                ByteArrayInputStream in = new ByteArrayInputStream(pdf);
-                IOUtils.copy(in, out);
-                out.close();
-                in.close();
-            }
-        }
     }
 
     public void savePdf(byte[] reportPDF, int reportId) throws LeluPdfUploadException {
