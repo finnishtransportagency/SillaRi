@@ -307,15 +307,6 @@ public class LeluController {
     }
 
 
-    // TODO remove after old test supervisions have pdf created or move to some test tools controller
-    // For testing purposes only; generate report for given supervision id; save to local disk or S3; return pdf in rest response
-    @GetMapping(value = "/testtest", produces = MediaType.APPLICATION_PDF_VALUE)
-    @ResponseBody
-    @Operation(summary = "Generate bridge supervision report pdf by report id acquired from /lelu/supervisions. Use with GET request in browser to open PDF.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
-    public byte[] testtest() throws LeluPdfUploadException {
-        throw new LeluPdfUploadException("HELLO " , HttpStatus.NOT_FOUND);
-    }
 
 
     // TODO remove after old test supervisions have pdf created or move to some test tools controller
