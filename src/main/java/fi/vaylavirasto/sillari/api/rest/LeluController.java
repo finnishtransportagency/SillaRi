@@ -317,7 +317,7 @@ public class LeluController {
                     supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
 
                     byte[] reportPDF = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
-                    supervisionService.savePdf(reportPDF, supervision.getReport().getId());
+                    supervisionService.savePdf(reportPDF, supervision.getId());
                     return reportPDF;
                 } else {
                     throw new LeluPdfUploadException("Supervision or report not found with supervision id " + supervisionId, HttpStatus.NOT_FOUND);
