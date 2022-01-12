@@ -1,33 +1,34 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
-import { IonDatetime, IonIcon, IonItem } from "@ionic/react";
 import moment from "moment";
-import calendar from "../../theme/icons/calendar.svg";
+import CustomSelect from "./CustomSelect";
 import "./DatePicker.css";
 
 interface DatePickerProps {
-  className?: string;
   value: Date;
   onChange: (value: Date) => void;
 }
 
-const DatePicker = ({ className, value, onChange }: DatePickerProps): JSX.Element => {
-  const { t } = useTranslation();
-  const minYear = moment().format("YYYY");
-  const maxYear = moment().add(3, "years").format("YYYY");
+const getDaysArray = (start: Date, end: Date) => {
+  const arr = [];
+  for (let dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
+    arr.push(new Date(dt));
+  }
+  return arr;
+};
 
+const DatePicker = ({ value, onChange }: DatePickerProps): JSX.Element => {
+  const min = moment().toDate();
+  const max = moment().add(100, "days").toDate();
   return (
-    <IonItem lines="none" className={`datePicker ${className || ""}`}>
-      <IonDatetime
-        doneText={t("common.buttons.done")}
-        cancelText={t("common.buttons.back")}
-        value={moment(value).toISOString()}
-        min={minYear}
-        max={maxYear}
-        onIonChange={(e) => onChange(moment(e.detail.value).toDate())}
-      />
-      <IonIcon className="otherIcon openIcon" icon={calendar} slot="end" />
-    </IonItem>
+    <CustomSelect
+      options={getDaysArray(min, max).map((date) => {
+        return { value: moment(date).format("YYYY-MM-DD"), label: moment(date).format("D.M") };
+      })}
+      selectedValue={moment(value).format("YYYY-MM-DD")}
+      onChange={(date) => {
+        onChange(moment(date).toDate());
+      }}
+    />
   );
 };
 

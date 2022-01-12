@@ -34,9 +34,27 @@ const BridgeGrid = ({ supervisors = [], modifiedRouteTransportDetail, setModifie
     );
   };
 
+  const setEstimatedCrossingDate = (supervision: ISupervision, dateTime: Date) => {
+    if (modifiedRouteTransportDetail) {
+      const dt = supervision.plannedTime;
+      dt.setFullYear(dateTime.getFullYear());
+      dt.setMonth(dateTime.getMonth());
+      dt.setDate(dateTime.getDate());
+      const modifiedSupervision: ISupervision = { ...supervision, plannedTime: dt };
+      const modifiedSupervisions = modifySupervisions(supervision.routeBridgeId, modifiedSupervision);
+
+      const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, supervisions: modifiedSupervisions };
+      setModifiedRouteTransportDetail(newDetail);
+    }
+  };
+
   const setEstimatedCrossingTime = (supervision: ISupervision, dateTime: Date) => {
     if (modifiedRouteTransportDetail) {
-      const modifiedSupervision: ISupervision = { ...supervision, plannedTime: dateTime };
+      const dt = supervision.plannedTime;
+      dt.setHours(dateTime.getHours());
+      dt.setMinutes(dateTime.getMinutes());
+      dt.setSeconds(0);
+      const modifiedSupervision: ISupervision = { ...supervision, plannedTime: dt };
       const modifiedSupervisions = modifySupervisions(supervision.routeBridgeId, modifiedSupervision);
 
       const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, supervisions: modifiedSupervisions };
@@ -131,7 +149,7 @@ const BridgeGrid = ({ supervisors = [], modifiedRouteTransportDetail, setModifie
                   <IonRow>
                     <IonCol>
                       {status === TransportStatus.PLANNED && (
-                        <DatePicker value={estimatedCrossingTime.toDate()} onChange={(value) => setEstimatedCrossingTime(supervision, value)} />
+                        <DatePicker value={estimatedCrossingTime.toDate()} onChange={(value) => setEstimatedCrossingDate(supervision, value)} />
                       )}
                       {status !== TransportStatus.PLANNED && <Moment format={DATE_FORMAT}>{estimatedCrossingTime}</Moment>}
                     </IonCol>
