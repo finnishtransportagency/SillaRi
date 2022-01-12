@@ -52,6 +52,7 @@ public class SupervisionRepository {
     public List<SupervisionModel> getSupervisionsByRouteBridgeId(Integer routeBridgeId) {
         return dsl.select().from(TableAlias.supervision)
                 .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
+                .orderBy(TableAlias.supervision.ROW_CREATED_TIME)
                 .fetch(new SupervisionMapper());
     }
 
