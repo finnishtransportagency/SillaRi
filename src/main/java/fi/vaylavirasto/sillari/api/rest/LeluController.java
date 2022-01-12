@@ -279,18 +279,22 @@ public class LeluController {
      * @throws LeluPdfDownloadException when file download fails
      * @return PDF file as byte[]
      */
-    @GetMapping(value = "/supervisionreport", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/supervisionreport")
     @ResponseBody
     @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
-    public byte[] getSupervisionReport(@RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPdfDownloadException {
+    public void getSupervisionReport(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPdfDownloadException {
         logger.debug("LeLu getReport " + reportId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
                 byte[] file = supervisionService.getSupervisionPdf(reportId);
                 if (file != null) {
-                    return file;
+                    response.setContentType("application/pdf");
+                    OutputStream out = response.getOutputStream();
+                    out.write(file);
+                    out.close();
+                    return;
                 } else {
                     throw new LeluPdfDownloadException(messageSource.getMessage("lelu.supervision.pdf.download.failed", null, Locale.ROOT), HttpStatus.NOT_FOUND);
                 }
