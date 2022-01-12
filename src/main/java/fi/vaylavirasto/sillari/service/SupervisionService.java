@@ -151,21 +151,23 @@ public class SupervisionService {
     }
 
     // Completes the supervision by adding the status REPORT_SIGNED
-    public SupervisionModel completeSupervision(Integer supervisionId, SillariUser user) {
+    public void completeSupervisions(Integer supervisionId, SillariUser user) {
         SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.REPORT_SIGNED, OffsetDateTime.now(), user.getUsername());
         supervisionStatusRepository.insertSupervisionStatus(status);
 
         SupervisionModel supervision = getSupervision(supervisionId);
         supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
+
         byte[] pdf = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
-        try {
-            savePdf(pdf, supervision.getReport().getId());
-        } catch (LeluPdfUploadException e) {
-            e.printStackTrace();
+
+        if (pdf != null) {
+            try {
+                savePdf(pdf, supervision.getId());
+            } catch (LeluPdfUploadException e) {
+                // TODO what to do?
+                e.printStackTrace();
+            }
         }
-
-
-        return getSupervision(supervisionId);
     }
 
 
@@ -204,15 +206,15 @@ public class SupervisionService {
         return null;
     }
 
-    public void savePdf(byte[] reportPDF, int reportId) throws LeluPdfUploadException {
-        logger.debug("save pdf: " + reportId);
-        String objectKey = "" + reportId;
+    public void savePdf(byte[] reportPDF, int supervisionId) throws LeluPdfUploadException {
+        logger.debug("save pdf: " + supervisionId);
+        String objectKey = "" + supervisionId;
         if (activeProfile.equals("local")) {
             // Save to local file system
             File outputFile = new File("/", objectKey + ".pdf");
             try {
                 Files.write(outputFile.toPath(), reportPDF);
-                logger.debug("wrote pfd local file: " + outputFile.getAbsolutePath() + outputFile.getName());
+                logger.debug("wrote pdf local file: " + outputFile.getAbsolutePath() + outputFile.getName());
             } catch (IOException e) {
                 logger.error("Error writing file." + e.getClass().getName() + " " + e.getMessage());
                 throw new LeluPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

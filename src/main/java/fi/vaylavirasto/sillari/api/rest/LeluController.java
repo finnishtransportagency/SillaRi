@@ -330,18 +330,18 @@ public class LeluController {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
                 SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(supervisionId));
-                if (supervision != null) {
+                if (supervision != null && supervision.getReport() != null) {
                     supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
 
                     byte[] reportPDF = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
-                    supervisionService.savePdf(reportPDF, supervision.getReport().getId());
+                    supervisionService.savePdf(reportPDF, supervision.getId());
                     response.setContentType("application/pdf");
                     OutputStream out = response.getOutputStream();
                     out.write(reportPDF);
                     out.close();
                     return;
                 } else {
-                    throw new LeluPdfUploadException("Supervision not found with id " + supervisionId, HttpStatus.NOT_FOUND);
+                    throw new LeluPdfUploadException("Supervision or report not found with supervision id " + supervisionId, HttpStatus.NOT_FOUND);
                 }
             } catch (LeluPdfUploadException e) {
                 throw e;
