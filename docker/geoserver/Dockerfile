@@ -1,4 +1,4 @@
-FROM kartoza/geoserver:2.17.1
+FROM 384409174079.dkr.ecr.eu-west-1.amazonaws.com/geoserver
 MAINTAINER Jari Piitulainen <jari.piitulainen@cgi.com>
 #CMD mkdir /configs
 #ADD conf/server.xml /configs/server.xml

@@ -1,4 +1,4 @@
-FROM grafana/grafana
+FROM 384409174079.dkr.ecr.eu-west-1.amazonaws.com/grafana
 MAINTAINER Jari Piitulainen <jari.piitulainen@cgi.com>
 COPY ./grafana.ini /etc/grafana/grafana.ini
 #RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://archive.debian.org/debian/ jessie main\ndeb http://security.debian.org jessie/updates main\ndeb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list

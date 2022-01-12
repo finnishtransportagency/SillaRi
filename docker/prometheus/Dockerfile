@@ -1,4 +1,4 @@
-FROM prom/prometheus
+FROM 384409174079.dkr.ecr.eu-west-1.amazonaws.com/prometheus
 MAINTAINER Jari Piitulainen <jari.piitulainen@cgi.com>
 USER root
 ADD prometheus.yml /etc/prometheus/
