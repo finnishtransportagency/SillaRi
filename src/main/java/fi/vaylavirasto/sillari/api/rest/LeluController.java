@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.api.rest;
 
+import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
@@ -33,6 +34,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
 import java.util.Locale;
@@ -303,11 +305,22 @@ public class LeluController {
 
     // TODO remove after old test supervisions have pdf created or move to some test tools controller
     // For testing purposes only; generate report for given supervision id; save to local disk or S3; return pdf in rest response
-    @GetMapping(value = "/generatereportpdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/testtest", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseBody
     @Operation(summary = "Generate bridge supervision report pdf by report id acquired from /lelu/supervisions. Use with GET request in browser to open PDF.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
-    public byte[] generateSupervisionReport(@RequestParam Long supervisionId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPdfUploadException {
+    public byte[] testtest() throws LeluPdfUploadException {
+        throw new LeluPdfUploadException("HELLO " , HttpStatus.NOT_FOUND);
+    }
+
+
+    // TODO remove after old test supervisions have pdf created or move to some test tools controller
+    // For testing purposes only; generate report for given supervision id; save to local disk or S3; return pdf in rest response
+    @GetMapping(value = "/generatereportpdf")
+    @ResponseBody
+    @Operation(summary = "Generate bridge supervision report pdf by report id acquired from /lelu/supervisions. Use with GET request in browser to open PDF.")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
+    public void generateSupervisionReport(HttpServletResponse response, @RequestParam Long supervisionId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPdfUploadException {
         logger.debug("Lelu generateReport " + supervisionId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
@@ -318,7 +331,11 @@ public class LeluController {
 
                     byte[] reportPDF = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
                     supervisionService.savePdf(reportPDF, supervision.getReport().getId());
-                    return reportPDF;
+                    response.setContentType("application/pdf");
+                    OutputStream out = response.getOutputStream();
+                    out.write(reportPDF);
+                    out.close();
+                    return;
                 } else {
                     throw new LeluPdfUploadException("Supervision not found with id " + supervisionId, HttpStatus.NOT_FOUND);
                 }
