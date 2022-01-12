@@ -52,6 +52,7 @@ public class PDFGenerator {
     public byte[] generateReportPDF(SupervisionModel supervision, boolean isLocal) {
         this.isLocal = isLocal;
 
+        logger.debug("Generate pdf for supervision {}, isLocalEnv={}", supervision, isLocal);
         BridgeModel bridge = supervision.getRouteBridge().getBridge();
         RouteModel route = supervision.getRouteBridge().getRoute();
         SupervisionReportModel report = supervision.getReport();
