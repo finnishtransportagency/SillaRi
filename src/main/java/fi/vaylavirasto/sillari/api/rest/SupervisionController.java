@@ -159,9 +159,7 @@ public class SupervisionController {
             SillariUser user = uiService.getSillariUser();
 
             if (supervisionIds != null && !supervisionIds.isEmpty()) {
-                supervisionIds.forEach(supervisionId -> {
-                    supervisionService.completeSupervision(supervisionId, user);
-                });
+                supervisionIds.forEach(supervisionId -> supervisionService.completeSupervisions(supervisionId, user));
             }
 
             // TODO - check if any data should be returned
