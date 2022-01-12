@@ -255,13 +255,7 @@ public class LeluController {
         logger.debug("Lelu getSupervisions " + routeId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
-            try {
-                LeluRouteResponseDTO route = leluService.getWholeRoute(routeId);
-                return route;
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                return null;
-            }
+            return leluService.getWholeRoute(routeId);
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
         }
