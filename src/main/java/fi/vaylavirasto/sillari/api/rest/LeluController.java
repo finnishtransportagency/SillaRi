@@ -1,6 +1,5 @@
 package fi.vaylavirasto.sillari.api.rest;
 
-import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
@@ -37,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -61,9 +61,7 @@ public class LeluController {
     private final MessageSource messageSource;
     private final SupervisionService supervisionService;
 
-    // TODO remove when generateSupervisionReport is no longer needed
-    @Autowired
-    PDFGenerator pdfGenerator;
+
     @Autowired
     SupervisionImageService supervisionImageService;
 
@@ -317,8 +315,8 @@ public class LeluController {
                 SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(supervisionId));
                 if (supervision != null && supervision.getReport() != null) {
                     supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
-
-                    byte[] reportPDF = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
+                    List<byte[]> images = supervisionService.getImageFiles(supervision.getImages(), activeProfile.equals("local"));
+                    byte[] reportPDF = new PDFGenerator().generateReportPDF(supervision, images);
                     supervisionService.savePdf(reportPDF, supervision.getId());
                     response.setContentType("application/pdf");
                     OutputStream out = response.getOutputStream();
