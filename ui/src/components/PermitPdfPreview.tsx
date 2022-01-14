@@ -1,6 +1,6 @@
 import React, { MouseEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IonButton, IonCol, IonContent, IonFab, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonModal, IonRow, IonTitle } from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonFab, IonGrid, IonIcon, IonItem, IonLabel, IonModal, IonRow } from "@ionic/react";
 import { Document, Page } from "react-pdf";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import close from "../theme/icons/close_large_white.svg";
