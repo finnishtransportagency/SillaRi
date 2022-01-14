@@ -1,6 +1,6 @@
 import React, { MouseEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonModal, IonRow } from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonFab, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonModal, IonRow, IonTitle } from "@ionic/react";
 import { Document, Page } from "react-pdf";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import close from "../theme/icons/close_large_white.svg";
@@ -38,12 +38,11 @@ const PermitPdfPreview = ({ pdfObjectKey, isOpen, setOpen }: PermitPdfPreviewPro
 
   return (
     <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
-      <IonItem color="primary" onClick={(evt) => evt.stopPropagation()}>
-        <IonLabel className="headingBoldText">{t("permitPdf.title")}</IonLabel>
-        <IonIcon className="otherIconLarge" slot="end" icon={close} onClick={(evt) => closePreview(evt as MouseEvent)} />
-      </IonItem>
-
       <IonContent ref={contentRef} scrollX={false} scrollY={false} onClick={(evt) => evt.stopPropagation()}>
+        <IonItem color="primary" onClick={(evt) => evt.stopPropagation()}>
+          <IonLabel className="headingBoldText">{t("permitPdf.title")}</IonLabel>
+          <IonIcon className="otherIconLarge" slot="end" icon={close} onClick={(evt) => closePreview(evt as MouseEvent)} />
+        </IonItem>
         <Document
           file={`${getOrigin()}/api/permit/getpermitpdf?objectKey=${pdfObjectKey}`}
           renderMode="svg"
@@ -67,24 +66,23 @@ const PermitPdfPreview = ({ pdfObjectKey, isOpen, setOpen }: PermitPdfPreviewPro
             }}
           </TransformWrapper>
         </Document>
+        <IonFab vertical="bottom" horizontal="end" slot="fixed">
+          <IonGrid className="ion-no-padding">
+            <IonRow>
+              <IonCol className="ion-text-center">
+                <IonButton className="ion-margin" color="primary" size="default" onClick={() => transformZoomIn()}>
+                  {t("permitPdf.zoomIn")}
+                </IonButton>
+              </IonCol>
+              <IonCol className="ion-text-center">
+                <IonButton className="ion-margin" color="primary" size="default" onClick={() => transformZoomOut()}>
+                  {t("permitPdf.zoomOut")}
+                </IonButton>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        </IonFab>
       </IonContent>
-
-      <IonItem lines="none" onClick={(evt) => evt.stopPropagation()}>
-        <IonGrid className="ion-no-padding">
-          <IonRow>
-            <IonCol className="ion-text-center">
-              <IonButton className="ion-margin" color="primary" size="default" onClick={() => transformZoomIn()}>
-                {t("permitPdf.zoomIn")}
-              </IonButton>
-            </IonCol>
-            <IonCol className="ion-text-center">
-              <IonButton className="ion-margin" color="primary" size="default" onClick={() => transformZoomOut()}>
-                {t("permitPdf.zoomOut")}
-              </IonButton>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-      </IonItem>
     </IonModal>
   );
 };
