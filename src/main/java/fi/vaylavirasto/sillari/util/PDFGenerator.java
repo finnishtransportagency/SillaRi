@@ -50,6 +50,7 @@ public class PDFGenerator {
     }
 
     public byte[] generateReportPDF(SupervisionModel supervision, boolean isLocal) {
+        logger.debug("hello gen pdf: " + System.identityHashCode(this));
         this.isLocal = isLocal;
 
         BridgeModel bridge = supervision.getRouteBridge().getBridge();
@@ -186,6 +187,7 @@ public class PDFGenerator {
             InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
             document.close();
 
+            logger.debug("pdf success");
             return IOUtils.toByteArray(inputStream);
 
         } catch (Exception e) {
