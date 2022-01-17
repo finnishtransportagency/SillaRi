@@ -13,9 +13,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -42,8 +47,7 @@ public class SupervisionService {
     AWSS3Client awss3Client;
     @Autowired
     SupervisionImageService supervisionImageService;
-    @Autowired
-    private PDFGenerator pdfGenerator;
+
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
@@ -160,7 +164,8 @@ public class SupervisionService {
         SupervisionModel supervision = getSupervision(supervisionId);
         supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
 
-        byte[] pdf = pdfGenerator.generateReportPDF(supervision, activeProfile.equals("local"));
+        List<byte[]> images = getImageFiles(supervision.getImages(), activeProfile.equals("local"));
+        byte[] pdf = new PDFGenerator().generateReportPDF(supervision, images);
 
         if (pdf != null) {
             try {
@@ -232,4 +237,38 @@ public class SupervisionService {
     }
 
 
+    public List<byte[]> getImageFiles(List<SupervisionImageModel> imageMetadatas, boolean isLocal) {
+        List<byte[]> images = new ArrayList<>();
+        for (SupervisionImageModel imageMetadata : imageMetadatas) {
+
+
+            String objectKey = imageMetadata.getObjectKey();
+            String decodedKey = new String(Base64.getDecoder().decode(objectKey));
+
+
+            String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
+            if (isLocal) {
+                // Get from local file system
+                File inputFile = new File("/", filename);
+                if (inputFile.exists()) {
+
+                    try {
+                        byte[] imageBytes = Files.readAllBytes(Path.of(inputFile.getPath()));
+                        images.add(imageBytes);
+                    } catch (IOException e) {
+                        logger.error("Local image creation failed: " + e.getClass().getName() + e.getMessage());
+                    }
+                } else {
+                    logger.debug("No local input file");
+                }
+            } else {
+                //from aws s3
+                byte[] imageBytes = awss3Client.download(decodedKey, awss3Client.getPhotoBucketName());
+                images.add(imageBytes);
+            }
+
+        }
+
+        return images;
+    }
 }

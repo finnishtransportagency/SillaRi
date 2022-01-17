@@ -17,7 +17,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -25,18 +28,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-@Component
-@RequestScope
 public class PDFGenerator {
-    @Autowired
-    AWSS3Client awss3Client;
 
     @Autowired
     MessageSource messageSource;
 
     public static final int TOP_MARGIN = 50;
     private static final Logger logger = LogManager.getLogger();
-    private  boolean isLocal;
+
 
 
     private PDDocument document;
@@ -49,17 +48,17 @@ public class PDFGenerator {
     public PDFGenerator() {
     }
 
-    public byte[] generateReportPDF(SupervisionModel supervision, boolean isLocal) {
-        logger.debug("hello gen pdf: " + System.identityHashCode(this));
-        this.isLocal = isLocal;
+    public byte[] generateReportPDF(SupervisionModel supervision, List<byte[]> images) {
 
+
+        logger.debug("Generate pdf for supervision {}, isLocalEnv={}", supervision);
         BridgeModel bridge = supervision.getRouteBridge().getBridge();
         RouteModel route = supervision.getRouteBridge().getRoute();
         SupervisionReportModel report = supervision.getReport();
         PermitModel permit = route.getPermit();
         // TODO get the supervisor who has finished the report
         SupervisorModel supervisor = ((supervision.getSupervisors() == null || supervision.getSupervisors().isEmpty()) ? null : supervision.getSupervisors().get(0));
-        List<SupervisionImageModel> images = supervision.getImages();
+
 
         document = new PDDocument();
         page = new PDPage();
@@ -79,27 +78,27 @@ public class PDFGenerator {
             contentStream.setLeading(12 * 1.2f);
             contentStream.newLineAtOffset(50, y);
 
-            contentStream.showText(messageSource.getMessage("supervision.pdf.title",null, Locale.ROOT));
+            contentStream.showText(messageSource.getMessage("supervision.pdf.title", null, Locale.ROOT));
 
             newLine();
             contentStream.setFont(PDType1Font.COURIER, 12);
 
             newLine();
-            contentStream.showText(messageSource.getMessage("supervision.pdf.permit.number",null, Locale.ROOT) + permit.getPermitNumber());
+            contentStream.showText(messageSource.getMessage("supervision.pdf.permit.number", null, Locale.ROOT) + permit.getPermitNumber());
 
             newLine();
-            contentStream.showText(messageSource.getMessage("supervision.pdf.route.name",null, Locale.ROOT) + route.getName());
+            contentStream.showText(messageSource.getMessage("supervision.pdf.route.name", null, Locale.ROOT) + route.getName());
 
             String supervisionTime = formatStatusDate(supervision, SupervisionStatusType.IN_PROGRESS);
 
             newLine();
-            contentStream.showText(messageSource.getMessage("supervision.pdf.supervision.start.time",null, Locale.ROOT) + supervisionTime);
+            contentStream.showText(messageSource.getMessage("supervision.pdf.supervision.start.time", null, Locale.ROOT) + supervisionTime);
 
             newLine();
-            contentStream.showText(messageSource.getMessage("supervision.pdf.bridge",null, Locale.ROOT) + bridge.getName() + " | " + bridge.getIdentifier() + " | " + bridge.getOid());
+            contentStream.showText(messageSource.getMessage("supervision.pdf.bridge", null, Locale.ROOT) + bridge.getName() + " | " + bridge.getIdentifier() + " | " + bridge.getOid());
 
             newLine();
-            contentStream.showText(messageSource.getMessage("supervision.pdf.road.address",null, Locale.ROOT) + (bridge.getRoadAddress() == null ? "-" : bridge.getRoadAddress()));
+            contentStream.showText(messageSource.getMessage("supervision.pdf.road.address", null, Locale.ROOT) + (bridge.getRoadAddress() == null ? "-" : bridge.getRoadAddress()));
 
             String signTime = formatStatusDate(supervision, SupervisionStatusType.REPORT_SIGNED);
 
@@ -169,8 +168,8 @@ public class PDFGenerator {
             contentStream.endText();
             contentStream.close();
 
-
-            int imageCount = ((images == null || images.isEmpty()) ? 0 : images.size());
+            List<SupervisionImageModel> imageMetadatas = supervision.getImages();
+            int imageCount = ((imageMetadatas == null || imageMetadatas.isEmpty()) ? 0 : imageMetadatas.size());
 
             if (imageCount > 0) {
                 newPage();
@@ -178,7 +177,7 @@ public class PDFGenerator {
                 newLine();
                 contentStream.endText();
 
-                handleImages(supervision.getImages(), document);
+                handleImages(imageMetadatas, images, document);
 
                 contentStream.close();
             }
@@ -187,7 +186,6 @@ public class PDFGenerator {
             InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
             document.close();
 
-            logger.debug("pdf success");
             return IOUtils.toByteArray(inputStream);
 
         } catch (Exception e) {
@@ -258,40 +256,30 @@ public class PDFGenerator {
 
     }
 
-    private void handleImages(List<SupervisionImageModel> images, PDDocument document) {
+    private void handleImages(List<SupervisionImageModel> imageMetadatas, List<byte[]> images, PDDocument document) {
         int n = 0;
-        for (SupervisionImageModel image : images) {
-            n++;
-            String objectKey = image.getObjectKey();
+        for (SupervisionImageModel imageData : imageMetadatas) {
+
+            String objectKey = imageData.getObjectKey();
             String decodedKey = new String(Base64.getDecoder().decode(objectKey));
             PDImageXObject pdImage = null;
 
             String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
 
-            if (isLocal) {
-                // Get from local file system
-                File inputFile = new File("/", filename);
-                if (inputFile.exists()) {
-
-                    try {
-                        pdImage = PDImageXObject.createFromFile(inputFile.getPath(), document);
-                    } catch (IOException e) {
-                        logger.error("Local image creation failed: " + e.getClass().getName() + e.getMessage());
-                    }
-                } else {
-                    logger.debug("No local input file");
-                }
-            } else {
-                //from aws s3
-                byte[] imageBytes = awss3Client.download(decodedKey, awss3Client.getPhotoBucketName());
-                if (imageBytes != null) {
-                    try {
-                        pdImage = PDImageXObject.createFromByteArray(document, imageBytes, filename);
-                    } catch (IOException e) {
-                        logger.error("Image creation from AWS failed: " + e.getClass().getName() + e.getMessage());
-                    }
+            byte[] imageBytes = null;
+            try {
+                imageBytes = images.get(n);
+            } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
+                logger.error("No corresponding image bytes for metadata " + objectKey);
+            }
+            if (imageBytes != null) {
+                try {
+                    pdImage = PDImageXObject.createFromByteArray(document, imageBytes, filename);
+                } catch (IOException e) {
+                    logger.error("Image creation from AWS failed: " + e.getClass().getName() + e.getMessage());
                 }
             }
+            n++;
 
 
             final float MAX_PHOTO_WIDTH = page.getMediaBox().getWidth() - 60;
@@ -324,7 +312,7 @@ public class PDFGenerator {
                 contentStream.beginText();
                 contentStream.setFont(PDType1Font.COURIER, 12);
                 contentStream.newLineAtOffset(50, y - 20);
-                contentStream.showText(messageSource.getMessage("supervision.pdf.photo",null, Locale.ROOT) + n + ". " + image.getTaken());
+                contentStream.showText(messageSource.getMessage("supervision.pdf.photo", null, Locale.ROOT) + n + ". " + imageData.getTaken());
                 contentStream.endText();
 
                 contentStream.drawImage(pdImage, 30, y, newWidth, newHeight);
@@ -334,9 +322,9 @@ public class PDFGenerator {
             }
 
 
-    }
+        }
 
-}
+    }
 
 
     @NotNull
