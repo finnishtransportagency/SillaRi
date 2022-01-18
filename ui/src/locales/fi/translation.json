@@ -202,6 +202,7 @@
     "companySummary": {
       "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
       "transports": "Kuljetuksia",
+      "supervision": "Sillanvalvonta",
       "addTransportButtonLabel": "Lisää kuljetus",
       "filter": {
         "show": "Näytä",
