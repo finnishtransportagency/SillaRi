@@ -1,6 +1,6 @@
 import React, { MouseEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IonButton, IonCol, IonContent, IonFab, IonGrid, IonIcon, IonItem, IonLabel, IonModal, IonRow } from "@ionic/react";
+import { IonButton, IonButtons, IonCol, IonContent, IonFab, IonGrid, IonHeader, IonIcon, IonModal, IonRow, IonTitle, IonToolbar } from "@ionic/react";
 import { Document, Page } from "react-pdf";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import close from "../theme/icons/close_large_white.svg";
@@ -38,11 +38,17 @@ const PermitPdfPreview = ({ pdfObjectKey, isOpen, setOpen }: PermitPdfPreviewPro
 
   return (
     <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
+      <IonHeader>
+        <IonToolbar color="primary">
+          <IonTitle class="headingBoldText">{t("permitPdf.title")}</IonTitle>
+          <IonButtons slot="end">
+            <IonButton onClick={(evt) => closePreview(evt as MouseEvent)}>
+              <IonIcon className="otherIconLarge" icon={close}></IonIcon>
+            </IonButton>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
       <IonContent ref={contentRef} scrollX={false} scrollY={false} onClick={(evt) => evt.stopPropagation()}>
-        <IonItem color="primary" onClick={(evt) => evt.stopPropagation()}>
-          <IonLabel className="headingBoldText">{t("permitPdf.title")}</IonLabel>
-          <IonIcon className="otherIconLarge" slot="end" icon={close} onClick={(evt) => closePreview(evt as MouseEvent)} />
-        </IonItem>
         <Document
           file={`${getOrigin()}/api/permit/getpermitpdf?objectKey=${pdfObjectKey}`}
           renderMode="svg"

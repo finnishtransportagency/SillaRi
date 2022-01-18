@@ -1211,12 +1211,12 @@
     debug "^4.0.0"
     tslib "^2.0.1"
 
-"@ionic/core@6.0.1", "@ionic/core@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-6.0.1.tgz#d82500435dcc0a4db219187149d2489a6a1b8c9d"
-  integrity sha512-MrS2rxxEk44Nmas+1ccGk+VDxvhoDKbQ7g3KHQkeRtHXmWPoG47tnUHY2aCRRTeaN5wPSA14/kmCwyMMyO5A9A==
+"@ionic/core@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-6.0.2.tgz#91baae70b2ad5bb2b33b6ac6391c942a1b8d5318"
+  integrity sha512-PE1dfI+klx9sNBFWLLX06jlP05ciQ2rvAJOJTJeo0ydqiIaK1ZELByRwjxaRC29QMXEuiCwANesmVIKScHHz8w==
   dependencies:
-    "@stencil/core" "~2.11.0-0"
+    "@stencil/core" "~2.12.0"
     ionicons "^6.0.0"
     tslib "^2.1.0"
 
@@ -1225,20 +1225,20 @@
   resolved "https://registry.yarnpkg.com/@ionic/pwa-elements/-/pwa-elements-3.1.1.tgz#ae1a97260886545b3285364974674576f2b090a7"
   integrity sha512-BoEX1pSrKn5dP4VQwaf8DweAmT4ynmpW+9f6oj/W1xLe54bmuXcUY07ziuZX1DLu50xHSYcO5qJ/dbYC/w6wgA==
 
-"@ionic/react-router@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@ionic/react-router/-/react-router-6.0.1.tgz#69d8f39c8c3f17d7a1cb85549a162e021d0ff0b3"
-  integrity sha512-Guiht/Rnsh1xhTo45jnOA2+uE4LVbWjEPOrZYrxYA2obR7/5kKgXtCtJbIuKV2FOEPBHubwFizMJxcmYx59buw==
+"@ionic/react-router@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@ionic/react-router/-/react-router-6.0.2.tgz#5bc341f681510184b916064c61be446ec4bfb779"
+  integrity sha512-HGPqyyZWwahjUBC21XodMaEqV4V+sVgCU3IDPGvsTaAP5nKNWxVsZYluhf6ZOdpKvNGjtW8fOCKGuf/ts+0XYw==
   dependencies:
-    "@ionic/react" "6.0.1"
+    "@ionic/react" "^6.0.2"
     tslib "*"
 
-"@ionic/react@6.0.1", "@ionic/react@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@ionic/react/-/react-6.0.1.tgz#b12bc1c21c29b1bcabe8868fdaabe6dcc2886884"
-  integrity sha512-XyoRDmtddtLg5X6A9FRO7JP7aUf2lBtgpKFD27H6NKRIMI2v5mXluiarrdOS4Oryj6xF2iU7i/PariLl5+rrdg==
+"@ionic/react@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@ionic/react/-/react-6.0.2.tgz#4880c1a60d2b8179e00dad75670d567fd655d2c9"
+  integrity sha512-/pga8HFRUtUXImCr+iILKijCwtF98V5saJp/+JNHN4kyptoUAohEpmkJAIcDAP8CQV4mTQketS1Rzi8qN1qxCQ==
   dependencies:
-    "@ionic/core" "6.0.1"
+    "@ionic/core" "^6.0.2"
     ionicons "^6.0.0"
     tslib "*"
 
@@ -1641,10 +1641,10 @@
   resolved "https://registry.yarnpkg.com/@stencil/core/-/core-2.10.0.tgz#acf44b9ae6578a20f0d09bf94296e833beadc885"
   integrity sha512-15rWMTPQ/sp0lSV82HVCXkIya3QLN+uBl7pqK4JnTrp4HiLrzLmNbWjbvgCs55gw0lULbCIGbRIEsFz+Pe/Q+A==
 
-"@stencil/core@~2.11.0-0":
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/@stencil/core/-/core-2.11.0.tgz#8accc2791e2c34cce2d2aa8b40864dd40be4e10c"
-  integrity sha512-/IubCWhVXCguyMUp/3zGrg3c882+RJNg/zpiKfyfJL3kRCOwe+/MD8OoAXVGdd+xAohZKIi1Ik+EHFlsptsjLg==
+"@stencil/core@~2.12.0":
+  version "2.12.1"
+  resolved "https://registry.yarnpkg.com/@stencil/core/-/core-2.12.1.tgz#92364d3e57337b8d36dd9b70cfbed2833929f22d"
+  integrity sha512-u24TZ+FEvjnZt5ZgIkLjLpUNsO6Ml3mUZqwmqk81w6RWWz75hgB5p4RFI5rvuErFeh2xvMIGo+pNdG24XUBz1A==
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
