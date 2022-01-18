@@ -1,6 +1,7 @@
 #!/bin/sh
 cat /var/sillari/hosts >> /etc/hosts
 env > /data/env.txt
+echo $db_url > /data/db_url.txt
 if [ -f "/var/sillari/node1" ]; then
     nodename="node1"
     export nodename
@@ -13,6 +14,6 @@ else
     else
         nodename="nodex"
         export nodename
-        java -javaagent:"javaagent.jar=9404:/config.yaml" -Xms2048m -Xmx4092m -Ddb.url=${db.url} -Druntime.nodename=nodex -Dspring.profiles.active=${environment} -Druntime.environment=${environment} -Djava.security.egd=file:/dev/./urandom -Duser.timezone=Europe/Helsinki -XX:-OmitStackTraceInFastThrow -jar /sillari.jar
+        java -javaagent:"javaagent.jar=9404:/config.yaml" -Xms2048m -Xmx4092m -Druntime.nodename=nodex -Dspring.profiles.active=${environment} -Druntime.environment=${environment} -Djava.security.egd=file:/dev/./urandom -Duser.timezone=Europe/Helsinki -XX:-OmitStackTraceInFastThrow -jar /sillari.jar
     fi
 fi
