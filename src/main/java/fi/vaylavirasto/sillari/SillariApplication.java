@@ -25,6 +25,8 @@ public class SillariApplication {
         logger.debug("application starting");
         logger.info("db.url = " + System.getenv("db.url"));
         logger.info("db.username = " + System.getenv("db.username"));
+        System.out.println("db.url = " + System.getenv("db.url"));
+        System.out.println("db.username = " + System.getenv("db.username"));
         SpringApplication.run(SillariApplication.class, args);
     }
     @Bean
