@@ -23,6 +23,7 @@ import close from "../theme/icons/close_large_white.svg";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import { onRetry } from "../utils/backendData";
 import { completeSupervisions } from "../utils/supervisionBackendData";
+import { useHistory } from "react-router";
 
 interface SendingListProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ interface SendingListProps {
 
 const SendingList = ({ isOpen, setOpen, supervisionList }: SendingListProps): JSX.Element => {
   const { t } = useTranslation();
+  const history = useHistory();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
@@ -64,8 +66,20 @@ const SendingList = ({ isOpen, setOpen, supervisionList }: SendingListProps): JS
     }
   };
 
+  const [targetUrl, setTargetUrl] = useState<string>("");
+
+  const handleOpen = () => {
+    setTargetUrl("");
+  };
+
+  const handleClose = () => {
+    if (targetUrl) {
+      history.push(targetUrl);
+    }
+  };
+
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
+    <IonModal isOpen={isOpen} onDidPresent={() => handleOpen()} onWillDismiss={() => setOpen(false)} onDidDismiss={() => handleClose()}>
       <IonHeader>
         <IonToolbar color="primary">
           <IonTitle class="headingBoldText">{t("sendingList.title")}</IonTitle>
@@ -115,7 +129,14 @@ const SendingList = ({ isOpen, setOpen, supervisionList }: SendingListProps): JS
                     <IonLabel>{`${t("sendingList.tractorUnit")}: ${tractorUnit}`}</IonLabel>
                     <IonLabel>{`${t("sendingList.supervisionStarted")}: ${moment(startedTime).format(DATE_TIME_FORMAT_MIN)}`}</IonLabel>
                     <IonLabel>
-                      <IonButton color="secondary" size="default" routerLink={`/supervision/${supervisionId}`} onClick={() => setOpen(false)}>
+                      <IonButton
+                        color="secondary"
+                        size="default"
+                        onClick={() => {
+                          setTargetUrl(`/supervision/${supervisionId}`);
+                          setOpen(false);
+                        }}
+                      >
                         {t("common.buttons.edit")}
                       </IonButton>
                     </IonLabel>
