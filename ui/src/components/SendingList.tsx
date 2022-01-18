@@ -2,7 +2,21 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { IonButton, IonCheckbox, IonContent, IonIcon, IonItem, IonLabel, IonModal, IonText, IonToast } from "@ionic/react";
+import {
+  IonButton,
+  IonButtons,
+  IonCheckbox,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonModal,
+  IonText,
+  IonTitle,
+  IonToast,
+  IonToolbar,
+} from "@ionic/react";
 import moment from "moment";
 import ISupervision from "../interfaces/ISupervision";
 import close from "../theme/icons/close_large_white.svg";
@@ -52,11 +66,16 @@ const SendingList = ({ isOpen, setOpen, supervisionList }: SendingListProps): JS
 
   return (
     <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
-      <IonItem color="primary">
-        <IonLabel className="headingBoldText">{t("sendingList.title")}</IonLabel>
-        <IonIcon className="otherIconLarge" slot="end" icon={close} onClick={() => setOpen(false)} />
-      </IonItem>
-
+      <IonHeader>
+        <IonToolbar color="primary">
+          <IonTitle class="headingBoldText">{t("sendingList.title")}</IonTitle>
+          <IonButtons slot="end">
+            <IonButton onClick={() => setOpen(false)}>
+              <IonIcon className="otherIconLarge" icon={close}></IonIcon>
+            </IonButton>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
       <IonContent>
         {supervisionList.length === 0 ? (
           <IonItem lines="none">
@@ -105,18 +124,17 @@ const SendingList = ({ isOpen, setOpen, supervisionList }: SendingListProps): JS
               );
             })
         )}
+        <IonButton
+          className="ion-margin"
+          color="primary"
+          expand="block"
+          size="large"
+          disabled={supervisionList.length === 0 || selectedIds.length === 0 || isSendingSupervisions}
+          onClick={sendSelected}
+        >
+          {t("sendingList.sendSelected")}
+        </IonButton>
       </IonContent>
-
-      <IonButton
-        className="ion-margin"
-        color="primary"
-        expand="block"
-        size="large"
-        disabled={supervisionList.length === 0 || selectedIds.length === 0 || isSendingSupervisions}
-        onClick={sendSelected}
-      >
-        {t("sendingList.sendSelected")}
-      </IonButton>
 
       <IonToast
         isOpen={toastMessage.length > 0}
