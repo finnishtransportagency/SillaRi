@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { IonCol, IonGrid, IonIcon, IonRow, IonText, useIonPopover } from "@ionic/react";
+import { warningOutline } from "ionicons/icons";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
@@ -250,6 +251,13 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                           >
                             {statusText}
                           </IonText>
+                        )}
+
+                        {status === TransportStatus.PLANNED && (!supervisions || supervisions.length === 0) && (
+                          <>
+                            <IonIcon className="routeGridStatusUnknown" icon={warningOutline} />
+                            <IonText className="routeGridStatusUnknown">{t("management.transportStatus.unknown")}</IonText>
+                          </>
                         )}
                       </IonCol>
                     </IonRow>

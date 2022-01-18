@@ -27,3 +27,7 @@
 .routeGridStatus_arrived {
   background-color: var(--ion-color-light);
 }
+
+.routeGridStatusUnknown {
+  color: var(--ion-color-warning-shade);
+}
