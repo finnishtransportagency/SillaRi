@@ -13,9 +13,9 @@ spring:
     name: SillaRi
   datasource:
     # Values from pom.xml profile properties
-    url: ${db.url}
-    username: ${db.username}
-    password: ${db.password}
+    url: ${db_url}
+    username: ${db_username}
+    password: ${db_password}
     driver-class-name: org.postgresql.Driver
   jooq:
     sql-dialect: POSTGRES
