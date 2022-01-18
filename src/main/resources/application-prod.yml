@@ -20,8 +20,8 @@ spring:
   jooq:
     sql-dialect: POSTGRES
   flyway:
-    enabled: true
-    baselineOnMigrate: true
+    enabled: false
+    baselineOnMigrate: false
 logging:
   config: classpath:log4j2-test.xml
 server:

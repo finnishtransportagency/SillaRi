@@ -23,6 +23,7 @@ public class SillariApplication {
     private static final Logger logger = LogManager.getLogger();
     public static void main(String[] args) {
         logger.debug("application starting");
+        logger.info("db.url = " + System.getenv("db.url"));
         SpringApplication.run(SillariApplication.class, args);
     }
     @Bean
