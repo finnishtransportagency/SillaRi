@@ -218,11 +218,14 @@
         "id": "ID",
         "tractorUnit": "Vetoauto",
         "route": "Reitti",
-        "supervision": "Sillanvalvonta",
         "time": "Ajankohta",
         "password": "Salasana",
         "status": "Tila",
         "action": "Toiminto"
+      },
+      "time": {
+        "departureTime": "Lähtöaika",
+        "plannedTime": "Arvioitu lähtöaika"
       },
       "action": {
         "details": "Lisätiedot",

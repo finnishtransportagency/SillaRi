@@ -12,7 +12,7 @@ import { actions } from "../../store/rootSlice";
 import close from "../../theme/icons/close.svg";
 import { onRetry } from "../../utils/backendData";
 import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
-import { DATE_TIME_FORMAT_MIN, SupervisorType, TransportStatus } from "../../utils/constants";
+import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 import RouteStatusLog from "./RouteStatusLog";
 import "./RouteGrid.css";
 
@@ -65,31 +65,35 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
     }
   );
 
-  const supervisionText = (supervisions?: ISupervision[]) => {
-    // Get the unique non-null supervisor types and map them to translated text
-    if (supervisions) {
-      const supervisorTypes = supervisions
-        .map((supervision) => {
-          const { routeBridge } = supervision;
-          const { contractNumber = 0 } = routeBridge || {};
-          return contractNumber > 0 ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR;
+  const timePeriodText = (status?: TransportStatus, statusHistory?: IRouteTransportStatus[]) => {
+    if (status && statusHistory && statusHistory.length > 0) {
+      const sortedTimes = statusHistory
+        .filter((history) => {
+          return statusHistory.length === 1 || history.status !== TransportStatus.PLANNED;
         })
-        .filter((v, i, a) => v && a.indexOf(v) === i);
+        .sort((a, b) => {
+          const am = moment(a.time);
+          const bm = moment(b.time);
+          return bm.diff(am, "seconds");
+        });
 
-      return supervisorTypes.length > 0
-        ? supervisorTypes.map((st) => t(`management.supervisionType.${st.toLowerCase()}`)).join(", ")
-        : t("management.supervisionType.unknown");
-    } else {
-      return t("management.supervisionType.unknown");
-    }
-  };
-
-  const timePeriodText = (supervisions?: ISupervision[]) => {
-    if (!!supervisions && supervisions.length > 0) {
-      const plannedTimes = supervisions.map((supervision) => moment(supervision.plannedTime));
-      const minPlannedTime = moment.min(plannedTimes);
-      const maxPlannedTime = moment.max(plannedTimes);
-      return `${minPlannedTime.format(DATE_TIME_FORMAT_MIN)} - ${maxPlannedTime.format(DATE_TIME_FORMAT_MIN)}`;
+      switch (status) {
+        case TransportStatus.PLANNED: {
+          const plannedTime = moment(sortedTimes[0].time);
+          return `${t("management.companySummary.time.plannedTime")} ${plannedTime.format(DATE_TIME_FORMAT_MIN)}`;
+        }
+        case TransportStatus.DEPARTED:
+        case TransportStatus.STOPPED:
+        case TransportStatus.IN_PROGRESS: {
+          const departureTime = moment(sortedTimes[0].time);
+          return `${t("management.companySummary.time.departureTime")} ${departureTime.format(DATE_TIME_FORMAT_MIN)}`;
+        }
+        case TransportStatus.ARRIVED: {
+          const departureTime = moment(sortedTimes[0].time);
+          const arrivalTime = moment(sortedTimes[sortedTimes.length - 1].time);
+          return `${departureTime.format(DATE_TIME_FORMAT_MIN)} - ${arrivalTime.format(DATE_TIME_FORMAT_MIN)}`;
+        }
+      }
     } else {
       return "";
     }
@@ -112,25 +116,22 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   return (
     <IonGrid className="routeGrid ion-no-padding">
       <IonRow className="lightBackground ion-hide-lg-down">
-        <IonCol size="15" size-lg="2" className="ion-padding">
+        <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
           <IonText>{t("management.companySummary.route.tractorUnit").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="15" size-lg="2" className="ion-padding">
+        <IonCol size="24" size-lg="8" className="ion-padding-start ion-padding-top ion-padding-bottom">
           <IonText>{t("management.companySummary.route.route").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="15" size-lg="3" className="ion-padding">
-          <IonText>{t("management.companySummary.route.supervision").toUpperCase()}</IonText>
-        </IonCol>
-        <IonCol size="15" size-lg="2" className="ion-padding">
+        <IonCol size="24" size-lg="4" className="ion-padding-start ion-padding-top ion-padding-bottom">
           <IonText>{t("management.companySummary.route.time").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="15" size-lg="2" className="ion-padding">
+        <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
           <IonText>{t("management.companySummary.route.password").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="15" size-lg="2" className="ion-padding">
+        <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
           <IonText>{t("management.companySummary.route.status").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="15" size-lg="2" className="ion-padding">
+        <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
           <IonText>{t("management.companySummary.route.action").toUpperCase()}</IonText>
         </IonCol>
       </IonRow>
@@ -185,13 +186,13 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
 
             return (
               <IonRow key={key}>
-                <IonCol size="15" size-lg="2" className="ion-padding">
+                <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
                   <IonText className="headingText ion-hide-lg-up">{`${t("management.companySummary.route.tractorUnit")}: `}</IonText>
                   <IonText>{tractorUnit ? tractorUnit.toUpperCase() : ""}</IonText>
                 </IonCol>
 
-                <IonCol size="15" size-lg="2" className="ion-padding">
-                  <IonGrid className="ion-no-padding">
+                <IonCol size="24" size-lg="8" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                  <IonGrid className="routeSubGrid ion-no-padding">
                     <IonRow>
                       <IonCol size="12" className="ion-hide-lg-up">
                         <IonText className="headingText">{t("management.companySummary.route.route")}</IonText>
@@ -203,34 +204,21 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                   </IonGrid>
                 </IonCol>
 
-                <IonCol size="15" size-lg="3" className="ion-padding">
-                  <IonGrid className="ion-no-padding">
-                    <IonRow>
-                      <IonCol size="12" className="ion-hide-lg-up">
-                        <IonText className="headingText">{t("management.companySummary.route.supervision")}</IonText>
-                      </IonCol>
-                      <IonCol size="12">
-                        <IonText>{supervisionText(supervisions)}</IonText>
-                      </IonCol>
-                    </IonRow>
-                  </IonGrid>
-                </IonCol>
-
-                <IonCol size="15" size-lg="2" className="ion-padding">
-                  <IonGrid className="ion-no-padding">
+                <IonCol size="24" size-lg="4" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                  <IonGrid className="routeSubGrid ion-no-padding">
                     <IonRow>
                       <IonCol size="12" className="ion-hide-lg-up">
                         <IonText className="headingText">{t("management.companySummary.route.time")}</IonText>
                       </IonCol>
                       <IonCol size="12">
-                        <IonText>{timePeriodText(supervisions)}</IonText>
+                        <IonText>{timePeriodText(status, statusHistory)}</IonText>
                       </IonCol>
                     </IonRow>
                   </IonGrid>
                 </IonCol>
 
-                <IonCol size="15" size-lg="2" className="ion-padding">
-                  <IonGrid className="ion-no-padding">
+                <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                  <IonGrid className="routeSubGrid ion-no-padding">
                     <IonRow>
                       <IonCol size="5" size-sm="3" className="ion-hide-lg-up">
                         <IonText className="headingText">{t("management.companySummary.route.password")}</IonText>
@@ -248,8 +236,8 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                   </IonGrid>
                 </IonCol>
 
-                <IonCol size="15" size-lg="2" className="ion-padding">
-                  <IonGrid className="ion-no-padding">
+                <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                  <IonGrid className="routeSubGrid ion-no-padding">
                     <IonRow>
                       <IonCol size="5" size-sm="3" className="ion-hide-lg-up">
                         <IonText className="headingText">{t("management.companySummary.route.status")}</IonText>
@@ -268,8 +256,8 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                   </IonGrid>
                 </IonCol>
 
-                <IonCol size="15" size-lg="2" className="ion-padding">
-                  <IonGrid className="ion-no-padding">
+                <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                  <IonGrid className="routeSubGrid ion-no-padding">
                     <IonRow>
                       <IonCol size="5" size-sm="3" className="ion-hide-lg-up">
                         <IonText className="headingText">{t("management.companySummary.route.action")}</IonText>

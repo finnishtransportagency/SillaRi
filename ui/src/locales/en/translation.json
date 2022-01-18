@@ -218,11 +218,14 @@
         "id": "ID",
         "tractorUnit": "Tractor unit",
         "route": "Route",
-        "supervision": "Supervision",
         "time": "Time",
         "password": "Password",
         "status": "Status",
         "action": "Action"
+      },
+      "time": {
+        "departureTime": "Departure time",
+        "plannedTime": "Planned departure time"
       },
       "action": {
         "details": "Details",
