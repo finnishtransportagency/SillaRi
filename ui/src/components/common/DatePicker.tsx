@@ -17,7 +17,7 @@ const getDaysArray = (start: Date, end: Date) => {
 };
 
 const DatePicker = ({ value, onChange }: DatePickerProps): JSX.Element => {
-  const min = moment().toDate();
+  const min = moment(value).unix() < moment().unix() ? value : moment().toDate();
   const max = moment().add(100, "days").toDate();
   return (
     <CustomSelect
