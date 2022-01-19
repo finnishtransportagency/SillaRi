@@ -145,17 +145,18 @@ const SendingList = ({ isOpen, setOpen, supervisionList }: SendingListProps): JS
               );
             })
         )}
-        <IonButton
-          className="ion-margin"
-          color="primary"
-          expand="block"
-          size="large"
-          disabled={supervisionList.length === 0 || selectedIds.length === 0 || isSendingSupervisions}
-          onClick={sendSelected}
-        >
-          {t("sendingList.sendSelected")}
-        </IonButton>
       </IonContent>
+
+      <IonButton
+        className="ion-margin"
+        color="primary"
+        expand="block"
+        size="large"
+        disabled={supervisionList.length === 0 || selectedIds.length === 0 || isSendingSupervisions}
+        onClick={sendSelected}
+      >
+        {t("sendingList.sendSelected")}
+      </IonButton>
 
       <IonToast
         isOpen={toastMessage.length > 0}
