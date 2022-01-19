@@ -14,3 +14,8 @@ if [ "$environment" == "prod" ]
  then
     /bin/prometheus --storage.tsdb.path=/prometheus_data --storage.tsdb.retention=180d --config.file=/etc/prometheus/prometheus-prod.yml --web.route-prefix=/prometheus --web.external-url=https://sillari.vaylapilvi.fi/prometheus --web.enable-admin-api
 fi
+
+if [ "$environment" == "preprod" ]
+ then
+    /bin/prometheus --storage.tsdb.path=/prometheus_data --storage.tsdb.retention=180d --config.file=/etc/prometheus/prometheus-preprod.yml --web.route-prefix=/prometheus --web.external-url=https://sillaripreprod.testivaylapilvi.fi/prometheus --web.enable-admin-api
+fi

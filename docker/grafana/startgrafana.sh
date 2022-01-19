@@ -7,6 +7,16 @@ else
     if [ "$environment" == "test" ] ; then
         export grafana_root_uri=sillaritest.testivaylapilvi.fi/grafana/
         export grafana_domain=sillaritest.testivaylapilvi.fi
+    else
+      if [ "$environment" == "prod" ] ; then
+          export grafana_root_uri=sillari.vaylapilvi.fi/grafana/
+          export grafana_domain=sillari.vaylapilvi.fi
+      else
+        if [ "$environment" == "preprod" ] ; then
+            export grafana_root_uri=sillaripreprod.testivaylapilvi.fi/grafana/
+            export grafana_domain=sillaripreprod.testivaylapilvi.fi
+        fi
+      fi
     fi
 fi
 
