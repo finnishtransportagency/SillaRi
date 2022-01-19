@@ -8,7 +8,6 @@ import { warningOutline } from "ionicons/icons";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
-import ISupervision from "../../interfaces/ISupervision";
 import { actions } from "../../store/rootSlice";
 import close from "../../theme/icons/close.svg";
 import { onRetry } from "../../utils/backendData";
@@ -90,8 +89,8 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
           return `${t("management.companySummary.time.departureTime")} ${departureTime.format(DATE_TIME_FORMAT_MIN)}`;
         }
         case TransportStatus.ARRIVED: {
-          const departureTime = moment(sortedTimes[0].time);
-          const arrivalTime = moment(sortedTimes[sortedTimes.length - 1].time);
+          const arrivalTime = moment(sortedTimes[0].time);
+          const departureTime = moment(sortedTimes[sortedTimes.length - 1].time);
           return `${departureTime.format(DATE_TIME_FORMAT_MIN)} - ${arrivalTime.format(DATE_TIME_FORMAT_MIN)}`;
         }
       }

@@ -210,7 +210,7 @@
           "all": "Kaikki kuljetukset",
           "planned": "Suunnitellut",
           "waiting": "Lähtöä odottavat",
-          "in_progress": "Liikkeella olevat",
+          "in_progress": "Liikkeellä olevat",
           "completed": "Päättyneet"
         }
       },
@@ -296,7 +296,7 @@
       "planned": "Suunniteltu",
       "departed": "Lähtenyt",
       "stopped": "Tauolla",
-      "in_progress": "Liikkeella",
+      "in_progress": "Ajossa",
       "arrived": "Päättynyt"
     }
   },
