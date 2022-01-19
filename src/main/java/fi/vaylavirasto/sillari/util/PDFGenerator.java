@@ -298,13 +298,14 @@ public class PDFGenerator {
 
 
             final float MAX_PHOTO_WIDTH = page.getMediaBox().getWidth() - 60;
-            final float MAX_PHOTO_HEIGHT = page.getMediaBox().getHeight() - 40;
+            final float MAX_PHOTO_HEIGHT = page.getMediaBox().getHeight() - 150;
 
             float imageWidth = pdImage != null ? pdImage.getWidth() : 0;
             float imageHeight = pdImage != null ? pdImage.getHeight() : 0;
 
             float newWidth = imageWidth;
             float newHeight = imageHeight;
+
 
             if (imageWidth > MAX_PHOTO_WIDTH) {
                 final float ratio = imageWidth / MAX_PHOTO_WIDTH;
@@ -314,9 +315,11 @@ public class PDFGenerator {
 
             if (newHeight > MAX_PHOTO_HEIGHT) {
                 final float ratio = imageHeight / MAX_PHOTO_HEIGHT;
-                newWidth = newWidth / ratio;
+                newWidth = imageWidth / ratio;
                 newHeight = MAX_PHOTO_HEIGHT;
             }
+
+
 
             y -= 20 + newHeight;
             if (y <= 20) {
