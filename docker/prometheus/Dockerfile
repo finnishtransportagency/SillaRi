@@ -4,6 +4,7 @@ USER root
 ADD prometheus.yml /etc/prometheus/
 ADD prometheus-test.yml /etc/prometheus/
 ADD prometheus-prod.yml /etc/prometheus/
+ADD prometheus-preprod.yml /etc/prometheus/
 ADD startprometheus.sh /startprometheus.sh
 RUN chmod gou+rx /startprometheus.sh
 
