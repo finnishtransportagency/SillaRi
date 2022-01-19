@@ -202,6 +202,7 @@
     "companySummary": {
       "permitListTitle": "(SV) Transport permits and management",
       "transports": "(SV) Transports",
+      "supervision": "(SV) Supervision",
       "addTransportButtonLabel": "(SV) Add transport",
       "filter": {
         "show": "(SV) Show",
@@ -217,11 +218,14 @@
         "id": "(SV) ID",
         "tractorUnit": "(SV) Tractor unit",
         "route": "(SV) Route",
-        "supervision": "(SV) Supervision",
         "time": "(SV) Time",
         "password": "(SV) Password",
         "status": "(SV) Status",
         "action": "(SV) Action"
+      },
+      "time": {
+        "departureTime": "(SV) Departure time",
+        "plannedTime": "(SV) Planned departure time"
       },
       "action": {
         "details": "(SV) Details",

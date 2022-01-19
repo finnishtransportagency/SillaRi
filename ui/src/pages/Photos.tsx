@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { IonButton, IonCol, IonContent, IonFooter, IonGrid, IonIcon, IonList, IonPage, IonRow } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Camera, CameraSource, CameraResultType } from "@capacitor/camera";
+import { Camera, CameraSource, CameraResultType, CameraDirection } from "@capacitor/camera";
 import { useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import moment from "moment";
@@ -73,6 +73,7 @@ const Photos = (): JSX.Element => {
       // Use uuid in the filename to make it unique
       const image = await Camera.getPhoto({
         source: CameraSource.Camera,
+        direction: CameraDirection.Rear,
         resultType: CameraResultType.DataUrl,
       });
       const now = new Date();
