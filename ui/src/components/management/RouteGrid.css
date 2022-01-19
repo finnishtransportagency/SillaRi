@@ -1,10 +1,14 @@
 .routeGrid {
   border: 2px solid var(--ion-color-base);
-  --ion-grid-columns: 15;
+  --ion-grid-columns: 24;
 }
 
 .routeGrid > ion-row {
   border-top: 2px solid var(--ion-color-base);
+}
+
+.routeSubGrid {
+  --ion-grid-columns: 12;
 }
 
 .routeGridStatus {
@@ -22,4 +26,8 @@
 
 .routeGridStatus_arrived {
   background-color: var(--ion-color-light);
+}
+
+.routeGridStatusUnknown {
+  color: var(--ion-color-warning-shade);
 }

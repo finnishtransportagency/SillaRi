@@ -8,7 +8,7 @@ import IPermit from "../../interfaces/IPermit";
 import { actions } from "../../store/rootSlice";
 import { onRetry } from "../../utils/backendData";
 import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
-import { DATE_FORMAT } from "../../utils/constants";
+import { DATE_FORMAT, SupervisorType } from "../../utils/constants";
 import PermitLinkText from "../PermitLinkText";
 
 interface PermitAccordionHeadingProps {
@@ -29,31 +29,62 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
     }
   );
 
+  const supervisionText = () => {
+    // Get the unique non-null supervisor types from each transport and map them to translated text
+    const supervisorTypes = routeTransportList
+      ? routeTransportList
+          .flatMap((routeTransport) => {
+            const { supervisions } = routeTransport;
+
+            return supervisions
+              ? supervisions
+                  .map((supervision) => {
+                    const { routeBridge } = supervision;
+                    const { contractNumber = 0 } = routeBridge || {};
+                    return contractNumber > 0 ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR;
+                  })
+                  .filter((v, i, a) => v && a.indexOf(v) === i)
+              : [];
+          })
+          .filter((v, i, a) => v && a.indexOf(v) === i)
+      : [];
+
+    return supervisorTypes.length > 0
+      ? supervisorTypes.map((st) => t(`management.supervisionType.${st.toLowerCase()}`)).join(", ")
+      : t("management.supervisionType.unknown");
+  };
+
   return (
     <IonGrid className="ion-no-padding" ref={ref}>
       <IonRow className="ion-margin ion-align-items-center">
-        <IonCol>
+        <IonCol size="12" size-md="8">
           <IonGrid className="ion-no-padding">
             <IonRow>
               <IonCol>
                 <PermitLinkText permit={permit} className="headingText" />
               </IonCol>
+              <IonCol>
+                <IonText>{`${t("management.companySummary.transports")}: ${routeTransportList ? routeTransportList.length : 0}`}</IonText>
+              </IonCol>
             </IonRow>
             <IonRow>
-              <IonCol>
+              <IonCol size="12" size-lg="6">
                 <small>
                   <Moment format={DATE_FORMAT}>{validStartDate}</Moment>
                   <IonText>{" - "}</IonText>
                   <Moment format={DATE_FORMAT}>{validEndDate}</Moment>
                 </small>
               </IonCol>
+              <IonCol size="12" size-lg="6">
+                <small>
+                  <IonText>{`${t("management.companySummary.supervision")}: ${supervisionText()}`}</IonText>
+                </small>
+              </IonCol>
             </IonRow>
           </IonGrid>
         </IonCol>
-        <IonCol>
-          <IonText>{`${t("management.companySummary.transports")}: ${routeTransportList ? routeTransportList.length : 0}`}</IonText>
-        </IonCol>
-        <IonCol className="ion-hide-md-down">
+
+        <IonCol size="12" size-md="4" className="ion-hide-md-down">
           <IonButton
             color="secondary"
             // expand="block"

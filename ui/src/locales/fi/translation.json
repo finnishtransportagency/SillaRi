@@ -202,6 +202,7 @@
     "companySummary": {
       "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
       "transports": "Kuljetuksia",
+      "supervision": "Sillanvalvonta",
       "addTransportButtonLabel": "Lisää kuljetus",
       "filter": {
         "show": "Näytä",
@@ -209,7 +210,7 @@
           "all": "Kaikki kuljetukset",
           "planned": "Suunnitellut",
           "waiting": "Lähtöä odottavat",
-          "in_progress": "Liikkeella olevat",
+          "in_progress": "Liikkeellä olevat",
           "completed": "Päättyneet"
         }
       },
@@ -217,11 +218,14 @@
         "id": "ID",
         "tractorUnit": "Vetoauto",
         "route": "Reitti",
-        "supervision": "Sillanvalvonta",
         "time": "Ajankohta",
         "password": "Salasana",
         "status": "Tila",
         "action": "Toiminto"
+      },
+      "time": {
+        "departureTime": "Lähtöaika",
+        "plannedTime": "Arvioitu lähtöaika"
       },
       "action": {
         "details": "Lisätiedot",
@@ -292,7 +296,7 @@
       "planned": "Suunniteltu",
       "departed": "Lähtenyt",
       "stopped": "Tauolla",
-      "in_progress": "Liikkeella",
+      "in_progress": "Ajossa",
       "arrived": "Päättynyt"
     }
   },
