@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
-import { IonApp, IonButton, IonContent, setupConfig } from "@ionic/react";
+import { IonApp, IonButton, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -48,7 +48,7 @@ import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import Cookies from "js-cookie";
 
 // Use the same style for all platforms
-setupConfig({
+setupIonicReact({
   mode: "md",
 });
 

@@ -20,7 +20,7 @@ const RouteStatusLog = ({ isOpen, setOpen, statusHistory }: RouteStatusLogProps)
   const { t } = useTranslation();
 
   return (
-    <IonModal cssClass="" isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
+    <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
       <IonItem color="primary">
         <IonLabel className="headingBoldText">{t("management.companySummary.transportStatusLog")}</IonLabel>
         <IonIcon className="otherIconLarge" slot="end" icon={close} onClick={() => setOpen(false)} />

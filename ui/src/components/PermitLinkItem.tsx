@@ -29,7 +29,7 @@ const PermitLinkItem = ({ permit, isHeader }: PermitLinkItemProps): JSX.Element 
         </IonLabel>
       </IonItem>
 
-      {isPermitPdfOpen && <PermitPdfPreview pdfObjectKey={pdfObjectKey} isOpen={isPermitPdfOpen} setOpen={setPermitPdfOpen} />}
+      <PermitPdfPreview pdfObjectKey={pdfObjectKey} isOpen={isPermitPdfOpen} setOpen={setPermitPdfOpen} />
     </>
   ) : (
     <IonItem className={isHeader ? "header" : ""} detail detailIcon="" lines="none">

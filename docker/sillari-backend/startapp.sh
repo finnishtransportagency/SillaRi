@@ -1,5 +1,7 @@
 #!/bin/sh
 cat /var/sillari/hosts >> /etc/hosts
+env > /data/env.txt
+echo $db_url > /data/db_url.txt
 if [ -f "/var/sillari/node1" ]; then
     nodename="node1"
     export nodename

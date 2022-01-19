@@ -13,7 +13,7 @@ spring:
     name: SillaRi
   datasource:
     # Values from pom.xml profile properties
-    url: ${db.url}
+    url: @db.url@
     username: @db.username@
     password: @db.password@
     driver-class-name: @db.driver@
