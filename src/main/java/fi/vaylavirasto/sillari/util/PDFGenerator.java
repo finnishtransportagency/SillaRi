@@ -24,30 +24,29 @@ import java.util.stream.Collectors;
 
 public class PDFGenerator {
 
-    public static final String pdf_title="Sillanvalvontaraportti";
-    public static final String pdf_permit_number="Lupanumero:";
-    public static final String pdf_route_name="Reitin nimi:";
-    public static final String pdf_supervision_start_time="Valvonta aloitettu:";
-    public static final String pdf_bridge="Silta:";
-    public static final String pdf_road_address="Tieosoite:";
-    public static final String pdf_observations="Havainnot";
-    public static final String pdf_driving_line_reason="Miksi ajolinjaa ei noudatettu:";
-    public static final String pdf_speed_reason="Miksi ajonopeutta ei hyväksytä:";
-    public static final String pdf_sign_time="Kuittauksen ajankohta: {0}";
-    public static final String pdf_supervisor="Sillanvalvoja: {2, choice, 0#-|1#{0} {1}}";
-    public static final String pdf_driving_line="Ajolinjaa on noudatettu: {0, choice, 0#kyllä|1#ei}";
-    public static final String pdf_speed="Ajonopeus on hyväksytty: {0, choice, 0#kyllä|1#ei}";
-    public static final String pdf_anomalies="Poikkeavia havaintoja: {0, choice, 0#kyllä|1#ei}";
-    public static final String pdf_joint_damage="Liikuntasauman rikkoutuminen: {0, choice, 0#kyllä|1#ei}";
-    public static final String pdf_bend_or_displacement="Pysyvä taipuma tai muu siirtymä: {0, choice, 0#kyllä|1#ei}";
-    public static final String pdf_other="Jotain muuta, mitä? {0, choice, 0#kyllä|1#ei}";
-    public static final String pdf_additional_info="Lisätiedot: {0}";
-    public static final String pdf_photos_kpl="Valokuvat ({0}kpl)";
-    public static final String pdf_photo="kuva";
+    public static final String pdf_title = "Sillanvalvontaraportti";
+    public static final String pdf_permit_number = "Lupanumero:";
+    public static final String pdf_route_name = "Reitin nimi:";
+    public static final String pdf_supervision_start_time = "Valvonta aloitettu:";
+    public static final String pdf_bridge = "Silta:";
+    public static final String pdf_road_address = "Tieosoite:";
+    public static final String pdf_observations = "Havainnot";
+    public static final String pdf_driving_line_reason = "Miksi ajolinjaa ei noudatettu:";
+    public static final String pdf_speed_reason = "Miksi ajonopeutta ei hyväksytä:";
+    public static final String pdf_sign_time = "Kuittauksen ajankohta: {0}";
+    public static final String pdf_supervisor = "Sillanvalvoja: ";
+    public static final String pdf_driving_line = "Ajolinjaa on noudatettu: {0, choice, 0#kyllä|1#ei}";
+    public static final String pdf_speed = "Ajonopeus on hyväksytty: {0, choice, 0#kyllä|1#ei}";
+    public static final String pdf_anomalies = "Poikkeavia havaintoja: {0, choice, 0#kyllä|1#ei}";
+    public static final String pdf_joint_damage = "Liikuntasauman rikkoutuminen: {0, choice, 0#kyllä|1#ei}";
+    public static final String pdf_bend_or_displacement = "Pysyvä taipuma tai muu siirtymä: {0, choice, 0#kyllä|1#ei}";
+    public static final String pdf_other = "Jotain muuta, mitä? {0, choice, 0#kyllä|1#ei}";
+    public static final String pdf_additional_info = "Lisätiedot: {0}";
+    public static final String pdf_photos_kpl = "Valokuvat ({0}kpl)";
+    public static final String pdf_photo = "kuva";
 
     public static final int TOP_MARGIN = 50;
     private static final Logger logger = LogManager.getLogger();
-
 
 
     private PDDocument document;
@@ -62,17 +61,12 @@ public class PDFGenerator {
 
     public byte[] generateReportPDF(SupervisionModel supervision, List<byte[]> images) {
 
-        
-
 
         logger.debug("Generate pdf for supervision {}, isLocalEnv={}", supervision);
         BridgeModel bridge = supervision.getRouteBridge().getBridge();
         RouteModel route = supervision.getRouteBridge().getRoute();
         SupervisionReportModel report = supervision.getReport();
         PermitModel permit = route.getPermit();
-        // TODO get the supervisor who has finished the report
-        SupervisorModel supervisor = ((supervision.getSupervisors() == null || supervision.getSupervisors().isEmpty()) ? null : supervision.getSupervisors().get(0));
-
 
         document = new PDDocument();
         page = new PDPage();
@@ -120,9 +114,7 @@ public class PDFGenerator {
             contentStream.showText(MessageFormat.format(pdf_sign_time, signTime));
 
             newLine();
-            String supervisorFirstName = supervisor != null ? supervisor.getFirstName() : "";
-            String supervisorLastName = supervisor != null ? supervisor.getLastName() : "";
-            contentStream.showText(MessageFormat.format(pdf_supervisor, supervisorFirstName, supervisorLastName, (supervisor == null) ? 0 : 1));
+            contentStream.showText(pdf_supervisor + getSupervisorName(supervision));
 
             newLine();
             newLine();
@@ -191,9 +183,19 @@ public class PDFGenerator {
                 newLine();
                 contentStream.endText();
 
-                handleImages(imageMetadatas, images, document);
+                try {
+                    handleImages(imageMetadatas, images, document);
+                } catch (Exception e) {
+                    // TODO what to do?
+                    logger.error("caughth: " + e.getClass().getName() + e.getMessage());
+                }
 
-                contentStream.close();
+                try {
+                    contentStream.close();
+                } catch (Exception e) {
+                    // TODO what to do?
+                    logger.error("caughth: " + e.getClass().getName() + e.getMessage());
+                }
             }
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             document.save(byteArrayOutputStream);
@@ -320,7 +322,6 @@ public class PDFGenerator {
             }
 
 
-
             y -= 20 + newHeight;
             if (y <= 20) {
                 newImagePage();
@@ -358,6 +359,28 @@ public class PDFGenerator {
         }
     }
 
+    @NotNull
+    private String getSupervisorUserName(SupervisionModel supervision) {
+        return supervision.getStatusHistory().stream()
+                .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(SupervisionStatusType.REPORT_SIGNED))
+                .findFirst().orElseThrow().getUsername();
+
+    }
+
+    @NotNull
+    private String getSupervisorName(SupervisionModel supervision) {
+        try {
+            String userName = getSupervisorUserName(supervision);
+            List<SupervisorModel> supervisors = ((supervision.getSupervisors() == null || supervision.getSupervisors().isEmpty()) ? null : supervision.getSupervisors());
+            SupervisorModel supervisor = supervisors.stream().filter(s -> s.getUsername().equals(userName)).findFirst().orElseThrow();
+            String supervisorFirstName = supervisor != null ? supervisor.getFirstName() : "";
+            String supervisorLastName = supervisor != null ? supervisor.getLastName() : "";
+            return supervisorFirstName + " " + supervisorLastName;
+        } catch (Exception e) {
+            logger.debug("caught: " + e.getClass().getName() + e.getMessage());
+            return "-";
+        }
+    }
 
 
 }
