@@ -47,9 +47,24 @@ const RouteInfoGrid = ({
 
   const estimatedDeparture = moment(plannedDepartureTime);
 
+  const setPlannedDepartureDate = (dateTime: Date) => {
+    if (modifiedRouteTransportDetail) {
+      const dt = modifiedRouteTransportDetail.plannedDepartureTime;
+      dt.setFullYear(dateTime.getFullYear());
+      dt.setMonth(dateTime.getMonth());
+      dt.setDate(dateTime.getDate());
+      const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: dt };
+      setModifiedRouteTransportDetail(newDetail);
+    }
+  };
+
   const setPlannedDepartureTime = (dateTime: Date) => {
     if (modifiedRouteTransportDetail) {
-      const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: dateTime };
+      const dt = modifiedRouteTransportDetail.plannedDepartureTime;
+      dt.setHours(dateTime.getHours());
+      dt.setMinutes(dateTime.getMinutes());
+      dt.setSeconds(0);
+      const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: dt };
       setModifiedRouteTransportDetail(newDetail);
     }
   };
@@ -98,7 +113,7 @@ const RouteInfoGrid = ({
   return (
     <IonGrid className="ion-no-padding">
       <IonRow>
-        <IonCol size-lg="3">
+        <IonCol size-lg="2">
           <IonGrid className="ion-no-padding">
             <IonRow className="ion-margin-top">
               <IonCol>
@@ -107,14 +122,14 @@ const RouteInfoGrid = ({
             </IonRow>
             <IonRow>
               <IonCol>
-                {status === TransportStatus.PLANNED && <DatePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />}
+                {status === TransportStatus.PLANNED && <DatePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureDate} />}
                 {status !== TransportStatus.PLANNED && <Moment format={DATE_FORMAT}>{estimatedDeparture}</Moment>}
               </IonCol>
             </IonRow>
           </IonGrid>
         </IonCol>
 
-        <IonCol size-lg="3">
+        <IonCol size-lg="2">
           <IonGrid className="ion-no-padding">
             <IonRow className="ion-margin-start ion-margin-end ion-margin-top">
               <IonCol>
@@ -130,7 +145,7 @@ const RouteInfoGrid = ({
           </IonGrid>
         </IonCol>
 
-        <IonCol size="12" size-lg="6">
+        <IonCol size="12" size-lg="8">
           <IonGrid className="ion-no-padding">
             <IonRow className="ion-margin-top">
               <IonCol>

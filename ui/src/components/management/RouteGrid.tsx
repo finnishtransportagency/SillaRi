@@ -291,7 +291,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
             );
           })}
 
-      {isStatusLogOpen && <RouteStatusLog isOpen={isStatusLogOpen} setOpen={setStatusLogOpen} statusHistory={statusLog} />}
+      <RouteStatusLog isOpen={isStatusLogOpen} setOpen={setStatusLogOpen} statusHistory={statusLog} />
     </IonGrid>
   );
 };
