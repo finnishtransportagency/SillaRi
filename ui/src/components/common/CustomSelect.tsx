@@ -19,7 +19,11 @@ const DropdownIndicator = (props: DropdownIndicatorProps<{ value: string | numbe
   );
 };
 
-const CustomSelect = ({ options, selectedValue, onChange }: CustomSelectProps): JSX.Element => {
+const Input = (props: InputProps<{ value: string | number; label: string }, false>) => {
+  // Show a numeric input keyboard on mobile devices
+  return <components.Input {...props} inputMode="numeric" />;
+};
+
 const CustomSelect = ({ options, selectedValue, onChange, validateInput }: CustomSelectProps): JSX.Element => {
   return (
     <Select
@@ -45,7 +49,7 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput }: Custo
           zIndex: 999,
         }),
       }}
-      components={{ DropdownIndicator }}
+      components={{ Input, DropdownIndicator }}
       options={options}
       value={options.find((option) => option.value === selectedValue)}
       placeholder=""
