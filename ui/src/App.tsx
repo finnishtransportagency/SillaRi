@@ -18,6 +18,7 @@ import TransportCodeInput from "./pages/transport/TransportCodeInput";
 import Transport from "./pages/transport/Transport";
 import TransportDetail from "./pages/management/TransportDetail";
 import SidebarMenu from "./components/SidebarMenu";
+import AccessDenied from "./pages/AccessDenied";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -107,6 +108,13 @@ const App: React.FC = () => {
     });
   };
 
+  const userHasRole = (role: string) => {
+    if (userData) {
+      return userData.roles.includes(role);
+    }
+    return false;
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <IonApp>
@@ -128,24 +136,56 @@ const App: React.FC = () => {
             <SidebarMenu roles={userData.roles} />
             <IonContent id="MainContent">
               <Switch>
-                <Route path="/supervisions" component={Supervisions} exact />
+                <Route exact path="/supervisions">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <Supervisions /> : <AccessDenied />}
+                </Route>
                 {/*Optional params not supported in react-router v6, have to declare two routes for both options to work*/}
-                <Route path="/supervisions/:tabId" component={Supervisions} exact />
-                <Route path="/bridgemap/:routeBridgeId" component={Map} exact />
-                <Route path="/routemap/:routeId" component={Map} exact />
-                <Route path="/routeTransportDetail/:routeTransportId" component={RouteTransportDetail} exact />
-                <Route path="/bridgeDetail/:supervisionId" component={BridgeDetail} exact />
-                <Route path="/supervision/:supervisionId" component={Supervision} exact />
-                <Route path="/denyCrossing/:supervisionId" component={DenyCrossing} exact />
-                <Route path="/summary/:supervisionId" component={SupervisionSummary} exact />
-                <Route path="/takePhotos/:supervisionId" component={Photos} exact />
-                <Route path="/management/:companyId" component={CompanySummary} exact />
-                <Route path="/management/addTransport/:permitId" component={AddTransport} exact />
-                <Route path="/management/transportDetail/:routeTransportId" component={TransportDetail} exact />
-                <Route path="/transport" component={TransportCodeInput} exact />
-                <Route path="/transport/:routeTransportId" component={Transport} exact />
-                <Route path="/settings" component={Settings} exact />
-                <Route path="/" exact>
+                <Route exact path="/supervisions/:tabId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <Supervisions /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/bridgemap/:routeBridgeId">
+                  <Map />
+                </Route>
+                <Route exact path="/routemap/:routeId">
+                  <Map />
+                </Route>
+                <Route exact path="/routeTransportDetail/:routeTransportId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <RouteTransportDetail /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/bridgeDetail/:supervisionId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <BridgeDetail /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/supervision/:supervisionId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <Supervision /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/denyCrossing/:supervisionId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <DenyCrossing /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/summary/:supervisionId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <SupervisionSummary /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/takePhotos/:supervisionId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <Photos /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/management/:companyId">
+                  {userHasRole("SILLARI_AJOJARJESTELIJA") ? <CompanySummary /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/management/addTransport/:permitId">
+                  {userHasRole("SILLARI_AJOJARJESTELIJA") ? <AddTransport /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/management/transportDetail/:routeTransportId">
+                  {userHasRole("SILLARI_AJOJARJESTELIJA") ? <TransportDetail /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/transport">
+                  {userHasRole("SILLARI_KULJETTAJA") ? <TransportCodeInput /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/transport/:routeTransportId">
+                  {userHasRole("SILLARI_KULJETTAJA") ? <Transport /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/settings">
+                  <Settings />
+                </Route>
+                <Route exact path="/">
                   <Redirect to={homePage} />
                 </Route>
               </Switch>
