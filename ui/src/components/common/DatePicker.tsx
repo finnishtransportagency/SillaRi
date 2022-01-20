@@ -16,6 +16,19 @@ const getDaysArray = (start: Date, end: Date) => {
   return arr;
 };
 
+const validateInput = (inputValue: string, prevInputValue: string) => {
+  if (!inputValue || inputValue.length === 0) {
+    return "";
+  } else {
+    // Check that the input value matches the format in the dropdown
+    // Allow the user to enter numbers, and add the separator automatically if missing
+    // The select dropdown filter will determine the final value, so no need to do date validation
+    const testValue = inputValue.length >= 3 && inputValue.indexOf(".") < 0 ? `${inputValue.substring(0, 2)}.${inputValue.substring(2)}` : inputValue;
+    const regex = /^\d{1,2}\.?\d{0,2}$/g;
+    return testValue.match(regex) ? testValue : prevInputValue;
+  }
+};
+
 const DatePicker = ({ value, onChange }: DatePickerProps): JSX.Element => {
   const min = moment(value).isBefore(moment()) ? value : moment().toDate();
   const max = moment().add(100, "days").toDate();
@@ -28,6 +41,7 @@ const DatePicker = ({ value, onChange }: DatePickerProps): JSX.Element => {
       onChange={(date) => {
         onChange(moment(date).toDate());
       }}
+      validateInput={validateInput}
     />
   );
 };

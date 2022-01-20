@@ -1,6 +1,6 @@
 import React from "react";
 import Select, { components } from "react-select";
-import type { DropdownIndicatorProps } from "react-select";
+import type { DropdownIndicatorProps, InputActionMeta, InputProps } from "react-select";
 import { IonIcon } from "@ionic/react";
 import arrowOpen from "../../theme/icons/arrow-open.svg";
 
@@ -8,6 +8,7 @@ interface CustomSelectProps {
   options: { value: string | number; label: string }[];
   selectedValue?: string | number;
   onChange?: (value?: string | number) => void;
+  validateInput?: (inputValue: string, prevInputValue: string) => string;
 }
 
 const DropdownIndicator = (props: DropdownIndicatorProps<{ value: string | number; label: string }, false>) => {
@@ -19,6 +20,7 @@ const DropdownIndicator = (props: DropdownIndicatorProps<{ value: string | numbe
 };
 
 const CustomSelect = ({ options, selectedValue, onChange }: CustomSelectProps): JSX.Element => {
+const CustomSelect = ({ options, selectedValue, onChange, validateInput }: CustomSelectProps): JSX.Element => {
   return (
     <Select
       className="reactSelect"
@@ -48,6 +50,12 @@ const CustomSelect = ({ options, selectedValue, onChange }: CustomSelectProps): 
       value={options.find((option) => option.value === selectedValue)}
       placeholder=""
       onChange={(e) => onChange && onChange(e?.value)}
+      onInputChange={(newValue: string, actionMeta: InputActionMeta) => {
+        if (validateInput) {
+          const { prevInputValue } = actionMeta;
+          return validateInput(newValue, prevInputValue);
+        }
+      }}
     ></Select>
   );
 };
@@ -55,6 +63,7 @@ const CustomSelect = ({ options, selectedValue, onChange }: CustomSelectProps): 
 CustomSelect.defaultProps = {
   selectedValue: undefined,
   onChange: undefined,
+  validateInput: undefined,
 };
 
 export default CustomSelect;
