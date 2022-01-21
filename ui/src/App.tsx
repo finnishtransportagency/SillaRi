@@ -167,10 +167,18 @@ const App: React.FC = () => {
                   {userHasRole("SILLARI_SILLANVALVOJA") ? <Supervisions /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/bridgemap/:routeBridgeId">
-                  <Map />
+                  {userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                    <Map />
+                  ) : (
+                    <AccessDenied />
+                  )}
                 </Route>
                 <Route exact path="/routemap/:routeId">
-                  <Map />
+                  {userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                    <Map />
+                  ) : (
+                    <AccessDenied />
+                  )}
                 </Route>
                 <Route exact path="/routeTransportDetail/:routeTransportId">
                   {userHasRole("SILLARI_SILLANVALVOJA") ? <RouteTransportDetail /> : <AccessDenied />}
