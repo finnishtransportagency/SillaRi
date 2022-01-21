@@ -343,5 +343,12 @@
         "confirm": "Päätä kuljetus"
       }
     }
+  },
+  "accessDenied": {
+    "header": {
+      "title": "SillaRi"
+    },
+    "title": "Pääsy estetty!",
+    "content": "Sinulla ei ole oikeuksia nähdä tätä sivua."
   }
 }

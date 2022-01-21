@@ -343,5 +343,12 @@
         "confirm": "End transport"
       }
     }
+  },
+  "accessDenied": {
+    "header": {
+      "title": "SillaRi"
+    },
+    "title": "Access Denied!",
+    "content": "You do no not have permission to see this page."
   }
 }

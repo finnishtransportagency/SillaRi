@@ -18,6 +18,7 @@ import TransportCodeInput from "./pages/transport/TransportCodeInput";
 import Transport from "./pages/transport/Transport";
 import TransportDetail from "./pages/management/TransportDetail";
 import SidebarMenu from "./components/SidebarMenu";
+import AccessDenied from "./pages/AccessDenied";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -60,15 +61,20 @@ const queryClient = new QueryClient();
 const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
   const [homePage, setHomePage] = useState<string>("/supervisions");
-  const [errorMsg, setErrorMsg] = useState<string>();
+  const [errorCode, setErrorCode] = useState<number>(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userDataResponse = await fetch(`${getOrigin()}/api/ui/userdata`);
+        /* Disabling caching to avoid getting stale user data. */
+        const headers = new Headers();
+        headers.append("pragma", "no-cache");
+        headers.append("cache-control", "no-store");
+
+        const userDataResponse = await fetch(`${getOrigin()}/api/ui/userdata`, { method: "GET", headers: headers });
 
         if (userDataResponse?.ok) {
-          const responseData = await userDataResponse.json();
+          const responseData = await (userDataResponse.json() as Promise<IUserData>);
           if (responseData.roles.length > 0) {
             if (responseData.roles.includes("SILLARI_SILLANVALVOJA")) {
               setHomePage("/supervisions");
@@ -79,19 +85,25 @@ const App: React.FC = () => {
             }
             setUserData(responseData);
           } else {
-            setErrorMsg("Ei oikeutta SillaRi-sovelluksen käyttöön.");
+            /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
+            setErrorCode(1001);
           }
         } else {
           console.log(userDataResponse);
           if (userDataResponse.status === 401) {
-            setErrorMsg("401 - Access denied.");
+            /* Returned by Väylä access control. */
+            setErrorCode(401);
+          } else if (userDataResponse.status === 403) {
+            /* Returned by SillaRi backend if user does not have SillaRi roles. */
+            setErrorCode(403);
           } else {
-            setErrorMsg("Käsittelemätön virhetilanne 1.");
+            /* Properly handling other response code not handled yet. */
+            setErrorCode(1002);
           }
         }
       } catch (e) {
         console.log(e);
-        setErrorMsg("Käsittelemätön virhetilanne 2.");
+        setErrorCode(1003);
       }
     };
     fetchUserData();
@@ -107,45 +119,104 @@ const App: React.FC = () => {
     });
   };
 
+  const userHasRole = (role: string) => {
+    if (userData) {
+      return userData.roles.includes(role);
+    }
+    return false;
+  };
+
+  const renderError = (code: number) => {
+    return (
+      <>
+        {code === 401 ? (
+          <div>
+            <h1>Pääsy estetty</h1>
+            <p>Kirjaudu sisään käyttääksesi sovellusta.</p>
+            <IonButton color="primary" expand="block" size="large" onClick={logoutFromApp}>
+              Kirjaudu sisään
+            </IonButton>
+          </div>
+        ) : code === 403 ? (
+          <div>
+            <h1>Pääsy estetty</h1>
+            <p>Sinulla ei ole oikeuksia käyttää SillaRi-sovellusta.</p>
+          </div>
+        ) : (
+          <div>Käsittelemätön virhetilanne: {code}</div>
+        )}
+      </>
+    );
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <IonApp>
         {!userData ? (
-          <div>
-            {errorMsg ? (
-              <div>
-                <div>{errorMsg}</div>
-                <IonButton color="primary" expand="block" size="large" onClick={logoutFromApp}>
-                  Kirjaudu sisään
-                </IonButton>
-              </div>
-            ) : (
-              <div>Starting app...</div>
-            )}
-          </div>
+          <IonContent className="ion-padding">{errorCode ? <>{renderError(errorCode)}</> : <div>Starting app...</div>}</IonContent>
         ) : (
           <IonReactRouter>
             <SidebarMenu roles={userData.roles} />
             <IonContent id="MainContent">
               <Switch>
-                <Route path="/supervisions" component={Supervisions} exact />
+                <Route exact path="/supervisions">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <Supervisions /> : <AccessDenied />}
+                </Route>
                 {/*Optional params not supported in react-router v6, have to declare two routes for both options to work*/}
-                <Route path="/supervisions/:tabId" component={Supervisions} exact />
-                <Route path="/bridgemap/:routeBridgeId" component={Map} exact />
-                <Route path="/routemap/:routeId" component={Map} exact />
-                <Route path="/routeTransportDetail/:routeTransportId" component={RouteTransportDetail} exact />
-                <Route path="/bridgeDetail/:supervisionId" component={BridgeDetail} exact />
-                <Route path="/supervision/:supervisionId" component={Supervision} exact />
-                <Route path="/denyCrossing/:supervisionId" component={DenyCrossing} exact />
-                <Route path="/summary/:supervisionId" component={SupervisionSummary} exact />
-                <Route path="/takePhotos/:supervisionId" component={Photos} exact />
-                <Route path="/management/:companyId" component={CompanySummary} exact />
-                <Route path="/management/addTransport/:permitId" component={AddTransport} exact />
-                <Route path="/management/transportDetail/:routeTransportId" component={TransportDetail} exact />
-                <Route path="/transport" component={TransportCodeInput} exact />
-                <Route path="/transport/:routeTransportId" component={Transport} exact />
-                <Route path="/settings" component={Settings} exact />
-                <Route path="/" exact>
+                <Route exact path="/supervisions/:tabId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <Supervisions /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/bridgemap/:routeBridgeId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                    <Map />
+                  ) : (
+                    <AccessDenied />
+                  )}
+                </Route>
+                <Route exact path="/routemap/:routeId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                    <Map />
+                  ) : (
+                    <AccessDenied />
+                  )}
+                </Route>
+                <Route exact path="/routeTransportDetail/:routeTransportId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <RouteTransportDetail /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/bridgeDetail/:supervisionId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <BridgeDetail /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/supervision/:supervisionId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <Supervision /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/denyCrossing/:supervisionId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <DenyCrossing /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/summary/:supervisionId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <SupervisionSummary /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/takePhotos/:supervisionId">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <Photos /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/management/:companyId">
+                  {userHasRole("SILLARI_AJOJARJESTELIJA") ? <CompanySummary /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/management/addTransport/:permitId">
+                  {userHasRole("SILLARI_AJOJARJESTELIJA") ? <AddTransport /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/management/transportDetail/:routeTransportId">
+                  {userHasRole("SILLARI_AJOJARJESTELIJA") ? <TransportDetail /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/transport">
+                  {userHasRole("SILLARI_KULJETTAJA") ? <TransportCodeInput /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/transport/:routeTransportId">
+                  {userHasRole("SILLARI_KULJETTAJA") ? <Transport /> : <AccessDenied />}
+                </Route>
+                <Route exact path="/settings">
+                  <Settings />
+                </Route>
+                <Route exact path="/">
                   <Redirect to={homePage} />
                 </Route>
               </Switch>
