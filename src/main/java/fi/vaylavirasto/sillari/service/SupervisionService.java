@@ -1,16 +1,32 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.api.rest.error.LeluPdfUploadException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
+import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
+import fi.vaylavirasto.sillari.util.PDFGenerator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Service
 public class SupervisionService {
+    private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     SupervisionRepository supervisionRepository;
     @Autowired
@@ -27,6 +43,15 @@ public class SupervisionService {
     RouteRepository routeRepository;
     @Autowired
     PermitRepository permitRepository;
+    @Autowired
+    AWSS3Client awss3Client;
+    @Autowired
+    SupervisionImageService supervisionImageService;
+
+
+    @Value("${spring.profiles.active:Unknown}")
+    private String activeProfile;
+
 
     public SupervisionModel getSupervision(Integer supervisionId) {
         SupervisionModel supervision = supervisionRepository.getSupervisionById(supervisionId);
@@ -70,8 +95,9 @@ public class SupervisionService {
     public List<SupervisionModel> getFinishedButUnsignedSupervisions(String username) {
         List<SupervisionModel> supervisions = supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisorUsername(username);
         for (SupervisionModel supervision : supervisions) {
-            // The sending list needs supervision started time, bridge and permit details
+            // The sending list needs supervision started time, bridge, routeTransport and permit details
             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+            supervision.setRouteTransport(routeTransportRepository.getRouteTransportById(supervision.getRouteTransportId()));
             fillPermitDetails(supervision);
         }
         return supervisions;
@@ -129,11 +155,28 @@ public class SupervisionService {
     }
 
     // Completes the supervision by adding the status REPORT_SIGNED
-    public SupervisionModel completeSupervision(Integer supervisionId, SillariUser user) {
+    public void completeSupervision(Integer supervisionId, SillariUser user) {
         SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.REPORT_SIGNED, OffsetDateTime.now(), user.getUsername());
         supervisionStatusRepository.insertSupervisionStatus(status);
-        return getSupervision(supervisionId);
     }
+
+    public void createSupervisionPdf(Integer supervisionId) {
+        SupervisionModel supervision = getSupervision(supervisionId);
+        supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
+
+        List<byte[]> images = getImageFiles(supervision.getImages(), activeProfile.equals("local"));
+        byte[] pdf = new PDFGenerator().generateReportPDF(supervision, images);
+
+        if (pdf != null) {
+            try {
+                savePdf(pdf, supervision.getId());
+            } catch (LeluPdfUploadException e) {
+                // TODO what to do?
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     // Deletes the report and adds the status CANCELLED
     public SupervisionModel cancelSupervision(Integer supervisionId, SillariUser user) {
@@ -150,4 +193,82 @@ public class SupervisionService {
         return getSupervision(supervisionReportModel.getSupervisionId());
     }
 
+    public byte[] getSupervisionPdf(Long reportId) throws IOException {
+        String objectKey = "" + reportId;
+        if (activeProfile.equals("local")) {
+            // Get from local file system
+            String filename = objectKey + ".pdf";
+
+            File inputFile = new File("/", filename);
+            if (inputFile.exists()) {
+                FileInputStream in = new FileInputStream(inputFile);
+                return in.readAllBytes();
+            } else {
+                logger.error("no file");
+            }
+        } else {
+            // Get from AWS
+            return awss3Client.download(objectKey, AWSS3Client.SILLARI_SUPERVISION_PDF_BUCKET);
+        }
+        return null;
+    }
+
+    public void savePdf(byte[] reportPDF, int supervisionId) throws LeluPdfUploadException {
+        logger.debug("save pdf: " + supervisionId);
+        String objectKey = "" + supervisionId;
+        if (activeProfile.equals("local")) {
+            // Save to local file system
+            File outputFile = new File("/", objectKey + ".pdf");
+            try {
+                Files.write(outputFile.toPath(), reportPDF);
+                logger.debug("wrote pdf local file: " + outputFile.getAbsolutePath() + outputFile.getName());
+            } catch (IOException e) {
+                logger.error("Error writing file." + e.getClass().getName() + " " + e.getMessage());
+                throw new LeluPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            // Upload to AWS
+            boolean success = awss3Client.upload(objectKey, reportPDF, "application/pdf", AWSS3Client.SILLARI_SUPERVISION_PDF_BUCKET, AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
+            logger.debug("Uploaded to AWS: " + objectKey);
+            if (!success) {
+                throw new LeluPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+
+    public List<byte[]> getImageFiles(List<SupervisionImageModel> imageMetadatas, boolean isLocal) {
+        List<byte[]> images = new ArrayList<>();
+        for (SupervisionImageModel imageMetadata : imageMetadatas) {
+
+
+            String objectKey = imageMetadata.getObjectKey();
+            String decodedKey = new String(Base64.getDecoder().decode(objectKey));
+
+
+            String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
+            if (isLocal) {
+                // Get from local file system
+                File inputFile = new File("/", filename);
+                if (inputFile.exists()) {
+
+                    try {
+                        byte[] imageBytes = Files.readAllBytes(Path.of(inputFile.getPath()));
+                        images.add(imageBytes);
+                    } catch (IOException e) {
+                        logger.error("Local image creation failed: " + e.getClass().getName() + e.getMessage());
+                    }
+                } else {
+                    logger.debug("No local input file");
+                }
+            } else {
+                //from aws s3
+                byte[] imageBytes = awss3Client.download(decodedKey, awss3Client.getPhotoBucketName());
+                images.add(imageBytes);
+            }
+
+        }
+
+        return images;
+    }
 }

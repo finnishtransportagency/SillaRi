@@ -1,49 +1,33 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation } from "react-query";
-import { useDispatch } from "react-redux";
-import { IonButton, IonCol, IonGrid, IonRow, IonText, useIonAlert } from "@ionic/react";
+import { UseMutationResult } from "react-query";
+import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText, useIonAlert } from "@ionic/react";
 import IRouteTransport from "../../interfaces/IRouteTransport";
+import IRouteTransportPassword from "../../interfaces/IRouteTransportPassword";
+import close from "../../theme/icons/close.svg";
 import { TransportStatus } from "../../utils/constants";
-import { onRetry } from "../../utils/backendData";
-import { generateNewRouteTransportPassword } from "../../utils/managementBackendData";
-import "./TransportPassword.css";
 
 interface TransportPasswordProps {
   routeTransportId: number;
   modifiedRouteTransportDetail: IRouteTransport;
-  setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
   isSendingTransportUpdate: boolean;
+  routeTransportPasswordMutation: UseMutationResult<IRouteTransportPassword, string, number, unknown>;
+  dismissPassword: () => void;
 }
 
 const TransportPassword = ({
   routeTransportId,
   modifiedRouteTransportDetail,
-  setModifiedRouteTransportDetail,
   isSendingTransportUpdate,
+  routeTransportPasswordMutation,
+  dismissPassword,
 }: TransportPasswordProps): JSX.Element => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const [present] = useIonAlert();
 
   const { currentTransportPassword, currentStatus } = modifiedRouteTransportDetail || {};
   const { transportPassword = "" } = currentTransportPassword || {};
   const { status } = currentStatus || {};
-
-  const routeTransportPasswordMutation = useMutation(
-    (routeTransportIdToGenerate: number) => generateNewRouteTransportPassword(routeTransportIdToGenerate, dispatch),
-    {
-      retry: onRetry,
-      onSuccess: (data) => {
-        // Update the password in the modified details
-        const newDetail: IRouteTransport = {
-          ...modifiedRouteTransportDetail,
-          currentTransportPassword: data,
-        };
-        setModifiedRouteTransportDetail(newDetail);
-      },
-    }
-  );
 
   const { isLoading: isGeneratingPassword } = routeTransportPasswordMutation;
 
@@ -59,32 +43,34 @@ const TransportPassword = ({
   };
 
   return (
-    <IonGrid className="ion-no-padding">
+    <IonGrid className="ion-margin ion-no-padding">
       <IonRow>
-        <IonCol size="12">
-          <IonGrid className="transportPassword ion-padding">
-            <IonRow className="ion-align-items-center">
-              <IonCol>
-                <IonText>{t("management.transportDetail.password")}</IonText>
-              </IonCol>
-              <IonCol className="ion-padding-start">
-                {transportPassword.length > 0 && <IonText className="headingText">{transportPassword}</IonText>}
-                {transportPassword.length === 0 && <IonText>{`(${t("management.transportDetail.passwordUnknown")})`}</IonText>}
-              </IonCol>
-              <IonCol>
-                {status === TransportStatus.PLANNED && transportPassword.length > 0 && (
-                  <IonButton
-                    color="tertiary"
-                    size="small"
-                    disabled={isSendingTransportUpdate || isGeneratingPassword}
-                    onClick={generateRouteTransportPassword}
-                  >
-                    <IonText>{t("management.transportDetail.buttons.generatePassword")}</IonText>
-                  </IonButton>
-                )}
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+        <IonCol size="10" className="ion-text-center">
+          {transportPassword.length > 0 && <IonText className="headingText">{transportPassword}</IonText>}
+          {transportPassword.length === 0 && <IonText>{`(${t("management.transportDetail.passwordUnknown")})`}</IonText>}
+        </IonCol>
+        <IonCol size="2">
+          <IonIcon
+            className="otherIcon"
+            icon={close}
+            onClick={() => {
+              dismissPassword();
+            }}
+          />
+        </IonCol>
+      </IonRow>
+      <IonRow>
+        <IonCol size="10" className="ion-text-center">
+          {status === TransportStatus.PLANNED && transportPassword.length > 0 && (
+            <IonButton
+              color="tertiary"
+              size="small"
+              disabled={isSendingTransportUpdate || isGeneratingPassword}
+              onClick={generateRouteTransportPassword}
+            >
+              <IonText>{t("management.transportDetail.buttons.generatePassword")}</IonText>
+            </IonButton>
+          )}
         </IonCol>
       </IonRow>
     </IonGrid>

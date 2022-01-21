@@ -27,6 +27,7 @@ import java.util.Date;
 
 @Component
 public class AWSS3Client {
+
     private static final Logger logger = LogManager.getLogger();
     public static final String SILLARI_PHOTOS_ROLE_SESSION_NAME = "SILLARI-PHOTOS";
     public static final String SILLARI_PERMITS_ROLE_SESSION_NAME = "SILLARI-PERMITS";
@@ -34,6 +35,7 @@ public class AWSS3Client {
     public static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
     public static final String SILLARI_PHOTOS_BUCKET_TEST = "sillari-photos-test";
     public static final String SILLARI_PERMIT_PDF_BUCKET = "sillari-permits";
+    public static final String SILLARI_SUPERVISION_PDF_BUCKET = "sillari-supervisions";
     private final String roleArn;
     private String accessKey;
     private String secretKey;

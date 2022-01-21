@@ -43,7 +43,7 @@ const AddTransport = (): JSX.Element => {
     retry: onRetry,
     refetchOnWindowFocus: false,
   });
-  const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry });
+  const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry, refetchOnWindowFocus: false });
 
   useEffect(() => {
     // Put empty details into redux for later modifying
@@ -67,7 +67,7 @@ const AddTransport = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={t("management.transportDetail.headerTitleAdd")} somethingFailed={isFailed.getPermit} />
-      <IonContent fullscreen color="light">
+      <IonContent color="light">
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (

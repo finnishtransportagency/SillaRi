@@ -12,16 +12,18 @@ public class RouteMapper implements RecordMapper<Record, RouteModel> {
     @Nullable
     @Override
     public RouteModel map(Record record) {
-        RouteModel routeModel = new RouteModel();
-        routeModel.setId(record.get(TableAlias.route.ID));
-        routeModel.setPermitId(record.get(TableAlias.route.PERMIT_ID));
-        routeModel.setDepartureAddressId(record.get(TableAlias.route.DEPARTURE_ADDRESS_ID));
-        routeModel.setArrivalAddressId(record.get(TableAlias.route.ARRIVAL_ADDRESS_ID));
-        routeModel.setLeluId(record.get(TableAlias.route.LELU_ID));
-        routeModel.setName(record.get(TableAlias.route.NAME));
-        routeModel.setTransportCount(record.get(TableAlias.route.TRANSPORT_COUNT));
-        routeModel.setAlternativeRoute(record.get(TableAlias.route.ALTERNATIVE_ROUTE));
-        routeModel.setRouteBridges(new ArrayList<>());
-        return routeModel;
+        RouteModel model = new RouteModel();
+        model.setId(record.get(TableAlias.route.ID));
+        model.setPermitId(record.get(TableAlias.route.PERMIT_ID));
+        model.setDepartureAddressId(record.get(TableAlias.route.DEPARTURE_ADDRESS_ID));
+        model.setArrivalAddressId(record.get(TableAlias.route.ARRIVAL_ADDRESS_ID));
+        model.setLeluId(record.get(TableAlias.route.LELU_ID));
+        model.setName(record.get(TableAlias.route.NAME));
+        model.setTransportCount(record.get(TableAlias.route.TRANSPORT_COUNT));
+        model.setAlternativeRoute(record.get(TableAlias.route.ALTERNATIVE_ROUTE));
+        model.setRowCreatedTime(record.get(TableAlias.route.ROW_CREATED_TIME));
+        model.setRowUpdatedTime(record.get(TableAlias.route.ROW_UPDATED_TIME));
+        model.setRouteBridges(new ArrayList<>());
+        return model;
     }
 }

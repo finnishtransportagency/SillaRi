@@ -42,11 +42,10 @@
     }
   },
   "camera": {
-    "takePhotoButtonLabel": "Ta bild",
-    "listLabel": "Bilderna",
-    "listLabelPcs": "st",
+    "takePhotoButtonLabel": "(SV) Add photos",
+    "listLabel": "(SV) Photos",
     "item": {
-      "deleteButtonLabel": "Ta bort"
+      "deleteButtonLabel": "(SV) Delete image"
     }
   },
   "SidebarMenu": {
@@ -203,6 +202,7 @@
     "companySummary": {
       "permitListTitle": "(SV) Transport permits and management",
       "transports": "(SV) Transports",
+      "supervision": "(SV) Supervision",
       "addTransportButtonLabel": "(SV) Add transport",
       "filter": {
         "show": "(SV) Show",
@@ -218,11 +218,14 @@
         "id": "(SV) ID",
         "tractorUnit": "(SV) Tractor unit",
         "route": "(SV) Route",
-        "supervision": "(SV) Supervision",
         "time": "(SV) Time",
         "password": "(SV) Password",
         "status": "(SV) Status",
         "action": "(SV) Action"
+      },
+      "time": {
+        "departureTime": "(SV) Departure time",
+        "plannedTime": "(SV) Planned departure time"
       },
       "action": {
         "details": "(SV) Details",
@@ -267,7 +270,8 @@
         "destination": "(SV) Destination",
         "showRouteOnMap": "(SV) Show route on map",
         "tractorUnitIdentifier": "(SV) Vehicle registration number (tractor unit)",
-        "tractorUnitNotSelected": "(SV) Registration number missing"
+        "tractorUnitNotSelected": "(SV) Registration number missing",
+        "pushingVehicle": "(SV) additional or pushing vehicle"
       },
       "bridgeInfo": {
         "bridge": "(SV) Bridge",
@@ -275,9 +279,11 @@
         "bridgeSupervisors": "(SV) Bridge supervisors",
         "ownSupervisor": "(SV) Own supervisors",
         "contractor": "(SV) Maintenance contractor",
+        "contractNumber": "(SV) Contract number",
         "bridgeSupervisor": "(SV) Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "(SV) Bridge supervisor (1.)",
-        "supervisor2": "(SV) Backup supervisor (2.)"
+        "supervisor2": "(SV) Backup supervisor (2.)",
+        "copySupervisor": "(SV) Copy to all bridges"
       }
     },
     "supervisionType": {
@@ -337,5 +343,12 @@
         "confirm": "(SV) End transport"
       }
     }
+  },
+  "accessDenied": {
+    "header": {
+      "title": "SillaRi"
+    },
+    "title": "(SV) Access Denied!",
+    "content": "(SV) You do no not have permission to see this page."
   }
 }

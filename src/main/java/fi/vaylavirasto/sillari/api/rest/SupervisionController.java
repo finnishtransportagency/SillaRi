@@ -17,6 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @RestController
 @Timed
@@ -159,9 +161,11 @@ public class SupervisionController {
             SillariUser user = uiService.getSillariUser();
 
             if (supervisionIds != null && !supervisionIds.isEmpty()) {
-                supervisionIds.forEach(supervisionId -> {
-                    supervisionService.completeSupervision(supervisionId, user);
-                });
+                supervisionIds.forEach(supervisionId -> supervisionService.completeSupervision(supervisionId, user));
+
+                // Don't wait for pdf generation before returning the response
+                ExecutorService executor = Executors.newWorkStealingPool();
+                executor.submit(() -> supervisionIds.forEach(supervisionId -> supervisionService.createSupervisionPdf(supervisionId)));
             }
 
             // TODO - check if any data should be returned

@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.service;
 
 
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
@@ -26,8 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -45,6 +45,7 @@ public class LeluService {
     private RouteBridgeRepository routeBridgeRepository;
     private BridgeRepository bridgeRepository;
     private SupervisionRepository supervisionRepository;
+    private SupervisionStatusRepository supervisionStatusRepository;
     private final MessageSource messageSource;
     private LeluRouteUploadUtil leluRouteUploadUtil;
     private AWSS3Client awss3Client;
@@ -53,11 +54,8 @@ public class LeluService {
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
 
-
-
-
     @Autowired
-    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, SupervisionStatusRepository supervisionStatusRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
                        TRexService trexService) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
@@ -67,6 +65,7 @@ public class LeluService {
         this.messageSource = messageSource;
         this.leluRouteUploadUtil = leluRouteUploadUtil;
         this.supervisionRepository = supervisionRepository;
+        this.supervisionStatusRepository = supervisionStatusRepository;
         this.awss3Client = awss3Client;
         this.trexService = trexService;
     }
@@ -177,11 +176,11 @@ public class LeluService {
     }
 
     public LeluRouteGeometryResponseDTO uploadRouteGeometry(Long routeId, MultipartFile file) throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
-        logger.debug("uploadRouteGeometry: " + routeId + " " +  file.getName());
+        logger.debug("uploadRouteGeometry: " + routeId + " " + file.getName());
         List<RouteModel> routes = routeRepository.getRoutesWithLeluId(routeId);
 
-        if(routes == null || routes.isEmpty()){
-            logger.warn("Route not found with lelu id "+routeId);
+        if (routes == null || routes.isEmpty()) {
+            logger.warn("Route not found with lelu id " + routeId);
             throw new LeluRouteNotFoundException(messageSource.getMessage("lelu.route.not.found", null, Locale.ROOT));
         }
 
@@ -279,21 +278,19 @@ public class LeluService {
         }
 
         //check if there exists supervisions for permits's routes, then update is not allowed, need to create a new version
-        if(permitRepository.hasSupervisions(routeIdsToRemove)){
+        if (permitRepository.hasSupervisions(routeIdsToRemove)) {
             throw new LeluDeleteRouteWithSupervisionsException((messageSource.getMessage("lelu.route.has.supervisions", null, Locale.ROOT)));
-        }
-        else {
+        } else {
             permitRepository.updatePermit(permitModel, routeIdsToRemove);
         }
     }
 
-    public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) throws LeluPermitPdfUploadException {
+    public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) throws LeluPdfUploadException {
         Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitNumber, permitVersion);
         if (permitId == null) {
-            throw new LeluPermitPdfUploadException(messageSource.getMessage("lelu.permit.not.found", null, Locale.ROOT), HttpStatus.NOT_FOUND);
+            throw new LeluPdfUploadException(messageSource.getMessage("lelu.permit.not.found", null, Locale.ROOT), HttpStatus.NOT_FOUND);
         }
         String objectKey = "permitPdf/" + permitNumber + "_" + permitVersion + "/" + file.getOriginalFilename();
-
 
 
         if (activeProfile.equals("local")) {
@@ -303,18 +300,18 @@ public class LeluService {
                 Files.write(outputFile.toPath(), file.getBytes());
             } catch (IOException e) {
                 logger.error("Error writing file." + e.getClass().getName() + " " + e.getMessage());
-                throw new LeluPermitPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new LeluPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             // Upload to AWS
             try {
                 boolean success = awss3Client.upload(objectKey, file.getBytes(), "application/pdf", AWSS3Client.SILLARI_PERMIT_PDF_BUCKET, AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
-                if(!success){
-                    throw new LeluPermitPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
+                if (!success) {
+                    throw new LeluPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             } catch (IOException e) {
                 logger.error("Error uploading file to aws." + e.getClass().getName() + " " + e.getMessage());
-                throw new LeluPermitPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new LeluPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
         permitRepository.updatePermitPdf(permitId, objectKey);
@@ -322,4 +319,28 @@ public class LeluService {
         return new LeluPermiPdfResponseDTO(permitNumber, permitVersion, messageSource.getMessage("lelu.permit.pdf.upload.completed", null, Locale.ROOT));
 
     }
+
+    public LeluRouteResponseDTO getWholeRoute(Long leluRouteId) {
+        RouteModel route = routeRepository.getRouteWithLeluID(leluRouteId);
+        if (route != null) {
+
+            List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(route.getId());
+            route.setRouteBridges(routeBridges);
+
+            if (routeBridges != null) {
+                for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
+                    routeBridge.setSupervisions(supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId()));
+                    if (routeBridge.getSupervisions() != null) {
+                        routeBridge.getSupervisions().forEach(supervision -> {
+                            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+                        });
+                    }
+                }
+            }
+        }
+        logger.debug("HELLO!: " + route);
+        return dtoMapper.fromModelToDTO(route);
+    }
+
+
 }

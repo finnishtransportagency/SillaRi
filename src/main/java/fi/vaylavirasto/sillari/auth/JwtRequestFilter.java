@@ -145,13 +145,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         authorityList.add(SillariRole.fromString("SILLARI_KULJETTAJA"));
                     }
 
-                    // NOTE: Set all roles if none is set in KVH. REMOVE THIS once all user roles has been set correctly in KVH!
-                    if (authorityList.size() < 1) {
-                        authorityList.add(SillariRole.fromString("SILLARI_SILLANVALVOJA"));
-                        authorityList.add(SillariRole.fromString("SILLARI_AJOJARJESTELIJA"));
-                        authorityList.add(SillariRole.fromString("SILLARI_KULJETTAJA"));
-                    }
-
                     SillariUser userDetails = new SillariUser(userNameDetail, authorityList);
 
                     authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);

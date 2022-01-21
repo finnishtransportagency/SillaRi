@@ -53,7 +53,7 @@ const TransportDetail = (): JSX.Element => {
       refetchOnWindowFocus: false,
     }
   );
-  const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry });
+  const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry, refetchOnWindowFocus: false });
 
   const { routeId, tractorUnit } = selectedRouteTransportDetail || {};
 
@@ -111,7 +111,7 @@ const TransportDetail = (): JSX.Element => {
         title={t("management.transportDetail.headerTitleDetail")}
         somethingFailed={isFailed.getRouteTransport || isFailed.getPermitOfRouteTransport || isFailed.getSupervisors}
       />
-      <IonContent fullscreen color="light">
+      <IonContent color="light">
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (

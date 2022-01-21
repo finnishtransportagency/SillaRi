@@ -5,6 +5,7 @@ import ISupervisionImage from "../interfaces/ISupervisionImage";
 import { getOrigin } from "../utils/request";
 import ImagePreview from "./ImagePreview";
 import { DATE_TIME_FORMAT } from "../utils/constants";
+import "./ImageThumbnailRow.css";
 
 interface ImageThumbnailRowProps {
   images: ISupervisionImage[];
@@ -35,7 +36,7 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
 
             return (
               <IonCol key={image.id} size="3">
-                <IonThumbnail onClick={() => showImage(true, imageUrl)}>
+                <IonThumbnail className="imageThumbnail" onClick={() => showImage(true, imageUrl)}>
                   <IonImg src={imageUrl} />
                 </IonThumbnail>
               </IonCol>

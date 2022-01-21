@@ -16,9 +16,11 @@ public class AddressMapper implements RecordMapper<Record, AddressModel> {
     @Nullable
     @Override
     public AddressModel map(Record record) {
-        AddressModel addressModel = new AddressModel();
-        addressModel.setId(record.get(tableAlias.ID));
-        addressModel.setStreetAddress(record.get(tableAlias.STREETADDRESS));
-        return addressModel;
+        AddressModel model = new AddressModel();
+        model.setId(record.get(tableAlias.ID));
+        model.setStreetAddress(record.get(tableAlias.STREETADDRESS));
+        model.setRowCreatedTime(record.get(tableAlias.ROW_CREATED_TIME));
+        model.setRowUpdatedTime(record.get(tableAlias.ROW_UPDATED_TIME));
+        return model;
     }
 }

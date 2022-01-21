@@ -34,7 +34,7 @@ public class LeluPermitDTO {
     private LocalDateTime validFrom;
 
     @NotNull(message = "{permit.valid.to.not.null}")
-    @Schema(description = "Permit valid until", required = true, example = "2021-11-30T00:00:00.000Z")
+    @Schema(description = "Permit valid until", required = true, example = "2022-12-31T00:00:00.000Z")
     private LocalDateTime validTo;
 
     @Valid

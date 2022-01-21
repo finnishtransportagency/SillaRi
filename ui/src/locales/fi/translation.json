@@ -42,11 +42,10 @@
     }
   },
   "camera": {
-    "takePhotoButtonLabel": "Ota kuva",
-    "listLabel": "Kuvat",
-    "listLabelPcs": "kpl",
+    "takePhotoButtonLabel": "Lisää valokuvia",
+    "listLabel": "Valokuvia",
     "item": {
-      "deleteButtonLabel": "Poista"
+      "deleteButtonLabel": "Poista kuva"
     }
   },
   "SidebarMenu": {
@@ -203,6 +202,7 @@
     "companySummary": {
       "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
       "transports": "Kuljetuksia",
+      "supervision": "Sillanvalvonta",
       "addTransportButtonLabel": "Lisää kuljetus",
       "filter": {
         "show": "Näytä",
@@ -210,7 +210,7 @@
           "all": "Kaikki kuljetukset",
           "planned": "Suunnitellut",
           "waiting": "Lähtöä odottavat",
-          "in_progress": "Liikkeella olevat",
+          "in_progress": "Liikkeellä olevat",
           "completed": "Päättyneet"
         }
       },
@@ -218,11 +218,14 @@
         "id": "ID",
         "tractorUnit": "Vetoauto",
         "route": "Reitti",
-        "supervision": "Sillanvalvonta",
         "time": "Ajankohta",
         "password": "Salasana",
         "status": "Tila",
         "action": "Toiminto"
+      },
+      "time": {
+        "departureTime": "Lähtöaika",
+        "plannedTime": "Arvioitu lähtöaika"
       },
       "action": {
         "details": "Lisätiedot",
@@ -267,7 +270,8 @@
         "destination": "Määräpaikka",
         "showRouteOnMap": "Näytä reitti kartalla",
         "tractorUnitIdentifier": "Ajoneuvon rekisteritunnus (vetoauto)",
-        "tractorUnitNotSelected": "Rekisteritunnus puuttuu"
+        "tractorUnitNotSelected": "Rekisteritunnus puuttuu",
+        "pushingVehicle": "lisä- tai työntöauto"
       },
       "bridgeInfo": {
         "bridge": "Silta",
@@ -275,9 +279,11 @@
         "bridgeSupervisors": "Sillanvalvojat",
         "ownSupervisor": "Omat valvojat",
         "contractor": "Hoitourakoitsija",
+        "contractNumber": "Urakkasopimus",
         "bridgeSupervisor": "Sillanvalvoja (1.) ja varavalvoja (2.)",
         "supervisor1": "Sillanvalvoja (1.)",
-        "supervisor2": "Varavalvoja (2.)"
+        "supervisor2": "Varavalvoja (2.)",
+        "copySupervisor": "Kopioi kaikille silloille"
       }
     },
     "supervisionType": {
@@ -290,7 +296,7 @@
       "planned": "Suunniteltu",
       "departed": "Lähtenyt",
       "stopped": "Tauolla",
-      "in_progress": "Liikkeella",
+      "in_progress": "Ajossa",
       "arrived": "Päättynyt"
     }
   },
@@ -337,5 +343,12 @@
         "confirm": "Päätä kuljetus"
       }
     }
+  },
+  "accessDenied": {
+    "header": {
+      "title": "SillaRi"
+    },
+    "title": "Pääsy estetty!",
+    "content": "Sinulla ei ole oikeuksia nähdä tätä sivua."
   }
 }

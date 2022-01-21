@@ -12,11 +12,13 @@ public class RouteTransportStatusMapper implements RecordMapper<Record, RouteTra
     @Nullable
     @Override
     public RouteTransportStatusModel map(Record record) {
-        RouteTransportStatusModel transportStatusModel = new RouteTransportStatusModel();
-        transportStatusModel.setId(record.get(TableAlias.transportStatus.ID));
-        transportStatusModel.setRouteTransportId(record.get(TableAlias.transportStatus.ROUTE_TRANSPORT_ID));
-        transportStatusModel.setStatus(record.get(TableAlias.transportStatus.STATUS, new TransportStatusTypeConverter(String.class, TransportStatusType.class)));
-        transportStatusModel.setTime(record.get(TableAlias.transportStatus.TIME));
-        return transportStatusModel;
+        RouteTransportStatusModel model = new RouteTransportStatusModel();
+        model.setId(record.get(TableAlias.transportStatus.ID));
+        model.setRouteTransportId(record.get(TableAlias.transportStatus.ROUTE_TRANSPORT_ID));
+        model.setStatus(record.get(TableAlias.transportStatus.STATUS, new TransportStatusTypeConverter(String.class, TransportStatusType.class)));
+        model.setTime(record.get(TableAlias.transportStatus.TIME));
+        model.setRowCreatedTime(record.get(TableAlias.transportStatus.ROW_CREATED_TIME));
+        model.setRowUpdatedTime(record.get(TableAlias.transportStatus.ROW_UPDATED_TIME));
+        return model;
     }
 }

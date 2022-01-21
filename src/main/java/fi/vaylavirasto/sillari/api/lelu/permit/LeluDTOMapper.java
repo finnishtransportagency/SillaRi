@@ -1,5 +1,9 @@
 package fi.vaylavirasto.sillari.api.lelu.permit;
 
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluSupervisionDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluSupervisionStatus;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.util.DateMapper;
 import org.mapstruct.Mapper;
@@ -55,4 +59,29 @@ public interface LeluDTOMapper {
     AddressModel fromDTOToModel(LeluAddressDTO dto);
 
 
+    @Mappings({
+            @Mapping(target = "reasonText", source = "model.reason"),
+            @Mapping(target = "modifiedDate", source = "model.time"),
+    })
+    LeluSupervisionStatus fromModelToDTO(SupervisionStatusModel model);
+
+    @Mappings({
+            @Mapping(target = "supervisionStatus", source = "model.currentStatus"),
+            @Mapping(target = "reportId", source = "model.id"),
+    })
+    LeluSupervisionDTO fromModelToDTO(SupervisionModel model);
+
+    @Mappings({
+            @Mapping(target = "oid", source = "model.bridge.oid"),
+            @Mapping(target = "identifier", source = "model.bridge.identifier"),
+            @Mapping(target = "name", source = "model.bridge.name"),
+            @Mapping(target = "roadAddress", source = "model.bridge.roadAddress"),
+            @Mapping(target = "supervisions", source = "model.supervisions")
+    })
+    LeluBridgeResponseDTO fromModelToDTO(RouteBridgeModel model);
+
+    @Mappings({
+            @Mapping(target = "bridges", source = "model.routeBridges")
+    })
+    LeluRouteResponseDTO fromModelToDTO(RouteModel model);
 }

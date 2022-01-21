@@ -14,7 +14,7 @@ import { useTypedSelector } from "../store/store";
 import { onRetry } from "../utils/backendData";
 import { finishSupervision, getSupervision } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
-import { SupervisionStatus } from "../utils/constants";
+import { SupervisionListType, SupervisionStatus } from "../utils/constants";
 
 interface SummaryProps {
   supervisionId: string;
@@ -32,6 +32,7 @@ const SupervisionSummary = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
+    selectedSupervisionListType,
   } = useTypedSelector((state) => state.rootReducer);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
@@ -39,14 +40,27 @@ const SupervisionSummary = (): JSX.Element => {
     () => getSupervision(Number(supervisionId), dispatch),
     { retry: onRetry }
   );
+  const { routeTransportId = "0" } = supervision || {};
+
+  const returnToSupervisionList = () => {
+    // Go back to bridge supervision listing on either SupervisionList or RouteTransportDetail page
+    // If selectedSupervisionListType is not set, go to supervisions main page
+    if (selectedSupervisionListType === SupervisionListType.BRIDGE) {
+      history.push("/supervisions/1");
+    } else if (selectedSupervisionListType === SupervisionListType.TRANSPORT) {
+      history.push("/supervisions/0"); // Go through main page so back button works as expected on RouteTransportDetail page
+      history.push(`/routeTransportDetail/${routeTransportId}`);
+    } else {
+      history.push("/supervisions");
+    }
+  };
 
   const finishSupervisionMutation = useMutation((superId: string) => finishSupervision(Number(superId), dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       queryClient.setQueryData(["getSupervision", supervisionId], data);
       setToastMessage(t("supervision.summary.saved"));
-      // TODO go back to supervision list - but where?
-      history.push("/");
+      returnToSupervisionList();
     },
   });
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
@@ -81,7 +95,7 @@ const SupervisionSummary = (): JSX.Element => {
   };
 
   const confirmGoBack = (): void => {
-    if (supervisionStatus !== SupervisionStatus.FINISHED) {
+    if (supervisionStatus !== SupervisionStatus.FINISHED && supervisionStatus !== SupervisionStatus.REPORT_SIGNED) {
       showConfirmLeavePage();
     } else {
       history.goBack();
@@ -93,7 +107,7 @@ const SupervisionSummary = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={t("supervision.summary.title")} somethingFailed={isFailed.getSupervision} includeSendingList confirmGoBack={confirmGoBack} />
-      <IonContent fullscreen>
+      <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />
         ) : (

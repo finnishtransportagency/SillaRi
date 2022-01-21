@@ -14,7 +14,7 @@ const Settings: React.FC = () => {
   return (
     <IonPage>
       <Header title={t("settings.header.title")} />
-      <IonContent fullscreen>
+      <IonContent>
         <IonList>
           <IonRadioGroup value={i18n.language} onIonChange={(e) => changeLanguage(e.detail.value)}>
             <IonListHeader color="secondary">
