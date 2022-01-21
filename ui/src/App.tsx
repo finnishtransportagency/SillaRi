@@ -74,7 +74,7 @@ const App: React.FC = () => {
         const userDataResponse = await fetch(`${getOrigin()}/api/ui/userdata`, { method: "GET", headers: headers });
 
         if (userDataResponse?.ok) {
-          const responseData = await userDataResponse.json();
+          const responseData = await (userDataResponse.json() as Promise<IUserData>);
           if (responseData.roles.length > 0) {
             if (responseData.roles.includes("SILLARI_SILLANVALVOJA")) {
               setHomePage("/supervisions");
