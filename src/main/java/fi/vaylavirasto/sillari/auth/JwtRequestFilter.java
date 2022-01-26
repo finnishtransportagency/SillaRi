@@ -122,7 +122,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 PreAuthenticatedAuthenticationToken authenticationToken = null;
                 if (claims != null) {
 
-                     // claims.forEach((k, v) -> logger.debug(String.format("Claim %s=%s", k, v)));
+                    claims.forEach((k, v) -> logger.debug(String.format("Claim %s=%s", k, v)));
 
                     String username = (String) claims.get("username");
                     String uid = (String) claims.get("custom:uid");
