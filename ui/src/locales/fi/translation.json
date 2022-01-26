@@ -238,7 +238,7 @@
         "planned": "Suunniteltu",
         "departed": "Kuljetus lähtenyt liikkeelle",
         "stopped": "Tauolla",
-        "in_progress": "Ajossa",
+        "in_progress": "Liikkeellä",
         "arrived": "Kuljetus päättynyt"
       }
     },
@@ -294,9 +294,9 @@
     "transportStatus": {
       "unknown": "Tietoja puuttuu",
       "planned": "Suunniteltu",
-      "departed": "Lähtenyt",
+      "departed": "Liikkeellä",
       "stopped": "Tauolla",
-      "in_progress": "Ajossa",
+      "in_progress": "Liikkeellä",
       "arrived": "Päättynyt"
     }
   },

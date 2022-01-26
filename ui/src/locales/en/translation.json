@@ -237,8 +237,8 @@
         "unknown": "Information unknown",
         "planned": "Planned",
         "departed": "Transport departed",
-        "stopped": "Stopped",
-        "in_progress": "Driving",
+        "stopped": "On a break",
+        "in_progress": "On the move",
         "arrived": "Transport arrived"
       }
     },
@@ -294,9 +294,9 @@
     "transportStatus": {
       "unknown": "Information unknown",
       "planned": "Planned",
-      "departed": "Departed",
-      "stopped": "Stopped",
-      "in_progress": "In progress",
+      "departed": "On the move",
+      "stopped": "On a break",
+      "in_progress": "On the move",
       "arrived": "Arrived"
     }
   },

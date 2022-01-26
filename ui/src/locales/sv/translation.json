@@ -237,8 +237,8 @@
         "unknown": "(SV) Information unknown",
         "planned": "(SV) Planned",
         "departed": "(SV) Transport departed",
-        "stopped": "(SV) Stopped",
-        "in_progress": "(SV) Driving",
+        "stopped": "(SV) On a break",
+        "in_progress": "(SV) On the move",
         "arrived": "(SV) Transport arrived"
       }
     },
@@ -294,9 +294,9 @@
     "transportStatus": {
       "unknown": "(SV) Information unknown",
       "planned": "(SV) Planned",
-      "departed": "(SV) Departed",
-      "stopped": "(SV) Stopped",
-      "in_progress": "(SV) In progress",
+      "departed": "(SV) On the move",
+      "stopped": "(SV) On a break",
+      "in_progress": "(SV) On the move",
       "arrived": "(SV) Arrived"
     }
   },
