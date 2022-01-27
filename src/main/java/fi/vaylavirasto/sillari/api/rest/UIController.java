@@ -159,6 +159,12 @@ public class UIController {
             HashMap<String, Object> responseBody = new HashMap<>();
             responseBody.put("username", user.getUsername());
             responseBody.put("roles", user.getRoles());
+            responseBody.put("firstName", user.getFirstName());
+            responseBody.put("lastName", user.getLastName());
+            responseBody.put("email", user.getEmail());
+            responseBody.put("phoneNumber", user.getPhoneNumber());
+            responseBody.put("businessId", user.getBusinessId());
+            responseBody.put("organization", user.getOrganization());
 
             return ResponseEntity.status(HttpStatus.OK).body(responseBody);
         } finally {

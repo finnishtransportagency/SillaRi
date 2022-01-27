@@ -130,6 +130,22 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                     logger.debug(String.format("Username %s", userNameDetail));
 
+                    String firstName = (String) claims.get("custom:etunimi");
+                    String lastName = (String) claims.get("custom:sukunimi");
+                    logger.debug(String.format("Name %s %s", firstName, lastName));
+
+                    String email = (String) claims.get("email");
+                    logger.debug(String.format("Email %s", email));
+
+                    String phoneNumber = (String) claims.get("custom:puhelin");
+                    logger.debug(String.format("Phone number %s", phoneNumber));
+
+                    String businessId = (String) claims.get("custom:ytunnus");
+                    logger.debug(String.format("Business ID %s", businessId));
+
+                    String organization = (String) claims.get("custom:organisaatio");
+                    logger.debug(String.format("Organization %s", organization));
+
                     String[] roles = ((String) claims.get("custom:rooli")).split("\\,");
                     logger.debug(String.format("Roles %s", String.join(",", roles)));
 
@@ -146,6 +162,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     }
 
                     SillariUser userDetails = new SillariUser(userNameDetail, authorityList);
+
+                    userDetails.setFirstName(firstName);
+                    userDetails.setLastName(lastName);
+                    userDetails.setEmail(email);
+                    userDetails.setPhoneNumber(phoneNumber);
+                    userDetails.setBusinessId(businessId);
+                    userDetails.setOrganization(organization);
 
                     authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -167,6 +190,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     authorityList.add(SillariRole.fromString("SILLARI_KULJETTAJA"));
 
                     SillariUser userDetails = new SillariUser("T012345", authorityList);
+
+                    userDetails.setFirstName("Etunimi");
+                    userDetails.setLastName("Sukunimi");
+                    userDetails.setEmail("etunimi.sukunimi@cgi.com");
+                    userDetails.setPhoneNumber("0123456789");
+                    userDetails.setBusinessId("0357502-9");
+                    userDetails.setOrganization("CGI Suomi Oy");
 
                     authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
