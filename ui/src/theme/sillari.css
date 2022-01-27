@@ -114,6 +114,11 @@ ion-label {
   white-space: normal !important;
 }
 
+ion-icon {
+  /* prevent title popup on Ionic icons */
+  pointer-events: none;
+}
+
 /** Additional Vayla colors **/
 .ion-color-teal {
   --ion-color-base: var(--ion-color-teal);
