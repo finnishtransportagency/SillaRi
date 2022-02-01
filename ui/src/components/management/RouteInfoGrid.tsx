@@ -198,10 +198,12 @@ const RouteInfoGrid = ({
             <IonRow className="ion-margin-top">
               <IonCol size="12" size-lg="4" />
               <IonCol size="12" size-lg="8">
-                <Link to={`/routemap/${selectedRouteId}`}>
-                  <IonText className="linkText">{t("management.transportDetail.routeInfo.showRouteOnMap")}</IonText>
-                  <IonIcon className="otherIcon" icon={mapPoint} />
-                </Link>
+                {selectedRouteId > 0 && (
+                  <Link to={`/routemap/${selectedRouteId}`}>
+                    <IonText className="linkText">{t("management.transportDetail.routeInfo.showRouteOnMap")}</IonText>
+                    <IonIcon className="otherIcon" icon={mapPoint} />
+                  </Link>
+                )}
               </IonCol>
             </IonRow>
           </IonGrid>
