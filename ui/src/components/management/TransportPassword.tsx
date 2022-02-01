@@ -46,19 +46,21 @@ const TransportPassword = ({
 
   return (
     <IonGrid className="ion-margin ion-no-padding">
-      <IonRow>
+      <IonRow className="ion-align-items-center">
         <IonCol size="10" className="ion-text-center">
           {transportPassword.length > 0 && <IonText className="headingText">{transportPassword}</IonText>}
           {transportPassword.length === 0 && <IonText>{`(${t("management.transportDetail.passwordUnknown")})`}</IonText>}
         </IonCol>
         <IonCol size="2">
-          <IonIcon
-            className="otherIcon"
-            icon={close}
+          <IonButton
+            fill="clear"
+            size="small"
             onClick={() => {
               dismissPassword();
             }}
-          />
+          >
+            <IonIcon className="otherIcon" icon={close} />
+          </IonButton>
         </IonCol>
       </IonRow>
       <IonRow>

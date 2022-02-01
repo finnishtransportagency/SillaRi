@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { IonCol, IonGrid, IonIcon, IonRow, IonText, useIonPopover } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText, useIonPopover } from "@ionic/react";
 import { warningOutline } from "ionicons/icons";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
@@ -32,19 +32,21 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   const [popoverText, setPopoverText] = useState("");
   const [presentPassword, dismissPassword] = useIonPopover(
     <IonGrid className="ion-no-margin">
-      <IonRow>
-        <IonCol size="10">
+      <IonRow className="ion-align-items-center">
+        <IonCol size="9" className="ion-text-center">
           <IonText>{popoverText}</IonText>
         </IonCol>
-        <IonCol size="2">
-          <IonIcon
-            className="otherIcon"
-            icon={close}
+        <IonCol size="3">
+          <IonButton
+            fill="clear"
+            size="small"
             onClick={() => {
               setPopoverText("");
               dismissPassword();
             }}
-          />
+          >
+            <IonIcon className="otherIcon" icon={close} />
+          </IonButton>
         </IonCol>
       </IonRow>
     </IonGrid>,
