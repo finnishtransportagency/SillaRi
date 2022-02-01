@@ -74,8 +74,12 @@
   cursor: pointer;
 }
 
+.disabled {
+  color: var(--ion-color-medium);
+}
+
 .disabledLink {
-  color: grey;
+  color: var(--ion-color-medium);
   cursor: default;
 }
 

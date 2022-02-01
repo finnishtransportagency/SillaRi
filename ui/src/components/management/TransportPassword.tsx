@@ -5,10 +5,12 @@ import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText, useIonAlert } fro
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../../interfaces/IRouteTransportPassword";
 import close from "../../theme/icons/close.svg";
-import { TransportStatus } from "../../utils/constants";
+import { isTransportEditable } from "../../utils/validation";
+import IPermit from "../../interfaces/IPermit";
 
 interface TransportPasswordProps {
   routeTransportId: number;
+  permit: IPermit;
   modifiedRouteTransportDetail: IRouteTransport;
   isSendingTransportUpdate: boolean;
   routeTransportPasswordMutation: UseMutationResult<IRouteTransportPassword, string, number, unknown>;
@@ -17,6 +19,7 @@ interface TransportPasswordProps {
 
 const TransportPassword = ({
   routeTransportId,
+  permit,
   modifiedRouteTransportDetail,
   isSendingTransportUpdate,
   routeTransportPasswordMutation,
@@ -25,9 +28,8 @@ const TransportPassword = ({
   const { t } = useTranslation();
   const [present] = useIonAlert();
 
-  const { currentTransportPassword, currentStatus } = modifiedRouteTransportDetail || {};
+  const { currentTransportPassword } = modifiedRouteTransportDetail || {};
   const { transportPassword = "" } = currentTransportPassword || {};
-  const { status } = currentStatus || {};
 
   const { isLoading: isGeneratingPassword } = routeTransportPasswordMutation;
 
@@ -61,7 +63,7 @@ const TransportPassword = ({
       </IonRow>
       <IonRow>
         <IonCol size="10" className="ion-text-center">
-          {status === TransportStatus.PLANNED && transportPassword.length > 0 && (
+          {isTransportEditable(modifiedRouteTransportDetail, permit) && transportPassword.length > 0 && (
             <IonButton
               color="tertiary"
               size="small"

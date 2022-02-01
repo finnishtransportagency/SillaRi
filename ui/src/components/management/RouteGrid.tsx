@@ -13,6 +13,7 @@ import close from "../../theme/icons/close.svg";
 import { onRetry } from "../../utils/backendData";
 import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
+import { isTransportEditable } from "../../utils/validation";
 import RouteStatusLog from "./RouteStatusLog";
 import "./RouteGrid.css";
 
@@ -181,8 +182,9 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
             const { status } = currentStatus || {};
 
             const statusText = status ? t(`management.transportStatus.${status.toLowerCase()}`) : t("management.transportStatus.unknown");
-            const action =
-              status === TransportStatus.PLANNED ? t("management.companySummary.action.modify") : t("management.companySummary.action.details");
+            const action = isTransportEditable(routeTransport, permit)
+              ? t("management.companySummary.action.modify")
+              : t("management.companySummary.action.details");
 
             return (
               <IonRow key={key}>
