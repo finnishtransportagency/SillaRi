@@ -9,11 +9,11 @@ import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
 import IRouteTransportStatus from "../interfaces/IRouteTransportStatus";
 import ISupervisor from "../interfaces/ISupervisor";
 
-export const getCompany = async (companyId: number, dispatch: Dispatch): Promise<ICompany> => {
+export const getCompany = async (dispatch: Dispatch): Promise<ICompany> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getCompany: false } });
 
-    const companyResponse = await fetch(`${getOrigin()}/api/company/getcompany?companyId=${companyId}`);
+    const companyResponse = await fetch(`${getOrigin()}/api/company/getcompany`);
 
     if (companyResponse.ok) {
       const company = (await companyResponse.json()) as Promise<ICompany>;

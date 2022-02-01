@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
 import { IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
@@ -13,10 +12,6 @@ import { useTypedSelector } from "../../store/store";
 import { onRetry } from "../../utils/backendData";
 import { getCompany } from "../../utils/managementBackendData";
 
-interface CompanySummaryProps {
-  companyId: string;
-}
-
 const CompanySummary = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -26,9 +21,8 @@ const CompanySummary = (): JSX.Element => {
     networkStatus: { isFailed = {} },
     selectedManagementPermitId,
   } = management;
-  const { companyId = "0" } = useParams<CompanySummaryProps>();
 
-  const { data: selectedCompanyDetail } = useQuery(["getCompany", companyId], () => getCompany(Number(companyId), dispatch), {
+  const { data: selectedCompanyDetail } = useQuery(["getCompany"], () => getCompany(dispatch), {
     retry: onRetry,
   });
 

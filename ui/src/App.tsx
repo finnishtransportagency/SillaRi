@@ -198,7 +198,7 @@ const App: React.FC = () => {
                 <Route exact path="/takePhotos/:supervisionId">
                   {userHasRole("SILLARI_SILLANVALVOJA") ? <Photos /> : <AccessDenied />}
                 </Route>
-                <Route exact path="/management/:companyId">
+                <Route exact path="/management">
                   {userHasRole("SILLARI_AJOJARJESTELIJA") ? <CompanySummary /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/management/addTransport/:permitId">

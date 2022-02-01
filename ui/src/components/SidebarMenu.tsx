@@ -52,7 +52,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
           )}
           {roles.includes("SILLARI_AJOJARJESTELIJA") && (
             <IonMenuToggle>
-              <IonItem routerLink="/management/1">
+              <IonItem routerLink="/management">
                 <IonIcon className="otherIcon" icon={calendar} slot="start" />
                 <IonLabel>{t("SidebarMenu.management")}</IonLabel>
               </IonItem>

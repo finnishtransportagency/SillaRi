@@ -36,6 +36,12 @@ public class CompanyRepository {
         return record != null ? record.value1() : null;
     }
 
+    public CompanyModel getCompanyByBusinessId(String businessId) {
+        return dsl.select().from(TableAlias.company)
+                .where(lower(TableAlias.company.BUSINESS_ID).eq(businessId.toLowerCase(Locale.ROOT)))
+                .fetchOne(new CompanyMapper());
+    }
+
     public Integer createCompany(CompanyModel companyModel) throws DataAccessException {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
