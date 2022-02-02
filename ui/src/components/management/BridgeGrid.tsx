@@ -5,24 +5,26 @@ import Moment from "react-moment";
 import moment from "moment";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
+import IPermit from "../../interfaces/IPermit";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import ISupervisor from "../../interfaces/ISupervisor";
-import { DATE_FORMAT, TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
+import { DATE_FORMAT, TIME_FORMAT_MIN } from "../../utils/constants";
+import { isTransportEditable } from "../../utils/validation";
 import "./BridgeGrid.css";
 import SupervisorSelect from "./SupervisorSelect";
 
 interface BridgeGridProps {
   supervisors: ISupervisor[];
+  permit: IPermit;
   modifiedRouteTransportDetail: IRouteTransport;
   setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
 }
 
-const BridgeGrid = ({ supervisors = [], modifiedRouteTransportDetail, setModifiedRouteTransportDetail }: BridgeGridProps): JSX.Element => {
+const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, setModifiedRouteTransportDetail }: BridgeGridProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { supervisions = [], currentStatus } = modifiedRouteTransportDetail || {};
-  const { status } = currentStatus || {};
+  const { supervisions = [] } = modifiedRouteTransportDetail || {};
 
   const modifySupervisions = (routeBridgeId: number, modifiedSupervision: ISupervision) => {
     // Add the modified supervision for this route bridge id to the supervisions array in place of the existing one
@@ -116,6 +118,8 @@ const BridgeGrid = ({ supervisors = [], modifiedRouteTransportDetail, setModifie
           const supervisor2 = supervisionSupervisors.find((s) => s.priority === 2);
           const { firstName: firstName1 = "", lastName: lastName1 = "" } = supervisor1 || {};
           const { firstName: firstName2 = "", lastName: lastName2 = "" } = supervisor2 || {};
+
+          const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
           const key = `bridge_${index}`;
 
           return (
@@ -148,16 +152,18 @@ const BridgeGrid = ({ supervisors = [], modifiedRouteTransportDetail, setModifie
                   </IonRow>
                   <IonRow>
                     <IonCol>
-                      {status === TransportStatus.PLANNED && (
+                      {isEditable ? (
                         <DatePicker value={estimatedCrossingTime.toDate()} onChange={(value) => setEstimatedCrossingDate(supervision, value)} />
+                      ) : (
+                        <Moment format={DATE_FORMAT}>{estimatedCrossingTime}</Moment>
                       )}
-                      {status !== TransportStatus.PLANNED && <Moment format={DATE_FORMAT}>{estimatedCrossingTime}</Moment>}
                     </IonCol>
                     <IonCol>
-                      {status === TransportStatus.PLANNED && (
+                      {isEditable ? (
                         <TimePicker value={estimatedCrossingTime.toDate()} onChange={(value) => setEstimatedCrossingTime(supervision, value)} />
+                      ) : (
+                        <Moment format={TIME_FORMAT_MIN}>{estimatedCrossingTime}</Moment>
                       )}
-                      {status !== TransportStatus.PLANNED && <Moment format={TIME_FORMAT_MIN}>{estimatedCrossingTime}</Moment>}
                     </IonCol>
                   </IonRow>
 
@@ -181,7 +187,7 @@ const BridgeGrid = ({ supervisors = [], modifiedRouteTransportDetail, setModifie
                       <IonText>1.</IonText>
                     </IonCol>
                     <IonCol>
-                      {status === TransportStatus.PLANNED && (
+                      {isEditable ? (
                         // Added key for SupervisorSelect as a workaround for bug: https://github.com/ionic-team/ionic-framework/issues/20106
                         // which causes infinite loops when supervisors are updated from setAllBridgesSupervisor
                         // (onIonChange event is triggered from supervision changes in state. Key change creates a new instance of the select.)
@@ -193,8 +199,9 @@ const BridgeGrid = ({ supervisors = [], modifiedRouteTransportDetail, setModifie
                           value={supervisor1}
                           setSupervisor={setSupervisor}
                         />
+                      ) : (
+                        <IonText>{`${firstName1} ${lastName1}`}</IonText>
                       )}
-                      {status !== TransportStatus.PLANNED && <IonText>{`${firstName1} ${lastName1}`}</IonText>}
                     </IonCol>
                   </IonRow>
 
@@ -208,7 +215,7 @@ const BridgeGrid = ({ supervisors = [], modifiedRouteTransportDetail, setModifie
                       <IonText>2.</IonText>
                     </IonCol>
                     <IonCol>
-                      {status === TransportStatus.PLANNED && (
+                      {isEditable ? (
                         <SupervisorSelect
                           key={`${routeBridgeId}-${supervisor2?.priority}-${supervisor2?.id}`}
                           supervisors={supervisors}
@@ -217,8 +224,9 @@ const BridgeGrid = ({ supervisors = [], modifiedRouteTransportDetail, setModifie
                           value={supervisor2}
                           setSupervisor={setSupervisor}
                         />
+                      ) : (
+                        <IonText>{`${firstName2} ${lastName2}`}</IonText>
                       )}
-                      {status !== TransportStatus.PLANNED && <IonText>{`${firstName2} ${lastName2}`}</IonText>}
                     </IonCol>
                   </IonRow>
                 </IonGrid>

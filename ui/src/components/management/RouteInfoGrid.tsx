@@ -7,13 +7,14 @@ import moment from "moment";
 import CustomSelect from "../common/CustomSelect";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
+import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
-import mapPoint from "../../theme/icons/map-point.svg";
-import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, TransportStatus, VehicleRole } from "../../utils/constants";
-import IPermit from "../../interfaces/IPermit";
 import IVehicle from "../../interfaces/IVehicle";
+import mapPoint from "../../theme/icons/map-point.svg";
+import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, VehicleRole } from "../../utils/constants";
+import { isTransportEditable } from "../../utils/validation";
 
 interface RouteInfoGridProps {
   routeTransportId: number;
@@ -39,13 +40,13 @@ const RouteInfoGrid = ({
   const { t } = useTranslation();
 
   const { routes: permitRoutes = [], vehicles = [] } = permit || {};
-  const { plannedDepartureTime, currentStatus } = modifiedRouteTransportDetail || {};
-  const { status } = currentStatus || {};
+  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
   const { id: selectedRouteId, name: selectedRouteName, departureAddress, arrivalAddress } = selectedRouteOption || {};
   const { streetAddress: departureStreetAddress } = departureAddress || {};
   const { streetAddress: arrivalStreetAddress } = arrivalAddress || {};
 
   const estimatedDeparture = moment(plannedDepartureTime);
+  const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
   const setPlannedDepartureDate = (dateTime: Date) => {
     if (modifiedRouteTransportDetail) {
@@ -122,8 +123,11 @@ const RouteInfoGrid = ({
             </IonRow>
             <IonRow>
               <IonCol>
-                {status === TransportStatus.PLANNED && <DatePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureDate} />}
-                {status !== TransportStatus.PLANNED && <Moment format={DATE_FORMAT}>{estimatedDeparture}</Moment>}
+                {isEditable ? (
+                  <DatePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureDate} />
+                ) : (
+                  <Moment format={DATE_FORMAT}>{estimatedDeparture}</Moment>
+                )}
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -138,8 +142,11 @@ const RouteInfoGrid = ({
             </IonRow>
             <IonRow className="ion-margin-start ion-margin-end">
               <IonCol>
-                {status === TransportStatus.PLANNED && <TimePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />}
-                {status !== TransportStatus.PLANNED && <Moment format={TIME_FORMAT_MIN}>{estimatedDeparture}</Moment>}
+                {isEditable ? (
+                  <TimePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />
+                ) : (
+                  <Moment format={TIME_FORMAT_MIN}>{estimatedDeparture}</Moment>
+                )}
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -154,7 +161,7 @@ const RouteInfoGrid = ({
             </IonRow>
             <IonRow>
               <IonCol>
-                {status === TransportStatus.PLANNED && (
+                {isEditable ? (
                   <CustomSelect
                     options={permitRoutes.map((route) => {
                       const { id: routeId, name } = route;
@@ -163,8 +170,9 @@ const RouteInfoGrid = ({
                     selectedValue={selectedRouteId}
                     onChange={(routeId) => selectRoute(routeId as number)}
                   />
+                ) : (
+                  <IonText>{selectedRouteName}</IonText>
                 )}
-                {status !== TransportStatus.PLANNED && <IonText>{selectedRouteName}</IonText>}
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -198,10 +206,12 @@ const RouteInfoGrid = ({
             <IonRow className="ion-margin-top">
               <IonCol size="12" size-lg="4" />
               <IonCol size="12" size-lg="8">
-                <Link to={`/routemap/${selectedRouteId}`}>
-                  <IonText className="linkText">{t("management.transportDetail.routeInfo.showRouteOnMap")}</IonText>
-                  <IonIcon className="otherIcon" icon={mapPoint} />
-                </Link>
+                {selectedRouteId > 0 && (
+                  <Link to={`/routemap/${selectedRouteId}`}>
+                    <IonText className="linkText">{t("management.transportDetail.routeInfo.showRouteOnMap")}</IonText>
+                    <IonIcon className="otherIcon" icon={mapPoint} />
+                  </Link>
+                )}
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -217,7 +227,7 @@ const RouteInfoGrid = ({
           </IonRow>
           <IonRow>
             <IonCol size="12" size-lg="4">
-              {status === TransportStatus.PLANNED && (
+              {isEditable ? (
                 <CustomSelect
                   options={vehicles
                     .filter((vehicle) => !!vehicle.identifier && (!vehicle.role || vehicle.role !== VehicleRole.TRAILER))
@@ -232,8 +242,7 @@ const RouteInfoGrid = ({
                   selectedValue={selectedVehicle?.id}
                   onChange={(vehicleId) => setTractorUnit(vehicleId as number)}
                 />
-              )}
-              {status !== TransportStatus.PLANNED && (
+              ) : (
                 <IonText>
                   {selectedVehicle ? selectedVehicle.identifier.toUpperCase() : t("management.transportDetail.routeInfo.tractorUnitNotSelected")}
                 </IonText>

@@ -6,6 +6,7 @@ import CustomSelect from "../common/CustomSelect";
 import RouteGrid from "./RouteGrid";
 import IPermit from "../../interfaces/IPermit";
 import { actions } from "../../store/rootSlice";
+import { isPermitValid } from "../../utils/validation";
 
 interface PermitAccordionPanelProps {
   permit: IPermit;
@@ -23,19 +24,21 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
     <IonGrid className="ion-no-padding">
       <IonRow className="ion-margin">
         <IonCol size="12" size-sm="6" className="ion-padding-bottom ion-text-center">
-          <IonButton
-            className="ion-hide-md-up"
-            color="secondary"
-            expand="block"
-            size="large"
-            routerLink={`/management/addTransport/${permitId}`}
-            onClick={(evt) => {
-              dispatch({ type: actions.SET_MANAGEMENT_PERMIT_ID, payload: permitId });
-              evt.stopPropagation();
-            }}
-          >
-            {t("management.companySummary.addTransportButtonLabel")}
-          </IonButton>
+          {isPermitValid(permit) && (
+            <IonButton
+              className="ion-hide-md-up"
+              color="secondary"
+              expand="block"
+              size="large"
+              routerLink={`/management/addTransport/${permitId}`}
+              onClick={(evt) => {
+                dispatch({ type: actions.SET_MANAGEMENT_PERMIT_ID, payload: permitId });
+                evt.stopPropagation();
+              }}
+            >
+              {t("management.companySummary.addTransportButtonLabel")}
+            </IonButton>
+          )}
         </IonCol>
         <IonCol size="12" size-sm="6">
           <IonGrid className="ion-no-padding">

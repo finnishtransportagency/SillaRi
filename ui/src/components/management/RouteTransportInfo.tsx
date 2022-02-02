@@ -16,7 +16,8 @@ import {
   generateNewRouteTransportPassword,
   updateRouteTransport,
 } from "../../utils/managementBackendData";
-import { DATE_FORMAT, TransportStatus } from "../../utils/constants";
+import { DATE_FORMAT } from "../../utils/constants";
+import { isPermitValid, isTransportEditable } from "../../utils/validation";
 import BridgeGrid from "./BridgeGrid";
 import PermitLinkText from "../PermitLinkText";
 import RouteInfoGrid from "./RouteInfoGrid";
@@ -57,9 +58,9 @@ const RouteTransportInfo = ({
   const [present] = useIonAlert();
 
   const { companyId, validStartDate, validEndDate } = permit || {};
-  const { currentStatus } = modifiedRouteTransportDetail || {};
-  const { status } = currentStatus || {};
   const { routeBridges = [] } = selectedRouteOption || {};
+
+  const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
   // Set-up mutations for modifying data later
   // TODO - handle errors
@@ -137,6 +138,7 @@ const RouteTransportInfo = ({
   const [presentPassword, dismissPassword] = useIonPopover(
     <TransportPassword
       routeTransportId={routeTransportId}
+      permit={permit}
       modifiedRouteTransportDetail={modifiedRouteTransportDetail}
       isSendingTransportUpdate={isSendingTransportUpdate}
       routeTransportPasswordMutation={routeTransportPasswordMutation}
@@ -178,7 +180,9 @@ const RouteTransportInfo = ({
                 <IonText className="headingText">{t("management.transportDetail.validityPeriod")}</IonText>
               </IonCol>
               <IonCol size="12" size-sm="8" size-lg="7">
-                <IonText>{`${moment(validStartDate).format(DATE_FORMAT)} - ${moment(validEndDate).format(DATE_FORMAT)}`}</IonText>
+                <IonText className={!isPermitValid(permit) ? "disabled" : ""}>{`${moment(validStartDate).format(DATE_FORMAT)} - ${moment(
+                  validEndDate
+                ).format(DATE_FORMAT)}`}</IonText>
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -245,7 +249,7 @@ const RouteTransportInfo = ({
               </IonCol>
             </IonRow>
 
-            {selectedRouteOption && status === TransportStatus.PLANNED && (
+            {selectedRouteOption && isEditable && (
               <MultiSupervisorsSelection
                 supervisors={supervisors}
                 modifiedRouteTransportDetail={modifiedRouteTransportDetail}
@@ -264,6 +268,7 @@ const RouteTransportInfo = ({
                   <IonCol>
                     <BridgeGrid
                       supervisors={supervisors}
+                      permit={permit}
                       modifiedRouteTransportDetail={modifiedRouteTransportDetail}
                       setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
                     />
@@ -275,7 +280,7 @@ const RouteTransportInfo = ({
         </IonCol>
       </IonRow>
 
-      {status === TransportStatus.PLANNED && (
+      {isEditable && (
         <IonRow className="ion-margin ion-justify-content-end">
           {!!routeTransportId && routeTransportId > 0 && (
             <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
@@ -315,7 +320,7 @@ const RouteTransportInfo = ({
         </IonRow>
       )}
 
-      {status !== TransportStatus.PLANNED && (
+      {!isEditable && (
         <IonRow className="ion-margin ion-justify-content-end">
           <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
             <IonButton

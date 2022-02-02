@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { IonCol, IonGrid, IonIcon, IonRow, IonText, useIonPopover } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText, useIonPopover } from "@ionic/react";
 import { warningOutline } from "ionicons/icons";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
@@ -13,6 +13,7 @@ import close from "../../theme/icons/close.svg";
 import { onRetry } from "../../utils/backendData";
 import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
+import { isTransportEditable } from "../../utils/validation";
 import RouteStatusLog from "./RouteStatusLog";
 import "./RouteGrid.css";
 
@@ -31,19 +32,21 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   const [popoverText, setPopoverText] = useState("");
   const [presentPassword, dismissPassword] = useIonPopover(
     <IonGrid className="ion-no-margin">
-      <IonRow>
-        <IonCol size="10">
+      <IonRow className="ion-align-items-center">
+        <IonCol size="9" className="ion-text-center">
           <IonText>{popoverText}</IonText>
         </IonCol>
-        <IonCol size="2">
-          <IonIcon
-            className="otherIcon"
-            icon={close}
+        <IonCol size="3">
+          <IonButton
+            fill="clear"
+            size="small"
             onClick={() => {
               setPopoverText("");
               dismissPassword();
             }}
-          />
+          >
+            <IonIcon className="otherIcon" icon={close} />
+          </IonButton>
         </IonCol>
       </IonRow>
     </IonGrid>,
@@ -181,8 +184,9 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
             const { status } = currentStatus || {};
 
             const statusText = status ? t(`management.transportStatus.${status.toLowerCase()}`) : t("management.transportStatus.unknown");
-            const action =
-              status === TransportStatus.PLANNED ? t("management.companySummary.action.modify") : t("management.companySummary.action.details");
+            const action = isTransportEditable(routeTransport, permit)
+              ? t("management.companySummary.action.modify")
+              : t("management.companySummary.action.details");
 
             return (
               <IonRow key={key}>

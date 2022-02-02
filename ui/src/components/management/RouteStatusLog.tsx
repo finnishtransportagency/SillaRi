@@ -1,6 +1,19 @@
-import React, { Dispatch, Fragment, SetStateAction } from "react";
+import React, { Dispatch, Fragment, MouseEvent, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
-import { IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonModal, IonRow, IonText } from "@ionic/react";
+import {
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonModal,
+  IonRow,
+  IonText,
+  IonTitle,
+  IonToolbar,
+} from "@ionic/react";
 import moment from "moment";
 import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
 import check from "../../theme/icons/check_black.svg";
@@ -19,12 +32,23 @@ interface RouteStatusLogProps {
 const RouteStatusLog = ({ isOpen, setOpen, statusHistory }: RouteStatusLogProps): JSX.Element => {
   const { t } = useTranslation();
 
+  const closeStatusLog = (evt: MouseEvent) => {
+    evt.stopPropagation();
+    setOpen(false);
+  };
+
   return (
     <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
-      <IonItem color="primary">
-        <IonLabel className="headingBoldText">{t("management.companySummary.transportStatusLog")}</IonLabel>
-        <IonIcon className="otherIconLarge" slot="end" icon={close} onClick={() => setOpen(false)} />
-      </IonItem>
+      <IonHeader>
+        <IonToolbar color="primary">
+          <IonTitle class="headingBoldText">{t("management.companySummary.transportStatusLog")}</IonTitle>
+          <IonButtons slot="end">
+            <IonButton onClick={(evt) => closeStatusLog(evt as MouseEvent)}>
+              <IonIcon className="otherIconLarge" icon={close}></IonIcon>
+            </IonButton>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
 
       <IonContent>
         <IonGrid className="ion-no-padding ion-margin">
