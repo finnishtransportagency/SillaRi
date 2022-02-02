@@ -79,7 +79,7 @@ const App: React.FC = () => {
             if (responseData.roles.includes("SILLARI_SILLANVALVOJA")) {
               setHomePage("/supervisions");
             } else if (responseData.roles.includes("SILLARI_AJOJARJESTELIJA")) {
-              setHomePage("/management/1");
+              setHomePage("/management");
             } else if (responseData.roles.includes("SILLARI_KULJETTAJA")) {
               setHomePage("/transport");
             }
