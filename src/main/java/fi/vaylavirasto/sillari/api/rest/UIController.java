@@ -175,7 +175,7 @@ public class UIController {
             serviceMetric.end();
         }
     }
-    private static String buildNumber = null;
+    private static String buildNumber = "";
     private static String versionNumber = null;
     private static String version = null;
     @Operation(summary = "Get version data")
@@ -184,7 +184,7 @@ public class UIController {
         ServiceMetric serviceMetric = new ServiceMetric("UIController", "versionInfo");
         try {
             synchronized (buildNumber) {
-                if (buildNumber == null) {
+                if (buildNumber.length() == 0) {
                     try (InputStream input = new ClassPathResource("version.properties").getInputStream()) {
                         Properties prop = new Properties();
                         prop.load(input);
