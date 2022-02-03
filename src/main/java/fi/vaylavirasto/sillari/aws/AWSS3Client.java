@@ -41,6 +41,7 @@ public class AWSS3Client {
 
     private static final String SILLARI_SUPERVISION_PDF_BUCKET_DEV = "sillari-supervisions";
     private static final String SILLARI_SUPERVISION_PDF_BUCKET_TEST = "sillari-supervisions-test";
+    
     private final String roleArn;
     private String accessKey;
     private String secretKey;
