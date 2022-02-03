@@ -22,7 +22,7 @@ spring:
   flyway:
     enabled: true
     baselineOnMigrate: true
-    locations: classpath:a,classpath:b
+    locations: classpath:@sillari.flyway.migrations.schema.dir@,classpath:@sillari.flyway.migrations.testdata.dir@
 logging:
   config: classpath:log4j2-local.xml
 server:

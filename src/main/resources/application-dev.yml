@@ -22,6 +22,7 @@ spring:
   flyway:
     enabled: true
     baselineOnMigrate: true
+    locations: claspath
 logging:
   config: classpath:log4j2-dev.xml
 server:
