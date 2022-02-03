@@ -180,7 +180,6 @@ public class UIController {
     private static String version = null;
     @Operation(summary = "Get version data")
     @GetMapping(value = "/versioninfo")
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public ResponseEntity<?> versionInfo() {
         ServiceMetric serviceMetric = new ServiceMetric("UIController", "versionInfo");
         try {
