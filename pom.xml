@@ -37,10 +37,10 @@
                 <db.url>jdbc:postgresql://localhost:5432/sillari</db.url>
                 <db.username>sillari</db.username>
                 <db.password>sillari1234</db.password>
-                <sillari.xflyway.migrations.common>filesystem:src/main/resources/a</sillari.xflyway.migrations.common>
-                <sillari.xflyway.migrations.dev>filesystem:src/main/resources/b</sillari.xflyway.migrations.dev>
-                <sillari.xflyway.migrations.locations>${sillari.xflyway.migrations.common},${sillari.xflyway.migrations.dev}
-                </sillari.xflyway.migrations.locations>
+                <sillari.flyway.migrations.common>filesystem:src/main/resources/a</sillari.flyway.migrations.common>
+                <sillari.flyway.migrations.dev>filesystem:src/main/resources/b</sillari.flyway.migrations.dev>
+                <sillari.flyway.migrations.locations>${sillari.flyway.migrations.common},${sillari.flyway.migrations.dev}
+                </sillari.flyway.migrations.locations>
             </properties>
             <build>
             <plugins>
@@ -64,10 +64,10 @@
                         <schemas>sillari</schemas>
                         <locations>
                             <location>
-                                ${sillari.xflyway.migrations.common}
+                                ${sillari.flyway.migrations.common}
                             </location>
                             <location>
-                                ${sillari.xflyway.migrations.dev}
+                                ${sillari.flyway.migrations.dev}
                             </location>
                         </locations>
                     </configuration>
@@ -89,10 +89,10 @@
                 <db.url>jdbc:postgresql://sillari-dev.cpakz3z86ezw.eu-west-1.rds.amazonaws.com:5432/sillari</db.url>
                 <db.username>sillari</db.username>
                 <db.password>silLari1234B7</db.password>
-                <sillari.xflyway.migrations.common>filesystem:src/main/resources/a</sillari.xflyway.migrations.common>
-                <sillari.xflyway.migrations.dev>filesystem:src/main/resources/b</sillari.xflyway.migrations.dev>
-                <sillari.xflyway.migrations.locations>${sillari.xflyway.migrations.common},${sillari.xflyway.migrations.dev}
-                </sillari.xflyway.migrations.locations>
+                <sillari.flyway.migrations.common>filesystem:src/main/resources/a</sillari.flyway.migrations.common>
+                <sillari.flyway.migrations.dev>filesystem:src/main/resources/b</sillari.flyway.migrations.dev>
+                <sillari.flyway.migrations.locations>${sillari.flyway.migrations.common},${sillari.flyway.migrations.dev}
+                </sillari.flyway.migrations.locations>
             </properties>
             <build>
                 <plugins>
@@ -116,10 +116,10 @@
                             <schemas>sillari</schemas>
                             <locations>
                                 <location>
-                                    ${sillari.xflyway.migrations.common}
+                                    ${sillari.flyway.migrations.common}
                                 </location>
                                 <location>
-                                    ${sillari.xflyway.migrations.dev}
+                                    ${sillari.flyway.migrations.dev}
                                 </location>
                             </locations>
                         </configuration>
