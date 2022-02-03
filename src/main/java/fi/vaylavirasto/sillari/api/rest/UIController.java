@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 @RestController
 @Timed
@@ -166,6 +170,38 @@ public class UIController {
             responseBody.put("businessId", user.getBusinessId());
             responseBody.put("organization", user.getOrganization());
 
+            return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+        } finally {
+            serviceMetric.end();
+        }
+    }
+    private static String buildNumber = null;
+    private static String versionNumber = null;
+    private static String version = null;
+    @Operation(summary = "Get version data")
+    @GetMapping(value = "/versioninfo")
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> versionInfo() {
+        ServiceMetric serviceMetric = new ServiceMetric("UIController", "versionInfo");
+        try {
+            synchronized (buildNumber) {
+                if (buildNumber == null) {
+                    try (InputStream input = new ClassPathResource("version.properties").getInputStream()) {
+                        Properties prop = new Properties();
+                        prop.load(input);
+                        buildNumber = prop.getProperty("buildNumber");
+                        versionNumber = prop.getProperty("versionNumber");
+                        version = prop.getProperty("version");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                        logger.error(ex.toString());
+                    }
+                }
+            }
+            HashMap<String, Object> responseBody = new HashMap<>();
+            responseBody.put("buildNumber", buildNumber);
+            responseBody.put("versionNumber", versionNumber);
+            responseBody.put("version", version);
             return ResponseEntity.status(HttpStatus.OK).body(responseBody);
         } finally {
             serviceMetric.end();
