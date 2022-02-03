@@ -32,10 +32,15 @@ public class AWSS3Client {
     public static final String SILLARI_PHOTOS_ROLE_SESSION_NAME = "SILLARI-PHOTOS";
     public static final String SILLARI_PERMITS_ROLE_SESSION_NAME = "SILLARI-PERMITS";
     private AmazonS3 s3Client=null;
-    public static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
-    public static final String SILLARI_PHOTOS_BUCKET_TEST = "sillari-photos-test";
-    public static final String SILLARI_PERMIT_PDF_BUCKET = "sillari-permits";
-    public static final String SILLARI_SUPERVISION_PDF_BUCKET = "sillari-supervisions";
+
+    private static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
+    private static final String SILLARI_PHOTOS_BUCKET_TEST = "sillari-photos-test";
+
+    private static final String SILLARI_PERMIT_PDF_BUCKET_DEV = "sillari-permits";
+    private static final String SILLARI_PERMIT_PDF_BUCKET_TEST = "sillari-permits-test";
+
+    private static final String SILLARI_SUPERVISION_PDF_BUCKET_DEV = "sillari-supervisions";
+    private static final String SILLARI_SUPERVISION_PDF_BUCKET_TEST = "sillari-supervisions-test";
     private final String roleArn;
     private String accessKey;
     private String secretKey;
@@ -50,6 +55,24 @@ public class AWSS3Client {
             secretKey = System.getenv("secretKey");
         }
         roleArn = System.getenv("roleArn");
+    }
+
+    public String getPermitBucketName(){
+        if("test".equals(environment)) {
+            return SILLARI_PERMIT_PDF_BUCKET_TEST;
+        }
+        else{
+            return SILLARI_PERMIT_PDF_BUCKET_DEV;
+        }
+    }
+
+    public String getSupervisionBucketName(){
+        if("test".equals(environment)) {
+            return SILLARI_SUPERVISION_PDF_BUCKET_TEST;
+        }
+        else{
+            return SILLARI_SUPERVISION_PDF_BUCKET_DEV;
+        }
     }
 
     public String getPhotoBucketName(){
