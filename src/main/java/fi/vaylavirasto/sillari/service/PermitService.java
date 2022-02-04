@@ -56,6 +56,14 @@ public class PermitService {
         return permitModel;
     }
 
+    public PermitModel getPermitOfRouteTransport(Integer routeTransportId, boolean fillDetails) {
+        PermitModel permitModel = permitRepository.getPermitByRouteTransportId(routeTransportId);
+        if (fillDetails) {
+          fillPermitDetails(permitModel);
+        }
+        return permitModel;
+    }
+
     private void fillPermitDetails(PermitModel permitModel) {
         if (permitModel != null) {
             if (permitModel.getAxleChart() != null) {
