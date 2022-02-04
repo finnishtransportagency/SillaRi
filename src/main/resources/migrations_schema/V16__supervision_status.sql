@@ -14,13 +14,7 @@ create table if not exists sillari.supervision_status
 create index if not exists supervision_status_supervision_id on sillari.supervision_status (supervision_id);
 create index if not exists supervision_latest_status on sillari.supervision_status (supervision_id, time);
 
---Random (between 1-9) date and time in August 2021
-insert into sillari.supervision_status (supervision_id, status, time)
-select s.id,
-       'PLANNED',
-       ('2021-08-0' || (floor(random() * (9 - 1 + 1) + 1)::int) || ' 0' || (floor(random() * (9 - 1 + 1) + 1)::int) ||
-        ':0' || (floor(random() * (9 - 1 + 1) + 1)::int) || ':00 +03:00')::timestamptz
-from sillari.supervision s;
+
 
 --Supervision
 alter table sillari.supervision

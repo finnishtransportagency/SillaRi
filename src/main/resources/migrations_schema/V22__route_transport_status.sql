@@ -15,13 +15,6 @@ create table if not exists sillari.route_transport_status
 create index if not exists route_transport_status_route_transport_id on sillari.route_transport_status (route_transport_id);
 create index if not exists route_transport_latest_status on sillari.route_transport_status (route_transport_id, time);
 
---Random (between 1-9) date and time in August 2021
-insert into sillari.route_transport_status (route_transport_id, status, time)
-select rt.id,
-       'DEPARTED',
-       ('2021-08-0' || (floor(random() * (9 - 1 + 1) + 1)::int) || ' 0' || (floor(random() * (9 - 1 + 1) + 1)::int) ||
-        ':0' || (floor(random() * (9 - 1 + 1) + 1)::int) || ':00 +03:00')::timestamptz
-from sillari.route_transport rt;
 
 --Route_transport
 alter table sillari.route_transport

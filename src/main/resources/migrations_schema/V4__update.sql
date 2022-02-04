@@ -1,7 +1,7 @@
 create sequence company_id_seq;
 create sequence bridge_id_seq;
 create sequence transportsbridge_id_seq;
-create sequence authorization_id_seq;
+create sequence permit_id_seq;
 create sequence route_id_seq;
 create sequence crossing_id_seq;
 
@@ -19,7 +19,7 @@ create table sillari.route
 
 create table sillari.authorization
 (
-    id   integer NOT NULL DEFAULT nextval('authorization_id_seq'),
+    id   integer NOT NULL DEFAULT nextval('permit_id_seq'),
     company_id integer not null,
     permissionId text not null,
     validStartDate text,
@@ -61,25 +61,8 @@ alter table sillari.transport add column company_id integer;
 alter table sillari.transport add column begindate timestamp;
 alter table sillari.transport add column enddate timestamp;
 
-update sillari.transport set begindate = now();
-update sillari.transport set enddate = now();
-insert into sillari.company(id,name) (select id,'company' || id from sillari.transport);
-update sillari.transport set company_id = transport.id;
-
-insert into sillari.bridge (id,name) (select id, 'bridge'||id from sillari.transport);
-insert into sillari.transportsbridge (transprort_id,bridgeid) (select id, id from sillari.transport);
-
-insert into sillari.authorization(id, company_id, permissionId, validStartDate, validEndDate)
- (select id, id, 'lupa-'||id, now(),now() from sillari.company );
-
-insert into sillari.route(id, authorization_id, name, departure_address_id, arrival_address_id, departure_time, arrival_time)
- (select id,id,'route-'||id, departure_address_id,arrival_address_id, now(),now() from sillari.transport);
-
 
 create index route_authorization_id on sillari.route(authorization_id);
 
 create index authorization_company_id on sillari.authorization(company_id);
-
-insert into sillari.crossing(id, route_id, bridge_id, name)
-    (select id, id, id, 'crossing-'||id from sillari.company );
 

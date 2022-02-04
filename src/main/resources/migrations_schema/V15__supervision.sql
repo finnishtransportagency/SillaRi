@@ -17,8 +17,3 @@ create table if not exists sillari.supervision
 create index if not exists supervision_route_bridge_id on sillari.supervision (route_bridge_id);
 create index if not exists supervision_route_transport_id on sillari.supervision (route_transport_id);
 
-insert into sillari.supervision (route_bridge_id, route_transport_id, planned_time, status, conforms_to_permit)
-select rb.id, rt.id, '2021-09-22 06:06:06 +03:00', 'PLANNED', false
-from sillari.route_bridge rb
-         inner join sillari.route r on rb.route_id = r.id
-         inner join sillari.route_transport rt on r.id = rt.route_id;

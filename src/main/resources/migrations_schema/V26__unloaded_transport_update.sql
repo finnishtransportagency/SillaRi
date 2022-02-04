@@ -23,12 +23,6 @@ CREATE TABLE IF NOT EXISTS sillari.unloaded_transport_dimensions
 )
     );
 
-DELETE
-FROM sillari.unloaded_transport_dimensions;
-INSERT INTO sillari.unloaded_transport_dimensions (permit_id, height, width, length)
-SELECT id, 3.5, 2.48, 24
-FROM sillari.permit
-ORDER BY id;
 
 
 

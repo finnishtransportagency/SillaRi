@@ -10,14 +10,7 @@ CREATE TABLE IF NOT EXISTS sillari.supervision_supervisor (
     CONSTRAINT supervision_supervisor_supervisor_id_fkey FOREIGN KEY (supervisor_id) REFERENCES supervisor (id) DEFERRABLE
 );
 
-INSERT INTO sillari.supervision_supervisor (supervision_id, supervisor_id, priority)
-SELECT s.id, s.supervisor_id, 1
-FROM supervision s
-WHERE s.supervisor_id IS NOT NULL
-AND NOT EXISTS (
-    SELECT 1 FROM sillari.supervision_supervisor ss WHERE ss.id = s.id AND ss.supervisor_id = s.supervisor_id
-)
-ORDER BY s.id;
+
 
 CREATE INDEX IF NOT EXISTS supervision_supervisor_supervision_id ON sillari.supervision_supervisor (supervision_id);
 CREATE INDEX IF NOT EXISTS supervision_supervisor_supervisor_id ON sillari.supervision_supervisor (supervisor_id);

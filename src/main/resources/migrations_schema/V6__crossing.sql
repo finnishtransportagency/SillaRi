@@ -12,14 +12,11 @@ alter table sillari.crossing add column permanentBendings boolean;
 alter table sillari.crossing add column twist boolean;
 alter table sillari.crossing add column damage boolean;
 
-create sequence routesbridges_id_seq;
+create sequence route_bridge_id_seq;
 
 create table sillari.routesbridges(
-  id   integer NOT NULL DEFAULT nextval('routesbridges_id_seq'),
+  id   integer NOT NULL DEFAULT nextval('route_bridge_id_seq'),
   routeid integer not NULL,
   bridgeid integer not null,
   primary key(id)
 );
-
-insert into sillari.routesbridges(routeid, bridgeid)
-(select id,id from sillari.route);

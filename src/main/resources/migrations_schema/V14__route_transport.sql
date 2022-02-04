@@ -15,5 +15,3 @@ create table if not exists sillari.route_transport
 );
 
 create index if not exists route_transport_route_id on sillari.route_transport (route_id);
-
-insert into sillari.route_transport (route_id, departure_time, status) (select id, '2021-09-22 05:05:05 +03:00', 'IN_PROGRESS' from sillari.route);

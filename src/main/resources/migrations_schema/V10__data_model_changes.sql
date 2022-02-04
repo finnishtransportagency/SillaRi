@@ -8,7 +8,7 @@ ALTER TABLE sillari.permit RENAME COLUMN validEndDate TO valid_end_date;
 ALTER TABLE sillari.permit ADD CONSTRAINT permit_company_id_fkey FOREIGN KEY (company_id) REFERENCES company (id) DEFERRABLE;
 
 -- Note: rename sequence not possible with H2
--- ALTER SEQUENCE sillari.authorization_id_seq RENAME TO permit_id_seq;
+-- ALTER SEQUENCE sillari.permit_id_seq RENAME TO permit_id_seq;
 
 ALTER INDEX sillari.authorization_company_id RENAME TO permit_company_id;
 
@@ -41,7 +41,7 @@ ALTER TABLE sillari.route_bridge ADD CONSTRAINT route_bridge_route_id_fkey FOREI
 ALTER TABLE sillari.route_bridge ADD CONSTRAINT route_bridge_bridge_id_fkey FOREIGN KEY (bridge_id) REFERENCES bridge (id) DEFERRABLE;
 
 -- Note: rename sequence not possible with H2
--- ALTER SEQUENCE sillari.routesbridges_id_seq RENAME TO route_bridge_id_seq;
+-- ALTER SEQUENCE sillari.route_bridge_id_seqRENAME TO route_bridge_id_seq;
 
 CREATE INDEX route_bridge_route_id ON sillari.route_bridge (route_id);
 CREATE INDEX route_bridge_bridge_id ON sillari.route_bridge (bridge_id);
