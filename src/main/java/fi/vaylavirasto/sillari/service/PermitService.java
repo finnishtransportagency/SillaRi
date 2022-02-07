@@ -98,7 +98,7 @@ public class PermitService {
             }
         } else {
             // Get from AWS
-            byte[] pdf = awss3Client.download(decodedKey, AWSS3Client.SILLARI_PERMIT_PDF_BUCKET);
+            byte[] pdf = awss3Client.download(decodedKey, awss3Client.getPermitBucketName());
             if (pdf != null) {
                 response.setContentType("application/pdf");
                 OutputStream out = response.getOutputStream();

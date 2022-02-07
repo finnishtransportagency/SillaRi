@@ -208,7 +208,7 @@ public class SupervisionService {
             }
         } else {
             // Get from AWS
-            return awss3Client.download(objectKey, AWSS3Client.SILLARI_SUPERVISION_PDF_BUCKET);
+            return awss3Client.download(objectKey, awss3Client.getSupervisionBucketName());
         }
         return null;
     }
@@ -228,7 +228,7 @@ public class SupervisionService {
             }
         } else {
             // Upload to AWS
-            boolean success = awss3Client.upload(objectKey, reportPDF, "application/pdf", AWSS3Client.SILLARI_SUPERVISION_PDF_BUCKET, AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
+            boolean success = awss3Client.upload(objectKey, reportPDF, "application/pdf", awss3Client.getSupervisionBucketName(), AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
             logger.debug("Uploaded to AWS: " + objectKey);
             if (!success) {
                 throw new LeluPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
