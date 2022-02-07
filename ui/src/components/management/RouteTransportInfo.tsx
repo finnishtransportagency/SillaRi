@@ -57,7 +57,7 @@ const RouteTransportInfo = ({
   const queryClient = useQueryClient();
   const [present] = useIonAlert();
 
-  const { companyId, validStartDate, validEndDate } = permit || {};
+  const { validStartDate, validEndDate } = permit || {};
   const { routeBridges = [] } = selectedRouteOption || {};
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
@@ -72,7 +72,7 @@ const RouteTransportInfo = ({
 
       // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
       queryClient.invalidateQueries("getRouteTransportsOfPermit");
-      history.replace(`/management/${companyId}`);
+      history.replace("/management");
     },
   });
   const routeTransportUpdateMutation = useMutation((transport: IRouteTransport) => updateRouteTransport(transport, dispatch), {
@@ -83,7 +83,7 @@ const RouteTransportInfo = ({
 
       // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
       queryClient.invalidateQueries("getRouteTransportsOfPermit");
-      history.replace(`/management/${companyId}`);
+      history.replace("/management");
     },
   });
   const routeTransportDeleteMutation = useMutation((routeTransportIdToDelete: number) => deleteRouteTransport(routeTransportIdToDelete, dispatch), {
@@ -94,7 +94,7 @@ const RouteTransportInfo = ({
 
       // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
       queryClient.invalidateQueries("getRouteTransportsOfPermit");
-      history.replace(`/management/${companyId}`);
+      history.replace("/management");
     },
   });
   const routeTransportPasswordMutation = useMutation(
