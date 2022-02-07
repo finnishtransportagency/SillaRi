@@ -21,8 +21,9 @@
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <log4j2.version>2.17.1</log4j2.version>
-        <sillari.flyway.migrations.schema.dir>migrations_schema</sillari.flyway.migrations.schema.dir>
-        <sillari.flyway.migrations.testdata.dir>migrations_testdata</sillari.flyway.migrations.testdata.dir>
+        <sillari.flyway.migrations.both.dir>migrations</sillari.flyway.migrations.both.dir>
+        <sillari.flyway.migrations.schema.dir>migrations/migrations_schema</sillari.flyway.migrations.schema.dir>
+        <sillari.flyway.migrations.testdata.dir>migrations/migrations_testdata</sillari.flyway.migrations.testdata.dir>
         <sillari.flyway.migrations.pom.path>filesystem:src/main/resources/</sillari.flyway.migrations.pom.path>
     </properties>
     <profiles>
@@ -40,89 +41,8 @@
                 <db.url>jdbc:postgresql://localhost:5432/sillari</db.url>
                 <db.username>sillari</db.username>
                 <db.password>sillari1234</db.password>
+                <sillari.flyway.migrations.dir>${sillari.flyway.migrations.both.dir}</sillari.flyway.migrations.dir>
             </properties>
-            <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.flywaydb</groupId>
-                    <artifactId>flyway-maven-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>migrate</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <driver>${db.driver}</driver>
-                        <url>${db.url}</url>
-                        <user>${db.username}</user>
-                        <password>${db.password}</password>
-                        <baselineOnMigrate>true</baselineOnMigrate>
-                        <schemas>sillari</schemas>
-                        <locations>
-                            <location>
-                                ${sillari.flyway.migrations.pom.path}${sillari.flyway.migrations.schema.dir}
-                            </location>
-                            <location>
-                                ${sillari.flyway.migrations.pom.path}${sillari.flyway.migrations.testdata.dir}
-                            </location>
-
-                        </locations>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.jooq</groupId>
-                    <artifactId>jooq-codegen-maven</artifactId>
-                    <executions>
-                        <execution>
-                            <id>generate-postgre</id>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>generate</goal>
-                            </goals>
-                            <configuration>
-                                <jdbc>
-                                    <driver>${db.driver}</driver>
-                                    <url>${db.url}</url>
-                                    <user>${db.username}</user>
-                                    <password>${db.password}</password>
-                                </jdbc>
-                                <generator>
-                                    <database>
-                                        <name>
-                                            org.jooq.meta.postgres.PostgresDatabase
-                                        </name>
-                                        <includes>.*</includes>
-                                        <excludes></excludes>
-                                        <inputSchema>sillari</inputSchema>
-                                    </database>
-                                    <generate>
-                                        <pojos>true</pojos>
-                                        <daos>true</daos>
-                                        <pojosEqualsAndHashCode>
-                                            true
-                                        </pojosEqualsAndHashCode>
-                                        <javaTimeTypes>true</javaTimeTypes>
-                                        <fluentSetters>true</fluentSetters>
-                                    </generate>
-                                    <target>
-                                        <packageName>
-                                            fi.vaylavirasto.sillari.model
-                                        </packageName>
-                                        <directory>
-                                            target/generated-sources/jooq
-                                        </directory>
-                                    </target>
-                                </generator>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-            </build>
-
         </profile>
         <profile>
             <id>dev</id>
@@ -138,6 +58,7 @@
                 <db.url>jdbc:postgresql://sillari-dev.cpakz3z86ezw.eu-west-1.rds.amazonaws.com:5432/sillari</db.url>
                 <db.username>sillari</db.username>
                 <db.password>silLari1234B7</db.password>
+                <sillari.flyway.migrations.dir>${sillari.flyway.migrations.both.dir}</sillari.flyway.migrations.dir>
             </properties>
         </profile>
     </profiles>
@@ -377,8 +298,80 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <driver>${db.driver}</driver>
+                    <url>${db.url}</url>
+                    <user>${db.username}</user>
+                    <password>${db.password}</password>
+                    <baselineOnMigrate>true</baselineOnMigrate>
+                    <schemas>sillari</schemas>
+                    <locations>
+                        <location>
+                            ${sillari.flyway.migrations.pom.path}${sillari.flyway.migrations.dir}
+                        </location>
+                    </locations>
+                </configuration>
+            </plugin>
 
-
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-postgre</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <jdbc>
+                                <driver>${db.driver}</driver>
+                                <url>${db.url}</url>
+                                <user>${db.username}</user>
+                                <password>${db.password}</password>
+                            </jdbc>
+                            <generator>
+                                <database>
+                                    <name>
+                                        org.jooq.meta.postgres.PostgresDatabase
+                                    </name>
+                                    <includes>.*</includes>
+                                    <excludes></excludes>
+                                    <inputSchema>sillari</inputSchema>
+                                </database>
+                                <generate>
+                                    <pojos>true</pojos>
+                                    <daos>true</daos>
+                                    <pojosEqualsAndHashCode>
+                                        true
+                                    </pojosEqualsAndHashCode>
+                                    <javaTimeTypes>true</javaTimeTypes>
+                                    <fluentSetters>true</fluentSetters>
+                                </generate>
+                                <target>
+                                    <packageName>
+                                        fi.vaylavirasto.sillari.model
+                                    </packageName>
+                                    <directory>
+                                        target/generated-sources/jooq
+                                    </directory>
+                                </target>
+                            </generator>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
