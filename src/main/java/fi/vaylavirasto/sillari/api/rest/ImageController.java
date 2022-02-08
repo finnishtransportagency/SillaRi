@@ -2,15 +2,24 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
+import fi.vaylavirasto.sillari.model.CompanyModel;
+import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.model.FileInputModel;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
+import fi.vaylavirasto.sillari.service.CompanyService;
 import fi.vaylavirasto.sillari.service.SupervisionImageService;
+import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,10 +37,17 @@ import java.util.List;
 @Timed
 @RequestMapping("/images")
 public class ImageController {
+    private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     AWSS3Client awss3Client;
     @Autowired
     SupervisionImageService supervisionImageService;
+    @Autowired
+    CompanyService companyService;
+    @Autowired
+    UIService uiService;
+
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
@@ -42,13 +58,16 @@ public class ImageController {
     public void getImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "getImage");
 
-        String decodedKey = supervisionImageService.getSupervisionImage(id).getObjectKey();
-        try {
-           // String decodedKey = new String(Base64.getDecoder().decode(objectKey));
+        if (!isOwnCompanyImage(id)) {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            return;
+        }
 
+        String objectKey = supervisionImageService.getSupervisionImage(id).getObjectKey();
+        try {
             if (activeProfile.equals("local")) {
                 // Get from local file system
-                String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
+                String filename = objectKey.substring(objectKey.lastIndexOf("/"));
 
                 File inputFile = new File("/", filename);
                 if (inputFile.exists()) {
@@ -61,7 +80,7 @@ public class ImageController {
                 }
             } else {
                 // Get from AWS
-                byte[] image = awss3Client.download(decodedKey, awss3Client.getPhotoBucketName());
+                byte[] image = awss3Client.download(objectKey, awss3Client.getPhotoBucketName());
                 if (image != null) {
                     response.setContentType("image/jpeg");
                     OutputStream out = response.getOutputStream();
@@ -175,5 +194,17 @@ public class ImageController {
     @GetMapping("/keepalive")
     public String keepalive() {
         return "Alive";
+    }
+
+
+    /* Check that images permits company matches user company */
+    private boolean isOwnCompanyImage(Integer imageId) {
+        CompanyModel cm = companyService.getCompanyBySupervisionImageId(imageId);
+        logger.debug("companyhello:" + cm.getId());
+        logger.debug("companyhello:" + cm.getBusinessId());
+        logger.debug("imageId:" + imageId);
+        SillariUser user = uiService.getSillariUser();
+        logger.debug("userhello:" + user.getBusinessId());
+        return user.getBusinessId().equals(cm.getBusinessId());
     }
 }

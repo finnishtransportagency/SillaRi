@@ -94,4 +94,7 @@ public class CompanyService {
         return companyTransports;
     }
 
+    public CompanyModel getCompanyBySupervisionImageId(Integer imageId) {
+        return companyRepository.getCompanyByRouteTransportId(imageId);
+    }
 }
