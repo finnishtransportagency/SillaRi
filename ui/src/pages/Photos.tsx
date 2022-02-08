@@ -153,7 +153,7 @@ const Photos = (): JSX.Element => {
                 return bm.diff(am, "seconds");
               })
               .map((supervisionImage) => {
-                const imageUrl = `${getOrigin()}/api/images/get?objectKey=${supervisionImage.objectKey}`;
+                const imageUrl = `${getOrigin()}/api/images/get?id=${supervisionImage.id}`;
                 const thumbnailClicked = (): void => showImage(true, imageUrl);
                 const deleteClicked = (): void => deleteImageObject(supervisionImage.objectKey);
 

@@ -32,7 +32,7 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
             return bm.diff(am, "seconds");
           })
           .map((image) => {
-            const imageUrl = `${getOrigin()}/api/images/get?objectKey=${image.objectKey}`;
+            const imageUrl = `${getOrigin()}/api/images/get?id=${image.id}`;
 
             return (
               <IonCol key={image.id} size="3">

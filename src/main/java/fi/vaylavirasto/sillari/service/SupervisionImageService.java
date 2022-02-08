@@ -16,6 +16,10 @@ public class SupervisionImageService {
         return supervisionImageRepository.getFiles(supervisionId);
     }
 
+    public SupervisionImageModel getSupervisionImage(Integer id) {
+        return supervisionImageRepository.getFile(id);
+    }
+
     public SupervisionImageModel createFile(SupervisionImageModel supervisionImage) {
         Integer id = supervisionImageRepository.insertFileIfNotExists(supervisionImage);
         return supervisionImageRepository.getFile(id);

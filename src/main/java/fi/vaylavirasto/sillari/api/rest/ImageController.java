@@ -39,10 +39,12 @@ public class ImageController {
     @Operation(summary = "Get image")
     @GetMapping("/get")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public void getImage(HttpServletResponse response, @RequestParam String objectKey) throws IOException {
+    public void getImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "getImage");
+
+        String decodedKey = supervisionImageService.getSupervisionImage(id).getObjectKey();
         try {
-            String decodedKey = new String(Base64.getDecoder().decode(objectKey));
+           // String decodedKey = new String(Base64.getDecoder().decode(objectKey));
 
             if (activeProfile.equals("local")) {
                 // Get from local file system
