@@ -4,7 +4,6 @@ import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
-import fi.vaylavirasto.sillari.model.RouteTransportStatusModel;
 import fi.vaylavirasto.sillari.model.TransportStatusType;
 import fi.vaylavirasto.sillari.service.RouteTransportService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
@@ -175,26 +174,6 @@ public class RouteTransportController {
                 return true;
             } else {
                 return false;
-            }
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
-    @Operation(summary = "Change route transport status")
-    @PostMapping(value = "/changeroutetransportstatus", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> changeRouteTransportStatus(@RequestBody RouteTransportStatusModel routeTransportStatus) {
-        ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "changeRouteTransportStatus");
-        try {
-            // TODO - restrict this method to transport UI users only
-            if (routeTransportStatus != null) {
-                routeTransportService.addRouteTransportStatus(routeTransportStatus);
-
-                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(routeTransportStatus.getRouteTransportId(), false);
-                return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
-            } else {
-                return ResponseEntity.ok().body(new EmptyJsonResponse());
             }
         } finally {
             serviceMetric.end();

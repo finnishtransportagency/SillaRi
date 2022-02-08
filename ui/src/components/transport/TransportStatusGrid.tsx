@@ -8,15 +8,16 @@ import IRouteTransport from "../../interfaces/IRouteTransport";
 import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
 import arrowLeft from "../../theme/icons/arrow-left.svg";
 import { onRetry } from "../../utils/backendData";
-import { changeRouteTransportStatus } from "../../utils/managementBackendData";
+import { changeRouteTransportStatus } from "../../utils/transportBackendData";
 import { TransportStatus } from "../../utils/constants";
 import "./TransportStatusGrid.css";
 
 interface TransportStatusGridProps {
+  transportPassword: string;
   selectedRouteTransportDetail: IRouteTransport;
 }
 
-const TransportStatusGrid = ({ selectedRouteTransportDetail }: TransportStatusGridProps): JSX.Element => {
+const TransportStatusGrid = ({ transportPassword, selectedRouteTransportDetail }: TransportStatusGridProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -27,13 +28,13 @@ const TransportStatusGrid = ({ selectedRouteTransportDetail }: TransportStatusGr
   const { status } = currentStatus || {};
 
   const routeTransportStatusMutation = useMutation(
-    (routeTransportStatus: IRouteTransportStatus) => changeRouteTransportStatus(routeTransportStatus, dispatch),
+    (routeTransportStatus: IRouteTransportStatus) => changeRouteTransportStatus(transportPassword, routeTransportStatus, dispatch),
     {
       retry: onRetry,
       onSuccess: () => {
         // Update the route transport detail to force the grid to update
         // queryClient.setQueryData(["getRouteTransport", routeTransportId], data);
-        queryClient.invalidateQueries("getRouteTransport");
+        queryClient.invalidateQueries("transport/getRouteTransport");
       },
     }
   );

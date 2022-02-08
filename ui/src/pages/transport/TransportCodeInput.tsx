@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { IonButton, IonCol, IonContent, IonGrid, IonInput, IonLabel, IonPage, IonRow, IonText } from "@ionic/react";
 import Header from "../../components/Header";
 import { useHistory } from "react-router";
-import { findRouteTransportPassword } from "../../utils/managementBackendData";
+import { findRouteTransportPassword } from "../../utils/transportBackendData";
 import { useDispatch } from "react-redux";
 
 const TransportCodeForm = (): JSX.Element => {
@@ -25,7 +25,7 @@ const TransportCodeForm = (): JSX.Element => {
 
       if (routeTransportPassword.routeTransportId) {
         setErrorMsg("");
-        history.push(`/transport/${routeTransportPassword.routeTransportId}`);
+        history.push(`/transport/${encodeURIComponent(routeTransportPassword.transportPassword)}`);
       } else {
         setErrorMsg(t("transports.transportCodeInput.invalidCodeErrorMessage"));
       }

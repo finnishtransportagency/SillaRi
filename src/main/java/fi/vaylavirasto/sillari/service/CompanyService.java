@@ -48,6 +48,10 @@ public class CompanyService {
         return company;
     }
 
+    public CompanyModel getCompanyByRouteTransportId(Integer routeTransportId) {
+        return companyRepository.getCompanyByRouteTransportId(routeTransportId);
+    }
+
     public List<CompanyTransportsDTO> getCompanyTransportListOfSupervisor(String username) {
         List<CompanyTransportsDTO> companyTransports = new ArrayList<>();
 

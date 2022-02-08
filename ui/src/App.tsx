@@ -210,7 +210,7 @@ const App: React.FC = () => {
                 <Route exact path="/transport">
                   {userHasRole("SILLARI_KULJETTAJA") ? <TransportCodeInput /> : <AccessDenied />}
                 </Route>
-                <Route exact path="/transport/:routeTransportId">
+                <Route exact path="/transport/:transportPassword">
                   {userHasRole("SILLARI_KULJETTAJA") ? <Transport /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/settings">
