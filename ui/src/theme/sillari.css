@@ -1,3 +1,22 @@
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/react/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/react/css/normalize.css";
+@import "@ionic/react/css/structure.css";
+@import "@ionic/react/css/typography.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/react/css/padding.css";
+@import "@ionic/react/css/float-elements.css";
+@import "@ionic/react/css/text-alignment.css";
+@import "@ionic/react/css/text-transformation.css";
+@import "@ionic/react/css/flex-utils.css";
+@import "@ionic/react/css/display.css";
+
+/* Theme variables */
+@import "./variables.css";
+
 @font-face {
   font-family: "Exo2";
   font-weight: 400;
@@ -121,6 +140,21 @@ ion-label {
 ion-icon {
   /* prevent title popup on Ionic icons */
   pointer-events: none;
+}
+
+/*
+  NOTE: The following ion-margin overrides are required to fix a problem with react-scripts 5.0.0, which now uses Webpack 5
+  The production build incorrectly sets margin-left and margin-right to 'unset' in the compiled css after defining the margin sizes, and so sets all margins to 0
+  This is likely caused by build plugin changes, since it does not happen in the dev env, nor in the previous version of react-scripts
+*/
+.ion-margin {
+  margin: var(--ion-margin, 16px);
+}
+.ion-margin-start {
+  margin-left: var(--ion-margin, 16px);
+}
+.ion-margin-end {
+  margin-right: var(--ion-margin, 16px);
 }
 
 /** Additional Vayla colors **/

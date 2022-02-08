@@ -158,7 +158,7 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
                         <Moment format={DATE_FORMAT}>{estimatedCrossingTime}</Moment>
                       )}
                     </IonCol>
-                    <IonCol>
+                    <IonCol className="ion-margin-start">
                       {isEditable ? (
                         <TimePicker value={estimatedCrossingTime.toDate()} onChange={(value) => setEstimatedCrossingTime(supervision, value)} />
                       ) : (

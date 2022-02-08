@@ -4,6 +4,7 @@ import { IonApp, IonButton, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
+import Cookies from "js-cookie";
 import Supervisions from "./pages/Supervisions";
 import Settings from "./pages/Settings";
 import Map from "./pages/Map";
@@ -19,34 +20,13 @@ import Transport from "./pages/transport/Transport";
 import TransportDetail from "./pages/management/TransportDetail";
 import SidebarMenu from "./components/SidebarMenu";
 import AccessDenied from "./pages/AccessDenied";
-
-/* Core CSS required for Ionic components to work properly */
-import "@ionic/react/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
-import "@ionic/react/css/normalize.css";
-import "@ionic/react/css/structure.css";
-import "@ionic/react/css/typography.css";
-
-/* Optional CSS utils that can be commented out */
-import "@ionic/react/css/padding.css";
-import "@ionic/react/css/float-elements.css";
-import "@ionic/react/css/text-alignment.css";
-import "@ionic/react/css/text-transformation.css";
-import "@ionic/react/css/flex-utils.css";
-import "@ionic/react/css/display.css";
-
-/* Theme variables */
-import "./theme/variables.css";
-
-/* Sillari.css */
-import "./theme/sillari.css";
 import IUserData from "./interfaces/IUserData";
 import { getOrigin } from "./utils/request";
 import Photos from "./pages/Photos";
-
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
-import Cookies from "js-cookie";
+
+/* Sillari.css */
+import "./theme/sillari.css";
 
 // Use the same style for all platforms
 setupIonicReact({
