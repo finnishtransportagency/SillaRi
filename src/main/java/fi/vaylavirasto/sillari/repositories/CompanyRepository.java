@@ -56,19 +56,11 @@ public class CompanyRepository {
                 .fetchOne(new CompanyMapper());
     }
 
-    public CompanyModel getCompanyBySupervisionImageId(Integer imageId) {
+    public CompanyModel getCompanyByPermitId(Integer permitId) {
         return dsl.select().from(TableAlias.company)
                 .where(TableAlias.company.ID.eq(
                         dsl.select(TableAlias.permit.COMPANY_ID).from(TableAlias.permit).where(TableAlias.permit.ID.eq(
-                                dsl.select(TableAlias.route.PERMIT_ID).from(TableAlias.route).where(TableAlias.route.ID.eq(
-                                        dsl.select(TableAlias.routeTransport.ROUTE_ID).from(TableAlias.routeTransport).where(TableAlias.routeTransport.ID.eq(
-                                                dsl.select(TableAlias.supervision.ROUTE_TRANSPORT_ID).from(TableAlias.supervision).where(TableAlias.supervision.ID.eq(
-                                                        dsl.select(TableAlias.supervisionImage.SUPERVISION_ID).from(TableAlias.supervisionImage).where(TableAlias.supervisionImage.ID.eq(
-                                                                imageId
-                                                        ))
-                                                ))
-                                        ))
-                                ))
+                              permitId
                         ))
                 ))
                 .fetchOne(new CompanyMapper());
@@ -92,5 +84,6 @@ public class CompanyRepository {
             return companyId;
         });
     }
+
 
 }
