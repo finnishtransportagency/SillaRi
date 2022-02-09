@@ -69,6 +69,15 @@ public class SupervisionRepository {
                 .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
     }
 
+    public SupervisionModel getSupervisionBySupervisionImageId(Integer imageId) {
+        return  dsl.select().from(TableAlias.supervision).where(TableAlias.supervision.ID.eq(
+                        dsl.select(TableAlias.supervisionImage.SUPERVISION_ID).from(TableAlias.supervisionImage).where(TableAlias.supervisionImage.ID.eq(
+                                        imageId
+                                ))
+                ))
+                .fetchOne(new SupervisionMapper());
+    }
+
     public List<SupervisionModel> getSupervisionsByRouteTransportAndSupervisorUsername(Integer routeTransportId, String username) {
         return dsl.select().from(TableAlias.supervision)
                 .innerJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))

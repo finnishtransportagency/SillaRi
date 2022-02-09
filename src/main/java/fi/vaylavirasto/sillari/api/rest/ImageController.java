@@ -4,13 +4,8 @@ import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
-import fi.vaylavirasto.sillari.model.FileInputModel;
-import fi.vaylavirasto.sillari.model.SupervisionImageModel;
-import fi.vaylavirasto.sillari.service.CompanyService;
-import fi.vaylavirasto.sillari.service.SupervisionImageService;
-import fi.vaylavirasto.sillari.service.UIService;
+import fi.vaylavirasto.sillari.model.*;
+import fi.vaylavirasto.sillari.service.*;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
@@ -20,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +40,8 @@ public class ImageController {
     @Autowired
     SupervisionImageService supervisionImageService;
     @Autowired
-    CompanyService companyService;
+    SupervisionService supervisionService;
+
     @Autowired
     UIService uiService;
 
@@ -58,9 +55,8 @@ public class ImageController {
     public void getImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "getImage");
 
-        if (!isOwnCompanyImage(id)) {
-            response.setStatus(HttpStatus.FORBIDDEN.value());
-            return;
+        if (!isOwnSupervisionImage(id)) {
+            throw new AccessDeniedException("Image not of the user");
         }
 
         String objectKey = supervisionImageService.getSupervisionImage(id).getObjectKey();
@@ -100,6 +96,10 @@ public class ImageController {
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public SupervisionImageModel uploadImage(@RequestBody FileInputModel fileInputModel) {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "uploadImage");
+        if (!isOwnSupervision(Integer.parseInt(fileInputModel.getSupervisionId()))) {
+            throw new AccessDeniedException("Supervision not of the user");
+        }
+
         SupervisionImageModel model = new SupervisionImageModel();
         try {
             model.setObjectKey("supervision/" + fileInputModel.getSupervisionId() + "/" + fileInputModel.getFilename());
@@ -157,6 +157,9 @@ public class ImageController {
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public boolean deleteSupervisionImages(@RequestParam Integer supervisionId) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deletesupervisionimages");
+        if (!isOwnSupervision(supervisionId)) {
+            throw new AccessDeniedException("Supervision not of the user");
+        }
 
         try {
             List<SupervisionImageModel> images = supervisionImageService.getSupervisionImages(supervisionId);
@@ -197,14 +200,21 @@ public class ImageController {
     }
 
 
-    /* Check that images permits company matches user company */
-    private boolean isOwnCompanyImage(Integer imageId) {
-        CompanyModel cm = companyService.getCompanyBySupervisionImageId(imageId);
-        logger.debug("companyhello:" + cm.getId());
-        logger.debug("companyhello:" + cm.getBusinessId());
-        logger.debug("imageId:" + imageId);
+    /* Check that image belongs to a supervision of the user */
+    private boolean isOwnSupervisionImage(Integer imageId) {
+        SupervisionModel supervisionOfImage = supervisionService.getSupervisionBySupervisionImageId(imageId);
         SillariUser user = uiService.getSillariUser();
-        logger.debug("userhello:" + user.getBusinessId());
-        return user.getBusinessId().equals(cm.getBusinessId());
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getSupervisionsOfSupervisor(user.getUsername());
+
+        return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervisionOfImage.getId()));
+    }
+
+    /* Check that supervision belongs to the user */
+    private boolean isOwnSupervision(Integer supervisionId) {
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+        SillariUser user = uiService.getSillariUser();
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getSupervisionsOfSupervisor(user.getUsername());
+
+        return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
     }
 }
