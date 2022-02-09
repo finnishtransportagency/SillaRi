@@ -27,6 +27,7 @@ import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 /* Sillari.css */
 import "./theme/sillari.css";
+import IVersionInfo from "./interfaces/IVersionInfo";
 
 // Use the same style for all platforms
 setupIonicReact({
@@ -42,6 +43,7 @@ const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
   const [homePage, setHomePage] = useState<string>("/supervisions");
   const [errorCode, setErrorCode] = useState<number>(0);
+  const [version, setVersion] = useState<string>("-");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -51,7 +53,15 @@ const App: React.FC = () => {
         headers.append("pragma", "no-cache");
         headers.append("cache-control", "no-store");
 
-        const userDataResponse = await fetch(`${getOrigin()}/api/ui/userdata`, { method: "GET", headers: headers });
+        const [userDataResponse, versionResponse] = await Promise.all([
+          fetch(`${getOrigin()}/api/ui/userdata`, { method: "GET", headers: headers }),
+          fetch(`${getOrigin()}/api/ui/versioninfo`, { method: "GET", headers: headers }),
+        ]);
+
+        if (versionResponse?.ok) {
+          const responseData = await (versionResponse.json() as Promise<IVersionInfo>);
+          setVersion(responseData.version);
+        }
 
         if (userDataResponse?.ok) {
           const responseData = await (userDataResponse.json() as Promise<IUserData>);
@@ -136,7 +146,7 @@ const App: React.FC = () => {
           <IonContent className="ion-padding">{errorCode ? <>{renderError(errorCode)}</> : <div>Starting app...</div>}</IonContent>
         ) : (
           <IonReactRouter>
-            <SidebarMenu roles={userData.roles} />
+            <SidebarMenu roles={userData.roles} version={version} />
             <IonContent id="MainContent">
               <Switch>
                 <Route exact path="/supervisions">

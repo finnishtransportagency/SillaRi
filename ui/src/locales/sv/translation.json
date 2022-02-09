@@ -56,7 +56,8 @@
     "camera": "Kamera",
     "management": "(SV) Management",
     "transports": "(SV) Transports",
-    "logout": "(SV) Logout"
+    "logout": "(SV) Logout",
+    "versionLabel": "(SV) SillaRi version"
   },
   "company": {
     "transportPermit": "(SV) Transport permit",

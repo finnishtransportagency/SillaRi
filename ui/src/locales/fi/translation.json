@@ -56,7 +56,8 @@
     "camera": "Kamera",
     "management": "Kuljetusten hallinta",
     "transports": "Kuljetukset",
-    "logout": "Kirjaudu ulos"
+    "logout": "Kirjaudu ulos",
+    "versionLabel": "SillaRi versio"
   },
   "company": {
     "transportPermit": "Kuljetuslupa",
