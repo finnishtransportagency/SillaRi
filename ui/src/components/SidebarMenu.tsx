@@ -10,6 +10,7 @@ import logout from "../theme/icons/logout.svg";
 import settings from "../theme/icons/settings.svg";
 import truck from "../theme/icons/truck.svg";
 import "./SidebarMenu.css";
+import { person } from "ionicons/icons";
 
 interface SidebarMenuProps {
   roles: string[];
@@ -70,6 +71,12 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
             <IonItem routerLink="/settings">
               <IonIcon className="otherIcon" icon={settings} slot="start" />
               <IonLabel>{t("SidebarMenu.settings")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
+            <IonItem routerLink="/userinfo">
+              <IonIcon className="otherIcon" icon={person} slot="start" />
+              <IonLabel>{t("SidebarMenu.userInfo")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>

@@ -27,6 +27,7 @@ import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 /* Sillari.css */
 import "./theme/sillari.css";
+import UserInfo from "./pages/UserInfo";
 
 // Use the same style for all platforms
 setupIonicReact({
@@ -195,6 +196,13 @@ const App: React.FC = () => {
                 </Route>
                 <Route exact path="/settings">
                   <Settings />
+                </Route>
+                <Route exact path="/userinfo">
+                  {userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                    <UserInfo userData={userData} />
+                  ) : (
+                    <AccessDenied />
+                  )}
                 </Route>
                 <Route exact path="/">
                   <Redirect to={homePage} />

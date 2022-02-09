@@ -41,6 +41,22 @@
       "en": "English"
     }
   },
+  "userInfo": {
+    "header": {
+      "title": "(SV) Own information"
+    },
+    "usernameLabel": "(SV) Username",
+    "nameLabel": "(SV) Name",
+    "emailLabel": "(SV) Email",
+    "phoneNumberLabel": "(SV) Phone number",
+    "organizationLabel": "(SV) Organization",
+    "roleLabel": "(SV) Role",
+    "role": {
+      "ajojarjestelija": "Ajojärjestelijä",
+      "sillanvalvoja": "Sillanvalvoja",
+      "kuljettaja": "Kuljettaja"
+    }
+  },
   "camera": {
     "takePhotoButtonLabel": "(SV) Add photos",
     "listLabel": "(SV) Photos",
@@ -52,8 +68,7 @@
     "title": "SillaRi",
     "mainPage": "(SV) Transports and bridges",
     "settings": "Inställningar",
-    "map": "Karta",
-    "camera": "Kamera",
+    "userInfo": "(SV) Own information",
     "management": "(SV) Management",
     "transports": "(SV) Transports",
     "logout": "(SV) Logout"
