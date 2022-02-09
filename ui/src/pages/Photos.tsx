@@ -52,7 +52,7 @@ const Photos = (): JSX.Element => {
   });
   const { isLoading: isSendingImageUpload } = imageUploadMutation;
 
-  const imageDeleteMutation = useMutation((objectKey: string) => deleteImage(objectKey, dispatch), {
+  const imageDeleteMutation = useMutation((id: number) => deleteImage(id, dispatch), {
     retry: onRetry,
     onSuccess: () => {
       // Fetch the supervision data again to update the image list after the delete has finished
@@ -93,10 +93,10 @@ const Photos = (): JSX.Element => {
     setImages(imagesToEdit);
   };
 
-  const deleteImageObject = (objectKey: string) => {
+  const deleteImageObject = (id: number) => {
     const { isLoading: isDeletingImage } = imageDeleteMutation;
     if (!isDeletingImage) {
-      imageDeleteMutation.mutate(objectKey);
+      imageDeleteMutation.mutate(id);
     }
   };
 
@@ -155,7 +155,7 @@ const Photos = (): JSX.Element => {
               .map((supervisionImage) => {
                 const imageUrl = `${getOrigin()}/api/images/get?id=${supervisionImage.id}`;
                 const thumbnailClicked = (): void => showImage(true, imageUrl);
-                const deleteClicked = (): void => deleteImageObject(supervisionImage.objectKey);
+                const deleteClicked = (): void => deleteImageObject(supervisionImage.id);
 
                 return (
                   <PhotoItem

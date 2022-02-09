@@ -71,9 +71,9 @@ public class SupervisionImageRepository {
                 .fetch(new SupervisionImageMapper(true));
     }
 
-    public int deleteFileByObjectKey(String objectKey) {
+    public int deleteFileByImageId(Integer id) {
         return dsl.delete(TableAlias.supervisionImage)
-                .where(TableAlias.supervisionImage.OBJECT_KEY.eq(objectKey))
+                .where(TableAlias.supervisionImage.ID.eq(id))
                 .execute();
     }
 

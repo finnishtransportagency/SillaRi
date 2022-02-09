@@ -137,15 +137,19 @@ public class ImageController {
     @Operation(summary = "Delete image")
     @DeleteMapping("/delete")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public boolean deleteImage(HttpServletResponse response, @RequestParam String objectKey) throws IOException {
+    public boolean deleteImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deleteImage");
+        if (!isOwnSupervisionImage(id)) {
+            throw new AccessDeniedException("Image not of the user");
+        }
+
+        String objectKey = supervisionImageService.getSupervisionImage(id).getObjectKey();
         try {
-            String decodedKey = new String(Base64.getDecoder().decode(objectKey));
             // Delete image from AWS bucket or local file system
-            deleteFile(decodedKey);
+            deleteFile(objectKey);
 
             // Delete the image row from the database
-            supervisionImageService.deleteSupervisionImage(decodedKey);
+            supervisionImageService.deleteSupervisionImage(id);
         } finally {
             serviceMetric.end();
         }
