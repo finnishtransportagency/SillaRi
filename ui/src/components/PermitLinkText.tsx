@@ -1,5 +1,5 @@
-import React, {MouseEvent, useState} from "react";
-import {IonText} from "@ionic/react";
+import React, { MouseEvent, useState } from "react";
+import { IonText } from "@ionic/react";
 import IPermit from "../interfaces/IPermit";
 import PermitPdfPreview from "./PermitPdfPreview";
 

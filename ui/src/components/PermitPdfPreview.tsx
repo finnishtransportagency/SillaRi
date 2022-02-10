@@ -1,23 +1,10 @@
-import React, {MouseEvent, useRef, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {
-    IonButton,
-    IonButtons,
-    IonCol,
-    IonContent,
-    IonFab,
-    IonGrid,
-    IonHeader,
-    IonIcon,
-    IonModal,
-    IonRow,
-    IonTitle,
-    IonToolbar
-} from "@ionic/react";
-import {Document, Page} from "react-pdf";
-import {TransformComponent, TransformWrapper} from "react-zoom-pan-pinch";
+import React, { MouseEvent, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { IonButton, IonButtons, IonCol, IonContent, IonFab, IonGrid, IonHeader, IonIcon, IonModal, IonRow, IonTitle, IonToolbar } from "@ionic/react";
+import { Document, Page } from "react-pdf";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import close from "../theme/icons/close_large_white.svg";
-import {getOrigin} from "../utils/request";
+import { getOrigin } from "../utils/request";
 
 interface PermitPdfPreviewProps {
   id: number;

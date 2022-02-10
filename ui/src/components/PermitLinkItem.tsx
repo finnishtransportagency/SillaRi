@@ -1,6 +1,6 @@
-import React, {MouseEvent, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {IonItem, IonLabel, IonText} from "@ionic/react";
+import React, { MouseEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { IonItem, IonLabel, IonText } from "@ionic/react";
 import IPermit from "../interfaces/IPermit";
 import file from "../theme/icons/file.svg";
 import PermitPdfPreview from "./PermitPdfPreview";
