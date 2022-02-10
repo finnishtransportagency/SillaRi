@@ -1,5 +1,5 @@
-import React, { MouseEvent, useState } from "react";
-import { IonText } from "@ionic/react";
+import React, {MouseEvent, useState} from "react";
+import {IonText} from "@ionic/react";
 import IPermit from "../interfaces/IPermit";
 import PermitPdfPreview from "./PermitPdfPreview";
 
@@ -10,7 +10,7 @@ interface PermitLinkTextProps {
 
 const PermitLinkText = ({ permit, className }: PermitLinkTextProps): JSX.Element => {
   const [isPermitPdfOpen, setPermitPdfOpen] = useState<boolean>(false);
-  const { permitNumber, pdfObjectKey = "" } = permit || {};
+  const { id, permitNumber, pdfObjectKey = "" } = permit || {};
 
   const openPreview = (evt: MouseEvent) => {
     evt.stopPropagation();
@@ -23,7 +23,7 @@ const PermitLinkText = ({ permit, className }: PermitLinkTextProps): JSX.Element
         {permitNumber}
       </IonText>
 
-      <PermitPdfPreview pdfObjectKey={pdfObjectKey} isOpen={isPermitPdfOpen} setOpen={setPermitPdfOpen} />
+      <PermitPdfPreview id={id} isOpen={isPermitPdfOpen} setOpen={setPermitPdfOpen} />
     </>
   ) : (
     <IonText>{permitNumber}</IonText>

@@ -1,6 +1,6 @@
-import React, { MouseEvent, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { IonItem, IonLabel, IonText } from "@ionic/react";
+import React, {MouseEvent, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {IonItem, IonLabel, IonText} from "@ionic/react";
 import IPermit from "../interfaces/IPermit";
 import file from "../theme/icons/file.svg";
 import PermitPdfPreview from "./PermitPdfPreview";
@@ -13,7 +13,7 @@ interface PermitLinkItemProps {
 const PermitLinkItem = ({ permit, isHeader }: PermitLinkItemProps): JSX.Element => {
   const { t } = useTranslation();
   const [isPermitPdfOpen, setPermitPdfOpen] = useState<boolean>(false);
-  const { permitNumber, pdfObjectKey = "" } = permit || {};
+  const { id, permitNumber, pdfObjectKey = "" } = permit || {};
 
   const openPreview = (evt: MouseEvent) => {
     evt.stopPropagation();
@@ -29,7 +29,7 @@ const PermitLinkItem = ({ permit, isHeader }: PermitLinkItemProps): JSX.Element 
         </IonLabel>
       </IonItem>
 
-      <PermitPdfPreview pdfObjectKey={pdfObjectKey} isOpen={isPermitPdfOpen} setOpen={setPermitPdfOpen} />
+      <PermitPdfPreview id={id} isOpen={isPermitPdfOpen} setOpen={setPermitPdfOpen} />
     </>
   ) : (
     <IonItem className={isHeader ? "header" : ""} detail detailIcon="" lines="none">

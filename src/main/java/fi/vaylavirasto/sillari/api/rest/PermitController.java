@@ -10,6 +10,8 @@ import fi.vaylavirasto.sillari.service.PermitService;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ import java.io.IOException;
 @Timed
 @RequestMapping("/permit")
 public class PermitController {
+    private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     PermitService permitService;
     @Autowired
@@ -69,9 +73,16 @@ public class PermitController {
     @Operation(summary = "Get permit pdf")
     @GetMapping(value = "/getpermitpdf", produces = MediaType.APPLICATION_PDF_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public void getPermitPdf(HttpServletResponse response, @RequestParam String objectKey) throws IOException {
+    public void getPermitPdf(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitPdf");
         try {
+            logger.debug("getPermitPdf: " +id);
+            if (!isOwnCompanyPermit(id)) {
+                logger.warn("not isOwnCompanyPermit");
+                throw new AccessDeniedException("Not user company permit.");
+            }
+            PermitModel permit = permitService.getPermit(id);
+            String objectKey = permit.getPdfObjectKey();
             permitService.getPermitPdf(response, objectKey);
         } finally {
             serviceMetric.end();
