@@ -9,17 +9,17 @@ import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
 import PermitLinkText from "../../components/PermitLinkText";
 import RouteAccordion from "../../components/RouteAccordion";
-import TransportStatusGrid from "../../components/management/TransportStatusGrid";
+import TransportStatusGrid from "../../components/transport/TransportStatusGrid";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import { useTypedSelector } from "../../store/store";
 import { onRetry } from "../../utils/backendData";
-import { getPermitOfRouteTransport, getRouteTransport } from "../../utils/managementBackendData";
+import { getRouteTransport, getPermitOfRouteTransport } from "../../utils/transportBackendData";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 
 interface TransportProps {
-  routeTransportId: string;
+  transportPassword: string;
 }
 
 const Transport = (): JSX.Element => {
@@ -32,19 +32,19 @@ const Transport = (): JSX.Element => {
     networkStatus: { isFailed = {} },
   } = management;
 
-  const { routeTransportId = "0" } = useParams<TransportProps>();
+  const { transportPassword = "" } = useParams<TransportProps>();
 
   const { data: selectedRouteTransportDetail } = useQuery(
-    ["getRouteTransport", routeTransportId],
-    () => getRouteTransport(Number(routeTransportId), dispatch),
+    ["transport/getRouteTransport", transportPassword],
+    () => getRouteTransport(transportPassword, dispatch),
     {
       retry: onRetry,
     }
   );
 
   const { data: selectedPermitDetail } = useQuery(
-    ["getPermitOfRouteTransport", routeTransportId],
-    () => getPermitOfRouteTransport(Number(routeTransportId), dispatch),
+    ["getPermitOfRouteTransport", transportPassword],
+    () => getPermitOfRouteTransport(transportPassword, dispatch),
     {
       retry: onRetry,
       refetchOnWindowFocus: false,
@@ -125,7 +125,10 @@ const Transport = (): JSX.Element => {
               </IonRow>
             </IonGrid>
 
-            <TransportStatusGrid selectedRouteTransportDetail={selectedRouteTransportDetail as IRouteTransport} />
+            <TransportStatusGrid
+              transportPassword={transportPassword}
+              selectedRouteTransportDetail={selectedRouteTransportDetail as IRouteTransport}
+            />
           </>
         )}
       </IonContent>

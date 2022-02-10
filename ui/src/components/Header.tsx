@@ -8,6 +8,7 @@ import outgoing from "../theme/icons/outgoing_white_no_badge.svg";
 import { onRetry } from "../utils/backendData";
 import { getSupervisionSendingList } from "../utils/supervisionBackendData";
 import SendingList from "./SendingList";
+import "./Header.css";
 
 interface HeaderProps {
   title: string;
@@ -28,7 +29,7 @@ const Header = ({ title, somethingFailed, includeSendingList, confirmGoBack }: H
     enabled: includeSendingList,
   });
 
-  const canGoBack = !pathname.includes("/supervisions") && pathname !== "/transport" && pathname !== "/management/1";
+  const canGoBack = !pathname.includes("/supervisions") && pathname !== "/transport" && pathname !== "/management";
 
   const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : history.goBack;
 
@@ -45,14 +46,18 @@ const Header = ({ title, somethingFailed, includeSendingList, confirmGoBack }: H
         </IonButtons>
         <IonTitle className="headingBoldText">{title}</IonTitle>
         <IonButtons slot="end">
-          <IonIcon slot="icon-only" icon={cloudOfflineOutline} className={somethingFailed ? "" : "ion-hide"} />
-          <IonIcon slot="icon-only" icon={cloudUploadOutline} className={isMutating > 0 && !somethingFailed ? "" : "ion-hide"} />
+          <IonIcon slot="icon-only" icon={cloudOfflineOutline} className={`cloudIcon ${somethingFailed ? "" : "ion-hide"}`} />
+          <IonIcon slot="icon-only" icon={cloudUploadOutline} className={`cloudIcon ${isMutating > 0 && !somethingFailed ? "" : "ion-hide"}`} />
           <IonIcon
             slot="icon-only"
             icon={cloudDownloadOutline}
-            className={isFetching > 0 && isMutating === 0 && !somethingFailed ? "" : "ion-hide"}
+            className={`cloudIcon ${isFetching > 0 && isMutating === 0 && !somethingFailed ? "" : "ion-hide"}`}
           />
-          <IonIcon slot="icon-only" icon={cloudOutline} className={isFetching === 0 && isMutating === 0 && !somethingFailed ? "" : "ion-hide"} />
+          <IonIcon
+            slot="icon-only"
+            icon={cloudOutline}
+            className={`cloudIcon ${isFetching === 0 && isMutating === 0 && !somethingFailed ? "" : "ion-hide"}`}
+          />
 
           {includeSendingList && (
             <IonButton shape="round" className="otherIcon" onClick={() => setSendingListOpen(true)}>

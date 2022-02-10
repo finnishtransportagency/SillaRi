@@ -9,13 +9,15 @@ import lane from "../theme/icons/lane.svg";
 import logout from "../theme/icons/logout.svg";
 import settings from "../theme/icons/settings.svg";
 import truck from "../theme/icons/truck.svg";
+import user from "../theme/icons/user.svg";
 import "./SidebarMenu.css";
 
 interface SidebarMenuProps {
   roles: string[];
+  version: string;
 }
 
-const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
+const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles, version }) => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -52,7 +54,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
           )}
           {roles.includes("SILLARI_AJOJARJESTELIJA") && (
             <IonMenuToggle>
-              <IonItem routerLink="/management/1">
+              <IonItem routerLink="/management">
                 <IonIcon className="otherIcon" icon={calendar} slot="start" />
                 <IonLabel>{t("SidebarMenu.management")}</IonLabel>
               </IonItem>
@@ -73,12 +75,21 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>
+            <IonItem routerLink="/userinfo">
+              <IonIcon className="otherIcon" icon={user} slot="start" />
+              <IonLabel>{t("SidebarMenu.userInfo")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
             <IonItem button onClick={logoutFromApp}>
               <IonIcon className="otherIcon" icon={logout} slot="start" />
               <IonLabel>{t("SidebarMenu.logout")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
         </IonList>
+        <div className="versionArea">
+          {t("SidebarMenu.versionLabel")} {version}
+        </div>
       </IonContent>
     </IonMenu>
   );

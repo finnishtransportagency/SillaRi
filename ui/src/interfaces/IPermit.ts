@@ -9,10 +9,10 @@ export default interface IPermit {
   permitNumber: string;
   validStartDate: string;
   validEndDate: string;
-  routes: IRoute[];
-  transportDimensions: ITransportDimensions;
-  vehicles: IVehicle[];
-  axleChart: IAxleChart;
+  routes?: IRoute[];
+  transportDimensions?: ITransportDimensions;
+  vehicles?: IVehicle[];
+  axleChart?: IAxleChart;
   transportTotalMass: number;
   pdfObjectKey: string;
 }

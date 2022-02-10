@@ -9,6 +9,7 @@ import { actions } from "../../store/rootSlice";
 import { onRetry } from "../../utils/backendData";
 import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_FORMAT, SupervisorType } from "../../utils/constants";
+import { isPermitValid } from "../../utils/validation";
 import PermitLinkText from "../PermitLinkText";
 
 interface PermitAccordionHeadingProps {
@@ -68,7 +69,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
               </IonCol>
             </IonRow>
             <IonRow>
-              <IonCol size="12" size-lg="6">
+              <IonCol size="12" size-lg="6" className={!isPermitValid(permit) ? "disabled" : ""}>
                 <small>
                   <Moment format={DATE_FORMAT}>{validStartDate}</Moment>
                   <IonText>{" - "}</IonText>
@@ -85,18 +86,20 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
         </IonCol>
 
         <IonCol size="12" size-md="4" className="ion-hide-md-down">
-          <IonButton
-            color="secondary"
-            // expand="block"
-            size="large"
-            routerLink={`/management/addTransport/${permitId}`}
-            onClick={(evt) => {
-              dispatch({ type: actions.SET_MANAGEMENT_PERMIT_ID, payload: permitId });
-              evt.stopPropagation();
-            }}
-          >
-            {t("management.companySummary.addTransportButtonLabel")}
-          </IonButton>
+          {isPermitValid(permit) && (
+            <IonButton
+              color="secondary"
+              // expand="block"
+              size="large"
+              routerLink={`/management/addTransport/${permitId}`}
+              onClick={(evt) => {
+                dispatch({ type: actions.SET_MANAGEMENT_PERMIT_ID, payload: permitId });
+                evt.stopPropagation();
+              }}
+            >
+              {t("management.companySummary.addTransportButtonLabel")}
+            </IonButton>
+          )}
         </IonCol>
       </IonRow>
     </IonGrid>

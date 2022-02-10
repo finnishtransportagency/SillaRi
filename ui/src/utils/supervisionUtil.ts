@@ -24,7 +24,7 @@ export const groupSupervisionsByDate = (supervisions: ISupervision[] | undefined
   return supervisionDays;
 };
 
-export const sortSupervisionsByTimeAndBridgeOrder = (supervisions: ISupervision[] | undefined) => {
+export const sortSupervisionsByTimeAndBridgeOrder = (supervisions: ISupervision[] | undefined): void => {
   if (supervisions && supervisions.length > 0) {
     supervisions.sort((a, b) => {
       const timeDiff = moment(a.plannedTime).diff(moment(b.plannedTime), "minutes");

@@ -39,6 +39,19 @@ public class CompanyService {
         return company;
     }
 
+    public CompanyModel getCompanyByBusinessId(String businessId) {
+        CompanyModel company = companyRepository.getCompanyByBusinessId(businessId);
+        company.setPermits(permitRepository.getPermitsByCompanyId(company.getId()));
+        for (PermitModel permitModel : company.getPermits()) {
+            permitModel.setRoutes(routeRepository.getRoutesByPermitId(permitModel.getId()));
+        }
+        return company;
+    }
+
+    public CompanyModel getCompanyByRouteTransportId(Integer routeTransportId) {
+        return companyRepository.getCompanyByRouteTransportId(routeTransportId);
+    }
+
     public List<CompanyTransportsDTO> getCompanyTransportListOfSupervisor(String username) {
         List<CompanyTransportsDTO> companyTransports = new ArrayList<>();
 

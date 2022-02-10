@@ -4,6 +4,7 @@ import { IonApp, IonButton, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
+import Cookies from "js-cookie";
 import Supervisions from "./pages/Supervisions";
 import Settings from "./pages/Settings";
 import Map from "./pages/Map";
@@ -19,34 +20,15 @@ import Transport from "./pages/transport/Transport";
 import TransportDetail from "./pages/management/TransportDetail";
 import SidebarMenu from "./components/SidebarMenu";
 import AccessDenied from "./pages/AccessDenied";
-
-/* Core CSS required for Ionic components to work properly */
-import "@ionic/react/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
-import "@ionic/react/css/normalize.css";
-import "@ionic/react/css/structure.css";
-import "@ionic/react/css/typography.css";
-
-/* Optional CSS utils that can be commented out */
-import "@ionic/react/css/padding.css";
-import "@ionic/react/css/float-elements.css";
-import "@ionic/react/css/text-alignment.css";
-import "@ionic/react/css/text-transformation.css";
-import "@ionic/react/css/flex-utils.css";
-import "@ionic/react/css/display.css";
-
-/* Theme variables */
-import "./theme/variables.css";
-
-/* Sillari.css */
-import "./theme/sillari.css";
 import IUserData from "./interfaces/IUserData";
 import { getOrigin } from "./utils/request";
 import Photos from "./pages/Photos";
-
+import IVersionInfo from "./interfaces/IVersionInfo";
+import UserInfo from "./pages/UserInfo";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
-import Cookies from "js-cookie";
+
+/* Sillari.css */
+import "./theme/sillari.css";
 
 // Use the same style for all platforms
 setupIonicReact({
@@ -62,6 +44,7 @@ const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
   const [homePage, setHomePage] = useState<string>("/supervisions");
   const [errorCode, setErrorCode] = useState<number>(0);
+  const [version, setVersion] = useState<string>("-");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -71,7 +54,15 @@ const App: React.FC = () => {
         headers.append("pragma", "no-cache");
         headers.append("cache-control", "no-store");
 
-        const userDataResponse = await fetch(`${getOrigin()}/api/ui/userdata`, { method: "GET", headers: headers });
+        const [userDataResponse, versionResponse] = await Promise.all([
+          fetch(`${getOrigin()}/api/ui/userdata`, { method: "GET", headers: headers }),
+          fetch(`${getOrigin()}/api/ui/versioninfo`, { method: "GET", headers: headers }),
+        ]);
+
+        if (versionResponse?.ok) {
+          const responseData = await (versionResponse.json() as Promise<IVersionInfo>);
+          setVersion(responseData.version);
+        }
 
         if (userDataResponse?.ok) {
           const responseData = await (userDataResponse.json() as Promise<IUserData>);
@@ -79,7 +70,7 @@ const App: React.FC = () => {
             if (responseData.roles.includes("SILLARI_SILLANVALVOJA")) {
               setHomePage("/supervisions");
             } else if (responseData.roles.includes("SILLARI_AJOJARJESTELIJA")) {
-              setHomePage("/management/1");
+              setHomePage("/management");
             } else if (responseData.roles.includes("SILLARI_KULJETTAJA")) {
               setHomePage("/transport");
             }
@@ -156,7 +147,7 @@ const App: React.FC = () => {
           <IonContent className="ion-padding">{errorCode ? <>{renderError(errorCode)}</> : <div>Starting app...</div>}</IonContent>
         ) : (
           <IonReactRouter>
-            <SidebarMenu roles={userData.roles} />
+            <SidebarMenu roles={userData.roles} version={version} />
             <IonContent id="MainContent">
               <Switch>
                 <Route exact path="/supervisions">
@@ -198,7 +189,7 @@ const App: React.FC = () => {
                 <Route exact path="/takePhotos/:supervisionId">
                   {userHasRole("SILLARI_SILLANVALVOJA") ? <Photos /> : <AccessDenied />}
                 </Route>
-                <Route exact path="/management/:companyId">
+                <Route exact path="/management">
                   {userHasRole("SILLARI_AJOJARJESTELIJA") ? <CompanySummary /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/management/addTransport/:permitId">
@@ -210,11 +201,18 @@ const App: React.FC = () => {
                 <Route exact path="/transport">
                   {userHasRole("SILLARI_KULJETTAJA") ? <TransportCodeInput /> : <AccessDenied />}
                 </Route>
-                <Route exact path="/transport/:routeTransportId">
+                <Route exact path="/transport/:transportPassword">
                   {userHasRole("SILLARI_KULJETTAJA") ? <Transport /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/settings">
                   <Settings />
+                </Route>
+                <Route exact path="/userinfo">
+                  {userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                    <UserInfo userData={userData} />
+                  ) : (
+                    <AccessDenied />
+                  )}
                 </Route>
                 <Route exact path="/">
                   <Redirect to={homePage} />

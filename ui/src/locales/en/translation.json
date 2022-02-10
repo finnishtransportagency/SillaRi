@@ -41,6 +41,23 @@
       "en": "English"
     }
   },
+  "userInfo": {
+    "header": {
+      "title": "Own information"
+    },
+    "usernameLabel": "Username",
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "phoneNumberLabel": "Phone number",
+    "organizationLabel": "Organization",
+    "roleLabel": "User role",
+    "role": {
+      "ajojarjestelija": "Ajojärjestelijä",
+      "sillanvalvoja": "Sillanvalvoja",
+      "kuljettaja": "Kuljettaja"
+    },
+    "errorInfo": "If there are errors in your contact details, please contact your company's representative."
+  },
   "camera": {
     "takePhotoButtonLabel": "Add photos",
     "listLabel": "Photos",
@@ -52,11 +69,11 @@
     "title": "SillaRi",
     "mainPage": "Transports and bridges",
     "settings": "Settings",
-    "map": "Map",
-    "camera": "Camera",
+    "userInfo": "Own information",
     "management": "Management",
     "transports": "Transports",
-    "logout": "Logout"
+    "logout": "Logout",
+    "versionLabel": "SillaRi version"
   },
   "company": {
     "transportPermit": "Transport permit",
@@ -237,8 +254,8 @@
         "unknown": "Information unknown",
         "planned": "Planned",
         "departed": "Transport departed",
-        "stopped": "Stopped",
-        "in_progress": "Driving",
+        "stopped": "On a break",
+        "in_progress": "On the move",
         "arrived": "Transport arrived"
       }
     },
@@ -294,9 +311,9 @@
     "transportStatus": {
       "unknown": "Information unknown",
       "planned": "Planned",
-      "departed": "Departed",
-      "stopped": "Stopped",
-      "in_progress": "In progress",
+      "departed": "On the move",
+      "stopped": "On a break",
+      "in_progress": "On the move",
       "arrived": "Arrived"
     }
   },

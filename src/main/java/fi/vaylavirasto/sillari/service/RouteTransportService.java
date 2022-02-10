@@ -63,6 +63,34 @@ public class RouteTransportService {
         return routeTransportModel;
     }
 
+    public RouteTransportModel getRouteTransport(Integer routeTransportId, boolean includePassword, boolean includeSupervisions) {
+        RouteTransportModel routeTransportModel = routeTransportRepository.getRouteTransportById(routeTransportId);
+
+        if (routeTransportModel != null) {
+            routeTransportModel.setRoute(routeRepository.getRoute(routeTransportModel.getRouteId()));
+            // Sets also current status
+            routeTransportModel.setStatusHistory(routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId()));
+
+            if (includeSupervisions) {
+
+                List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportId);
+                if (supervisions != null) {
+                    supervisions.forEach(supervision -> {
+                        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                        supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+                    });
+                }
+                routeTransportModel.setSupervisions(supervisions);
+            }
+
+            if (includePassword) {
+                // Only for use with the transport company admin UI
+                routeTransportModel.setCurrentTransportPassword(routeTransportPasswordRepository.getTransportPassword(routeTransportModel.getId()));
+            }
+        }
+        return routeTransportModel;
+    }
+
     public List<RouteTransportModel> getRouteTransportsOfPermit(Integer permitId, boolean includePassword) {
         List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByPermitId(permitId);
 

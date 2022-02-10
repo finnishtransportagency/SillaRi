@@ -56,6 +56,14 @@ public class PermitService {
         return permitModel;
     }
 
+    public PermitModel getPermitOfRouteTransport(Integer routeTransportId, boolean fillDetails) {
+        PermitModel permitModel = permitRepository.getPermitByRouteTransportId(routeTransportId);
+        if (fillDetails) {
+          fillPermitDetails(permitModel);
+        }
+        return permitModel;
+    }
+
     private void fillPermitDetails(PermitModel permitModel) {
         if (permitModel != null) {
             if (permitModel.getAxleChart() != null) {
@@ -98,7 +106,7 @@ public class PermitService {
             }
         } else {
             // Get from AWS
-            byte[] pdf = awss3Client.download(decodedKey, AWSS3Client.SILLARI_PERMIT_PDF_BUCKET);
+            byte[] pdf = awss3Client.download(decodedKey, awss3Client.getPermitBucketName());
             if (pdf != null) {
                 response.setContentType("application/pdf");
                 OutputStream out = response.getOutputStream();

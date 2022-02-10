@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -36,10 +35,12 @@ public class CompanyController {
     @Operation(summary = "Get company")
     @GetMapping(value = "/getcompany", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getCompany(@RequestParam Integer companyId) {
+    public ResponseEntity<?> getCompany() {
         ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getCompany");
         try {
-            CompanyModel company = companyService.getCompany(companyId);
+            SillariUser user = uiService.getSillariUser();
+
+            CompanyModel company = companyService.getCompanyByBusinessId(user.getBusinessId());
             return ResponseEntity.ok().body(company != null ? company : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
