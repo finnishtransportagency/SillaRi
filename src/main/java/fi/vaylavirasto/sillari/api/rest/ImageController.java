@@ -49,7 +49,7 @@ public class ImageController {
 
     @Operation(summary = "Get image")
     @GetMapping("/get")
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public void getImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "getImage");
         try {
@@ -90,7 +90,7 @@ public class ImageController {
 
     @Operation(summary = "Upload image")
     @PostMapping("/upload")
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public SupervisionImageModel uploadImage(@RequestBody FileInputModel fileInputModel) {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "uploadImage");
         SupervisionImageModel model = new SupervisionImageModel();
@@ -135,7 +135,7 @@ public class ImageController {
 
     @Operation(summary = "Delete image")
     @DeleteMapping("/delete")
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public boolean deleteImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deleteImage");
         try {
@@ -157,7 +157,7 @@ public class ImageController {
 
     @Operation(summary = "Delete all supervision images")
     @DeleteMapping("/deletesupervisionimages")
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public boolean deleteSupervisionImages(@RequestParam Integer supervisionId) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deletesupervisionimages");
         try {
