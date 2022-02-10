@@ -14,9 +14,10 @@ import "./SidebarMenu.css";
 
 interface SidebarMenuProps {
   roles: string[];
+  version: string;
 }
 
-const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
+const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles, version }) => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -86,6 +87,9 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
             </IonItem>
           </IonMenuToggle>
         </IonList>
+        <div className="versionArea">
+          {t("SidebarMenu.versionLabel")} {version}
+        </div>
       </IonContent>
     </IonMenu>
   );

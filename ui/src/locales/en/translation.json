@@ -72,7 +72,8 @@
     "userInfo": "Own information",
     "management": "Management",
     "transports": "Transports",
-    "logout": "Logout"
+    "logout": "Logout",
+    "versionLabel": "SillaRi version"
   },
   "company": {
     "transportPermit": "Transport permit",
