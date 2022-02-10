@@ -62,6 +62,13 @@ public class SupervisionService {
         return supervision;
     }
 
+    public List<SupervisionModel> getSupervisionsByRouteBridgeId(Integer routeBridgeId) {
+        List<SupervisionModel> supervision = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridgeId);
+        return supervision;
+    }
+
+
+
     private void fillSupervisionDetails(SupervisionModel supervision) {
         Integer supervisionId = supervision.getId();
         supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));

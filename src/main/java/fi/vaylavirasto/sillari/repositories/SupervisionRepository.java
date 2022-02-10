@@ -1,8 +1,10 @@
 package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.BridgeMapper;
+import fi.vaylavirasto.sillari.mapper.CompanyMapper;
 import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.mapper.SupervisionMapper;
+import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
@@ -55,6 +57,7 @@ public class SupervisionRepository {
                 .orderBy(TableAlias.supervision.ROW_CREATED_TIME)
                 .fetch(new SupervisionMapper());
     }
+
 
     public List<SupervisionModel> getSupervisionsBySupervisorUsername(String username) {
         return dsl.select().from(TableAlias.supervision)
@@ -203,4 +206,7 @@ public class SupervisionRepository {
                     .execute();
         });
     }
+
+
+
 }
