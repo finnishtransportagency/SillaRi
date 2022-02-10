@@ -11,7 +11,6 @@ import settings from "../theme/icons/settings.svg";
 import truck from "../theme/icons/truck.svg";
 import user from "../theme/icons/user.svg";
 import "./SidebarMenu.css";
-import { person } from "ionicons/icons";
 
 interface SidebarMenuProps {
   roles: string[];

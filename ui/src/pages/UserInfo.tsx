@@ -39,48 +39,48 @@ const UserInfo: React.FC<UserInfoProps> = ({ userData }) => {
         <IonList>
           <IonItem>
             <IonLabel>
-              <p className="itemLabel">{t("userInfo.usernameLabel")}</p>
-              <p>{userData.username}</p>
+              <IonLabel className="itemLabel">{t("userInfo.usernameLabel")}</IonLabel>
+              <IonLabel>{userData.username}</IonLabel>
             </IonLabel>
           </IonItem>
           {(userData.roles.includes("SILLARI_SILLANVALVOJA") || userData.roles.includes("SILLARI_AJOJARJESTELIJA")) && (
             <IonItem>
               <IonLabel>
-                <p className="itemLabel">{t("userInfo.nameLabel")}</p>
-                <p>
+                <IonLabel className="itemLabel">{t("userInfo.nameLabel")}</IonLabel>
+                <IonLabel>
                   {userData.firstName} {userData.lastName}
-                </p>
+                </IonLabel>
               </IonLabel>
             </IonItem>
           )}
           {(userData.roles.includes("SILLARI_SILLANVALVOJA") || userData.roles.includes("SILLARI_AJOJARJESTELIJA")) && (
             <IonItem>
               <IonLabel>
-                <p className="itemLabel">{t("userInfo.emailLabel")}</p>
-                <p>{userData.email}</p>
+                <IonLabel className="itemLabel">{t("userInfo.emailLabel")}</IonLabel>
+                <IonLabel>{userData.email}</IonLabel>
               </IonLabel>
             </IonItem>
           )}
           {(userData.roles.includes("SILLARI_SILLANVALVOJA") || userData.roles.includes("SILLARI_AJOJARJESTELIJA")) && (
             <IonItem>
               <IonLabel>
-                <p className="itemLabel">{t("userInfo.phoneNumberLabel")}</p>
-                <p>{userData.phoneNumber}</p>
+                <IonLabel className="itemLabel">{t("userInfo.phoneNumberLabel")}</IonLabel>
+                <IonLabel>{userData.phoneNumber}</IonLabel>
               </IonLabel>
             </IonItem>
           )}
           <IonItem>
             <IonLabel>
-              <p className="itemLabel">{t("userInfo.organizationLabel")}</p>
-              <p>
+              <IonLabel className="itemLabel">{t("userInfo.organizationLabel")}</IonLabel>
+              <IonLabel>
                 {userData.organization}, {userData.businessId}
-              </p>
+              </IonLabel>
             </IonLabel>
           </IonItem>
           <IonItem>
             <IonLabel>
-              <p className="itemLabel">{t("userInfo.roleLabel")}</p>
-              <p>{getRolesString(userData.roles)}</p>
+              <IonLabel className="itemLabel">{t("userInfo.roleLabel")}</IonLabel>
+              <IonLabel>{getRolesString(userData.roles)}</IonLabel>
             </IonLabel>
           </IonItem>
         </IonList>
