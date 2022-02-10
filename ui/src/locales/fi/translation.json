@@ -41,6 +41,23 @@
       "en": "English"
     }
   },
+  "userInfo": {
+    "header": {
+      "title": "Omat tiedot"
+    },
+    "usernameLabel": "Käyttäjätunnus",
+    "nameLabel": "Nimi",
+    "emailLabel": "Sähköpostiosoite",
+    "phoneNumberLabel": "Puhelinnumero",
+    "organizationLabel": "Organisaatio",
+    "roleLabel": "Käyttäjärooli",
+    "role": {
+      "ajojarjestelija": "Ajojärjestelijä",
+      "sillanvalvoja": "Sillanvalvoja",
+      "kuljettaja": "Kuljettaja"
+    },
+    "errorInfo": "Mikäli yhteystiedoissasi on virheitä, ota yhteyttä yrityksesi käyttövaltuusvastaavaan."
+  },
   "camera": {
     "takePhotoButtonLabel": "Lisää valokuvia",
     "listLabel": "Valokuvia",
@@ -52,8 +69,7 @@
     "title": "SillaRi",
     "mainPage": "Kuljetukset ja sillat",
     "settings": "Asetukset",
-    "map": "Kartta",
-    "camera": "Kamera",
+    "userInfo": "Omat tiedot",
     "management": "Kuljetusten hallinta",
     "transports": "Kuljetukset",
     "logout": "Kirjaudu ulos",

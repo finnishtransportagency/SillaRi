@@ -23,11 +23,12 @@ import AccessDenied from "./pages/AccessDenied";
 import IUserData from "./interfaces/IUserData";
 import { getOrigin } from "./utils/request";
 import Photos from "./pages/Photos";
+import IVersionInfo from "./interfaces/IVersionInfo";
+import UserInfo from "./pages/UserInfo";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 /* Sillari.css */
 import "./theme/sillari.css";
-import IVersionInfo from "./interfaces/IVersionInfo";
 
 // Use the same style for all platforms
 setupIonicReact({
@@ -205,6 +206,13 @@ const App: React.FC = () => {
                 </Route>
                 <Route exact path="/settings">
                   <Settings />
+                </Route>
+                <Route exact path="/userinfo">
+                  {userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                    <UserInfo userData={userData} />
+                  ) : (
+                    <AccessDenied />
+                  )}
                 </Route>
                 <Route exact path="/">
                   <Redirect to={homePage} />
