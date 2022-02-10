@@ -1,8 +1,9 @@
-import { IonContent, IonPage, IonItem, IonLabel, IonList } from "@ionic/react";
+import { IonContent, IonPage, IonItem, IonLabel, IonList, IonIcon } from "@ionic/react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Header from "../components/Header";
 import IUserData from "../interfaces/IUserData";
+import infoOutline from "../theme/icons/info-outline.svg";
 import "./UserInfo.css";
 
 interface UserInfoProps {
@@ -83,6 +84,16 @@ const UserInfo: React.FC<UserInfoProps> = ({ userData }) => {
               <IonLabel>{getRolesString(userData.roles)}</IonLabel>
             </IonLabel>
           </IonItem>
+
+          {(userData.roles.includes("SILLARI_SILLANVALVOJA") || userData.roles.includes("SILLARI_AJOJARJESTELIJA")) && (
+            <>
+              <IonItem className="header" lines="none"></IonItem>
+              <IonItem>
+                <IonIcon className="otherIcon" icon={infoOutline} slot="start" />
+                <IonLabel className="itemLabel">{t("userInfo.errorInfo")}</IonLabel>
+              </IonItem>
+            </>
+          )}
         </IonList>
       </IonContent>
     </IonPage>

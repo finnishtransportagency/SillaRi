@@ -50,12 +50,13 @@
     "emailLabel": "(SV) Email",
     "phoneNumberLabel": "(SV) Phone number",
     "organizationLabel": "(SV) Organization",
-    "roleLabel": "(SV) Role",
+    "roleLabel": "(SV) User role",
     "role": {
       "ajojarjestelija": "Ajojärjestelijä",
       "sillanvalvoja": "Sillanvalvoja",
       "kuljettaja": "Kuljettaja"
-    }
+    },
+    "errorInfo": "(SV) If there are errors in your contact details, please contact your company's representative."
   },
   "camera": {
     "takePhotoButtonLabel": "(SV) Add photos",

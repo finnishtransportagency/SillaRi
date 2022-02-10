@@ -50,12 +50,13 @@
     "emailLabel": "Sähköpostiosoite",
     "phoneNumberLabel": "Puhelinnumero",
     "organizationLabel": "Organisaatio",
-    "roleLabel": "Rooli",
+    "roleLabel": "Käyttäjärooli",
     "role": {
       "ajojarjestelija": "Ajojärjestelijä",
       "sillanvalvoja": "Sillanvalvoja",
       "kuljettaja": "Kuljettaja"
-    }
+    },
+    "errorInfo": "Mikäli yhteystiedoissasi on virheitä, ota yhteyttä yrityksesi käyttövaltuusvastaavaan."
   },
   "camera": {
     "takePhotoButtonLabel": "Lisää valokuvia",
