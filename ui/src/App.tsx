@@ -158,14 +158,14 @@ const App: React.FC = () => {
                   {userHasRole("SILLARI_SILLANVALVOJA") ? <Supervisions /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/bridgemap/:routeBridgeId">
-                  {userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                  {userHasRole("SILLARI_KULJETTAJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
                     <Map />
                   ) : (
                     <AccessDenied />
                   )}
                 </Route>
                 <Route exact path="/routemap/:routeId">
-                  {userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                  {userHasRole("SILLARI_KULJETTAJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
                     <Map />
                   ) : (
                     <AccessDenied />
@@ -208,7 +208,7 @@ const App: React.FC = () => {
                   <Settings />
                 </Route>
                 <Route exact path="/userinfo">
-                  {userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                  {userHasRole("SILLARI_KULJETTAJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
                     <UserInfo userData={userData} />
                   ) : (
                     <AccessDenied />
