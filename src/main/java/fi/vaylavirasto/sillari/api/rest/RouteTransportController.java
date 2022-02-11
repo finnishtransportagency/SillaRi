@@ -2,9 +2,11 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
+import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.model.TransportStatusType;
+import fi.vaylavirasto.sillari.service.CompanyService;
 import fi.vaylavirasto.sillari.service.RouteTransportService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
@@ -13,15 +15,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,14 +31,18 @@ public class RouteTransportController {
     RouteTransportService routeTransportService;
     @Autowired
     SupervisionService supervisionService;
+    @Autowired
+    CompanyService companyService;
 
     @Operation(summary = "Get route transport")
     @GetMapping(value = "/getroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
     public ResponseEntity<?> getRouteTransport(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransport");
         try {
-            // TODO - restrict this method to transport company admin users only
+            if (!isOwnCompanyRouteTransport(routeTransportId)) {
+                throw new AccessDeniedException("Not own company route transport");
+            }
             RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId, true);
             return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
         } finally {
@@ -178,5 +178,12 @@ public class RouteTransportController {
         } finally {
             serviceMetric.end();
         }
+    }
+
+    /* Check that transport company matches user company */
+    private boolean isOwnCompanyRouteTransport(Integer routeTransportId) {
+        CompanyModel cm = companyService.getCompanyByRouteTransportId(routeTransportId);
+        SillariUser user = uiService.getSillariUser();
+        return user.getBusinessId().equals(cm.getBusinessId());
     }
 }
