@@ -47,10 +47,10 @@ public class RouteBridgeController {
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
     public ResponseEntity<?> getRouteBridge(@RequestParam Integer routeBridgeId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteBridgeController", "getRouteBridge");
-        if(!userHasRightsToViewRouteBridge(routeBridgeId)){
-            throw new AccessDeniedException("Viewing routebridge not allowed to the user");
-        }
         try {
+            if(!userHasRightsToViewRouteBridge(routeBridgeId)){
+                throw new AccessDeniedException("Viewing routebridge not allowed to the user");
+            }
             RouteBridgeModel routeBridge = routeBridgeService.getRouteBridge(routeBridgeId);
             return ResponseEntity.ok().body(routeBridge != null ? routeBridge : new EmptyJsonResponse());
         } finally {

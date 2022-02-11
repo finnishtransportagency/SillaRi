@@ -284,4 +284,8 @@ public class SupervisionService {
         return supervisorRepository.getSupervisorsByRouteBridgeId(routeBridgeId);
     }
 
+    public List<SupervisorModel> getSupervisorsByRouteId(Integer routeId) {
+        return supervisorRepository.getSupervisorsByRouteId(routeId);
+    }
+
 }

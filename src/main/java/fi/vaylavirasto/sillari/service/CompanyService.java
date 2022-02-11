@@ -56,8 +56,12 @@ public class CompanyService {
         return companyRepository.getCompanyByPermitId(permitId);
     }
 
-    public CompanyModel getCompanyByRouteBridgeId(Integer routeTransportId) {
-        return companyRepository.getCompanyByRouteBridgeId(routeTransportId);
+    public CompanyModel getCompanyByRouteBridgeId(Integer routeBridgeId) {
+        return companyRepository.getCompanyByRouteBridgeId(routeBridgeId);
+    }
+
+    public CompanyModel getCompanyByRouteId(Integer routeId) {
+        return companyRepository.getCompanyByRouteId(routeId);
     }
 
     public List<CompanyTransportsDTO> getCompanyTransportListOfSupervisor(String username) {

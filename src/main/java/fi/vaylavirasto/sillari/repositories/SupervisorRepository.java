@@ -42,16 +42,29 @@ public class SupervisorRepository {
                 });
     }
 
-    public  List<SupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
-        return
-                dsl.select().from(TableAlias.supervisor).where(TableAlias.supervisor.ID.in(
-                                dsl.select(TableAlias.supervisionSupervisor.SUPERVISOR_ID).from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
-                                        dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(
-                                                routeBridgeId
+    public List<SupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
+        return dsl.select().from(TableAlias.supervisor).where(TableAlias.supervisor.ID.in(
+                        dsl.select(TableAlias.supervisionSupervisor.SUPERVISOR_ID).from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
+                                dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(
+                                        routeBridgeId
+                                ))
+                        ))
+                ))
+                .fetch(new SupervisorMapper());
+    }
+
+
+    public List<SupervisorModel> getSupervisorsByRouteId(Integer routeId) {
+        return dsl.select().from(TableAlias.supervisor).where(TableAlias.supervisor.ID.in(
+                        dsl.select(TableAlias.supervisionSupervisor.SUPERVISOR_ID).from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
+                                dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_BRIDGE_ID.in(
+                                        dsl.select(TableAlias.routeBridge.ID).from(TableAlias.routeBridge).where(TableAlias.routeBridge.ROUTE_ID.eq(
+                                                routeId
                                         ))
                                 ))
                         ))
-                        .fetch(new SupervisorMapper());
+                ))
+                .fetch(new SupervisorMapper());
     }
 
 
