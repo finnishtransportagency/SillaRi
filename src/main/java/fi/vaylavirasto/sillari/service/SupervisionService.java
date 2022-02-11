@@ -62,13 +62,6 @@ public class SupervisionService {
         return supervision;
     }
 
-    public List<SupervisionModel> getSupervisionsByRouteBridgeId(Integer routeBridgeId) {
-        List<SupervisionModel> supervision = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridgeId);
-        return supervision;
-    }
-
-
-
     private void fillSupervisionDetails(SupervisionModel supervision) {
         Integer supervisionId = supervision.getId();
         supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
@@ -102,6 +95,10 @@ public class SupervisionService {
     public SupervisionModel getSupervisionBySupervisionImageId(Integer imageId) {
         return supervisionRepository.getSupervisionBySupervisionImageId(imageId);
     }
+
+
+
+
 
     public List<SupervisionModel> getFinishedButUnsignedSupervisions(String username) {
         List<SupervisionModel> supervisions = supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisorUsername(username);
@@ -282,4 +279,9 @@ public class SupervisionService {
 
         return images;
     }
+
+    public List<SupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
+        return supervisorRepository.getSupervisorsByRouteBridgeId(routeBridgeId);
+    }
+
 }

@@ -5,6 +5,7 @@ import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -40,6 +41,19 @@ public class SupervisorRepository {
                     return supervisor;
                 });
     }
+
+    public  List<SupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
+        return
+                dsl.select().from(TableAlias.supervisor).where(TableAlias.supervisor.ID.in(
+                                dsl.select(TableAlias.supervisionSupervisor.SUPERVISOR_ID).from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
+                                        dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(
+                                                routeBridgeId
+                                        ))
+                                ))
+                        ))
+                        .fetch(new SupervisorMapper());
+    }
+
 
     public void insertSupervisionSupervisor(DSLContext ctx, Integer supervisionId, Integer supervisorId, Integer priority, String username) {
         ctx.insertInto(TableAlias.supervisionSupervisor,
