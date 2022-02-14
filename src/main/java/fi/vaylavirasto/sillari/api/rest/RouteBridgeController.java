@@ -68,7 +68,7 @@ public class RouteBridgeController {
         boolean hasRight = false;
 
         if(user.getRoles().contains(SillariRole.SILLARI_SILLANVALVOJA)){
-            hasRight = isOwnSupervisedRouteBridge(user, routeBridgeId);
+            hasRight = isRouteBridgeOfSupervisor(user, routeBridgeId);
         }
         if(user.getRoles().contains(SillariRole.SILLARI_KULJETTAJA) || user.getRoles().contains(SillariRole.SILLARI_AJOJARJESTELIJA)){
             hasRight |= isOwnCompanyRouteBridge(user, routeBridgeId);
@@ -84,7 +84,7 @@ public class RouteBridgeController {
         return user.getBusinessId().equals(cm.getBusinessId());
     }
 
-    private boolean isOwnSupervisedRouteBridge(SillariUser user, Integer routeBridgeId) {
+    private boolean isRouteBridgeOfSupervisor(SillariUser user, Integer routeBridgeId) {
         List<SupervisorModel> supervisors = supervisionService.getSupervisorsByRouteBridgeId(routeBridgeId);
         return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
     }

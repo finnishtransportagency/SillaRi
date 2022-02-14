@@ -62,7 +62,7 @@ public class RouteController {
         boolean hasRight = false;
 
         if(user.getRoles().contains(SillariRole.SILLARI_SILLANVALVOJA)){
-            hasRight = isSupervisorsSupervisedRoute(user, routeId);
+            hasRight = isSupervisedRouteOfSupervisor(user, routeId);
         }
         if(user.getRoles().contains(SillariRole.SILLARI_KULJETTAJA) || user.getRoles().contains(SillariRole.SILLARI_AJOJARJESTELIJA)){
             hasRight |= isOwnCompanyRoute(user, routeId);
@@ -78,7 +78,7 @@ public class RouteController {
         return user.getBusinessId().equals(cm.getBusinessId());
     }
 
-    private boolean isSupervisorsSupervisedRoute(SillariUser user, Integer routeId) {
+    private boolean isSupervisedRouteOfSupervisor(SillariUser user, Integer routeId) {
         List<SupervisorModel> supervisors = supervisionService.getSupervisorsByRouteId(routeId);
         return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
     }

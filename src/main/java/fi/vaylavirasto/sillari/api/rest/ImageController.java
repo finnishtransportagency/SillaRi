@@ -53,7 +53,7 @@ public class ImageController {
     public void getImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "getImage");
         try {
-            if (!isOwnSupervisionImage(id)) {
+            if (!isSupervisionImageOfSupervisor(id)) {
                 throw new AccessDeniedException("Image not of the user");
             }
 
@@ -96,7 +96,7 @@ public class ImageController {
         SupervisionImageModel model = new SupervisionImageModel();
         try {
 
-            if (!isOwnSupervision(Integer.parseInt(fileInputModel.getSupervisionId()))) {
+            if (!isSupervisionOfSupervisor(Integer.parseInt(fileInputModel.getSupervisionId()))) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
 
@@ -139,7 +139,7 @@ public class ImageController {
     public boolean deleteImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deleteImage");
         try {
-            if (!isOwnSupervisionImage(id)) {
+            if (!isSupervisionImageOfSupervisor(id)) {
                 throw new AccessDeniedException("Image not of the user");
             }
 
@@ -161,7 +161,7 @@ public class ImageController {
     public boolean deleteSupervisionImages(@RequestParam Integer supervisionId) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deletesupervisionimages");
         try {
-            if (!isOwnSupervision(supervisionId)) {
+            if (!isSupervisionOfSupervisor(supervisionId)) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             List<SupervisionImageModel> images = supervisionImageService.getSupervisionImages(supervisionId);
@@ -203,7 +203,7 @@ public class ImageController {
 
 
     /* Check that image belongs to a supervision of the user */
-    private boolean isOwnSupervisionImage(Integer imageId) {
+    private boolean isSupervisionImageOfSupervisor(Integer imageId) {
         SupervisionModel supervisionOfImage = supervisionService.getSupervisionBySupervisionImageId(imageId);
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getSupervisionsOfSupervisor(user.getUsername());
@@ -212,7 +212,7 @@ public class ImageController {
     }
 
     /* Check that supervision belongs to the user */
-    private boolean isOwnSupervision(Integer supervisionId) {
+    private boolean isSupervisionOfSupervisor(Integer supervisionId) {
         SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getSupervisionsOfSupervisor(user.getUsername());
