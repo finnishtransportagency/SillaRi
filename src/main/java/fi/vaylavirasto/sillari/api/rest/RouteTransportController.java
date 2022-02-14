@@ -31,6 +31,7 @@ public class RouteTransportController {
     @Autowired
     CompanyService companyService;
 
+
     @Operation(summary = "Get route transport")
     @GetMapping(value = "/getroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
