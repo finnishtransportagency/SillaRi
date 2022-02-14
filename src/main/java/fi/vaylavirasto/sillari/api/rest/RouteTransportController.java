@@ -52,11 +52,13 @@ public class RouteTransportController {
 
     @Operation(summary = "Get route transports of permit")
     @GetMapping(value = "/getroutetransportsofpermit", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
     public ResponseEntity<?> getRouteTransportsOfPermit(@RequestParam Integer permitId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportsOfPermit");
         try {
-            // TODO - restrict this method to transport company admin users only
+            if (!isOwnCompanyPermit(permitId)) {
+                throw new AccessDeniedException("Not own company route permit");
+            }
             List<RouteTransportModel> routeTransports = routeTransportService.getRouteTransportsOfPermit(permitId, true);
             return ResponseEntity.ok().body(routeTransports != null ? routeTransports : new EmptyJsonResponse());
         } finally {
@@ -66,7 +68,7 @@ public class RouteTransportController {
 
     @Operation(summary = "Get route transport of supervisor, with supervisions and route data")
     @GetMapping(value = "/getroutetransportofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public ResponseEntity<?> getRouteTransportOfSupervisor(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportOfSupervisor");
         try {
@@ -80,13 +82,15 @@ public class RouteTransportController {
 
     @Operation(summary = "Create route transport")
     @PostMapping(value = "/createroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
     public ResponseEntity<?> createRouteTransport(@RequestBody RouteTransportModel routeTransport) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "createRouteTransport");
         try {
             SillariUser user = uiService.getSillariUser();
 
-            // TODO - restrict this method to transport company admin users only
+            if (!isOwnCompanyRouteTransport(routeTransport.getId())) {
+                throw new AccessDeniedException("Not own company route transport");
+            }
             RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
             if (routeTransport.getSupervisions() != null && insertedRouteTransport != null) {
@@ -114,13 +118,15 @@ public class RouteTransportController {
 
     @Operation(summary = "Update route transport")
     @PutMapping(value = "/updateroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
     public ResponseEntity<?> updateRouteTransport(@RequestBody RouteTransportModel routeTransport) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "updateRouteTransport");
         try {
             SillariUser user = uiService.getSillariUser();
 
-            // TODO - restrict this method to transport company admin users only
+            if (!isOwnCompanyRouteTransport(routeTransport.getId())) {
+                throw new AccessDeniedException("Not own company route transport");
+            }
             RouteTransportModel updatedTransportModel = routeTransportService.updateRouteTransport(routeTransport);
 
             if (routeTransport.getSupervisions() != null) {
@@ -146,11 +152,13 @@ public class RouteTransportController {
 
     @Operation(summary = "Delete route transport")
     @DeleteMapping(value = "/deleteroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
     public boolean deleteRouteTransport(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "updateRouteTransport");
         try {
-            // TODO - restrict this method to transport company admin users only
+            if (!isOwnCompanyRouteTransport(routeTransportId)) {
+                throw new AccessDeniedException("Not own company route transport");
+            }
 
             // Fetch all the route transport details including the status which is not sent
             RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId, false);
@@ -183,6 +191,13 @@ public class RouteTransportController {
     /* Check that transport company matches user company */
     private boolean isOwnCompanyRouteTransport(Integer routeTransportId) {
         CompanyModel cm = companyService.getCompanyByRouteTransportId(routeTransportId);
+        SillariUser user = uiService.getSillariUser();
+        return user.getBusinessId().equals(cm.getBusinessId());
+    }
+
+    /* Check that permit company matches user company */
+    private boolean isOwnCompanyPermit(Integer permitId) {
+        CompanyModel cm = companyService.getCompanyByPermitId(permitId);
         SillariUser user = uiService.getSillariUser();
         return user.getBusinessId().equals(cm.getBusinessId());
     }
