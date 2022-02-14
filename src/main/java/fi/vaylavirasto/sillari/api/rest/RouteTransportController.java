@@ -2,10 +2,7 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
-import fi.vaylavirasto.sillari.model.RouteTransportModel;
-import fi.vaylavirasto.sillari.model.TransportStatusType;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.service.CompanyService;
 import fi.vaylavirasto.sillari.service.RouteTransportService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
@@ -72,6 +69,9 @@ public class RouteTransportController {
     public ResponseEntity<?> getRouteTransportOfSupervisor(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportOfSupervisor");
         try {
+            if (!isRouteTransportOfSupervisor(routeTransportId)) {
+                throw new AccessDeniedException("Not own company route permit");
+            }
             SillariUser user = uiService.getSillariUser();
             RouteTransportModel routeTransport = routeTransportService.getRouteTransportOfSupervisor(routeTransportId, user.getUsername());
             return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
@@ -79,6 +79,8 @@ public class RouteTransportController {
             serviceMetric.end();
         }
     }
+
+
 
     @Operation(summary = "Create route transport")
     @PostMapping(value = "/createroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -201,4 +203,12 @@ public class RouteTransportController {
         SillariUser user = uiService.getSillariUser();
         return user.getBusinessId().equals(cm.getBusinessId());
     }
+
+    /* Check that route transport contains supervision by the supervisos */
+    private boolean isRouteTransportOfSupervisor(Integer routeTransportId) {
+        SillariUser user = uiService.getSillariUser();
+        List<SupervisorModel> supervisors = supervisionService.getSupervisorsByRouteTransportId(routeTransportId);
+        return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
+    }
+
 }

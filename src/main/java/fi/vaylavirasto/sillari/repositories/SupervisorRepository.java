@@ -68,6 +68,17 @@ public class SupervisorRepository {
     }
 
 
+    public List<SupervisorModel> getSupervisorsByRouteTransportId(Integer routeTransportId) {
+        return dsl.select().from(TableAlias.supervisor).where(TableAlias.supervisor.ID.in(
+                        dsl.select(TableAlias.supervisionSupervisor.SUPERVISOR_ID).from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
+                                dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(
+                                        routeTransportId
+                                ))
+                        ))
+                ))
+                .fetch(new SupervisorMapper());
+    }
+
     public void insertSupervisionSupervisor(DSLContext ctx, Integer supervisionId, Integer supervisorId, Integer priority, String username) {
         ctx.insertInto(TableAlias.supervisionSupervisor,
                         TableAlias.supervisionSupervisor.SUPERVISION_ID,
@@ -88,4 +99,6 @@ public class SupervisorRepository {
                 .where(TableAlias.supervisionSupervisor.SUPERVISION_ID.eq(supervisionId))
                 .execute();
     }
+
+   
 }
