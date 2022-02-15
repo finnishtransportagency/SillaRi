@@ -78,14 +78,14 @@ public class PermitController {
 
     @Operation(summary = "Get permit pdf")
     @GetMapping(value = "/getpermitpdf", produces = MediaType.APPLICATION_PDF_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)  || @sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public void getPermitPdf(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitPdf");
         try {
             logger.debug("getPermitPdf: " +id);
-            if (!isOwnCompanyPermit(id)) {
-                logger.warn("not isOwnCompanyPermit");
-                throw new AccessDeniedException("Not user company permit.");
+            if (!userHasRightsToViewPermit(id)) {
+                logger.warn("not userHasRightsToViewPermit");
+                throw new AccessDeniedException("Not right to view company permit.");
             }
             PermitModel permit = permitService.getPermit(id);
             String objectKey = permit.getPdfObjectKey();
@@ -109,7 +109,7 @@ public class PermitController {
         return user.getBusinessId().equals(cm.getBusinessId());
     }
 
-
+    /* Check that sillanvalvoja-user has right to view permit*/
     private boolean isPermitOfSupervisor(SillariUser user, Integer permitId) {
         List<SupervisorModel> supervisors = supervisionService.getSupervisorsByPermitId(permitId);
         return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
