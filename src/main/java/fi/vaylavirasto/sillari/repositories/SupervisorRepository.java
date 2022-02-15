@@ -79,6 +79,22 @@ public class SupervisorRepository {
                 .fetch(new SupervisorMapper());
     }
 
+
+    public List<SupervisorModel> getSupervisorsByPermitId(Integer permitId) {
+        return dsl.select().from(TableAlias.supervisor).where(TableAlias.supervisor.ID.in(
+                        dsl.select(TableAlias.supervisionSupervisor.SUPERVISOR_ID).from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
+                                dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_BRIDGE_ID.in(
+                                        dsl.select(TableAlias.routeBridge.ID).from(TableAlias.routeBridge).where(TableAlias.routeBridge.ROUTE_ID.in(
+                                                dsl.select(TableAlias.route.ID).from(TableAlias.route).where(TableAlias.route.PERMIT_ID.eq(
+                                                        permitId
+                                                ))
+                                        ))
+                                ))
+                        ))
+                ))
+                .fetch(new SupervisorMapper());
+    }
+
     public void insertSupervisionSupervisor(DSLContext ctx, Integer supervisionId, Integer supervisorId, Integer priority, String username) {
         ctx.insertInto(TableAlias.supervisionSupervisor,
                         TableAlias.supervisionSupervisor.SUPERVISION_ID,

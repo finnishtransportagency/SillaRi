@@ -43,7 +43,7 @@ public class TransportRouteTransportController {
     @Autowired
     CompanyService companyService;
 
-    /* Check that transport company matches user company */
+    /* Check that transport company matches ajojärjestelija- or kuljettaja-user company */
     private boolean isOwnCompanyRouteTransport(Integer routeTransportId) {
         CompanyModel cm = companyService.getCompanyByRouteTransportId(routeTransportId);
         SillariUser user = uiService.getSillariUser();
