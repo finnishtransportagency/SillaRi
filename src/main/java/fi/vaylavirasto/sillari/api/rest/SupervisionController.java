@@ -93,6 +93,9 @@ public class SupervisionController {
     public ResponseEntity<?> updateConformsToPermit(@RequestBody SupervisionModel supervision) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateConformsToPermit");
         try {
+            if (!isSupervisionOfSupervisor(supervision.getId())) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
             SupervisionModel supervisionModel = supervisionService.updateConformsToPermit(supervision);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
@@ -106,6 +109,9 @@ public class SupervisionController {
     public ResponseEntity<?> startSupervision(@RequestBody SupervisionReportModel report) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "startSupervision");
         try {
+            if (!isSupervisionOfSupervisor(report.getSupervisionId())) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
             SillariUser user = uiService.getSillariUser();
             SupervisionModel supervisionModel = supervisionService.startSupervision(report, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
@@ -120,6 +126,9 @@ public class SupervisionController {
     public ResponseEntity<?> cancelSupervision(@RequestParam Integer supervisionId) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "cancelSupervision");
         try {
+            if (!isSupervisionOfSupervisor(supervisionId)) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
             SillariUser user = uiService.getSillariUser();
             SupervisionModel supervisionModel = supervisionService.cancelSupervision(supervisionId, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
@@ -134,6 +143,9 @@ public class SupervisionController {
     public ResponseEntity<?> denyCrossing(@RequestParam Integer supervisionId, @RequestParam String denyReason) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "denyCrossing");
         try {
+            if (!isSupervisionOfSupervisor(supervisionId)) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
             SillariUser user = uiService.getSillariUser();
             SupervisionModel supervisionModel = supervisionService.denyCrossing(supervisionId, denyReason, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
@@ -148,6 +160,9 @@ public class SupervisionController {
     public ResponseEntity<?> finishSupervision(@RequestParam Integer supervisionId) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "finishSupervision");
         try {
+            if (!isSupervisionOfSupervisor(supervisionId)) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
             SillariUser user = uiService.getSillariUser();
             SupervisionModel supervisionModel = supervisionService.finishSupervision(supervisionId, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
@@ -162,6 +177,9 @@ public class SupervisionController {
     public ResponseEntity<?> completeSupervisions(@RequestParam List<Integer> supervisionIds) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "completeSupervisions");
         try {
+            if (supervisionIds.stream().anyMatch(id->!isSupervisionOfSupervisor(id))){
+                throw new AccessDeniedException("Supervision not of the user");
+            }
             SillariUser user = uiService.getSillariUser();
 
             if (supervisionIds != null && !supervisionIds.isEmpty()) {
@@ -185,6 +203,9 @@ public class SupervisionController {
     public ResponseEntity<?> updateSupervisionReport(@RequestBody SupervisionReportModel report) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateSupervisionReport");
         try {
+            if (!isSupervisionOfSupervisor(report.getSupervisionId())) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
             SupervisionModel supervisionModel = supervisionService.updateSupervisionReport(report);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
