@@ -85,7 +85,7 @@ public class PermitController {
             logger.debug("getPermitPdf: " +id);
             if (!userHasRightsToViewPermit(id)) {
                 logger.warn("not userHasRightsToViewPermit");
-                throw new AccessDeniedException("Not right to view company permit.");
+                throw new AccessDeniedException("No right to view permit.");
             }
             PermitModel permit = permitService.getPermit(id);
             String objectKey = permit.getPdfObjectKey();
