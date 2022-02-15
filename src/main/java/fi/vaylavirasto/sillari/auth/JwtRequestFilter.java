@@ -185,9 +185,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                     List<GrantedAuthority> authorityList = new ArrayList<>();
                     // NOTE: Add all roles. Each role (and combinations) can be tested by commenting row(s) out below
-               //    authorityList.add(SillariRole.fromString("SILLARI_SILLANVALVOJA"));
-                   authorityList.add(SillariRole.fromString("SILLARI_AJOJARJESTELIJA"));
-               //    authorityList.add(SillariRole.fromString("SILLARI_KULJETTAJA"));
+                    authorityList.add(SillariRole.fromString("SILLARI_SILLANVALVOJA"));
+                    authorityList.add(SillariRole.fromString("SILLARI_AJOJARJESTELIJA"));
+                    authorityList.add(SillariRole.fromString("SILLARI_KULJETTAJA"));
 
                     SillariUser userDetails = new SillariUser("T012345", authorityList);
 
