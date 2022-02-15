@@ -10,11 +10,12 @@ import type { Extent } from "ol/extent";
 import Feature from "ol/Feature";
 import { WMTSCapabilities } from "ol/format";
 import { Geometry, Point } from "ol/geom";
-import { Layer, Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import BaseLayer from "ol/layer/Base";
 import MapOL from "ol/Map";
 import { get as getProj, fromLonLat } from "ol/proj";
 import { register } from "ol/proj/proj4";
-import { Source, TileDebug } from "ol/source";
+import { TileDebug } from "ol/source";
 import View from "ol/View";
 import proj4 from "proj4";
 import TileSource from "ol/source/Tile";
@@ -44,8 +45,8 @@ const MapContainer = (): JSX.Element => {
   const { routeBridgeId: routeBridgeIdParam, routeId: routeIdParam } = useParams<MapContainerProps>();
 
   const [backgroundLayer, setBackgroundLayer] = useState<TileLayer<TileSource>>();
-  const [bridgeLayer, setBridgeLayer] = useState<Layer<Source>>();
-  const [routeLayer, setRouteLayer] = useState<Layer<Source>>();
+  const [bridgeLayer, setBridgeLayer] = useState<BaseLayer>();
+  const [routeLayer, setRouteLayer] = useState<BaseLayer>();
   const [userLayer, setUserLayer] = useState<VectorLayer<VectorSource<Geometry>>>();
   const [bridgeCoords, setBridgeCoords] = useState<Point>();
   const [routeExtent, setRouteExtent] = useState<Extent>();

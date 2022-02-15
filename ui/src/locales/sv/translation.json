@@ -41,6 +41,23 @@
       "en": "English"
     }
   },
+  "userInfo": {
+    "header": {
+      "title": "(SV) Own information"
+    },
+    "usernameLabel": "(SV) Username",
+    "nameLabel": "(SV) Name",
+    "emailLabel": "(SV) Email",
+    "phoneNumberLabel": "(SV) Phone number",
+    "organizationLabel": "(SV) Organization",
+    "roleLabel": "(SV) User role",
+    "role": {
+      "ajojarjestelija": "Ajojärjestelijä",
+      "sillanvalvoja": "Sillanvalvoja",
+      "kuljettaja": "Kuljettaja"
+    },
+    "errorInfo": "(SV) If there are errors in your contact details, please contact your company's representative."
+  },
   "camera": {
     "takePhotoButtonLabel": "(SV) Add photos",
     "listLabel": "(SV) Photos",
@@ -52,11 +69,11 @@
     "title": "SillaRi",
     "mainPage": "(SV) Transports and bridges",
     "settings": "Inställningar",
-    "map": "Karta",
-    "camera": "Kamera",
+    "userInfo": "(SV) Own information",
     "management": "(SV) Management",
     "transports": "(SV) Transports",
-    "logout": "(SV) Logout"
+    "logout": "(SV) Logout",
+    "versionLabel": "(SV) SillaRi version"
   },
   "company": {
     "transportPermit": "(SV) Transport permit",
