@@ -53,10 +53,11 @@ public class AWSS3Client {
             secretKey = System.getenv("secretKey");
         }
         roleArn = System.getenv("roleArn");
+        logger.info(environment);
     }
 
     public String getPermitBucketName(){
-        if(!"dev".equals(environment) && !"localhost".equals(environment)) {
+        if("dev".equals(environment) || "localhost".equals(environment)) {
             return SILLARI_PERMIT_PDF_BUCKET_DEV;
         }
         else{
@@ -65,7 +66,7 @@ public class AWSS3Client {
     }
 
     public String getSupervisionBucketName(){
-        if(!"dev".equals(environment) && !"localhost".equals(environment)) {
+        if("dev".equals(environment) || "localhost".equals(environment)) {
             return SILLARI_SUPERVISION_PDF_BUCKET_DEV;
         }
         else{
@@ -74,7 +75,7 @@ public class AWSS3Client {
     }
 
     public String getPhotoBucketName(){
-        if(!"dev".equals(environment) && !"localhost".equals(environment)) {
+        if("dev".equals(environment) || "localhost".equals(environment)) {
             return SILLARI_PHOTOS_BUCKET_DEV;
         }
         else{
@@ -137,6 +138,7 @@ public class AWSS3Client {
     public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName) {
         try {
             init(sillariPhotosRoleSessionName);
+            logger.info("upload " + bucketName + " contenttype " + contenttype);
             ByteArrayInputStream byteInputStream = new ByteArrayInputStream(bytes);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contenttype);
@@ -153,6 +155,7 @@ public class AWSS3Client {
     public byte[] download(String objectKey, String bucketName) {
         try {
             init(SILLARI_PHOTOS_ROLE_SESSION_NAME);
+            logger.info("download " + bucketName + " objectKey " + objectKey);
             GetObjectRequest request = new GetObjectRequest(bucketName, objectKey);
             S3Object object = s3Client.getObject(request);
             return IOUtils.toByteArray(object.getObjectContent());
