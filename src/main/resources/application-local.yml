@@ -8,6 +8,8 @@ sillari:
     routeuploadpath: /tmp
   trex:
     url: http://localhost:8080/api/devtools/localHardCodedBridgeInfoJson
+  fim:
+    url: http://localhost:8080/api/devtools/localHardCodedFim
 spring:
   application:
     name: SillaRi
