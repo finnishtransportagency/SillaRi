@@ -69,7 +69,7 @@ public class AWSS3Client {
             return SILLARI_SUPERVISION_PDF_BUCKET_DEV;
         }
         else{
-            return SILLARI_SUPERVISION_PDF_BUCKET_DEV;
+            return SILLARI_SUPERVISION_PDF_BUCKET_DEV+"-"+environment;
         }
     }
 
