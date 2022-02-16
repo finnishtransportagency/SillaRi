@@ -94,38 +94,46 @@ public class AWSS3Client {
             }
         }
         if(s3Client == null) {
-            AWSSecurityTokenService stsClient;
-            if("localhost".equals(environment)) {
-                BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKey, secretKey);
-                AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(basicAWSCredentials);
-                stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+            if("localhost".equals(environment) || "dev".equals(environment)) {
+                // localhost and dev: assume role is needed
+                AWSSecurityTokenService stsClient;
+                if ("localhost".equals(environment)) {
+                    BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKey, secretKey);
+                    AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(basicAWSCredentials);
+                    stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+                            .withRegion(Regions.EU_WEST_1)
+                            .withCredentials(credentialsProvider)
+                            .build();
+                } else {
+                    stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+                            .withRegion(Regions.EU_WEST_1)
+                            .build();
+                }
+                AssumeRoleRequest roleRequest = new AssumeRoleRequest()
+                        .withRoleArn(roleArn)
+                        .withRoleSessionName(sillariPhotosRoleSessionName);
+
+                roleResponse = stsClient.assumeRole(roleRequest);
+                Credentials myCreds = roleResponse.getCredentials();
+
+                Date exTime = myCreds.getExpiration();
+                String tokenInfo = myCreds.getSessionToken();
+
+                BasicSessionCredentials awsCreds = new BasicSessionCredentials(myCreds.getAccessKeyId(), myCreds.getSecretAccessKey(), myCreds.getSessionToken());
+                AWSCredentialsProvider rolecredentialsProvider = new AWSStaticCredentialsProvider(awsCreds);
+
+                System.out.println("The token " + tokenInfo + "  expires on " + exTime);
+                s3Client = AmazonS3ClientBuilder.standard()
                         .withRegion(Regions.EU_WEST_1)
-                        .withCredentials(credentialsProvider)
+                        .withCredentials(rolecredentialsProvider)
                         .build();
             } else {
-                stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+                // test, prod, preprod environments: ecs task used has required policies in task role
+                s3Client = AmazonS3ClientBuilder.standard()
                         .withRegion(Regions.EU_WEST_1)
                         .build();
+
             }
-
-            AssumeRoleRequest roleRequest = new AssumeRoleRequest()
-                    .withRoleArn(roleArn)
-                    .withRoleSessionName(sillariPhotosRoleSessionName);
-
-            roleResponse = stsClient.assumeRole(roleRequest);
-            Credentials myCreds = roleResponse.getCredentials();
-
-            Date exTime = myCreds.getExpiration();
-            String tokenInfo = myCreds.getSessionToken();
-
-            BasicSessionCredentials awsCreds = new BasicSessionCredentials(myCreds.getAccessKeyId(),myCreds.getSecretAccessKey(),myCreds.getSessionToken());
-            AWSCredentialsProvider rolecredentialsProvider = new AWSStaticCredentialsProvider(awsCreds);
-
-            System.out.println("The token "+tokenInfo + "  expires on " + exTime );
-            s3Client = AmazonS3ClientBuilder.standard()
-                    .withRegion(Regions.EU_WEST_1)
-                    .withCredentials(rolecredentialsProvider)
-                    .build();
         }
     }
 
