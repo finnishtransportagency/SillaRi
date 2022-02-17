@@ -1,7 +1,9 @@
 package fi.vaylavirasto.sillari.api.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.service.fim.FIMService;
 import fi.vaylavirasto.sillari.service.fim.responseModel.GroupsType;
@@ -57,6 +59,122 @@ public class DevToolsController {
 
     }
 
+
+    //this can be set as "trex url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,
+    @RequestMapping(value = "/localHardCodedSupervisors", method = RequestMethod.GET)
+    public GroupsType fimHardInfo() {
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        XmlMapper xmlMapper = new XmlMapper();
+        GroupsType value
+                = null;
+        try {
+            value = xmlMapper.readValue(fimHardString(), GroupsType.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+
+    private String fimHardString() {
+        return "<groups>\n" +
+                "    <group>\n" +
+                "        <ObjectKey>11274699</ObjectKey>\n" +
+                "        <ObjectID>46bccf6c-e36f-4cb3-9a8e-69bb3182c2c4</ObjectID>\n" +
+                "        <DisplayName>sillari_sillanvalvoja</DisplayName>\n" +
+                "        <persons>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>10364038</ObjectKey>\n" +
+                "                <ObjectID>2fe11aa0-da22-483f-b676-95877d1426db</ObjectID>\n" +
+                "                <AccountName>LX067415</AccountName>\n" +
+                "                <DisplayName>Sillari Testi1 Testi Kuljetusyritys Oy</DisplayName>\n" +
+                "                <FirstName>Testi1</FirstName>\n" +
+                "                <LastName>Sillari</LastName>\n" +
+                "                <Email>janne.upla@cgi.com4</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>10364060</ObjectKey>\n" +
+                "                <ObjectID>dc435118-7949-4ae4-85e0-6d5a8ece4a48</ObjectID>\n" +
+                "                <AccountName>LX790081</AccountName>\n" +
+                "                <DisplayName>Sillari Testi2 Testi Kuljetusyritys Oy</DisplayName>\n" +
+                "                <FirstName>Testi2</FirstName>\n" +
+                "                <LastName>Sillari</LastName>\n" +
+                "                <Email>janne.upla@cgi.com5</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>10363986</ObjectKey>\n" +
+                "                <ObjectID>5f61cf23-d553-4a47-9821-b497b8022e53</ObjectID>\n" +
+                "                <AccountName>LX687859</AccountName>\n" +
+                "                <DisplayName>Sillari Testi3 Testi Toinen Kuljetusyritys Oy</DisplayName>\n" +
+                "                <FirstName>Testi3</FirstName>\n" +
+                "                <LastName>Sillari</LastName>\n" +
+                "                <Email>janne.upla@cgi.com3</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>10709140</ObjectKey>\n" +
+                "                <ObjectID>79469d82-48e4-49ff-858e-480b0128b158</ObjectID>\n" +
+                "                <AccountName>LX618343</AccountName>\n" +
+                "                <DisplayName>Sillari Yit1 YIT Rakennus Oy</DisplayName>\n" +
+                "                <FirstName>Yit1</FirstName>\n" +
+                "                <LastName>Sillari</LastName>\n" +
+                "                <Email>janne.upla@cgi.com</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>10709156</ObjectKey>\n" +
+                "                <ObjectID>61ea1971-1b63-4c3e-b116-f4666b9b8969</ObjectID>\n" +
+                "                <AccountName>LX914102</AccountName>\n" +
+                "                <DisplayName>Sillari Yit2 YIT Rakennus Oy</DisplayName>\n" +
+                "                <FirstName>Yit2</FirstName>\n" +
+                "                <LastName>Sillari</LastName>\n" +
+                "                <Email>janne.upla@cgi.com</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>10709181</ObjectKey>\n" +
+                "                <ObjectID>71ef8677-4866-4f32-bc99-fc77c408e871</ObjectID>\n" +
+                "                <AccountName>LX671423</AccountName>\n" +
+                "                <DisplayName>Sillari Yit3 YIT Rakennus Oy</DisplayName>\n" +
+                "                <FirstName>Yit3</FirstName>\n" +
+                "                <LastName>Sillari</LastName>\n" +
+                "                <Email>janne.upla@cgi.com</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>335342</ObjectKey>\n" +
+                "                <ObjectID>041b5510-4af3-4273-a07c-10716aba4e71</ObjectID>\n" +
+                "                <AccountName>K670970</AccountName>\n" +
+                "                <DisplayName>Upla Janne</DisplayName>\n" +
+                "                <FirstName>Janne</FirstName>\n" +
+                "                <LastName>Upla</LastName>\n" +
+                "                <Email>janne.upla@cgi.com</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>2999351</ObjectKey>\n" +
+                "                <ObjectID>52f05daa-dbf9-4efb-a71d-785f30c3df55</ObjectID>\n" +
+                "                <AccountName>L683844</AccountName>\n" +
+                "                <DisplayName>Vina Miina</DisplayName>\n" +
+                "                <FirstName>Miina</FirstName>\n" +
+                "                <LastName>Vina</LastName>\n" +
+                "                <Email>miina.vina@testi.vayla.fi</Email>\n" +
+                "                <Yksikko>ICT-yksikkö</Yksikko>\n" +
+                "                <Department>Tieto</Department>\n" +
+                "            </person>\n" +
+                "        </persons>\n" +
+                "    </group>\n" +
+                "</groups>";
+    }
 
     @RequestMapping(value = "/testConnectionToTrex", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request with constant bridge")
