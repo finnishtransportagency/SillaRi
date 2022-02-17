@@ -52,6 +52,18 @@ public class CompanyService {
         return companyRepository.getCompanyByRouteTransportId(routeTransportId);
     }
 
+    public CompanyModel getCompanyByPermitId(Integer permitId) {
+        return companyRepository.getCompanyByPermitId(permitId);
+    }
+
+    public CompanyModel getCompanyByRouteBridgeId(Integer routeBridgeId) {
+        return companyRepository.getCompanyByRouteBridgeId(routeBridgeId);
+    }
+
+    public CompanyModel getCompanyByRouteId(Integer routeId) {
+        return companyRepository.getCompanyByRouteId(routeId);
+    }
+
     public List<CompanyTransportsDTO> getCompanyTransportListOfSupervisor(String username) {
         List<CompanyTransportsDTO> companyTransports = new ArrayList<>();
 
@@ -93,5 +105,6 @@ public class CompanyService {
         }
         return companyTransports;
     }
+
 
 }

@@ -315,12 +315,12 @@ export const sendImageUpload = async (fileUpload: ISupervisionImageInput, dispat
   }
 };
 
-export const deleteImage = async (objectKey: string, dispatch: Dispatch): Promise<boolean> => {
+export const deleteImage = async (id: number, dispatch: Dispatch): Promise<boolean> => {
   try {
     console.log("DeleteImage");
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteImage: false } });
 
-    const imageDeleteResponse = await fetch(`${getOrigin()}/api/images/delete?objectKey=${objectKey}`, {
+    const imageDeleteResponse = await fetch(`${getOrigin()}/api/images/delete?id=${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

@@ -92,6 +92,14 @@ public class SupervisionService {
         return supervisions;
     }
 
+    public SupervisionModel getSupervisionBySupervisionImageId(Integer imageId) {
+        return supervisionRepository.getSupervisionBySupervisionImageId(imageId);
+    }
+
+
+
+
+
     public List<SupervisionModel> getFinishedButUnsignedSupervisions(String username) {
         List<SupervisionModel> supervisions = supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisorUsername(username);
         for (SupervisionModel supervision : supervisions) {
@@ -271,4 +279,21 @@ public class SupervisionService {
 
         return images;
     }
+
+    public List<SupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
+        return supervisorRepository.getSupervisorsByRouteBridgeId(routeBridgeId);
+    }
+
+    public List<SupervisorModel> getSupervisorsByRouteId(Integer routeId) {
+        return supervisorRepository.getSupervisorsByRouteId(routeId);
+    }
+
+    public List<SupervisorModel> getSupervisorsByRouteTransportId(Integer routeBridgeId) {
+        return supervisorRepository.getSupervisorsByRouteTransportId(routeBridgeId);
+    }
+
+    public List<SupervisorModel> getSupervisorsByPermitId(Integer routeId) {
+        return supervisorRepository.getSupervisorsByPermitId(routeId);
+    }
+
 }
