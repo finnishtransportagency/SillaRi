@@ -177,7 +177,7 @@ public class SupervisionController {
     public ResponseEntity<?> completeSupervisions(@RequestParam List<Integer> supervisionIds) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "completeSupervisions");
         try {
-            if (supervisionIds.stream().anyMatch(id->!isSupervisionOfSupervisor(id))){
+            if (supervisionIds.stream().anyMatch(id->!isSendingListSupervisionOfSupervisor(id))){
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
@@ -218,6 +218,15 @@ public class SupervisionController {
         SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getSupervisionsOfSupervisor(user.getUsername());
+
+        return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
+    }
+
+    /* Check that supervision is on the user's sending list */
+    private boolean isSendingListSupervisionOfSupervisor(Integer supervisionId) {
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+        SillariUser user = uiService.getSillariUser();
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getFinishedButUnsignedSupervisionsNoDetails(user.getUsername());
 
         return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
     }
