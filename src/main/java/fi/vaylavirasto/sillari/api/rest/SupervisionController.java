@@ -8,6 +8,7 @@ import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
+import fi.vaylavirasto.sillari.service.fim.FIMService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class SupervisionController {
     UIService uiService;
     @Autowired
     SupervisionService supervisionService;
+    @Autowired
+    FIMService fimService;
 
     @Operation(summary = "Get supervision")
     @GetMapping(value = "/getsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -76,7 +79,7 @@ public class SupervisionController {
     public ResponseEntity<?> getSupervisors() {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisors");
         try {
-            List<SupervisorModel> supervisors = supervisionService.getSupervisors();
+            List<SupervisorModel> supervisors = fimService.getSupervisors();
             return ResponseEntity.ok().body(supervisors != null ? supervisors : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

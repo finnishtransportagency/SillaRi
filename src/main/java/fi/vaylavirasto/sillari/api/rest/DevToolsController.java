@@ -3,6 +3,8 @@ package fi.vaylavirasto.sillari.api.rest;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
+import fi.vaylavirasto.sillari.service.fim.FIMService;
+import fi.vaylavirasto.sillari.service.fim.responseModel.GroupsType;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJson;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,12 +24,37 @@ public class DevToolsController {
 
     @Autowired
     TRexService tRexService;
-
+    @Autowired
+    FIMService fimService;
 
     @RequestMapping(value = "/resttest", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
     public String resttest() {
         return "Hello world.";
+    }
+
+    @RequestMapping(value = "/testConnectionToFim", method = RequestMethod.GET)
+    @Operation(summary = "Test basic get request with constant bridge")
+    public TrexBridgeInfoResponseJson testConnectionToFim() throws TRexRestException {
+
+        logger.debug("HELLO test connections to fim");
+        GroupsType g = null;
+        try {
+            g = fimService.getBridgeInfo("1.2.246.578.1.15.401830");
+            if (b == null) {
+                logger.error("trex fail  bridge null");
+                return null;
+
+            } else {
+                logger.debug("success getting bridge from trex: " + b.toString());
+                return b;
+            }
+        } catch (Exception e) {
+            logger.error("trex fail " + e.getClass().getName() + " " + e.getMessage());
+            return null;
+        }
+
+
     }
 
 

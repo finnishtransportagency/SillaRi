@@ -1,0 +1,240 @@
+<groups>
+    <group>
+        <ObjectKey>11274699</ObjectKey>
+        <ObjectID>46bccf6c-e36f-4cb3-9a8e-69bb3182c2c4</ObjectID>
+        <DisplayName>sillari_sillanvalvoja</DisplayName>
+        <persons>
+            <person>
+                <ObjectKey>3848819</ObjectKey>
+                <ObjectID>9280bce0-66e4-4b8e-8f29-0eae24282264</ObjectID>
+                <AccountName>K167761</AccountName>
+                <DisplayName>Brown Anthony</DisplayName>
+                <FirstName>Anthony</FirstName>
+                <LastName>Brown</LastName>
+                <Email>ant.brown@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>8843058</ObjectKey>
+                <ObjectID>446361ac-e61f-481c-93ab-8bd14a0babdd</ObjectID>
+                <AccountName>LX721619</AccountName>
+                <DisplayName>Hiisilä Aki CGI Suomi Oy</DisplayName>
+                <FirstName>Aki</FirstName>
+                <LastName>Hiisilä</LastName>
+                <Email>aki.hiisila@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>8843060</ObjectKey>
+                <ObjectID>f5bd5971-66b7-469b-b55d-7d421c0418bc</ObjectID>
+                <AccountName>LX387991</AccountName>
+                <DisplayName>Koskinen Tuuli CGI Suomi Oy</DisplayName>
+                <FirstName>Tuuli</FirstName>
+                <LastName>Koskinen</LastName>
+                <Email>tuuli.koskinen@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>399583</ObjectKey>
+                <ObjectID>aa7eabf3-0662-4c04-ac65-9d4de4bdabd5</ObjectID>
+                <AccountName>K093561</AccountName>
+                <DisplayName>Mustonen Kalle</DisplayName>
+                <FirstName>Kalle</FirstName>
+                <LastName>Mustonen</LastName>
+                <Email>kalle.mustonen@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>3056809</ObjectKey>
+                <ObjectID>232ede37-329a-4ff5-9c5f-5e79d28dde9a</ObjectID>
+                <AccountName>K968458</AccountName>
+                <DisplayName>Oksanen Noora</DisplayName>
+                <FirstName>Noora</FirstName>
+                <LastName>Oksanen</LastName>
+                <Email>noora.oksanen@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>3829651</ObjectKey>
+                <ObjectID>369134f5-7aac-4966-b623-7b76663eb881</ObjectID>
+                <AccountName>K704855</AccountName>
+                <DisplayName>Piitulainen Jari</DisplayName>
+                <FirstName>Jari</FirstName>
+                <LastName>Piitulainen</LastName>
+                <Email>jari.piitulainen@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10709074</ObjectKey>
+                <ObjectID>34e2c1db-a674-475a-8619-e95fe1b2569a</ObjectID>
+                <AccountName>LX062897</AccountName>
+                <DisplayName>Sillari Destia1 Destia Oy</DisplayName>
+                <FirstName>Destia1</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10709093</ObjectKey>
+                <ObjectID>c21045dd-aefa-47ee-9acf-ccb559fa9dea</ObjectID>
+                <AccountName>LX802744</AccountName>
+                <DisplayName>Sillari Destia2 Destia Oy</DisplayName>
+                <FirstName>Destia2</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10709118</ObjectKey>
+                <ObjectID>659e0fbb-a5bd-46b6-87a3-14f2da77eb9c</ObjectID>
+                <AccountName>LX589604</AccountName>
+                <DisplayName>Sillari Destia3 Destia Oy</DisplayName>
+                <FirstName>Destia3</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10708141</ObjectKey>
+                <ObjectID>cf4ccb02-761a-49a0-9ffc-9dd10db64cbc</ObjectID>
+                <AccountName>LX042640</AccountName>
+                <DisplayName>Sillari Havator1 Havator Oy</DisplayName>
+                <FirstName>Havator1</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10708163</ObjectKey>
+                <ObjectID>f5107ab4-f665-4892-9633-0fa3eb5861a2</ObjectID>
+                <AccountName>LX651708</AccountName>
+                <DisplayName>Sillari Havator2 Havator Oy</DisplayName>
+                <FirstName>Havator2</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10708185</ObjectKey>
+                <ObjectID>b59a3d6e-c773-4a00-b389-b00fedda2492</ObjectID>
+                <AccountName>LX905168</AccountName>
+                <DisplayName>Sillari Havator3 Havator Oy</DisplayName>
+                <FirstName>Havator3</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10743028</ObjectKey>
+                <ObjectID>80059e0b-7a99-4e12-9e41-b482ef4e1d90</ObjectID>
+                <AccountName>LX559571</AccountName>
+                <DisplayName>Sillari Havator6 Havator Oy</DisplayName>
+                <FirstName>Havator6</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10364038</ObjectKey>
+                <ObjectID>2fe11aa0-da22-483f-b676-95877d1426db</ObjectID>
+                <AccountName>LX067415</AccountName>
+                <DisplayName>Sillari Testi1 Testi Kuljetusyritys Oy</DisplayName>
+                <FirstName>Testi1</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com4</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10364060</ObjectKey>
+                <ObjectID>dc435118-7949-4ae4-85e0-6d5a8ece4a48</ObjectID>
+                <AccountName>LX790081</AccountName>
+                <DisplayName>Sillari Testi2 Testi Kuljetusyritys Oy</DisplayName>
+                <FirstName>Testi2</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com5</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10363986</ObjectKey>
+                <ObjectID>5f61cf23-d553-4a47-9821-b497b8022e53</ObjectID>
+                <AccountName>LX687859</AccountName>
+                <DisplayName>Sillari Testi3 Testi Toinen Kuljetusyritys Oy</DisplayName>
+                <FirstName>Testi3</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com3</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10709140</ObjectKey>
+                <ObjectID>79469d82-48e4-49ff-858e-480b0128b158</ObjectID>
+                <AccountName>LX618343</AccountName>
+                <DisplayName>Sillari Yit1 YIT Rakennus Oy</DisplayName>
+                <FirstName>Yit1</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10709156</ObjectKey>
+                <ObjectID>61ea1971-1b63-4c3e-b116-f4666b9b8969</ObjectID>
+                <AccountName>LX914102</AccountName>
+                <DisplayName>Sillari Yit2 YIT Rakennus Oy</DisplayName>
+                <FirstName>Yit2</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10709181</ObjectKey>
+                <ObjectID>71ef8677-4866-4f32-bc99-fc77c408e871</ObjectID>
+                <AccountName>LX671423</AccountName>
+                <DisplayName>Sillari Yit3 YIT Rakennus Oy</DisplayName>
+                <FirstName>Yit3</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>335342</ObjectKey>
+                <ObjectID>041b5510-4af3-4273-a07c-10716aba4e71</ObjectID>
+                <AccountName>K670970</AccountName>
+                <DisplayName>Upla Janne</DisplayName>
+                <FirstName>Janne</FirstName>
+                <LastName>Upla</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>2999351</ObjectKey>
+                <ObjectID>52f05daa-dbf9-4efb-a71d-785f30c3df55</ObjectID>
+                <AccountName>L683844</AccountName>
+                <DisplayName>Vina Miina</DisplayName>
+                <FirstName>Miina</FirstName>
+                <LastName>Vina</LastName>
+                <Email>miina.vina@testi.vayla.fi</Email>
+                <Yksikko>ICT-yksikkö</Yksikko>
+                <Department>Tieto</Department>
+            </person>
+        </persons>
+    </group>
+</groups>
