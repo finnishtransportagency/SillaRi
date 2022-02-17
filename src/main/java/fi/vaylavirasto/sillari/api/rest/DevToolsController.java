@@ -33,24 +33,24 @@ public class DevToolsController {
         return "Hello world.";
     }
 
-    @RequestMapping(value = "/testConnectionToFim", method = RequestMethod.GET)
+    @RequestMapping(value = "/testGetSupervisorsRawFromFim", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request with constant bridge")
-    public TrexBridgeInfoResponseJson testConnectionToFim() throws TRexRestException {
+    public GroupsType testConnectionToFim() throws TRexRestException {
 
         logger.debug("HELLO test connections to fim");
         GroupsType g = null;
         try {
-            g = fimService.getBridgeInfo("1.2.246.578.1.15.401830");
-            if (b == null) {
+            GroupsType groups = fimService.getSupervisorsXML();
+            if (groups == null) {
                 logger.error("trex fail  bridge null");
                 return null;
 
             } else {
-                logger.debug("success getting bridge from trex: " + b.toString());
-                return b;
+                logger.debug("success getting bridge from trex: " + groups.toString());
+                return groups;
             }
         } catch (Exception e) {
-            logger.error("trex fail " + e.getClass().getName() + " " + e.getMessage());
+            logger.error("fimrest fail " + e.getClass().getName() + " " + e.getMessage());
             return null;
         }
 

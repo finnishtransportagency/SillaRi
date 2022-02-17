@@ -6,7 +6,6 @@ import fi.vaylavirasto.sillari.service.fim.responseModel.FIMSupervisorMapper;
 import fi.vaylavirasto.sillari.service.fim.responseModel.GroupType;
 import fi.vaylavirasto.sillari.service.fim.responseModel.GroupsType;
 import fi.vaylavirasto.sillari.service.fim.responseModel.PersonType;
-import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
@@ -59,40 +58,37 @@ public class FIMService {
             GroupType group = groups.getGroup();
             for (PersonType persons : group.getPersons().getPerson()) {
                 SupervisorModel supervisor = mapper.fromDTOToModel(persons);
+                supervisors.add(supervisor);
             }
 
         } catch (TRexRestException e) {
             e.printStackTrace();
         }
-
+        return supervisors;
 
     }
 
     public GroupsType getSupervisorsXML() throws TRexRestException {
 
-        logger.trace("bridgeOid: " + bridgeOid);
+        logger.debug("Get supervisors from fimrest");
 
-        if (bridgeOid != null) {
+
             WebClient webClient = buildClient();
             try {
-                TrexBridgeInfoResponseJson bridgeInfo = webClient.get()
+                GroupsType groups = webClient.get()
                         .uri(uriBuilder -> uriBuilder
-
-                                .queryParam("oid", bridgeOid)
                                 .build())
                         .retrieve()
-                        .bodyToMono(TrexBridgeInfoResponseJson.class)
+                        .bodyToMono(GroupsType.class)
                         .block();
-                logger.debug("bridgeInfo: " + bridgeInfo);
-                return bridgeInfo;
+                logger.debug("groups: " + groups);
+                return groups;
             } catch (WebClientResponseException e) {
                 logger.error(e.getMessage() + e.getStatusCode());
                 throw new TRexRestException(e.getMessage(), e.getStatusCode());
             }
 
-        } else {
-            return null;
-        }
+
     }
 
     private WebClient buildClient() {

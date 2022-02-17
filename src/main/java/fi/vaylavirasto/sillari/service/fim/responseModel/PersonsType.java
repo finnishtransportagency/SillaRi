@@ -8,6 +8,8 @@
 
 package fi.vaylavirasto.sillari.service.fim.responseModel;
 
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -36,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "personsType", propOrder = {
         "person"
 })
+@ToString
 public class PersonsType {
 
     protected List<PersonType> person;
