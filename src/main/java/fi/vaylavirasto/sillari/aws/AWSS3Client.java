@@ -34,14 +34,11 @@ public class AWSS3Client {
     private AmazonS3 s3Client=null;
 
     private static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
-    private static final String SILLARI_PHOTOS_BUCKET_TEST = "sillari-photos-test";
 
     private static final String SILLARI_PERMIT_PDF_BUCKET_DEV = "sillari-permits";
-    private static final String SILLARI_PERMIT_PDF_BUCKET_TEST = "sillari-permits-test";
 
     private static final String SILLARI_SUPERVISION_PDF_BUCKET_DEV = "sillari-supervisions";
-    private static final String SILLARI_SUPERVISION_PDF_BUCKET_TEST = "sillari-supervisions-test";
-    
+
     private final String roleArn;
     private String accessKey;
     private String secretKey;
@@ -56,32 +53,33 @@ public class AWSS3Client {
             secretKey = System.getenv("secretKey");
         }
         roleArn = System.getenv("roleArn");
+        logger.info(environment);
     }
 
     public String getPermitBucketName(){
-        if("test".equals(environment)) {
-            return SILLARI_PERMIT_PDF_BUCKET_TEST;
+        if("dev".equals(environment) || "localhost".equals(environment)) {
+            return SILLARI_PERMIT_PDF_BUCKET_DEV;
         }
         else{
-            return SILLARI_PERMIT_PDF_BUCKET_DEV;
+            return SILLARI_PERMIT_PDF_BUCKET_DEV+"-"+environment;
         }
     }
 
     public String getSupervisionBucketName(){
-        if("test".equals(environment)) {
-            return SILLARI_SUPERVISION_PDF_BUCKET_TEST;
+        if("dev".equals(environment) || "localhost".equals(environment)) {
+            return SILLARI_SUPERVISION_PDF_BUCKET_DEV;
         }
         else{
-            return SILLARI_SUPERVISION_PDF_BUCKET_DEV;
+            return SILLARI_SUPERVISION_PDF_BUCKET_DEV+"-"+environment;
         }
     }
 
     public String getPhotoBucketName(){
-        if("test".equals(environment)) {
-            return SILLARI_PHOTOS_BUCKET_TEST;
+        if("dev".equals(environment) || "localhost".equals(environment)) {
+            return SILLARI_PHOTOS_BUCKET_DEV;
         }
         else{
-            return SILLARI_PHOTOS_BUCKET_DEV;
+            return SILLARI_PHOTOS_BUCKET_DEV+"-"+environment;
         }
     }
 
@@ -94,44 +92,53 @@ public class AWSS3Client {
             }
         }
         if(s3Client == null) {
-            AWSSecurityTokenService stsClient;
-            if("localhost".equals(environment)) {
-                BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKey, secretKey);
-                AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(basicAWSCredentials);
-                stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+            if("localhost".equals(environment) || "dev".equals(environment)) {
+                // localhost and dev: assume role is needed
+                AWSSecurityTokenService stsClient;
+                if ("localhost".equals(environment)) {
+                    BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKey, secretKey);
+                    AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(basicAWSCredentials);
+                    stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+                            .withRegion(Regions.EU_WEST_1)
+                            .withCredentials(credentialsProvider)
+                            .build();
+                } else {
+                    stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+                            .withRegion(Regions.EU_WEST_1)
+                            .build();
+                }
+                AssumeRoleRequest roleRequest = new AssumeRoleRequest()
+                        .withRoleArn(roleArn)
+                        .withRoleSessionName(sillariPhotosRoleSessionName);
+
+                roleResponse = stsClient.assumeRole(roleRequest);
+                Credentials myCreds = roleResponse.getCredentials();
+
+                Date exTime = myCreds.getExpiration();
+                String tokenInfo = myCreds.getSessionToken();
+
+                BasicSessionCredentials awsCreds = new BasicSessionCredentials(myCreds.getAccessKeyId(), myCreds.getSecretAccessKey(), myCreds.getSessionToken());
+                AWSCredentialsProvider rolecredentialsProvider = new AWSStaticCredentialsProvider(awsCreds);
+
+                System.out.println("The token " + tokenInfo + "  expires on " + exTime);
+                s3Client = AmazonS3ClientBuilder.standard()
                         .withRegion(Regions.EU_WEST_1)
-                        .withCredentials(credentialsProvider)
+                        .withCredentials(rolecredentialsProvider)
                         .build();
             } else {
-                stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+                // test, prod, preprod environments: ecs task used has required policies in task role
+                s3Client = AmazonS3ClientBuilder.standard()
                         .withRegion(Regions.EU_WEST_1)
                         .build();
+
             }
-
-            AssumeRoleRequest roleRequest = new AssumeRoleRequest()
-                    .withRoleArn(roleArn)
-                    .withRoleSessionName(sillariPhotosRoleSessionName);
-
-            roleResponse = stsClient.assumeRole(roleRequest);
-            Credentials myCreds = roleResponse.getCredentials();
-
-            Date exTime = myCreds.getExpiration();
-            String tokenInfo = myCreds.getSessionToken();
-
-            BasicSessionCredentials awsCreds = new BasicSessionCredentials(myCreds.getAccessKeyId(),myCreds.getSecretAccessKey(),myCreds.getSessionToken());
-            AWSCredentialsProvider rolecredentialsProvider = new AWSStaticCredentialsProvider(awsCreds);
-
-            System.out.println("The token "+tokenInfo + "  expires on " + exTime );
-            s3Client = AmazonS3ClientBuilder.standard()
-                    .withRegion(Regions.EU_WEST_1)
-                    .withCredentials(rolecredentialsProvider)
-                    .build();
         }
     }
 
     public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName) {
         try {
             init(sillariPhotosRoleSessionName);
+            logger.info("upload " + bucketName + " contenttype " + contenttype);
             ByteArrayInputStream byteInputStream = new ByteArrayInputStream(bytes);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contenttype);
@@ -148,6 +155,7 @@ public class AWSS3Client {
     public byte[] download(String objectKey, String bucketName) {
         try {
             init(SILLARI_PHOTOS_ROLE_SESSION_NAME);
+            logger.info("download " + bucketName + " objectKey " + objectKey);
             GetObjectRequest request = new GetObjectRequest(bucketName, objectKey);
             S3Object object = s3Client.getObject(request);
             return IOUtils.toByteArray(object.getObjectContent());

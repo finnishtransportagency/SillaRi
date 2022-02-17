@@ -21,4 +21,6 @@ public class SillariUser extends User {
     public SillariUser(String username, Collection<? extends GrantedAuthority> authorities) {
         super(username, "", authorities);
     }
+
+
 }

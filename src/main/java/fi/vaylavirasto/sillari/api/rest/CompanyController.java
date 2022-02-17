@@ -49,7 +49,7 @@ public class CompanyController {
 
     @Operation(summary = "Get supervisor transports grouped by company")
     @GetMapping(value = "/getcompanytransportlistofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public ResponseEntity<?> getCompanyTransportListOfSupervisor() {
         ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getCompanyTransportListOfSupervisor");
         try {

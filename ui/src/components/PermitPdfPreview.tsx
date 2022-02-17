@@ -2,12 +2,12 @@ import React, { MouseEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IonButton, IonButtons, IonCol, IonContent, IonFab, IonGrid, IonHeader, IonIcon, IonModal, IonRow, IonTitle, IonToolbar } from "@ionic/react";
 import { Document, Page } from "react-pdf";
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import close from "../theme/icons/close_large_white.svg";
 import { getOrigin } from "../utils/request";
 
 interface PermitPdfPreviewProps {
-  pdfObjectKey: string;
+  id: number;
   isOpen: boolean;
   setOpen: (isOpen: boolean) => void;
 }
@@ -18,7 +18,7 @@ interface PermitPdfPreviewProps {
 // If the react-pdf dependency is updated, do the following:
 //   1. Manually update the pdfjs-dist version in package.json to the version used in react-pdf (currently 2.12.313)
 //   2. Copy pdf.worker.js from ./node_modules/pdfjs-dist/build to ./public
-const PermitPdfPreview = ({ pdfObjectKey, isOpen, setOpen }: PermitPdfPreviewProps): JSX.Element => {
+const PermitPdfPreview = ({ id, isOpen, setOpen }: PermitPdfPreviewProps): JSX.Element => {
   const contentRef = useRef<HTMLIonContentElement>(null);
   const { t } = useTranslation();
 
@@ -50,7 +50,7 @@ const PermitPdfPreview = ({ pdfObjectKey, isOpen, setOpen }: PermitPdfPreviewPro
       </IonHeader>
       <IonContent ref={contentRef} scrollX={false} scrollY={false} onClick={(evt) => evt.stopPropagation()}>
         <Document
-          file={`${getOrigin()}/api/permit/getpermitpdf?objectKey=${pdfObjectKey}`}
+          file={`${getOrigin()}/api/permit/getpermitpdf?id=${id}`}
           renderMode="svg"
           onLoadSuccess={onDocumentLoadSuccess}
           loading={t("permitPdf.loading")}
