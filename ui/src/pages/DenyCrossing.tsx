@@ -53,7 +53,7 @@ const DenyCrossing = (): JSX.Element => {
   const otherReason = "other";
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", supervisionId],
+    ["getSupervision", Number(supervisionId)],
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
@@ -65,7 +65,7 @@ const DenyCrossing = (): JSX.Element => {
     retry: onRetry,
     onSuccess: (data) => {
       // Update "getSupervision" query to return the updated data
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
       history.goBack();
     },
   });

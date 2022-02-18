@@ -39,10 +39,14 @@ const AddTransport = (): JSX.Element => {
 
   const { permitId = "0" } = useParams<AddTransportProps>();
 
-  const { isLoading: isLoadingPermit, data: selectedPermitDetail } = useQuery(["getPermit", permitId], () => getPermit(Number(permitId), dispatch), {
-    retry: onRetry,
-    refetchOnWindowFocus: false,
-  });
+  const { isLoading: isLoadingPermit, data: selectedPermitDetail } = useQuery(
+    ["getPermit", Number(permitId)],
+    () => getPermit(Number(permitId), dispatch),
+    {
+      retry: onRetry,
+      refetchOnWindowFocus: false,
+    }
+  );
   const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry, refetchOnWindowFocus: false });
 
   useEffect(() => {

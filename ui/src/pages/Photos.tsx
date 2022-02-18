@@ -35,7 +35,7 @@ const Photos = (): JSX.Element => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", supervisionId],
+    ["getSupervision", Number(supervisionId)],
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,

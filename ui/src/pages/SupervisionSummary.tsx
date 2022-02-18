@@ -36,7 +36,7 @@ const SupervisionSummary = (): JSX.Element => {
   } = useTypedSelector((state) => state.rootReducer);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", supervisionId],
+    ["getSupervision", Number(supervisionId)],
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
@@ -61,7 +61,7 @@ const SupervisionSummary = (): JSX.Element => {
   const finishSupervisionMutation = useMutation((superId: string) => finishSupervision(Number(superId), dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
       setToastMessage(t("supervision.summary.saved"));
       returnToSupervisionList();
     },

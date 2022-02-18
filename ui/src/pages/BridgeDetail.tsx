@@ -31,7 +31,7 @@ const BridgeDetail = (): JSX.Element => {
   } = useTypedSelector((state) => state.rootReducer);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", supervisionId],
+    ["getSupervision", Number(supervisionId)],
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
@@ -43,7 +43,7 @@ const BridgeDetail = (): JSX.Element => {
     retry: onRetry,
     onSuccess: (data) => {
       // Update the supervision from "getSupervision" with the updated supervision data in the response
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
     },
   });
 
