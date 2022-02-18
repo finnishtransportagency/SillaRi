@@ -8,8 +8,8 @@ import org.mapstruct.Mappings;
 @Mapper
 public interface FIMSupervisorMapper {
     @Mappings({
-            @Mapping(target = "firstName", source = "address"),
-            @Mapping(target = "lastName", source = "address"),
+            @Mapping(target = "firstName", source = "firstName"),
+            @Mapping(target = "lastName", source = "lastName"),
             @Mapping(target = "username", source = "accountName")
     })
     SupervisorModel fromDTOToModel(Person dto);
