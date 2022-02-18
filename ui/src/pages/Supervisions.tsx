@@ -35,6 +35,7 @@ const Supervisions = (): JSX.Element => {
 
   const { data: companyTransportsList = [] } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
     retry: onRetry,
+    staleTime: Infinity,
   });
 
   const { data: supervisionList = [] } = useQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
@@ -46,6 +47,7 @@ const Supervisions = (): JSX.Element => {
         setSupervisionDays(groupedSupervisions);
       }
     },
+    staleTime: Infinity,
   });
 
   const changeSegment = (evt: CustomEvent<SegmentChangeEventDetail>) => {

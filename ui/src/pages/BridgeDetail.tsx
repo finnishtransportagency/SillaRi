@@ -35,6 +35,7 @@ const BridgeDetail = (): JSX.Element => {
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
+      staleTime: Infinity,
     }
   );
 

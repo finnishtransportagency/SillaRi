@@ -28,6 +28,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
 
   const { data: supervisorUser, isLoading: isLoadingSupervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
     retry: onRetry,
+    staleTime: Infinity,
   });
 
   const { username: currentSupervisor = "" } = supervisorUser || {};

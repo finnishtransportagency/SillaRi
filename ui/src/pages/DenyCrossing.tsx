@@ -55,7 +55,10 @@ const DenyCrossing = (): JSX.Element => {
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
     () => getSupervision(Number(supervisionId), dispatch),
-    { retry: onRetry }
+    {
+      retry: onRetry,
+      staleTime: Infinity,
+    }
   );
 
   const denyCrossingMutation = useMutation((denyCrossingInput: IDenyCrossingInput) => denyCrossing(denyCrossingInput, dispatch), {

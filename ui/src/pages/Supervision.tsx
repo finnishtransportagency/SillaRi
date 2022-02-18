@@ -41,6 +41,7 @@ const Supervision = (): JSX.Element => {
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
+      staleTime: Infinity,
       onSuccess: (data) => {
         console.log("GetSupervision done", data.id, data.currentStatus, "draft: ", data.report ? data.report.draft : "");
       },

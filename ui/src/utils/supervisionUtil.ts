@@ -1,7 +1,19 @@
+import { QueryClient } from "react-query";
+import type { Dispatch } from "redux";
+import moment from "moment";
+import ICompanyTransports from "../interfaces/ICompanyTransports";
+import IRouteTransport from "../interfaces/IRouteTransport";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
-import moment from "moment";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
+import {
+  getCompanyTransportsList,
+  getRouteTransportOfSupervisor,
+  getSupervision,
+  getSupervisionList,
+  getSupervisionSendingList,
+} from "./supervisionBackendData";
+import { getUserData, onRetry } from "./backendData";
 
 export const groupSupervisionsByDate = (supervisions: ISupervision[] | undefined): ISupervisionDay[] => {
   const supervisionDays: ISupervisionDay[] = [];
@@ -69,5 +81,68 @@ export const reportHasUnsavedChanges = (modified: ISupervisionReport | undefined
         modified.bendOrDisplacement !== saved.bendOrDisplacement ||
         modified.otherObservations !== saved.otherObservations ||
         (modified.otherObservations && modified.otherObservationsInfo !== saved.otherObservationsInfo)))
+  );
+};
+
+export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Dispatch) => {
+  // Prefetch all data needed for supervisions so that the application can subsequently be used offline
+  // Use queryClient.prefetchQuery where possible but only for query data that is not needed by other queries
+  // Make sure the parameter types match the later useQuery calls, otherwise the caching doesn't work!
+
+  // Prefetch the main data, but only return the company transports data needed by the next step
+  const mainData = await Promise.all([
+    queryClient.fetchQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
+      retry: onRetry,
+      staleTime: Infinity,
+    }),
+    queryClient.prefetchQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
+      retry: onRetry,
+      staleTime: Infinity,
+    }),
+    queryClient.prefetchQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
+      retry: onRetry,
+      staleTime: Infinity,
+    }),
+    queryClient.prefetchQuery(["getSupervisor"], () => getUserData(dispatch), {
+      retry: onRetry,
+      staleTime: Infinity,
+    }),
+  ]);
+
+  // Prefetch the route transports of each company transport
+  const companyTransportsList = mainData[0];
+  const routeTransports = await Promise.all(
+    companyTransportsList.flatMap((companyTransports) => {
+      const { transports } = companyTransports || {};
+
+      return transports.map((transport) => {
+        const { id: routeTransportId } = transport || {};
+
+        return queryClient.fetchQuery(
+          ["getRouteTransportOfSupervisor", Number(routeTransportId)],
+          () => getRouteTransportOfSupervisor(routeTransportId, dispatch),
+          {
+            retry: onRetry,
+            staleTime: Infinity,
+          }
+        );
+      });
+    })
+  );
+
+  // Prefetch the supervisions of each route transport
+  await Promise.all(
+    routeTransports.flatMap((routeTransport) => {
+      const { supervisions = [] } = routeTransport || {};
+
+      return supervisions.map((supervision) => {
+        const { id: supervisionId } = supervision || {};
+
+        return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, dispatch), {
+          retry: onRetry,
+          staleTime: Infinity,
+        });
+      });
+    })
   );
 };

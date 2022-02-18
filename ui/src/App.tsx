@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { IonApp, IonButton, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 import Supervisions from "./pages/Supervisions";
 import Settings from "./pages/Settings";
@@ -26,6 +27,7 @@ import Photos from "./pages/Photos";
 import IVersionInfo from "./interfaces/IVersionInfo";
 import UserInfo from "./pages/UserInfo";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import { prefetchOfflineData } from "./utils/supervisionUtil";
 
 /* Sillari.css */
 import "./theme/sillari.css";
@@ -35,9 +37,12 @@ setupIonicReact({
   mode: "md",
 });
 
-// NOTE: the react-query client is currently using the default options as described here: https://react-query.tanstack.com/guides/important-defaults
+// NOTE 1: the react-query client is currently using the default options as described here: https://react-query.tanstack.com/guides/important-defaults
 // This means cached data is considered as stale, so data is always refetched, for example during page navigation or when the browser window gets focus
 // The queries themselves are stored in the cache based on a query key (using the query parameters), and garbage collected after 5 minutes if not used again
+// NOTE 2: to allow offline use for the supervisions app, staleTime must be set to something, such as Infinity to store data forever
+// However, it should not be added here, since it affects the transport company and transport apps which are not used offline
+// So instead use staleTime separately in the options of each query used by the supervisions app
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -45,6 +50,7 @@ const App: React.FC = () => {
   const [homePage, setHomePage] = useState<string>("/supervisions");
   const [errorCode, setErrorCode] = useState<number>(0);
   const [version, setVersion] = useState<string>("-");
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -110,12 +116,15 @@ const App: React.FC = () => {
     });
   };
 
-  const userHasRole = (role: string) => {
-    if (userData) {
-      return userData.roles.includes(role);
-    }
-    return false;
-  };
+  const userHasRole = useCallback(
+    (role: string) => {
+      if (userData) {
+        return userData.roles.includes(role);
+      }
+      return false;
+    },
+    [userData]
+  );
 
   const renderError = (code: number) => {
     return (
@@ -139,6 +148,18 @@ const App: React.FC = () => {
       </>
     );
   };
+
+  useEffect(() => {
+    const prefetchData = async () => {
+      // Only the supervisions app allows offline use, so only prefetch data for those users
+      // Use await to prefetch all required data before continuing
+      // TODO - maybe add a spinner to indicate loading?
+      if (userHasRole("SILLARI_SILLANVALVOJA")) {
+        await prefetchOfflineData(queryClient, dispatch);
+      }
+    };
+    prefetchData();
+  }, [userHasRole, dispatch]);
 
   return (
     <QueryClientProvider client={queryClient}>

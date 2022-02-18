@@ -38,7 +38,10 @@ const SupervisionSummary = (): JSX.Element => {
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     ["getSupervision", supervisionId],
     () => getSupervision(Number(supervisionId), dispatch),
-    { retry: onRetry }
+    {
+      retry: onRetry,
+      staleTime: Infinity,
+    }
   );
   const { routeTransportId = "0" } = supervision || {};
 

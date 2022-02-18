@@ -39,6 +39,7 @@ const Photos = (): JSX.Element => {
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
+      staleTime: Infinity,
     }
   );
   const { images: savedImages = [] } = supervision || {};

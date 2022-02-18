@@ -34,6 +34,7 @@ const RouteTransportDetail = (): JSX.Element => {
     () => getRouteTransportOfSupervisor(Number(routeTransportId), dispatch),
     {
       retry: onRetry,
+      staleTime: Infinity,
     }
   );
 
