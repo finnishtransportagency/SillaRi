@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.service.fim.FIMService;
-import fi.vaylavirasto.sillari.service.fim.responseModel.GroupsType;
+import fi.vaylavirasto.sillari.service.fim.responseModel.Groups;
 import fi.vaylavirasto.sillari.service.fim.responseModel.SimpleBean;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJson;
@@ -39,12 +39,12 @@ public class DevToolsController {
 
     @RequestMapping(value = "/testGetSupervisorsRawFromFim", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request with constant bridge")
-    public GroupsType testConnectionToFim() throws TRexRestException {
+    public Groups testConnectionToFim() throws TRexRestException {
 
         logger.debug("HELLO test connections to fim");
-        GroupsType g = null;
+        Groups g = null;
         try {
-            GroupsType groups = fimService.getSupervisorsXML();
+            Groups groups = fimService.getSupervisorsXML();
             if (groups == null) {
                 logger.error("trex fail  bridge null");
                 return null;
@@ -64,7 +64,7 @@ public class DevToolsController {
 
     //this can be set as "trex url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,
     @RequestMapping(value = "/localHardCodedSimpleTesttttt", method = RequestMethod.GET)
-    public GroupsType simpleHardInfo() {
+    public Groups simpleHardInfo() {
         XmlMapper xmlMapper = new XmlMapper();
         xmlMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         try {
@@ -85,7 +85,7 @@ public class DevToolsController {
 
     //this can be set as "trex url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,
     @RequestMapping(value = "/localHardCodedSimpleTesttttt2", method = RequestMethod.GET)
-    public GroupsType simpleHardInfo2() {
+    public Groups simpleHardInfo2() {
         XmlMapper xmlMapper = new XmlMapper();
         xmlMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         try {
@@ -106,14 +106,14 @@ public class DevToolsController {
 
     //this can be set as "trex url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,
     @RequestMapping(value = "/localHardCodedSupervisors", method = RequestMethod.GET)
-    public GroupsType fimHardInfo() {
+    public Groups fimHardInfo() {
         XmlMapper xmlMapper = new XmlMapper();
         xmlMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         try {
-            GroupsType value
+            Groups value
                     = null;
 
-            value = xmlMapper.readValue(fimHardString(), GroupsType.class);
+            value = xmlMapper.readValue(fimHardString(), Groups.class);
             logger.debug("hello: " + value);
             return value;
 

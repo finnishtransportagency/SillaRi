@@ -3,9 +3,9 @@ package fi.vaylavirasto.sillari.service.fim;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.service.fim.responseModel.FIMSupervisorMapper;
-import fi.vaylavirasto.sillari.service.fim.responseModel.GroupType;
-import fi.vaylavirasto.sillari.service.fim.responseModel.GroupsType;
-import fi.vaylavirasto.sillari.service.fim.responseModel.PersonType;
+import fi.vaylavirasto.sillari.service.fim.responseModel.Group;
+import fi.vaylavirasto.sillari.service.fim.responseModel.Groups;
+import fi.vaylavirasto.sillari.service.fim.responseModel.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
@@ -54,9 +54,9 @@ public class FIMService {
     public List<SupervisorModel> getSupervisors() {
         List<SupervisorModel> supervisors = new ArrayList<>();
         try {
-            GroupsType groups = getSupervisorsXML();
-            GroupType group = groups.getGroup();
-            for (PersonType persons : group.getPersons().getPerson()) {
+            Groups groups = getSupervisorsXML();
+            Group group = groups.getGroup();
+            for (Person persons : group.getPersons().getPerson()) {
                 SupervisorModel supervisor = mapper.fromDTOToModel(persons);
                 supervisors.add(supervisor);
             }
@@ -68,19 +68,19 @@ public class FIMService {
 
     }
 
-    public GroupsType getSupervisorsXML() throws TRexRestException {
+    public Groups getSupervisorsXML() throws TRexRestException {
 
         logger.debug("Get supervisors from fimrest");
 
 
-            WebClient webClient = buildClient();
-            try {
-                GroupsType groups = webClient.get()
-                        .uri(uriBuilder -> uriBuilder
-                                .build())
-                        .retrieve()
-                        .bodyToMono(GroupsType.class)
-                        .block();
+        WebClient webClient = buildClient();
+        try {
+            Groups groups = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .build())
+                    .retrieve()
+                    .bodyToMono(Groups.class)
+                    .block();
                 logger.debug("groups: " + groups);
                 return groups;
             } catch (WebClientResponseException e) {
