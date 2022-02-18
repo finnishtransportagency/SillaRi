@@ -59,7 +59,9 @@ const Supervision = (): JSX.Element => {
   const deleteImagesMutation = useMutation((superId: string) => deleteSupervisionImages(Number(superId), dispatch), {
     retry: onRetry,
     onSuccess: () => {
+      // TODO - figure out a better way to do this when offline
       queryClient.invalidateQueries(["getSupervision", Number(supervisionId)]);
+
       // We don't want to allow the user to get back to this page by using "back"
       history.replace(`/bridgeDetail/${supervisionId}`, { direction: "back" });
     },

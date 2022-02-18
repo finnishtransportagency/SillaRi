@@ -43,6 +43,7 @@ const SendingList = ({ isOpen, setOpen, supervisionList }: SendingListProps): JS
   const sendSupervisionMutation = useMutation((supervisionIds: string[]) => completeSupervisions(supervisionIds, dispatch), {
     retry: onRetry,
     onSuccess: () => {
+      // TODO - figure out a better way to do this when offline, maybe using setQueryData to manually remove sent supervision
       queryClient.invalidateQueries(["getSupervisionSendingList"]);
       setToastMessage(t("sendingList.sentOk"));
     },

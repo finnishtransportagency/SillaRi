@@ -48,7 +48,8 @@ const Photos = (): JSX.Element => {
   const imageUploadMutation = useMutation((fileUpload: ISupervisionImageInput) => sendImageUpload(fileUpload, dispatch), {
     retry: onRetry,
     onSuccess: () => {
-      queryClient.invalidateQueries(["getSupervision", supervisionId]);
+      // TODO - figure out a better way to do this when offline
+      queryClient.invalidateQueries(["getSupervision", Number(supervisionId)]);
     },
   });
   const { isLoading: isSendingImageUpload } = imageUploadMutation;
@@ -57,7 +58,8 @@ const Photos = (): JSX.Element => {
     retry: onRetry,
     onSuccess: () => {
       // Fetch the supervision data again to update the image list after the delete has finished
-      queryClient.invalidateQueries(["getSupervision", supervisionId]);
+      // TODO - figure out a better way to do this when offline
+      queryClient.invalidateQueries(["getSupervision", Number(supervisionId)]);
     },
   });
   const { isLoading: isSendingImageDelete } = imageDeleteMutation;

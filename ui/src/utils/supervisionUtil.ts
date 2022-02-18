@@ -146,3 +146,36 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
     })
   );
 };
+
+export const invalidateOfflineData = (queryClient: QueryClient, dispatch: Dispatch) => {
+  // Invalidate the queries to force UI updates when using cached data
+  // Do this for the data that was fetched by prefetchOfflineData, rather than invalidating everything
+  // TODO - figure out a better way to do this when offline
+  const companyTransportsList = queryClient.getQueryData<ICompanyTransports[]>(["getCompanyTransportsList"]) || [];
+
+  companyTransportsList.forEach((companyTransports) => {
+    const { transports } = companyTransports || {};
+
+    transports.forEach((transport) => {
+      const { id: routeTransportId } = transport || {};
+
+      const routeTransport = queryClient.getQueryData<IRouteTransport>(["getRouteTransportOfSupervisor", Number(routeTransportId)]);
+
+      const { supervisions = [] } = routeTransport || {};
+      supervisions.forEach((supervision) => {
+        const { id: supervisionId } = supervision || {};
+        queryClient.invalidateQueries(["getSupervision", Number(supervisionId)]);
+      });
+
+      queryClient.invalidateQueries(["getRouteTransportOfSupervisor", Number(routeTransportId)]);
+    });
+  });
+
+  queryClient.invalidateQueries(["getCompanyTransportsList"]);
+  queryClient.invalidateQueries(["getSupervisionList"]);
+  queryClient.invalidateQueries(["getSupervisionSendingList"]);
+  queryClient.invalidateQueries(["getSupervisor"]);
+
+  // Repopulate the cache after invalidating
+  prefetchOfflineData(queryClient, dispatch);
+};
