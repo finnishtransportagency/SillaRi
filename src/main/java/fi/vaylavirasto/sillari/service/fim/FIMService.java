@@ -55,7 +55,7 @@ public class FIMService {
         List<SupervisorModel> supervisors = new ArrayList<>();
         try {
             Groups groups = getSupervisorsXML();
-            Group group = groups.getGroup();
+            Group group = groups.getGroup().get(0);
             for (Person persons : group.getPersons().getPerson()) {
                 SupervisorModel supervisor = mapper.fromDTOToModel(persons);
                 supervisors.add(supervisor);
