@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:element name="groups" type="groupsType"/>
-    <xs:complexType name="personType">
+    <xs:element name="groups" type="groups"/>
+    <xs:complexType name="person">
         <xs:sequence>
             <xs:element type="xs:string" name="ObjectKey"/>
             <xs:element type="xs:string" name="ObjectID"/>
@@ -15,22 +15,22 @@
             <xs:element type="xs:string" name="Department"/>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="personsType">
+    <xs:complexType name="persons">
         <xs:sequence>
-            <xs:element type="personType" name="person" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element type="person" name="person" maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="groupType">
+    <xs:complexType name="group">
         <xs:sequence>
             <xs:element type="xs:string" name="ObjectKey"/>
             <xs:element type="xs:string" name="ObjectID"/>
             <xs:element type="xs:string" name="DisplayName"/>
-            <xs:element type="personsType" name="persons"/>
+            <xs:element type="persons" name="persons"/>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="groupsType">
+    <xs:complexType name="groups">
         <xs:sequence>
-            <xs:element type="groupType" name="group"/>
+            <xs:element type="group" name="group"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

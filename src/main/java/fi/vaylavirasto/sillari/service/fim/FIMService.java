@@ -23,39 +23,13 @@ public class FIMService {
 
     @Value("${sillari.fim.url}")
     private String fimUrl;
-
     private final FIMSupervisorMapper mapper = Mappers.getMapper(FIMSupervisorMapper.class);
-
-
-
-/*    Muutetaan tämä hakemaan valvojat käyttövaltuushallinnasta REST4FIM:iä käyttäen. Rajapintakuvaus liitteenä. Haetaan kaikki käyttäjät jolle on määritelty rooli "sillari_sillanvalvoja".
-
-    Testipuolen REST-esimerkki:
-
-    https://testioag.vayla.fi/FIMGET/SimpleREST4FIM/1/Person.svc/?fetch=ObjectID,FirstName,LastName,AccountName,Email,MiddleName,JobTitle,Toimiala,Department,Yksikko,OfficeLocation&filterproperty=AccountType&filter=L-tunnus*/
-
-/*
-    en sillon aikanaan saanu noita sillariryhmiä toimimaan mutta raidemaintenance jota me käytetään raiteessa toimi tälleen :
-
-
-
-    sh-4.2$ curl --user svc_sillari "https://testioag.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/byfilter?filterproperty=DisplayName&filter=sillari_sillanvalvoja&fetch=ObjectID,DisplayName"
-<groups><group><ObjectID>fdfdfe1d-ef7d-4f65-84c5-2afab9ae311f</ObjectID><DisplayName>sillari_sillanvalvoja</DisplayName></group></groups>
-
-
-
-    ja tolla objectid:llä ku kysyi
-
-    sh-4.2$ curl --user svc_sillari "https://testioag.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/fdfdfe1d-ef7d-4f65-84c5-2afab9ae311f"
-    josta tuli sit vastauksena
-
-<groups><group><ObjectID>fdfdfe1d-ef7d-4f65-84c5-2afab9ae311f</ObjectID><DisplayName>raidemaintenance</DisplayName><members><member><DisplayName>Brown Anthony</DisplayName><Description/><Value>9280bce0-66e4-4b8e-8f29-0eae24282264</Value><DomainAndUserNameValue>9280bce0-66e4-4b8e-8f29-0eae24282264</DomainAndUserNameValue></member><member> ...*/
 
     public List<SupervisorModel> getSupervisors() {
         List<SupervisorModel> supervisors = new ArrayList<>();
         try {
             Groups groups = getSupervisorsXML();
-            Group group = groups.getGroup();
+            Group group = groups.getGroup().get(0);
             for (Person persons : group.getPersons().getPerson()) {
                 SupervisorModel supervisor = mapper.fromDTOToModel(persons);
                 supervisors.add(supervisor);
@@ -69,10 +43,7 @@ public class FIMService {
     }
 
     public Groups getSupervisorsXML() throws TRexRestException {
-
         logger.debug("Get supervisors from fimrest");
-
-
         WebClient webClient = buildClient();
         try {
             Groups groups = webClient.get()
