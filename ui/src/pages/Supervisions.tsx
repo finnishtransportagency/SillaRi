@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
@@ -40,15 +40,17 @@ const Supervisions = (): JSX.Element => {
 
   const { data: supervisionList = [] } = useQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
     retry: onRetry,
-    onSuccess: (data) => {
-      if (data && data.length > 0) {
-        const groupedSupervisions = groupSupervisionsByDate(data);
-        groupedSupervisions.forEach((s) => sortSupervisionsByTimeAndBridgeOrder(s.supervisions));
-        setSupervisionDays(groupedSupervisions);
-      }
-    },
     staleTime: Infinity,
   });
+
+  useEffect(() => {
+    // Group the supervisions with useEffect instead of useQuery, since onSuccess is not called when using cached data
+    if (supervisionList && supervisionList.length > 0) {
+      const groupedSupervisions = groupSupervisionsByDate(supervisionList);
+      groupedSupervisions.forEach((s) => sortSupervisionsByTimeAndBridgeOrder(s.supervisions));
+      setSupervisionDays(groupedSupervisions);
+    }
+  }, [supervisionList]);
 
   const changeSegment = (evt: CustomEvent<SegmentChangeEventDetail>) => {
     const newValue = evt.detail.value;
