@@ -2,11 +2,13 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.service.fim.FIMService;
 import fi.vaylavirasto.sillari.service.fim.responseModel.GroupsType;
+import fi.vaylavirasto.sillari.service.fim.responseModel.SimpleBean;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJson;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,20 +63,66 @@ public class DevToolsController {
 
 
     //this can be set as "trex url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,
-    @RequestMapping(value = "/localHardCodedSupervisors", method = RequestMethod.GET)
-    public GroupsType fimHardInfo() {
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    @RequestMapping(value = "/localHardCodedSimpleTesttttt", method = RequestMethod.GET)
+    public GroupsType simpleHardInfo() {
         XmlMapper xmlMapper = new XmlMapper();
-        GroupsType value
-                = null;
+        xmlMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         try {
+            SimpleBean value
+                    = xmlMapper.readValue("<SimpleBean><x>5</x><y>6</y><abc>sdjgh</abc><beanToo><cde>1dg2jg134</cde></beanToo><beanToo><cde>dg2134</cde></beanToo></SimpleBean>", SimpleBean.class);
+            logger.debug("hello: " + value.toString());
+        /*GroupsType value
+                = null;
+
             value = xmlMapper.readValue(fimHardString(), GroupsType.class);
+        */
         } catch (JsonProcessingException e) {
+
             e.printStackTrace();
         }
-        return value;
+        return null;
     }
 
+    //this can be set as "trex url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,
+    @RequestMapping(value = "/localHardCodedSimpleTesttttt2", method = RequestMethod.GET)
+    public GroupsType simpleHardInfo2() {
+        XmlMapper xmlMapper = new XmlMapper();
+        xmlMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+        try {
+            SimpleBean value
+                    = xmlMapper.readValue("<SimpleBean><X>5</X><y>6</y><abc>sdjgh</abc><BeanToo><cde>1dg2jg134</cde></BeanToo><BeanToo><cde>dg2134</cde></BeanToo></SimpleBean>", SimpleBean.class);
+            logger.debug("hello: " + value.toString());
+        /*GroupsType value
+                = null;
+
+            value = xmlMapper.readValue(fimHardString(), GroupsType.class);
+        */
+        } catch (JsonProcessingException e) {
+
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //this can be set as "trex url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,
+    @RequestMapping(value = "/localHardCodedSupervisors", method = RequestMethod.GET)
+    public GroupsType fimHardInfo() {
+        XmlMapper xmlMapper = new XmlMapper();
+        xmlMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+        try {
+            GroupsType value
+                    = null;
+
+            value = xmlMapper.readValue(fimHardString(), GroupsType.class);
+            logger.debug("hello: " + value);
+            return value;
+
+        } catch (JsonProcessingException e) {
+
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     private String fimHardString() {
         return "<groups>\n" +

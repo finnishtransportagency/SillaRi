@@ -43,6 +43,13 @@ public class GroupsType {
     @XmlElement(required = true)
     protected GroupType group;
 
+    public GroupsType() {
+    }
+
+    public GroupsType(GroupType group) {
+        this.group = group;
+    }
+
     /**
      * Gets the value of the group property.
      *

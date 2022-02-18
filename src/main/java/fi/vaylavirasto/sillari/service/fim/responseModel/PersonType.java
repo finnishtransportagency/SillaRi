@@ -53,6 +53,21 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class PersonType {
 
+    public PersonType() {
+    }
+
+    public PersonType(String objectKey, String objectID, String accountName, String displayName, String firstName, String lastName, String email, String yksikko, String department) {
+        this.objectKey = objectKey;
+        this.objectID = objectID;
+        this.accountName = accountName;
+        this.displayName = displayName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.yksikko = yksikko;
+        this.department = department;
+    }
+
     @XmlElement(name = "ObjectKey", required = true)
     protected String objectKey;
     @XmlElement(name = "ObjectID", required = true)
@@ -71,6 +86,8 @@ public class PersonType {
     protected String yksikko;
     @XmlElement(name = "Department", required = true)
     protected String department;
+
+
 
     /**
      * Gets the value of the objectKey property.

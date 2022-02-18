@@ -55,6 +55,16 @@ public class GroupType {
     @XmlElement(required = true)
     protected PersonsType persons;
 
+    public GroupType() {
+    }
+
+    public GroupType(String objectKey, String objectID, String displayName, PersonsType persons) {
+        this.objectKey = objectKey;
+        this.objectID = objectID;
+        this.displayName = displayName;
+        this.persons = persons;
+    }
+
     /**
      * Gets the value of the objectKey property.
      *

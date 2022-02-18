@@ -43,6 +43,13 @@ public class PersonsType {
 
     protected List<PersonType> person;
 
+    public PersonsType() {
+    }
+
+    public PersonsType(List<PersonType> person) {
+        this.person = person;
+    }
+
     /**
      * Gets the value of the person property.
      *
