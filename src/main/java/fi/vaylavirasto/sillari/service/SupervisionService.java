@@ -102,6 +102,11 @@ public class SupervisionService {
         return supervisions;
     }
 
+    public List<SupervisionModel> getUnsignedSupervisionsBySupervisorUsername(String username) {
+        List<SupervisionModel> supervisions = supervisionRepository.getUnsignedSupervisionsBySupervisorUsername(username);
+        return supervisions;
+    }
+
 
     public List<SupervisionModel> getFinishedButUnsignedSupervisions(String username) {
         List<SupervisionModel> supervisions = supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisorUsername(username);

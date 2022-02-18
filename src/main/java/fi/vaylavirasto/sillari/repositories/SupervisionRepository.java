@@ -120,6 +120,20 @@ public class SupervisionRepository {
                 .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
     }
 
+    public List<SupervisionModel> getUnsignedSupervisionsBySupervisorUsername(String username) {
+        return dsl.select().from(TableAlias.supervision)
+                .innerJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))
+                .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
+                .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
+                .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
+                .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
+                .and(notExists(selectOne()
+                        .from(TableAlias.supervisionStatus)
+                        .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)
+                                .and(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.REPORT_SIGNED.toString())))))
+                .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
+    }
+
     private SupervisionModel mapSupervisionWithRouteBridgeAndBridge(Record record) {
         SupervisionMapper supervisionMapper = new SupervisionMapper();
         SupervisionModel supervision = supervisionMapper.map(record);
