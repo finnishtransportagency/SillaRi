@@ -61,28 +61,9 @@ public class DevToolsController {
 
     }
 
-
     //this can be set as "fim url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,
     @RequestMapping(value = "/localHardCodedSupervisors", method = RequestMethod.GET)
-    public Groups fimHardInfo() {
-        XmlMapper xmlMapper = new XmlMapper();
-        xmlMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-        try {
-            Groups value
-                    = null;
-
-            value = xmlMapper.readValue(fimHardString(), Groups.class);
-            logger.debug("hello: " + value);
-            return value;
-
-        } catch (JsonProcessingException e) {
-
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String fimHardString() {
+    public String fimHardString() {
         return "<groups>\n" +
                 "    <group>\n" +
                 "        <ObjectKey>11274699</ObjectKey>\n" +

@@ -1,5 +1,9 @@
 package fi.vaylavirasto.sillari.service.fim;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import fi.vaylavirasto.sillari.api.rest.error.FIMRestException;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.service.fim.responseModel.FIMSupervisorMapper;
@@ -23,6 +27,10 @@ public class FIMService {
 
     @Value("${sillari.fim.url}")
     private String fimUrl;
+    @Value("${sillari.fim.username}")
+    private String username;
+    @Value("${sillari.fim.password}")
+    private String password;
     private final FIMSupervisorMapper mapper = Mappers.getMapper(FIMSupervisorMapper.class);
 
     public List<SupervisorModel> getSupervisors() {
@@ -35,29 +43,39 @@ public class FIMService {
                 supervisors.add(supervisor);
             }
 
-        } catch (TRexRestException e) {
+        } catch (FIMRestException e) {
             e.printStackTrace();
         }
         return supervisors;
 
     }
 
-    public Groups getSupervisorsXML() throws TRexRestException {
+    public Groups getSupervisorsXML() throws FIMRestException {
         logger.debug("Get supervisors from fimrest");
         WebClient webClient = buildClient();
         try {
-            Groups groups = webClient.get()
+            String xml = webClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .build())
+                    .headers(h -> h.setBasicAuth(username, password))
                     .retrieve()
-                    .bodyToMono(Groups.class)
+                    .bodyToMono(String.class)
                     .block();
-                logger.debug("groups: " + groups);
-                return groups;
-            } catch (WebClientResponseException e) {
-                logger.error(e.getMessage() + e.getStatusCode());
-                throw new TRexRestException(e.getMessage(), e.getStatusCode());
-            }
+            logger.debug("groups: " + xml);
+            XmlMapper xmlMapper = new XmlMapper();
+            xmlMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+
+            Groups groups = null;
+
+            groups = xmlMapper.readValue(xml, Groups.class);
+            logger.debug("hello: " + groups);
+            return groups;
+
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new FIMRestException(e.getMessage());
+        }
 
 
     }

@@ -10,6 +10,9 @@ sillari:
     url: http://localhost:8080/api/devtools/localHardCodedBridgeInfoJson
   fim:
     url: http://localhost:8080/api/devtools/localHardCodedSupervisors
+    #url: https://testioag.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/getGroup2?displayName=sillari_sillanvalvoja
+    username: you
+    password: wish
 spring:
   application:
     name: SillaRi
