@@ -58,6 +58,7 @@ const DatePicker = ({ value, onChange }: DatePickerProps): JSX.Element => {
         onChange(moment(date).toDate());
       }}
       validateInput={validateInput}
+      hasError={false}
     />
   );
 };

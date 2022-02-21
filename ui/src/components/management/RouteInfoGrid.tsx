@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
@@ -38,6 +38,7 @@ const RouteInfoGrid = ({
   setSelectedVehicle,
 }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
+  const [departureTimeValid, setDepartureTimeValid] = useState<boolean>(true);
 
   const { routes: permitRoutes = [], vehicles = [] } = permit || {};
   const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
@@ -65,6 +66,8 @@ const RouteInfoGrid = ({
       dt.setHours(dateTime.getHours());
       dt.setMinutes(dateTime.getMinutes());
       dt.setSeconds(0);
+      setDepartureTimeValid(moment(dt).isAfter(moment(new Date()), "minute"));
+
       const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: dt };
       setModifiedRouteTransportDetail(newDetail);
     }
@@ -143,7 +146,7 @@ const RouteInfoGrid = ({
             <IonRow className="ion-margin-start ion-margin-end">
               <IonCol>
                 {isEditable ? (
-                  <TimePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />
+                  <TimePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} hasError={!departureTimeValid} />
                 ) : (
                   <Moment format={TIME_FORMAT_MIN}>{estimatedDeparture}</Moment>
                 )}
@@ -169,6 +172,7 @@ const RouteInfoGrid = ({
                     })}
                     selectedValue={selectedRouteId}
                     onChange={(routeId) => selectRoute(routeId as number)}
+                    hasError={false}
                   />
                 ) : (
                   <IonText>{selectedRouteName}</IonText>
@@ -241,6 +245,7 @@ const RouteInfoGrid = ({
                     })}
                   selectedValue={selectedVehicle?.id}
                   onChange={(vehicleId) => setTractorUnit(vehicleId as number)}
+                  hasError={false}
                 />
               ) : (
                 <IonText>

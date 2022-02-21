@@ -6,6 +6,7 @@ import "./TimePicker.css";
 interface TimePickerProps {
   value: Date;
   onChange: (value: Date) => void;
+  hasError: boolean;
 }
 
 const getMinutesArray = (start: Date, end: Date) => {
@@ -29,7 +30,7 @@ const validateInput = (inputValue: string, prevInputValue: string) => {
   }
 };
 
-const TimePicker = ({ value, onChange }: TimePickerProps): JSX.Element => {
+const TimePicker = ({ value, onChange, hasError }: TimePickerProps): JSX.Element => {
   const min = moment(value).startOf("day").toDate();
   const max = moment(value).endOf("day").toDate();
   return (
@@ -42,6 +43,7 @@ const TimePicker = ({ value, onChange }: TimePickerProps): JSX.Element => {
         onChange(moment(date).toDate());
       }}
       validateInput={validateInput}
+      hasError={hasError}
     />
   );
 };

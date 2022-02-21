@@ -9,6 +9,7 @@ interface CustomSelectProps {
   selectedValue?: string | number;
   onChange?: (value?: string | number) => void;
   validateInput?: (inputValue: string, prevInputValue: string) => string;
+  hasError: boolean;
 }
 
 const DropdownIndicator = (props: DropdownIndicatorProps<{ value: string | number; label: string }, false>) => {
@@ -24,7 +25,7 @@ const Input = (props: InputProps<{ value: string | number; label: string }, fals
   return <components.Input {...props} inputMode="numeric" />;
 };
 
-const CustomSelect = ({ options, selectedValue, onChange, validateInput }: CustomSelectProps): JSX.Element => {
+const CustomSelect = ({ options, selectedValue, onChange, validateInput, hasError }: CustomSelectProps): JSX.Element => {
   return (
     <Select
       className="reactSelect"
@@ -41,13 +42,20 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput }: Custo
       styles={{
         control: (provided) => ({
           ...provided,
-          borderColor: "var(--ion-color-base)",
+          color: hasError ? "var(--ion-color-danger)" : "var(--ion-color-base)",
+          borderColor: hasError ? "var(--ion-color-danger)" : "var(--ion-color-base)",
           borderWidth: "2px",
         }),
         menu: (provided) => ({
           ...provided,
           zIndex: 999,
         }),
+        singleValue: (provided) => {
+          if (hasError) {
+            return { ...provided, color: "var(--ion-color-danger)" };
+          }
+          return { ...provided };
+        },
       }}
       components={{ Input, DropdownIndicator }}
       options={options}
@@ -60,7 +68,7 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput }: Custo
           return validateInput(newValue, prevInputValue);
         }
       }}
-    ></Select>
+    />
   );
 };
 
