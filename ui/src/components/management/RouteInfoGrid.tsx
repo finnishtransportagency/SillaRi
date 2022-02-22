@@ -49,12 +49,20 @@ const RouteInfoGrid = ({
   const estimatedDeparture = moment(plannedDepartureTime);
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
+  const isTimeNowOrAfter = (dateTime: Date): boolean => {
+    const now = moment(new Date());
+    return moment(dateTime).isAfter(now, "minute") || moment(dateTime).isSame(now, "minute");
+  };
+
   const setPlannedDepartureDate = (dateTime: Date) => {
     if (modifiedRouteTransportDetail) {
       const dt = modifiedRouteTransportDetail.plannedDepartureTime;
       dt.setFullYear(dateTime.getFullYear());
       dt.setMonth(dateTime.getMonth());
       dt.setDate(dateTime.getDate());
+      // If date is changed, update validation also on time field as the date change might affect it
+      setDepartureTimeValid(isTimeNowOrAfter(dt));
+
       const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: dt };
       setModifiedRouteTransportDetail(newDetail);
     }
@@ -66,7 +74,7 @@ const RouteInfoGrid = ({
       dt.setHours(dateTime.getHours());
       dt.setMinutes(dateTime.getMinutes());
       dt.setSeconds(0);
-      setDepartureTimeValid(moment(dt).isAfter(moment(new Date()), "minute"));
+      setDepartureTimeValid(isTimeNowOrAfter(dt));
 
       const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: dt };
       setModifiedRouteTransportDetail(newDetail);

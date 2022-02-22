@@ -3,6 +3,7 @@ import Select, { components } from "react-select";
 import type { DropdownIndicatorProps, InputActionMeta, InputProps } from "react-select";
 import { IonIcon } from "@ionic/react";
 import arrowOpen from "../../theme/icons/arrow-open.svg";
+import arrowOpenWarning from "../../theme/icons/arrow-open-warning.svg";
 
 interface CustomSelectProps {
   options: { value: string | number; label: string }[];
@@ -13,9 +14,12 @@ interface CustomSelectProps {
 }
 
 const DropdownIndicator = (props: DropdownIndicatorProps<{ value: string | number; label: string }, false>) => {
+  // @ts-ignore - example from official docs https://react-select.com/components for passing custom props from parent
+  const { hasError } = props.selectProps;
+
   return (
     <components.DropdownIndicator {...props}>
-      <IonIcon className="otherIcon" icon={arrowOpen} />
+      <IonIcon className="otherIcon" icon={hasError ? arrowOpenWarning : arrowOpen} />
     </components.DropdownIndicator>
   );
 };
@@ -34,7 +38,7 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput, hasErro
         ...theme,
         colors: {
           ...theme.colors,
-          primary: "var(--ion-color-primary)",
+          primary: hasError ? "var(--ion-color-danger)" : "var(--ion-color-primary)",
           primary50: "var(--ion-color-secondary-50)",
           primary25: "var(--ion-color-light)",
         },
@@ -57,6 +61,8 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput, hasErro
           return { ...provided };
         },
       }}
+      // @ts-ignore - example from official docs https://react-select.com/components for including custom props
+      hasError={hasError}
       components={{ Input, DropdownIndicator }}
       options={options}
       value={options.find((option) => option.value === selectedValue)}
