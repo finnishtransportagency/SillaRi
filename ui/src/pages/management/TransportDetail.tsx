@@ -53,7 +53,12 @@ const TransportDetail = (): JSX.Element => {
       refetchOnWindowFocus: false,
     }
   );
-  const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry, refetchOnWindowFocus: false });
+  const { isLoading: isLoadingSupervisorList, data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), {
+    retry: onRetry,
+    refetchOnWindowFocus: false,
+  });
+  console.log("supervisorList:", supervisorList);
+  console.log("isLoadingSupervisorList:", isLoadingSupervisorList);
 
   const { routeId, tractorUnit } = selectedRouteTransportDetail || {};
 
@@ -101,6 +106,7 @@ const TransportDetail = (): JSX.Element => {
   }, [isLoadingPermit, isLoadingTransport, selectedPermitDetail, tractorUnit]);
 
   const noNetworkNoData =
+    isLoadingSupervisorList ||
     (isFailed.getRouteTransport && selectedRouteTransportDetail === undefined) ||
     (isFailed.getPermitOfRouteTransport && selectedPermitDetail === undefined) ||
     (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
