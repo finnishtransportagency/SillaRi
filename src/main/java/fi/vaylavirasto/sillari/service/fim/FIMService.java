@@ -38,8 +38,11 @@ public class FIMService {
         try {
             Groups groups = getSupervisorsXML();
             Group group = groups.getGroup().get(0);
+            int n=1;
             for (Person persons : group.getPersons().getPerson()) {
                 SupervisorModel supervisor = mapper.fromDTOToModel(persons);
+                supervisor.setId(n);
+                n++;
                 supervisors.add(supervisor);
             }
 
