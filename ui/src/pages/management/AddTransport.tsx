@@ -43,7 +43,10 @@ const AddTransport = (): JSX.Element => {
     retry: onRetry,
     refetchOnWindowFocus: false,
   });
-  const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry, refetchOnWindowFocus: false });
+  const { isLoading: isLoadingSupervisorList, data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), {
+    retry: onRetry,
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
     // Put empty details into redux for later modifying
@@ -62,7 +65,9 @@ const AddTransport = (): JSX.Element => {
   }, [isLoadingPermit, dispatch]);
 
   const noNetworkNoData =
-    (isFailed.getPermit && selectedPermitDetail === undefined) || (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
+    isLoadingSupervisorList ||
+    (isFailed.getPermit && selectedPermitDetail === undefined) ||
+    (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
 
   return (
     <IonPage>
