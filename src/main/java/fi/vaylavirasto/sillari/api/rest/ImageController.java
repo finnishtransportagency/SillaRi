@@ -206,7 +206,7 @@ public class ImageController {
     private boolean isSupervisionImageOfSupervisor(Integer imageId) {
         SupervisionModel supervisionOfImage = supervisionService.getSupervisionBySupervisionImageId(imageId);
         SillariUser user = uiService.getSillariUser();
-        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getSupervisionsOfSupervisor(user.getUsername());
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsBySupervisorUsername(user.getUsername());
 
         return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervisionOfImage.getId()));
     }
@@ -215,7 +215,7 @@ public class ImageController {
     private boolean isSupervisionOfSupervisor(Integer supervisionId) {
         SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
         SillariUser user = uiService.getSillariUser();
-        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getSupervisionsOfSupervisor(user.getUsername());
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsBySupervisorUsername(user.getUsername());
 
         return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
     }
