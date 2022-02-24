@@ -15,6 +15,7 @@ import { onRetry } from "../utils/backendData";
 import { finishSupervision, getSupervision } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
 import { SupervisionListType, SupervisionStatus } from "../utils/constants";
+import { invalidateOfflineData } from "../utils/supervisionUtil";
 
 interface SummaryProps {
   supervisionId: string;
@@ -36,9 +37,12 @@ const SupervisionSummary = (): JSX.Element => {
   } = useTypedSelector((state) => state.rootReducer);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", supervisionId],
+    ["getSupervision", Number(supervisionId)],
     () => getSupervision(Number(supervisionId), dispatch),
-    { retry: onRetry }
+    {
+      retry: onRetry,
+      staleTime: Infinity,
+    }
   );
   const { routeTransportId = "0" } = supervision || {};
 
@@ -58,7 +62,12 @@ const SupervisionSummary = (): JSX.Element => {
   const finishSupervisionMutation = useMutation((superId: string) => finishSupervision(Number(superId), dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
+
+      // Invalidate queries to remove the finished supervision from the UI when using cached data
+      // TODO - figure out a better way to do this when offline, maybe using setQueryData to manually remove finished supervisions
+      invalidateOfflineData(queryClient, dispatch);
+
       setToastMessage(t("supervision.summary.saved"));
       returnToSupervisionList();
     },

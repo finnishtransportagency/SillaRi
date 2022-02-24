@@ -33,7 +33,7 @@ const TransportStatusGrid = ({ transportPassword, selectedRouteTransportDetail }
       retry: onRetry,
       onSuccess: () => {
         // Update the route transport detail to force the grid to update
-        // queryClient.setQueryData(["getRouteTransport", routeTransportId], data);
+        // queryClient.setQueryData(["getRouteTransport", Number(routeTransportId)], data);
         queryClient.invalidateQueries("transport/getRouteTransport");
       },
     }

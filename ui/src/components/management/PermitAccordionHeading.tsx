@@ -23,7 +23,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
   const { id: permitId, validStartDate, validEndDate } = permit;
 
   const { data: routeTransportList } = useQuery(
-    ["getRouteTransportsOfPermit", permitId],
+    ["getRouteTransportsOfPermit", Number(permitId)],
     () => getRouteTransportsOfPermit(Number(permitId), dispatch),
     {
       retry: onRetry,

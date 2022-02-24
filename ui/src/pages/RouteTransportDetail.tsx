@@ -30,10 +30,11 @@ const RouteTransportDetail = (): JSX.Element => {
   const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
 
   const { data: routeTransport } = useQuery(
-    ["getRouteTransportOfSupervisor", routeTransportId],
+    ["getRouteTransportOfSupervisor", Number(routeTransportId)],
     () => getRouteTransportOfSupervisor(Number(routeTransportId), dispatch),
     {
       retry: onRetry,
+      staleTime: Infinity,
     }
   );
 
