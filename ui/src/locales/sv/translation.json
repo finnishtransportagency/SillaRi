@@ -13,6 +13,9 @@
     "answer": {
       "yes": "Ja",
       "no": "Nej"
+    },
+    "validation": {
+      "checkTime": "(SV) Check the time"
     }
   },
   "main": {

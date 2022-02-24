@@ -49,6 +49,7 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput, hasErro
           color: hasError ? "var(--ion-color-danger)" : "var(--ion-color-base)",
           borderColor: hasError ? "var(--ion-color-danger)" : "var(--ion-color-base)",
           borderWidth: "2px",
+          zIndex: 998,
         }),
         menu: (provided) => ({
           ...provided,

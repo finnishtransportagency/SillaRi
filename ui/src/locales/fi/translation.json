@@ -13,6 +13,9 @@
     "answer": {
       "yes": "Kyllä",
       "no": "Ei"
+    },
+    "validation": {
+      "checkTime": "Tarkista kellonaika"
     }
   },
   "main": {
