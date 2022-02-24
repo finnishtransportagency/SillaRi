@@ -1,12 +1,13 @@
 package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.SupervisorMapper;
+import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
+import org.jooq.Record1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -116,5 +117,32 @@ public class SupervisorRepository {
                 .execute();
     }
 
-   
+
+
+
+    public SupervisorModel getSupervisorByUsername(DSLContext ctx, String username) {
+        return ctx.select().from(TableAlias.supervisor).where(TableAlias.supervisor.USERNAME.eq(
+                        username
+                ))
+                .fetchOne(new SupervisorMapper());
+    }
+
+
+
+    public Integer insertSupervisor(DSLContext ctx, SupervisorModel supervisorModel) {
+        Record1<Integer> supervisorIdResult = ctx.insertInto(TableAlias.supervisor,
+                        TableAlias.supervisor.FIRSTNAME,
+                        TableAlias.supervisor.LASTNAME,
+                        TableAlias.supervisor.USERNAME
+
+                ).values(
+                        supervisorModel.getFirstName(),
+                        supervisorModel.getLastName(),
+                        supervisorModel.getUsername()
+                )
+                .returningResult(TableAlias.supervisor.ID)
+                .fetchOne();
+        Integer supervisorId = supervisorIdResult != null ? supervisorIdResult.value1() : null;
+        return supervisorId;
+    }
 }

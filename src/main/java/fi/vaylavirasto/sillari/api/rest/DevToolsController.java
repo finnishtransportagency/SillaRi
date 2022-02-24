@@ -1,14 +1,10 @@
 package fi.vaylavirasto.sillari.api.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.service.fim.FIMService;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Groups;
-import fi.vaylavirasto.sillari.service.fim.responseModel.SimpleBean;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJson;
 import io.swagger.v3.oas.annotations.Operation;

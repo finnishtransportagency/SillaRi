@@ -1,13 +1,12 @@
 package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.BridgeMapper;
-import fi.vaylavirasto.sillari.mapper.CompanyMapper;
 import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.mapper.SupervisionMapper;
-import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,10 +72,10 @@ public class SupervisionRepository {
     }
 
     public SupervisionModel getSupervisionBySupervisionImageId(Integer imageId) {
-        return  dsl.select().from(TableAlias.supervision).where(TableAlias.supervision.ID.eq(
+        return dsl.select().from(TableAlias.supervision).where(TableAlias.supervision.ID.eq(
                         dsl.select(TableAlias.supervisionImage.SUPERVISION_ID).from(TableAlias.supervisionImage).where(TableAlias.supervisionImage.ID.eq(
-                                        imageId
-                                ))
+                                imageId
+                        ))
                 ))
                 .fetchOne(new SupervisionMapper());
     }
@@ -192,7 +191,19 @@ public class SupervisionRepository {
 
             supervisorRepository.deleteSupervisionSupervisors(ctx, supervisionModel.getId());
             supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisorModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
+                logger.debug("supervisorModel::::::::::::::::"+supervisorModel);
+                SupervisorModel existingSupervisor = supervisorRepository.getSupervisorByUsername(ctx, supervisorModel.getUsername());
+                logger.debug("existingSupervisor::::::::::::::::"+existingSupervisor);
+                Integer supervisorId;
+                if (existingSupervisor == null) {
+                    supervisorId = supervisorRepository.insertSupervisor(ctx, supervisorModel);
+                }
+                else{
+                    supervisorId = existingSupervisor.getId();
+                }
+
+
+                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisorId, supervisorModel.getPriority(), supervisorModel.getUsername());
             });
         });
     }
@@ -220,7 +231,6 @@ public class SupervisionRepository {
                     .execute();
         });
     }
-
 
 
 }
