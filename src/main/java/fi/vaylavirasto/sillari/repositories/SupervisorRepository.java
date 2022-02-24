@@ -1,13 +1,13 @@
 package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.SupervisorMapper;
-import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -145,4 +145,16 @@ public class SupervisorRepository {
         Integer supervisorId = supervisorIdResult != null ? supervisorIdResult.value1() : null;
         return supervisorId;
     }
+
+    public void updateSupervisor(SupervisorModel supervisorModel) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            ctx.update(TableAlias.supervisor)
+                    .set(TableAlias.supervisor.FIRSTNAME, supervisorModel.getFirstName())
+                    .set(TableAlias.supervisor.LASTNAME, supervisorModel.getLastName())
+                    .execute();
+        });
+    }
+
 }

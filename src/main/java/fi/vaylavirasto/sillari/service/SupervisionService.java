@@ -304,4 +304,6 @@ public class SupervisionService {
         return supervisorRepository.getSupervisorsByPermitId(routeId);
     }
 
+    public void updateSupervisor(SupervisorModel supervisorModel) {
+        supervisorRepository.updateSupervisor(supervisorModel);    }
 }

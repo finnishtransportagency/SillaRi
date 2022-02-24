@@ -191,9 +191,7 @@ public class SupervisionRepository {
 
             supervisorRepository.deleteSupervisionSupervisors(ctx, supervisionModel.getId());
             supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                logger.debug("supervisorModel::::::::::::::::"+supervisorModel);
                 SupervisorModel existingSupervisor = supervisorRepository.getSupervisorByUsername(ctx, supervisorModel.getUsername());
-                logger.debug("existingSupervisor::::::::::::::::"+existingSupervisor);
                 Integer supervisorId;
                 if (existingSupervisor == null) {
                     supervisorId = supervisorRepository.insertSupervisor(ctx, supervisorModel);

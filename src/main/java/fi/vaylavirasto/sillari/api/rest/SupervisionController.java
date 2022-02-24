@@ -11,6 +11,8 @@ import fi.vaylavirasto.sillari.service.UIService;
 import fi.vaylavirasto.sillari.service.fim.FIMService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +23,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @RestController
 @Timed
 @RequestMapping("/supervision")
 public class SupervisionController {
+    private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     UIService uiService;
     @Autowired
@@ -83,10 +88,32 @@ public class SupervisionController {
     public ResponseEntity<?> getSupervisors() {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisors");
         try {
-            List<SupervisorModel> supervisors = fimService.getSupervisors();
-            return ResponseEntity.ok().body(supervisors != null ? supervisors : new EmptyJsonResponse());
+            //We need to get existing supervisors from db to get their ids.
+            //Update db supervisors from FIM data; if names have changed
+            List<SupervisorModel> supervisorsFromFIM = fimService.getSupervisors();
+            List<SupervisorModel> supervisorsFromDb = supervisionService.getSupervisors();
+            List<SupervisorModel> supervisorsFromFIMInBoth  = supervisorsFromFIM.stream().filter(s->supervisorsFromDb.stream().anyMatch(s2->s2.getUsername().equals(s.getUsername()))).collect(Collectors.toList());
+            List<SupervisorModel> supervisorsFromDbInBoth  = supervisorsFromDb.stream().filter(s->supervisorsFromFIM.stream().anyMatch(s2->s2.getUsername().equals(s.getUsername()))).collect(Collectors.toList());
+            setIdsFromDb(supervisorsFromDbInBoth, supervisorsFromFIM);
+            insertUpdatedData(supervisorsFromFIMInBoth, supervisorsFromDbInBoth);
+            return ResponseEntity.ok().body(supervisorsFromFIM != null ? supervisorsFromFIM : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
+        }
+    }
+
+    private void insertUpdatedData(List<SupervisorModel> supervisorsFromFIMInBoth, List<SupervisorModel> supervisorsFromDbInBoth) {
+        for(SupervisorModel supervisorFromDb:supervisorsFromDbInBoth){
+            SupervisorModel supervisorFromFIM = supervisorsFromFIMInBoth.stream().filter(s->s.getUsername().equals(supervisorFromDb.getUsername())).findFirst().orElseThrow();
+            supervisorFromFIM.setId(supervisorFromDb.getId());
+            supervisionService.updateSupervisor(supervisorFromFIM);
+        }
+    }
+
+    private void setIdsFromDb(List<SupervisorModel> supervisorsFromDbInBoth, List<SupervisorModel> supervisorsFromFIM) {
+        for (SupervisorModel supervisorFromDb :supervisorsFromDbInBoth) {
+            SupervisorModel supervisorFromFIM = supervisorsFromFIM.stream().filter(s->s.getUsername().equals(supervisorFromDb.getUsername())).findFirst().orElseThrow();
+            supervisorFromFIM.setId(supervisorFromDb.getId());
         }
     }
 
