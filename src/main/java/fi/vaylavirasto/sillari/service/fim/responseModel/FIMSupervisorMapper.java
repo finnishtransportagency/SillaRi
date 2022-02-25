@@ -6,7 +6,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
 @Mapper
-public interface FIMSupervisionSupervisorMapper {
+public interface FIMSupervisorMapper {
     @Mappings({
             @Mapping(target = "firstName", source = "firstName"),
             @Mapping(target = "lastName", source = "lastName"),

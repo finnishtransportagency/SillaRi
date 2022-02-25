@@ -1,12 +1,10 @@
 package fi.vaylavirasto.sillari.service.fim;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fi.vaylavirasto.sillari.api.rest.error.FIMRestException;
-import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
-import fi.vaylavirasto.sillari.service.fim.responseModel.FIMSupervisionSupervisorMapper;
+import fi.vaylavirasto.sillari.service.fim.responseModel.FIMSupervisorMapper;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Group;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Groups;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Person;
@@ -16,7 +14,6 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +28,7 @@ public class FIMService {
     private String username;
     @Value("${sillari.fim.password}")
     private String password;
-    private final FIMSupervisionSupervisorMapper mapper = Mappers.getMapper(FIMSupervisionSupervisorMapper.class);
+    private final FIMSupervisorMapper mapper = Mappers.getMapper(FIMSupervisorMapper.class);
 
     public List<SupervisorModel> getSupervisors() {
         List<SupervisorModel> supervisors = new ArrayList<>();
