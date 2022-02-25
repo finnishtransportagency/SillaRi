@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.api.rest.error.FIMRestException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluPdfUploadException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
@@ -69,31 +70,34 @@ public class SupervisionService {
     private void fillSupervisionDetails(SupervisionModel supervision) {
         Integer supervisionId = supervision.getId();
         supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
-        supervision.setSupervisionSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
-        supervision.setSupervisors(xxx(supervision.getSupervisionSupervisors()));
+        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
+        populateSupervisorNamesFromFIM(supervision.getSupervisors());
         supervision.setImages(supervisionImageRepository.getFiles(supervisionId));
         // Sets also current status and status timestamps
         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
     }
 
-    private List<SupervisorModel> xxx(List<SupervisionSupervisorModel> supervisionSupervisors) {
-        List<SupervisorModel> allSupervisors = fimService.getSupervisors();
-        List<SupervisorModel> allSupervisors =
-        for (SupervisionSupervisorModel selectedSupervisor : supervisionSupervisors) {
-            SupervisorModel populatedSupervisor = new SupervisorModel(selectedSupervisor);
+    private void populateSupervisorNamesFromFIM(List<SupervisorModel> supervisionSupervisors) {
+
+        List<SupervisorModel> allSupervisors = new ArrayList<>();
+        try {
+            allSupervisors = fimService.getSupervisors();
+        } catch (FIMRestException e) {
+            logger.error("Error getting supervisors from FIMREST " + e.getMessage());
+        }
+
+        for (SupervisorModel selectedSupervisor : supervisionSupervisors) {
             try {
                 SupervisorModel supervisorFromFIM = allSupervisors.stream().filter(s -> s.getUsername().equals(selectedSupervisor.getUsername())).findFirst().orElseThrow();
-                populatedSupervisor.setFirstName(supervisorFromFIM.getFirstName());
-                populatedSupervisor.setLastName(supervisorFromFIM.getLastName());
+                selectedSupervisor.setFirstName(supervisorFromFIM.getFirstName());
+                selectedSupervisor.setLastName(supervisorFromFIM.getLastName());
             } catch (NoSuchElementException nee) {
-                populatedSupervisor.setFirstName("XXX");
-                populatedSupervisor.setLastName("XXX");
+                logger.warn("Supervisor username not in FIM data");
+                selectedSupervisor.setFirstName("XXX");
+                selectedSupervisor.setLastName("XXX");
             }
 
         }
-
-
-
 
     }
 
@@ -152,7 +156,7 @@ public class SupervisionService {
         return supervisions;
     }
 
-    public List<SupervisionSupervisorModel> getSupervisors() {
+    public List<SupervisorModel> getSupervisors() {
         // TODO - limit the list of supervisors somehow?
         return supervisorRepository.getSupervisors();
     }
@@ -321,19 +325,19 @@ public class SupervisionService {
         return images;
     }
 
-    public List<SupervisionSupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
+    public List<SupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
         return supervisorRepository.getSupervisorsByRouteBridgeId(routeBridgeId);
     }
 
-    public List<SupervisionSupervisorModel> getSupervisorsByRouteId(Integer routeId) {
+    public List<SupervisorModel> getSupervisorsByRouteId(Integer routeId) {
         return supervisorRepository.getSupervisorsByRouteId(routeId);
     }
 
-    public List<SupervisionSupervisorModel> getSupervisorsByRouteTransportId(Integer routeBridgeId) {
+    public List<SupervisorModel> getSupervisorsByRouteTransportId(Integer routeBridgeId) {
         return supervisorRepository.getSupervisorsByRouteTransportId(routeBridgeId);
     }
 
-    public List<SupervisionSupervisorModel> getSupervisorsByPermitId(Integer routeId) {
+    public List<SupervisorModel> getSupervisorsByPermitId(Integer routeId) {
         return supervisorRepository.getSupervisorsByPermitId(routeId);
     }
 

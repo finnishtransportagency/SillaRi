@@ -211,7 +211,7 @@ public class RouteTransportController {
     /* Check that route transport contains supervision by the supervisos */
     private boolean isRouteTransportOfSupervisor(Integer routeTransportId) {
         SillariUser user = uiService.getSillariUser();
-        List<SupervisionSupervisorModel> supervisors = supervisionService.getSupervisorsByRouteTransportId(routeTransportId);
+        List<SupervisorModel> supervisors = supervisionService.getSupervisorsByRouteTransportId(routeTransportId);
         return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
     }
 

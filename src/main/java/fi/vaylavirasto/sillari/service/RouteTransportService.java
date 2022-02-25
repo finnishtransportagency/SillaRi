@@ -41,7 +41,7 @@ public class RouteTransportService {
             List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportId);
             if (supervisions != null) {
                 supervisions.forEach(supervision -> {
-                    supervision.setSupervisionSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                    supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
                     supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });
             }
@@ -69,7 +69,7 @@ public class RouteTransportService {
                 List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportId);
                 if (supervisions != null) {
                     supervisions.forEach(supervision -> {
-                        supervision.setSupervisionSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
                         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                     });
                 }
@@ -96,7 +96,7 @@ public class RouteTransportService {
                 List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportModel.getId());
                 if (supervisions != null) {
                     supervisions.forEach(supervision -> {
-                        supervision.setSupervisionSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
                         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                     });
                 }
@@ -140,7 +140,7 @@ public class RouteTransportService {
             List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportAndSupervisorUsername(routeTransportId, username);
             if (supervisions != null) {
                 supervisions.forEach(supervision -> {
-                    supervision.setSupervisionSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                    supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
                     // Sets also current status and status timestamps
                     supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });

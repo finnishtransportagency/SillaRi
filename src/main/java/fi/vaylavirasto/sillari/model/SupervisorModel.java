@@ -8,20 +8,13 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
 public class SupervisorModel extends BaseModel {
+    // From supervision supervisor
     private Integer id;
-    private String firstName;
-    private String lastName;
     private String username;
-
-    // For supervision supervisor
     private Integer priority;
 
-    public SupervisorModel(SupervisionSupervisorModel selectedSupervisor) {
-        super(selectedSupervisor);
-        this.setUsername(selectedSupervisor.getUsername());
-        this.setPriority(selectedSupervisor.getPriority());
-    }
+    // From fimrest
+    private String firstName;
+    private String lastName;
 
-    public SupervisorModel() {
-    }
-}
+   }

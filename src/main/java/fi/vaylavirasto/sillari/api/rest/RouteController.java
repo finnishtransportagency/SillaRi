@@ -76,7 +76,7 @@ public class RouteController {
     }
 
     private boolean isSupervisedRouteOfSupervisor(SillariUser user, Integer routeId) {
-        List<SupervisionSupervisorModel> supervisors = supervisionService.getSupervisorsByRouteId(routeId);
+        List<SupervisorModel> supervisors = supervisionService.getSupervisorsByRouteId(routeId);
         return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
     }
 }

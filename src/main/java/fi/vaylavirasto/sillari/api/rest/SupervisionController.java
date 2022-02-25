@@ -1,6 +1,7 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
+import fi.vaylavirasto.sillari.api.rest.error.FIMRestException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.service.SupervisionService;
@@ -82,7 +83,7 @@ public class SupervisionController {
     @Operation(summary = "Get supervisors")
     @GetMapping(value = "/getsupervisors", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication) || @sillariRightsChecker.isSillariAjojarjestelija(authentication)")
-    public ResponseEntity<?> getSupervisors() {
+    public ResponseEntity<?> getSupervisors() throws FIMRestException {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisors");
         try {
             List<SupervisorModel> supervisorsFromFIM = fimService.getSupervisors();

@@ -30,9 +30,9 @@ public class FIMService {
     private String password;
     private final FIMSupervisorMapper mapper = Mappers.getMapper(FIMSupervisorMapper.class);
 
-    public List<SupervisorModel> getSupervisors() {
+    public List<SupervisorModel> getSupervisors() throws FIMRestException {
         List<SupervisorModel> supervisors = new ArrayList<>();
-        try {
+
             Groups groups = getSupervisorsXML();
             Group group = groups.getGroup().get(0);
             //set negative ids to differentiate those from the db
@@ -44,9 +44,7 @@ public class FIMService {
                 supervisors.add(supervisor);
             }
 
-        } catch (FIMRestException e) {
-            e.printStackTrace();
-        }
+
         return supervisors;
 
     }
