@@ -21,6 +21,7 @@ public class SupervisionModel extends BaseModel {
     private SupervisionStatusModel currentStatus;
     private List<SupervisionStatusModel> statusHistory;
     private List<SupervisorModel> supervisors;
+    private List<SupervisionSupervisorModel> supervisionSupervisors;
     private SupervisionReportModel report;
     private List<SupervisionImageModel> images;
 

@@ -1,6 +1,5 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.mapper.SupervisorMapper;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
@@ -19,11 +18,6 @@ public class SupervisorRepository {
 
     @Autowired
     private DSLContext dsl;
-
-    public List<SupervisorModel> getSupervisors() {
-        return dsl.select().from(TableAlias.supervisor)
-                .fetch(new SupervisorMapper());
-    }
 
     public List<SupervisorModel> getSupervisorsBySupervisionId(Integer supervisionId) {
         return dsl.select().from(TableAlias.supervisor)
