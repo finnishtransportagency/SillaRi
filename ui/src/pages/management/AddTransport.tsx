@@ -56,7 +56,7 @@ const AddTransport = (): JSX.Element => {
       const newRouteTransport: IRouteTransport = {
         id: 0,
         routeId: 0,
-        plannedDepartureTime: moment().toDate(),
+        plannedDepartureTime: undefined,
         tractorUnit: "",
         currentStatus: { status: TransportStatus.PLANNED } as IRouteTransportStatus,
       };

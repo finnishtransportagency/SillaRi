@@ -1,7 +1,7 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, MouseEvent, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText, useIonPopover } from "@ionic/react";
 import moment from "moment";
 import CustomSelect from "../common/CustomSelect";
 import IPermit from "../../interfaces/IPermit";
@@ -10,9 +10,10 @@ import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import IVehicle from "../../interfaces/IVehicle";
 import mapPoint from "../../theme/icons/map-point.svg";
-import { SupervisorType, VehicleRole } from "../../utils/constants";
+import { DATE_TIME_FORMAT_MIN, SupervisorType, VehicleRole } from "../../utils/constants";
 import { isTransportEditable } from "../../utils/validation";
 import TransportDepartureTime from "./TransportDepartureTime";
+import Moment from "react-moment";
 
 interface RouteInfoGridProps {
   routeTransportId: number;
@@ -36,11 +37,13 @@ const RouteInfoGrid = ({
   setSelectedVehicle,
 }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
+  const [isDepartureTimeOpen, setDepartureTimeOpen] = useState<boolean>(false);
 
   const { routes: permitRoutes = [], vehicles = [] } = permit || {};
   const { id: selectedRouteId, name: selectedRouteName, departureAddress, arrivalAddress } = selectedRouteOption || {};
   const { streetAddress: departureStreetAddress } = departureAddress || {};
   const { streetAddress: arrivalStreetAddress } = arrivalAddress || {};
+  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
@@ -87,11 +90,28 @@ const RouteInfoGrid = ({
 
   return (
     <IonGrid className="ion-no-padding">
-      <IonRow>
-        <TransportDepartureTime
-          modifiedRouteTransportDetail={modifiedRouteTransportDetail}
-          setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-        />
+      <IonRow className="ion-margin-top">
+        <IonCol>
+          <IonRow>
+            <IonText className="headingText">{t("management.transportDetail.routeInfo.estimatedDepartureTime")}</IonText>
+          </IonRow>
+          <IonRow>{plannedDepartureTime && <Moment format={DATE_TIME_FORMAT_MIN}>{plannedDepartureTime}</Moment>}</IonRow>
+          <IonRow>
+            {isEditable && (
+              <IonButton color="secondary" expand="block" onClick={() => setDepartureTimeOpen(true)}>
+                {!plannedDepartureTime
+                  ? t("management.transportDetail.buttons.setDepartureTime")
+                  : t("management.transportDetail.buttons.updateDepartureTime")}
+              </IonButton>
+            )}
+            <TransportDepartureTime
+              isOpen={isDepartureTimeOpen}
+              setOpen={setDepartureTimeOpen}
+              modifiedRouteTransportDetail={modifiedRouteTransportDetail}
+              setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+            />
+          </IonRow>
+        </IonCol>
       </IonRow>
       <IonRow>
         <IonCol size="12" size-lg="8">
@@ -103,6 +123,7 @@ const RouteInfoGrid = ({
             </IonRow>
             <IonRow>
               <IonCol>
+                {/*TODO disable if plannedTime is not set*/}
                 {isEditable ? (
                   <CustomSelect
                     options={permitRoutes.map((route) => {
