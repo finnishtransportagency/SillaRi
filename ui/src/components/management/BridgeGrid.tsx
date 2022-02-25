@@ -64,9 +64,9 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
     }
   };
 
-  const setSupervisor = (priority: number, supervisorId: number, supervision?: ISupervision) => {
+  const setSupervisor = (priority: number, supervisorUsername: string, supervision?: ISupervision) => {
     if (supervision && modifiedRouteTransportDetail) {
-      const supervisor = supervisors.find((s) => s.id === supervisorId) as ISupervisor;
+      const supervisor = supervisors.find((s) => s.username === supervisorUsername) as ISupervisor;
       const { supervisors: supervisionSupervisors = [], routeBridgeId } = supervision;
 
       // Add the selected supervisor for this route bridge id and priority to the supervisors array in place of the existing one if one exists
