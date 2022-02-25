@@ -65,7 +65,7 @@ public class SupervisionService {
     private void fillSupervisionDetails(SupervisionModel supervision) {
         Integer supervisionId = supervision.getId();
         supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
-        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
+        supervision.setSupervisionSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
         supervision.setImages(supervisionImageRepository.getFiles(supervisionId));
         // Sets also current status and status timestamps
         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
@@ -119,7 +119,7 @@ public class SupervisionService {
         return supervisions;
     }
 
-    public List<SupervisorModel> getSupervisors() {
+    public List<SupervisionSupervisorModel> getSupervisors() {
         // TODO - limit the list of supervisors somehow?
         return supervisorRepository.getSupervisors();
     }
@@ -288,22 +288,21 @@ public class SupervisionService {
         return images;
     }
 
-    public List<SupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
+    public List<SupervisionSupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
         return supervisorRepository.getSupervisorsByRouteBridgeId(routeBridgeId);
     }
 
-    public List<SupervisorModel> getSupervisorsByRouteId(Integer routeId) {
+    public List<SupervisionSupervisorModel> getSupervisorsByRouteId(Integer routeId) {
         return supervisorRepository.getSupervisorsByRouteId(routeId);
     }
 
-    public List<SupervisorModel> getSupervisorsByRouteTransportId(Integer routeBridgeId) {
+    public List<SupervisionSupervisorModel> getSupervisorsByRouteTransportId(Integer routeBridgeId) {
         return supervisorRepository.getSupervisorsByRouteTransportId(routeBridgeId);
     }
 
-    public List<SupervisorModel> getSupervisorsByPermitId(Integer routeId) {
+    public List<SupervisionSupervisorModel> getSupervisorsByPermitId(Integer routeId) {
         return supervisorRepository.getSupervisorsByPermitId(routeId);
     }
 
-    public void updateSupervisor(SupervisorModel supervisorModel) {
-        supervisorRepository.updateSupervisor(supervisorModel);    }
+
 }

@@ -3,10 +3,7 @@ package fi.vaylavirasto.sillari.api.rest;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariRole;
 import fi.vaylavirasto.sillari.auth.SillariUser;
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
-import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.SupervisorModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.service.CompanyService;
 import fi.vaylavirasto.sillari.service.PermitService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
@@ -111,7 +108,7 @@ public class PermitController {
 
     /* Check that sillanvalvoja-user has right to view permit*/
     private boolean isPermitOfSupervisor(SillariUser user, Integer permitId) {
-        List<SupervisorModel> supervisors = supervisionService.getSupervisorsByPermitId(permitId);
+        List<SupervisionSupervisorModel> supervisors = supervisionService.getSupervisorsByPermitId(permitId);
         return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
     }
 

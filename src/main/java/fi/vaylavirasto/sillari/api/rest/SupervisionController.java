@@ -2,10 +2,7 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
-import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
-import fi.vaylavirasto.sillari.model.SupervisionModel;
-import fi.vaylavirasto.sillari.model.SupervisionReportModel;
-import fi.vaylavirasto.sillari.model.SupervisorModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
 import fi.vaylavirasto.sillari.service.fim.FIMService;
@@ -88,34 +85,13 @@ public class SupervisionController {
     public ResponseEntity<?> getSupervisors() {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisors");
         try {
-            //We need to get existing supervisors from db to get their ids.
-            //Update db supervisors from FIM data; if names have changed
             List<SupervisorModel> supervisorsFromFIM = fimService.getSupervisors();
-            List<SupervisorModel> supervisorsFromDb = supervisionService.getSupervisors();
-            List<SupervisorModel> supervisorsFromFIMInBoth  = supervisorsFromFIM.stream().filter(s->supervisorsFromDb.stream().anyMatch(s2->s2.getUsername().equals(s.getUsername()))).collect(Collectors.toList());
-            List<SupervisorModel> supervisorsFromDbInBoth  = supervisorsFromDb.stream().filter(s->supervisorsFromFIM.stream().anyMatch(s2->s2.getUsername().equals(s.getUsername()))).collect(Collectors.toList());
-            setIdsFromDb(supervisorsFromDbInBoth, supervisorsFromFIM);
-            insertUpdatedData(supervisorsFromFIMInBoth, supervisorsFromDbInBoth);
             return ResponseEntity.ok().body(supervisorsFromFIM != null ? supervisorsFromFIM : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
     }
 
-    private void insertUpdatedData(List<SupervisorModel> supervisorsFromFIMInBoth, List<SupervisorModel> supervisorsFromDbInBoth) {
-        for(SupervisorModel supervisorFromDb:supervisorsFromDbInBoth){
-            SupervisorModel supervisorFromFIM = supervisorsFromFIMInBoth.stream().filter(s->s.getUsername().equals(supervisorFromDb.getUsername())).findFirst().orElseThrow();
-            supervisorFromFIM.setId(supervisorFromDb.getId());
-            supervisionService.updateSupervisor(supervisorFromFIM);
-        }
-    }
-
-    private void setIdsFromDb(List<SupervisorModel> supervisorsFromDbInBoth, List<SupervisorModel> supervisorsFromFIM) {
-        for (SupervisorModel supervisorFromDb :supervisorsFromDbInBoth) {
-            SupervisorModel supervisorFromFIM = supervisorsFromFIM.stream().filter(s->s.getUsername().equals(supervisorFromDb.getUsername())).findFirst().orElseThrow();
-            supervisorFromFIM.setId(supervisorFromDb.getId());
-        }
-    }
 
     @Operation(summary = "Update conforms to permit attribute in supervision")
     @PutMapping(value = "/updateconformstopermit", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -3,10 +3,7 @@ package fi.vaylavirasto.sillari.api.rest;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariRole;
 import fi.vaylavirasto.sillari.auth.SillariUser;
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
-import fi.vaylavirasto.sillari.model.RouteBridgeModel;
-import fi.vaylavirasto.sillari.model.SupervisorModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.service.CompanyService;
 import fi.vaylavirasto.sillari.service.RouteBridgeService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
@@ -85,7 +82,7 @@ public class RouteBridgeController {
     }
 
     private boolean isRouteBridgeOfSupervisor(SillariUser user, Integer routeBridgeId) {
-        List<SupervisorModel> supervisors = supervisionService.getSupervisorsByRouteBridgeId(routeBridgeId);
+        List<SupervisionSupervisorModel> supervisors = supervisionService.getSupervisorsByRouteBridgeId(routeBridgeId);
         return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
     }
 }

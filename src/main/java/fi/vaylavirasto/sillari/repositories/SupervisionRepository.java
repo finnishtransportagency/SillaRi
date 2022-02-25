@@ -6,7 +6,7 @@ import fi.vaylavirasto.sillari.mapper.SupervisionMapper;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
-import fi.vaylavirasto.sillari.model.SupervisorModel;
+import fi.vaylavirasto.sillari.model.SupervisionSupervisorModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -161,18 +161,18 @@ public class SupervisionRepository {
                             TableAlias.supervision.CONFORMS_TO_PERMIT
                     ).values(
                             supervisionModel.getRouteBridgeId(),
-                            supervisionModel.getRouteTransportId(),
-                            supervisionModel.getPlannedTime(),
-                            supervisionModel.getSupervisorType().toString(),
-                            false)
+                    supervisionModel.getRouteTransportId(),
+                    supervisionModel.getPlannedTime(),
+                    supervisionModel.getSupervisorType().toString(),
+                    false)
                     .returningResult(TableAlias.supervision.ID)
                     .fetchOne(); // Execute and return zero or one record
 
             Integer supervisionId = supervisionIdResult != null ? supervisionIdResult.value1() : null;
             supervisionModel.setId(supervisionId);
 
-            supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
+            supervisionModel.getSupervisionSupervisors().forEach(supervisionSupervisorModel -> {
+                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionSupervisorModel.getId(), supervisionSupervisorModel.getPriority(), supervisionSupervisorModel.getUsername());
             });
 
             return supervisionId;
@@ -190,18 +190,8 @@ public class SupervisionRepository {
                     .execute();
 
             supervisorRepository.deleteSupervisionSupervisors(ctx, supervisionModel.getId());
-            supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                SupervisorModel existingSupervisor = supervisorRepository.getSupervisorByUsername(ctx, supervisorModel.getUsername());
-                Integer supervisorId;
-                if (existingSupervisor == null) {
-                    supervisorId = supervisorRepository.insertSupervisor(ctx, supervisorModel);
-                }
-                else{
-                    supervisorId = existingSupervisor.getId();
-                }
-
-
-                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisorId, supervisorModel.getPriority(), supervisorModel.getUsername());
+            supervisionModel.getSupervisionSupervisors().forEach(supervisionSupervisorModel -> {
+                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisionSupervisorModel.getPriority(), supervisionSupervisorModel.getUsername());
             });
         });
     }
