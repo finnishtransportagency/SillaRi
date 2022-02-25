@@ -12,4 +12,12 @@ import java.time.OffsetDateTime;
 public class BaseModel {
     private OffsetDateTime rowCreatedTime;
     private OffsetDateTime rowUpdatedTime;
+
+    public BaseModel(SupervisionSupervisorModel from) {
+        this.setRowCreatedTime(from.getRowCreatedTime());
+        this.setRowUpdatedTime(from.getRowUpdatedTime());
+    }
+
+    public BaseModel() {
+    }
 }

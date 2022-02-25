@@ -15,4 +15,13 @@ public class SupervisorModel extends BaseModel {
 
     // For supervision supervisor
     private Integer priority;
+
+    public SupervisorModel(SupervisionSupervisorModel selectedSupervisor) {
+        super(selectedSupervisor);
+        this.setUsername(selectedSupervisor.getUsername());
+        this.setPriority(selectedSupervisor.getPriority());
+    }
+
+    public SupervisorModel() {
+    }
 }

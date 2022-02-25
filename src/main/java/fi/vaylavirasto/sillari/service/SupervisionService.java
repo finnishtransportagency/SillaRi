@@ -5,6 +5,7 @@ import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
+import fi.vaylavirasto.sillari.service.fim.FIMService;
 import fi.vaylavirasto.sillari.util.PDFGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +23,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class SupervisionService {
@@ -47,6 +49,8 @@ public class SupervisionService {
     AWSS3Client awss3Client;
     @Autowired
     SupervisionImageService supervisionImageService;
+    @Autowired
+    FIMService fimService;
 
 
     @Value("${spring.profiles.active:Unknown}")
@@ -66,9 +70,38 @@ public class SupervisionService {
         Integer supervisionId = supervision.getId();
         supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
         supervision.setSupervisionSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
+        supervision.setSupervisors(xxx(supervision.getSupervisionSupervisors()));
         supervision.setImages(supervisionImageRepository.getFiles(supervisionId));
         // Sets also current status and status timestamps
         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
+    }
+
+    private List<SupervisorModel> xxx(List<SupervisionSupervisorModel> supervisionSupervisors) {
+        List<SupervisorModel> allSupervisors = fimService.getSupervisors();
+        List<SupervisorModel> allSupervisors =
+        for (SupervisionSupervisorModel selectedSupervisor : supervisionSupervisors) {
+            SupervisorModel populatedSupervisor = new SupervisorModel(selectedSupervisor);
+            try {
+                SupervisorModel supervisorFromFIM = allSupervisors.stream().filter(s -> s.getUsername().equals(selectedSupervisor.getUsername())).findFirst().orElseThrow();
+                populatedSupervisor.setFirstName(supervisorFromFIM.getFirstName());
+                populatedSupervisor.setLastName(supervisorFromFIM.getLastName());
+            } catch (NoSuchElementException nee) {
+                populatedSupervisor.setFirstName("XXX");
+                populatedSupervisor.setLastName("XXX");
+            }
+
+        }
+
+
+
+
+    }
+
+    private void setIdsFromDb(List<SupervisorModel> supervisorsFromDbInBoth, List<SupervisorModel> supervisorsFromFIM) {
+        for (SupervisorModel supervisorFromDb : supervisorsFromDbInBoth) {
+            SupervisorModel supervisorFromFIM = supervisorsFromFIM.stream().filter(s -> s.getUsername().equals(supervisorFromDb.getUsername())).findFirst().orElseThrow();
+            supervisorFromFIM.setId(supervisorFromDb.getId());
+        }
     }
 
     private void fillPermitDetails(SupervisionModel supervision) {
