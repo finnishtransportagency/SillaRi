@@ -32,7 +32,7 @@ public class FIMService {
     private final FIMSupervisorMapper mapper = Mappers.getMapper(FIMSupervisorMapper.class);
     private List<SupervisorModel> supervisors = new ArrayList<>();
     private long supervisorsLastQueryedInMillis = 0;
-    private static long CACHE_LIFE_IN_MILLIS = 6000;
+    private static long CACHE_LIFE_IN_MILLIS = 60000;
 
 
 
@@ -108,12 +108,11 @@ public class FIMService {
             try {
                 SupervisorModel supervisorFromFIM = allSupervisors.stream().filter(s -> s.getUsername().equals(selectedSupervisor.getUsername())).findFirst().orElseThrow();
                 selectedSupervisor.setFirstName(supervisorFromFIM.getFirstName());
-                //  selectedSupervisor.setFirstName(supervisorFromFIM.getFirstName());
                 selectedSupervisor.setLastName(supervisorFromFIM.getLastName());
             } catch (NoSuchElementException nee) {
                 logger.warn("Supervisor username not in FIM data");
-                selectedSupervisor.setFirstName("XXX");
-                selectedSupervisor.setLastName("XXX");
+                selectedSupervisor.setFirstName(selectedSupervisor.getUsername());
+                selectedSupervisor.setLastName("");
             }
 
         }
