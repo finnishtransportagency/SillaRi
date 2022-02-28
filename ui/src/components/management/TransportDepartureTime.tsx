@@ -1,4 +1,4 @@
-import React, { Dispatch, MouseEvent, SetStateAction } from "react";
+import React, { Dispatch, MouseEvent, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   IonButton,
@@ -16,7 +16,6 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import moment from "moment";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
 import IRouteTransport from "../../interfaces/IRouteTransport";
@@ -39,33 +38,38 @@ const TransportDepartureTime = ({
   const { t } = useTranslation();
 
   const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
-  const estimatedDeparture = plannedDepartureTime ? moment(plannedDepartureTime) : moment();
+  const estimatedDeparture = plannedDepartureTime ? plannedDepartureTime : new Date();
+  const [departureTime, setDepartureTime] = useState<Date>(estimatedDeparture);
+
+  const setPlannedDepartureDate = (dateTime: Date) => {
+    const dt = new Date(departureTime);
+    dt.setFullYear(dateTime.getFullYear());
+    dt.setMonth(dateTime.getMonth());
+    dt.setDate(dateTime.getDate());
+    // TODO validation
+    setDepartureTime(dt);
+  };
+
+  const setPlannedDepartureTime = (dateTime: Date) => {
+    const dt = new Date(departureTime);
+    dt.setHours(dateTime.getHours());
+    dt.setMinutes(dateTime.getMinutes());
+    dt.setSeconds(0);
+    // TODO validation
+    setDepartureTime(dt);
+  };
 
   const closeModal = (evt: MouseEvent) => {
     evt.stopPropagation();
     setOpen(false);
+    setDepartureTime(estimatedDeparture);
   };
 
-  const setPlannedDepartureDate = (dateTime: Date) => {
-    if (modifiedRouteTransportDetail) {
-      const dt = modifiedRouteTransportDetail.plannedDepartureTime;
-      /*dt.setFullYear(dateTime.getFullYear());
-      dt.setMonth(dateTime.getMonth());
-      dt.setDate(dateTime.getDate());*/
-      const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: dt };
-      setModifiedRouteTransportDetail(newDetail);
-    }
-  };
-
-  const setPlannedDepartureTime = (dateTime: Date) => {
-    if (modifiedRouteTransportDetail) {
-      const dt = modifiedRouteTransportDetail.plannedDepartureTime;
-      /*dt.setHours(dateTime.getHours());
-      dt.setMinutes(dateTime.getMinutes());
-      dt.setSeconds(0);*/
-      const newDetail: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: dt };
-      setModifiedRouteTransportDetail(newDetail);
-    }
+  const updatePlannedDeparture = (evt: MouseEvent) => {
+    evt.stopPropagation();
+    const newRouteTransport: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: departureTime };
+    setModifiedRouteTransportDetail(newRouteTransport);
+    setOpen(false);
   };
 
   return (
@@ -93,7 +97,7 @@ const TransportDepartureTime = ({
                 </IonRow>
                 <IonRow>
                   <IonCol>
-                    <DatePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureDate} />
+                    <DatePicker value={departureTime} onChange={setPlannedDepartureDate} />
                   </IonCol>
                 </IonRow>
               </IonGrid>
@@ -108,7 +112,7 @@ const TransportDepartureTime = ({
                 </IonRow>
                 <IonRow className="ion-margin-start ion-margin-end">
                   <IonCol>
-                    <TimePicker value={estimatedDeparture.toDate()} onChange={setPlannedDepartureTime} />
+                    <TimePicker value={departureTime} onChange={setPlannedDepartureTime} />
                   </IonCol>
                 </IonRow>
               </IonGrid>
@@ -121,10 +125,11 @@ const TransportDepartureTime = ({
             </IonItem>
           </IonRow>
           <IonRow>
-            <IonButton color="secondary" expand="block" onClick={() => setOpen(false)}>
+            <IonButton color="secondary" expand="block" onClick={(evt) => closeModal(evt)}>
               {t("common.buttons.cancel")}
             </IonButton>
-            <IonButton color="primary" expand="block" onClick={() => setOpen(false)}>
+            {/*TODO disabled when date validation fails*/}
+            <IonButton color="primary" expand="block" onClick={(evt) => updatePlannedDeparture(evt)}>
               {t("management.transportDetail.transportDepartureTime.setTime")}
             </IonButton>
           </IonRow>
