@@ -1,6 +1,5 @@
 package fi.vaylavirasto.sillari.service;
 
-import fi.vaylavirasto.sillari.api.rest.error.FIMRestException;
 import fi.vaylavirasto.sillari.api.rest.error.LeluPdfUploadException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
@@ -24,7 +23,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class SupervisionService {
@@ -71,34 +69,10 @@ public class SupervisionService {
         Integer supervisionId = supervision.getId();
         supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
         supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
-        populateSupervisorNamesFromFIM(supervision.getSupervisors());
+        fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors(),"ddd");
         supervision.setImages(supervisionImageRepository.getFiles(supervisionId));
         // Sets also current status and status timestamps
         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
-    }
-
-    private void populateSupervisorNamesFromFIM(List<SupervisorModel> supervisionSupervisors) {
-
-        List<SupervisorModel> allSupervisors = new ArrayList<>();
-        try {
-            allSupervisors = fimService.getSupervisors();
-        } catch (FIMRestException e) {
-            logger.error("Error getting supervisors from FIMREST " + e.getMessage());
-        }
-
-        for (SupervisorModel selectedSupervisor : supervisionSupervisors) {
-            try {
-                SupervisorModel supervisorFromFIM = allSupervisors.stream().filter(s -> s.getUsername().equals(selectedSupervisor.getUsername())).findFirst().orElseThrow();
-                selectedSupervisor.setFirstName(supervisorFromFIM.getFirstName());
-                selectedSupervisor.setLastName(supervisorFromFIM.getLastName());
-            } catch (NoSuchElementException nee) {
-                logger.warn("Supervisor username not in FIM data");
-                selectedSupervisor.setFirstName("XXX");
-                selectedSupervisor.setLastName("XXX");
-            }
-
-        }
-
     }
 
     private void setIdsFromDb(List<SupervisorModel> supervisorsFromDbInBoth, List<SupervisorModel> supervisorsFromFIM) {
@@ -156,10 +130,6 @@ public class SupervisionService {
         return supervisions;
     }
 
-    public List<SupervisorModel> getSupervisors() {
-        // TODO - limit the list of supervisors somehow?
-        return supervisorRepository.getSupervisors();
-    }
 
     // Creates new supervision and adds a new status with type PLANNED
     // The timestamp in PLANNED is the current time, not planned_time which can be updated later.

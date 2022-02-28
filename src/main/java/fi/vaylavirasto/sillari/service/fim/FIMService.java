@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fi.vaylavirasto.sillari.api.rest.error.FIMRestException;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
+import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.fim.responseModel.FIMSupervisorMapper;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Group;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Groups;
@@ -17,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class FIMService {
@@ -35,18 +37,13 @@ public class FIMService {
 
             Groups groups = getSupervisorsXML();
             Group group = groups.getGroup().get(0);
-            //set negative ids to differentiate those from the db
-            int n=-2;
+
             for (Person persons : group.getPersons().getPerson()) {
                 SupervisorModel supervisor = mapper.fromDTOToModel(persons);
-                supervisor.setId(n);
-                n--;
                 supervisors.add(supervisor);
             }
 
-
         return supervisors;
-
     }
 
     public Groups getSupervisorsXML() throws FIMRestException {
@@ -84,4 +81,27 @@ public class FIMService {
     }
 
 
+    public void populateSupervisorNamesFromFIM(List<SupervisorModel> supervisionSupervisors, String naem) {
+
+        List<SupervisorModel> allSupervisors = new ArrayList<>();
+        try {
+            allSupervisors = getSupervisors();
+        } catch (FIMRestException e) {
+            logger.error("Error getting supervisors from FIMREST " + e.getMessage());
+        }
+
+        for (SupervisorModel selectedSupervisor : supervisionSupervisors) {
+            try {
+                SupervisorModel supervisorFromFIM = allSupervisors.stream().filter(s -> s.getUsername().equals(selectedSupervisor.getUsername())).findFirst().orElseThrow();
+                selectedSupervisor.setFirstName(supervisorFromFIM.getFirstName());
+                selectedSupervisor.setLastName(supervisorFromFIM.getLastName());
+            } catch (NoSuchElementException nee) {
+                logger.warn("Supervisor username not in FIM data");
+                selectedSupervisor.setFirstName(naem);
+                selectedSupervisor.setLastName("XXX");
+            }
+
+        }
+
+    }
 }

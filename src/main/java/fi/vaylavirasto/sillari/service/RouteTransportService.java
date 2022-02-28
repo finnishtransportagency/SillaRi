@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
+import fi.vaylavirasto.sillari.service.fim.FIMService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,9 @@ public class RouteTransportService {
     SupervisorRepository supervisorRepository;
     @Autowired
     RouteTransportPasswordRepository routeTransportPasswordRepository;
+    @Autowired
+    FIMService fimService;
+
 
     public RouteTransportModel getRouteTransport(Integer routeTransportId, boolean includePassword) {
         RouteTransportModel routeTransportModel = routeTransportRepository.getRouteTransportById(routeTransportId);
@@ -42,6 +46,7 @@ public class RouteTransportService {
             if (supervisions != null) {
                 supervisions.forEach(supervision -> {
                     supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                    fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors(),"aaa");
                     supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });
             }
@@ -70,6 +75,7 @@ public class RouteTransportService {
                 if (supervisions != null) {
                     supervisions.forEach(supervision -> {
                         supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                        fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors(),"ccc");
                         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                     });
                 }
@@ -141,6 +147,7 @@ public class RouteTransportService {
             if (supervisions != null) {
                 supervisions.forEach(supervision -> {
                     supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                    fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors(), "bbb");
                     // Sets also current status and status timestamps
                     supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });

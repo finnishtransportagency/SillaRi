@@ -172,7 +172,7 @@ supervisionModel.getRouteBridgeId(),
             supervisionModel.setId(supervisionId);
 
             supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
+                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getPriority(), supervisorModel.getUsername());
             });
 
             return supervisionId;
