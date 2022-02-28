@@ -69,7 +69,7 @@ public class SupervisionService {
         Integer supervisionId = supervision.getId();
         supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
         supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
-        fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors(),"ddd");
+        fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
         supervision.setImages(supervisionImageRepository.getFiles(supervisionId));
         // Sets also current status and status timestamps
         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));

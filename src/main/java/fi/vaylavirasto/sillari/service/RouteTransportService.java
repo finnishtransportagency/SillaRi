@@ -46,7 +46,7 @@ public class RouteTransportService {
             if (supervisions != null) {
                 supervisions.forEach(supervision -> {
                     supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
-                    fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors(),"aaa");
+                    fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
                     supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });
             }
@@ -75,7 +75,8 @@ public class RouteTransportService {
                 if (supervisions != null) {
                     supervisions.forEach(supervision -> {
                         supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
-                        fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors(),"ccc");
+                        // Supervisor name not shown in ui from this resource, so we don't waste time getting them
+                        //fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
                         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                     });
                 }
@@ -103,6 +104,8 @@ public class RouteTransportService {
                 if (supervisions != null) {
                     supervisions.forEach(supervision -> {
                         supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                        // Supervisor name not shown in ui from this resource, so we don't waste time getting them
+                        //fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
                         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                     });
                 }
@@ -147,7 +150,10 @@ public class RouteTransportService {
             if (supervisions != null) {
                 supervisions.forEach(supervision -> {
                     supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
-                    fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors(), "bbb");
+
+                    // Supervisor name not shown in ui from this resource, so we don't waste time getting them
+                    //fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
+
                     // Sets also current status and status timestamps
                     supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });

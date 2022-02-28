@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fi.vaylavirasto.sillari.api.rest.error.FIMRestException;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
-import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.fim.responseModel.FIMSupervisorMapper;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Group;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Groups;
@@ -31,19 +30,34 @@ public class FIMService {
     @Value("${sillari.fim.password}")
     private String password;
     private final FIMSupervisorMapper mapper = Mappers.getMapper(FIMSupervisorMapper.class);
+    private List<SupervisorModel> supervisors = new ArrayList<>();
+    private long supervisorsLastQueryedInMillis = 0;
+    private static long CACHE_LIFE_IN_MILLIS = 6000;
+
+
 
     public List<SupervisorModel> getSupervisors() throws FIMRestException {
-        List<SupervisorModel> supervisors = new ArrayList<>();
+         if(!cachedDataCurrent()) {
+             logger.debug("Get from FIM. Not using cached supervisornames");
+             supervisorsLastQueryedInMillis = System.currentTimeMillis();
+             supervisors = new ArrayList<>();
 
-            Groups groups = getSupervisorsXML();
-            Group group = groups.getGroup().get(0);
+             Groups groups = getSupervisorsXML();
+             Group group = groups.getGroup().get(0);
 
-            for (Person persons : group.getPersons().getPerson()) {
-                SupervisorModel supervisor = mapper.fromDTOToModel(persons);
-                supervisors.add(supervisor);
-            }
-
+             for (Person persons : group.getPersons().getPerson()) {
+                 SupervisorModel supervisor = mapper.fromDTOToModel(persons);
+                 supervisors.add(supervisor);
+             }
+         }
+         else{
+             logger.debug("Using cached supervisornames");
+         }
         return supervisors;
+    }
+
+    private boolean cachedDataCurrent() {
+        return System.currentTimeMillis() - supervisorsLastQueryedInMillis < CACHE_LIFE_IN_MILLIS;
     }
 
     public Groups getSupervisorsXML() throws FIMRestException {
@@ -81,8 +95,8 @@ public class FIMService {
     }
 
 
-    public void populateSupervisorNamesFromFIM(List<SupervisorModel> supervisionSupervisors, String naem) {
-
+    public void populateSupervisorNamesFromFIM(List<SupervisorModel> supervisionSupervisors) {
+        logger.debug("getting supervisors from FIMREST");
         List<SupervisorModel> allSupervisors = new ArrayList<>();
         try {
             allSupervisors = getSupervisors();
@@ -94,10 +108,11 @@ public class FIMService {
             try {
                 SupervisorModel supervisorFromFIM = allSupervisors.stream().filter(s -> s.getUsername().equals(selectedSupervisor.getUsername())).findFirst().orElseThrow();
                 selectedSupervisor.setFirstName(supervisorFromFIM.getFirstName());
+                //  selectedSupervisor.setFirstName(supervisorFromFIM.getFirstName());
                 selectedSupervisor.setLastName(supervisorFromFIM.getLastName());
             } catch (NoSuchElementException nee) {
                 logger.warn("Supervisor username not in FIM data");
-                selectedSupervisor.setFirstName(naem);
+                selectedSupervisor.setFirstName("XXX");
                 selectedSupervisor.setLastName("XXX");
             }
 
