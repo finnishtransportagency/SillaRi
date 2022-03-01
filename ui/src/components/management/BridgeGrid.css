@@ -1,7 +1,7 @@
 .bridgeGrid {
-  border: 2px solid var(--ion-color-base);
+  border: 2px solid var(--ion-color-light);
 }
 
 .bridgeGrid > ion-row {
-  border-top: 2px solid var(--ion-color-base);
+  border-top: 2px solid var(--ion-color-light);
 }

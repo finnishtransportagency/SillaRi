@@ -1,11 +1,11 @@
 .customAccordion .accordion__panel {
-  border: 2px solid var(--ion-color-base);
+  border: 2px solid var(--ion-color-light);
   border-top: 0;
 }
 
 .customAccordion .accordion__button {
   cursor: pointer;
-  border: 2px solid var(--ion-color-base);
+  border: 2px solid var(--ion-color-light);
   border-bottom: 2px solid var(--ion-color-light);
 }
 
