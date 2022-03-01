@@ -1,0 +1,65 @@
+sillari:
+  wmts:
+    url: https://oag.vayla.fi/rasteripalvelu-mml/wmts/maasto/1.0.0/
+  geoserver:
+    url: https://sillaripreprod.testivaylapilvi.fi/geoserver/
+  lelu:
+    version: @leluApiVersion@
+    routeuploadpath: /tmp
+  trex:
+    url: https://oag.vayla.fi/trex/rajapinta/taitorakenne/v2/yleistiedot/silta
+spring:
+  application:
+    name: SillaRi
+  datasource:
+    # Values from pom.xml profile properties
+    url: ${db_url}
+    username: ${db_username}
+    password: ${db_password}
+    driver-class-name: org.postgresql.Driver
+  jooq:
+    sql-dialect: POSTGRES
+  flyway:
+    enabled: true
+    baselineOnMigrate: true
+logging:
+  config: classpath:log4j2-test.xml
+server:
+  port: 8081
+  servlet: # 2.0
+    context-path: /api
+management:
+  contextPath: /actuator
+  security:
+    enabled: false
+  endpoints:
+    prometheus:
+      enabled: true
+    web:
+      exposure:
+        include: '*'
+      base-path: /actuator
+  health:
+    jms:
+      enabled: false
+  info:
+    git:
+      mode: full
+endpoints:
+  prometheus:
+    enabled: true
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operationsSorter: alpha
+    tagsSorter: alpha
+  show-actuator: true
+  version: 3.0
+  api-docs:
+    groups:
+      enabled: true
+  group-configs:
+    - group: api
+      packagesToScan: fi.vaylavirasto.sillari.api
