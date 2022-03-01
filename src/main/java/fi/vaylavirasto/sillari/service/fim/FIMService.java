@@ -38,7 +38,7 @@ public class FIMService {
 
     public List<SupervisorModel> getSupervisors() throws FIMRestException {
          if(!cachedDataCurrent()) {
-             logger.debug("Get from FIM. Not using cached supervisornames");
+             logger.trace("Get from FIM. Not using cached supervisornames");
              supervisorsLastQueryedInMillis = System.currentTimeMillis();
              supervisors = new ArrayList<>();
 
@@ -51,17 +51,17 @@ public class FIMService {
              }
          }
          else{
-             logger.debug("Using cached supervisornames");
+             logger.trace("Using cached supervisornames");
          }
         return supervisors;
     }
 
     private boolean cachedDataCurrent() {
-        return System.currentTimeMillis() - supervisorsLastQueryedInMillis < CACHE_LIFE_IN_MILLIS;
+        return !supervisors.isEmpty()  && System.currentTimeMillis() - supervisorsLastQueryedInMillis < CACHE_LIFE_IN_MILLIS;
     }
 
     public Groups getSupervisorsXML() throws FIMRestException {
-        logger.debug("Get supervisors from fimrest");
+        logger.trace("Get supervisors from fimrest");
         WebClient webClient = buildClient();
         try {
             String xml = webClient.get()
@@ -71,14 +71,13 @@ public class FIMService {
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
-            logger.debug("groups: " + xml);
+            logger.trace("groups: " + xml);
             XmlMapper xmlMapper = new XmlMapper();
             xmlMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
 
             Groups groups = null;
 
             groups = xmlMapper.readValue(xml, Groups.class);
-            logger.debug("hello: " + groups);
             return groups;
 
 
@@ -96,10 +95,12 @@ public class FIMService {
 
 
     public void populateSupervisorNamesFromFIM(List<SupervisorModel> supervisionSupervisors) {
-        logger.debug("getting supervisors from FIMREST");
+        logger.trace("getting supervisors from FIMREST");
+        boolean fimQuerySuccess  = false;
         List<SupervisorModel> allSupervisors = new ArrayList<>();
         try {
             allSupervisors = getSupervisors();
+            fimQuerySuccess =true;
         } catch (FIMRestException e) {
             logger.error("Error getting supervisors from FIMREST " + e.getMessage());
         }
@@ -110,7 +111,13 @@ public class FIMService {
                 selectedSupervisor.setFirstName(supervisorFromFIM.getFirstName());
                 selectedSupervisor.setLastName(supervisorFromFIM.getLastName());
             } catch (NoSuchElementException nee) {
-                logger.warn("Supervisor username not in FIM data");
+                if(fimQuerySuccess){
+                    logger.warn("Using supervisor username as name. Supervisor not found FIM data: " + selectedSupervisor.getUsername());
+                }
+                else{
+                    logger.warn("Using supervisor username as name. Fetching from FIMREST failed.");
+                }
+
                 selectedSupervisor.setFirstName(selectedSupervisor.getUsername());
                 selectedSupervisor.setLastName("");
             }
