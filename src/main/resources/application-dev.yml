@@ -10,8 +10,8 @@ sillari:
     url: https://testioag.vayla.fi/trex/rajapinta/taitorakenne/v2/yleistiedot/silta
   fim:
     url: https://testioag.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/getGroup2?displayName=sillari_sillanvalvoja
-    username:todo 
-    password:todo
+    username: ${FIM_USERNAME}
+    password: ${FIM_PASSWORD}
 spring:
   application:
     name: SillaRi
