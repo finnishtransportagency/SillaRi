@@ -53,6 +53,19 @@ const App: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // Add or remove the "dark" class based on if the media query matches
+    const toggleDarkTheme = (shouldAdd: boolean) => {
+      document.body.classList.toggle("dark", shouldAdd);
+    };
+
+    // Use matchMedia to check the user preference
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+    toggleDarkTheme(prefersDark.matches);
+
+    // Listen for changes to the prefers-color-scheme media query
+    prefersDark.addEventListener("change", (mediaQuery) => toggleDarkTheme(mediaQuery.matches));
+
     const fetchUserData = async () => {
       try {
         /* Disabling caching to avoid getting stale user data. */
