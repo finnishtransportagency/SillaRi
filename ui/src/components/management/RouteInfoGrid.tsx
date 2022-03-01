@@ -1,7 +1,7 @@
-import React, { Dispatch, MouseEvent, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText, useIonPopover } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
 import moment from "moment";
 import CustomSelect from "../common/CustomSelect";
 import IPermit from "../../interfaces/IPermit";

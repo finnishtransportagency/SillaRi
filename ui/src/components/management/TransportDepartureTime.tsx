@@ -12,7 +12,6 @@ import {
   IonLabel,
   IonModal,
   IonRow,
-  IonText,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -73,69 +72,54 @@ const TransportDepartureTime = ({
   };
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle class="headingText">{t("management.transportDetail.transportDepartureTime.header")}</IonTitle>
-          <IonButtons slot="end">
-            <IonButton onClick={(evt) => closeModal(evt as MouseEvent)}>
-              <IonIcon className="otherIconLarge" icon={close} color="primary" />
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
+    <IonContent>
+      <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
+        <IonHeader className="ion-no-border">
+          <IonToolbar color="light">
+            <IonTitle className="headingText">{t("management.transportDetail.transportDepartureTime.header")}</IonTitle>
+            <IonButtons slot="end">
+              <IonButton onClick={(evt) => closeModal(evt as MouseEvent)}>
+                <IonIcon className="otherIconLarge" icon={close} color="primary" />
+              </IonButton>
+            </IonButtons>
+          </IonToolbar>
+        </IonHeader>
 
-      <IonContent>
         <IonGrid className="ion-no-padding ion-margin">
-          <IonRow>
-            <IonCol>
-              <IonGrid className="ion-no-padding">
-                <IonRow className="ion-margin-top">
-                  <IonCol>
-                    <IonText className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureDate")}</IonText>
-                  </IonCol>
-                </IonRow>
-                <IonRow>
-                  <IonCol>
-                    <DatePicker value={departureTime} onChange={setPlannedDepartureDate} />
-                  </IonCol>
-                </IonRow>
-              </IonGrid>
+          <IonRow className="ion-margin-top">
+            <IonCol className="ion-padding-end">
+              <IonLabel className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureDate")}</IonLabel>
+              <DatePicker value={departureTime} onChange={setPlannedDepartureDate} />
             </IonCol>
-
             <IonCol>
-              <IonGrid className="ion-no-padding">
-                <IonRow className="ion-margin-start ion-margin-end ion-margin-top">
-                  <IonCol>
-                    <IonText className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureTime")}</IonText>
-                  </IonCol>
-                </IonRow>
-                <IonRow className="ion-margin-start ion-margin-end">
-                  <IonCol>
-                    <TimePicker value={departureTime} onChange={setPlannedDepartureTime} />
-                  </IonCol>
-                </IonRow>
-              </IonGrid>
+              <IonLabel className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureTime")}</IonLabel>
+              <TimePicker value={departureTime} onChange={setPlannedDepartureTime} />
             </IonCol>
           </IonRow>
-          <IonRow>
-            <IonItem lines="none">
-              <IonIcon className="otherIcon" icon={infoOutline} slot="start" />
-              <IonLabel className="itemLabel">{t("management.transportDetail.transportDepartureTime.info")}</IonLabel>
-            </IonItem>
+          <IonRow className="ion-margin-top">
+            <IonCol>
+              <IonItem className="ion-no-padding" lines="none">
+                <IonIcon className="otherIcon" icon={infoOutline} slot="start" />
+                <IonLabel className="itemLabel">{t("management.transportDetail.transportDepartureTime.info")}</IonLabel>
+              </IonItem>
+            </IonCol>
           </IonRow>
-          <IonRow>
-            <IonButton color="secondary" expand="block" onClick={(evt) => closeModal(evt)}>
-              {t("common.buttons.cancel")}
-            </IonButton>
-            {/*TODO disabled when date validation fails*/}
-            <IonButton color="primary" expand="block" onClick={(evt) => updatePlannedDeparture(evt)}>
-              {t("management.transportDetail.transportDepartureTime.setTime")}
-            </IonButton>
+          <IonRow className="ion-margin-top ion-justify-content-end">
+            <IonCol className="ion-padding-end" size-lg="3">
+              <IonButton color="secondary" expand="block" onClick={(evt) => closeModal(evt)}>
+                {t("common.buttons.cancel")}
+              </IonButton>
+            </IonCol>
+            <IonCol size-lg="4">
+              {/*TODO disabled when date validation fails*/}
+              <IonButton color="primary" expand="block" onClick={(evt) => updatePlannedDeparture(evt)}>
+                {t("management.transportDetail.transportDepartureTime.setTime")}
+              </IonButton>
+            </IonCol>
           </IonRow>
         </IonGrid>
-      </IonContent>
-    </IonModal>
+      </IonModal>
+    </IonContent>
   );
 };
 
