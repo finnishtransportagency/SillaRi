@@ -197,7 +197,7 @@ body.dark {
   --ion-color-success-tint: #98d07c;
 
   /** success additional (Vayla green) **/
-  --ion-color-success-25: #e3f2db;
+  --ion-color-success-25: #6a9852;
 
   /** warning (Vayla yellow) **/
   --ion-color-warning: #ffc300;
@@ -216,7 +216,7 @@ body.dark {
   --ion-color-danger-tint: #cd521a;
 
   /** danger additional **/
-  --ion-color-danger-25: #f1cfc0;
+  --ion-color-danger-25: #952f00;
 
   /** dark (same as light mode light) **/
   --ion-color-dark: #f4f5f8;

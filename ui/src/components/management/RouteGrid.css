@@ -13,6 +13,7 @@
 
 .routeGridStatus {
   padding: 6px;
+  color: #000000 !important; /* always black due to colours defined below */
 }
 
 .routeGridStatus_departed,
