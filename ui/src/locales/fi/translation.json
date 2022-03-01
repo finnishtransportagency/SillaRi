@@ -286,7 +286,7 @@
         "origin": "Lähtöpaikka",
         "destination": "Määräpaikka",
         "showRouteOnMap": "Näytä reitti kartalla",
-        "tractorUnitIdentifier": "Ajoneuvon rekisteritunnus (vetoauto)",
+        "tractorUnitIdentifier": "Ajoneuvon rekisteritunnus (ensimmäinen vetoauto)",
         "tractorUnitNotSelected": "Rekisteritunnus puuttuu",
         "pushingVehicle": "lisä- tai työntöauto"
       },
