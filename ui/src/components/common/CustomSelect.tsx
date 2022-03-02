@@ -42,7 +42,7 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput }: Custo
         control: (provided) => ({
           ...provided,
           backgroundColor: "var(--ion-background-color)",
-          borderColor: "var(--ion-color-light)",
+          borderColor: "var(--ion-color-step-150)",
           borderWidth: "2px",
         }),
         singleValue: (provided) => ({

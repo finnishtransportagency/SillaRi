@@ -6,7 +6,7 @@
 .customAccordion .accordion__button {
   cursor: pointer;
   border: 2px solid var(--ion-color-light);
-  border-bottom: 2px solid var(--ion-color-light);
+  border-top: 0;
 }
 
 .customAccordion .accordion__button[aria-expanded="true"],
