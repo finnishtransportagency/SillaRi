@@ -1,6 +1,5 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import moment from "moment";
@@ -15,6 +14,7 @@ import IVehicle from "../../interfaces/IVehicle";
 import mapPoint from "../../theme/icons/map-point.svg";
 import { DATE_FORMAT, SupervisorType, TIME_FORMAT_MIN, VehicleRole } from "../../utils/constants";
 import { isTransportEditable } from "../../utils/validation";
+import MapModal from "../MapModal";
 
 interface RouteInfoGridProps {
   routeTransportId: number;
@@ -38,6 +38,8 @@ const RouteInfoGrid = ({
   setSelectedVehicle,
 }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
+
+  const [isMapModalOpen, setMapModalOpen] = useState<boolean>(false);
 
   const { routes: permitRoutes = [], vehicles = [] } = permit || {};
   const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
@@ -207,10 +209,14 @@ const RouteInfoGrid = ({
               <IonCol size="12" size-lg="4" />
               <IonCol size="12" size-lg="8">
                 {selectedRouteId > 0 && (
-                  <Link to={`/routemap/${selectedRouteId}`}>
-                    <IonText className="linkText">{t("management.transportDetail.routeInfo.showRouteOnMap")}</IonText>
+                  <>
+                    <IonText className="linkText" onClick={() => setMapModalOpen(true)}>
+                      {t("management.transportDetail.routeInfo.showRouteOnMap")}
+                    </IonText>
                     <IonIcon className="otherIcon" icon={mapPoint} />
-                  </Link>
+
+                    <MapModal routeId={String(selectedRouteId)} isOpen={isMapModalOpen} setIsOpen={() => setMapModalOpen(false)} />
+                  </>
                 )}
               </IonCol>
             </IonRow>
