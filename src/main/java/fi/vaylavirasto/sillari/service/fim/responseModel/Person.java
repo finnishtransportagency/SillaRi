@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.service.fim.responseModel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -34,13 +35,22 @@ import lombok.ToString;
 @Getter
 @Setter
 public class Person {
+    @JsonProperty("ObjectKey")
     protected String objectKey;
+    @JsonProperty("ObjectID")
     protected String objectID;
+    @JsonProperty("AccountName")
     protected String accountName;
+    @JsonProperty("DisplayName")
     protected String displayName;
+    @JsonProperty("FirstName")
     protected String firstName;
+    @JsonProperty("LastName")
     protected String lastName;
+    @JsonProperty("Email")
     protected String email;
+    @JsonProperty("Yksikko")
     protected String yksikko;
+    @JsonProperty("Department")
     protected String department;
 }

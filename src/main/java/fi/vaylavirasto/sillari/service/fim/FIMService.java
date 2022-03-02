@@ -73,9 +73,8 @@ public class FIMService {
                     .block();
             logger.trace("groups: " + xml);
             XmlMapper xmlMapper = new XmlMapper();
-            xmlMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
 
-            Groups groups = null;
+            Groups groups;
 
             groups = xmlMapper.readValue(xml, Groups.class);
             return groups;

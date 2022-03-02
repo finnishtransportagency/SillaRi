@@ -8,6 +8,7 @@
 
 package fi.vaylavirasto.sillari.service.fim.responseModel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -40,8 +41,11 @@ import lombok.ToString;
 @Getter
 @Setter
 public class Group {
+    @JsonProperty("ObjectKey")
     protected String objectKey;
+    @JsonProperty("ObjectID")
     protected String objectID;
+    @JsonProperty("DisplayName")
     protected String displayName;
     protected Persons persons;
 
