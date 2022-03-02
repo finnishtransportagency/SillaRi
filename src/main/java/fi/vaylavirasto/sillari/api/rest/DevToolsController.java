@@ -132,28 +132,6 @@ public class DevToolsController {
                 "                <Yksikko/>\n" +
                 "                <Department/>\n" +
                 "            </person>\n" +
-                "            <person>\n" +
-                "                <ObjectKey>335342</ObjectKey>\n" +
-                "                <ObjectID>041b5510-4af3-4273-a07c-10716aba4e71</ObjectID>\n" +
-                "                <AccountName>K670970</AccountName>\n" +
-                "                <DisplayName>Upla Janne</DisplayName>\n" +
-                "                <FirstName>Janne</FirstName>\n" +
-                "                <LastName>Upla</LastName>\n" +
-                "                <Email>janne.upla@cgi.com</Email>\n" +
-                "                <Yksikko/>\n" +
-                "                <Department/>\n" +
-                "            </person>\n" +
-                "            <person>\n" +
-                "                <ObjectKey>2999351</ObjectKey>\n" +
-                "                <ObjectID>52f05daa-dbf9-4efb-a71d-785f30c3df55</ObjectID>\n" +
-                "                <AccountName>L683844</AccountName>\n" +
-                "                <DisplayName>Vina Miina</DisplayName>\n" +
-                "                <FirstName>Miina</FirstName>\n" +
-                "                <LastName>Vina</LastName>\n" +
-                "                <Email>miina.vina@testi.vayla.fi</Email>\n" +
-                "                <Yksikko>ICT-yksikkö</Yksikko>\n" +
-                "                <Department>Tieto</Department>\n" +
-                "            </person>\n" +
                 "        </persons>\n" +
                 "    </group>\n" +
                 "</groups>";
