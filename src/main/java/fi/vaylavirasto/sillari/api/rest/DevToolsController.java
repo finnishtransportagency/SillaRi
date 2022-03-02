@@ -37,7 +37,7 @@ public class DevToolsController {
     @Operation(summary = "Test basic get request with constant bridge")
     public Groups testConnectionToFim() throws TRexRestException {
 
-        logger.debug("HELLO test connections to fim");
+        logger.debug("Test connections to fim");
 
         try {
             Groups groups = fimService.getSupervisorsXML();

@@ -160,7 +160,7 @@ public class SupervisionRepository {
                             TableAlias.supervision.SUPERVISOR_TYPE,
                             TableAlias.supervision.CONFORMS_TO_PERMIT
                     ).values(
-supervisionModel.getRouteBridgeId(),
+                    supervisionModel.getRouteBridgeId(),
                     supervisionModel.getRouteTransportId(),
                     supervisionModel.getPlannedTime(),
                     supervisionModel.getSupervisorType().toString(),
