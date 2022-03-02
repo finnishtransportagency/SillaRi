@@ -15,7 +15,7 @@ const SupervisorSelect = ({ supervisors, supervision, priority, value, setSuperv
   return (
     <CustomSelect
       options={supervisors.map((supervisor) => {
-        const { id: supervisorId, firstName, lastName, username } = supervisor;
+        const { firstName, lastName, username } = supervisor;
         return { value: username, label: `${firstName} ${lastName}` };
       })}
       selectedValue={value?.username}

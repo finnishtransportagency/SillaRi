@@ -192,7 +192,7 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
                         // which causes infinite loops when supervisors are updated from setAllBridgesSupervisor
                         // (onIonChange event is triggered from supervision changes in state. Key change creates a new instance of the select.)
                         <SupervisorSelect
-                          key={`${routeBridgeId}-${supervisor1?.priority}-${supervisor1?.id}`}
+                          key={`${routeBridgeId}-${supervisor1?.priority}-${supervisor1?.username}`}
                           supervisors={supervisors}
                           supervision={supervision}
                           priority={1}
@@ -217,7 +217,7 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
                     <IonCol>
                       {isEditable ? (
                         <SupervisorSelect
-                          key={`${routeBridgeId}-${supervisor2?.priority}-${supervisor2?.id}`}
+                          key={`${routeBridgeId}-${supervisor2?.priority}-${supervisor2?.username}`}
                           supervisors={supervisors}
                           supervision={supervision}
                           priority={2}
