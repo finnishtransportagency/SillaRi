@@ -36,6 +36,9 @@ public class LeluBridgeDTO {
     @Schema(description = "Contract number in LeLu.", example = "12345")
     private Long contractNumber;
 
+    @Schema(description = "Number of crossing, starting from 1.")
+    private Integer transportNumber;
+
     public LeluBridgeDTO() {
     }
 
