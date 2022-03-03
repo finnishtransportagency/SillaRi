@@ -2,7 +2,7 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.lelu.permit_current.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit_current.LeluPermitResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.permit_currentPdf.LeluPermiPdfResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
