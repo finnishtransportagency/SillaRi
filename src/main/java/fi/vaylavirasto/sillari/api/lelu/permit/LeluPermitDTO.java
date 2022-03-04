@@ -74,7 +74,7 @@ public class LeluPermitDTO {
     private List<LeluRouteDTO> routes;
 
     @Valid
-    @Schema(description = "Authorizer for the company, 'valtuussvastaava'", required = false)
+    @Schema(description = "Authorizer for the company, 'valtuusvastaava'", required = false)
     private LeluCompanyAuthorizerDTO companyAuthorizer;
 
 }
