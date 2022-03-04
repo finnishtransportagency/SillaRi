@@ -69,7 +69,7 @@ const RouteInfoGrid = ({
             id: 0,
             routeBridgeId,
             routeTransportId,
-            plannedTime: moment().toDate(), // TODO should this use the selected departure time or reset?
+            plannedTime: plannedDepartureTime ? plannedDepartureTime : moment().toDate(),
             conformsToPermit: false,
             supervisorType: contractNumber > 0 ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR,
             supervisors: [],
