@@ -2,8 +2,12 @@
 
 .map {
   position: fixed;
+  /*
   top: var(--offset-top);
   bottom: var(--offset-bottom);
+  */
+  top: 0px;
+  bottom: 0px;
   left: 0px;
   right: 0px;
 }

@@ -287,7 +287,7 @@
         "origin": "(SV) Origin",
         "destination": "(SV) Destination",
         "showRouteOnMap": "(SV) Show route on map",
-        "tractorUnitIdentifier": "(SV) Vehicle registration number (tractor unit)",
+        "tractorUnitIdentifier": "(SV) Vehicle registration number (first tractor unit)",
         "tractorUnitNotSelected": "(SV) Registration number missing",
         "pushingVehicle": "(SV) additional or pushing vehicle"
       },

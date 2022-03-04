@@ -42,11 +42,17 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput, usePort
       styles={{
         control: (provided) => ({
           ...provided,
-          borderColor: "var(--ion-color-base)",
+          backgroundColor: "var(--ion-background-color)",
+          borderColor: "var(--ion-color-step-150)",
           borderWidth: "2px",
+        }),
+        singleValue: (provided) => ({
+          ...provided,
+          color: "var(--ion-text-color)",
         }),
         menu: (provided) => ({
           ...provided,
+          backgroundColor: "var(--ion-background-color)",
           zIndex: 999,
         }),
       }}

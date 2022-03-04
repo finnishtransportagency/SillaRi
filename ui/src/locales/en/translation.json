@@ -287,7 +287,7 @@
         "origin": "Origin",
         "destination": "Destination",
         "showRouteOnMap": "Show route on map",
-        "tractorUnitIdentifier": "Vehicle registration number (tractor unit)",
+        "tractorUnitIdentifier": "Vehicle registration number (first tractor unit)",
         "tractorUnitNotSelected": "Registration number missing",
         "pushingVehicle": "additional or pushing vehicle"
       },
