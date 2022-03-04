@@ -4,8 +4,8 @@
 
 .mainSegmentButton {
   --background: var(--ion-color-primary);
-  --background-checked: white;
-  --color: white;
+  --background-checked: var(--ion-background-color);
+  --color: var(--ion-background-color);
   --color-checked: var(--ion-color-primary);
   --indicator-color: var(--ion-color-primary);
 }
