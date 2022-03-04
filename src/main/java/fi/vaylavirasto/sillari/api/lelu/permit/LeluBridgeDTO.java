@@ -39,7 +39,7 @@ public class LeluBridgeDTO {
     @Schema(description = "Contractor y-tunnus from Harja. Might be missing", example = "1234567-8")
     private String contractBusinessIdentifier;
 
-    @Schema(description = "Number of crossing, starting from 1.", example = "1")
+    @Schema(description = "Order number of crossing, starting from 1.", example = "1")
     @NotBlank(message = "{transport.number.not.blank}")
     private Integer transportNumber;
 
