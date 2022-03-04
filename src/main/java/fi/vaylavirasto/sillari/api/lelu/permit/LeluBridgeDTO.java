@@ -36,7 +36,7 @@ public class LeluBridgeDTO {
     @Schema(description = "Contract number in LeLu.", example = "12345")
     private Long contractNumber;
 
-    @Schema(description = "Contractor y-tunnus from Harja. Might be missing", example = "12345")
+    @Schema(description = "Contractor y-tunnus from Harja. Might be missing", example = "1234567-8")
     private String contractBusinessIdentifier;
 
     @Schema(description = "Number of crossing, starting from 1.", example = "1")
