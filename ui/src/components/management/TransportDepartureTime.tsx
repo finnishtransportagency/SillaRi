@@ -100,11 +100,11 @@ const TransportDepartureTime = ({ modifiedRouteTransportDetail, setModifiedRoute
           <IonRow className="ion-margin-top">
             <IonCol className="ion-padding-end">
               <IonLabel className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureDate")}</IonLabel>
-              <DatePicker value={departureTime} onChange={setPlannedDepartureDate} />
+              <DatePicker value={departureTime} onChange={setPlannedDepartureDate} usePortal={true} />
             </IonCol>
             <IonCol>
               <IonLabel className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureTime")}</IonLabel>
-              <TimePicker value={departureTime} onChange={setPlannedDepartureTime} />
+              <TimePicker value={departureTime} onChange={setPlannedDepartureTime} usePortal={true} />
             </IonCol>
           </IonRow>
           <IonRow className="ion-margin-top">
