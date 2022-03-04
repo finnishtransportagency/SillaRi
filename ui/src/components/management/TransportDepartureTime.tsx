@@ -4,13 +4,12 @@ import {
   IonButton,
   IonButtons,
   IonCol,
-  IonContent,
   IonGrid,
   IonHeader,
   IonIcon,
   IonItem,
   IonLabel,
-  IonModal,
+  IonPopover,
   IonRow,
   IonTitle,
   IonToolbar,
@@ -20,25 +19,32 @@ import TimePicker from "../common/TimePicker";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import close from "../../theme/icons/close_large.svg";
 import infoOutline from "../../theme/icons/info-outline.svg";
+import "./TransportDepartureTime.css";
 
 interface TransportDepartureTimeProps {
-  isOpen: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
   modifiedRouteTransportDetail: IRouteTransport;
   setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
 }
 
-const TransportDepartureTime = ({
-  isOpen,
-  setOpen,
-  modifiedRouteTransportDetail,
-  setModifiedRouteTransportDetail,
-}: TransportDepartureTimeProps): JSX.Element => {
+const TransportDepartureTime = ({ modifiedRouteTransportDetail, setModifiedRouteTransportDetail }: TransportDepartureTimeProps): JSX.Element => {
   const { t } = useTranslation();
+
+  /*Event is needed for positioning the popup relative to the element which triggered the event*/
+  const [popoverState, setShowPopover] = useState({ showPopover: false, event: undefined });
 
   const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
   const estimatedDeparture = plannedDepartureTime ? plannedDepartureTime : new Date();
   const [departureTime, setDepartureTime] = useState<Date>(estimatedDeparture);
+
+  // Must use event type "any" because "Type 'MouseEvent' is not assignable to type 'undefined'" (example from https://ionicframework.com/docs/api/popover#usage)
+  const showPopup = (evt: any) => {
+    evt.persist();
+    setShowPopover({ showPopover: true, event: evt });
+  };
+
+  const hidePopup = () => {
+    setShowPopover({ showPopover: false, event: undefined });
+  };
 
   const setPlannedDepartureDate = (dateTime: Date) => {
     const dt = new Date(departureTime);
@@ -58,27 +64,32 @@ const TransportDepartureTime = ({
     setDepartureTime(dt);
   };
 
-  const closeModal = (evt: MouseEvent) => {
+  const cancelChanges = (evt: MouseEvent) => {
     evt.stopPropagation();
-    setOpen(false);
-    setDepartureTime(estimatedDeparture);
+    hidePopup();
+    setDepartureTime(plannedDepartureTime ? plannedDepartureTime : new Date());
   };
 
   const updatePlannedDeparture = (evt: MouseEvent) => {
     evt.stopPropagation();
     const newRouteTransport: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: departureTime };
     setModifiedRouteTransportDetail(newRouteTransport);
-    setOpen(false);
+    hidePopup();
   };
 
   return (
-    <IonContent>
-      <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
+    <>
+      <IonButton color="secondary" expand="block" onClick={(evt) => showPopup(evt)}>
+        {!plannedDepartureTime
+          ? t("management.transportDetail.buttons.setDepartureTime")
+          : t("management.transportDetail.buttons.updateDepartureTime")}
+      </IonButton>
+      <IonPopover className="largePopover" isOpen={popoverState.showPopover} onDidDismiss={() => hidePopup()} event={popoverState.event} side="right">
         <IonHeader className="ion-no-border">
           <IonToolbar color="light">
             <IonTitle className="headingText">{t("management.transportDetail.transportDepartureTime.header")}</IonTitle>
             <IonButtons slot="end">
-              <IonButton onClick={(evt) => closeModal(evt as MouseEvent)}>
+              <IonButton onClick={(evt) => cancelChanges(evt as MouseEvent)}>
                 <IonIcon className="otherIconLarge" icon={close} color="primary" />
               </IonButton>
             </IonButtons>
@@ -106,7 +117,7 @@ const TransportDepartureTime = ({
           </IonRow>
           <IonRow className="ion-margin-top ion-justify-content-end">
             <IonCol className="ion-padding-end" size-lg="3">
-              <IonButton color="secondary" expand="block" onClick={(evt) => closeModal(evt)}>
+              <IonButton color="secondary" expand="block" onClick={(evt) => cancelChanges(evt)}>
                 {t("common.buttons.cancel")}
               </IonButton>
             </IonCol>
@@ -118,8 +129,8 @@ const TransportDepartureTime = ({
             </IonCol>
           </IonRow>
         </IonGrid>
-      </IonModal>
-    </IonContent>
+      </IonPopover>
+    </>
   );
 };
 

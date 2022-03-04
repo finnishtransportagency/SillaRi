@@ -1,7 +1,7 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
+import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
 import moment from "moment";
 import CustomSelect from "../common/CustomSelect";
 import IPermit from "../../interfaces/IPermit";
@@ -37,7 +37,6 @@ const RouteInfoGrid = ({
   setSelectedVehicle,
 }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
-  const [isDepartureTimeOpen, setDepartureTimeOpen] = useState<boolean>(false);
 
   const { routes: permitRoutes = [], vehicles = [] } = permit || {};
   const { id: selectedRouteId, name: selectedRouteName, departureAddress, arrivalAddress } = selectedRouteOption || {};
@@ -98,18 +97,11 @@ const RouteInfoGrid = ({
           <IonRow>{plannedDepartureTime && <Moment format={DATE_TIME_FORMAT_MIN}>{plannedDepartureTime}</Moment>}</IonRow>
           <IonRow>
             {isEditable && (
-              <IonButton color="secondary" expand="block" onClick={() => setDepartureTimeOpen(true)}>
-                {!plannedDepartureTime
-                  ? t("management.transportDetail.buttons.setDepartureTime")
-                  : t("management.transportDetail.buttons.updateDepartureTime")}
-              </IonButton>
+              <TransportDepartureTime
+                modifiedRouteTransportDetail={modifiedRouteTransportDetail}
+                setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+              />
             )}
-            <TransportDepartureTime
-              isOpen={isDepartureTimeOpen}
-              setOpen={setDepartureTimeOpen}
-              modifiedRouteTransportDetail={modifiedRouteTransportDetail}
-              setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-            />
           </IonRow>
         </IonCol>
       </IonRow>
