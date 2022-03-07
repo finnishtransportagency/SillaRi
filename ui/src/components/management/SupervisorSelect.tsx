@@ -22,7 +22,6 @@ const SupervisorSelect = ({ supervisors, supervision, priority, value, setSuperv
       onChange={(supervisorId) =>
         supervision ? setSupervisor(priority, supervisorId as number, supervision) : setSupervisor(priority, supervisorId as number)
       }
-      hasError={false}
     />
   );
 };

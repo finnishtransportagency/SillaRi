@@ -273,8 +273,8 @@
       "buttons": {
         "generatePassword": "(SV) New password",
         "deleteTransport": "(SV) Delete transport",
-        "setDepartureTime": "Set estimated departure time",
-        "updateDepartureTime": "Update estimated departure time"
+        "setDepartureTime": "(SV) Set estimated departure time",
+        "updateDepartureTime": "(SV) Update departure time"
       },
       "alert": {
         "generatePassword": "(SV) Are you sure you want to generate a new password?",
@@ -310,6 +310,7 @@
         "header": "(SV) Estimated departure time",
         "estimatedDepartureDate": "(SV) Estimated departure date",
         "estimatedDepartureTime": "(SV) time",
+        "departureAt": "(SV) at",
         "setTime": "(SV) Set",
         "updateTime": "(SV) Update",
         "info": "(SV) IMPORTANT. Departure time affects the estimated crossing times of the bridges."

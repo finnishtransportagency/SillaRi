@@ -23,3 +23,8 @@ export const isTransportEditable = (transport: IRouteTransport, permit: IPermit)
     return false;
   }
 };
+
+export const isTimestampCurrentOrAfter = (dateTime: Date): boolean => {
+  const now = moment(new Date());
+  return moment(dateTime).isAfter(now, "minute") || moment(dateTime).isSame(now, "minute");
+};

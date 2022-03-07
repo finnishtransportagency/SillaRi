@@ -59,7 +59,6 @@ const DatePicker = ({ value, onChange, usePortal }: DatePickerProps): JSX.Elemen
         onChange(moment(date).toDate());
       }}
       validateInput={validateInput}
-      hasError={false}
       usePortal={usePortal}
     />
   );
@@ -67,6 +66,7 @@ const DatePicker = ({ value, onChange, usePortal }: DatePickerProps): JSX.Elemen
 
 DatePicker.defaultProps = {
   className: undefined,
+  usePortal: false,
 };
 
 export default DatePicker;

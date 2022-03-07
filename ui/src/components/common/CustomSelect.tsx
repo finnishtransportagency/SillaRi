@@ -10,7 +10,7 @@ interface CustomSelectProps {
   selectedValue?: string | number;
   onChange?: (value?: string | number) => void;
   validateInput?: (inputValue: string, prevInputValue: string) => string;
-  hasError: boolean;
+  hasError?: boolean;
   usePortal?: boolean;
 }
 
@@ -87,6 +87,8 @@ CustomSelect.defaultProps = {
   selectedValue: undefined,
   onChange: undefined,
   validateInput: undefined,
+  hasError: false,
+  usePortal: false,
 };
 
 export default CustomSelect;

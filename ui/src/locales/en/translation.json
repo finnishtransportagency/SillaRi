@@ -274,7 +274,7 @@
         "generatePassword": "New password",
         "deleteTransport": "Delete transport",
         "setDepartureTime": "Set estimated departure time",
-        "updateDepartureTime": "Update estimated departure time"
+        "updateDepartureTime": "Update departure time"
       },
       "alert": {
         "generatePassword": "Are you sure you want to generate a new password?",
@@ -310,6 +310,7 @@
         "header": "Estimated departure time",
         "estimatedDepartureDate": "Estimated departure date",
         "estimatedDepartureTime": "time",
+        "departureAt": "at",
         "setTime": "Set",
         "updateTime": "Update",
         "info": "IMPORTANT. Departure time affects the estimated crossing times of the bridges."

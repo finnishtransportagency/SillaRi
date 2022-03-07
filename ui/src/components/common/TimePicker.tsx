@@ -6,7 +6,7 @@ import "./TimePicker.css";
 interface TimePickerProps {
   value: Date;
   onChange: (value: Date) => void;
-  hasError: boolean;
+  hasError?: boolean;
   usePortal?: boolean;
 }
 
@@ -52,6 +52,8 @@ const TimePicker = ({ value, onChange, hasError, usePortal }: TimePickerProps): 
 
 TimePicker.defaultProps = {
   className: undefined,
+  hasError: false,
+  usePortal: false,
 };
 
 export default TimePicker;
