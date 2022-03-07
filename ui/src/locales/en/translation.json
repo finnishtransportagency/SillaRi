@@ -269,7 +269,9 @@
       "bridgesToSupervise": "Bridges to supervise",
       "buttons": {
         "generatePassword": "New password",
-        "deleteTransport": "Delete transport"
+        "deleteTransport": "Delete transport",
+        "setDepartureTime": "Set estimated departure time",
+        "updateDepartureTime": "Update estimated departure time"
       },
       "alert": {
         "generatePassword": "Are you sure you want to generate a new password?",
@@ -280,8 +282,7 @@
       "password": "Transport password",
       "passwordUnknown": "Unknown",
       "routeInfo": {
-        "estimatedDepartureDate": "Estimated departure date",
-        "estimatedDepartureTime": "time",
+        "estimatedDepartureTime": "Estimated departure time",
         "route": "Route",
         "origin": "Origin",
         "destination": "Destination",
@@ -301,6 +302,14 @@
         "supervisor1": "Bridge supervisor (1.)",
         "supervisor2": "Backup supervisor (2.)",
         "copySupervisor": "Copy to all bridges"
+      },
+      "transportDepartureTime": {
+        "header": "Estimated departure time",
+        "estimatedDepartureDate": "Estimated departure date",
+        "estimatedDepartureTime": "time",
+        "setTime": "Set",
+        "updateTime": "Update",
+        "info": "IMPORTANT. Departure time affects the estimated crossing times of the bridges."
       }
     },
     "supervisionType": {

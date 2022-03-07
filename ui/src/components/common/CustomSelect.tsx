@@ -9,6 +9,7 @@ interface CustomSelectProps {
   selectedValue?: string | number;
   onChange?: (value?: string | number) => void;
   validateInput?: (inputValue: string, prevInputValue: string) => string;
+  usePortal?: boolean;
 }
 
 const DropdownIndicator = (props: DropdownIndicatorProps<{ value: string | number; label: string }, false>) => {
@@ -24,7 +25,7 @@ const Input = (props: InputProps<{ value: string | number; label: string }, fals
   return <components.Input {...props} inputMode="numeric" />;
 };
 
-const CustomSelect = ({ options, selectedValue, onChange, validateInput }: CustomSelectProps): JSX.Element => {
+const CustomSelect = ({ options, selectedValue, onChange, validateInput, usePortal }: CustomSelectProps): JSX.Element => {
   return (
     <Select
       className="reactSelect"
@@ -41,7 +42,7 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput }: Custo
       styles={{
         control: (provided) => ({
           ...provided,
-          backgroundColor: "var(--ion-background-color)",
+          backgroundColor: "var(--ion-color-tertiary)",
           borderColor: "var(--ion-color-step-150)",
           borderWidth: "2px",
         }),
@@ -51,7 +52,7 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput }: Custo
         }),
         menu: (provided) => ({
           ...provided,
-          backgroundColor: "var(--ion-background-color)",
+          backgroundColor: "var(--ion-color-tertiary)",
           zIndex: 999,
         }),
       }}
@@ -66,7 +67,10 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput }: Custo
           return validateInput(newValue, prevInputValue);
         }
       }}
-    ></Select>
+      menuPortalTarget={usePortal ? document.body : null}
+      menuPlacement={usePortal ? "bottom" : "auto"}
+      menuShouldScrollIntoView={!usePortal}
+    />
   );
 };
 
