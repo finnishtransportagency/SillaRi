@@ -69,7 +69,6 @@ public class LeluPermitDTO {
     private String additionalDetails;
 
     @Valid
-    @NotEmpty(message = "{permit.routes.not.empty}")
     @Schema(description = "List of routes included in the permit", required = true)
     private List<LeluRouteDTO> routes;
 
