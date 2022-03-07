@@ -125,7 +125,7 @@ const TransportDepartureTime = ({
           isOpen={popoverState.showPopover}
           onDidDismiss={() => hidePopup()}
           event={popoverState.event}
-          side={plannedDepartureTime ? "bottom" : "right"}
+          side={plannedDepartureTime ? "bottom" : "end"}
         >
           <IonHeader className="ion-no-border">
             <IonToolbar color="light">
@@ -139,7 +139,7 @@ const TransportDepartureTime = ({
           </IonHeader>
 
           <IonGrid className="ion-no-padding ion-margin">
-            <IonRow className="ion-margin-top">
+            <IonRow className="ion-margin-top ion-align-items-end">
               <IonCol className="ion-padding-end">
                 <IonLabel className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureDate")}</IonLabel>
                 <DatePicker value={departureTime} onChange={setPlannedDepartureDate} usePortal={true} />
