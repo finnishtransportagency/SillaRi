@@ -11,6 +11,7 @@ import {
   IonLabel,
   IonPopover,
   IonRow,
+  IonText,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -20,13 +21,20 @@ import IRouteTransport from "../../interfaces/IRouteTransport";
 import close from "../../theme/icons/close_large.svg";
 import infoOutline from "../../theme/icons/info-outline.svg";
 import "./TransportDepartureTime.css";
+import Moment from "react-moment";
+import { DATE_TIME_FORMAT_MIN } from "../../utils/constants";
 
 interface TransportDepartureTimeProps {
+  isEditable: boolean;
   modifiedRouteTransportDetail: IRouteTransport;
   setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
 }
 
-const TransportDepartureTime = ({ modifiedRouteTransportDetail, setModifiedRouteTransportDetail }: TransportDepartureTimeProps): JSX.Element => {
+const TransportDepartureTime = ({
+  isEditable,
+  modifiedRouteTransportDetail,
+  setModifiedRouteTransportDetail,
+}: TransportDepartureTimeProps): JSX.Element => {
   const { t } = useTranslation();
 
   /*Event is needed for positioning the popup relative to the element which triggered the event*/
@@ -78,59 +86,73 @@ const TransportDepartureTime = ({ modifiedRouteTransportDetail, setModifiedRoute
   };
 
   return (
-    <>
-      <IonButton color="secondary" expand="block" onClick={(evt) => showPopup(evt)}>
-        {!plannedDepartureTime
-          ? t("management.transportDetail.buttons.setDepartureTime")
-          : t("management.transportDetail.buttons.updateDepartureTime")}
-      </IonButton>
-      <IonPopover className="largePopover" isOpen={popoverState.showPopover} onDidDismiss={() => hidePopup()} event={popoverState.event} side="right">
-        <IonHeader className="ion-no-border">
-          <IonToolbar color="light">
-            <IonTitle className="headingText">{t("management.transportDetail.transportDepartureTime.header")}</IonTitle>
-            <IonButtons slot="end">
-              <IonButton onClick={(evt) => cancelChanges(evt as MouseEvent)}>
-                <IonIcon className="otherIconLarge" icon={close} color="primary" />
-              </IonButton>
-            </IonButtons>
-          </IonToolbar>
-        </IonHeader>
+    <IonCol>
+      <IonRow>
+        <IonText className="headingText">{t("management.transportDetail.routeInfo.estimatedDepartureTime")}</IonText>
+      </IonRow>
+      <IonRow>{plannedDepartureTime && <Moment format={DATE_TIME_FORMAT_MIN}>{plannedDepartureTime}</Moment>}</IonRow>
+      <IonRow>
+        {isEditable && (
+          <IonButton color="secondary" expand="block" onClick={(evt) => showPopup(evt)}>
+            {!plannedDepartureTime
+              ? t("management.transportDetail.buttons.setDepartureTime")
+              : t("management.transportDetail.buttons.updateDepartureTime")}
+          </IonButton>
+        )}
+        <IonPopover
+          className="largePopover"
+          isOpen={popoverState.showPopover}
+          onDidDismiss={() => hidePopup()}
+          event={popoverState.event}
+          side="right"
+        >
+          <IonHeader className="ion-no-border">
+            <IonToolbar color="light">
+              <IonTitle className="headingText">{t("management.transportDetail.transportDepartureTime.header")}</IonTitle>
+              <IonButtons slot="end">
+                <IonButton onClick={(evt) => cancelChanges(evt as MouseEvent)}>
+                  <IonIcon className="otherIconLarge" icon={close} color="primary" />
+                </IonButton>
+              </IonButtons>
+            </IonToolbar>
+          </IonHeader>
 
-        <IonGrid className="ion-no-padding ion-margin">
-          <IonRow className="ion-margin-top">
-            <IonCol className="ion-padding-end">
-              <IonLabel className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureDate")}</IonLabel>
-              <DatePicker value={departureTime} onChange={setPlannedDepartureDate} usePortal={true} />
-            </IonCol>
-            <IonCol>
-              <IonLabel className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureTime")}</IonLabel>
-              <TimePicker value={departureTime} onChange={setPlannedDepartureTime} usePortal={true} />
-            </IonCol>
-          </IonRow>
-          <IonRow className="ion-margin-top">
-            <IonCol>
-              <IonItem className="ion-no-padding" lines="none">
-                <IonIcon className="otherIcon" icon={infoOutline} slot="start" />
-                <IonLabel className="itemLabel">{t("management.transportDetail.transportDepartureTime.info")}</IonLabel>
-              </IonItem>
-            </IonCol>
-          </IonRow>
-          <IonRow className="ion-margin-top ion-justify-content-end">
-            <IonCol className="ion-padding-end" size-lg="3">
-              <IonButton color="secondary" expand="block" onClick={(evt) => cancelChanges(evt)}>
-                {t("common.buttons.cancel")}
-              </IonButton>
-            </IonCol>
-            <IonCol size-lg="4">
-              {/*TODO disabled when date validation fails*/}
-              <IonButton color="primary" expand="block" onClick={(evt) => updatePlannedDeparture(evt)}>
-                {t("management.transportDetail.transportDepartureTime.setTime")}
-              </IonButton>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-      </IonPopover>
-    </>
+          <IonGrid className="ion-no-padding ion-margin">
+            <IonRow className="ion-margin-top">
+              <IonCol className="ion-padding-end">
+                <IonLabel className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureDate")}</IonLabel>
+                <DatePicker value={departureTime} onChange={setPlannedDepartureDate} usePortal={true} />
+              </IonCol>
+              <IonCol>
+                <IonLabel className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureTime")}</IonLabel>
+                <TimePicker value={departureTime} onChange={setPlannedDepartureTime} usePortal={true} />
+              </IonCol>
+            </IonRow>
+            <IonRow className="ion-margin-top">
+              <IonCol>
+                <IonItem className="ion-no-padding" lines="none">
+                  <IonIcon className="otherIcon" icon={infoOutline} slot="start" />
+                  <IonLabel className="itemLabel">{t("management.transportDetail.transportDepartureTime.info")}</IonLabel>
+                </IonItem>
+              </IonCol>
+            </IonRow>
+            <IonRow className="ion-margin-top ion-justify-content-end">
+              <IonCol className="ion-padding-end" size-lg="3">
+                <IonButton color="secondary" expand="block" onClick={(evt) => cancelChanges(evt)}>
+                  {t("common.buttons.cancel")}
+                </IonButton>
+              </IonCol>
+              <IonCol size-lg="4">
+                {/*TODO disabled when date validation fails*/}
+                <IonButton color="primary" expand="block" onClick={(evt) => updatePlannedDeparture(evt)}>
+                  {t("management.transportDetail.transportDepartureTime.setTime")}
+                </IonButton>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        </IonPopover>
+      </IonRow>
+    </IonCol>
   );
 };
 

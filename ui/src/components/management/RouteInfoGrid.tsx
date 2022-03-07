@@ -9,11 +9,10 @@ import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import IVehicle from "../../interfaces/IVehicle";
 import mapPoint from "../../theme/icons/map-point.svg";
-import { DATE_TIME_FORMAT_MIN, SupervisorType, VehicleRole } from "../../utils/constants";
+import { SupervisorType, VehicleRole } from "../../utils/constants";
 import { isTransportEditable } from "../../utils/validation";
 import MapModal from "../MapModal";
 import TransportDepartureTime from "./TransportDepartureTime";
-import Moment from "react-moment";
 
 interface RouteInfoGridProps {
   routeTransportId: number;
@@ -92,20 +91,11 @@ const RouteInfoGrid = ({
   return (
     <IonGrid className="ion-no-padding">
       <IonRow className="ion-margin-top">
-        <IonCol>
-          <IonRow>
-            <IonText className="headingText">{t("management.transportDetail.routeInfo.estimatedDepartureTime")}</IonText>
-          </IonRow>
-          <IonRow>{plannedDepartureTime && <Moment format={DATE_TIME_FORMAT_MIN}>{plannedDepartureTime}</Moment>}</IonRow>
-          <IonRow>
-            {isEditable && (
-              <TransportDepartureTime
-                modifiedRouteTransportDetail={modifiedRouteTransportDetail}
-                setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-              />
-            )}
-          </IonRow>
-        </IonCol>
+        <TransportDepartureTime
+          isEditable={isEditable}
+          modifiedRouteTransportDetail={modifiedRouteTransportDetail}
+          setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+        />
       </IonRow>
       <IonRow>
         <IonCol size="12" size-lg="8">
