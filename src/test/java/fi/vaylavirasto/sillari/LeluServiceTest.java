@@ -1,7 +1,7 @@
 package fi.vaylavirasto.sillari;
 
 import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
-import fi.vaylavirasto.sillari.api.lelu.permit_current.*;
+import fi.vaylavirasto.sillari.api.lelu.permit.*;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;

@@ -1,7 +1,7 @@
 package fi.vaylavirasto.sillari.api.rest;
 
-import fi.vaylavirasto.sillari.api.lelu.permit_current.LeluPermitDTO;
-import fi.vaylavirasto.sillari.api.lelu.permit_current.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
@@ -171,9 +171,9 @@ public class LeluController {
     //non functional
     //just to provide swagger documentation for updated api
     //https://extranet.vayla.fi/jira/browse/SILLARI-551
-    @PostMapping(value = "/permit_new")
+    @PostMapping(value = "/permit_2.0.0")
     @ResponseBody
-    @Operation(summary = "Create or update permit. Non functional with 3.2022 API-changes.", description = "Adds a new permit from LeLu to SillaRi. " +
+    @Operation(summary = "Create or update permit. Non functional with https://extranet.vayla.fi/jira/browse/SILLARI-551 API-changes.", description = "Adds a new permit from LeLu to SillaRi. " +
             "If the same permit number is already found in SillaRi, updates that permit with the provided data. " +
             "If permit is updated, updates routes found with same LeLu ID, adds new routes and deletes routes that are no longer included in the permit. " +
             "CURRENT LIMITATIONS: 1. Bridge OID must be found in SillaRi DB, otherwise bridge is not added. " +
@@ -183,7 +183,7 @@ public class LeluController {
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
     })
 
-    public ResponseEntity<LeluPermitResponseDTO> savePermit_new(@Valid @RequestBody fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPermitSaveException {
+    public ResponseEntity<LeluPermitResponseDTO> savePermit_new(@Valid @RequestBody fi.vaylavirasto.sillari.api.lelu.permit_2_0_0.LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPermitSaveException {
         throw new LeluPermitSaveException("nonfunctional api");
 
     }

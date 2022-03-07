@@ -14,18 +14,18 @@ import org.mapstruct.Mappings;
 public interface LeluDTOMapper {
 
     @Mappings({
-            @Mapping(target="company", source = "dto.customer"),
-            @Mapping(target="permitNumber", source="dto.number"),
-            @Mapping(target="leluVersion", source="dto.version"),
-            @Mapping(target="leluLastModifiedDate", source="dto.lastModifiedDate"),
-            @Mapping(target="validStartDate", source="dto.validFrom"),
-            @Mapping(target="validEndDate", source="dto.validTo"),
+            @Mapping(target = "company", source = "dto.customer"),
+            @Mapping(target = "permitNumber", source = "dto.number"),
+            @Mapping(target = "leluVersion", source = "dto.version"),
+            @Mapping(target = "leluLastModifiedDate", source = "dto.lastModifiedDate"),
+            @Mapping(target = "validStartDate", source = "dto.validFrom"),
+            @Mapping(target = "validEndDate", source = "dto.validTo"),
 
     })
     PermitModel fromDTOToModel(LeluPermitDTO dto);
 
     @Mappings({
-            @Mapping(target="businessId", source="dto.identifier")
+            @Mapping(target = "businessId", source = "dto.identifier")
     })
     CompanyModel fromDTOToModel(LeluCustomerDTO dto);
 
