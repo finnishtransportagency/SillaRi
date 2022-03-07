@@ -269,7 +269,9 @@
       "bridgesToSupervise": "Valvottavat sillat",
       "buttons": {
         "generatePassword": "Uusi salasana",
-        "deleteTransport": "Poista kuljetus"
+        "deleteTransport": "Poista kuljetus",
+        "setDepartureTime": "Aseta arvioitu lähtöaika",
+        "updateDepartureTime": "Päivitä arvioitu lähtöaika"
       },
       "alert": {
         "generatePassword": "Oletko varma, että haluat generoida uuden salasanan?",
@@ -280,8 +282,7 @@
       "password": "Kuljetuksen salasana",
       "passwordUnknown": "Puuttuu",
       "routeInfo": {
-        "estimatedDepartureDate": "Arvioitu lähtöpäivä",
-        "estimatedDepartureTime": "klo",
+        "estimatedDepartureTime": "Kuljetuksen arvioitu lähtöaika",
         "route": "Reitti",
         "origin": "Lähtöpaikka",
         "destination": "Määräpaikka",
@@ -301,6 +302,14 @@
         "supervisor1": "Sillanvalvoja (1.)",
         "supervisor2": "Varavalvoja (2.)",
         "copySupervisor": "Kopioi kaikille silloille"
+      },
+      "transportDepartureTime": {
+        "header": "Arvioitu lähtöaika",
+        "estimatedDepartureDate": "Arvioitu lähtöpäivä",
+        "estimatedDepartureTime": "klo",
+        "setTime": "Aseta",
+        "updateTime": "Päivitä",
+        "info": "HUOM. Lähtöaika vaikuttaa myös siltojen arvioituihin ylitysaikoihin."
       }
     },
     "supervisionType": {

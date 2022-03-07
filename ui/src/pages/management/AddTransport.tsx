@@ -4,7 +4,6 @@ import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { IonContent, IonPage, IonToast } from "@ionic/react";
-import moment from "moment";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
 import RouteTransportInfo from "../../components/management/RouteTransportInfo";
@@ -56,7 +55,7 @@ const AddTransport = (): JSX.Element => {
       const newRouteTransport: IRouteTransport = {
         id: 0,
         routeId: 0,
-        plannedDepartureTime: moment().toDate(),
+        plannedDepartureTime: undefined,
         tractorUnit: "",
         currentStatus: { status: TransportStatus.PLANNED } as IRouteTransportStatus,
       };
