@@ -147,9 +147,15 @@ const TransportDepartureTime = ({
               <IonCol>
                 <IonLabel className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureTime")}</IonLabel>
                 <TimePicker value={departureTime} onChange={setPlannedDepartureTime} hasError={!departureTimeValid} usePortal={true} />
-                {!departureTimeValid && <ValidationError label={t("common.validation.checkTime")} />}
               </IonCol>
             </IonRow>
+            {!departureTimeValid && (
+              <IonRow>
+                <IonCol size="6" offset="6">
+                  <ValidationError label={t("common.validation.checkTime")} />
+                </IonCol>
+              </IonRow>
+            )}
             <IonRow className="ion-margin-top">
               <IonCol>
                 <IonItem className="ion-no-padding" lines="none">
