@@ -1,5 +1,6 @@
 .statusBox {
   font-size: 30px;
+  color: #000000; /* always black due to colours defined below */
 }
 
 .status_departed,

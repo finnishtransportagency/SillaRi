@@ -28,6 +28,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
 
   const { data: supervisorUser, isLoading: isLoadingSupervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
     retry: onRetry,
+    staleTime: Infinity,
   });
 
   const { username: currentSupervisor = "" } = supervisorUser || {};
@@ -48,7 +49,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
     retry: onRetry,
     onSuccess: (data) => {
       // Update "getSupervision" query to return the updated data
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
       history.push(`/supervision/${supervisionId}`);
     },
   });

@@ -7,6 +7,7 @@ interface TimePickerProps {
   value: Date;
   onChange: (value: Date) => void;
   hasError: boolean;
+  usePortal?: boolean;
 }
 
 const getMinutesArray = (start: Date, end: Date) => {
@@ -30,7 +31,7 @@ const validateInput = (inputValue: string, prevInputValue: string) => {
   }
 };
 
-const TimePicker = ({ value, onChange, hasError }: TimePickerProps): JSX.Element => {
+const TimePicker = ({ value, onChange, hasError, usePortal }: TimePickerProps): JSX.Element => {
   const min = moment(value).startOf("day").toDate();
   const max = moment(value).endOf("day").toDate();
   return (
@@ -44,6 +45,7 @@ const TimePicker = ({ value, onChange, hasError }: TimePickerProps): JSX.Element
       }}
       validateInput={validateInput}
       hasError={hasError}
+      usePortal={usePortal}
     />
   );
 };

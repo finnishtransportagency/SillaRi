@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
@@ -31,18 +30,14 @@ import { getRouteGeometry, getRouteBridgeGeometry, onRetry } from "../utils/back
 import "./MapContainer.scss";
 
 interface MapContainerProps {
-  routeBridgeId: string;
-  routeId: string;
+  routeBridgeIdParam?: string;
+  routeIdParam?: string;
 }
 
-const MapContainer = (): JSX.Element => {
+const MapContainer = ({ routeBridgeIdParam, routeIdParam }: MapContainerProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const mapRef = useRef<HTMLDivElement>(null);
-
-  // The page route provides either routeBridgeId or routeId, but not both
-  // These values are checked later, so don't use default values here
-  const { routeBridgeId: routeBridgeIdParam, routeId: routeIdParam } = useParams<MapContainerProps>();
 
   const [backgroundLayer, setBackgroundLayer] = useState<TileLayer<TileSource>>();
   const [bridgeLayer, setBridgeLayer] = useState<BaseLayer>();

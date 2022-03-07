@@ -26,6 +26,7 @@ const Header = ({ title, somethingFailed, includeSendingList, confirmGoBack }: H
 
   const { data: supervisionList = [] } = useQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
     retry: onRetry,
+    staleTime: Infinity,
     enabled: includeSendingList,
   });
 

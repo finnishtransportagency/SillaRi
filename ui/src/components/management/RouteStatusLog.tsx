@@ -16,10 +16,13 @@ import {
 } from "@ionic/react";
 import moment from "moment";
 import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
-import check from "../../theme/icons/check_black.svg";
+import checkBlack from "../../theme/icons/check_black.svg";
+import checkWhite from "../../theme/icons/check_white.svg";
 import close from "../../theme/icons/close_large_white.svg";
-import truck from "../../theme/icons/truck_black.svg";
-import up from "../../theme/icons/up_black.svg";
+import truckBlack from "../../theme/icons/truck_black.svg";
+import truckWhite from "../../theme/icons/truck_white.svg";
+import upBlack from "../../theme/icons/up_black.svg";
+import upWhite from "../../theme/icons/up_white.svg";
 import { DATE_FORMAT, TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 import "./RouteStatusLog.css";
 
@@ -36,6 +39,10 @@ const RouteStatusLog = ({ isOpen, setOpen, statusHistory }: RouteStatusLogProps)
     evt.stopPropagation();
     setOpen(false);
   };
+
+  // Use matchMedia to check the user preference
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+  const darkMode = prefersDark.matches;
 
   return (
     <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
@@ -75,9 +82,9 @@ const RouteStatusLog = ({ isOpen, setOpen, statusHistory }: RouteStatusLogProps)
                   <IonRow className="ion-align-items-center">
                     <IonCol size="3" className="ion-text-center">
                       <IonText>
-                        {index === 0 && <IonIcon className="logIconLarge" icon={truck} />}
-                        {index > 0 && index < history.length - 1 && <IonIcon className="logIcon" icon={check} />}
-                        {index > 0 && index === history.length - 1 && <IonIcon className="logIcon" icon={up} />}
+                        {index === 0 && <IonIcon className="logIconLarge" icon={darkMode ? truckWhite : truckBlack} />}
+                        {index > 0 && index < history.length - 1 && <IonIcon className="logIcon" icon={darkMode ? checkWhite : checkBlack} />}
+                        {index > 0 && index === history.length - 1 && <IonIcon className="logIcon" icon={darkMode ? upWhite : upBlack} />}
                       </IonText>
                     </IonCol>
                     <IonCol size="3">

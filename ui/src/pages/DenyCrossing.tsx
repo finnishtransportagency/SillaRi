@@ -27,6 +27,7 @@ import IPermit from "../interfaces/IPermit";
 import { onRetry } from "../utils/backendData";
 import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
 import { SupervisionStatus } from "../utils/constants";
+import { invalidateOfflineData } from "../utils/supervisionUtil";
 
 interface DenyCrossingProps {
   supervisionId: string;
@@ -53,16 +54,24 @@ const DenyCrossing = (): JSX.Element => {
   const otherReason = "other";
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", supervisionId],
+    ["getSupervision", Number(supervisionId)],
     () => getSupervision(Number(supervisionId), dispatch),
-    { retry: onRetry }
+    {
+      retry: onRetry,
+      staleTime: Infinity,
+    }
   );
 
   const denyCrossingMutation = useMutation((denyCrossingInput: IDenyCrossingInput) => denyCrossing(denyCrossingInput, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
       // Update "getSupervision" query to return the updated data
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
+
+      // Invalidate queries to remove the denied supervision from the UI when using cached data
+      // TODO - figure out a better way to do this when offline, maybe using setQueryData to manually remove denied supervisions
+      invalidateOfflineData(queryClient, dispatch);
+
       history.goBack();
     },
   });

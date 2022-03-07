@@ -11,6 +11,7 @@ interface CustomSelectProps {
   onChange?: (value?: string | number) => void;
   validateInput?: (inputValue: string, prevInputValue: string) => string;
   hasError: boolean;
+  usePortal?: boolean;
 }
 
 const DropdownIndicator = (props: DropdownIndicatorProps<{ value: string | number; label: string }, false>) => {
@@ -29,7 +30,7 @@ const Input = (props: InputProps<{ value: string | number; label: string }, fals
   return <components.Input {...props} inputMode="numeric" />;
 };
 
-const CustomSelect = ({ options, selectedValue, onChange, validateInput, hasError }: CustomSelectProps): JSX.Element => {
+const CustomSelect = ({ options, selectedValue, onChange, validateInput, hasError, usePortal }: CustomSelectProps): JSX.Element => {
   return (
     <Select
       className="reactSelect"
@@ -46,21 +47,21 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput, hasErro
       styles={{
         control: (provided) => ({
           ...provided,
-          color: hasError ? "var(--ion-color-danger)" : "var(--ion-color-base)",
-          borderColor: hasError ? "var(--ion-color-danger)" : "var(--ion-color-base)",
+          color: hasError ? "var(--ion-color-danger)" : "var(--ion-text-color)",
+          backgroundColor: "var(--ion-color-tertiary)",
+          borderColor: hasError ? "var(--ion-color-danger)" : "var(--ion-color-step-150)",
           borderWidth: "2px",
           zIndex: 998,
         }),
+        singleValue: (provided) => ({
+          ...provided,
+          color: hasError ? "var(--ion-color-danger)" : "var(--ion-text-color)",
+        }),
         menu: (provided) => ({
           ...provided,
+          backgroundColor: "var(--ion-color-tertiary)",
           zIndex: 999,
         }),
-        singleValue: (provided) => {
-          if (hasError) {
-            return { ...provided, color: "var(--ion-color-danger)" };
-          }
-          return { ...provided };
-        },
       }}
       // @ts-ignore - example from official docs https://react-select.com/components for including custom props
       hasError={hasError}
@@ -75,6 +76,9 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput, hasErro
           return validateInput(newValue, prevInputValue);
         }
       }}
+      menuPortalTarget={usePortal ? document.body : null}
+      menuPlacement={usePortal ? "bottom" : "auto"}
+      menuShouldScrollIntoView={!usePortal}
     />
   );
 };

@@ -38,7 +38,7 @@ const TransportDetail = (): JSX.Element => {
   const { routeTransportId = "0" } = useParams<TransportDetailProps>();
 
   const { isLoading: isLoadingTransport, data: selectedRouteTransportDetail } = useQuery(
-    ["getRouteTransport", routeTransportId],
+    ["getRouteTransport", Number(routeTransportId)],
     () => getRouteTransport(Number(routeTransportId), dispatch),
     {
       retry: onRetry,
@@ -46,7 +46,7 @@ const TransportDetail = (): JSX.Element => {
     }
   );
   const { isLoading: isLoadingPermit, data: selectedPermitDetail } = useQuery(
-    ["getPermitOfRouteTransport", routeTransportId],
+    ["getPermitOfRouteTransport", Number(routeTransportId)],
     () => getPermitOfRouteTransport(Number(routeTransportId), dispatch),
     {
       retry: onRetry,
