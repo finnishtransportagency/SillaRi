@@ -70,7 +70,7 @@ const RouteInfoGrid = ({
             id: 0,
             routeBridgeId,
             routeTransportId,
-            plannedTime: plannedDepartureTime ? plannedDepartureTime : moment().toDate(),
+            plannedTime: plannedDepartureTime ? moment(plannedDepartureTime).toDate() : moment().toDate(),
             conformsToPermit: false,
             supervisorType: contractNumber > 0 ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR,
             supervisors: [],
