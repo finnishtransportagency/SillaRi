@@ -168,25 +168,6 @@ public class LeluController {
 
 
 
-    //non functional
-    //just to provide swagger documentation for updated api
-    //https://extranet.vayla.fi/jira/browse/SILLARI-551
-    @PostMapping(value = "/permit_2.0.0")
-    @ResponseBody
-    @Operation(summary = "Create or update permit. Non functional with https://extranet.vayla.fi/jira/browse/SILLARI-551 API-changes.", description = "Adds a new permit from LeLu to SillaRi. " +
-            "If the same permit number is already found in SillaRi, updates that permit with the provided data. " +
-            "If permit is updated, updates routes found with same LeLu ID, adds new routes and deletes routes that are no longer included in the permit. " +
-            "CURRENT LIMITATIONS: 1. Bridge OID must be found in SillaRi DB, otherwise bridge is not added. " +
-            "2. Updated routes must not have existing transport instances or supervisions.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200 OK", description = "Permit saved/updated"),
-            @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
-    })
-
-    public ResponseEntity<LeluPermitResponseDTO> savePermit_new(@Valid @RequestBody fi.vaylavirasto.sillari.api.lelu.permit_2_0_0.LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPermitSaveException {
-        throw new LeluPermitSaveException("nonfunctional api");
-
-    }
 
 
     private void getBridgeFromTrexToDB(String oid) {
