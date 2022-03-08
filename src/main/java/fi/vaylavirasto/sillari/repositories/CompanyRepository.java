@@ -56,6 +56,42 @@ public class CompanyRepository {
                 .fetchOne(new CompanyMapper());
     }
 
+    public CompanyModel getCompanyByPermitId(Integer permitId) {
+        return dsl.select().from(TableAlias.company)
+                .where(TableAlias.company.ID.eq(
+                        dsl.select(TableAlias.permit.COMPANY_ID).from(TableAlias.permit).where(TableAlias.permit.ID.eq(
+                              permitId
+                        ))
+                ))
+                .fetchOne(new CompanyMapper());
+    }
+
+    public CompanyModel getCompanyByRouteBridgeId(Integer routeBridgeId) {
+        return dsl.select().from(TableAlias.company)
+                .where(TableAlias.company.ID.eq(
+                        dsl.select(TableAlias.permit.COMPANY_ID).from(TableAlias.permit).where(TableAlias.permit.ID.eq(
+                                dsl.select(TableAlias.route.PERMIT_ID).from(TableAlias.route).where(TableAlias.route.ID.eq(
+                                        dsl.select(TableAlias.routeBridge.ROUTE_ID).from(TableAlias.routeBridge).where(TableAlias.routeBridge.ID.eq(
+                                                routeBridgeId
+                                        ))
+                                ))
+                        ))
+                ))
+                .fetchOne(new CompanyMapper());
+    }
+
+    public CompanyModel getCompanyByRouteId(Integer routeId) {
+        return dsl.select().from(TableAlias.company)
+                .where(TableAlias.company.ID.eq(
+                        dsl.select(TableAlias.permit.COMPANY_ID).from(TableAlias.permit).where(TableAlias.permit.ID.eq(
+                                dsl.select(TableAlias.route.PERMIT_ID).from(TableAlias.route).where(TableAlias.route.ID.eq(
+                                            routeId
+                                        ))
+                                ))
+                        ))
+                .fetchOne(new CompanyMapper());
+    }
+
     public Integer createCompany(CompanyModel companyModel) throws DataAccessException {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
@@ -74,5 +110,6 @@ public class CompanyRepository {
             return companyId;
         });
     }
+
 
 }

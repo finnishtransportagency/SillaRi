@@ -22,7 +22,7 @@ public class LeluPermitDTO {
     private String number;
 
     @NotNull(message = "{permit.last.modified.not.null}")
-    @Schema(description = "When the permit was last modified in LeLu", required = true, example = "2021-05-26T08:02:36.000Z" )
+    @Schema(description = "When the permit was last modified in LeLu", required = true, example = "2021-05-26T08:02:36.000Z")
     private LocalDateTime lastModifiedDate;
 
     @NotNull(message = "{permit.version.not.null}")

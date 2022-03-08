@@ -37,10 +37,11 @@ const Supervision = (): JSX.Element => {
   const [present] = useIonAlert();
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", supervisionId],
+    ["getSupervision", Number(supervisionId)],
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
+      staleTime: Infinity,
       onSuccess: (data) => {
         console.log("GetSupervision done", data.id, data.currentStatus, "draft: ", data.report ? data.report.draft : "");
       },
@@ -50,7 +51,7 @@ const Supervision = (): JSX.Element => {
   const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
     retry: onRetry,
     onSuccess: (data) => {
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
+      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
     },
   });
   const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
@@ -58,7 +59,9 @@ const Supervision = (): JSX.Element => {
   const deleteImagesMutation = useMutation((superId: string) => deleteSupervisionImages(Number(superId), dispatch), {
     retry: onRetry,
     onSuccess: () => {
-      queryClient.invalidateQueries(["getSupervision", supervisionId]);
+      // TODO - figure out a better way to do this when offline
+      queryClient.invalidateQueries(["getSupervision", Number(supervisionId)]);
+
       // We don't want to allow the user to get back to this page by using "back"
       history.replace(`/bridgeDetail/${supervisionId}`, { direction: "back" });
     },

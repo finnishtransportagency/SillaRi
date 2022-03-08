@@ -61,7 +61,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   const { id: permitId } = permit;
 
   const { data: routeTransportList } = useQuery(
-    ["getRouteTransportsOfPermit", permitId],
+    ["getRouteTransportsOfPermit", Number(permitId)],
     () => getRouteTransportsOfPermit(Number(permitId), dispatch),
     {
       retry: onRetry,

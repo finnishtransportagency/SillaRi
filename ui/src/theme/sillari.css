@@ -103,7 +103,7 @@
 }
 
 .whiteBackground {
-  background-color: white;
+  background-color: var(--ion-background-color);
 }
 
 .lightBackground {

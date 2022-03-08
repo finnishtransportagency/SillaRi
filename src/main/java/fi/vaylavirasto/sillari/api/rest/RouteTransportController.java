@@ -2,26 +2,21 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
-import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
-import fi.vaylavirasto.sillari.model.RouteTransportModel;
-import fi.vaylavirasto.sillari.model.TransportStatusType;
+import fi.vaylavirasto.sillari.model.*;
+import fi.vaylavirasto.sillari.service.CompanyService;
 import fi.vaylavirasto.sillari.service.RouteTransportService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,20 +24,26 @@ import java.util.List;
 @Timed
 @RequestMapping("/routetransport")
 public class RouteTransportController {
+    private static final Logger logger = LogManager.getLogger();
     @Autowired
     UIService uiService;
     @Autowired
     RouteTransportService routeTransportService;
     @Autowired
     SupervisionService supervisionService;
+    @Autowired
+    CompanyService companyService;
+
 
     @Operation(summary = "Get route transport")
     @GetMapping(value = "/getroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
     public ResponseEntity<?> getRouteTransport(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransport");
         try {
-            // TODO - restrict this method to transport company admin users only
+            if (!isOwnCompanyRouteTransport(routeTransportId)) {
+                throw new AccessDeniedException("Not own company route transport");
+            }
             RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId, true);
             return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
         } finally {
@@ -52,11 +53,13 @@ public class RouteTransportController {
 
     @Operation(summary = "Get route transports of permit")
     @GetMapping(value = "/getroutetransportsofpermit", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
     public ResponseEntity<?> getRouteTransportsOfPermit(@RequestParam Integer permitId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportsOfPermit");
         try {
-            // TODO - restrict this method to transport company admin users only
+            if (!isOwnCompanyPermit(permitId)) {
+                throw new AccessDeniedException("Not own company route permit");
+            }
             List<RouteTransportModel> routeTransports = routeTransportService.getRouteTransportsOfPermit(permitId, true);
             return ResponseEntity.ok().body(routeTransports != null ? routeTransports : new EmptyJsonResponse());
         } finally {
@@ -66,10 +69,13 @@ public class RouteTransportController {
 
     @Operation(summary = "Get route transport of supervisor, with supervisions and route data")
     @GetMapping(value = "/getroutetransportofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public ResponseEntity<?> getRouteTransportOfSupervisor(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportOfSupervisor");
         try {
+            if (!isRouteTransportOfSupervisor(routeTransportId)) {
+                throw new AccessDeniedException("Not own company route permit");
+            }
             SillariUser user = uiService.getSillariUser();
             RouteTransportModel routeTransport = routeTransportService.getRouteTransportOfSupervisor(routeTransportId, user.getUsername());
             return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
@@ -78,15 +84,19 @@ public class RouteTransportController {
         }
     }
 
+
+
     @Operation(summary = "Create route transport")
     @PostMapping(value = "/createroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
     public ResponseEntity<?> createRouteTransport(@RequestBody RouteTransportModel routeTransport) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "createRouteTransport");
         try {
             SillariUser user = uiService.getSillariUser();
 
-            // TODO - restrict this method to transport company admin users only
+            if (!isOwnCompanyPermit(routeTransport.getRoute().getPermitId())) {
+                throw new AccessDeniedException("Not own company permit for route transport");
+            }
             RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
             if (routeTransport.getSupervisions() != null && insertedRouteTransport != null) {
@@ -114,13 +124,15 @@ public class RouteTransportController {
 
     @Operation(summary = "Update route transport")
     @PutMapping(value = "/updateroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
     public ResponseEntity<?> updateRouteTransport(@RequestBody RouteTransportModel routeTransport) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "updateRouteTransport");
         try {
             SillariUser user = uiService.getSillariUser();
 
-            // TODO - restrict this method to transport company admin users only
+            if (!isOwnCompanyRouteTransport(routeTransport.getId())) {
+                throw new AccessDeniedException("Not own company route transport");
+            }
             RouteTransportModel updatedTransportModel = routeTransportService.updateRouteTransport(routeTransport);
 
             if (routeTransport.getSupervisions() != null) {
@@ -146,11 +158,13 @@ public class RouteTransportController {
 
     @Operation(summary = "Delete route transport")
     @DeleteMapping(value = "/deleteroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
     public boolean deleteRouteTransport(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "updateRouteTransport");
         try {
-            // TODO - restrict this method to transport company admin users only
+            if (!isOwnCompanyRouteTransport(routeTransportId)) {
+                throw new AccessDeniedException("Not own company route transport");
+            }
 
             // Fetch all the route transport details including the status which is not sent
             RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId, false);
@@ -179,4 +193,26 @@ public class RouteTransportController {
             serviceMetric.end();
         }
     }
+
+    /* Check that transport company matches ajojärjestelija- or kuljettaja-user company */
+    private boolean isOwnCompanyRouteTransport(Integer routeTransportId) {
+        CompanyModel cm = companyService.getCompanyByRouteTransportId(routeTransportId);
+        SillariUser user = uiService.getSillariUser();
+        return user.getBusinessId().equals(cm.getBusinessId());
+    }
+
+    /* Check that permit company matches ajojärjestelija- or kuljettaja-user company */
+    private boolean isOwnCompanyPermit(Integer permitId) {
+        CompanyModel cm = companyService.getCompanyByPermitId(permitId);
+        SillariUser user = uiService.getSillariUser();
+        return user.getBusinessId().equals(cm.getBusinessId());
+    }
+
+    /* Check that route transport contains supervision by the supervisos */
+    private boolean isRouteTransportOfSupervisor(Integer routeTransportId) {
+        SillariUser user = uiService.getSillariUser();
+        List<SupervisorModel> supervisors = supervisionService.getSupervisorsByRouteTransportId(routeTransportId);
+        return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
+    }
+
 }

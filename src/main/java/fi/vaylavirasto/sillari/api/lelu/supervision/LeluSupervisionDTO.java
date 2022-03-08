@@ -17,4 +17,10 @@ public class LeluSupervisionDTO {
 
     @Schema(description = "Identifier of a report available from /getSupervisionReport ", example = "123456")
     Long reportId;
+
+    @Schema(description = "Supervision report in json format")
+    LeluSupervisionReportDTO supervisionReport;
+
+    @Schema(description = "Order number of crossing, provided by lelu in incoming permit->route->bridge.", example = "1")
+    private Integer transportNumber;
 }

@@ -36,6 +36,7 @@ public class LeluBridgeDTO {
     @Schema(description = "Contract number in LeLu.", example = "12345")
     private Long contractNumber;
 
+
     public LeluBridgeDTO() {
     }
 
