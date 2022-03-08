@@ -25,6 +25,8 @@ import Moment from "react-moment";
 import { DATE_FORMAT, TIME_FORMAT_MIN } from "../../utils/constants";
 import { isTimestampCurrentOrAfter } from "../../utils/validation";
 import ValidationError from "../common/ValidationError";
+import ISupervision from "../../interfaces/ISupervision";
+import moment from "moment";
 
 interface TransportDepartureTimeProps {
   isEditable: boolean;
@@ -39,7 +41,7 @@ const TransportDepartureTime = ({
 }: TransportDepartureTimeProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
+  const { plannedDepartureTime, supervisions = [] } = modifiedRouteTransportDetail || {};
   const estimatedDeparture = plannedDepartureTime ? plannedDepartureTime : new Date();
 
   /*Event is needed for positioning the popup relative to the element which triggered the event*/
@@ -83,9 +85,37 @@ const TransportDepartureTime = ({
     setDepartureTime(plannedDepartureTime ? plannedDepartureTime : new Date());
   };
 
+  const updateSupervisionTimes = (): ISupervision[] => {
+    // Compare previous time and selected time, ignore seconds and milliseconds
+    const selectedDeparture = moment(departureTime).startOf("minute");
+    const previousDeparture = plannedDepartureTime ? moment(plannedDepartureTime).startOf("minute") : null;
+    const timeDiff = previousDeparture ? selectedDeparture.diff(previousDeparture, "minutes") : null;
+    console.log("diff", timeDiff, "minutes");
+
+    if (supervisions.length > 0) {
+      return supervisions.map((s) => {
+        const { plannedTime: currentTime } = s;
+        if (currentTime && timeDiff !== null) {
+          // Update supervision time by diff in previous departure time and new departure time
+          return { ...s, plannedTime: moment(currentTime).add(timeDiff, "minutes").toDate() };
+        }
+        // If plannedDepartureTime was not set before (or supervision is missing plannedTime),
+        // update all planned supervision times with new departure time
+        return { ...s, plannedTime: moment(departureTime).toDate() };
+      });
+    }
+    return supervisions;
+  };
+
   const updatePlannedDeparture = (evt: MouseEvent) => {
     evt.stopPropagation();
-    const newRouteTransport: IRouteTransport = { ...modifiedRouteTransportDetail, plannedDepartureTime: departureTime };
+
+    const updatedSupervisions = updateSupervisionTimes();
+    const newRouteTransport: IRouteTransport = {
+      ...modifiedRouteTransportDetail,
+      plannedDepartureTime: moment(departureTime).toDate(),
+      supervisions: updatedSupervisions,
+    };
     setModifiedRouteTransportDetail(newRouteTransport);
     hidePopup();
   };
