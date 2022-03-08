@@ -1,5 +1,4 @@
-package fi.vaylavirasto.sillari.api.lelu.permit;
-
+package fi.vaylavirasto.sillari.api.lelu.permit_2_0_0;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
