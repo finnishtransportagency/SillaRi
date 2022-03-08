@@ -66,6 +66,7 @@ const DatePicker = ({ value, onChange, usePortal }: DatePickerProps): JSX.Elemen
 
 DatePicker.defaultProps = {
   className: undefined,
+  usePortal: false,
 };
 
 export default DatePicker;

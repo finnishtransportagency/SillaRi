@@ -22,7 +22,9 @@ import close from "../../theme/icons/close_large.svg";
 import infoOutline from "../../theme/icons/info-outline.svg";
 import "./TransportDepartureTime.css";
 import Moment from "react-moment";
-import { DATE_TIME_FORMAT_MIN } from "../../utils/constants";
+import { DATE_FORMAT, TIME_FORMAT_MIN } from "../../utils/constants";
+import { isTimestampCurrentOrAfter } from "../../utils/validation";
+import ValidationError from "../common/ValidationError";
 
 interface TransportDepartureTimeProps {
   isEditable: boolean;
@@ -37,12 +39,13 @@ const TransportDepartureTime = ({
 }: TransportDepartureTimeProps): JSX.Element => {
   const { t } = useTranslation();
 
-  /*Event is needed for positioning the popup relative to the element which triggered the event*/
-  const [popoverState, setShowPopover] = useState({ showPopover: false, event: undefined });
-
   const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
   const estimatedDeparture = plannedDepartureTime ? plannedDepartureTime : new Date();
+
+  /*Event is needed for positioning the popup relative to the element which triggered the event*/
+  const [popoverState, setShowPopover] = useState({ showPopover: false, event: undefined });
   const [departureTime, setDepartureTime] = useState<Date>(estimatedDeparture);
+  const [departureTimeValid, setDepartureTimeValid] = useState<boolean>(true);
 
   // Must use event type "any" because "Type 'MouseEvent' is not assignable to type 'undefined'" (example from https://ionicframework.com/docs/api/popover#usage)
   const showPopup = (evt: any) => {
@@ -59,7 +62,8 @@ const TransportDepartureTime = ({
     dt.setFullYear(dateTime.getFullYear());
     dt.setMonth(dateTime.getMonth());
     dt.setDate(dateTime.getDate());
-    // TODO validation
+
+    setDepartureTimeValid(isTimestampCurrentOrAfter(dt));
     setDepartureTime(dt);
   };
 
@@ -68,7 +72,8 @@ const TransportDepartureTime = ({
     dt.setHours(dateTime.getHours());
     dt.setMinutes(dateTime.getMinutes());
     dt.setSeconds(0);
-    // TODO validation
+
+    setDepartureTimeValid(isTimestampCurrentOrAfter(dt));
     setDepartureTime(dt);
   };
 
@@ -90,21 +95,37 @@ const TransportDepartureTime = ({
       <IonRow>
         <IonText className="headingText">{t("management.transportDetail.routeInfo.estimatedDepartureTime")}</IonText>
       </IonRow>
-      <IonRow>{plannedDepartureTime && <Moment format={DATE_TIME_FORMAT_MIN}>{plannedDepartureTime}</Moment>}</IonRow>
       <IonRow>
-        {isEditable && (
-          <IonButton color="secondary" expand="block" onClick={(evt) => showPopup(evt)}>
-            {!plannedDepartureTime
-              ? t("management.transportDetail.buttons.setDepartureTime")
-              : t("management.transportDetail.buttons.updateDepartureTime")}
-          </IonButton>
-        )}
+        <IonGrid className="ion-no-padding">
+          <IonRow className="ion-align-items-center">
+            {plannedDepartureTime && (
+              <IonCol size="12" size-sm="5" size-lg="3">
+                <IonText>
+                  <Moment format={DATE_FORMAT}>{plannedDepartureTime}</Moment>
+                  {` ${t("management.transportDetail.transportDepartureTime.departureAt")} `}
+                  <Moment format={TIME_FORMAT_MIN}>{plannedDepartureTime}</Moment>
+                </IonText>
+              </IonCol>
+            )}
+            {isEditable && (
+              <IonCol size="12" size-sm="6" size-lg="3" className="ion-padding-end">
+                <IonButton color="secondary" expand="block" onClick={(evt) => showPopup(evt)}>
+                  {!plannedDepartureTime
+                    ? t("management.transportDetail.buttons.setDepartureTime")
+                    : t("management.transportDetail.buttons.updateDepartureTime")}
+                </IonButton>
+              </IonCol>
+            )}
+          </IonRow>
+        </IonGrid>
+      </IonRow>
+      <IonRow>
         <IonPopover
           className="largePopover"
           isOpen={popoverState.showPopover}
           onDidDismiss={() => hidePopup()}
           event={popoverState.event}
-          side="right"
+          side={plannedDepartureTime ? "bottom" : "end"}
         >
           <IonHeader className="ion-no-border">
             <IonToolbar color="light">
@@ -118,16 +139,23 @@ const TransportDepartureTime = ({
           </IonHeader>
 
           <IonGrid className="ion-no-padding ion-margin">
-            <IonRow className="ion-margin-top">
+            <IonRow className="ion-margin-top ion-align-items-end">
               <IonCol className="ion-padding-end">
                 <IonLabel className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureDate")}</IonLabel>
                 <DatePicker value={departureTime} onChange={setPlannedDepartureDate} usePortal={true} />
               </IonCol>
               <IonCol>
                 <IonLabel className="headingText">{t("management.transportDetail.transportDepartureTime.estimatedDepartureTime")}</IonLabel>
-                <TimePicker value={departureTime} onChange={setPlannedDepartureTime} usePortal={true} />
+                <TimePicker value={departureTime} onChange={setPlannedDepartureTime} hasError={!departureTimeValid} usePortal={true} />
               </IonCol>
             </IonRow>
+            {!departureTimeValid && (
+              <IonRow>
+                <IonCol size="6" offset="6">
+                  <ValidationError label={t("common.validation.checkTime")} />
+                </IonCol>
+              </IonRow>
+            )}
             <IonRow className="ion-margin-top">
               <IonCol>
                 <IonItem className="ion-no-padding" lines="none">
@@ -143,8 +171,7 @@ const TransportDepartureTime = ({
                 </IonButton>
               </IonCol>
               <IonCol size-lg="4">
-                {/*TODO disabled when date validation fails*/}
-                <IonButton color="primary" expand="block" onClick={(evt) => updatePlannedDeparture(evt)}>
+                <IonButton color="primary" expand="block" disabled={!departureTimeValid} onClick={(evt) => updatePlannedDeparture(evt)}>
                   {t("management.transportDetail.transportDepartureTime.setTime")}
                 </IonButton>
               </IonCol>

@@ -13,6 +13,9 @@
     "answer": {
       "yes": "Kyllä",
       "no": "Ei"
+    },
+    "validation": {
+      "checkTime": "Tarkista kellonaika"
     }
   },
   "main": {
@@ -271,7 +274,7 @@
         "generatePassword": "Uusi salasana",
         "deleteTransport": "Poista kuljetus",
         "setDepartureTime": "Aseta arvioitu lähtöaika",
-        "updateDepartureTime": "Päivitä arvioitu lähtöaika"
+        "updateDepartureTime": "Muuta lähtöaikaa"
       },
       "alert": {
         "generatePassword": "Oletko varma, että haluat generoida uuden salasanan?",
@@ -307,6 +310,7 @@
         "header": "Arvioitu lähtöaika",
         "estimatedDepartureDate": "Arvioitu lähtöpäivä",
         "estimatedDepartureTime": "klo",
+        "departureAt": "klo",
         "setTime": "Aseta",
         "updateTime": "Päivitä",
         "info": "HUOM. Lähtöaika vaikuttaa myös siltojen arvioituihin ylitysaikoihin."
