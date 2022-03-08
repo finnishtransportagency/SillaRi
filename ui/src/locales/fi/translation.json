@@ -28,7 +28,8 @@
       "transports": "Kuljetukset",
       "bridges": "Sillat"
     },
-    "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen..."
+    "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen...",
+    "loading": "Ladataan..."
   },
   "map": {
     "attribution": "Aineisto"

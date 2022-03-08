@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { IonContent, IonPage, IonToast } from "@ionic/react";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
+import Loading from "../../components/Loading";
 import RouteTransportInfo from "../../components/management/RouteTransportInfo";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
@@ -64,16 +65,22 @@ const AddTransport = (): JSX.Element => {
   }, [isLoadingPermit, dispatch]);
 
   const noNetworkNoData =
-    isLoadingSupervisorList ||
-    (isFailed.getPermit && selectedPermitDetail === undefined) ||
-    (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
+    (isFailed.getPermit && selectedPermitDetail === undefined) || (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
+
+  const loading = isLoadingSupervisorList;
+
+  const notReady = noNetworkNoData || loading;
 
   return (
     <IonPage>
       <Header title={t("management.transportDetail.headerTitleAdd")} somethingFailed={isFailed.getPermit} />
       <IonContent color="light">
-        {noNetworkNoData ? (
-          <NoNetworkNoData />
+        {notReady ? (
+          noNetworkNoData ? (
+            <NoNetworkNoData />
+          ) : (
+            <Loading />
+          )
         ) : (
           <RouteTransportInfo
             routeTransportId={0}
