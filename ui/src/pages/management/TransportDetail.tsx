@@ -16,6 +16,7 @@ import { useTypedSelector } from "../../store/store";
 import { onRetry } from "../../utils/backendData";
 import { getPermitOfRouteTransport, getRouteTransport, getSupervisors } from "../../utils/managementBackendData";
 import IVehicle from "../../interfaces/IVehicle";
+import Loading from "../../components/Loading";
 
 interface TransportDetailProps {
   routeTransportId: string;
@@ -53,7 +54,12 @@ const TransportDetail = (): JSX.Element => {
       refetchOnWindowFocus: false,
     }
   );
-  const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry, refetchOnWindowFocus: false });
+  const { isLoading: isLoadingSupervisorList, data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), {
+    retry: onRetry,
+    refetchOnWindowFocus: false,
+  });
+  console.log("supervisorList:", supervisorList);
+  console.log("isLoadingSupervisorList:", isLoadingSupervisorList);
 
   const { routeId, tractorUnit } = selectedRouteTransportDetail || {};
 
@@ -105,6 +111,10 @@ const TransportDetail = (): JSX.Element => {
     (isFailed.getPermitOfRouteTransport && selectedPermitDetail === undefined) ||
     (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
 
+  const loading = isLoadingSupervisorList;
+
+  const notReady = noNetworkNoData || loading;
+
   return (
     <IonPage>
       <Header
@@ -112,8 +122,12 @@ const TransportDetail = (): JSX.Element => {
         somethingFailed={isFailed.getRouteTransport || isFailed.getPermitOfRouteTransport || isFailed.getSupervisors}
       />
       <IonContent color="light">
-        {noNetworkNoData ? (
-          <NoNetworkNoData />
+        {notReady ? (
+          noNetworkNoData ? (
+            <NoNetworkNoData />
+          ) : (
+            <Loading />
+          )
         ) : (
           <RouteTransportInfo
             routeTransportId={Number(routeTransportId)}

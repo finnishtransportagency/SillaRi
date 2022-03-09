@@ -1,13 +1,12 @@
 package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.BridgeMapper;
-import fi.vaylavirasto.sillari.mapper.CompanyMapper;
 import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.mapper.SupervisionMapper;
-import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,10 +72,10 @@ public class SupervisionRepository {
     }
 
     public SupervisionModel getSupervisionBySupervisionImageId(Integer imageId) {
-        return  dsl.select().from(TableAlias.supervision).where(TableAlias.supervision.ID.eq(
+        return dsl.select().from(TableAlias.supervision).where(TableAlias.supervision.ID.eq(
                         dsl.select(TableAlias.supervisionImage.SUPERVISION_ID).from(TableAlias.supervisionImage).where(TableAlias.supervisionImage.ID.eq(
-                                        imageId
-                                ))
+                                imageId
+                        ))
                 ))
                 .fetchOne(new SupervisionMapper());
     }
@@ -161,11 +160,11 @@ public class SupervisionRepository {
                             TableAlias.supervision.SUPERVISOR_TYPE,
                             TableAlias.supervision.CONFORMS_TO_PERMIT
                     ).values(
-                            supervisionModel.getRouteBridgeId(),
-                            supervisionModel.getRouteTransportId(),
-                            supervisionModel.getPlannedTime(),
-                            supervisionModel.getSupervisorType().toString(),
-                            false)
+                    supervisionModel.getRouteBridgeId(),
+                    supervisionModel.getRouteTransportId(),
+                    supervisionModel.getPlannedTime(),
+                    supervisionModel.getSupervisorType().toString(),
+                    false)
                     .returningResult(TableAlias.supervision.ID)
                     .fetchOne(); // Execute and return zero or one record
 
@@ -173,7 +172,7 @@ public class SupervisionRepository {
             supervisionModel.setId(supervisionId);
 
             supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
+                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getPriority(), supervisorModel.getUsername());
             });
 
             return supervisionId;
@@ -192,7 +191,7 @@ public class SupervisionRepository {
 
             supervisorRepository.deleteSupervisionSupervisors(ctx, supervisionModel.getId());
             supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisorModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
+                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
             });
         });
     }
@@ -220,7 +219,6 @@ public class SupervisionRepository {
                     .execute();
         });
     }
-
 
 
 }
