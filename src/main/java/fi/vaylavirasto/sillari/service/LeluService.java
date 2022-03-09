@@ -73,7 +73,7 @@ public class LeluService {
     // TODO
     //this used currently to ease lelu testing.
     //Deletes everything under the permit with lelu permit id if given.
-    //Will be rreplaced by createOrUpdatePermit eventually.
+    //Will be replaced by createOrUpdatePermit eventually.
     public LeluPermitResponseDTO createOrUpdatePermitDevVersion(LeluPermitDTO permitDTO) throws LeluDeleteRouteWithSupervisionsException {
         LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
 

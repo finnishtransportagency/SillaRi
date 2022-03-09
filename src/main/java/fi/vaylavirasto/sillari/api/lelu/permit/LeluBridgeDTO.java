@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -40,7 +41,7 @@ public class LeluBridgeDTO {
     private String contractBusinessIdentifier;
 
     @Schema(description = "Order number of crossing, starting from 1.", example = "1")
-    @NotBlank(message = "{transport.number.not.blank}")
+    @NotNull(message = "{transport.number.not.null}")
     private Integer transportNumber;
 
     public LeluBridgeDTO() {

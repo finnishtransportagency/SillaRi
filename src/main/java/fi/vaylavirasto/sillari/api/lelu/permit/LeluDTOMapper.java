@@ -49,7 +49,9 @@ public interface LeluDTOMapper {
             @Mapping(target = "bridge.identifier", source = "dto.identifier"),
             @Mapping(target = "bridge.name", source = "dto.name"),
             @Mapping(target = "bridge.roadAddress", source = "dto.roadAddress"),
-            @Mapping(target = "crossingInstruction", source = "dto.additionalInfo")
+            @Mapping(target = "crossingInstruction", source = "dto.additionalInfo"),
+            @Mapping(target = "contractBusinessIdentifier", source = "dto.contractBusinessIdentifier"),
+            @Mapping(target = "transportNumber", source = "dto.transportNumber")
     })
     RouteBridgeModel fromDTOToModel(LeluBridgeDTO dto);
 

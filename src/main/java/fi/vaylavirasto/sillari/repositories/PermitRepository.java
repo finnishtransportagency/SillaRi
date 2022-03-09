@@ -327,13 +327,17 @@ public class PermitRepository {
                                 TableAlias.routeBridge.BRIDGE_ID,
                                 TableAlias.routeBridge.ORDINAL,
                                 TableAlias.routeBridge.CROSSING_INSTRUCTION,
-                                TableAlias.routeBridge.CONTRACT_NUMBER
+                                TableAlias.routeBridge.CONTRACT_NUMBER,
+                                TableAlias.routeBridge.CONTRACT_BUSINESS_ID,
+                                TableAlias.routeBridge.TRANSPORT_NUMBER
                         ).values(
                                 routeBridge.getRouteId(),
                                 routeBridge.getBridgeId(),
                                 routeBridge.getOrdinal(),
                                 routeBridge.getCrossingInstruction(),
-                                routeBridge.getContractNumber())
+                                routeBridge.getContractNumber(),
+                                routeBridge.getContractBusinessIdentifier(),
+                                routeBridge.getTransportNumber())
                         .execute();
             } else {
                 logger.warn("BridgeId missing for routeBridge, cannot insert");

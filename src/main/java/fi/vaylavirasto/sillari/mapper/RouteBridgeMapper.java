@@ -19,6 +19,8 @@ public class RouteBridgeMapper implements RecordMapper<Record, RouteBridgeModel>
         model.setContractNumber(record.get(TableAlias.routeBridge.CONTRACT_NUMBER));
         model.setRowCreatedTime(record.get(TableAlias.routeBridge.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.routeBridge.ROW_UPDATED_TIME));
+        model.setContractBusinessIdentifier(record.get(TableAlias.routeBridge.CONTRACT_BUSINESS_ID));
+        model.setTransportNumber(record.get(TableAlias.routeBridge.TRANSPORT_NUMBER));
         return model;
     }
 }
