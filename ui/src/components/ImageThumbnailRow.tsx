@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { IonCol, IonImg, IonRow, IonThumbnail } from "@ionic/react";
+import { IonCol, IonImg, IonRow, IonSpinner, IonThumbnail } from "@ionic/react";
+import { useIsMutating } from "react-query";
 import moment from "moment";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import { getOrigin } from "../utils/request";
@@ -20,10 +21,20 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
     setImagePreviewUrl(imageUrl || imagePreviewUrl);
   };
 
+  // Check if images are being uploaded using the mutationKey defined in Photos.tsx
+  const isImageUploadMutating = useIsMutating(["imageUpload"]);
+
   // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
   return (
     <IonRow>
-      {images &&
+      {isImageUploadMutating > 0 && (
+        <IonCol>
+          <IonSpinner color="primary" className="imageSpinner" />
+        </IonCol>
+      )}
+
+      {isImageUploadMutating === 0 &&
+        images &&
         images.length > 0 &&
         [...images]
           .sort((a, b) => {
