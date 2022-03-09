@@ -1,6 +1,5 @@
 package fi.vaylavirasto.sillari.service.fim;
 
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fi.vaylavirasto.sillari.api.rest.error.FIMRestException;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
@@ -40,20 +39,22 @@ public class FIMService {
          if(!cachedDataCurrent()) {
              logger.trace("Get from FIM. Not using cached supervisornames");
              supervisorsLastQueryedInMillis = System.currentTimeMillis();
-             supervisors = new ArrayList<>();
+             List<SupervisorModel> supervisorsFromFIM = new ArrayList<>();
 
              Groups groups = getSupervisorsXML();
              Group group = groups.getGroup().get(0);
 
              for (Person persons : group.getPersons().getPerson()) {
                  SupervisorModel supervisor = mapper.fromDTOToModel(persons);
-                 supervisors.add(supervisor);
+                 supervisorsFromFIM.add(supervisor);
              }
+             return supervisorsFromFIM;
          }
          else{
              logger.trace("Using cached supervisornames");
+             return supervisors;
          }
-        return supervisors;
+
     }
 
     private boolean cachedDataCurrent() {
