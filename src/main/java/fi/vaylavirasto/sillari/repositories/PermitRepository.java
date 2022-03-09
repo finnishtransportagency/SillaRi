@@ -532,6 +532,13 @@ public class PermitRepository {
     }
 
     private void deleteRouteTransports(DSLContext ctx, RouteModel routeModel) {
+        ctx.delete(TableAlias.routeTransportPassword)
+                .where(TableAlias.routeTransportPassword.ROUTE_TRANSPORT_ID.in(ctx.select(TableAlias.routeTransport.ID)
+                        .from(TableAlias.routeTransport)
+                        .where(TableAlias.routeTransport.ROUTE_ID.eq(routeModel.getId()))
+                        .fetch()))
+                .execute();
+
         ctx.delete(TableAlias.transportStatus)
                 .where(TableAlias.transportStatus.ROUTE_TRANSPORT_ID.in(ctx.select(TableAlias.routeTransport.ID)
                 .from(TableAlias.routeTransport)
