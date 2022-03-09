@@ -10,7 +10,7 @@ import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import ISupervisor from "../../interfaces/ISupervisor";
 import { DATE_FORMAT, TIME_FORMAT_MIN } from "../../utils/constants";
-import { isTransportEditable } from "../../utils/validation";
+import { isPlannedDateBefore, isPlannedTimeBefore, isTransportEditable } from "../../utils/validation";
 import "./BridgeGrid.css";
 import SupervisorSelect from "./SupervisorSelect";
 
@@ -106,7 +106,7 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
           const { ordinal: ordinalB = -1 } = b.routeBridge || {};
           return ordinalA - ordinalB;
         })
-        .map((supervision, index) => {
+        .map((supervision, index, sortedSupervisions) => {
           const { routeBridge } = supervision || {};
           const { id: routeBridgeId, bridge, contractNumber = 0 } = routeBridge || {};
           const { identifier, name } = bridge || {};
@@ -121,6 +121,10 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
 
           const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
           const key = `bridge_${index}`;
+
+          const previousSupervision = index !== 0 ? sortedSupervisions[index - 1] : null;
+          const { plannedTime: previousTime } = previousSupervision || {};
+          const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
 
           return (
             <IonRow key={key}>
@@ -153,14 +157,22 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
                   <IonRow>
                     <IonCol>
                       {isEditable ? (
-                        <DatePicker value={estimatedCrossingTime.toDate()} onChange={(value) => setEstimatedCrossingDate(supervision, value)} />
+                        <DatePicker
+                          value={estimatedCrossingTime.toDate()}
+                          onChange={(value) => setEstimatedCrossingDate(supervision, value)}
+                          hasError={isPlannedDateBefore(plannedTime, previousTime, plannedDepartureTime)}
+                        />
                       ) : (
                         <Moment format={DATE_FORMAT}>{estimatedCrossingTime}</Moment>
                       )}
                     </IonCol>
                     <IonCol className="ion-margin-start">
                       {isEditable ? (
-                        <TimePicker value={estimatedCrossingTime.toDate()} onChange={(value) => setEstimatedCrossingTime(supervision, value)} />
+                        <TimePicker
+                          value={estimatedCrossingTime.toDate()}
+                          onChange={(value) => setEstimatedCrossingTime(supervision, value)}
+                          hasError={isPlannedTimeBefore(plannedTime, previousTime, plannedDepartureTime)}
+                        />
                       ) : (
                         <Moment format={TIME_FORMAT_MIN}>{estimatedCrossingTime}</Moment>
                       )}

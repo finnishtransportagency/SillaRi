@@ -26,5 +26,33 @@ export const isTransportEditable = (transport: IRouteTransport, permit: IPermit)
 
 export const isTimestampCurrentOrAfter = (dateTime: Date): boolean => {
   const now = moment(new Date());
-  return moment(dateTime).isAfter(now, "minute") || moment(dateTime).isSame(now, "minute");
+  return moment(dateTime).isAfter(now, "minutes") || moment(dateTime).isSame(now, "minute");
+};
+
+export const isPlannedDateBefore = (selectedTime: Date | undefined, previousTime: Date | undefined, departureTime: Date | undefined): boolean => {
+  if (selectedTime && previousTime && moment(selectedTime).isBefore(moment(previousTime), "dates")) {
+    return true;
+  }
+  return !!(selectedTime && departureTime && moment(selectedTime).isBefore(moment(departureTime), "dates"));
+};
+
+export const isPlannedTimeBefore = (selectedTime: Date | undefined, previousTime: Date | undefined, departureTime: Date | undefined): boolean => {
+  if (!selectedTime) {
+    return false;
+  }
+  const selectedMoment = moment(selectedTime);
+  const departureMoment = departureTime ? moment(departureTime) : null;
+  const previousMoment = previousTime ? moment(previousTime) : null;
+
+  // Validate times only when date is the same - date errors shown in date box
+  const departureDateIsSame = departureMoment && selectedMoment.isSame(departureMoment, "dates");
+  const previousDateIsSame = previousMoment && selectedMoment.isSame(previousMoment, "dates");
+
+  if (previousDateIsSame && selectedMoment.isBefore(previousMoment, "minutes")) {
+    return true;
+  }
+
+  // If selected time is after previous, or it's the first one, compare to departureTime.
+  // However, if departure date is different from previous date, errors are shown in date box - no need to show it in time box.
+  return !!(departureDateIsSame && previousDateIsSame && selectedMoment.isBefore(departureMoment, "minutes"));
 };
