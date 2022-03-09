@@ -86,13 +86,13 @@ const TransportDepartureTime = ({
   };
 
   const updateSupervisionTimes = (): ISupervision[] => {
-    // Compare previous time and selected time, ignore seconds and milliseconds
-    const selectedDeparture = moment(departureTime).startOf("minute");
-    const previousDeparture = plannedDepartureTime ? moment(plannedDepartureTime).startOf("minute") : null;
-    const timeDiff = previousDeparture ? selectedDeparture.diff(previousDeparture, "minutes") : null;
-    console.log("diff", timeDiff, "minutes");
-
     if (supervisions.length > 0) {
+      // Compare previous time and selected time, ignore seconds and milliseconds
+      const selectedDeparture = moment(departureTime).startOf("minute");
+      const previousDeparture = plannedDepartureTime ? moment(plannedDepartureTime).startOf("minute") : null;
+      const timeDiff = previousDeparture ? selectedDeparture.diff(previousDeparture, "minutes") : null;
+      console.log("diff", timeDiff, "minutes");
+
       return supervisions.map((s) => {
         const { plannedTime: currentTime } = s;
         if (currentTime && timeDiff !== null) {
