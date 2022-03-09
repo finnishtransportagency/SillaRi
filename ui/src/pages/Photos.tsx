@@ -45,7 +45,9 @@ const Photos = (): JSX.Element => {
   const { images: savedImages = [] } = supervision || {};
 
   // Set-up mutations for modifying data later
+  // This mutationKey is used in ImageThumbnailRow to check if images are being uploaded
   const imageUploadMutation = useMutation((fileUpload: ISupervisionImageInput) => sendImageUpload(fileUpload, dispatch), {
+    mutationKey: "imageUpload",
     retry: onRetry,
     onSuccess: () => {
       // TODO - figure out a better way to do this when offline
