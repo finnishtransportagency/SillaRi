@@ -8,6 +8,11 @@ sillari:
     routeuploadpath: /tmp
   trex:
     url: http://localhost:8080/api/devtools/localHardCodedBridgeInfoJson
+  fim:
+    url: http://localhost:8080/api/devtools/localHardCodedSupervisors
+    #url: https://testioag.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/getGroup2?displayName=sillari_sillanvalvoja
+    username: ${FIM_USERNAME}
+    password: ${FIM_PASSWORD}
 spring:
   application:
     name: SillaRi

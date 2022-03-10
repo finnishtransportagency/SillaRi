@@ -1,17 +1,11 @@
 package fi.vaylavirasto.sillari.service;
 
-import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.model.RouteTransportModel;
-import fi.vaylavirasto.sillari.model.RouteTransportPasswordModel;
-import fi.vaylavirasto.sillari.model.RouteTransportStatusModel;
-import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
+import fi.vaylavirasto.sillari.service.fim.FIMService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -36,6 +30,9 @@ public class RouteTransportService {
     SupervisorRepository supervisorRepository;
     @Autowired
     RouteTransportPasswordRepository routeTransportPasswordRepository;
+    @Autowired
+    FIMService fimService;
+
 
     public RouteTransportModel getRouteTransport(Integer routeTransportId, boolean includePassword) {
         RouteTransportModel routeTransportModel = routeTransportRepository.getRouteTransportById(routeTransportId);
@@ -49,6 +46,7 @@ public class RouteTransportService {
             if (supervisions != null) {
                 supervisions.forEach(supervision -> {
                     supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                    fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
                     supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });
             }
@@ -77,6 +75,8 @@ public class RouteTransportService {
                 if (supervisions != null) {
                     supervisions.forEach(supervision -> {
                         supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                        // Supervisor name not shown in ui from this resource, so we don't waste time getting them
+                        //fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
                         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                     });
                 }
@@ -104,6 +104,8 @@ public class RouteTransportService {
                 if (supervisions != null) {
                     supervisions.forEach(supervision -> {
                         supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+                        // Supervisor name not shown in ui from this resource, so we don't waste time getting them
+                        //fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
                         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                     });
                 }
@@ -148,6 +150,10 @@ public class RouteTransportService {
             if (supervisions != null) {
                 supervisions.forEach(supervision -> {
                     supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
+
+                    // Supervisor name not shown in ui from this resource, so we don't waste time getting them
+                    //fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
+
                     // Sets also current status and status timestamps
                     supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });

@@ -1,0 +1,97 @@
+<groups>
+    <group>
+        <ObjectKey>11274699</ObjectKey>
+        <ObjectID>46bccf6c-e36f-4cb3-9a8e-69bb3182c2c4</ObjectID>
+        <DisplayName>sillari_sillanvalvoja</DisplayName>
+        <persons>
+            <person>
+                <ObjectKey>10364038</ObjectKey>
+                <ObjectID>2fe11aa0-da22-483f-b676-95877d1426db</ObjectID>
+                <AccountName>LX067415</AccountName>
+                <DisplayName>Sillari Testi1 Testi Kuljetusyritys Oy</DisplayName>
+                <FirstName>Testi1</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com4</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10364060</ObjectKey>
+                <ObjectID>dc435118-7949-4ae4-85e0-6d5a8ece4a48</ObjectID>
+                <AccountName>LX790081</AccountName>
+                <DisplayName>Sillari Testi2 Testi Kuljetusyritys Oy</DisplayName>
+                <FirstName>Testi2</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com5</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10363986</ObjectKey>
+                <ObjectID>5f61cf23-d553-4a47-9821-b497b8022e53</ObjectID>
+                <AccountName>LX687859</AccountName>
+                <DisplayName>Sillari Testi3 Testi Toinen Kuljetusyritys Oy</DisplayName>
+                <FirstName>Testi3</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com3</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10709140</ObjectKey>
+                <ObjectID>79469d82-48e4-49ff-858e-480b0128b158</ObjectID>
+                <AccountName>LX618343</AccountName>
+                <DisplayName>Sillari Yit1 YIT Rakennus Oy</DisplayName>
+                <FirstName>Yit1</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10709156</ObjectKey>
+                <ObjectID>61ea1971-1b63-4c3e-b116-f4666b9b8969</ObjectID>
+                <AccountName>LX914102</AccountName>
+                <DisplayName>Sillari Yit2 YIT Rakennus Oy</DisplayName>
+                <FirstName>Yit2</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>10709181</ObjectKey>
+                <ObjectID>71ef8677-4866-4f32-bc99-fc77c408e871</ObjectID>
+                <AccountName>LX671423</AccountName>
+                <DisplayName>Sillari Yit3 YIT Rakennus Oy</DisplayName>
+                <FirstName>Yit3</FirstName>
+                <LastName>Sillari</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>335342</ObjectKey>
+                <ObjectID>041b5510-4af3-4273-a07c-10716aba4e71</ObjectID>
+                <AccountName>K670970</AccountName>
+                <DisplayName>Upla Janne</DisplayName>
+                <FirstName>Janne</FirstName>
+                <LastName>Upla</LastName>
+                <Email>janne.upla@cgi.com</Email>
+                <Yksikko/>
+                <Department/>
+            </person>
+            <person>
+                <ObjectKey>2999351</ObjectKey>
+                <ObjectID>52f05daa-dbf9-4efb-a71d-785f30c3df55</ObjectID>
+                <AccountName>L683844</AccountName>
+                <DisplayName>Vina Miina</DisplayName>
+                <FirstName>Miina</FirstName>
+                <LastName>Vina</LastName>
+                <Email>miina.vina@testi.vayla.fi</Email>
+                <Yksikko>ICT-yksikkö</Yksikko>
+                <Department>Tieto</Department>
+            </person>
+        </persons>
+    </group>
+</groups>

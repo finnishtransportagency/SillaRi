@@ -5,6 +5,7 @@ import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
+import fi.vaylavirasto.sillari.service.fim.FIMService;
 import fi.vaylavirasto.sillari.util.PDFGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,6 +48,8 @@ public class SupervisionService {
     AWSS3Client awss3Client;
     @Autowired
     SupervisionImageService supervisionImageService;
+    @Autowired
+    FIMService fimService;
 
 
     @Value("${spring.profiles.active:Unknown}")
@@ -66,9 +69,17 @@ public class SupervisionService {
         Integer supervisionId = supervision.getId();
         supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
         supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
+        fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
         supervision.setImages(supervisionImageRepository.getFiles(supervisionId));
         // Sets also current status and status timestamps
         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
+    }
+
+    private void setIdsFromDb(List<SupervisorModel> supervisorsFromDbInBoth, List<SupervisorModel> supervisorsFromFIM) {
+        for (SupervisorModel supervisorFromDb : supervisorsFromDbInBoth) {
+            SupervisorModel supervisorFromFIM = supervisorsFromFIM.stream().filter(s -> s.getUsername().equals(supervisorFromDb.getUsername())).findFirst().orElseThrow();
+            supervisorFromFIM.setId(supervisorFromDb.getId());
+        }
     }
 
     private void fillPermitDetails(SupervisionModel supervision) {
@@ -119,10 +130,6 @@ public class SupervisionService {
         return supervisions;
     }
 
-    public List<SupervisorModel> getSupervisors() {
-        // TODO - limit the list of supervisors somehow?
-        return supervisorRepository.getSupervisors();
-    }
 
     // Creates new supervision and adds a new status with type PLANNED
     // The timestamp in PLANNED is the current time, not planned_time which can be updated later.
@@ -303,5 +310,6 @@ public class SupervisionService {
     public List<SupervisorModel> getSupervisorsByPermitId(Integer routeId) {
         return supervisorRepository.getSupervisorsByPermitId(routeId);
     }
+
 
 }

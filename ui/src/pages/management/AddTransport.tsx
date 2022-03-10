@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { IonContent, IonPage, IonToast } from "@ionic/react";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
+import Loading from "../../components/Loading";
 import RouteTransportInfo from "../../components/management/RouteTransportInfo";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
@@ -38,15 +39,14 @@ const AddTransport = (): JSX.Element => {
 
   const { permitId = "0" } = useParams<AddTransportProps>();
 
-  const { isLoading: isLoadingPermit, data: selectedPermitDetail } = useQuery(
-    ["getPermit", Number(permitId)],
-    () => getPermit(Number(permitId), dispatch),
-    {
-      retry: onRetry,
-      refetchOnWindowFocus: false,
-    }
-  );
-  const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry, refetchOnWindowFocus: false });
+  const { isLoading: isLoadingPermit, data: selectedPermitDetail } = useQuery(["getPermit", permitId], () => getPermit(Number(permitId), dispatch), {
+    retry: onRetry,
+    refetchOnWindowFocus: false,
+  });
+  const { isLoading: isLoadingSupervisorList, data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), {
+    retry: onRetry,
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
     // Put empty details into redux for later modifying
@@ -67,12 +67,20 @@ const AddTransport = (): JSX.Element => {
   const noNetworkNoData =
     (isFailed.getPermit && selectedPermitDetail === undefined) || (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
 
+  const loading = isLoadingSupervisorList;
+
+  const notReady = noNetworkNoData || loading;
+
   return (
     <IonPage>
       <Header title={t("management.transportDetail.headerTitleAdd")} somethingFailed={isFailed.getPermit} />
       <IonContent color="light">
-        {noNetworkNoData ? (
-          <NoNetworkNoData />
+        {notReady ? (
+          noNetworkNoData ? (
+            <NoNetworkNoData />
+          ) : (
+            <Loading />
+          )
         ) : (
           <RouteTransportInfo
             routeTransportId={0}

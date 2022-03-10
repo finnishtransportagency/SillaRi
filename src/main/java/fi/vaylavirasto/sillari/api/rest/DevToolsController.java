@@ -3,6 +3,8 @@ package fi.vaylavirasto.sillari.api.rest;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
+import fi.vaylavirasto.sillari.service.fim.FIMService;
+import fi.vaylavirasto.sillari.service.fim.responseModel.Groups;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJson;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +24,8 @@ public class DevToolsController {
 
     @Autowired
     TRexService tRexService;
-
+    @Autowired
+    FIMService fimService;
 
     @RequestMapping(value = "/resttest", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
@@ -30,6 +33,131 @@ public class DevToolsController {
         return "Hello world.";
     }
 
+    @RequestMapping(value = "/testGetSupervisorsRawFromFim", method = RequestMethod.GET)
+    @Operation(summary = "Test basic get request with constant bridge")
+    public Groups testConnectionToFim() throws TRexRestException {
+
+        logger.debug("Test connections to fim");
+
+        try {
+            Groups groups = fimService.getSupervisorsXML();
+            if (groups == null) {
+                logger.error("trex fail  bridge null");
+                return null;
+
+            } else {
+                logger.debug("success getting bridge from trex: " + groups.toString());
+                return groups;
+            }
+        } catch (Exception e) {
+            logger.error("fimrest fail " + e.getClass().getName() + " " + e.getMessage());
+            return null;
+        }
+
+
+    }
+
+    //this can be set as "fim url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,
+    @RequestMapping(value = "/localHardCodedSupervisors", method = RequestMethod.GET)
+    public String fimHardString() {
+        return "<groups>\n" +
+                "    <group>\n" +
+                "        <ObjectKey>11274699</ObjectKey>\n" +
+                "        <ObjectID>46bccf6c-e36f-4cb3-9a8e-69bb3182c2c4</ObjectID>\n" +
+                "        <DisplayName>sillari_sillanvalvoja</DisplayName>\n" +
+                "        <persons>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>10364038</ObjectKey>\n" +
+                "                <ObjectID>2fe11aa0-da22-483f-b676-95877d1426db</ObjectID>\n" +
+                "                <AccountName>LX067415</AccountName>\n" +
+                "                <DisplayName>Sillari Testi1 Testi Kuljetusyritys Oy</DisplayName>\n" +
+                "                <FirstName>Testi1</FirstName>\n" +
+                "                <LastName>Sillari</LastName>\n" +
+                "                <Email>janne.upla@cgi.com4</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>10364060</ObjectKey>\n" +
+                "                <ObjectID>dc435118-7949-4ae4-85e0-6d5a8ece4a48</ObjectID>\n" +
+                "                <AccountName>LX790081</AccountName>\n" +
+                "                <DisplayName>Sillari Testi2 Testi Kuljetusyritys Oy</DisplayName>\n" +
+                "                <FirstName>Testi2</FirstName>\n" +
+                "                <LastName>Sillari</LastName>\n" +
+                "                <Email>janne.upla@cgi.com5</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>10363986</ObjectKey>\n" +
+                "                <ObjectID>5f61cf23-d553-4a47-9821-b497b8022e53</ObjectID>\n" +
+                "                <AccountName>LX687859</AccountName>\n" +
+                "                <DisplayName>Sillari Testi3 Testi Toinen Kuljetusyritys Oy</DisplayName>\n" +
+                "                <FirstName>Testi3</FirstName>\n" +
+                "                <LastName>Sillari</LastName>\n" +
+                "                <Email>janne.upla@cgi.com3</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>10709140</ObjectKey>\n" +
+                "                <ObjectID>79469d82-48e4-49ff-858e-480b0128b158</ObjectID>\n" +
+                "                <AccountName>LX618343</AccountName>\n" +
+                "                <DisplayName>Sillari Yit1 YIT Rakennus Oy</DisplayName>\n" +
+                "                <FirstName>Yit1</FirstName>\n" +
+                "                <LastName>Sillari</LastName>\n" +
+                "                <Email>janne.upla@cgi.com</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>10709156</ObjectKey>\n" +
+                "                <ObjectID>61ea1971-1b63-4c3e-b116-f4666b9b8969</ObjectID>\n" +
+                "                <AccountName>LX914102</AccountName>\n" +
+                "                <DisplayName>Sillari Yit2 YIT Rakennus Oy</DisplayName>\n" +
+                "                <FirstName>Yit2</FirstName>\n" +
+                "                <LastName>Sillari</LastName>\n" +
+                "                <Email>janne.upla@cgi.com</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>10709181</ObjectKey>\n" +
+                "                <ObjectID>71ef8677-4866-4f32-bc99-fc77c408e871</ObjectID>\n" +
+                "                <AccountName>LX671423</AccountName>\n" +
+                "                <DisplayName>Sillari Yit3 YIT Rakennus Oy</DisplayName>\n" +
+                "                <FirstName>Yit3</FirstName>\n" +
+                "                <LastName>Sillari</LastName>\n" +
+                "                <Email>janne.upla@cgi.com</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>335342</ObjectKey>\n" +
+                "                <ObjectID>041b5510-4af3-4273-a07c-10716aba4e71</ObjectID>\n" +
+                "                <AccountName>T012345</AccountName>\n" +
+                "                <DisplayName>CGI-Local</DisplayName>\n" +
+                "                <FirstName>CGI-Local</FirstName>\n" +
+                "                <LastName>Testikäyttäjä</LastName>\n" +
+                "                <Email>Testikäyttäjä@cgi.com</Email>\n" +
+                "                <Yksikko/>\n" +
+                "                <Department/>\n" +
+                "            </person>\n" +
+                "            <person>\n" +
+                "                <ObjectKey>2999351</ObjectKey>\n" +
+                "                <ObjectID>52f05daa-dbf9-4efb-a71d-785f30c3df55</ObjectID>\n" +
+                "                <AccountName>USER2</AccountName>\n" +
+                "                <DisplayName>Ville Varavalvoja</DisplayName>\n" +
+                "                <FirstName>Ville</FirstName>\n" +
+                "                <LastName>Varavalvoja</LastName>\n" +
+                "                <Email>Ville.Varavalvoja@testi.vayla.fi</Email>\n" +
+                "                <Yksikko>ICT-yksikkö</Yksikko>\n" +
+                "                <Department>Tieto</Department>\n" +
+                "            </person>\n" +
+                "        </persons>\n" +
+                "    </group>\n" +
+                "</groups>";
+    }
 
     @RequestMapping(value = "/testConnectionToTrex", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request with constant bridge")

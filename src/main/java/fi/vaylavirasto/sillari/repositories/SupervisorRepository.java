@@ -1,11 +1,10 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.mapper.SupervisorMapper;
+import fi.vaylavirasto.sillari.mapper.SupervisionSupervisorMapper;
 import fi.vaylavirasto.sillari.model.SupervisorModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -19,21 +18,19 @@ public class SupervisorRepository {
     @Autowired
     private DSLContext dsl;
 
+
     public List<SupervisorModel> getSupervisors() {
-        return dsl.select().from(TableAlias.supervisor)
-                .fetch(new SupervisorMapper());
+        return dsl.select().from(TableAlias.supervisionSupervisor)
+                .fetch(new SupervisionSupervisorMapper());
     }
 
     public List<SupervisorModel> getSupervisorsBySupervisionId(Integer supervisionId) {
-        return dsl.select().from(TableAlias.supervisor)
-                .innerJoin(TableAlias.supervisionSupervisor)
-                .on(TableAlias.supervisionSupervisor.SUPERVISOR_ID.eq(TableAlias.supervisor.ID))
+        return dsl.select().from(TableAlias.supervisionSupervisor)
                 .where(TableAlias.supervisionSupervisor.SUPERVISION_ID.eq(supervisionId))
                 .fetch(record -> {
-                    SupervisorMapper supervisorMapper = new SupervisorMapper();
-                    SupervisorModel supervisor = supervisorMapper.map(record);
+                    SupervisionSupervisorMapper supervisionSupervisorMapper = new SupervisionSupervisorMapper();
+                    SupervisorModel supervisor = supervisionSupervisorMapper.map(record);
                     if (supervisor != null) {
-                        supervisor.setPriority(record.get(TableAlias.supervisionSupervisor.PRIORITY));
                         // Supervisor created and updated timestamps overridden by supervisionSupervisor
                         supervisor.setRowCreatedTime(record.get(TableAlias.supervisionSupervisor.ROW_CREATED_TIME));
                         supervisor.setRowUpdatedTime(record.get(TableAlias.supervisionSupervisor.ROW_UPDATED_TIME));
@@ -43,67 +40,64 @@ public class SupervisorRepository {
     }
 
     public List<SupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
-        return dsl.select().from(TableAlias.supervisor).where(TableAlias.supervisor.ID.in(
-                        dsl.select(TableAlias.supervisionSupervisor.SUPERVISOR_ID).from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
-                                dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(
-                                        routeBridgeId
-                                ))
+        return dsl.select().from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
+                        dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(
+                                routeBridgeId
                         ))
                 ))
-                .fetch(new SupervisorMapper());
+                .fetch(new SupervisionSupervisorMapper());
     }
 
 
     public List<SupervisorModel> getSupervisorsByRouteId(Integer routeId) {
-        return dsl.select().from(TableAlias.supervisor).where(TableAlias.supervisor.ID.in(
-                        dsl.select(TableAlias.supervisionSupervisor.SUPERVISOR_ID).from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
-                                dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_BRIDGE_ID.in(
-                                        dsl.select(TableAlias.routeBridge.ID).from(TableAlias.routeBridge).where(TableAlias.routeBridge.ROUTE_ID.eq(
-                                                routeId
-                                        ))
+        return dsl.select().from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
+
+                        dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_BRIDGE_ID.in(
+                                dsl.select(TableAlias.routeBridge.ID).from(TableAlias.routeBridge).where(TableAlias.routeBridge.ROUTE_ID.eq(
+                                        routeId
                                 ))
                         ))
+
                 ))
-                .fetch(new SupervisorMapper());
+                .fetch(new SupervisionSupervisorMapper());
     }
 
 
     public List<SupervisorModel> getSupervisorsByRouteTransportId(Integer routeTransportId) {
-        return dsl.select().from(TableAlias.supervisor).where(TableAlias.supervisor.ID.in(
-                        dsl.select(TableAlias.supervisionSupervisor.SUPERVISOR_ID).from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
-                                dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(
-                                        routeTransportId
-                                ))
+        return dsl.select().from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
+
+                        dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(
+                                routeTransportId
                         ))
+
                 ))
-                .fetch(new SupervisorMapper());
+                .fetch(new SupervisionSupervisorMapper());
     }
 
 
     public List<SupervisorModel> getSupervisorsByPermitId(Integer permitId) {
-        return dsl.select().from(TableAlias.supervisor).where(TableAlias.supervisor.ID.in(
-                        dsl.select(TableAlias.supervisionSupervisor.SUPERVISOR_ID).from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
-                                dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_BRIDGE_ID.in(
-                                        dsl.select(TableAlias.routeBridge.ID).from(TableAlias.routeBridge).where(TableAlias.routeBridge.ROUTE_ID.in(
-                                                dsl.select(TableAlias.route.ID).from(TableAlias.route).where(TableAlias.route.PERMIT_ID.eq(
-                                                        permitId
-                                                ))
+        return dsl.select().from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(
+
+                        dsl.select(TableAlias.supervision.ID).from(TableAlias.supervision).where(TableAlias.supervision.ROUTE_BRIDGE_ID.in(
+                                dsl.select(TableAlias.routeBridge.ID).from(TableAlias.routeBridge).where(TableAlias.routeBridge.ROUTE_ID.in(
+                                        dsl.select(TableAlias.route.ID).from(TableAlias.route).where(TableAlias.route.PERMIT_ID.eq(
+                                                permitId
                                         ))
                                 ))
                         ))
+
                 ))
-                .fetch(new SupervisorMapper());
+                .fetch(new SupervisionSupervisorMapper());
     }
 
-    public void insertSupervisionSupervisor(DSLContext ctx, Integer supervisionId, Integer supervisorId, Integer priority, String username) {
+
+    public void insertSupervisionSupervisor(DSLContext ctx, Integer supervisionId, Integer priority, String username) {
         ctx.insertInto(TableAlias.supervisionSupervisor,
                         TableAlias.supervisionSupervisor.SUPERVISION_ID,
-                        TableAlias.supervisionSupervisor.SUPERVISOR_ID,
                         TableAlias.supervisionSupervisor.PRIORITY,
                         TableAlias.supervisionSupervisor.USERNAME
                 ).values(
                         supervisionId,
-                        supervisorId,
                         priority,
                         username
                 )
@@ -116,5 +110,13 @@ public class SupervisorRepository {
                 .execute();
     }
 
-   
+
+    public SupervisorModel getSupervisorByUsername(DSLContext ctx, String username) {
+        return ctx.select().from(TableAlias.supervisionSupervisor).where(TableAlias.supervisionSupervisor.USERNAME.eq(
+                        username
+                ))
+                .fetchOne(new SupervisionSupervisorMapper());
+    }
+
+
 }
