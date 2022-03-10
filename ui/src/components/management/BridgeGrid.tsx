@@ -14,6 +14,7 @@ import { isPlannedDateBefore, isPlannedTimeBefore, isTransportEditable } from ".
 import "./BridgeGrid.css";
 import SupervisorSelect from "./SupervisorSelect";
 import ValidationError from "../common/ValidationError";
+import { constructTimesForComparison } from "../../utils/managementUtil";
 
 interface BridgeGridProps {
   supervisors: ISupervisor[];
@@ -123,12 +124,13 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
           const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
           const key = `bridge_${index}`;
 
-          const previousSupervision = index !== 0 ? sortedSupervisions[index - 1] : null;
-          const { plannedTime: previousTime } = previousSupervision || {};
           const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
+          const previousTimes: Date[] = constructTimesForComparison(plannedDepartureTime, sortedSupervisions, index);
 
-          const hasDateError = isPlannedDateBefore(plannedTime, previousTime, plannedDepartureTime);
-          const hasTimeError = isPlannedTimeBefore(plannedTime, previousTime, plannedDepartureTime);
+          // TODO maybe check dateError here instead of validation.ts? No need for repetition.
+          // TODO disable save button if any date/time error exists.
+          const hasDateError = isPlannedDateBefore(plannedTime, previousTimes);
+          const hasTimeError = isPlannedTimeBefore(plannedTime, previousTimes);
 
           return (
             <IonRow key={key}>
