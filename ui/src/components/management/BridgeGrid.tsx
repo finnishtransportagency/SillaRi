@@ -13,6 +13,7 @@ import { DATE_FORMAT, TIME_FORMAT_MIN } from "../../utils/constants";
 import { isPlannedDateBefore, isPlannedTimeBefore, isTransportEditable } from "../../utils/validation";
 import "./BridgeGrid.css";
 import SupervisorSelect from "./SupervisorSelect";
+import ValidationError from "../common/ValidationError";
 
 interface BridgeGridProps {
   supervisors: ISupervisor[];
@@ -126,6 +127,9 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
           const { plannedTime: previousTime } = previousSupervision || {};
           const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
 
+          const hasDateError = isPlannedDateBefore(plannedTime, previousTime, plannedDepartureTime);
+          const hasTimeError = isPlannedTimeBefore(plannedTime, previousTime, plannedDepartureTime);
+
           return (
             <IonRow key={key}>
               <IonCol size="12" size-lg="4" className="ion-padding">
@@ -157,22 +161,28 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
                   <IonRow>
                     <IonCol>
                       {isEditable ? (
-                        <DatePicker
-                          value={estimatedCrossingTime.toDate()}
-                          onChange={(value) => setEstimatedCrossingDate(supervision, value)}
-                          hasError={isPlannedDateBefore(plannedTime, previousTime, plannedDepartureTime)}
-                        />
+                        <>
+                          <DatePicker
+                            value={estimatedCrossingTime.toDate()}
+                            onChange={(value) => setEstimatedCrossingDate(supervision, value)}
+                            hasError={hasDateError}
+                          />
+                          {hasDateError && <ValidationError label={t("common.validation.checkDateShort")} />}
+                        </>
                       ) : (
                         <Moment format={DATE_FORMAT}>{estimatedCrossingTime}</Moment>
                       )}
                     </IonCol>
                     <IonCol className="ion-margin-start">
                       {isEditable ? (
-                        <TimePicker
-                          value={estimatedCrossingTime.toDate()}
-                          onChange={(value) => setEstimatedCrossingTime(supervision, value)}
-                          hasError={isPlannedTimeBefore(plannedTime, previousTime, plannedDepartureTime)}
-                        />
+                        <>
+                          <TimePicker
+                            value={estimatedCrossingTime.toDate()}
+                            onChange={(value) => setEstimatedCrossingTime(supervision, value)}
+                            hasError={hasTimeError}
+                          />
+                          {hasTimeError && <ValidationError label={t("common.validation.checkTimeShort")} />}
+                        </>
                       ) : (
                         <Moment format={TIME_FORMAT_MIN}>{estimatedCrossingTime}</Moment>
                       )}

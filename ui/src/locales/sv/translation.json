@@ -15,7 +15,10 @@
       "no": "Nej"
     },
     "validation": {
-      "checkTime": "(SV) Check the time"
+      "checkDate": "(SV) Check the date",
+      "checkTime": "(SV) Check the time",
+      "checkDateShort": "(SV) Check the date",
+      "checkTimeShort": "(SV) Check the time"
     }
   },
   "main": {

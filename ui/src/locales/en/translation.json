@@ -15,7 +15,10 @@
       "no": "No"
     },
     "validation": {
-      "checkTime": "Check the time"
+      "checkDate": "Check the date",
+      "checkTime": "Check the time",
+      "checkDateShort": "Check the date",
+      "checkTimeShort": "Check the time"
     }
   },
   "main": {

@@ -180,7 +180,7 @@ const TransportDepartureTime = ({
               </IonCol>
             </IonRow>
             {!departureTimeValid && (
-              <IonRow>
+              <IonRow className="ion-margin-start">
                 <IonCol size="6" offset="6">
                   <ValidationError label={t("common.validation.checkTime")} />
                 </IonCol>

@@ -15,7 +15,10 @@
       "no": "Ei"
     },
     "validation": {
-      "checkTime": "Tarkista kellonaika"
+      "checkDate": "Tarkista päivämäärä",
+      "checkTime": "Tarkista kellonaika",
+      "checkDateShort": "Tarkista päivä",
+      "checkTimeShort": "Tarkista aika"
     }
   },
   "main": {
