@@ -21,6 +21,7 @@ public class RouteTransportMapper implements RecordMapper<Record, RouteTransport
         model.setRowUpdatedTime(record.get(TableAlias.routeTransport.ROW_UPDATED_TIME));
         model.setStatusHistory(new ArrayList<>());
         model.setSupervisions(new ArrayList<>());
+        model.setTransportNumber(record.get(TableAlias.routeTransport.TRANSPORT_NUMBER));
         return model;
     }
 }
