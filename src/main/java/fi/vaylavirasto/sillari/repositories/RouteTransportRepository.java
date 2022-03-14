@@ -51,7 +51,7 @@ public class RouteTransportRepository {
 
     public List<RouteTransportModel> getRouteTransportsOfSupervisor(String username) {
         return dsl.select(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME,
-                        TableAlias.routeTransport.TRACTOR_UNIT, TableAlias.routeTransport.ROW_CREATED_TIME, TableAlias.routeTransport.ROW_UPDATED_TIME)
+                        TableAlias.routeTransport.TRACTOR_UNIT, TableAlias.routeTransport.ROW_CREATED_TIME, TableAlias.routeTransport.ROW_UPDATED_TIME, TableAlias.routeTransport.TRANSPORT_NUMBER)
                 .from(TableAlias.routeTransport)
                 .innerJoin(TableAlias.supervision).on(TableAlias.routeTransport.ID.eq(TableAlias.supervision.ROUTE_TRANSPORT_ID))
                 .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))

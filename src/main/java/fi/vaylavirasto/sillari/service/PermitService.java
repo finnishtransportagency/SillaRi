@@ -2,16 +2,8 @@ package fi.vaylavirasto.sillari.service;
 
 import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
-import fi.vaylavirasto.sillari.model.AxleModel;
-import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.RouteBridgeModel;
-import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.model.VehicleModel;
-import fi.vaylavirasto.sillari.repositories.AxleRepository;
-import fi.vaylavirasto.sillari.repositories.PermitRepository;
-import fi.vaylavirasto.sillari.repositories.RouteBridgeRepository;
-import fi.vaylavirasto.sillari.repositories.RouteRepository;
-import fi.vaylavirasto.sillari.repositories.VehicleRepository;
+import fi.vaylavirasto.sillari.model.*;
+import fi.vaylavirasto.sillari.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -39,6 +32,8 @@ public class PermitService {
     @Autowired
     RouteBridgeRepository routeBridgeRepository;
     @Autowired
+    RouteTransportRepository routeTransportRepository;
+    @Autowired
     AWSS3Client awss3Client;
 
     @Value("${spring.profiles.active:Unknown}")
@@ -46,25 +41,35 @@ public class PermitService {
 
     public PermitModel getPermit(Integer permitId) {
         PermitModel permitModel = permitRepository.getPermit(permitId);
-        fillPermitDetails(permitModel);
+        fillPermitDetails(permitModel, null);
+        return permitModel;
+    }
+
+
+    public PermitModel getPermitWithOnlyNextAvailableTransportInstance(Integer permitId) {
+        PermitModel permitModel = permitRepository.getPermit(permitId);
+        Integer maxUsedTransportNumber = routeTransportRepository.getRouteTransportsByPermitId(permitId).stream().max(Comparator.comparing(RouteTransportModel::getTransportNumber)).map(rt -> rt.getTransportNumber()).orElse(null);
+        Integer nextAvailableTransportNumber = maxUsedTransportNumber == null ? 1 : maxUsedTransportNumber + 1;
+        fillPermitDetails(permitModel, nextAvailableTransportNumber);
         return permitModel;
     }
 
     public PermitModel getPermitOfRouteTransport(Integer routeTransportId) {
         PermitModel permitModel = permitRepository.getPermitByRouteTransportId(routeTransportId);
-        fillPermitDetails(permitModel);
+        fillPermitDetails(permitModel, null);
         return permitModel;
     }
 
     public PermitModel getPermitOfRouteTransport(Integer routeTransportId, boolean fillDetails) {
         PermitModel permitModel = permitRepository.getPermitByRouteTransportId(routeTransportId);
         if (fillDetails) {
-          fillPermitDetails(permitModel);
+            fillPermitDetails(permitModel, null);
         }
         return permitModel;
     }
 
-    private void fillPermitDetails(PermitModel permitModel) {
+    //returns all bridges if trasportNumber null
+    private void fillPermitDetails(PermitModel permitModel, Integer transportNumber) {
         if (permitModel != null) {
             if (permitModel.getAxleChart() != null) {
                 List<AxleModel> axles = axleRepository.getAxlesOfChart(permitModel.getAxleChart().getId());
@@ -81,7 +86,7 @@ public class PermitService {
             // TODO - if this returns too much data, add this as a separate method in RouteController
             if (permitModel.getRoutes() != null) {
                 permitModel.getRoutes().forEach(routeModel -> {
-                    List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRouteBridges(routeModel.getId());
+                    List<RouteBridgeModel> routeBridgeModels = transportNumber == null ? routeBridgeRepository.getRouteBridges(routeModel.getId()) : routeBridgeRepository.getRouteBridges(routeModel.getId(), transportNumber);
                     routeModel.setRouteBridges(routeBridgeModels);
                 });
             }
