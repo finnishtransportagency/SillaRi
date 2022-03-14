@@ -64,9 +64,9 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
     }
   };
 
-  const setSupervisor = (priority: number, supervisorId: number, supervision?: ISupervision) => {
+  const setSupervisor = (priority: number, supervisorUsername: string, supervision?: ISupervision) => {
     if (supervision && modifiedRouteTransportDetail) {
-      const supervisor = supervisors.find((s) => s.id === supervisorId) as ISupervisor;
+      const supervisor = supervisors.find((s) => s.username === supervisorUsername) as ISupervisor;
       const { supervisors: supervisionSupervisors = [], routeBridgeId } = supervision;
 
       // Add the selected supervisor for this route bridge id and priority to the supervisors array in place of the existing one if one exists
@@ -192,7 +192,7 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
                         // which causes infinite loops when supervisors are updated from setAllBridgesSupervisor
                         // (onIonChange event is triggered from supervision changes in state. Key change creates a new instance of the select.)
                         <SupervisorSelect
-                          key={`${routeBridgeId}-${supervisor1?.priority}-${supervisor1?.id}`}
+                          key={`${routeBridgeId}-${supervisor1?.priority}-${supervisor1?.username}`}
                           supervisors={supervisors}
                           supervision={supervision}
                           priority={1}
@@ -217,7 +217,7 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
                     <IonCol>
                       {isEditable ? (
                         <SupervisorSelect
-                          key={`${routeBridgeId}-${supervisor2?.priority}-${supervisor2?.id}`}
+                          key={`${routeBridgeId}-${supervisor2?.priority}-${supervisor2?.username}`}
                           supervisors={supervisors}
                           supervision={supervision}
                           priority={2}

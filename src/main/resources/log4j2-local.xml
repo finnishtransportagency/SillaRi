@@ -13,7 +13,7 @@
 
         <!-- Use the custom SQLDebugLogging to get the SQL statements only -->
         <Logger name="fi.vaylavirasto.sillari.config.SQLDebugLogging" additivity="false">
-            <AppenderRef ref="ConsoleAppender" level="debug"/>
+            <AppenderRef ref="ConsoleAppender" level="warn"/>
         </Logger>
 
         <!-- Use this for all other SillaRi debug logging -->

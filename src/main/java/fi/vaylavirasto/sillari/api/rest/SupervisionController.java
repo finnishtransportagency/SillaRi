@@ -1,15 +1,16 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
+import fi.vaylavirasto.sillari.api.rest.error.FIMRestException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
-import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
-import fi.vaylavirasto.sillari.model.SupervisionModel;
-import fi.vaylavirasto.sillari.model.SupervisionReportModel;
-import fi.vaylavirasto.sillari.model.SupervisorModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
+import fi.vaylavirasto.sillari.service.fim.FIMService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,10 +27,14 @@ import java.util.concurrent.Executors;
 @Timed
 @RequestMapping("/supervision")
 public class SupervisionController {
+    private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     UIService uiService;
     @Autowired
     SupervisionService supervisionService;
+    @Autowired
+    FIMService fimService;
 
     @Operation(summary = "Get supervision")
     @GetMapping(value = "/getsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -77,15 +83,16 @@ public class SupervisionController {
     @Operation(summary = "Get supervisors")
     @GetMapping(value = "/getsupervisors", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication) || @sillariRightsChecker.isSillariAjojarjestelija(authentication)")
-    public ResponseEntity<?> getSupervisors() {
+    public ResponseEntity<?> getSupervisors() throws FIMRestException, ExecutionException, InterruptedException {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisors");
         try {
-            List<SupervisorModel> supervisors = supervisionService.getSupervisors();
-            return ResponseEntity.ok().body(supervisors != null ? supervisors : new EmptyJsonResponse());
+            List<SupervisorModel> supervisorsFromFIM = fimService.getSupervisors();
+            return ResponseEntity.ok().body(supervisorsFromFIM != null ? supervisorsFromFIM : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
     }
+
 
     @Operation(summary = "Update conforms to permit attribute in supervision")
     @PutMapping(value = "/updateconformstopermit", produces = MediaType.APPLICATION_JSON_VALUE)
