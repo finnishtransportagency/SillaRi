@@ -4,6 +4,8 @@ import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,8 @@ public class PermitService {
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
 
+    private static final Logger logger = LogManager.getLogger();
+
     public PermitModel getPermit(Integer permitId) {
         PermitModel permitModel = permitRepository.getPermit(permitId);
         fillPermitDetails(permitModel, null);
@@ -48,7 +52,10 @@ public class PermitService {
 
     public PermitModel getPermitWithOnlyNextAvailableTransportInstance(Integer permitId) {
         PermitModel permitModel = permitRepository.getPermit(permitId);
+        logger.debug("hellohau:"+permitId);
         Integer maxUsedTransportNumber = routeTransportRepository.getRouteTransportsByPermitId(permitId).stream().max(Comparator.comparing(RouteTransportModel::getTransportNumber)).map(rt -> rt.getTransportNumber()).orElse(null);
+        logger.debug("hellohau:"+routeTransportRepository.getRouteTransportsByPermitId(permitId));
+        logger.debug("hellohau:"+maxUsedTransportNumber);
         Integer nextAvailableTransportNumber = maxUsedTransportNumber == null ? 1 : maxUsedTransportNumber + 1;
         fillPermitDetails(permitModel, nextAvailableTransportNumber);
         return permitModel;
