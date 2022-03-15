@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -82,7 +83,7 @@ public class SupervisionController {
     @Operation(summary = "Get supervisors")
     @GetMapping(value = "/getsupervisors", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication) || @sillariRightsChecker.isSillariAjojarjestelija(authentication)")
-    public ResponseEntity<?> getSupervisors() throws FIMRestException {
+    public ResponseEntity<?> getSupervisors() throws FIMRestException, ExecutionException, InterruptedException {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisors");
         try {
             List<SupervisorModel> supervisorsFromFIM = fimService.getSupervisors();

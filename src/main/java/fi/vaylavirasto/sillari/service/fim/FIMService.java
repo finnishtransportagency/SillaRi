@@ -17,6 +17,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Service
 public class FIMService {
@@ -29,36 +33,37 @@ public class FIMService {
     @Value("${sillari.fim.password}")
     private String password;
     private final FIMSupervisorMapper mapper = Mappers.getMapper(FIMSupervisorMapper.class);
-    private List<SupervisorModel> supervisors = new ArrayList<>();
+    private Future<List<SupervisorModel>> supervisors;
     private long supervisorsLastQueryedInMillis = 0;
     private static long CACHE_LIFE_IN_MILLIS = 60000;
 
 
+    public List<SupervisorModel> getSupervisors() throws FIMRestException, ExecutionException, InterruptedException {
+        if (!cachedDataCurrent()) {
+            logger.trace("Get from FIM. Not using cached supervisornames");
+            if (supervisors == null || supervisors.isDone()) {
+                supervisorsLastQueryedInMillis = System.currentTimeMillis();
+                ExecutorService executor = Executors.newWorkStealingPool();
+                supervisors = executor.submit(() -> fetchSupervisors());
+            }
+        }
+        return supervisors.get();
+    }
 
-    public List<SupervisorModel> getSupervisors() throws FIMRestException {
-         if(!cachedDataCurrent()) {
-             logger.trace("Get from FIM. Not using cached supervisornames");
-             supervisorsLastQueryedInMillis = System.currentTimeMillis();
-             List<SupervisorModel> supervisorsFromFIM = new ArrayList<>();
+    private List<SupervisorModel> fetchSupervisors() throws FIMRestException {
+        Groups groups = getSupervisorsXML();
+        Group group = groups.getGroup().get(0);
 
-             Groups groups = getSupervisorsXML();
-             Group group = groups.getGroup().get(0);
-
-             for (Person persons : group.getPersons().getPerson()) {
-                 SupervisorModel supervisor = mapper.fromDTOToModel(persons);
-                 supervisorsFromFIM.add(supervisor);
-             }
-             return supervisorsFromFIM;
-         }
-         else{
-             logger.trace("Using cached supervisornames");
-             return supervisors;
-         }
-
+        List<SupervisorModel> supervisorsFromFIM = new ArrayList<>();
+        for (Person persons : group.getPersons().getPerson()) {
+            SupervisorModel supervisor = mapper.fromDTOToModel(persons);
+            supervisorsFromFIM.add(supervisor);
+        }
+        return supervisorsFromFIM;
     }
 
     private boolean cachedDataCurrent() {
-        return !supervisors.isEmpty()  && System.currentTimeMillis() - supervisorsLastQueryedInMillis < CACHE_LIFE_IN_MILLIS;
+        return !(supervisors == null) && System.currentTimeMillis() - supervisorsLastQueryedInMillis < CACHE_LIFE_IN_MILLIS;
     }
 
     public Groups getSupervisorsXML() throws FIMRestException {
@@ -96,12 +101,12 @@ public class FIMService {
 
     public void populateSupervisorNamesFromFIM(List<SupervisorModel> supervisionSupervisors) {
         logger.trace("getting supervisors from FIMREST");
-        boolean fimQuerySuccess  = false;
+        boolean fimQuerySuccess = false;
         List<SupervisorModel> allSupervisors = new ArrayList<>();
         try {
             allSupervisors = getSupervisors();
-            fimQuerySuccess =true;
-        } catch (FIMRestException e) {
+            fimQuerySuccess = true;
+        } catch (FIMRestException | ExecutionException | InterruptedException e) {
             logger.error("Error getting supervisors from FIMREST " + e.getMessage());
         }
 
@@ -111,10 +116,9 @@ public class FIMService {
                 selectedSupervisor.setFirstName(supervisorFromFIM.getFirstName());
                 selectedSupervisor.setLastName(supervisorFromFIM.getLastName());
             } catch (NoSuchElementException nee) {
-                if(fimQuerySuccess){
+                if (fimQuerySuccess) {
                     logger.warn("Using supervisor username as name. Supervisor not found FIM data: " + selectedSupervisor.getUsername());
-                }
-                else{
+                } else {
                     logger.warn("Using supervisor username as name. Fetching from FIMREST failed.");
                 }
 
