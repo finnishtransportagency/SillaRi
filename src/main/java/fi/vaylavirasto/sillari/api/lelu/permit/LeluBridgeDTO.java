@@ -41,7 +41,8 @@ public class LeluBridgeDTO {
     private String contractBusinessIdentifier;
 
     @Schema(description = "Order number of crossing, starting from 1.", example = "1")
-    @NotNull(message = "{transport.number.not.null}")
+    //TO DO required field when lelu pää ready
+    // @NotNull(message = "{transport.number.not.null}")
     private Integer transportNumber;
 
     public LeluBridgeDTO() {
