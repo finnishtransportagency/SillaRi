@@ -12,7 +12,7 @@ import { Geometry, Point } from "ol/geom";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import BaseLayer from "ol/layer/Base";
 import MapOL from "ol/Map";
-import { get as getProj, fromLonLat } from "ol/proj";
+import { fromLonLat } from "ol/proj";
 import { register } from "ol/proj/proj4";
 import { TileDebug } from "ol/source";
 import View from "ol/View";
@@ -173,14 +173,14 @@ const MapContainer = ({ routeBridgeIdParam, routeIdParam }: MapContainerProps): 
     // This function is called several times from useEffect when the dependencies change
     // However, the map should only be initialised once, otherwise duplicate OpenLayers viewports are rendered
     if (!mapInitialised && backgroundLayer && bridgeLayer && routeLayer && userLayer) {
-      const backgroundTileGrid = backgroundLayer.getSource().getTileGrid();
+      const backgroundTileGrid = backgroundLayer.getSource()?.getTileGrid();
 
       // The tile grid and layer for the background map are defined, so create the OpenLayers view and map, and any other related components
       const view = new View({
         zoom: 3,
         center: [400000, 7000000],
         projection,
-        resolutions: backgroundTileGrid.getResolutions(),
+        resolutions: backgroundTileGrid?.getResolutions(),
         minZoom: 0,
         maxZoom: 15,
       });
@@ -200,7 +200,7 @@ const MapContainer = ({ routeBridgeIdParam, routeIdParam }: MapContainerProps): 
         controls: defaults(),
       });
 
-      if (debug) {
+      if (debug && backgroundTileGrid) {
         // For debug purposes, show the mouse coordinates and tile grid overlay
         const mousePositionControl = new MousePosition({
           projection,
@@ -210,7 +210,7 @@ const MapContainer = ({ routeBridgeIdParam, routeIdParam }: MapContainerProps): 
 
         const debugLayer = new TileLayer({
           source: new TileDebug({
-            projection: getProj(projection),
+            projection: projection,
             tileGrid: backgroundTileGrid,
           }),
         });
@@ -250,8 +250,8 @@ const MapContainer = ({ routeBridgeIdParam, routeIdParam }: MapContainerProps): 
           if (userPosition.coords && userPosition.coords.longitude > 0 && userPosition.coords.latitude > 0) {
             const userPoint = new Point(fromLonLat([userPosition.coords.longitude, userPosition.coords.latitude], projection));
             const userFeature = new Feature({ geometry: userPoint });
-            userLayer.getSource().clear();
-            userLayer.getSource().addFeature(userFeature);
+            userLayer.getSource()?.clear();
+            userLayer.getSource()?.addFeature(userFeature);
           }
         } catch (err) {
           console.log("ERROR", err);
