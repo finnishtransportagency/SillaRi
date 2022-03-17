@@ -21,6 +21,5 @@ public class LeluSupervisionDTO {
     @Schema(description = "Supervision report in json format")
     LeluSupervisionReportDTO supervisionReport;
 
-    @Schema(description = "Order number of crossing, provided by lelu in incoming permit->route->bridge.", example = "1")
-    private Integer transportNumber;
+
 }
