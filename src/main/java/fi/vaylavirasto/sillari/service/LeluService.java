@@ -46,6 +46,7 @@ public class LeluService {
     private BridgeRepository bridgeRepository;
     private SupervisionRepository supervisionRepository;
     private SupervisionStatusRepository supervisionStatusRepository;
+    private SupervisionReportRepository supervisionReportRepository;
     private final MessageSource messageSource;
     private LeluRouteUploadUtil leluRouteUploadUtil;
     private AWSS3Client awss3Client;
@@ -55,7 +56,7 @@ public class LeluService {
     private String activeProfile;
 
     @Autowired
-    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, SupervisionStatusRepository supervisionStatusRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, SupervisionStatusRepository supervisionStatusRepository, SupervisionReportRepository supervisionReportRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
                        TRexService trexService) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
@@ -66,6 +67,7 @@ public class LeluService {
         this.leluRouteUploadUtil = leluRouteUploadUtil;
         this.supervisionRepository = supervisionRepository;
         this.supervisionStatusRepository = supervisionStatusRepository;
+        this.supervisionReportRepository = supervisionReportRepository;
         this.awss3Client = awss3Client;
         this.trexService = trexService;
     }
@@ -333,6 +335,7 @@ public class LeluService {
                     if (routeBridge.getSupervisions() != null) {
                         routeBridge.getSupervisions().forEach(supervision -> {
                             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+                            supervision.setReport(supervisionReportRepository.getSupervisionReport(supervision.getId()));
                         });
                     }
                 }
