@@ -4,6 +4,7 @@ import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.model.BridgeModel;
@@ -235,6 +236,34 @@ public class LeluController {
         return leluService.uploadRouteGeometry(routeId, file);
     }
 
+
+    /**
+     * Get supervision of a route.
+     * Lelu uses this to yksittäistä sillanvalvontaa reitti id:n (routeId), sillan nimen (identifier) ja transportNumberin perusteella
+     *
+     * @param routeId
+     * @param apiVersion
+     * @param apiVersion
+     * @return
+     * @throws APIVersionException
+     */
+    @RequestMapping(value = "/supervision", method = RequestMethod.GET)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get bridge supervisions of a route")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200 OK", description = ""),
+            @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
+    })
+    public LeluBridgeResponseDTO getSupervision(@RequestParam Long routeId,@RequestParam String bridgeIdentifier,@RequestParam Integer transportNumber, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+        logger.debug("Lelu getSupervisions " + routeId);
+
+        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
+            return leluService.getSupervision(routeId, bridgeIdentifier, transportNumber);
+        } else {
+            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
+        }
+    }
 
     /**
      * Get supervisions of a route.

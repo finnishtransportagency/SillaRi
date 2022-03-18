@@ -40,6 +40,15 @@ public class RouteBridgeRepository {
                 .fetch(this::mapRouteBridgeRecordWithBridge);
     }
 
+    public RouteBridgeModel getRouteBridge(Integer routeId, String bridgeIdentifier, Integer transportNumber) {
+        return dsl.select().from(TableAlias.routeBridge)
+                .leftJoin(TableAlias.bridge).on(TableAlias.bridge.ID.eq(TableAlias.routeBridge.BRIDGE_ID))
+                .where(TableAlias.routeBridge.ROUTE_ID.eq(routeId))
+                .and(TableAlias.routeBridge.TRANSPORT_NUMBER.eq(transportNumber))
+                .and(TableAlias.bridge.IDENTIFIER.eq(bridgeIdentifier))
+                .fetchOne(this::mapRouteBridgeRecordWithBridge);
+    }
+
     private RouteBridgeModel mapRouteBridgeRecordWithBridge(Record record) {
         RouteBridgeMapper routeBridgeMapper = new RouteBridgeMapper();
         RouteBridgeModel routeBridge = routeBridgeMapper.map(record);
@@ -49,5 +58,6 @@ public class RouteBridgeRepository {
         }
         return routeBridge;
     }
+
 
 }

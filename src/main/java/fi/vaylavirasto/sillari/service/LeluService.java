@@ -1,18 +1,16 @@
 package fi.vaylavirasto.sillari.service;
 
 
-import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
-import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
+import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
+import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
-import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
-import fi.vaylavirasto.sillari.api.rest.error.LeluRouteGeometryUploadException;
-import fi.vaylavirasto.sillari.api.rest.error.LeluRouteNotFoundException;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
@@ -27,7 +25,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -333,7 +332,7 @@ public class LeluService {
 
             if (routeBridges != null) {
                 for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
-                    List<SupervisionModel> supervisions =supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
+                    List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
                     routeBridge.setSupervisions(new ArrayList<>());
                     if (supervisions != null) {
                         supervisions.forEach(supervision -> {
@@ -348,5 +347,25 @@ public class LeluService {
         return dtoMapper.fromModelToDTO(route);
     }
 
+    public LeluBridgeResponseDTO getSupervision(Long leluRouteId, String bridgeIdentifier, Integer transportNumber) {
+        RouteModel route = routeRepository.getRouteWithLeluID(leluRouteId);
+        if (route != null) {
+            RouteBridgeModel routeBridge = routeBridgeRepository.getRouteBridge(route.getId(), bridgeIdentifier, transportNumber);
+            if (routeBridge != null) {
+                List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
+                routeBridge.setSupervisions(new ArrayList<>());
+                if (supervisions != null) {
+                    supervisions.forEach(supervision -> {
+                        var filledSupervision = supervisionService.getSupervision(supervision.getId());
+                        routeBridge.getSupervisions().add(filledSupervision);
+                    });
+                }
+                logger.debug("HELLO!: " + routeBridge);
+                return dtoMapper.fromModelToDTO(routeBridge);
+
+            }
+        }
+        return null;
+    }
 
 }
