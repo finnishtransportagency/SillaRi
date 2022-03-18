@@ -5,6 +5,7 @@
 
 .customAccordion [slot="header"] {
   border-top: 4px solid var(--ion-color-light);
+  border-bottom: 2px solid var(--ion-color-light);
 }
 
 .customAccordion .accordion-expanded [slot="header"] {
