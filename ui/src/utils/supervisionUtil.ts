@@ -40,6 +40,24 @@ export const groupSupervisionsByDate = (supervisions: ISupervision[] | undefined
   return supervisionDays;
 };
 
+const sortByBridgeOrder = (a: ISupervision, b: ISupervision) => {
+  // Sort supervisions by first routeTransportId and then bridge ordinal
+  const { routeBridge: bridgeA, routeTransportId: transportA } = a;
+  const { routeBridge: bridgeB, routeTransportId: transportB } = b;
+  if (transportA === transportB) {
+    const { ordinal: ordinalA = -1 } = bridgeA || {};
+    const { ordinal: ordinalB = -1 } = bridgeB || {};
+    return ordinalA - ordinalB;
+  }
+  return transportA - transportB;
+};
+
+export const sortSupervisionsByBridgeOrder = (supervisions: ISupervision[] | undefined): void => {
+  if (supervisions && supervisions.length > 0) {
+    supervisions.sort(sortByBridgeOrder);
+  }
+};
+
 export const sortSupervisionsByTimeAndBridgeOrder = (supervisions: ISupervision[] | undefined): void => {
   if (supervisions && supervisions.length > 0) {
     supervisions.sort((a, b) => {

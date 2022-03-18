@@ -15,6 +15,7 @@ import { onRetry } from "../utils/backendData";
 import { getRouteTransportOfSupervisor } from "../utils/supervisionBackendData";
 import BridgeCardList from "../components/BridgeCardList";
 import IRouteTransport from "../interfaces/IRouteTransport";
+import { sortSupervisionsByBridgeOrder } from "../utils/supervisionUtil";
 
 interface RouteTransportDetailProps {
   routeTransportId: string;
@@ -40,6 +41,9 @@ const RouteTransportDetail = (): JSX.Element => {
 
   const { route, supervisions = [] } = routeTransport || {};
   const { name = "", permit } = route || {};
+
+  // Sort the supervisions into permit bridge order so the list is the same regardless of whether each supervision has started or not
+  sortSupervisionsByBridgeOrder(supervisions);
 
   const noNetworkNoData = isFailed.getRouteTransportOfSupervisor && routeTransport === undefined;
 
