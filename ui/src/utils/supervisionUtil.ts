@@ -31,8 +31,12 @@ export const groupSupervisionsByDate = (supervisions: ISupervision[] | undefined
         supervisionDays.push(newSupervisionDay);
       }
     });
-    supervisionDays.sort((a, b) => moment(a.date).diff(moment(b.date), "days"));
+
+    // Since the dates include times, sorting by days can give a diff of 0 if the times on different days are less than 24 hours apart
+    // So use startOf to use the time as 00:00 and get the correct day order
+    supervisionDays.sort((a, b) => moment(a.date).startOf("day").diff(moment(b.date).startOf("day"), "days"));
   }
+
   return supervisionDays;
 };
 
