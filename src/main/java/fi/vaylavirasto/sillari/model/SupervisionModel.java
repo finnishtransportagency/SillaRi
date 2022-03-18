@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
 import java.util.Comparator;
@@ -64,6 +65,33 @@ public class SupervisionModel extends BaseModel {
         this.startedTime = startedTime;
         this.crossingDeniedTime = crossingDeniedTime;
         this.finishedTime = finishedTime;
+    }
+
+
+    private String deduceSupervisorWhoSupervisedUserName() {
+        return getStatusHistory().stream()
+                .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(SupervisionStatusType.REPORT_SIGNED))
+                .findFirst().orElseThrow().getUsername();
+
+    }
+
+
+    public String getTest(){
+        return "hello";
+    }
+
+    public SupervisorModel getSupervisorWhoSupervised() {
+        try {
+            String userName = deduceSupervisorWhoSupervisedUserName();
+            List<SupervisorModel> supervisors = ((getSupervisors() == null || getSupervisors().isEmpty()) ? null : getSupervisors());
+            SupervisorModel supervisor = supervisors.stream().filter(s -> s.getUsername().equals(userName)).findFirst().orElseThrow();
+            return supervisor;
+        }
+        catch (Exception e){
+            //no supervision signed propably
+            return null;
+        }
+
     }
 
 }

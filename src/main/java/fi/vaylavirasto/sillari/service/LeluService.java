@@ -47,6 +47,7 @@ public class LeluService {
     private SupervisionRepository supervisionRepository;
     private SupervisionStatusRepository supervisionStatusRepository;
     private SupervisionReportRepository supervisionReportRepository;
+    private SupervisionService supervisionService;
     private final MessageSource messageSource;
     private LeluRouteUploadUtil leluRouteUploadUtil;
     private AWSS3Client awss3Client;
@@ -57,7 +58,7 @@ public class LeluService {
 
     @Autowired
     public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, SupervisionStatusRepository supervisionStatusRepository, SupervisionReportRepository supervisionReportRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
-                       TRexService trexService) {
+                       TRexService trexService, SupervisionService supervisionService) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
         this.routeRepository = routeRepository;
@@ -68,6 +69,7 @@ public class LeluService {
         this.supervisionRepository = supervisionRepository;
         this.supervisionStatusRepository = supervisionStatusRepository;
         this.supervisionReportRepository = supervisionReportRepository;
+        this.supervisionService = supervisionService;
         this.awss3Client = awss3Client;
         this.trexService = trexService;
     }
@@ -331,11 +333,12 @@ public class LeluService {
 
             if (routeBridges != null) {
                 for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
-                    routeBridge.setSupervisions(supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId()));
-                    if (routeBridge.getSupervisions() != null) {
-                        routeBridge.getSupervisions().forEach(supervision -> {
-                            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
-                            supervision.setReport(supervisionReportRepository.getSupervisionReport(supervision.getId()));
+                    List<SupervisionModel> supervisions =supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
+                    routeBridge.setSupervisions(new ArrayList<>());
+                    if (supervisions != null) {
+                        supervisions.forEach(supervision -> {
+                            var filledSupervision = supervisionService.getSupervision(supervision.getId());
+                            routeBridge.getSupervisions().add(filledSupervision);
                         });
                     }
                 }
