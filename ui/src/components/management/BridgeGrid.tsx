@@ -10,7 +10,7 @@ import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import ISupervisor from "../../interfaces/ISupervisor";
 import { DATE_FORMAT, TIME_FORMAT_MIN } from "../../utils/constants";
-import { isPlannedDateBefore, isPlannedTimeBefore, isTransportEditable } from "../../utils/validation";
+import { isPlannedTimeBefore, isTransportEditable } from "../../utils/validation";
 import "./BridgeGrid.css";
 import SupervisorSelect from "./SupervisorSelect";
 import ValidationError from "../common/ValidationError";
@@ -128,8 +128,8 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
           const previousTimes: Date[] = constructTimesForComparison(plannedDepartureTime, sortedSupervisions, index);
 
           // TODO disable save button if any date/time error exists.
-          const hasDateError = isPlannedDateBefore(plannedTime, previousTimes);
-          const hasTimeError = !hasDateError && isPlannedTimeBefore(plannedTime, previousTimes);
+          const hasDateError = isPlannedTimeBefore(plannedTime, previousTimes, "dates");
+          const hasTimeError = !hasDateError && isPlannedTimeBefore(plannedTime, previousTimes, "minutes");
 
           return (
             <IonRow key={key}>
