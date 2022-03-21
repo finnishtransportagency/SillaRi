@@ -21,5 +21,6 @@ public class LeluSupervisionDTO {
     @Schema(description = "Supervision report in json format")
     LeluSupervisionReportDTO supervisionReport;
 
-
+    @Schema(description = "Supervision report has expceptional values")
+    private boolean exceptional=false;
 }

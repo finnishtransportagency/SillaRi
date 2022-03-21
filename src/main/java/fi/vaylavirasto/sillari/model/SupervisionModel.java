@@ -29,6 +29,7 @@ public class SupervisionModel extends BaseModel {
     private OffsetDateTime crossingDeniedTime; // First (and only) CROSSING_DENIED in statusHistory
     private OffsetDateTime finishedTime; // First (and only) FINISHED in statusHistory
 
+
     // Parents
     private RouteBridgeModel routeBridge;
     private RouteTransportModel routeTransport;
@@ -76,8 +77,14 @@ public class SupervisionModel extends BaseModel {
     }
 
 
-    public String getTest(){
-        return "hello";
+    public boolean getExceptional(){
+        if(getReport() == null){
+            return false;
+        }
+        else {
+            return report.getAnomalies() || !report.getSpeedLimitOk() || !report.getDrivingLineOk();
+        }
+
     }
 
     public SupervisorModel getSupervisorWhoSupervised() {
