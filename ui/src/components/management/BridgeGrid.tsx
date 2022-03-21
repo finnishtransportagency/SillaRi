@@ -127,10 +127,9 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
           const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
           const previousTimes: Date[] = constructTimesForComparison(plannedDepartureTime, sortedSupervisions, index);
 
-          // TODO maybe check dateError here instead of validation.ts? No need for repetition.
           // TODO disable save button if any date/time error exists.
           const hasDateError = isPlannedDateBefore(plannedTime, previousTimes);
-          const hasTimeError = isPlannedTimeBefore(plannedTime, previousTimes);
+          const hasTimeError = !hasDateError && isPlannedTimeBefore(plannedTime, previousTimes);
 
           return (
             <IonRow key={key}>

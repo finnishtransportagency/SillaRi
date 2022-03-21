@@ -45,14 +45,7 @@ export const isPlannedTimeBefore = (selectedTime: Date | undefined, previousTime
   }
   const selected = moment(selectedTime);
 
-  // Validate times only when date is the same - date errors shown in date box
-  const hasDateError = previousTimes.some((prev) => {
-    return selected.isBefore(moment(prev), "dates");
-  });
-
-  const hasTimeError = previousTimes.some((prev) => {
+  return previousTimes.some((prev) => {
     return selected.isBefore(moment(prev), "minutes");
   });
-
-  return !hasDateError && hasTimeError;
 };
