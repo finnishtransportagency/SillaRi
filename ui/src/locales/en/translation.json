@@ -31,7 +31,8 @@
       "transports": "Transports",
       "bridges": "Bridges"
     },
-    "noNetworkNoData": "Unable to retrieve data, trying again..."
+    "noNetworkNoData": "Unable to retrieve data, trying again...",
+    "loading": "Loading..."
   },
   "map": {
     "attribution": "Material"

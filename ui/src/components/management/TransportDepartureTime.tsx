@@ -45,12 +45,11 @@ const TransportDepartureTime = ({
   const estimatedDeparture = plannedDepartureTime ? plannedDepartureTime : new Date();
 
   /*Event is needed for positioning the popup relative to the element which triggered the event*/
-  const [popoverState, setShowPopover] = useState({ showPopover: false, event: undefined });
+  const [popoverState, setShowPopover] = useState<{ showPopover: boolean; event: MouseEvent | undefined }>({ showPopover: false, event: undefined });
   const [departureTime, setDepartureTime] = useState<Date>(estimatedDeparture);
   const [departureTimeValid, setDepartureTimeValid] = useState<boolean>(true);
 
-  // Must use event type "any" because "Type 'MouseEvent' is not assignable to type 'undefined'" (example from https://ionicframework.com/docs/api/popover#usage)
-  const showPopup = (evt: any) => {
+  const showPopup = (evt: MouseEvent) => {
     evt.persist();
     setShowPopover({ showPopover: true, event: evt });
   };

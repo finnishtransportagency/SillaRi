@@ -8,19 +8,19 @@ interface SupervisorSelectProps {
   supervision?: ISupervision;
   priority: number;
   value?: ISupervisor;
-  setSupervisor: (priority: number, supervisorId: number, supervision?: ISupervision) => void;
+  setSupervisor: (priority: number, supervisorUsername: string, supervision?: ISupervision) => void;
 }
 
 const SupervisorSelect = ({ supervisors, supervision, priority, value, setSupervisor }: SupervisorSelectProps): JSX.Element => {
   return (
     <CustomSelect
       options={supervisors.map((supervisor) => {
-        const { id: supervisorId, firstName, lastName } = supervisor;
-        return { value: supervisorId, label: `${firstName} ${lastName}` };
+        const { firstName, lastName, username } = supervisor;
+        return { value: username, label: `${firstName} ${lastName}` };
       })}
-      selectedValue={value?.id}
-      onChange={(supervisorId) =>
-        supervision ? setSupervisor(priority, supervisorId as number, supervision) : setSupervisor(priority, supervisorId as number)
+      selectedValue={value?.username}
+      onChange={(supervisorUsername) =>
+        supervision ? setSupervisor(priority, supervisorUsername as string, supervision) : setSupervisor(priority, supervisorUsername as string)
       }
     />
   );

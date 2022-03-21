@@ -31,7 +31,8 @@
       "transports": "(SV) Transports",
       "bridges": "(SV) Bridges"
     },
-    "noNetworkNoData": "(SV) Unable to retrieve data, trying again..."
+    "noNetworkNoData": "(SV) Unable to retrieve data, trying again...",
+    "loading": "Laddning..."
   },
   "map": {
     "attribution": "Material"

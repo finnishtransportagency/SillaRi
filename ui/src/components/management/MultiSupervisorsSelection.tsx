@@ -21,12 +21,12 @@ const MultiSupervisorsSelection = ({
   const [selectedSupervisor1, setSelectedSupervisor1] = useState<ISupervisor | undefined>(undefined);
   const [selectedSupervisor2, setSelectedSupervisor2] = useState<ISupervisor | undefined>(undefined);
 
-  const setSupervisor = (priority: number, supervisorId: number) => {
+  const setSupervisor = (priority: number, supervisorUsername: string) => {
     if (priority === 1) {
-      const supervisor1 = supervisors.find((s) => s.id === supervisorId) as ISupervisor;
+      const supervisor1 = supervisors.find((s) => s.username === supervisorUsername) as ISupervisor;
       setSelectedSupervisor1({ ...supervisor1, priority: 1 });
     } else if (priority === 2) {
-      const supervisor2 = supervisors.find((s) => s.id === supervisorId) as ISupervisor;
+      const supervisor2 = supervisors.find((s) => s.username === supervisorUsername) as ISupervisor;
       setSelectedSupervisor2({ ...supervisor2, priority: 2 });
     }
   };
