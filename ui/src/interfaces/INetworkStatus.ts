@@ -1,7 +1,7 @@
 import IFailedQuery from "./IFailedQuery";
+import IFailedQueryStatus from "./IFailedQueryStatus";
 
 export default interface INetworkStatus {
   isFailed: IFailedQuery;
-
-  // TODO - add other network statuses such as offline?
+  failedStatus: IFailedQueryStatus;
 }

@@ -24,11 +24,11 @@ import TransportDetail from "./pages/management/TransportDetail";
 import SidebarMenu from "./components/SidebarMenu";
 import AccessDenied from "./pages/AccessDenied";
 import IUserData from "./interfaces/IUserData";
-import { getOrigin } from "./utils/request";
 import Photos from "./pages/Photos";
-import IVersionInfo from "./interfaces/IVersionInfo";
 import UserInfo from "./pages/UserInfo";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import { useTypedSelector } from "./store/store";
+import { getUserData, getVersionInfo } from "./utils/backendData";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/supervisionUtil";
 
@@ -62,6 +62,10 @@ const App: React.FC = () => {
   const [version, setVersion] = useState<string>("-");
   const dispatch = useDispatch();
 
+  const {
+    networkStatus: { isFailed = {}, failedStatus = {} },
+  } = useTypedSelector((state) => state.rootReducer);
+
   // NOTE: these persistence utilities are experimental in react-query v3 and subject to change
   // However at time of writing, they have not changed for months, and v4 is in active development which will include proper versions
   // The maxAge value is the same as the cacheTime value so garbage collection occurs at the expected time
@@ -88,55 +92,49 @@ const App: React.FC = () => {
 
     const fetchUserData = async () => {
       try {
-        /* Disabling caching to avoid getting stale user data. */
-        const headers = new Headers();
-        headers.append("pragma", "no-cache");
-        headers.append("cache-control", "no-store");
-
         const [userDataResponse, versionResponse] = await Promise.all([
-          fetch(`${getOrigin()}/api/ui/userdata`, { method: "GET", headers: headers }),
-          fetch(`${getOrigin()}/api/ui/versioninfo`, { method: "GET", headers: headers }),
+          queryClient.fetchQuery(["getSupervisor"], () => getUserData(dispatch), {
+            // retry: onRetry,
+            staleTime: Infinity,
+          }),
+          queryClient.fetchQuery(["getVersionInfo"], () => getVersionInfo(dispatch), {
+            // retry: onRetry,
+            staleTime: Infinity,
+          }),
         ]);
 
-        if (versionResponse?.ok) {
-          const responseData = await (versionResponse.json() as Promise<IVersionInfo>);
-          setVersion(responseData.version);
+        if (!isFailed.getVersionInfo) {
+          setVersion(versionResponse.version);
         }
 
-        if (userDataResponse?.ok) {
-          const responseData = await (userDataResponse.json() as Promise<IUserData>);
-          if (responseData.roles.length > 0) {
-            if (responseData.roles.includes("SILLARI_SILLANVALVOJA")) {
+        if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
+          if (userDataResponse.roles.length > 0) {
+            if (userDataResponse.roles.includes("SILLARI_SILLANVALVOJA")) {
               setHomePage("/supervisions");
-            } else if (responseData.roles.includes("SILLARI_AJOJARJESTELIJA")) {
+            } else if (userDataResponse.roles.includes("SILLARI_AJOJARJESTELIJA")) {
               setHomePage("/management");
-            } else if (responseData.roles.includes("SILLARI_KULJETTAJA")) {
+            } else if (userDataResponse.roles.includes("SILLARI_KULJETTAJA")) {
               setHomePage("/transport");
             }
-            setUserData(responseData);
+            setUserData(userDataResponse);
           } else {
             /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
-            setErrorCode(1001);
+            setErrorCode(SillariErrorCode.NO_USER_ROLES);
           }
         } else {
-          console.log(userDataResponse);
-          if (userDataResponse.status === 401) {
-            /* Returned by Väylä access control. */
-            setErrorCode(401);
-          } else if (userDataResponse.status === 403) {
-            /* Returned by SillaRi backend if user does not have SillaRi roles. */
-            setErrorCode(403);
-          } else {
-            /* Properly handling other response code not handled yet. */
-            setErrorCode(1002);
-          }
+          // Note: status codes from the backend such as 401 or 403 are now contained in failedStatus.getUserData
+          console.log("User data response", userDataResponse);
+          setErrorCode(SillariErrorCode.NO_USER_DATA);
         }
       } catch (e) {
-        console.log(e);
-        setErrorCode(1003);
+        console.log("App error", e);
+        setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
       }
     };
     fetchUserData();
+
+    // Fetch the user data on first render only, using a workaround utilising useEffect with empty dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const logoutFromApp = () => {
@@ -160,6 +158,8 @@ const App: React.FC = () => {
   );
 
   const renderError = (code: number) => {
+    // 401 - Returned by Väylä access control.
+    // 403 - Returned by SillaRi backend if user does not have SillaRi roles.
     return (
       <>
         {code === 401 ? (
@@ -194,11 +194,13 @@ const App: React.FC = () => {
     prefetchData();
   }, [userHasRole, dispatch]);
 
+  const statusCode = failedStatus.getUserData > 0 ? failedStatus.getUserData : errorCode;
+
   return (
     <QueryClientProvider client={queryClient}>
       <IonApp>
         {!userData ? (
-          <IonContent className="ion-padding">{errorCode ? <>{renderError(errorCode)}</> : <div>Starting app...</div>}</IonContent>
+          <IonContent className="ion-padding">{statusCode >= 400 ? <>{renderError(statusCode)}</> : <div>Starting app...</div>}</IonContent>
         ) : (
           <IonReactRouter>
             <SidebarMenu roles={userData.roles} version={version} />
