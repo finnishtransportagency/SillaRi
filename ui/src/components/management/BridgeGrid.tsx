@@ -126,8 +126,6 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
 
           const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
           const previousTimes: Date[] = constructTimesForComparison(plannedDepartureTime, sortedSupervisions, index);
-
-          // TODO disable save button if any date/time error exists.
           const hasDateError = isPlannedTimeBefore(plannedTime, previousTimes, "dates");
           const hasTimeError = !hasDateError && isPlannedTimeBefore(plannedTime, previousTimes, "minutes");
 

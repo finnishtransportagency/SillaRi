@@ -61,6 +61,7 @@ const RouteTransportInfo = ({
 
   const { validStartDate, validEndDate } = permit || {};
   const { routeBridges = [] } = selectedRouteOption || {};
+  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
@@ -322,7 +323,7 @@ const RouteTransportInfo = ({
               color="primary"
               expand="block"
               size="large"
-              disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption || !selectedVehicle}
+              disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption || !selectedVehicle || !plannedDepartureTime}
               onClick={() => validateSupervisionsAndSave()}
             >
               <IonText>{t("common.buttons.save")}</IonText>
