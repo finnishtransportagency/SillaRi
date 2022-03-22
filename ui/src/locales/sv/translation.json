@@ -8,14 +8,20 @@
       "search": "(SV) Search",
       "edit": "(SV) Edit",
       "save": "(SV) Save",
-      "send": "(SV) Send"
+      "send": "(SV) Send",
+      "closeAlert": "(SV) Close alert"
     },
     "answer": {
       "yes": "Ja",
       "no": "Nej"
     },
     "validation": {
-      "checkTime": "(SV) Check the time"
+      "checkDate": "(SV) Check the date",
+      "checkTime": "(SV) Check the time",
+      "checkDateShort": "(SV) Check the date",
+      "checkTimeShort": "(SV) Check the time",
+      "invalidTime": "(SV) Invalid time",
+      "fixTimes": "(SV) Check and correct conflicting times for estimated bridge crossings before proceeding."
     }
   },
   "main": {

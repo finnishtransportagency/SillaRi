@@ -1,9 +1,9 @@
-import React, { Dispatch, MouseEvent, SetStateAction } from "react";
+import React, { Dispatch, MouseEvent, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { IonButton, IonCol, IonGrid, IonItemDivider, IonRow, IonText, useIonAlert, useIonPopover } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonItemDivider, IonPopover, IonRow, IonText, useIonAlert, useIonPopover } from "@ionic/react";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
@@ -17,7 +17,7 @@ import {
   updateRouteTransport,
 } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
-import { isPermitValid, isTransportEditable } from "../../utils/validation";
+import { isPermitValid, isTransportEditable, hasSupervisionTimeErrors } from "../../utils/validation";
 import BridgeGrid from "./BridgeGrid";
 import PermitLinkText from "../PermitLinkText";
 import RouteInfoGrid from "./RouteInfoGrid";
@@ -25,6 +25,7 @@ import TransportInfoAccordion from "../TransportInfoAccordion";
 import TransportPassword from "./TransportPassword";
 import IVehicle from "../../interfaces/IVehicle";
 import MultiSupervisorsSelection from "./MultiSupervisorsSelection";
+import SupervisionTimesAlert from "./SupervisionTimesAlert";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -56,9 +57,11 @@ const RouteTransportInfo = ({
   const history = useHistory();
   const queryClient = useQueryClient();
   const [present] = useIonAlert();
+  const [supervisionTimesAlertOpen, setSupervisionTimesAlertOpen] = useState<boolean>(false);
 
   const { validStartDate, validEndDate } = permit || {};
   const { routeBridges = [] } = selectedRouteOption || {};
+  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
@@ -155,6 +158,15 @@ const RouteTransportInfo = ({
     presentPassword({
       event: evt.nativeEvent,
     });
+  };
+
+  const validateSupervisionsAndSave = () => {
+    const hasValidationErrors = hasSupervisionTimeErrors({ ...modifiedRouteTransportDetail });
+    if (hasValidationErrors) {
+      setSupervisionTimesAlertOpen(true);
+    } else {
+      saveRouteTransportDetail();
+    }
   };
 
   return (
@@ -311,8 +323,8 @@ const RouteTransportInfo = ({
               color="primary"
               expand="block"
               size="large"
-              disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption || !selectedVehicle}
-              onClick={saveRouteTransportDetail}
+              disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption || !selectedVehicle || !plannedDepartureTime}
+              onClick={() => validateSupervisionsAndSave()}
             >
               <IonText>{t("common.buttons.save")}</IonText>
             </IonButton>
@@ -335,6 +347,9 @@ const RouteTransportInfo = ({
           </IonCol>
         </IonRow>
       )}
+      <IonPopover className="large-popover" isOpen={supervisionTimesAlertOpen} onDidDismiss={() => setSupervisionTimesAlertOpen(false)}>
+        <SupervisionTimesAlert setOpen={setSupervisionTimesAlertOpen} />
+      </IonPopover>
     </IonGrid>
   );
 };
