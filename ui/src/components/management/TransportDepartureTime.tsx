@@ -20,7 +20,6 @@ import TimePicker from "../common/TimePicker";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import close from "../../theme/icons/close_large.svg";
 import infoOutline from "../../theme/icons/info-outline.svg";
-import "./TransportDepartureTime.css";
 import Moment from "react-moment";
 import { DATE_FORMAT, TIME_FORMAT_MIN } from "../../utils/constants";
 import { isTimestampCurrentOrAfter } from "../../utils/validation";
@@ -150,7 +149,7 @@ const TransportDepartureTime = ({
       </IonRow>
       <IonRow>
         <IonPopover
-          className="largePopover"
+          className="large-popover"
           isOpen={popoverState.showPopover}
           onDidDismiss={() => hidePopup()}
           event={popoverState.event}

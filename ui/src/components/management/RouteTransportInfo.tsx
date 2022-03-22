@@ -346,7 +346,7 @@ const RouteTransportInfo = ({
           </IonCol>
         </IonRow>
       )}
-      <IonPopover isOpen={supervisionTimesAlertOpen} onDidDismiss={() => setSupervisionTimesAlertOpen(false)}>
+      <IonPopover className="large-popover" isOpen={supervisionTimesAlertOpen} onDidDismiss={() => setSupervisionTimesAlertOpen(false)}>
         <SupervisionTimesAlert setOpen={setSupervisionTimesAlertOpen} />
       </IonPopover>
     </IonGrid>
