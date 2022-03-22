@@ -4,6 +4,8 @@ import { IonApp, IonButton, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { persistQueryClient } from "react-query/persistQueryClient-experimental";
+import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
 import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 import Supervisions from "./pages/Supervisions";
@@ -27,6 +29,7 @@ import Photos from "./pages/Photos";
 import IVersionInfo from "./interfaces/IVersionInfo";
 import UserInfo from "./pages/UserInfo";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/supervisionUtil";
 
 /* Sillari.css */
@@ -43,7 +46,14 @@ setupIonicReact({
 // NOTE 2: to allow offline use for the supervisions app, staleTime must be set to something, such as Infinity to store data forever
 // However, it should not be added here, since it affects the transport company and transport apps which are not used offline
 // So instead use staleTime separately in the options of each query used by the supervisions app
-const queryClient = new QueryClient();
+// NOTE 3: use cacheTime to set how long data should be persisted in local storage, used when offline, which is a different concept than staleTime
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: REACT_QUERY_CACHE_TIME,
+    },
+  },
+});
 
 const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
@@ -51,6 +61,16 @@ const App: React.FC = () => {
   const [errorCode, setErrorCode] = useState<number>(0);
   const [version, setVersion] = useState<string>("-");
   const dispatch = useDispatch();
+
+  // NOTE: these persistence utilities are experimental in react-query v3 and subject to change
+  // However at time of writing, they have not changed for months, and v4 is in active development which will include proper versions
+  // The maxAge value is the same as the cacheTime value so garbage collection occurs at the expected time
+  const localStoragePersistor = createWebStoragePersistor({ storage: window.localStorage });
+  persistQueryClient({
+    queryClient,
+    persistor: localStoragePersistor,
+    maxAge: REACT_QUERY_CACHE_TIME,
+  });
 
   useEffect(() => {
     // Add or remove the "dark" class based on if the media query matches
