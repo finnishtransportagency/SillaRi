@@ -8,7 +8,8 @@
       "search": "Search",
       "edit": "Edit",
       "save": "Save",
-      "send": "Send"
+      "send": "Send",
+      "closeAlert": "Close alert"
     },
     "answer": {
       "yes": "Yes",
@@ -18,7 +19,9 @@
       "checkDate": "Check the date",
       "checkTime": "Check the time",
       "checkDateShort": "Check the date",
-      "checkTimeShort": "Check the time"
+      "checkTimeShort": "Check the time",
+      "invalidTime": "Invalid time",
+      "fixTimes": "Check and correct conflicting times for estimated bridge crossings before proceeding."
     }
   },
   "main": {

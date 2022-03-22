@@ -15,7 +15,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import close from "../../theme/icons/close_large.svg";
-import infoOutline from "../../theme/icons/info-outline.svg";
+import { warning } from "ionicons/icons";
 
 interface SupervisionTimesAlertProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -33,7 +33,7 @@ const SupervisionTimesAlert = ({ setOpen }: SupervisionTimesAlertProps): JSX.Ele
     <IonContent>
       <IonHeader className="ion-no-border">
         <IonToolbar color="light">
-          <IonTitle className="headingText">{t("management.transportDetail.transportDepartureTime.header")}</IonTitle>
+          <IonTitle className="headingText">{t("common.validation.invalidTime")}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={(evt) => cancelChanges(evt as MouseEvent)}>
               <IonIcon className="otherIconLarge" icon={close} color="primary" />
@@ -46,15 +46,15 @@ const SupervisionTimesAlert = ({ setOpen }: SupervisionTimesAlertProps): JSX.Ele
         <IonRow className="ion-margin-top">
           <IonCol>
             <IonItem className="ion-no-padding" lines="none">
-              <IonIcon className="otherIcon" icon={infoOutline} slot="start" />
-              <IonLabel className="itemLabel">{t("management.transportDetail.transportDepartureTime.info")}</IonLabel>
+              <IonIcon className="otherIcon" icon={warning} color="danger" slot="start" />
+              <IonLabel className="itemLabel">{t("common.validation.fixTimes")}</IonLabel>
             </IonItem>
           </IonCol>
         </IonRow>
         <IonRow className="ion-margin-top ion-justify-content-end">
-          <IonCol className="ion-padding-end" size-lg="3">
-            <IonButton color="secondary" expand="block" onClick={(evt) => cancelChanges(evt)}>
-              {t("common.buttons.cancel")}
+          <IonCol size-lg="4">
+            <IonButton color="primary" expand="block" onClick={(evt) => cancelChanges(evt)}>
+              {t("common.buttons.closeAlert")}
             </IonButton>
           </IonCol>
         </IonRow>
