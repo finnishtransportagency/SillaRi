@@ -227,6 +227,7 @@
   },
   "management": {
     "companySummary": {
+      "noPermitsWarning": "Järjestelmässä ei ole kuljetuslupia yrityksellesi.",
       "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
       "transports": "Kuljetuksia",
       "supervision": "Sillanvalvonta",

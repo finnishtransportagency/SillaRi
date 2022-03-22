@@ -227,6 +227,7 @@
   },
   "management": {
     "companySummary": {
+      "noPermitsWarning": "(SV) Permits not found",
       "permitListTitle": "(SV) Transport permits and management",
       "transports": "(SV) Transports",
       "supervision": "(SV) Supervision",

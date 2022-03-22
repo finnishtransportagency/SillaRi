@@ -227,6 +227,7 @@
   },
   "management": {
     "companySummary": {
+      "noPermitsWarning": "Permits not found",
       "permitListTitle": "Transport permits and management",
       "transports": "Transports",
       "supervision": "Supervision",
