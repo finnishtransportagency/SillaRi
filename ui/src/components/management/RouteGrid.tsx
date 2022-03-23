@@ -68,7 +68,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
     }
   );
 
-  const timePeriodText = (status?: TransportStatus, statusHistory?: IRouteTransportStatus[]) => {
+  const timePeriodText = (plannedDepartureTime?: Date, status?: TransportStatus, statusHistory?: IRouteTransportStatus[]) => {
     if (status && statusHistory && statusHistory.length > 0) {
       const sortedTimes = statusHistory
         .filter((history) => {
@@ -82,8 +82,8 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
 
       switch (status) {
         case TransportStatus.PLANNED: {
-          const plannedTime = moment(sortedTimes[0].time);
-          return `${t("management.companySummary.time.plannedTime")} ${plannedTime.format(DATE_TIME_FORMAT_MIN)}`;
+          const plannedTime = plannedDepartureTime ? moment(plannedDepartureTime) : null;
+          return plannedTime ? `${t("management.companySummary.time.plannedTime")} ${plannedTime.format(DATE_TIME_FORMAT_MIN)}` : "";
         }
         case TransportStatus.DEPARTED:
         case TransportStatus.STOPPED:
@@ -173,6 +173,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
             const {
               id: routeTransportId,
               tractorUnit,
+              plannedDepartureTime,
               currentTransportPassword,
               currentStatus,
               statusHistory = [],
@@ -215,7 +216,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                         <IonText className="headingText">{t("management.companySummary.route.time")}</IonText>
                       </IonCol>
                       <IonCol size="12">
-                        <IonText>{timePeriodText(status, statusHistory)}</IonText>
+                        <IonText>{timePeriodText(plannedDepartureTime, status, statusHistory)}</IonText>
                       </IonCol>
                     </IonRow>
                   </IonGrid>
