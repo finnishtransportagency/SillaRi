@@ -1,0 +1,8 @@
+.secondary-accordion ion-accordion {
+  border: none;
+}
+
+.secondary-accordion .accordion-animated [slot="header"]  {
+  border: none;
+  --background: var(--ion-color-tertiary);
+}

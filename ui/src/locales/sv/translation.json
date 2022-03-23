@@ -209,7 +209,8 @@
     "supervisionStarted": "(SV) Supervision started",
     "sendSelected": "(SV) Send selected",
     "sentOk": "(SV) Selected supervisions have been sent",
-    "nothingToSend": "(SV) No supervision reports to send"
+    "nothingToSend": "(SV) No supervision reports to send",
+    "sentReports": "(SV) Sent supervision reports"
   },
   "permitPdf": {
     "title": "(SV) Transport permit",

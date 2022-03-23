@@ -17,19 +17,35 @@ import { getUserData, onRetry } from "./backendData";
 import { SupervisionStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 
-export const groupSupervisionsByDate = (supervisions: ISupervision[] | undefined): ISupervisionDay[] => {
+export const getReportSignedTime = (supervision: ISupervision): Date | undefined => {
+  const { statusHistory = [] } = supervision;
+
+  // Find the first status in history with REPORT_SIGNED
+  const signedStatus = statusHistory.find((st) => {
+    const { status } = st;
+    return status === SupervisionStatus.REPORT_SIGNED;
+  });
+  const { time: signedTime } = signedStatus || {};
+  return signedTime;
+};
+
+export const groupSupervisionsByDate = (
+  supervisions: ISupervision[] | undefined,
+  compareDates: (arg0: ISupervision, arg1: ISupervisionDay) => boolean,
+  createSupervisionDay: (arg0: ISupervision) => ISupervisionDay
+): ISupervisionDay[] => {
   const supervisionDays: ISupervisionDay[] = [];
 
   if (supervisions && supervisions.length > 0) {
     supervisions.forEach((supervision) => {
       const existingDayMatch: ISupervisionDay[] = supervisionDays.filter((supervisionDay) => {
-        return moment(supervision.plannedTime).isSame(moment(supervisionDay.date), "day");
+        return compareDates(supervision, supervisionDay);
       });
       // Should be only one match if found
       if (existingDayMatch.length > 0) {
         existingDayMatch[0].supervisions.push(supervision);
       } else {
-        const newSupervisionDay: ISupervisionDay = { date: supervision.plannedTime, supervisions: [supervision] };
+        const newSupervisionDay = createSupervisionDay(supervision);
         supervisionDays.push(newSupervisionDay);
       }
     });
@@ -38,8 +54,33 @@ export const groupSupervisionsByDate = (supervisions: ISupervision[] | undefined
     // So use startOf to use the time as 00:00 and get the correct day order
     supervisionDays.sort((a, b) => moment(a.date).startOf("day").diff(moment(b.date).startOf("day"), "days"));
   }
-
   return supervisionDays;
+};
+
+export const groupSupervisionsByPlannedDate = (supervisions: ISupervision[] | undefined): ISupervisionDay[] => {
+  const compareDates = (supervision: ISupervision, supervisionDay: ISupervisionDay) => {
+    return moment(supervision.plannedTime).isSame(moment(supervisionDay.date), "day");
+  };
+
+  const createSupervisionDay = (supervision: ISupervision): ISupervisionDay => {
+    return { date: moment(supervision.plannedTime).startOf("day").toDate(), supervisions: [supervision] };
+  };
+
+  return groupSupervisionsByDate(supervisions, compareDates, createSupervisionDay);
+};
+
+export const groupSupervisionsBySignedDate = (supervisions: ISupervision[] | undefined): ISupervisionDay[] => {
+  const compareDates = (supervision: ISupervision, supervisionDay: ISupervisionDay) => {
+    const signedTime = getReportSignedTime(supervision);
+    return moment(signedTime).isSame(moment(supervisionDay.date), "day");
+  };
+
+  const createSupervisionDay = (supervision: ISupervision): ISupervisionDay => {
+    const signedTime = getReportSignedTime(supervision);
+    return { date: moment(signedTime).startOf("day").toDate(), supervisions: [supervision] };
+  };
+
+  return groupSupervisionsByDate(supervisions, compareDates, createSupervisionDay);
 };
 
 const sortByBridgeOrder = (a: ISupervision, b: ISupervision) => {

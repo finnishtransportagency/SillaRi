@@ -209,7 +209,8 @@
     "supervisionStarted": "Valvonta aloitettu",
     "sendSelected": "Lähetä valitut",
     "sentOk": "Valitut valvonnat on lähetetty",
-    "nothingToSend": "Ei lähetettäviä valvontaraportteja"
+    "nothingToSend": "Ei lähetettäviä valvontaraportteja",
+    "sentReports": "Lähetetyt valvontaraportit"
   },
   "permitPdf": {
     "title": "Kuljetuslupa",

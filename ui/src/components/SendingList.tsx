@@ -6,12 +6,15 @@ import {
   IonButton,
   IonButtons,
   IonCheckbox,
+  IonCol,
   IonContent,
+  IonGrid,
   IonHeader,
   IonIcon,
   IonItem,
   IonLabel,
   IonModal,
+  IonRow,
   IonText,
   IonTitle,
   IonToast,
@@ -25,6 +28,7 @@ import { onRetry } from "../utils/backendData";
 import { completeSupervisions } from "../utils/supervisionBackendData";
 import { useHistory } from "react-router";
 import CustomAccordion from "./common/CustomAccordion";
+import SentSupervisionReportsAccordion from "./SentSupervisionReportsAccordion";
 
 interface SendingListProps {
   isOpen: boolean;
@@ -85,7 +89,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
     <IonModal isOpen={isOpen} onDidPresent={() => handleOpen()} onWillDismiss={() => setOpen(false)} onDidDismiss={() => handleClose()}>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle class="headingBoldText">{t("sendingList.title")}</IonTitle>
+          <IonTitle class="headingBoldText">{`${t("sendingList.title")} (${unsentSupervisions.length})`}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={() => setOpen(false)}>
               <IonIcon className="otherIconLarge" icon={close} />
@@ -160,6 +164,26 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
       >
         {t("sendingList.sendSelected")}
       </IonButton>
+
+      <IonContent>
+        <CustomAccordion
+          items={[
+            {
+              uuid: "sentReports",
+              heading: (
+                <IonGrid className="ion-no-padding">
+                  <IonRow>
+                    <IonCol>
+                      <IonText>{`${t("sendingList.sentReports")} (${sentSupervisions.length})`}</IonText>
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              ),
+              panel: <SentSupervisionReportsAccordion sentSupervisions={sentSupervisions} />,
+            },
+          ]}
+        />
+      </IonContent>
 
       <IonToast
         isOpen={toastMessage.length > 0}
