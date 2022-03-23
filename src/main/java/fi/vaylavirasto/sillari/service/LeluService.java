@@ -7,7 +7,7 @@ import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
@@ -347,7 +347,7 @@ public class LeluService {
         return dtoMapper.fromModelToDTO(route);
     }
 
-    public LeluBridgeResponseDTO getSupervision(Long leluRouteId, String bridgeIdentifier, Integer transportNumber) {
+    public LeluBridgeSupervisionResponseDTO getSupervision(Long leluRouteId, String bridgeIdentifier, Integer transportNumber) {
         RouteModel route = routeRepository.getRouteWithLeluID(leluRouteId);
         if (route != null) {
             RouteBridgeModel routeBridge = routeBridgeRepository.getRouteBridge(route.getId(), bridgeIdentifier, transportNumber);
@@ -361,8 +361,9 @@ public class LeluService {
                     });
                 }
                 logger.debug("HELLO!: " + routeBridge);
-                return dtoMapper.fromModelToDTO(routeBridge);
-
+                LeluBridgeSupervisionResponseDTO bridgeSupervisionResponseDTO = dtoMapper.fromModelToDTO2(routeBridge.getSupervisions().get(0));
+                bridgeSupervisionResponseDTO.setTransportNumber(routeBridge.getTransportNumber());
+                return bridgeSupervisionResponseDTO;
             }
         }
         return null;

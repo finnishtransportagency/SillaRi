@@ -80,6 +80,14 @@ public interface LeluDTOMapper {
     LeluSupervisionDTO fromModelToDTO(SupervisionModel model);
 
     @Mappings({
+        @Mapping(target = "supervisionStatus", source = "model.currentStatus"),
+        @Mapping(target = "reportId", source = "model.id"),
+        @Mapping(target = "supervisionReport", source = "model.report"),
+        @Mapping(target = "supervisor", source = "model.supervisorWhoSupervised"),
+    })
+    LeluBridgeSupervisionResponseDTO fromModelToDTO2(SupervisionModel model);
+
+    @Mappings({
             @Mapping(target = "drivingLineOk", source = "model.drivingLineOk"),
             @Mapping(target = "drivingLineInfo", source = "model.drivingLineInfo"),
             @Mapping(target = "speedLimitOk", source = "model.speedLimitOk"),
@@ -106,6 +114,8 @@ public interface LeluDTOMapper {
             @Mapping(target = "supervisions", source = "model.supervisions")
     })
     LeluBridgeResponseDTO fromModelToDTO(RouteBridgeModel model);
+
+
 
     @Mappings({
             @Mapping(target = "bridges", source = "model.routeBridges")
