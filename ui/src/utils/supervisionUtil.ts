@@ -15,6 +15,7 @@ import {
 } from "./supervisionBackendData";
 import { getUserData, onRetry } from "./backendData";
 import { SupervisionStatus } from "./constants";
+import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 
 export const groupSupervisionsByDate = (supervisions: ISupervision[] | undefined): ISupervisionDay[] => {
   const supervisionDays: ISupervisionDay[] = [];
@@ -77,6 +78,16 @@ export const sortSupervisionsByTimeAndBridgeOrder = (supervisions: ISupervision[
       return timeDiff === 0 ? sortByBridgeOrder(a, b) : timeDiff;
     });
   }
+};
+
+export const isSupervisionSigned = (statusHistory: ISupervisionStatus[]) => {
+  return (
+    statusHistory.length > 0 &&
+    statusHistory.some((st) => {
+      const { status } = st || {};
+      return status === SupervisionStatus.REPORT_SIGNED;
+    })
+  );
 };
 
 export const reportHasUnsavedChanges = (modified: ISupervisionReport | undefined, saved: ISupervisionReport | undefined): boolean => {

@@ -101,6 +101,20 @@ public class SupervisionRepository {
                                 .or(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.REPORT_SIGNED.toString()))))));
     }
 
+    public List<SupervisionModel> getFinishedSupervisionsBySupervisorUsername(String username) {
+        return dsl.select().from(TableAlias.supervision)
+                .innerJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))
+                .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
+                .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
+                .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
+                .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
+                .and(exists(selectOne()
+                        .from(TableAlias.supervisionStatus)
+                        .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)
+                                .and(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.FINISHED.toString())))))
+                .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
+    }
+
     public List<SupervisionModel> getFinishedButUnsignedSupervisionsBySupervisorUsername(String username) {
         return dsl.select().from(TableAlias.supervision)
                 .innerJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))

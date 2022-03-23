@@ -73,7 +73,7 @@ public class SupervisionController {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionSendingListOfSupervisor");
         try {
             SillariUser user = uiService.getSillariUser();
-            List<SupervisionModel> supervisions = supervisionService.getFinishedButUnsignedSupervisions(user.getUsername());
+            List<SupervisionModel> supervisions = supervisionService.getFinishedSupervisions(user.getUsername());
             return ResponseEntity.ok().body(supervisions != null ? supervisions : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

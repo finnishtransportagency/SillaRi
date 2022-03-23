@@ -119,8 +119,8 @@ public class SupervisionService {
     }
 
 
-    public List<SupervisionModel> getFinishedButUnsignedSupervisions(String username) {
-        List<SupervisionModel> supervisions = supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisorUsername(username);
+    public List<SupervisionModel> getFinishedSupervisions(String username) {
+        List<SupervisionModel> supervisions = supervisionRepository.getFinishedSupervisionsBySupervisorUsername(username);
         for (SupervisionModel supervision : supervisions) {
             // The sending list needs supervision started time, bridge, routeTransport and permit details
             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));

@@ -24,14 +24,16 @@ import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import { onRetry } from "../utils/backendData";
 import { completeSupervisions } from "../utils/supervisionBackendData";
 import { useHistory } from "react-router";
+import CustomAccordion from "./common/CustomAccordion";
 
 interface SendingListProps {
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  supervisionList: ISupervision[];
+  sentSupervisions: ISupervision[];
+  unsentSupervisions: ISupervision[];
 }
 
-const SendingList = ({ isOpen, setOpen, supervisionList }: SendingListProps): JSX.Element => {
+const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: SendingListProps): JSX.Element => {
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -86,18 +88,18 @@ const SendingList = ({ isOpen, setOpen, supervisionList }: SendingListProps): JS
           <IonTitle class="headingBoldText">{t("sendingList.title")}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={() => setOpen(false)}>
-              <IonIcon className="otherIconLarge" icon={close}></IonIcon>
+              <IonIcon className="otherIconLarge" icon={close} />
             </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        {supervisionList.length === 0 ? (
+        {unsentSupervisions.length === 0 ? (
           <IonItem lines="none">
             <IonLabel>{t("sendingList.nothingToSend")}</IonLabel>
           </IonItem>
         ) : (
-          supervisionList
+          unsentSupervisions
             .sort((a, b) => {
               const am = moment(a.startedTime);
               const bm = moment(b.startedTime);
@@ -153,7 +155,7 @@ const SendingList = ({ isOpen, setOpen, supervisionList }: SendingListProps): JS
         color="primary"
         expand="block"
         size="large"
-        disabled={supervisionList.length === 0 || selectedIds.length === 0 || isSendingSupervisions}
+        disabled={unsentSupervisions.length === 0 || selectedIds.length === 0 || isSendingSupervisions}
         onClick={sendSelected}
       >
         {t("sendingList.sendSelected")}
