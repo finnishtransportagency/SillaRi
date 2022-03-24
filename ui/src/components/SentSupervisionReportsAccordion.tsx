@@ -28,7 +28,7 @@ const SentSupervisionReportsAccordion = ({ sentSupervisions }: SentSupervisionRe
 
   return (
     <CustomAccordion
-      className="secondary-accordion"
+      className="secondaryAccordion"
       items={supervisionDays.map((day, index) => {
         const key = `reportDay_${index}`;
         const { supervisions = [] } = day;
@@ -49,7 +49,7 @@ const SentSupervisionReportsAccordion = ({ sentSupervisions }: SentSupervisionRe
           ),
           isPanelOpen: index === 0,
           panel: (
-            <div className="listContainer">
+            <div className="reportList ion-margin-bottom">
               {supervisions.map((supervision, idx) => {
                 const sKey = `sentReport_${idx}`;
                 const { id: supervisionId, routeBridge, routeTransport, startedTime } = supervision;
@@ -61,8 +61,8 @@ const SentSupervisionReportsAccordion = ({ sentSupervisions }: SentSupervisionRe
                 const reportSignedTime = getReportSignedTime(supervision);
 
                 return (
-                  <IonItem key={sKey} fill="outline" lines="none" className="ion-padding-start ion-padding-end ion-margin-bottom">
-                    <IonGrid className="ion-no-padding ion-padding-top ion-padding-bottom">
+                  <IonItem key={sKey} fill="outline" lines="none" className="ion-margin-horizontal">
+                    <IonGrid className="ion-no-padding ion-margin-vertical">
                       <IonRow className="ion-margin-bottom">
                         <IonCol>
                           <IonText className="headingBoldText">{`${name}, ${identifier}, ${municipality}`}</IonText>

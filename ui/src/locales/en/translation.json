@@ -212,7 +212,7 @@
     "report": "Supervision report",
     "sendSelected": "Send selected",
     "sentOk": "Selected supervisions have been sent",
-    "nothingToSend": "No supervision reports to send",
+    "nothingToSend": "No supervision reports to send.",
     "sentReports": "Sent supervision reports"
   },
   "permitPdf": {

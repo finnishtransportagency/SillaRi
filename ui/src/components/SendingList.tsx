@@ -29,6 +29,7 @@ import { completeSupervisions } from "../utils/supervisionBackendData";
 import { useHistory } from "react-router";
 import CustomAccordion from "./common/CustomAccordion";
 import SentSupervisionReportsAccordion from "./SentSupervisionReportsAccordion";
+import "./SendingList.css";
 
 interface SendingListProps {
   isOpen: boolean;
@@ -86,7 +87,13 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   };
 
   return (
-    <IonModal isOpen={isOpen} onDidPresent={() => handleOpen()} onWillDismiss={() => setOpen(false)} onDidDismiss={() => handleClose()}>
+    <IonModal
+      isOpen={isOpen}
+      onDidPresent={() => handleOpen()}
+      onWillDismiss={() => setOpen(false)}
+      onDidDismiss={() => handleClose()}
+      className="sendingListModal"
+    >
       <IonHeader>
         <IonToolbar color="primary">
           <IonTitle class="headingBoldText">{`${t("sendingList.title")} (${unsentSupervisions.length})`}</IonTitle>
@@ -99,73 +106,71 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
       </IonHeader>
       <IonContent>
         {unsentSupervisions.length === 0 ? (
-          <IonItem lines="none">
-            <IonLabel>{t("sendingList.nothingToSend")}</IonLabel>
-          </IonItem>
+          <div className="ion-margin ion-padding ion-text-center">
+            <IonText>{t("sendingList.nothingToSend")}</IonText>
+          </div>
         ) : (
-          unsentSupervisions
-            .sort((a, b) => {
-              const am = moment(a.startedTime);
-              const bm = moment(b.startedTime);
-              return am.diff(bm, "seconds");
-            })
-            .map((supervision, index) => {
-              const { id: supervisionId, routeBridge, routeTransport, startedTime } = supervision;
-              const { bridge, route } = routeBridge || {};
-              const { identifier = "", name = "" } = bridge || {};
-              const { permit } = route || {};
-              const { permitNumber } = permit || {};
-              const { tractorUnit = "" } = routeTransport || {};
-              const key = `sending_${index}`;
+          <>
+            {unsentSupervisions
+              .sort((a, b) => {
+                const am = moment(a.startedTime);
+                const bm = moment(b.startedTime);
+                return am.diff(bm, "seconds");
+              })
+              .map((supervision, index) => {
+                const { id: supervisionId, routeBridge, routeTransport, startedTime } = supervision;
+                const { bridge, route } = routeBridge || {};
+                const { identifier = "", name = "" } = bridge || {};
+                const { permit } = route || {};
+                const { permitNumber } = permit || {};
+                const { tractorUnit = "" } = routeTransport || {};
+                const key = `sending_${index}`;
 
-              return (
-                <IonItem key={key}>
-                  <IonItem lines="none">
-                    <IonCheckbox
-                      slot="start"
-                      value={String(supervisionId)}
-                      onIonChange={(e) => selectSupervision(e.detail.value, e.detail.checked)}
-                    />
+                return (
+                  <IonItem key={key} className="ion-no-padding ion-margin-top" lines="none">
+                    <IonItem lines="none">
+                      <IonCheckbox
+                        slot="start"
+                        value={String(supervisionId)}
+                        onIonChange={(e) => selectSupervision(e.detail.value, e.detail.checked)}
+                      />
+                    </IonItem>
+                    <IonLabel className="ion-no-padding">
+                      <IonLabel>
+                        <IonText className="headingText">{name}</IonText>
+                        <IonText className="ion-margin-start">{identifier}</IonText>
+                      </IonLabel>
+                      <IonLabel>{`${t("sendingList.transportPermit")}: ${permitNumber}`}</IonLabel>
+                      <IonLabel>{`${t("sendingList.tractorUnit")}: ${tractorUnit}`}</IonLabel>
+                      <IonLabel>{`${t("sendingList.supervisionStarted")}: ${moment(startedTime).format(DATE_TIME_FORMAT_MIN)}`}</IonLabel>
+                      <IonLabel>
+                        <IonButton
+                          color="secondary"
+                          size="default"
+                          onClick={() => {
+                            setTargetUrl(`/supervision/${supervisionId}`);
+                            setOpen(false);
+                          }}
+                        >
+                          {t("common.buttons.edit")}
+                        </IonButton>
+                      </IonLabel>
+                    </IonLabel>
                   </IonItem>
-                  <IonLabel>
-                    <IonLabel>
-                      <IonText className="headingText">{name}</IonText>
-                      <IonText className="ion-margin-start">{identifier}</IonText>
-                    </IonLabel>
-                    <IonLabel>{`${t("sendingList.transportPermit")}: ${permitNumber}`}</IonLabel>
-                    <IonLabel>{`${t("sendingList.tractorUnit")}: ${tractorUnit}`}</IonLabel>
-                    <IonLabel>{`${t("sendingList.supervisionStarted")}: ${moment(startedTime).format(DATE_TIME_FORMAT_MIN)}`}</IonLabel>
-                    <IonLabel>
-                      <IonButton
-                        color="secondary"
-                        size="default"
-                        onClick={() => {
-                          setTargetUrl(`/supervision/${supervisionId}`);
-                          setOpen(false);
-                        }}
-                      >
-                        {t("common.buttons.edit")}
-                      </IonButton>
-                    </IonLabel>
-                  </IonLabel>
-                </IonItem>
-              );
-            })
+                );
+              })}
+            <IonButton
+              className="ion-margin"
+              color="primary"
+              expand="block"
+              size="large"
+              disabled={unsentSupervisions.length === 0 || selectedIds.length === 0 || isSendingSupervisions}
+              onClick={sendSelected}
+            >
+              {t("sendingList.sendSelected")}
+            </IonButton>
+          </>
         )}
-      </IonContent>
-
-      <IonButton
-        className="ion-margin"
-        color="primary"
-        expand="block"
-        size="large"
-        disabled={unsentSupervisions.length === 0 || selectedIds.length === 0 || isSendingSupervisions}
-        onClick={sendSelected}
-      >
-        {t("sendingList.sendSelected")}
-      </IonButton>
-
-      <IonContent>
         <CustomAccordion
           items={[
             {
