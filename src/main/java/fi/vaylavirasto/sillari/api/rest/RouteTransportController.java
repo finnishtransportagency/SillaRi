@@ -97,8 +97,14 @@ public class RouteTransportController {
             if (!isOwnCompanyPermit(routeTransport.getRoute().getPermitId())) {
                 throw new AccessDeniedException("Not own company permit for route transport");
             }
-            //right transport number is in bridges; they have been filtered to those with nest available transport number when fetched to ui withh /getpermit
-            routeTransport.setTransportNumber(routeTransport.getRoute().getRouteBridges().get(0).getTransportNumber());
+            //right transport number is in bridges; they have been filtered to those with next available transport number when fetched to ui with /getpermit
+            Integer transportNumber = routeTransport.getRoute().getRouteBridges().get(0).getTransportNumber();
+            if(transportNumber!=null) {
+                routeTransport.setTransportNumber(transportNumber);
+            }
+            elss{
+                routeTransport.setTransportNumber(routeTransportService.getRouteTransportsOfRoute(routeTransport.getRouteId()));
+            }
             RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
             if (routeTransport.getSupervisions() != null && insertedRouteTransport != null) {

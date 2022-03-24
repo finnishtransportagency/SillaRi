@@ -196,4 +196,7 @@ public class RouteTransportService {
             routeTransportStatusRepository.insertTransportStatus(routeTransportStatusModel.getRouteTransportId(), routeTransportStatusModel.getStatus());
         }
     }
+
+    public Integer getRouteTransportsOfRoute(Integer routeId) {
+    }
 }
