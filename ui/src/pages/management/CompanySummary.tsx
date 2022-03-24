@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
+import { IonCol, IonContent, IonGrid, IonItem, IonPage, IonRow, IonText } from "@ionic/react";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
 import CustomAccordion from "../../components/common/CustomAccordion";
@@ -50,6 +50,10 @@ const CompanySummary = (): JSX.Element => {
       <IonContent color="light">
         {noNetworkNoData ? (
           <NoNetworkNoData />
+        ) : name === "" || permits.length < 1 ? (
+          <IonItem lines="none" color="warning">
+            {t("management.companySummary.noPermitsWarning")}
+          </IonItem>
         ) : (
           <IonGrid className="ion-no-padding" fixed>
             <IonRow>
