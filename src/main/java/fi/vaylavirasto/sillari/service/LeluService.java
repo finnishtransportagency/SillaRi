@@ -347,9 +347,10 @@ public class LeluService {
         return dtoMapper.fromModelToDTO(route);
     }
 
-    public LeluBridgeSupervisionResponseDTO getSupervision(Long leluRouteId, String bridgeIdentifier, Integer transportNumber) {
+    public LeluBridgeSupervisionResponseDTO getSupervision(Long leluRouteId, String bridgeIdentifier, Integer transportNumber) throws LeluRouteNotFoundException {
         RouteModel route = routeRepository.getRouteWithLeluID(leluRouteId);
         if (route != null) {
+            logger.debug("getting routebridge: " + route.getId() + " " + bridgeIdentifier + " " + transportNumber );
             RouteBridgeModel routeBridge = routeBridgeRepository.getRouteBridge(route.getId(), bridgeIdentifier, transportNumber);
             if (routeBridge != null) {
                 List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
@@ -361,12 +362,20 @@ public class LeluService {
                     });
                 }
                 logger.debug("HELLO!: " + routeBridge);
+                try{
                 LeluBridgeSupervisionResponseDTO bridgeSupervisionResponseDTO = dtoMapper.fromModelToDTO2(routeBridge.getSupervisions().get(0));
                 bridgeSupervisionResponseDTO.setTransportNumber(routeBridge.getTransportNumber());
-                return bridgeSupervisionResponseDTO;
+                return bridgeSupervisionResponseDTO;}
+                catch (IndexOutOfBoundsException e){
+                    throw new LeluRouteNotFoundException("No supervisions planned yet " + leluRouteId + " " + bridgeIdentifier + " "+ transportNumber);
+                }
+            } else {
+                throw new LeluRouteNotFoundException("Route bridge not found " + leluRouteId + " " + bridgeIdentifier + " "+ transportNumber);
             }
+        } else {
+            throw new LeluRouteNotFoundException("Route not found " + leluRouteId);
         }
-        return null;
+
     }
 
 }

@@ -255,8 +255,9 @@ public class LeluController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200 OK", description = ""),
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route, bridge or transport not found with provided id."),
     })
-    public LeluBridgeSupervisionResponseDTO getSupervision(@RequestParam Long routeId, @RequestParam String bridgeIdentifier, @RequestParam Integer transportNumber, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
+    public LeluBridgeSupervisionResponseDTO getSupervision(@RequestParam Long routeId, @RequestParam String bridgeIdentifier, @RequestParam Integer transportNumber, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluRouteNotFoundException {
         logger.debug("Lelu getSupervision " + routeId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
