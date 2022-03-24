@@ -52,10 +52,8 @@ public class PermitService {
 
     public PermitModel getPermitWithOnlyNextAvailableTransportInstance(Integer permitId) {
         PermitModel permitModel = permitRepository.getPermit(permitId);
-        logger.debug("hellohau:"+permitId);
+
         Integer maxUsedTransportNumber = routeTransportRepository.getRouteTransportsByPermitId(permitId).stream().max(Comparator.comparing(RouteTransportModel::getTransportNumber)).map(rt -> rt.getTransportNumber()).orElse(null);
-        logger.debug("hellohau:"+routeTransportRepository.getRouteTransportsByPermitId(permitId));
-        logger.debug("hellohau:"+maxUsedTransportNumber);
         Integer nextAvailableTransportNumber = maxUsedTransportNumber == null ? 1 : maxUsedTransportNumber + 1;
         fillPermitDetails(permitModel, nextAvailableTransportNumber);
         return permitModel;
@@ -94,6 +92,10 @@ public class PermitService {
             if (permitModel.getRoutes() != null) {
                 permitModel.getRoutes().forEach(routeModel -> {
                     List<RouteBridgeModel> routeBridgeModels = transportNumber == null ? routeBridgeRepository.getRouteBridges(routeModel.getId()) : routeBridgeRepository.getRouteBridges(routeModel.getId(), transportNumber);
+                    //todo for testing we are getting bridges with no transnum if with transnum not found
+                    if (routeBridgeModels.isEmpty()) {
+                        routeBridgeModels = routeBridgeRepository.getRouteBridges(routeModel.getId(), null);
+                    }
                     routeModel.setRouteBridges(routeBridgeModels);
                 });
             }

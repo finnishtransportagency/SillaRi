@@ -99,11 +99,10 @@ public class RouteTransportController {
             }
             //right transport number is in bridges; they have been filtered to those with next available transport number when fetched to ui with /getpermit
             Integer transportNumber = routeTransport.getRoute().getRouteBridges().get(0).getTransportNumber();
-            if(transportNumber!=null) {
+            if (transportNumber != null) {
                 routeTransport.setTransportNumber(transportNumber);
-            }
-            elss{
-                routeTransport.setTransportNumber(routeTransportService.getRouteTransportsOfRoute(routeTransport.getRouteId()));
+            } else {
+                routeTransport.setTransportNumber(routeTransportService.getMaxUsedTransportNumberOfRoute(routeTransport.getRouteId()) + 1);
             }
             RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
