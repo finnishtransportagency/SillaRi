@@ -92,9 +92,11 @@ public class PermitService {
             if (permitModel.getRoutes() != null) {
                 permitModel.getRoutes().forEach(routeModel -> {
                     List<RouteBridgeModel> routeBridgeModels = transportNumber == null ? routeBridgeRepository.getRouteBridges(routeModel.getId()) : routeBridgeRepository.getRouteBridges(routeModel.getId(), transportNumber);
-                    //todo for testing we are getting bridges with no transnum if with transnum not found
+                    //TODO for testing we are getting bridges with no transnum if with transnum not found
                     if (routeBridgeModels.isEmpty()) {
+                        logger.debug("hello we here ");
                         routeBridgeModels = routeBridgeRepository.getRouteBridges(routeModel.getId(), null);
+                        logger.debug("hello we here "+ routeBridgeModels);
                     }
                     routeModel.setRouteBridges(routeBridgeModels);
                 });

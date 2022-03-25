@@ -35,7 +35,7 @@ public class RouteBridgeRepository {
         return dsl.select().from(TableAlias.routeBridge)
                 .leftJoin(TableAlias.bridge).on(TableAlias.bridge.ID.eq(TableAlias.routeBridge.BRIDGE_ID))
                 .where(TableAlias.routeBridge.ROUTE_ID.eq(routeId))
-                .and(TableAlias.routeBridge.TRANSPORT_NUMBER.eq(transportNumber))
+                .and(transportNumber != null ? TableAlias.routeBridge.TRANSPORT_NUMBER.eq(transportNumber): TableAlias.routeBridge.TRANSPORT_NUMBER.isNull())
                 .orderBy(TableAlias.routeBridge.ORDINAL)
                 .fetch(this::mapRouteBridgeRecordWithBridge);
     }

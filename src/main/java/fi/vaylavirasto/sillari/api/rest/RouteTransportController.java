@@ -85,7 +85,6 @@ public class RouteTransportController {
     }
 
 
-
     @Operation(summary = "Create route transport")
     @PostMapping(value = "/createroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
@@ -97,13 +96,10 @@ public class RouteTransportController {
             if (!isOwnCompanyPermit(routeTransport.getRoute().getPermitId())) {
                 throw new AccessDeniedException("Not own company permit for route transport");
             }
-            //right transport number is in bridges; they have been filtered to those with next available transport number when fetched to ui with /getpermit
-            Integer transportNumber = routeTransport.getRoute().getRouteBridges().get(0).getTransportNumber();
-            if (transportNumber != null) {
-                routeTransport.setTransportNumber(transportNumber);
-            } else {
-                routeTransport.setTransportNumber(routeTransportService.getMaxUsedTransportNumberOfRoute(routeTransport.getRouteId()) + 1);
-            }
+            //we can give just next use transport number available and not worry about, cause bridges have been filtered into ui with the next
+            // availabe transport number in /getPermit
+            routeTransport.setTransportNumber(routeTransportService.getMaxUsedTransportNumberOfRoute(routeTransport.getRouteId()) + 1);
+
             RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
             if (routeTransport.getSupervisions() != null && insertedRouteTransport != null) {
@@ -219,7 +215,7 @@ public class RouteTransportController {
     private boolean isRouteTransportOfSupervisor(Integer routeTransportId) {
         SillariUser user = uiService.getSillariUser();
         List<SupervisorModel> supervisors = supervisionService.getSupervisorsByRouteTransportId(routeTransportId);
-        return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
+        return supervisors.stream().map(s -> s.getUsername()).anyMatch(u -> u.equals(user.getUsername()));
     }
 
 }

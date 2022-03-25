@@ -123,34 +123,6 @@ public class RouteTransportService {
     }
 
 
-    public List<RouteTransportModel> getRouteTransportsOfRoute(Integer routeId) {
-        List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByRouteId(routeId);
-
-        if (routeTransportModels != null) {
-            routeTransportModels.forEach(routeTransportModel -> {
-                routeTransportModel.setRoute(routeRepository.getRoute(routeTransportModel.getRouteId()));
-                // Sets also current status
-                routeTransportModel.setStatusHistory(routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId()));
-
-                List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportModel.getId());
-                if (supervisions != null) {
-                    supervisions.forEach(supervision -> {
-                        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
-                        // Supervisor name not shown in ui from this resource, so we don't waste time getting them
-                        //fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
-                        supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
-                    });
-                }
-                routeTransportModel.setSupervisions(supervisions);
-
-
-            });
-        }
-
-        return routeTransportModels;
-    }
-
-
     public RouteTransportModel getRouteTransportOfSupervisor(Integer routeTransportId, String username) {
         RouteTransportModel routeTransport = routeTransportRepository.getRouteTransportById(routeTransportId);
 
