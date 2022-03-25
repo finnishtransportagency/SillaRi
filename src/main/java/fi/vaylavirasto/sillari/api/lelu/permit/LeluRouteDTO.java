@@ -33,7 +33,7 @@ public class LeluRouteDTO {
     private Boolean alternativeRoute;
 
     @Valid
-    @NotEmpty(message = "{route.bridges.not.empty}")
+    @NotNull(message = "{route.bridges.not.null}")
     @Schema(description = "List of bridges on the route", required = true)
     private List<LeluBridgeDTO> bridges;
 
