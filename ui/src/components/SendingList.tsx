@@ -30,6 +30,7 @@ import { useHistory } from "react-router";
 import CustomAccordion from "./common/CustomAccordion";
 import SentSupervisionReportsAccordion from "./SentSupervisionReportsAccordion";
 import "./SendingList.css";
+import SendingListItem from "./SendingListItem";
 
 interface SendingListProps {
   isOpen: boolean;
@@ -118,45 +119,16 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
                 return am.diff(bm, "seconds");
               })
               .map((supervision, index) => {
-                const { id: supervisionId, routeBridge, routeTransport, startedTime } = supervision;
-                const { bridge, route } = routeBridge || {};
-                const { identifier = "", name = "" } = bridge || {};
-                const { permit } = route || {};
-                const { permitNumber } = permit || {};
-                const { tractorUnit = "" } = routeTransport || {};
                 const key = `sending_${index}`;
 
                 return (
-                  <IonItem key={key} className="ion-no-padding ion-margin-top" lines="none">
-                    <IonItem lines="none">
-                      <IonCheckbox
-                        slot="start"
-                        value={String(supervisionId)}
-                        onIonChange={(e) => selectSupervision(e.detail.value, e.detail.checked)}
-                      />
-                    </IonItem>
-                    <IonLabel className="ion-no-padding">
-                      <IonLabel>
-                        <IonText className="headingText">{name}</IonText>
-                        <IonText className="ion-margin-start">{identifier}</IonText>
-                      </IonLabel>
-                      <IonLabel>{`${t("sendingList.transportPermit")}: ${permitNumber}`}</IonLabel>
-                      <IonLabel>{`${t("sendingList.tractorUnit")}: ${tractorUnit}`}</IonLabel>
-                      <IonLabel>{`${t("sendingList.supervisionStarted")}: ${moment(startedTime).format(DATE_TIME_FORMAT_MIN)}`}</IonLabel>
-                      <IonLabel>
-                        <IonButton
-                          color="secondary"
-                          size="default"
-                          onClick={() => {
-                            setTargetUrl(`/supervision/${supervisionId}`);
-                            setOpen(false);
-                          }}
-                        >
-                          {t("common.buttons.edit")}
-                        </IonButton>
-                      </IonLabel>
-                    </IonLabel>
-                  </IonItem>
+                  <SendingListItem
+                    key={key}
+                    supervision={supervision}
+                    selectSupervision={selectSupervision}
+                    setTargetUrl={setTargetUrl}
+                    setOpen={setOpen}
+                  />
                 );
               })}
             <IonButton
