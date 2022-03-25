@@ -35,6 +35,8 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   const { id: supervisionId, conformsToPermit = false, currentStatus, finishedTime } = supervision || {};
   const { status: supervisionStatus, time: statusTime, username: statusUser } = currentStatus || {};
 
+  const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
+
   const supervisionPending =
     !isLoadingSupervision && (supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED);
   const supervisionInProgress = !isLoadingSupervision && supervisionStatus === SupervisionStatus.IN_PROGRESS;
@@ -45,12 +47,65 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   const statusByCurrentSupervisor = !isLoadingSupervisorUser && currentSupervisor && statusUser === currentSupervisor;
 
   // Set-up mutations for modifying data later
+  // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
   const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(initialReport, dispatch), {
     retry: onRetry,
-    onSuccess: (data) => {
-      // Update "getSupervision" query to return the updated data
-      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
+    onMutate: async (newData: ISupervisionReport) => {
+      // onMutate fires before the mutation function
+      console.log("startSupervision onMutate", newData);
+
+      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+      await queryClient.cancelQueries(supervisionQueryKey);
+
+      // Snapshot the previous value
+      const previousData = queryClient.getQueryData<ISupervision>(supervisionQueryKey);
+
+      // Optimistically update to the new value
+      // Set the current status to IN_PROGRESS here otherwise the Supervision page won't work when offline since the backend won't be called yet
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+        return {
+          ...oldData,
+          report: { ...oldData?.report, ...newData },
+          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.IN_PROGRESS },
+        } as ISupervision;
+      });
+
+      // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
       history.push(`/supervision/${supervisionId}`);
+
+      // Return a context object with the snapshotted value
+      // TODO - check if this is needed
+      return { previousData };
+    },
+    onError: (err, newData, context) => {
+      // onError doesn't fire when offline due to the retry option, but may fire when online again
+      console.log("startSupervision onError", err, newData, context);
+
+      // If the mutation fails, use the context returned from onMutate to roll back
+      // TODO - check if this is needed
+      /*
+      if (context?.previousData) {
+        queryClient.setQueryData<ISupervision>(queryKey, context.previousData);
+      }
+      */
+    },
+    onSettled: (data) => {
+      // onSettled doesn't fire when offline due to the retry option
+      console.log("startSupervision onSettled", data);
+
+      // Always refetch after error or success
+      // TODO - check if this is needed
+      // queryClient.invalidateQueries(queryKey);
+    },
+    onSuccess: (data) => {
+      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+      console.log("startSupervision onSuccess", data);
+
+      // Update "getSupervision" query to return the updated data
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, data);
+
+      // Note: moved to onMutate
+      // history.push(`/supervision/${supervisionId}`);
     },
   });
 

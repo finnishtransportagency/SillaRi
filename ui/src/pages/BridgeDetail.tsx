@@ -25,13 +25,14 @@ const BridgeDetail = (): JSX.Element => {
   const queryClient = useQueryClient();
 
   const { supervisionId = "0" } = useParams<BridgeDetailProps>();
+  const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
 
   const {
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.rootReducer);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", Number(supervisionId)],
+    supervisionQueryKey,
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
@@ -39,11 +40,53 @@ const BridgeDetail = (): JSX.Element => {
     }
   );
 
+  // Set-up mutations for modifying data later
+  // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
   const supervisionUpdateMutation = useMutation((updatedSupervision: ISupervision) => updateConformsToPermit(updatedSupervision, dispatch), {
     retry: onRetry,
+    onMutate: async (newData: ISupervision) => {
+      // onMutate fires before the mutation function
+      console.log("updateConformsToPermit onMutate", newData);
+
+      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+      await queryClient.cancelQueries(supervisionQueryKey);
+
+      // Snapshot the previous value
+      const previousData = queryClient.getQueryData<ISupervision>(supervisionQueryKey);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => ({ ...oldData, ...newData }));
+
+      // Return a context object with the snapshotted value
+      // TODO - check if this is needed
+      return { previousData };
+    },
+    onError: (err, newData, context) => {
+      // onError doesn't fire when offline due to the retry option, but may fire when online again
+      console.log("updateConformsToPermit onError", err, newData, context);
+
+      // If the mutation fails, use the context returned from onMutate to roll back
+      // TODO - check if this is needed
+      /*
+      if (context?.previousData) {
+        queryClient.setQueryData<ISupervision>(queryKey, context.previousData);
+      }
+      */
+    },
+    onSettled: (data) => {
+      // onSettled doesn't fire when offline due to the retry option
+      console.log("updateConformsToPermit onSettled", data);
+
+      // Always refetch after error or success
+      // TODO - check if this is needed
+      // queryClient.invalidateQueries(queryKey);
+    },
     onSuccess: (data) => {
+      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+      console.log("updateConformsToPermit onSuccess", data);
+
       // Update the supervision from "getSupervision" with the updated supervision data in the response
-      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, data);
     },
   });
 
@@ -71,7 +114,7 @@ const BridgeDetail = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={name} somethingFailed={isFailed.getSupervision} includeSendingList />
+      <Header title={name} somethingFailed={noNetworkNoData} includeSendingList />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />
