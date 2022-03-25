@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import CustomAccordion from "./common/CustomAccordion";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import { getReportSignedTime, groupSupervisionsBySignedDate } from "../utils/supervisionUtil";
-import { IonCol, IonGrid, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import { DATE_FORMAT, DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import "./SentSupervisionReportsAccordion.css";
@@ -12,9 +12,15 @@ import moment from "moment";
 
 interface SentSupervisionReportsAccordionProps {
   sentSupervisions: ISupervision[];
+  setReportModalOpen: Dispatch<SetStateAction<boolean>>;
+  setSelectedSupervisionId: Dispatch<SetStateAction<number | undefined>>;
 }
 
-const SentSupervisionReportsAccordion = ({ sentSupervisions }: SentSupervisionReportsAccordionProps): JSX.Element => {
+const SentSupervisionReportsAccordion = ({
+  sentSupervisions,
+  setReportModalOpen,
+  setSelectedSupervisionId,
+}: SentSupervisionReportsAccordionProps): JSX.Element => {
   const { t } = useTranslation();
   const [supervisionDays, setSupervisionDays] = useState<ISupervisionDay[]>([]);
 
@@ -25,6 +31,11 @@ const SentSupervisionReportsAccordion = ({ sentSupervisions }: SentSupervisionRe
       setSupervisionDays(groupedSupervisions);
     }
   }, [sentSupervisions]);
+
+  const openSupervisionReport = (supervisionId: number) => {
+    setSelectedSupervisionId(supervisionId);
+    setReportModalOpen(true);
+  };
 
   return (
     <CustomAccordion
@@ -62,8 +73,8 @@ const SentSupervisionReportsAccordion = ({ sentSupervisions }: SentSupervisionRe
 
                 return (
                   <IonItem key={sKey} fill="outline" lines="none" className="ion-margin-horizontal">
-                    <IonGrid className="ion-no-padding ion-margin-vertical">
-                      <IonRow className="ion-margin-bottom">
+                    <IonGrid className="ion-no-padding">
+                      <IonRow className="ion-margin-vertical">
                         <IonCol>
                           <IonText className="headingBoldText">{`${name}, ${identifier}, ${municipality}`}</IonText>
                         </IonCol>
@@ -100,7 +111,9 @@ const SentSupervisionReportsAccordion = ({ sentSupervisions }: SentSupervisionRe
                       </IonRow>
                       <IonRow>
                         <IonCol>
-                          <IonLabel>{t("sendingList.report")}</IonLabel>
+                          <IonButton buttonType="text" onClick={() => openSupervisionReport(supervisionId)}>
+                            <IonText className="linkText">{t("sendingList.report")}</IonText>
+                          </IonButton>
                         </IonCol>
                       </IonRow>
                     </IonGrid>

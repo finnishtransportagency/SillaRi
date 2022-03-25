@@ -5,14 +5,11 @@ import { useDispatch } from "react-redux";
 import {
   IonButton,
   IonButtons,
-  IonCheckbox,
   IonCol,
   IonContent,
   IonGrid,
   IonHeader,
   IonIcon,
-  IonItem,
-  IonLabel,
   IonModal,
   IonRow,
   IonText,
@@ -23,7 +20,6 @@ import {
 import moment from "moment";
 import ISupervision from "../interfaces/ISupervision";
 import close from "../theme/icons/close_large_white.svg";
-import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import { onRetry } from "../utils/backendData";
 import { completeSupervisions } from "../utils/supervisionBackendData";
 import { useHistory } from "react-router";
@@ -31,6 +27,7 @@ import CustomAccordion from "./common/CustomAccordion";
 import SentSupervisionReportsAccordion from "./SentSupervisionReportsAccordion";
 import "./SendingList.css";
 import SendingListItem from "./SendingListItem";
+import SentSupervisionReportModal from "./SentSupervisionReportModal";
 
 interface SendingListProps {
   isOpen: boolean;
@@ -47,6 +44,8 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [toastMessage, setToastMessage] = useState<string>("");
+  const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
+  const [selectedSupervisionId, setSelectedSupervisionId] = useState<number | undefined>(undefined);
 
   const sendSupervisionMutation = useMutation((supervisionIds: string[]) => completeSupervisions(supervisionIds, dispatch), {
     retry: onRetry,
@@ -156,7 +155,13 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
                   </IonRow>
                 </IonGrid>
               ),
-              panel: <SentSupervisionReportsAccordion sentSupervisions={sentSupervisions} />,
+              panel: (
+                <SentSupervisionReportsAccordion
+                  sentSupervisions={sentSupervisions}
+                  setReportModalOpen={setReportModalOpen}
+                  setSelectedSupervisionId={setSelectedSupervisionId}
+                />
+              ),
             },
           ]}
         />
@@ -169,6 +174,13 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
         duration={5000}
         position="top"
         color="secondary"
+      />
+
+      <SentSupervisionReportModal
+        isOpen={reportModalOpen}
+        setOpen={setReportModalOpen}
+        selectedSupervisionId={selectedSupervisionId}
+        setSelectedSupervisionId={setSelectedSupervisionId}
       />
     </IonModal>
   );

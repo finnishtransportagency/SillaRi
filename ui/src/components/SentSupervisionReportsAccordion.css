@@ -11,3 +11,8 @@
   --border-width: 2px;
   --border-color: var(--ion-color-light);
 }
+
+.reportList ion-button {
+  --padding-start: 0;
+  --padding-end: 0;
+}
