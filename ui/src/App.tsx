@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import { IonApp, IonButton, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { onlineManager, QueryClient, QueryClientProvider } from "react-query";
 import { persistQueryClient } from "react-query/persistQueryClient-experimental";
 import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
 import { useDispatch } from "react-redux";
@@ -70,6 +70,10 @@ const App: React.FC = () => {
   // However at time of writing, they have not changed for months, and v4 is in active development which will include proper versions
   // The maxAge value is the same as the cacheTime value so garbage collection occurs at the expected time
   const localStoragePersistor = createWebStoragePersistor({ storage: window.localStorage });
+  if (onlineManager.isOnline()) {
+    // When online, clear the persisted data to always get the latest from the backend on application start-up
+    localStoragePersistor.removeClient();
+  }
   persistQueryClient({
     queryClient,
     persistor: localStoragePersistor,
