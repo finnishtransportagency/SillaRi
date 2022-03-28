@@ -28,9 +28,7 @@ const SentSupervisionReportModal = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  console.log("selectedSupervision", selectedSupervisionId);
-
-  const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
+  const { data: supervision } = useQuery(
     ["getSupervision", Number(selectedSupervisionId)],
     () => getSupervision(Number(selectedSupervisionId), dispatch),
     {
