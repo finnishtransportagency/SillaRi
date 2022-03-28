@@ -114,7 +114,7 @@ const BridgeDetail = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={name} somethingFailed={noNetworkNoData} includeSendingList />
+      <Header title={name} somethingFailed={isFailed.getSupervision} includeSendingList />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />
