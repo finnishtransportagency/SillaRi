@@ -202,3 +202,15 @@ export const invalidateOfflineData = (queryClient: QueryClient, dispatch: Dispat
   // Repopulate the cache after invalidating
   prefetchOfflineData(queryClient, dispatch);
 };
+
+export const removeSupervisionFromRouteTransportList = (queryClient: QueryClient, routeTransportId: string, supervisionId: string) => {
+  // Remove the finished/denied supervision from the UI when using cached data
+  // This is a more efficient way than calling invalidateOfflineData to refetch everything
+  const routeTransport = queryClient.getQueryData<IRouteTransport>(["getRouteTransportOfSupervisor", Number(routeTransportId)]);
+  if (routeTransport && routeTransport.supervisions) {
+    routeTransport.supervisions = routeTransport.supervisions.reduce((acc: ISupervision[], s) => {
+      return s.id === Number(supervisionId) ? acc : [...acc, s];
+    }, []);
+    queryClient.setQueryData(["getRouteTransportOfSupervisor", Number(routeTransportId)], routeTransport);
+  }
+};
