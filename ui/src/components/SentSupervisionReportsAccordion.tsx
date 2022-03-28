@@ -106,12 +106,12 @@ const SentSupervisionReportsAccordion = ({
                         </IonCol>
                         <IonCol>{reportSignedTime ? moment(reportSignedTime).format(DATE_TIME_FORMAT_MIN) : ""}</IonCol>
                       </IonRow>
-                      <IonRow>
+                      {/*TODO how do we determine the time?*/}
+                      {/*<IonRow>
                         <IonCol size-md="4">
                           <IonLabel className="headingText">{t("sendingList.removed")}</IonLabel>
                         </IonCol>
-                        {/*TODO how do we determine the time?*/}
-                      </IonRow>
+                      </IonRow>*/}
                       <IonRow>
                         <IonCol>
                           <IonButton buttonType="text" onClick={() => openSupervisionReport(supervisionId)}>
