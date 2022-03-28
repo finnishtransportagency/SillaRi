@@ -17,7 +17,7 @@
     <properties>
         <leluApiVersion>0.0.1</leluApiVersion>
         <java.version>11</java.version>
-        <aws.sdk.version>1.12.150</aws.sdk.version>
+        <aws.sdk.version>1.12.186</aws.sdk.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <log4j2.version>2.17.1</log4j2.version>
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.5</version>
+            <version>1.6.6</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -136,22 +136,22 @@
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_spring_web</artifactId>
-            <version>0.14.1</version>
+            <version>0.15.0</version>
         </dependency>
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient</artifactId>
-            <version>0.14.1</version>
+            <version>0.15.0</version>
         </dependency>
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_hotspot</artifactId>
-            <version>0.14.1</version>
+            <version>0.15.0</version>
         </dependency>
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_httpserver</artifactId>
-            <version>0.14.1</version>
+            <version>0.15.0</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -161,7 +161,7 @@
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_servlet</artifactId>
-            <version>0.14.1</version>
+            <version>0.15.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -214,7 +214,7 @@
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
-            <version>2.2.1</version>
+            <version>2.3.0</version>
         </dependency>
         <!-- DTO mapping
         https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
@@ -263,19 +263,19 @@
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>6.5.3</version>
+            <version>7.0.1</version>
             <type>maven-plugin</type>
         </dependency>
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-core</artifactId>
-            <version>6.5.3</version>
+            <version>7.0.1</version>
             <type>maven-plugin</type>
         </dependency>
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-utils</artifactId>
-            <version>6.5.3</version>
+            <version>7.0.1</version>
             <type>maven-plugin</type>
         </dependency>
     </dependencies>
