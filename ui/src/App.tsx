@@ -3,7 +3,9 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import { IonApp, IonButton, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { withTranslation } from "react-i18next";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { onlineManager, QueryClient, QueryClientProvider } from "react-query";
+import { persistQueryClient } from "react-query/persistQueryClient-experimental";
+import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
 import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 import Supervisions from "./pages/Supervisions";
@@ -22,11 +24,12 @@ import TransportDetail from "./pages/management/TransportDetail";
 import SidebarMenu from "./components/SidebarMenu";
 import AccessDenied from "./pages/AccessDenied";
 import IUserData from "./interfaces/IUserData";
-import { getOrigin } from "./utils/request";
 import Photos from "./pages/Photos";
-import IVersionInfo from "./interfaces/IVersionInfo";
 import UserInfo from "./pages/UserInfo";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import { useTypedSelector } from "./store/store";
+import { getUserData, getVersionInfo } from "./utils/backendData";
+import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/supervisionUtil";
 
 /* Sillari.css */
@@ -43,7 +46,14 @@ setupIonicReact({
 // NOTE 2: to allow offline use for the supervisions app, staleTime must be set to something, such as Infinity to store data forever
 // However, it should not be added here, since it affects the transport company and transport apps which are not used offline
 // So instead use staleTime separately in the options of each query used by the supervisions app
-const queryClient = new QueryClient();
+// NOTE 3: use cacheTime to set how long data should be persisted in local storage, used when offline, which is a different concept than staleTime
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: REACT_QUERY_CACHE_TIME,
+    },
+  },
+});
 
 const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
@@ -51,6 +61,24 @@ const App: React.FC = () => {
   const [errorCode, setErrorCode] = useState<number>(0);
   const [version, setVersion] = useState<string>("-");
   const dispatch = useDispatch();
+
+  const {
+    networkStatus: { isFailed = {}, failedStatus = {} },
+  } = useTypedSelector((state) => state.rootReducer);
+
+  // NOTE: these persistence utilities are experimental in react-query v3 and subject to change
+  // However at time of writing, they have not changed for months, and v4 is in active development which will include proper versions
+  // The maxAge value is the same as the cacheTime value so garbage collection occurs at the expected time
+  const localStoragePersistor = createWebStoragePersistor({ storage: window.localStorage });
+  if (onlineManager.isOnline()) {
+    // When online, clear the persisted data to always get the latest from the backend on application start-up
+    localStoragePersistor.removeClient();
+  }
+  persistQueryClient({
+    queryClient,
+    persistor: localStoragePersistor,
+    maxAge: REACT_QUERY_CACHE_TIME,
+  });
 
   useEffect(() => {
     // Add or remove the "dark" class based on if the media query matches
@@ -68,55 +96,49 @@ const App: React.FC = () => {
 
     const fetchUserData = async () => {
       try {
-        /* Disabling caching to avoid getting stale user data. */
-        const headers = new Headers();
-        headers.append("pragma", "no-cache");
-        headers.append("cache-control", "no-store");
-
         const [userDataResponse, versionResponse] = await Promise.all([
-          fetch(`${getOrigin()}/api/ui/userdata`, { method: "GET", headers: headers }),
-          fetch(`${getOrigin()}/api/ui/versioninfo`, { method: "GET", headers: headers }),
+          queryClient.fetchQuery(["getSupervisor"], () => getUserData(dispatch), {
+            // retry: onRetry,
+            staleTime: Infinity,
+          }),
+          queryClient.fetchQuery(["getVersionInfo"], () => getVersionInfo(dispatch), {
+            // retry: onRetry,
+            staleTime: Infinity,
+          }),
         ]);
 
-        if (versionResponse?.ok) {
-          const responseData = await (versionResponse.json() as Promise<IVersionInfo>);
-          setVersion(responseData.version);
+        if (!isFailed.getVersionInfo) {
+          setVersion(versionResponse.version);
         }
 
-        if (userDataResponse?.ok) {
-          const responseData = await (userDataResponse.json() as Promise<IUserData>);
-          if (responseData.roles.length > 0) {
-            if (responseData.roles.includes("SILLARI_SILLANVALVOJA")) {
+        if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
+          if (userDataResponse.roles.length > 0) {
+            if (userDataResponse.roles.includes("SILLARI_SILLANVALVOJA")) {
               setHomePage("/supervisions");
-            } else if (responseData.roles.includes("SILLARI_AJOJARJESTELIJA")) {
+            } else if (userDataResponse.roles.includes("SILLARI_AJOJARJESTELIJA")) {
               setHomePage("/management");
-            } else if (responseData.roles.includes("SILLARI_KULJETTAJA")) {
+            } else if (userDataResponse.roles.includes("SILLARI_KULJETTAJA")) {
               setHomePage("/transport");
             }
-            setUserData(responseData);
+            setUserData(userDataResponse);
           } else {
             /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
-            setErrorCode(1001);
+            setErrorCode(SillariErrorCode.NO_USER_ROLES);
           }
         } else {
-          console.log(userDataResponse);
-          if (userDataResponse.status === 401) {
-            /* Returned by Väylä access control. */
-            setErrorCode(401);
-          } else if (userDataResponse.status === 403) {
-            /* Returned by SillaRi backend if user does not have SillaRi roles. */
-            setErrorCode(403);
-          } else {
-            /* Properly handling other response code not handled yet. */
-            setErrorCode(1002);
-          }
+          // Note: status codes from the backend such as 401 or 403 are now contained in failedStatus.getUserData
+          console.log("User data response", userDataResponse);
+          setErrorCode(SillariErrorCode.NO_USER_DATA);
         }
       } catch (e) {
-        console.log(e);
-        setErrorCode(1003);
+        console.log("App error", e);
+        setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
       }
     };
     fetchUserData();
+
+    // Fetch the user data on first render only, using a workaround utilising useEffect with empty dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const logoutFromApp = () => {
@@ -140,6 +162,8 @@ const App: React.FC = () => {
   );
 
   const renderError = (code: number) => {
+    // 401 - Returned by Väylä access control.
+    // 403 - Returned by SillaRi backend if user does not have SillaRi roles.
     return (
       <>
         {code === 401 ? (
@@ -174,11 +198,13 @@ const App: React.FC = () => {
     prefetchData();
   }, [userHasRole, dispatch]);
 
+  const statusCode = failedStatus.getUserData > 0 ? failedStatus.getUserData : errorCode;
+
   return (
     <QueryClientProvider client={queryClient}>
       <IonApp>
         {!userData ? (
-          <IonContent className="ion-padding">{errorCode ? <>{renderError(errorCode)}</> : <div>Starting app...</div>}</IonContent>
+          <IonContent className="ion-padding">{statusCode >= 400 ? <>{renderError(statusCode)}</> : <div>Starting app...</div>}</IonContent>
         ) : (
           <IonReactRouter>
             <SidebarMenu roles={userData.roles} version={version} />

@@ -5,6 +5,7 @@ import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.model.BridgeModel;
@@ -254,9 +255,10 @@ public class LeluController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200 OK", description = ""),
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route, bridge or transport not found with provided id."),
     })
-    public LeluBridgeResponseDTO getSupervision(@RequestParam Long routeId,@RequestParam String bridgeIdentifier,@RequestParam Integer transportNumber, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
-        logger.debug("Lelu getSupervisions " + routeId);
+    public LeluBridgeSupervisionResponseDTO getSupervision(@RequestParam Long routeId, @RequestParam String bridgeIdentifier, @RequestParam Integer transportNumber, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluRouteNotFoundException {
+        logger.debug("Lelu getSupervision " + routeId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             return leluService.getSupervision(routeId, bridgeIdentifier, transportNumber);

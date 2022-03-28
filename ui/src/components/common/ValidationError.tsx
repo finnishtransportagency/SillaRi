@@ -8,7 +8,7 @@ interface ValidationErrorProps {
 
 const ValidationError = ({ label }: ValidationErrorProps): JSX.Element => {
   return (
-    <IonItem lines="none">
+    <IonItem lines="none" className="ion-no-padding">
       <IonIcon className="otherIcon" icon={warning} color="danger" />
       <IonLabel color="danger">{label}</IonLabel>
     </IonItem>

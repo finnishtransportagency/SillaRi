@@ -8,14 +8,20 @@
       "search": "Hae",
       "edit": "Muokkaa",
       "save": "Tallenna",
-      "send": "Lähetä"
+      "send": "Lähetä",
+      "closeAlert": "Sulje ilmoitus"
     },
     "answer": {
       "yes": "Kyllä",
       "no": "Ei"
     },
     "validation": {
-      "checkTime": "Tarkista kellonaika"
+      "checkDate": "Tarkista päivämäärä",
+      "checkTime": "Tarkista kellonaika",
+      "checkDateShort": "Tarkista päivä",
+      "checkTimeShort": "Tarkista aika",
+      "invalidTime": "Virheellinen kellonaika",
+      "fixTimes": "Tarkista ja korjaa ristiriitaiset kellonajat siltojen arvioiduista ylitysajoista ennen jatkamista."
     }
   },
   "main": {
@@ -225,6 +231,7 @@
   },
   "management": {
     "companySummary": {
+      "noPermitsWarning": "Järjestelmässä ei ole kuljetuslupia yrityksellesi.",
       "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
       "transports": "Kuljetuksia",
       "supervision": "Sillanvalvonta",

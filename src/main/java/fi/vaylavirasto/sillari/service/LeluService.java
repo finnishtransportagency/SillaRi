@@ -7,8 +7,9 @@ import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluSupervisionStatus;
 import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
@@ -347,9 +348,10 @@ public class LeluService {
         return dtoMapper.fromModelToDTO(route);
     }
 
-    public LeluBridgeResponseDTO getSupervision(Long leluRouteId, String bridgeIdentifier, Integer transportNumber) {
+    public LeluBridgeSupervisionResponseDTO getSupervision(Long leluRouteId, String bridgeIdentifier, Integer transportNumber) throws LeluRouteNotFoundException {
         RouteModel route = routeRepository.getRouteWithLeluID(leluRouteId);
         if (route != null) {
+            logger.debug("getting routebridge: " + route.getId() + " " + bridgeIdentifier + " " + transportNumber);
             RouteBridgeModel routeBridge = routeBridgeRepository.getRouteBridge(route.getId(), bridgeIdentifier, transportNumber);
             if (routeBridge != null) {
                 List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
@@ -361,11 +363,28 @@ public class LeluService {
                     });
                 }
                 logger.debug("HELLO!: " + routeBridge);
-                return dtoMapper.fromModelToDTO(routeBridge);
+                try {
+                    LeluBridgeSupervisionResponseDTO bridgeSupervisionResponseDTO = dtoMapper.fromModelToDTO2(routeBridge.getSupervisions().get(0));
+                    bridgeSupervisionResponseDTO.setTransportNumber(routeBridge.getTransportNumber());
+                    return bridgeSupervisionResponseDTO;
+                } catch (IndexOutOfBoundsException e) {
+                    //route bridge has no supervisions because none planned yet.
+                    LeluBridgeSupervisionResponseDTO bridgeSupervisionResponseDTO = new LeluBridgeSupervisionResponseDTO();
+                    bridgeSupervisionResponseDTO.setTransportNumber(routeBridge.getTransportNumber());
+                    LeluSupervisionStatus superVisionStatus = new LeluSupervisionStatus();
+                    superVisionStatus.setStatus(SupervisionStatusType.RECEIVED_FROM_LELU);
+                    superVisionStatus.setModifiedDate(routeBridge.getRowCreatedTime());
+                    bridgeSupervisionResponseDTO.setSupervisionStatus(superVisionStatus);
+                    return bridgeSupervisionResponseDTO;
 
+                }
+            } else {
+                throw new LeluRouteNotFoundException("Route bridge not found " + leluRouteId + " " + bridgeIdentifier + " " + transportNumber);
             }
+        } else {
+            throw new LeluRouteNotFoundException("Route not found " + leluRouteId);
         }
-        return null;
+
     }
 
 }

@@ -142,6 +142,17 @@ ion-icon {
   pointer-events: none;
 }
 
+/* Wider popover: Ionic only supports the size of the triggering element (e.g. button) or default size */
+ion-popover.large-popover {
+  --width: 95%;
+  --max-width: 95%;
+}
+@media only screen and (min-width: 600px) {
+  ion-popover.large-popover {
+    --width: 500px;
+  }
+}
+
 /*
   NOTE: The following ion-margin overrides are required to fix a problem with react-scripts 5.0.0, which now uses Webpack 5
   The production build incorrectly sets margin-left and margin-right to 'unset' in the compiled css after defining the margin sizes, and so sets all margins to 0

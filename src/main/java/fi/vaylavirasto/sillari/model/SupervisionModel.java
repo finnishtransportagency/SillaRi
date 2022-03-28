@@ -95,7 +95,7 @@ public class SupervisionModel extends BaseModel {
             return supervisor;
         }
         catch (Exception e){
-            //no supervision signed propably
+            //no supervision signed probably
             return null;
         }
 

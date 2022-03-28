@@ -41,6 +41,9 @@ public class CompanyService {
 
     public CompanyModel getCompanyByBusinessId(String businessId) {
         CompanyModel company = companyRepository.getCompanyByBusinessId(businessId);
+        if (company == null) {
+            return null;
+        }
         company.setPermits(permitRepository.getPermitsByCompanyId(company.getId()));
         for (PermitModel permitModel : company.getPermits()) {
             permitModel.setRoutes(routeRepository.getRoutesByPermitId(permitModel.getId()));
