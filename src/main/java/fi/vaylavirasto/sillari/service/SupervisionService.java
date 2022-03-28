@@ -109,13 +109,15 @@ public class SupervisionService {
 
 
     public List<SupervisionModel> getFinishedButUnsignedSupervisionsNoDetails(String username) {
-        List<SupervisionModel> supervisions = supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisorUsername(username);
-        return supervisions;
+        return supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisorUsername(username);
     }
 
-    public List<SupervisionModel> getUnsignedSupervisionsBySupervisorUsername(String username) {
-        List<SupervisionModel> supervisions = supervisionRepository.getUnsignedSupervisionsBySupervisorUsername(username);
-        return supervisions;
+    public List<SupervisionModel> getUnsignedSupervisionsOfSupervisorNoDetails(String username) {
+        return supervisionRepository.getUnsignedSupervisionsBySupervisorUsername(username);
+    }
+
+    public List<SupervisionModel> getAllSupervisionsOfSupervisorNoDetails(String username) {
+        return supervisionRepository.getAllSupervisionsOfSupervisor(username);
     }
 
 
