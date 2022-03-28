@@ -40,18 +40,20 @@ public class RouteTransportRepository {
     }
 
     public List<RouteTransportModel> getRouteTransportsByPermitId(Integer permitId) {
-        return dsl.select().from(TableAlias.routeTransport)
+        var a = dsl.select().from(TableAlias.routeTransport)
                 .innerJoin(TableAlias.route)
                 .on(TableAlias.route.ID.eq(TableAlias.routeTransport.ROUTE_ID))
                 .innerJoin(TableAlias.permit)
                 .on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
                 .where(TableAlias.permit.ID.eq(permitId))
                 .fetch(new RouteTransportMapper());
+        logger.debug("hellohau:"+a);
+        return a;
     }
 
     public List<RouteTransportModel> getRouteTransportsOfSupervisor(String username) {
         return dsl.select(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME,
-                        TableAlias.routeTransport.TRACTOR_UNIT, TableAlias.routeTransport.ROW_CREATED_TIME, TableAlias.routeTransport.ROW_UPDATED_TIME)
+                        TableAlias.routeTransport.TRACTOR_UNIT, TableAlias.routeTransport.ROW_CREATED_TIME, TableAlias.routeTransport.ROW_UPDATED_TIME, TableAlias.routeTransport.TRANSPORT_NUMBER)
                 .from(TableAlias.routeTransport)
                 .innerJoin(TableAlias.supervision).on(TableAlias.routeTransport.ID.eq(TableAlias.supervision.ROUTE_TRANSPORT_ID))
                 .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
@@ -73,11 +75,13 @@ public class RouteTransportRepository {
             Record1<Integer> routeTransportIdResult = ctx.insertInto(TableAlias.routeTransport,
                             TableAlias.routeTransport.ROUTE_ID,
                             TableAlias.routeTransport.PLANNED_DEPARTURE_TIME,
-                            TableAlias.routeTransport.TRACTOR_UNIT
+                            TableAlias.routeTransport.TRACTOR_UNIT,
+                            TableAlias.routeTransport.TRANSPORT_NUMBER
                     ).values(
                             routeTransportModel.getRouteId(),
                             routeTransportModel.getPlannedDepartureTime(),
-                            routeTransportModel.getTractorUnit()
+                            routeTransportModel.getTractorUnit(),
+                            routeTransportModel.getTransportNumber()
                     )
                     .returningResult(TableAlias.routeTransport.ID)
                     .fetchOne(); // Execute and return zero or one record

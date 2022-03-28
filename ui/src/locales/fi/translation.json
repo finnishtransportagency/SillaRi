@@ -8,14 +8,20 @@
       "search": "Hae",
       "edit": "Muokkaa",
       "save": "Tallenna",
-      "send": "Lähetä"
+      "send": "Lähetä",
+      "closeAlert": "Sulje ilmoitus"
     },
     "answer": {
       "yes": "Kyllä",
       "no": "Ei"
     },
     "validation": {
-      "checkTime": "Tarkista kellonaika"
+      "checkDate": "Tarkista päivämäärä",
+      "checkTime": "Tarkista kellonaika",
+      "checkDateShort": "Tarkista päivä",
+      "checkTimeShort": "Tarkista aika",
+      "invalidTime": "Virheellinen kellonaika",
+      "fixTimes": "Tarkista ja korjaa ristiriitaiset kellonajat siltojen arvioiduista ylitysajoista ennen jatkamista."
     }
   },
   "main": {
@@ -207,9 +213,13 @@
     "transportPermit": "Kuljetuslupa",
     "tractorUnit": "Vetoauto",
     "supervisionStarted": "Valvonta aloitettu",
+    "reportSent": "Raportti lähetetty",
+    "removed": "Poistuu listalta",
+    "report": "Valvontaraportti",
     "sendSelected": "Lähetä valitut",
     "sentOk": "Valitut valvonnat on lähetetty",
-    "nothingToSend": "Ei lähetettäviä valvontaraportteja"
+    "nothingToSend": "Ei lähetettäviä valvontaraportteja.",
+    "sentReports": "Lähetetyt valvontaraportit"
   },
   "permitPdf": {
     "title": "Kuljetuslupa",
@@ -221,6 +231,7 @@
   },
   "management": {
     "companySummary": {
+      "noPermitsWarning": "Järjestelmässä ei ole kuljetuslupia yrityksellesi.",
       "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
       "transports": "Kuljetuksia",
       "supervision": "Sillanvalvonta",

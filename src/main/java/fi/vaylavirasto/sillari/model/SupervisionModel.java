@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
 import java.util.Comparator;
@@ -27,6 +28,7 @@ public class SupervisionModel extends BaseModel {
     private OffsetDateTime startedTime; // Latest IN_PROGRESS in statusHistory (because might have been started and cancelled and started again)
     private OffsetDateTime crossingDeniedTime; // First (and only) CROSSING_DENIED in statusHistory
     private OffsetDateTime finishedTime; // First (and only) FINISHED in statusHistory
+
 
     // Parents
     private RouteBridgeModel routeBridge;
@@ -64,6 +66,39 @@ public class SupervisionModel extends BaseModel {
         this.startedTime = startedTime;
         this.crossingDeniedTime = crossingDeniedTime;
         this.finishedTime = finishedTime;
+    }
+
+
+    private String deduceSupervisorWhoSupervisedUserName() {
+        return getStatusHistory().stream()
+                .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(SupervisionStatusType.REPORT_SIGNED))
+                .findFirst().orElseThrow().getUsername();
+
+    }
+
+
+    public boolean getExceptional(){
+        if(getReport() == null){
+            return false;
+        }
+        else {
+            return report.getAnomalies() || !report.getSpeedLimitOk() || !report.getDrivingLineOk();
+        }
+
+    }
+
+    public SupervisorModel getSupervisorWhoSupervised() {
+        try {
+            String userName = deduceSupervisorWhoSupervisedUserName();
+            List<SupervisorModel> supervisors = ((getSupervisors() == null || getSupervisors().isEmpty()) ? null : getSupervisors());
+            SupervisorModel supervisor = supervisors.stream().filter(s -> s.getUsername().equals(userName)).findFirst().orElseThrow();
+            return supervisor;
+        }
+        catch (Exception e){
+            //no supervision signed probably
+            return null;
+        }
+
     }
 
 }

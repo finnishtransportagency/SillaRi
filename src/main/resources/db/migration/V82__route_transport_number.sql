@@ -1,0 +1,1 @@
+ALTER TABLE sillari.route_transport ADD COLUMN IF NOT EXISTS transport_number integer not null default 1;

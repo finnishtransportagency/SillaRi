@@ -41,6 +41,7 @@ public class PermitController {
     @Autowired
     UIService uiService;
 
+
     @Operation(summary = "Get permit")
     @GetMapping(value = "/getpermit", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
@@ -50,7 +51,7 @@ public class PermitController {
             if (!isOwnCompanyPermit(permitId)) {
                 throw new AccessDeniedException("Not user company permit.");
             }
-            PermitModel permit = permitService.getPermit(permitId);
+            PermitModel permit = permitService.getPermitWithOnlyNextAvailableTransportInstance(permitId);
             return ResponseEntity.ok().body(permit != null ? permit : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

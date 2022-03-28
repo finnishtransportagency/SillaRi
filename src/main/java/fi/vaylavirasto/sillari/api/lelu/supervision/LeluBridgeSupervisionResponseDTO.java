@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class LeluSupervisionDTO {
+public class LeluBridgeSupervisionResponseDTO {
     @Schema(description = "Bridge crossing supervisor ")
     private LeluSupervisor supervisor;
 
@@ -21,6 +21,9 @@ public class LeluSupervisionDTO {
     @Schema(description = "Supervision report in json format")
     LeluSupervisionReportDTO supervisionReport;
 
-    @Schema(description = "Supervision report has expceptional values")
+    @Schema(description = "Supervision report has exceptional values")
     private boolean exceptional=false;
+
+    @Schema(description = "Order number of crossing, provided by lelu in incoming permit->route->bridge.", example = "1")
+    private Integer transportNumber;
 }

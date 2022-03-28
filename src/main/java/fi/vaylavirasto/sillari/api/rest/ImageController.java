@@ -96,7 +96,7 @@ public class ImageController {
         SupervisionImageModel model = new SupervisionImageModel();
         try {
 
-            if (!isSupervisionOfSupervisor(Integer.parseInt(fileInputModel.getSupervisionId()))) {
+            if (!canSupervisorUpdateSupervision(Integer.parseInt(fileInputModel.getSupervisionId()))) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
 
@@ -139,7 +139,7 @@ public class ImageController {
     public boolean deleteImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deleteImage");
         try {
-            if (!isSupervisionImageOfSupervisor(id)) {
+            if (!canSupervisorUpdateSupervision(id)) {
                 throw new AccessDeniedException("Image not of the user");
             }
 
@@ -161,7 +161,7 @@ public class ImageController {
     public boolean deleteSupervisionImages(@RequestParam Integer supervisionId) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deletesupervisionimages");
         try {
-            if (!isSupervisionOfSupervisor(supervisionId)) {
+            if (!canSupervisorUpdateSupervision(supervisionId)) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             List<SupervisionImageModel> images = supervisionImageService.getSupervisionImages(supervisionId);
@@ -206,16 +206,16 @@ public class ImageController {
     private boolean isSupervisionImageOfSupervisor(Integer imageId) {
         SupervisionModel supervisionOfImage = supervisionService.getSupervisionBySupervisionImageId(imageId);
         SillariUser user = uiService.getSillariUser();
-        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsBySupervisorUsername(user.getUsername());
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getAllSupervisionsOfSupervisorNoDetails(user.getUsername());
 
         return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervisionOfImage.getId()));
     }
 
-    /* Check that supervision belongs to the user */
-    private boolean isSupervisionOfSupervisor(Integer supervisionId) {
+    /* Check that supervision belongs to the user and report is not signed */
+    private boolean canSupervisorUpdateSupervision(Integer supervisionId) {
         SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
         SillariUser user = uiService.getSillariUser();
-        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsBySupervisorUsername(user.getUsername());
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsOfSupervisorNoDetails(user.getUsername());
 
         return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
     }

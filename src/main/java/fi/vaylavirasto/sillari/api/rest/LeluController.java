@@ -4,6 +4,8 @@ import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.model.BridgeModel;
@@ -168,25 +170,6 @@ public class LeluController {
 
 
 
-    //non functional
-    //just to provide swagger documentation for updated api
-    //https://extranet.vayla.fi/jira/browse/SILLARI-551
-    @PostMapping(value = "/permit_2.0.0")
-    @ResponseBody
-    @Operation(summary = "Create or update permit. Non functional with https://extranet.vayla.fi/jira/browse/SILLARI-551 API-changes.", description = "Adds a new permit from LeLu to SillaRi. " +
-            "If the same permit number is already found in SillaRi, updates that permit with the provided data. " +
-            "If permit is updated, updates routes found with same LeLu ID, adds new routes and deletes routes that are no longer included in the permit. " +
-            "CURRENT LIMITATIONS: 1. Bridge OID must be found in SillaRi DB, otherwise bridge is not added. " +
-            "2. Updated routes must not have existing transport instances or supervisions.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200 OK", description = "Permit saved/updated"),
-            @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
-    })
-
-    public ResponseEntity<LeluPermitResponseDTO> savePermit_new(@Valid @RequestBody fi.vaylavirasto.sillari.api.lelu.permit_2_0_0.LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPermitSaveException {
-        throw new LeluPermitSaveException("nonfunctional api");
-
-    }
 
 
     private void getBridgeFromTrexToDB(String oid) {
@@ -254,6 +237,35 @@ public class LeluController {
         return leluService.uploadRouteGeometry(routeId, file);
     }
 
+
+    /**
+     * Get supervision of a route.
+     * Lelu uses this to yksittäistä sillanvalvontaa reitti id:n (routeId), sillan nimen (identifier) ja transportNumberin perusteella
+     *
+     * @param routeId
+     * @param apiVersion
+     * @param apiVersion
+     * @return
+     * @throws APIVersionException
+     */
+    @RequestMapping(value = "/supervision", method = RequestMethod.GET)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get bridge supervisions of a route")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200 OK", description = ""),
+            @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route, bridge or transport not found with provided id."),
+    })
+    public LeluBridgeSupervisionResponseDTO getSupervision(@RequestParam Long routeId, @RequestParam String bridgeIdentifier, @RequestParam Integer transportNumber, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluRouteNotFoundException {
+        logger.debug("Lelu getSupervision " + routeId);
+
+        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
+            return leluService.getSupervision(routeId, bridgeIdentifier, transportNumber);
+        } else {
+            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
+        }
+    }
 
     /**
      * Get supervisions of a route.

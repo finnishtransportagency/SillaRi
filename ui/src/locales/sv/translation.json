@@ -1,21 +1,27 @@
 {
   "common": {
     "buttons": {
-      "done": "(SV) Done",
-      "back": "(SV) Back",
-      "back2": "(SV) Back",
-      "cancel": "(SV) Cancel",
-      "search": "(SV) Search",
-      "edit": "(SV) Edit",
-      "save": "(SV) Save",
-      "send": "(SV) Send"
+      "done": "Färdig",
+      "back": "Tillbaka",
+      "back2": "Tillbaka",
+      "cancel": "Avbryt",
+      "search": "Sök",
+      "edit": "Redigera",
+      "save": "Spara",
+      "send": "Sänd",
+      "closeAlert": "(SV) Close alert"
     },
     "answer": {
       "yes": "Ja",
       "no": "Nej"
     },
     "validation": {
-      "checkTime": "(SV) Check the time"
+      "checkDate": "(SV) Check the date",
+      "checkTime": "Kontrollera tiden",
+      "checkDateShort": "(SV) Check the date",
+      "checkTimeShort": "(SV) Check the time",
+      "invalidTime": "(SV) Invalid time",
+      "fixTimes": "(SV) Check and correct conflicting times for estimated bridge crossings before proceeding."
     }
   },
   "main": {
@@ -25,11 +31,11 @@
     "title": "SillaRi",
     "content": "Välkommen!",
     "tab": {
-      "transports": "(SV) Transports",
-      "bridges": "(SV) Bridges"
+      "transports": "Transporter",
+      "bridges": "Broar"
     },
-    "noNetworkNoData": "(SV) Unable to retrieve data, trying again...",
-    "loading": "Laddning..."
+    "noNetworkNoData": "Data kan inte hämtas, försöker igen...",
+    "loading": "Laddar..."
   },
   "map": {
     "attribution": "Material"
@@ -47,331 +53,336 @@
   },
   "userInfo": {
     "header": {
-      "title": "(SV) Own information"
+      "title": "Dina uppgifter"
     },
-    "usernameLabel": "(SV) Username",
-    "nameLabel": "(SV) Name",
-    "emailLabel": "(SV) Email",
-    "phoneNumberLabel": "(SV) Phone number",
-    "organizationLabel": "(SV) Organization",
-    "roleLabel": "(SV) User role",
+    "usernameLabel": "Användarnamn",
+    "nameLabel": "Namn",
+    "emailLabel": "E-postadress",
+    "phoneNumberLabel": "Telefonnummer",
+    "organizationLabel": "Organisation",
+    "roleLabel": "Användarroll",
     "role": {
-      "ajojarjestelija": "Ajojärjestelijä",
-      "sillanvalvoja": "Sillanvalvoja",
-      "kuljettaja": "Kuljettaja"
+      "ajojarjestelija": "Körplanerare",
+      "sillanvalvoja": "Broövervakare",
+      "kuljettaja": "Chaufför"
     },
-    "errorInfo": "(SV) If there are errors in your contact details, please contact your company's representative."
+    "errorInfo": "Om du hittar fel i dina kontaktuppgiter, kontakta företagets kontaktperson."
   },
   "camera": {
-    "takePhotoButtonLabel": "(SV) Add photos",
-    "listLabel": "(SV) Photos",
+    "takePhotoButtonLabel": "Lägg till bilder",
+    "listLabel": "Bilder",
     "item": {
-      "deleteButtonLabel": "(SV) Delete image"
+      "deleteButtonLabel": "Radera bild"
     }
   },
   "SidebarMenu": {
     "title": "SillaRi",
-    "mainPage": "(SV) Transports and bridges",
+    "mainPage": "Transporter och broar",
     "settings": "Inställningar",
-    "userInfo": "(SV) Own information",
-    "management": "(SV) Management",
-    "transports": "(SV) Transports",
-    "logout": "(SV) Logout",
-    "versionLabel": "(SV) SillaRi version"
+    "userInfo": "Dina uppgifter",
+    "management": "Transportledning",
+    "transports": "Transporter",
+    "logout": "Logga ut",
+    "versionLabel": "SillaRi version"
   },
   "company": {
-    "transportPermit": "(SV) Transport permit",
-    "validityPeriod": "(SV) Validity period",
+    "transportPermit": "Transporttillstånd",
+    "validityPeriod": "Giltighetstid",
     "transport": {
-      "transportDeparted": "(SV) Transport departed",
-      "transportArrived": "(SV) Transport arrived",
-      "nextTransport": "(SV) Next transport",
-      "estimatedDepartureTime": "(SV) estimated departure"
+      "transportDeparted": "Transport avgått",
+      "transportArrived": "Transport avslutad",
+      "nextTransport": "Nästa transport",
+      "estimatedDepartureTime": "Uppskattad avgångstid"
     }
   },
   "route": {
-    "departureTime": "(SV) Departure time",
-    "plannedTime": "(SV) Planned departure time",
-    "tractorUnit": "(SV) Tractor unit identifier",
+    "departureTime": "Avgångstid",
+    "plannedTime": "Planerad avgångstid",
+    "tractorUnit": "Dragfordonets reg.nr",
     "permitInfo": {
-      "title": "(SV) Permit information",
-      "permitNumber": "(SV) Permit number",
-      "routeDeparturePoint": "(SV) Route departure point",
-      "routeArrivalPoint": "(SV) Route arrival point"
+      "title": "Transporttillstånd",
+      "permitNumber": "Tillståndsnummer",
+      "routeDeparturePoint": "Ruttens startpunkt",
+      "routeArrivalPoint": "Ruttens slutpunkt"
     },
     "routeInfo": {
-      "title": "(SV) Route information",
-      "route": "(SV) Route",
-      "showRouteOnMap": "(SV) Show route on map",
-      "departurePoint": "(SV) Departure point",
-      "arrivalPoint": "(SV) Arrival point"
+      "title": "Ruttinformation",
+      "route": "Rutt",
+      "showRouteOnMap": "Visa rutten på kartan",
+      "departurePoint": "Avgångsplats",
+      "arrivalPoint": "Destination"
     },
-    "bridgesToSupervise": "(SV) Bridges to supervise"
+    "bridgesToSupervise": "Broar som övervakas"
   },
   "transportInfo": {
-    "title": "(SV) Transport permit information",
-    "subtitle": "(SV) Vehicles, maximum dimensions and mass",
-    "vehicles": "(SV) Vehicles in the permit",
-    "totalMass": "(SV) Max permitted total mass",
-    "dimensions": "(SV) Transport max dimensions",
-    "height": "(SV) Height from the ground",
-    "width": "(SV) Width",
-    "length": "(SV) Length"
+    "title": "Information om transporttillstånd",
+    "subtitle": "Fordon, högsta mått och massa",
+    "vehicles": "Fordon i tillståndet",
+    "totalMass": "Högsta tillåtna bruttovikt",
+    "dimensions": "Transportens högsta mått",
+    "height": "Höjd från marken",
+    "width": "Bredd",
+    "length": "Längd"
   },
   "bridgeCard": {
-    "estimate": "(SV) estimate",
-    "tractorUnit": "(SV) Tractor unit",
-    "tractorUnitMissing": "(SV) missing data"
+    "estimate": "uppskattning",
+    "tractorUnit": "Dragfordon",
+    "tractorUnitMissing": "data saknas"
   },
   "bridge": {
-    "title": "(SV) Bridge information",
-    "identifier": "(SV) Identifier",
-    "location": "(SV) Location",
+    "title": "Information om bron",
+    "identifier": "Id",
+    "location": "Läge",
     "crossingInstructions": {
-      "title": "(SV) Instructions"
+      "title": "Instructioner"
     },
     "trafficSupervisors": {
-      "title": "(SV) Traffic supervisors"
+      "title": "Trafikledare"
     },
-    "permitNumber": "(SV) Lupanumero",
-    "conformsToPermit": "(SV) Transport conforms to permit",
-    "startSupervision": "(SV) Start supervision",
-    "continueSupervision": "(SV) Continue supervision",
-    "denyCrossing": "(SV) Transport cannot cross bridge",
-    "supervisionMissing": "(SV) Bridge supervision is not yet planned",
-    "supervisionStarted": "(SV) Supervision started",
-    "crossingDenied": "(SV) Bridge crossing cancelled",
-    "supervisionFinished": "(SV) Supervision finished"
+    "permitNumber": "Tillståndsnummer",
+    "conformsToPermit": "Transporten är lovenlig",
+    "startSupervision": "Påbörja övervakningen",
+    "continueSupervision": "Fortsätt övervakningen",
+    "denyCrossing": "Transporten kan inte köra över bron",
+    "supervisionMissing": "Broövervakningen är inte planerad ännu",
+    "supervisionStarted": "Övervakningen påbörjad",
+    "crossingDenied": "Broöverfarten inställd",
+    "supervisionFinished": "Övervakningen avslutad"
   },
   "denyCrossing": {
-    "cantCross": "(SV) Transport cannot cross the bridge",
-    "whyCantCross": "(SV) Why can't the transport cross the bridge?",
-    "transportWontCross": "(SV) Transport was left on route or ended earlier",
-    "obstacleOnBridge": "(SV) Physical obstacle on bridge",
-    "other": "(SV) Something else, what?",
-    "placeholder": "(SV) Add text here"
+    "cantCross": "Transporten kan inte färdas över bron",
+    "whyCantCross": "Varför kan inte transporten färdas över bron?",
+    "transportWontCross": "Transporten har lämnat på rutten eller har avslutats tidigare",
+    "obstacleOnBridge": "Fysiskt hinder på bron",
+    "other": "Annan orsak, vad?",
+    "placeholder": "Skriv text här"
   },
   "supervision": {
-    "title": "(SV) Bridge supervision",
-    "permitNumber": "(SV) Permit number",
-    "supervisionStarted": "(SV) Supervision started",
-    "bridgeName": "(SV) Bridge details",
-    "crossingInstructions": "(SV) Crossing instructions",
-    "photos": "(SV) Photos",
-    "photosDrivingLine": "(SV) Photos and driving line",
+    "title": "Broövervakning",
+    "permitNumber": "Tillståndsnummer",
+    "supervisionStarted": "Övervakning påbörjjad",
+    "bridgeName": "Brodetaljer",
+    "crossingInstructions": "Instruktioner för överfarten",
+    "photos": "Bilder",
+    "photosDrivingLine": "Bilder och körlinje",
     "report": {
-      "observations": "(SV) Observations",
-      "drivingLineOk": "(SV) Driving line complied with",
-      "drivingLineInfo": "(SV) Why is the driving line not complied with?",
-      "speedLimitOk": "(SV) Speed limit complied with",
-      "speedLimitInfo": "(SV) Why is the speed limit not complied with?",
-      "anomalies": "(SV) Anomalies",
-      "anomaliesInfo": "(SV) Specify anomalies",
-      "surfaceDamage": "(SV) Surface damage",
-      "jointDamage": "(SV) Joint damage",
-      "bendOrDisplacement": "(SV) Permanent bend or other displacement",
-      "otherObservations": "(SV) Something else, what?",
-      "anomaliesDescription": "(SV) Describe anomalies",
-      "additionalInfo": "(SV) Additional information",
-      "placeholder": "(SV) Add text here"
+      "observations": "Observationer",
+      "drivingLineOk": "Körlinjen har följts",
+      "drivingLineInfo": "Varför följdes inte den rekommenderade körlinjen?",
+      "speedLimitOk": "Körhastigheten följdes",
+      "speedLimitInfo": "Varför följdes inte den rekommenderade körhastigheten?",
+      "anomalies": "Avvikande observation",
+      "anomaliesInfo": "Specificera avvikelsen",
+      "surfaceDamage": "Beläggninsskada",
+      "jointDamage": "Skadad expansionsfog",
+      "bendOrDisplacement": "Permanent nedböjning eller annan förflyttning",
+      "otherObservations": "Något annat, vad?",
+      "anomaliesDescription": "Beskriv avvikelsen",
+      "additionalInfo": "Övrig information",
+      "placeholder": "Skriv text här"
     },
     "buttons": {
-      "takePhotos": "(SV) Photos",
-      "drivingLine": "(SV) Driving line",
-      "summary": "(SV) Go to summary",
-      "cancel": "(SV) Cancel supervision",
-      "saveToSendList": "(SV) Save to the sending list"
+      "takePhotos": "Bilder",
+      "drivingLine": "Körlinje",
+      "summary": "Gå till sammandraget",
+      "cancel": "Annulera övervakningen",
+      "saveToSendList": "Lagra till sändningslistan"
     },
     "warning": {
-      "cancelSupervisionHeader": "(SV) Are you sure you want to cancel the supervision?",
-      "cancelSupervisionText": "(SV) All data from the report will be deleted.",
-      "leavePage": "(SV) Are you sure you want to leave the page?",
-      "unsavedChanges": "(SV) Supervision has unsaved changes.",
-      "supervisionNotFinished": "(SV) Supervision has not been saved to send list."
+      "cancelSupervisionHeader": "Vill du säkert annulera övervakningen?",
+      "cancelSupervisionText": "All data från rapporten kommer att avlägsnas.",
+      "leavePage": "Är du säker på att du vill lämna sidan?",
+      "unsavedChanges": "Övervakningen har osparade ändringar.",
+      "supervisionNotFinished": "Övervakningen har inte sparats till sändningslistan."
     },
     "summary": {
-      "title": "(SV) Summary",
-      "observations": "(SV) Observations",
-      "speedLimit": "(SV) Speed limit",
-      "drivingLine": "(SV) Driving line",
-      "anomalies": "(SV) Anomalies",
-      "noAnomalies": "(SV) None",
-      "additionalInfo": "(SV) Additional information",
-      "approved": "(SV) Approved",
-      "notApproved": "(SV) Not approved",
-      "saved": "(SV) Supervision has been saved to the sending list"
+      "title": "Sammanfattning",
+      "observations": "Observationer",
+      "speedLimit": "Körhastighet",
+      "drivingLine": "Körlinje",
+      "anomalies": "Avvikelser",
+      "noAnomalies": "Inga",
+      "additionalInfo": "Ytterligare information",
+      "approved": "Godkänd",
+      "notApproved": "Inte godkänd",
+      "saved": "Övervakningen har sparats till sändningslistan"
     }
   },
   "sendingList": {
-    "title": "(SV) Sending list",
-    "transportPermit": "(SV) Transport permit",
-    "tractorUnit": "(SV) Tractor unit",
-    "supervisionStarted": "(SV) Supervision started",
-    "sendSelected": "(SV) Send selected",
-    "sentOk": "(SV) Selected supervisions have been sent",
-    "nothingToSend": "(SV) No supervision reports to send"
+    "title": "Sändningslistan",
+    "transportPermit": "Transporttillstånd",
+    "tractorUnit": "Dragfordon",
+    "supervisionStarted": "Övervakningen påbörjad",
+    "reportSent": "(SV) Report sent",
+    "removed": "(SV) Removed from list",
+    "report": "(SV) Supervision report",
+    "sendSelected": "Sänd de valda",
+    "sentOk": "De valda övervakningsrapporterna har sänts",
+    "nothingToSend": "Inga övervakningsrapporter att sända",
+    "sentReports": "(SV) Sent supervision reports"
   },
   "permitPdf": {
-    "title": "(SV) Transport permit",
-    "loading": "(SV) Loading PDF...",
-    "error": "(SV) Failed to load PDF file",
-    "noData": "(SV) No PDF file specified",
-    "zoomIn": "(SV) Zoom in",
-    "zoomOut": "(SV) Zoom out"
+    "title": "Transporttillstånd",
+    "loading": "Nedladdar PDF...",
+    "error": "Nedladdningen av PDF-filen misslyckades",
+    "noData": "PDF-filen är inte specifiserad",
+    "zoomIn": "Zooma in",
+    "zoomOut": "Zooma ut"
   },
   "management": {
     "companySummary": {
-      "permitListTitle": "(SV) Transport permits and management",
-      "transports": "(SV) Transports",
-      "supervision": "(SV) Supervision",
-      "addTransportButtonLabel": "(SV) Add transport",
+      "noPermitsWarning": "(SV) Permits not found",
+      "permitListTitle": "Transporttillstånd och hantering",
+      "transports": "Transporter",
+      "supervision": "Övervakning",
+      "addTransportButtonLabel": "Lägg till en transport",
       "filter": {
-        "show": "(SV) Show",
+        "show": "Visa",
         "status": {
-          "all": "(SV) All transports",
-          "planned": "(SV) Planned",
-          "waiting": "(SV) Waiting to leave",
-          "in_progress": "(SV) In progress",
-          "completed": "(SV) Completed"
+          "all": "Alla transporter",
+          "planned": "Planerade",
+          "waiting": "Väntar på avgång",
+          "in_progress": "Aktiv transport",
+          "completed": "Avslutade"
         }
       },
       "route": {
-        "id": "(SV) ID",
-        "tractorUnit": "(SV) Tractor unit",
-        "route": "(SV) Route",
-        "time": "(SV) Time",
-        "password": "(SV) Password",
-        "status": "(SV) Status",
-        "action": "(SV) Action"
+        "id": "ID",
+        "tractorUnit": "Dragfordon",
+        "route": "Rutt",
+        "time": "Tidpunkt",
+        "password": "Lösenord",
+        "status": "Status",
+        "action": "Funktion"
       },
       "time": {
-        "departureTime": "(SV) Departure time",
-        "plannedTime": "(SV) Planned departure time"
+        "departureTime": "Avgångstid",
+        "plannedTime": "Planerad avgångstid"
       },
       "action": {
-        "details": "(SV) Details",
-        "modify": "(SV) Modify",
-        "show": "(SV) Show"
+        "details": "Detaljer",
+        "modify": "Redigera",
+        "show": "Visa"
       },
-      "transportStatusLog": "(SV) Transport tracking",
+      "transportStatusLog": "Transportspårning",
       "logStatus": {
-        "unknown": "(SV) Information unknown",
-        "planned": "(SV) Planned",
-        "departed": "(SV) Transport departed",
-        "stopped": "(SV) On a break",
-        "in_progress": "(SV) On the move",
-        "arrived": "(SV) Transport arrived"
+        "unknown": "Information saknas",
+        "planned": "Planerad",
+        "departed": "Transporten har avgått",
+        "stopped": "Paus",
+        "in_progress": "På väg",
+        "arrived": "Transporten avslutad"
       }
     },
     "transportDetail": {
-      "headerTitleAdd": "(SV) Add new transport",
-      "headerTitleDetail": "(SV) Transport details",
-      "transportPermit": "(SV) Transport permit",
-      "validityPeriod": "(SV) Validity period",
-      "transportId": "(SV) Transport ID",
-      "transportInformation": "(SV) Transport information",
-      "bridgesToSupervise": "(SV) Bridges to supervise",
+      "headerTitleAdd": "Lägg till transport",
+      "headerTitleDetail": "Transportdetaljer",
+      "transportPermit": "Transporttilstånd",
+      "validityPeriod": "Giltighetstid",
+      "transportId": "Transport ID",
+      "transportInformation": "Transport information",
+      "bridgesToSupervise": "Broar som övervakas",
       "buttons": {
-        "generatePassword": "(SV) New password",
-        "deleteTransport": "(SV) Delete transport",
-        "setDepartureTime": "(SV) Set estimated departure time",
-        "updateDepartureTime": "(SV) Update departure time"
+        "generatePassword": "Nytt lösenord",
+        "deleteTransport": "Ta bort transport",
+        "setDepartureTime": "Uppskatta avgångstid",
+        "updateDepartureTime": "Uppdatera avgångstid"
       },
       "alert": {
-        "generatePassword": "(SV) Are you sure you want to generate a new password?",
-        "deleteTransport": "(SV) Are you sure you want to delete the transport?"
+        "generatePassword": "Är du säker på att du vill generera ett nyt lösenord för transporten?",
+        "deleteTransport": "Är du säker på att du vill ta bort transporten?"
       },
-      "saved": "(SV) Saved",
-      "deleted": "(SV) Deleted",
-      "password": "(SV) Transport password",
-      "passwordUnknown": "(SV) Unknown",
+      "saved": "Sparad",
+      "deleted": "Borttagen",
+      "password": "Lösenord för transporten",
+      "passwordUnknown": "Okänd",
       "routeInfo": {
-        "estimatedDepartureTime": "(SV) Estimated departure time",
-        "route": "(SV) Route",
-        "origin": "(SV) Origin",
-        "destination": "(SV) Destination",
-        "showRouteOnMap": "(SV) Show route on map",
-        "tractorUnitIdentifier": "(SV) Vehicle registration number (first tractor unit)",
-        "tractorUnitNotSelected": "(SV) Registration number missing",
-        "pushingVehicle": "(SV) additional or pushing vehicle"
+        "estimatedDepartureTime": "Uppskattad avgångstid",
+        "route": "Rutt",
+        "origin": "Avgångsplats",
+        "destination": "Destination",
+        "showRouteOnMap": "Visa rutten på kartan",
+        "tractorUnitIdentifier": "Dragfordonets registernummer (första dragfordonet)",
+        "tractorUnitNotSelected": "Registernumret saknas",
+        "pushingVehicle": "extra- eller skjutande fordon"
       },
       "bridgeInfo": {
-        "bridge": "(SV) Bridge",
-        "estimatedCrossingTime": "(SV) Estimated crossing time",
-        "bridgeSupervisors": "(SV) Bridge supervisors",
-        "ownSupervisor": "(SV) Own supervisors",
-        "contractor": "(SV) Maintenance contractor",
-        "contractNumber": "(SV) Contract number",
-        "bridgeSupervisor": "(SV) Bridge supervisor (1.) and backup supervisor (2.)",
-        "supervisor1": "(SV) Bridge supervisor (1.)",
-        "supervisor2": "(SV) Backup supervisor (2.)",
-        "copySupervisor": "(SV) Copy to all bridges"
+        "bridge": "Bron",
+        "estimatedCrossingTime": "Uppskattad överfartstid",
+        "bridgeSupervisors": "Broövervakare",
+        "ownSupervisor": "Egen övervakare",
+        "contractor": "Underhållsentreprenör",
+        "contractNumber": "Kontrakt",
+        "bridgeSupervisor": "Broövervakare (1.) och stf. broövervakare (2.)",
+        "supervisor1": "Broövervakare (1.)",
+        "supervisor2": "stf. broövervakare(2.)",
+        "copySupervisor": "Kopiera till alla broar"
       },
       "transportDepartureTime": {
-        "header": "(SV) Estimated departure time",
-        "estimatedDepartureDate": "(SV) Estimated departure date",
-        "estimatedDepartureTime": "(SV) time",
-        "departureAt": "(SV) at",
-        "setTime": "(SV) Set",
-        "updateTime": "(SV) Update",
-        "info": "(SV) IMPORTANT. Departure time affects the estimated crossing times of the bridges."
+        "header": "Uppskattad avgångstid",
+        "estimatedDepartureDate": "Uppskattat avgångsdatum",
+        "estimatedDepartureTime": "tid",
+        "departureAt": "kl.",
+        "setTime": "Ställ",
+        "updateTime": "Uppdatera",
+        "info": "VIKTIGT. Avgångstiden påverkar också de uppskattade överfartstiderna för broarna."
       }
     },
     "supervisionType": {
-      "unknown": "(SV) Information unknown",
-      "own_supervisor": "(SV) Own supervisors",
-      "area_contractor": "(SV) Maintenance contractor"
+      "unknown": "Information saknas",
+      "own_supervisor": "Egen övervakare",
+      "area_contractor": "Underhållsentreprenör"
     },
     "transportStatus": {
-      "unknown": "(SV) Information unknown",
-      "planned": "(SV) Planned",
-      "departed": "(SV) On the move",
-      "stopped": "(SV) On a break",
-      "in_progress": "(SV) On the move",
-      "arrived": "(SV) Arrived"
+      "unknown": "Information saknas",
+      "planned": "Planerad",
+      "departed": "På väg",
+      "stopped": "Paus",
+      "in_progress": "På väg",
+      "arrived": "Transporten avslutad"
     }
   },
   "transports": {
     "transportCodeInput": {
       "header": {
-        "title": "(SV) Transports"
+        "title": "Transporter"
       },
-      "inputTitle": "(SV) Upcoming transport",
-      "inputLabel": "(SV) Transport password",
-      "inputPlaceholder": "(SV) Password",
-      "invalidCodeErrorMessage": "(SV) Invalid code"
+      "inputTitle": "Kommande transporter",
+      "inputLabel": "Lösenord för transporten",
+      "inputPlaceholder": "Lösenord",
+      "invalidCodeErrorMessage": "Ogiltig kod"
     },
     "transport": {
       "header": {
-        "title": "(SV) Transport"
+        "title": "Transport"
       },
-      "estimatedDepartureTime": "(SV) Estimated departure time",
-      "departureTime": "(SV) Departure time",
-      "permitLabel": "(SV) Permit",
-      "transportStatusLabel": "(SV) Status",
+      "estimatedDepartureTime": "Uppskattad avgångstid",
+      "departureTime": "Avgångstid",
+      "permitLabel": "Transportillstånd",
+      "transportStatusLabel": "Status",
       "statusInfo": {
-        "planned": "(SV) Drive has not yet started",
-        "departed": "(SV) Drive started",
-        "stopped": "(SV) Break started",
-        "in_progress": "(SV) Drive started",
-        "arrived": "(SV) Transport finished"
+        "planned": "Transporten har inte påbörjats ännu",
+        "departed": "Transporten påbörjad",
+        "stopped": "Pausen påbörjad",
+        "in_progress": "Transporten påbörjad",
+        "arrived": "Transporten avslutad"
       },
       "status": {
-        "departed": "(SV) On the move",
-        "stopped": "(SV) On a break",
-        "in_progress": "(SV) On the move",
-        "arrived": "(SV) Finished"
+        "departed": "På väg",
+        "stopped": "Paus",
+        "in_progress": "På väg",
+        "arrived": "Avslutad"
       },
       "buttons": {
-        "startDriving": "(SV) Start driving",
-        "startBreak": "(SV) Start break",
-        "stopBreak": "(SV) Continue driving",
-        "stopDriving": "(SV) End transport"
+        "startDriving": "Påbörja transporten",
+        "startBreak": "Påbörja paus",
+        "stopBreak": "Fortsätt transporten",
+        "stopDriving": "Avsluta transporten"
       },
       "stopAlert": {
-        "title": "(SV) Are you sure you want to end the transport?",
-        "message": "(SV) The transport cannot be continued anymore.",
-        "confirm": "(SV) End transport"
+        "title": "Vill du säkert avsluta transporten?",
+        "message": "Det går inte att fortsätta en avslutad transport.",
+        "confirm": "Avsluta transporten"
       }
     }
   },
@@ -379,7 +390,7 @@
     "header": {
       "title": "SillaRi"
     },
-    "title": "(SV) Access Denied!",
-    "content": "(SV) You do no not have permission to see this page."
+    "title": "Tillträde beviljas ej!",
+    "content": "Du har inte rätten att se den här sidan."
   }
 }

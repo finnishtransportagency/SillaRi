@@ -20,7 +20,6 @@ import TimePicker from "../common/TimePicker";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import close from "../../theme/icons/close_large.svg";
 import infoOutline from "../../theme/icons/info-outline.svg";
-import "./TransportDepartureTime.css";
 import Moment from "react-moment";
 import { DATE_FORMAT, TIME_FORMAT_MIN } from "../../utils/constants";
 import { isTimestampCurrentOrAfter } from "../../utils/validation";
@@ -45,12 +44,11 @@ const TransportDepartureTime = ({
   const estimatedDeparture = plannedDepartureTime ? plannedDepartureTime : new Date();
 
   /*Event is needed for positioning the popup relative to the element which triggered the event*/
-  const [popoverState, setShowPopover] = useState({ showPopover: false, event: undefined });
+  const [popoverState, setShowPopover] = useState<{ showPopover: boolean; event: MouseEvent | undefined }>({ showPopover: false, event: undefined });
   const [departureTime, setDepartureTime] = useState<Date>(estimatedDeparture);
   const [departureTimeValid, setDepartureTimeValid] = useState<boolean>(true);
 
-  // Must use event type "any" because "Type 'MouseEvent' is not assignable to type 'undefined'" (example from https://ionicframework.com/docs/api/popover#usage)
-  const showPopup = (evt: any) => {
+  const showPopup = (evt: MouseEvent) => {
     evt.persist();
     setShowPopover({ showPopover: true, event: evt });
   };
@@ -151,7 +149,7 @@ const TransportDepartureTime = ({
       </IonRow>
       <IonRow>
         <IonPopover
-          className="largePopover"
+          className="large-popover"
           isOpen={popoverState.showPopover}
           onDidDismiss={() => hidePopup()}
           event={popoverState.event}
@@ -180,7 +178,7 @@ const TransportDepartureTime = ({
               </IonCol>
             </IonRow>
             {!departureTimeValid && (
-              <IonRow>
+              <IonRow className="ion-margin-start">
                 <IonCol size="6" offset="6">
                   <ValidationError label={t("common.validation.checkTime")} />
                 </IonCol>

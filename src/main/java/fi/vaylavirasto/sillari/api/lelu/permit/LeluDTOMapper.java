@@ -1,9 +1,6 @@
 package fi.vaylavirasto.sillari.api.lelu.permit;
 
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluSupervisionDTO;
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluSupervisionStatus;
+import fi.vaylavirasto.sillari.api.lelu.supervision.*;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.util.DateMapper;
 import org.mapstruct.Mapper;
@@ -49,7 +46,9 @@ public interface LeluDTOMapper {
             @Mapping(target = "bridge.identifier", source = "dto.identifier"),
             @Mapping(target = "bridge.name", source = "dto.name"),
             @Mapping(target = "bridge.roadAddress", source = "dto.roadAddress"),
-            @Mapping(target = "crossingInstruction", source = "dto.additionalInfo")
+            @Mapping(target = "crossingInstruction", source = "dto.additionalInfo"),
+            @Mapping(target = "contractBusinessIdentifier", source = "dto.contractBusinessIdentifier"),
+            @Mapping(target = "transportNumber", source = "dto.transportNumber")
     })
     RouteBridgeModel fromDTOToModel(LeluBridgeDTO dto);
 
@@ -65,20 +64,58 @@ public interface LeluDTOMapper {
     })
     LeluSupervisionStatus fromModelToDTO(SupervisionStatusModel model);
 
+
+    @Mappings({
+            @Mapping(target = "firstName", source = "model.firstName"),
+            @Mapping(target = "lastName", source = "model.lastName")
+    })
+    LeluSupervisor fromModelToDTO(SupervisorModel model);
+
     @Mappings({
             @Mapping(target = "supervisionStatus", source = "model.currentStatus"),
             @Mapping(target = "reportId", source = "model.id"),
+            @Mapping(target = "supervisionReport", source = "model.report"),
+            @Mapping(target = "supervisor", source = "model.supervisorWhoSupervised"),
     })
     LeluSupervisionDTO fromModelToDTO(SupervisionModel model);
+
+    @Mappings({
+        @Mapping(target = "supervisionStatus", source = "model.currentStatus"),
+        @Mapping(target = "reportId", source = "model.id"),
+        @Mapping(target = "supervisionReport", source = "model.report"),
+        @Mapping(target = "supervisor", source = "model.supervisorWhoSupervised"),
+    })
+    LeluBridgeSupervisionResponseDTO fromModelToDTO2(SupervisionModel model);
+
+    @Mappings({
+            @Mapping(target = "drivingLineOk", source = "model.drivingLineOk"),
+            @Mapping(target = "drivingLineInfo", source = "model.drivingLineInfo"),
+            @Mapping(target = "speedLimitOk", source = "model.speedLimitOk"),
+            @Mapping(target = "speedLimitInfo", source = "model.speedLimitInfo"),
+            @Mapping(target = "anomalies", source = "model.anomalies"),
+            @Mapping(target = "anomaliesDescription", source = "model.anomaliesDescription"),
+            @Mapping(target = "surfaceDamage", source = "model.surfaceDamage"),
+            @Mapping(target = "jointDamage", source = "model.jointDamage"),
+            @Mapping(target = "bendOrDisplacement", source = "model.bendOrDisplacement"),
+            @Mapping(target = "otherObservations", source = "model.otherObservations"),
+            @Mapping(target = "otherObservationsInfo", source = "model.otherObservationsInfo"),
+            @Mapping(target = "additionalInfo", source = "model.additionalInfo")
+    })
+    LeluSupervisionReportDTO fromModelToDTO(SupervisionReportModel model);
+
+
 
     @Mappings({
             @Mapping(target = "oid", source = "model.bridge.oid"),
             @Mapping(target = "identifier", source = "model.bridge.identifier"),
             @Mapping(target = "name", source = "model.bridge.name"),
             @Mapping(target = "roadAddress", source = "model.bridge.roadAddress"),
+            @Mapping(target = "transportNumber", source = "model.transportNumber"),
             @Mapping(target = "supervisions", source = "model.supervisions")
     })
     LeluBridgeResponseDTO fromModelToDTO(RouteBridgeModel model);
+
+
 
     @Mappings({
             @Mapping(target = "bridges", source = "model.routeBridges")

@@ -1,4 +1,4 @@
-package fi.vaylavirasto.sillari.api.lelu.permit_2_0_0;
+package fi.vaylavirasto.sillari.api.lelu.permit;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -32,8 +33,9 @@ public class LeluCompanyAuthorizerDTO {
     @Schema(description = "Phone number of the authorizer", required = true, example = "050-123456")
     private String authorizerPhone;
 
-
-
+    @NotNull(message = "{authorizer.datachanged.not.blank}")
+    @Schema(description = "Describes if authorizer data has changed.", required = true, example = "true")
+    private Boolean dataChanged;
 
 
 }

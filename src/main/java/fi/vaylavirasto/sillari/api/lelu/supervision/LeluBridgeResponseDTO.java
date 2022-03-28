@@ -25,7 +25,10 @@ public class LeluBridgeResponseDTO {
     @Schema(description = "Bridge road address (road number, section, lane and distance)", example = "00012 204 0 03788")
     private String roadAddress;
 
-    @Schema(description = "Bridge supervisions in the order when planned supervision was created")
+    @Schema(description = "Order number of crossing, provided by lelu in incoming permit->route->bridge.", example = "1")
+    private Integer transportNumber;
+
+    @Schema(description = "Bridge supervision")
     private List<LeluSupervisionDTO> supervisions;
 
 

@@ -114,7 +114,7 @@ public class PDFGenerator {
             contentStream.showText(MessageFormat.format(pdf_sign_time, signTime));
 
             newLine();
-            contentStream.showText(pdf_supervisor + getSupervisorName(supervision));
+            contentStream.showText(pdf_supervisor + deduceSupervisorWhoSupervisedWholeName(supervision));
 
             newLine();
             newLine();
@@ -359,27 +359,13 @@ public class PDFGenerator {
         }
     }
 
-    @NotNull
-    private String getSupervisorUserName(SupervisionModel supervision) {
-        return supervision.getStatusHistory().stream()
-                .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(SupervisionStatusType.REPORT_SIGNED))
-                .findFirst().orElseThrow().getUsername();
+    private String deduceSupervisorWhoSupervisedWholeName(SupervisionModel supervision) {
 
-    }
+        SupervisorModel supervisor = supervision.getSupervisorWhoSupervised();
+        String supervisorFirstName = supervisor != null ? supervisor.getFirstName() : "";
+        String supervisorLastName = supervisor != null ? supervisor.getLastName() : "";
+        return supervisorFirstName + " " + supervisorLastName;
 
-    @NotNull
-    private String getSupervisorName(SupervisionModel supervision) {
-        try {
-            String userName = getSupervisorUserName(supervision);
-            List<SupervisorModel> supervisors = ((supervision.getSupervisors() == null || supervision.getSupervisors().isEmpty()) ? null : supervision.getSupervisors());
-            SupervisorModel supervisor = supervisors.stream().filter(s -> s.getUsername().equals(userName)).findFirst().orElseThrow();
-            String supervisorFirstName = supervisor != null ? supervisor.getFirstName() : "";
-            String supervisorLastName = supervisor != null ? supervisor.getLastName() : "";
-            return supervisorFirstName + " " + supervisorLastName;
-        } catch (Exception e) {
-            logger.debug("caught: " + e.getClass().getName() + e.getMessage());
-            return "-";
-        }
     }
 
 
