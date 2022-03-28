@@ -1,0 +1,18 @@
+.secondaryAccordion ion-accordion {
+  border: none;
+}
+
+.secondaryAccordion .accordion-animated [slot="header"]  {
+  border: none;
+  --background: var(--ion-color-tertiary);
+}
+
+.reportList ion-item {
+  --border-width: 2px;
+  --border-color: var(--ion-color-light);
+}
+
+.reportList ion-button {
+  --padding-start: 0;
+  --padding-end: 0;
+}

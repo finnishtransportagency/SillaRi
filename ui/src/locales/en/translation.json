@@ -213,9 +213,13 @@
     "transportPermit": "Transport permit",
     "tractorUnit": "Tractor unit",
     "supervisionStarted": "Supervision started",
+    "reportSent": "Report sent",
+    "removed": "Removed from list",
+    "report": "Supervision report",
     "sendSelected": "Send selected",
     "sentOk": "Selected supervisions have been sent",
-    "nothingToSend": "No supervision reports to send"
+    "nothingToSend": "No supervision reports to send.",
+    "sentReports": "Sent supervision reports"
   },
   "permitPdf": {
     "title": "Transport permit",

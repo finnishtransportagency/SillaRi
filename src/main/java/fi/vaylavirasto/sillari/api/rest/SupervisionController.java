@@ -73,7 +73,7 @@ public class SupervisionController {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionSendingListOfSupervisor");
         try {
             SillariUser user = uiService.getSillariUser();
-            List<SupervisionModel> supervisions = supervisionService.getFinishedButUnsignedSupervisions(user.getUsername());
+            List<SupervisionModel> supervisions = supervisionService.getFinishedSupervisions(user.getUsername());
             return ResponseEntity.ok().body(supervisions != null ? supervisions : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -100,7 +100,7 @@ public class SupervisionController {
     public ResponseEntity<?> updateConformsToPermit(@RequestBody SupervisionModel supervision) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateConformsToPermit");
         try {
-            if (!isSupervisionOfSupervisor(supervision.getId())) {
+            if (!canSupervisorUpdateSupervision(supervision.getId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SupervisionModel supervisionModel = supervisionService.updateConformsToPermit(supervision);
@@ -116,7 +116,7 @@ public class SupervisionController {
     public ResponseEntity<?> startSupervision(@RequestBody SupervisionReportModel report) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "startSupervision");
         try {
-            if (!isSupervisionOfSupervisor(report.getSupervisionId())) {
+            if (!canSupervisorUpdateSupervision(report.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
@@ -133,7 +133,7 @@ public class SupervisionController {
     public ResponseEntity<?> cancelSupervision(@RequestParam Integer supervisionId) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "cancelSupervision");
         try {
-            if (!isSupervisionOfSupervisor(supervisionId)) {
+            if (!canSupervisorUpdateSupervision(supervisionId)) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
@@ -150,7 +150,7 @@ public class SupervisionController {
     public ResponseEntity<?> denyCrossing(@RequestParam Integer supervisionId, @RequestParam String denyReason) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "denyCrossing");
         try {
-            if (!isSupervisionOfSupervisor(supervisionId)) {
+            if (!canSupervisorUpdateSupervision(supervisionId)) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
@@ -167,7 +167,7 @@ public class SupervisionController {
     public ResponseEntity<?> finishSupervision(@RequestParam Integer supervisionId) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "finishSupervision");
         try {
-            if (!isSupervisionOfSupervisor(supervisionId)) {
+            if (!canSupervisorUpdateSupervision(supervisionId)) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
@@ -210,7 +210,7 @@ public class SupervisionController {
     public ResponseEntity<?> updateSupervisionReport(@RequestBody SupervisionReportModel report) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateSupervisionReport");
         try {
-            if (!isSupervisionOfSupervisor(report.getSupervisionId())) {
+            if (!canSupervisorUpdateSupervision(report.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SupervisionModel supervisionModel = supervisionService.updateSupervisionReport(report);
@@ -224,7 +224,16 @@ public class SupervisionController {
     private boolean isSupervisionOfSupervisor(Integer supervisionId) {
         SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
         SillariUser user = uiService.getSillariUser();
-        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsBySupervisorUsername(user.getUsername());
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getAllSupervisionsOfSupervisorNoDetails(user.getUsername());
+
+        return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
+    }
+
+    /* Check that supervision belongs to the user and report is not signed */
+    private boolean canSupervisorUpdateSupervision(Integer supervisionId) {
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+        SillariUser user = uiService.getSillariUser();
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsOfSupervisorNoDetails(user.getUsername());
 
         return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
     }
