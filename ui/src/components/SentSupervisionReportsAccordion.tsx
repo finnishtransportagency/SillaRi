@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import CustomAccordion from "./common/CustomAccordion";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
-import { getReportSignedTime, groupSupervisionsBySignedDate } from "../utils/supervisionUtil";
+import { getReportSignedTime, groupSupervisionsBySignedDate, sortSentSupervisions } from "../utils/supervisionUtil";
 import { IonButton, IonCol, IonGrid, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import { DATE_FORMAT, DATE_TIME_FORMAT_MIN } from "../utils/constants";
@@ -27,7 +27,10 @@ const SentSupervisionReportsAccordion = ({
   useEffect(() => {
     if (sentSupervisions && sentSupervisions.length > 0) {
       const groupedSupervisions = groupSupervisionsBySignedDate(sentSupervisions);
-      // TODO sort (need specs)
+      groupedSupervisions.forEach((day) => {
+        const { supervisions = [] } = day;
+        sortSentSupervisions(supervisions);
+      });
       setSupervisionDays(groupedSupervisions);
     }
   }, [sentSupervisions]);

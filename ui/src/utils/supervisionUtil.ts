@@ -80,7 +80,8 @@ export const groupSupervisionsBySignedDate = (supervisions: ISupervision[] | und
     return { date: moment(signedTime).startOf("day").toDate(), supervisions: [supervision] };
   };
 
-  return groupSupervisionsByDate(supervisions, compareDates, createSupervisionDay);
+  const supervisionDays = groupSupervisionsByDate(supervisions, compareDates, createSupervisionDay);
+  return supervisionDays.reverse();
 };
 
 const sortByBridgeOrder = (a: ISupervision, b: ISupervision) => {
@@ -118,6 +119,20 @@ export const sortSupervisionsByTimeAndBridgeOrder = (supervisions: ISupervision[
       // Sort supervisions with the same time by first routeTransportId and then bridge ordinal
       return timeDiff === 0 ? sortByBridgeOrder(a, b) : timeDiff;
     });
+  }
+};
+
+export const sortSentSupervisions = (supervisions: ISupervision[] | undefined): void => {
+  if (supervisions && supervisions.length > 0) {
+    supervisions.sort((a, b) => {
+      const timeA = getReportSignedTime(a);
+      const timeB = getReportSignedTime(b);
+      const timeDiff = moment(timeA).startOf("minute").diff(moment(timeB).startOf("minute"), "minutes");
+      // Sort supervisions with the same time by first routeTransportId and then bridge ordinal
+      return timeDiff === 0 ? sortByBridgeOrder(a, b) : timeDiff;
+    });
+    // Sort the latest first - reverse also those sorted by bridge order, so it follows the same logic
+    supervisions.reverse();
   }
 };
 
