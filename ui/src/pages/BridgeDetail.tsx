@@ -50,7 +50,7 @@ const BridgeDetail = (): JSX.Element => {
       // Cancel any outgoing refetches so they don't overwrite the optimistic update below
       await queryClient.cancelQueries(supervisionQueryKey);
 
-      // Optimistically update to the new value
+      // Optimistically update to the new supervision
       queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => ({ ...oldData, ...newData }));
     },
     onSuccess: (data) => {

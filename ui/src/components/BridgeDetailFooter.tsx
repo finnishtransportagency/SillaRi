@@ -56,7 +56,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
       // Cancel any outgoing refetches so they don't overwrite the optimistic update below
       await queryClient.cancelQueries(supervisionQueryKey);
 
-      // Optimistically update to the new value
+      // Optimistically update to the new report
       // Set the current status to IN_PROGRESS here otherwise the Supervision page won't work when offline since the backend won't be called yet
       queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
         return {
@@ -74,9 +74,6 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
 
       // Update "getSupervision" query to return the updated data
       queryClient.setQueryData<ISupervision>(supervisionQueryKey, data);
-
-      // Note: moved to onMutate
-      // history.push(`/supervision/${supervisionId}`);
     },
   });
 

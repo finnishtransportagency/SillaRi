@@ -24,10 +24,11 @@ import NoNetworkNoData from "../components/NoNetworkNoData";
 import PermitLinkItem from "../components/PermitLinkItem";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 import IPermit from "../interfaces/IPermit";
+import ISupervision from "../interfaces/ISupervision";
 import { onRetry } from "../utils/backendData";
 import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
 import { SupervisionStatus } from "../utils/constants";
-import { invalidateOfflineData } from "../utils/supervisionUtil";
+import { removeSupervisionFromRouteTransportList } from "../utils/supervisionUtil";
 
 interface DenyCrossingProps {
   supervisionId: string;
@@ -40,6 +41,7 @@ const DenyCrossing = (): JSX.Element => {
   const queryClient = useQueryClient();
 
   const { supervisionId = "0" } = useParams<DenyCrossingProps>();
+  const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
 
   const {
     networkStatus: { isFailed = {} },
@@ -54,7 +56,7 @@ const DenyCrossing = (): JSX.Element => {
   const otherReason = "other";
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", Number(supervisionId)],
+    supervisionQueryKey,
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
@@ -62,17 +64,37 @@ const DenyCrossing = (): JSX.Element => {
     }
   );
 
+  const { routeTransportId = "0" } = supervision || {};
+
+  // Set-up mutations for modifying data later
+  // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
   const denyCrossingMutation = useMutation((denyCrossingInput: IDenyCrossingInput) => denyCrossing(denyCrossingInput, dispatch), {
     retry: onRetry,
-    onSuccess: (data) => {
-      // Update "getSupervision" query to return the updated data
-      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
+    onMutate: async () => {
+      // onMutate fires before the mutation function
 
-      // Invalidate queries to remove the denied supervision from the UI when using cached data
-      // TODO - figure out a better way to do this when offline, maybe using setQueryData to manually remove denied supervisions
-      invalidateOfflineData(queryClient, dispatch);
+      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+      await queryClient.cancelQueries(supervisionQueryKey);
 
+      // Set the current status to CROSSING_DENIED here since the backend won't be called yet when offline
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+        return {
+          ...oldData,
+          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.CROSSING_DENIED },
+        } as ISupervision;
+      });
+
+      // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
+      // Also remove the finished supervision from the route transport list in the UI
+      // invalidateOfflineData(queryClient, dispatch);
+      removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
       history.goBack();
+    },
+    onSuccess: (data) => {
+      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+
+      // Update "getSupervision" query to return the updated data
+      queryClient.setQueryData(supervisionQueryKey, data);
     },
   });
   const { isLoading: isSendingDenyCrossing } = denyCrossingMutation;

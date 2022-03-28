@@ -36,8 +36,10 @@ const Supervision = (): JSX.Element => {
   const [modifiedReport, setModifiedReport] = useState<ISupervisionReport | undefined>(undefined);
   const [present] = useIonAlert();
 
+  const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
+
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", Number(supervisionId)],
+    supervisionQueryKey,
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
@@ -48,29 +50,76 @@ const Supervision = (): JSX.Element => {
     }
   );
 
+  // Set-up mutations for modifying data later
+  // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
   const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
     retry: onRetry,
+    onMutate: async (newData: ISupervisionReport) => {
+      // onMutate fires before the mutation function
+
+      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+      await queryClient.cancelQueries(supervisionQueryKey);
+
+      // Optimistically update to the new report
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+        return {
+          ...oldData,
+          report: { ...oldData?.report, ...newData },
+        } as ISupervision;
+      });
+    },
     onSuccess: (data) => {
-      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
+      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+
+      queryClient.setQueryData(supervisionQueryKey, data);
     },
   });
   const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
 
   const deleteImagesMutation = useMutation((superId: string) => deleteSupervisionImages(Number(superId), dispatch), {
     retry: onRetry,
-    onSuccess: () => {
-      // TODO - figure out a better way to do this when offline
-      queryClient.invalidateQueries(["getSupervision", Number(supervisionId)]);
+    onMutate: async () => {
+      // onMutate fires before the mutation function
+
+      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+      await queryClient.cancelQueries(supervisionQueryKey);
+
+      // Clear the images here since the backend won't be called yet when offline
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+        return { ...oldData, images: [] } as ISupervision;
+      });
 
       // We don't want to allow the user to get back to this page by using "back"
+      // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
       history.replace(`/bridgeDetail/${supervisionId}`, { direction: "back" });
+    },
+    onSuccess: () => {
+      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+
+      // Fetch the latest data from the backend now that the app is online again
+      queryClient.invalidateQueries(supervisionQueryKey);
     },
   });
   const { isLoading: isSendingDeleteImages } = deleteImagesMutation;
 
   const cancelSupervisionMutation = useMutation((superId: string) => cancelSupervision(Number(superId), dispatch), {
     retry: onRetry,
-    onSuccess: () => {
+    onMutate: async () => {
+      // onMutate fires before the mutation function
+
+      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+      await queryClient.cancelQueries(supervisionQueryKey);
+
+      // Clear the report and set the current status to CANCELLED here since the backend won't be called yet when offline
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+        return {
+          ...oldData,
+          report: undefined,
+          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.CANCELLED },
+        } as ISupervision;
+      });
+
+      // Since onSuccess doesn't fire when offline, other mutations need to be called here instead
       deleteImagesMutation.mutate(supervisionId);
     },
   });
