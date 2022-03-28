@@ -12,7 +12,7 @@ import SupervisionList from "../components/SupervisionList";
 import "./Supervisions.css";
 import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
-import { groupSupervisionsByDate, sortSupervisionsByTimeAndBridgeOrder } from "../utils/supervisionUtil";
+import { groupSupervisionsByPlannedDate, sortSupervisionsByTimeAndBridgeOrder } from "../utils/supervisionUtil";
 import { useHistory, useParams } from "react-router-dom";
 
 interface SupervisionsProps {
@@ -46,7 +46,7 @@ const Supervisions = (): JSX.Element => {
   useEffect(() => {
     // Group the supervisions with useEffect instead of useQuery, since onSuccess is not called when using cached data
     if (supervisionList && supervisionList.length > 0) {
-      const groupedSupervisions = groupSupervisionsByDate(supervisionList);
+      const groupedSupervisions = groupSupervisionsByPlannedDate(supervisionList);
       groupedSupervisions.forEach((s) => sortSupervisionsByTimeAndBridgeOrder(s.supervisions));
       setSupervisionDays(groupedSupervisions);
     }

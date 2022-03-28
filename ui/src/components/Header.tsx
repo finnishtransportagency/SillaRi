@@ -9,6 +9,8 @@ import { onRetry } from "../utils/backendData";
 import { getSupervisionSendingList } from "../utils/supervisionBackendData";
 import SendingList from "./SendingList";
 import "./Header.css";
+import { isSupervisionSigned } from "../utils/supervisionUtil";
+import ISupervision from "../interfaces/ISupervision";
 
 interface HeaderProps {
   title: string;
@@ -40,6 +42,26 @@ const Header = ({ title, somethingFailed, includeSendingList, confirmGoBack }: H
   useEffect(() => {
     onlineManager.subscribe(() => setOnline(onlineManager.isOnline()));
   }, []);
+
+  const [sentSupervisions, setSentSupervisions] = useState<ISupervision[]>([]);
+  const [unsentSupervisions, setUnsentSupervisions] = useState<ISupervision[]>([]);
+
+  useEffect(() => {
+    // Separate sent and unsent supervisions with useEffect instead of useQuery, since onSuccess is not called when using cached data
+    if (supervisionList && supervisionList.length > 0) {
+      const sent = supervisionList.filter((supervision) => {
+        const { statusHistory = [] } = supervision || {};
+        return isSupervisionSigned(statusHistory);
+      });
+      setSentSupervisions(sent);
+
+      const unsent = supervisionList.filter((supervision) => {
+        const { statusHistory = [] } = supervision || {};
+        return !isSupervisionSigned(statusHistory);
+      });
+      setUnsentSupervisions(unsent);
+    }
+  }, [supervisionList]);
 
   return (
     <IonHeader>
@@ -73,14 +95,21 @@ const Header = ({ title, somethingFailed, includeSendingList, confirmGoBack }: H
           {includeSendingList && (
             <IonButton shape="round" className="otherIcon" onClick={() => setSendingListOpen(true)}>
               <IonBadge className="iconBadge" color="secondary">
-                {supervisionList.length}
+                {unsentSupervisions.length}
               </IonBadge>
-              <IonIcon slot="icon-only" icon={outgoing}></IonIcon>
+              <IonIcon slot="icon-only" icon={outgoing} />
             </IonButton>
           )}
         </IonButtons>
 
-        {includeSendingList && <SendingList isOpen={isSendingListOpen} setOpen={setSendingListOpen} supervisionList={supervisionList} />}
+        {includeSendingList && (
+          <SendingList
+            isOpen={isSendingListOpen}
+            setOpen={setSendingListOpen}
+            sentSupervisions={sentSupervisions}
+            unsentSupervisions={unsentSupervisions}
+          />
+        )}
       </IonToolbar>
     </IonHeader>
   );

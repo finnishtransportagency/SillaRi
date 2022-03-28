@@ -213,9 +213,13 @@
     "transportPermit": "Transporttillstånd",
     "tractorUnit": "Dragfordon",
     "supervisionStarted": "Övervakningen påbörjad",
+    "reportSent": "(SV) Report sent",
+    "removed": "(SV) Removed from list",
+    "report": "(SV) Supervision report",
     "sendSelected": "Sänd de valda",
     "sentOk": "De valda övervakningsrapporterna har sänts",
-    "nothingToSend": "Inga övervakningsrapporter att sända"
+    "nothingToSend": "Inga övervakningsrapporter att sända",
+    "sentReports": "(SV) Sent supervision reports"
   },
   "permitPdf": {
     "title": "Transporttillstånd",
