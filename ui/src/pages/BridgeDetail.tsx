@@ -46,44 +46,15 @@ const BridgeDetail = (): JSX.Element => {
     retry: onRetry,
     onMutate: async (newData: ISupervision) => {
       // onMutate fires before the mutation function
-      console.log("updateConformsToPermit onMutate", newData);
 
       // Cancel any outgoing refetches so they don't overwrite the optimistic update below
       await queryClient.cancelQueries(supervisionQueryKey);
 
-      // Snapshot the previous value
-      const previousData = queryClient.getQueryData<ISupervision>(supervisionQueryKey);
-
       // Optimistically update to the new value
       queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => ({ ...oldData, ...newData }));
-
-      // Return a context object with the snapshotted value
-      // TODO - check if this is needed
-      return { previousData };
-    },
-    onError: (err, newData, context) => {
-      // onError doesn't fire when offline due to the retry option, but may fire when online again
-      console.log("updateConformsToPermit onError", err, newData, context);
-
-      // If the mutation fails, use the context returned from onMutate to roll back
-      // TODO - check if this is needed
-      /*
-      if (context?.previousData) {
-        queryClient.setQueryData<ISupervision>(queryKey, context.previousData);
-      }
-      */
-    },
-    onSettled: (data) => {
-      // onSettled doesn't fire when offline due to the retry option
-      console.log("updateConformsToPermit onSettled", data);
-
-      // Always refetch after error or success
-      // TODO - check if this is needed
-      // queryClient.invalidateQueries(queryKey);
     },
     onSuccess: (data) => {
       // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
-      console.log("updateConformsToPermit onSuccess", data);
 
       // Update the supervision from "getSupervision" with the updated supervision data in the response
       queryClient.setQueryData<ISupervision>(supervisionQueryKey, data);

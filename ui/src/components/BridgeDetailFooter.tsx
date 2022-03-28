@@ -52,13 +52,9 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
     retry: onRetry,
     onMutate: async (newData: ISupervisionReport) => {
       // onMutate fires before the mutation function
-      console.log("startSupervision onMutate", newData);
 
       // Cancel any outgoing refetches so they don't overwrite the optimistic update below
       await queryClient.cancelQueries(supervisionQueryKey);
-
-      // Snapshot the previous value
-      const previousData = queryClient.getQueryData<ISupervision>(supervisionQueryKey);
 
       // Optimistically update to the new value
       // Set the current status to IN_PROGRESS here otherwise the Supervision page won't work when offline since the backend won't be called yet
@@ -72,34 +68,9 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
 
       // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
       history.push(`/supervision/${supervisionId}`);
-
-      // Return a context object with the snapshotted value
-      // TODO - check if this is needed
-      return { previousData };
-    },
-    onError: (err, newData, context) => {
-      // onError doesn't fire when offline due to the retry option, but may fire when online again
-      console.log("startSupervision onError", err, newData, context);
-
-      // If the mutation fails, use the context returned from onMutate to roll back
-      // TODO - check if this is needed
-      /*
-      if (context?.previousData) {
-        queryClient.setQueryData<ISupervision>(queryKey, context.previousData);
-      }
-      */
-    },
-    onSettled: (data) => {
-      // onSettled doesn't fire when offline due to the retry option
-      console.log("startSupervision onSettled", data);
-
-      // Always refetch after error or success
-      // TODO - check if this is needed
-      // queryClient.invalidateQueries(queryKey);
     },
     onSuccess: (data) => {
       // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
-      console.log("startSupervision onSuccess", data);
 
       // Update "getSupervision" query to return the updated data
       queryClient.setQueryData<ISupervision>(supervisionQueryKey, data);
