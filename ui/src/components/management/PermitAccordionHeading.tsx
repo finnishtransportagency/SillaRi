@@ -55,6 +55,13 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
       : t("management.supervisionType.unknown");
   };
 
+  const doneTransportsCount = routeTransportList ? routeTransportList.length : 0;
+
+  const totalTransportCount =
+    permit.routes && permit.routes.length > 0
+      ? permit.routes.map((route) => (route.transportCount ? route.transportCount : 0)).reduce((prevCount, count) => prevCount + count)
+      : 0;
+
   return (
     <IonGrid className="ion-no-padding" ref={ref}>
       <IonRow className="ion-margin ion-align-items-center">
@@ -65,17 +72,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
                 <PermitLinkText permit={permit} className="headingText" />
               </IonCol>
               <IonCol>
-                <IonText>
-                  {`${t("management.companySummary.transports")}: ${routeTransportList ? routeTransportList.length : 0}/${
-                    routeTransportList && routeTransportList.length > 0
-                      ? routeTransportList
-                          .map((routeTransport) =>
-                            routeTransport.route && routeTransport.route.transportCount ? routeTransport.route.transportCount : 0
-                          )
-                          .reduce((prevCount, count) => prevCount + count)
-                      : 0
-                  }`}
-                </IonText>
+                <IonText>{`${t("management.companySummary.transports")}: ${doneTransportsCount}/${totalTransportCount}`}</IonText>
               </IonCol>
             </IonRow>
             <IonRow>
