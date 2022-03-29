@@ -71,6 +71,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const sendSelected = () => {
     if (selectedIds.length > 0) {
       sendSupervisionMutation.mutate(selectedIds);
+      setSelectedIds([]);
     }
   };
 
