@@ -71,6 +71,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const sendSelected = () => {
     if (selectedIds.length > 0) {
       sendSupervisionMutation.mutate(selectedIds);
+      setSelectedIds([]);
     }
   };
 
@@ -117,8 +118,9 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
                 const bm = moment(b.startedTime);
                 return am.diff(bm, "seconds");
               })
-              .map((supervision, index) => {
-                const key = `sending_${index}`;
+              .map((supervision) => {
+                const { id: supervisionId } = supervision;
+                const key = `unsentReport_${supervisionId}`;
 
                 return (
                   <SendingListItem
