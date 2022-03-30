@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IonCol, IonImg, IonRow, IonSpinner, IonThumbnail } from "@ionic/react";
-import { useIsMutating } from "react-query";
+import { onlineManager, useIsMutating } from "react-query";
 import moment from "moment";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import { getOrigin } from "../utils/request";
@@ -27,13 +27,13 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
   // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
   return (
     <IonRow>
-      {isImageUploadMutating > 0 && (
+      {isImageUploadMutating > 0 && onlineManager.isOnline() && (
         <IonCol>
           <IonSpinner color="primary" className="imageSpinner" />
         </IonCol>
       )}
 
-      {isImageUploadMutating === 0 &&
+      {(isImageUploadMutating === 0 || !onlineManager.isOnline()) &&
         images &&
         images.length > 0 &&
         [...images]
@@ -43,10 +43,12 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
             return bm.diff(am, "seconds");
           })
           .map((image) => {
-            const imageUrl = `${getOrigin()}/api/images/get?id=${image.id}`;
+            // When offline, show images using the base64 data, otherwise download the image from the backend
+            const imageUrl = image.base64 && image.base64.length > 0 ? image.base64 : `${getOrigin()}/api/images/get?id=${image.id}`;
+            const key = `image_${image.id}`;
 
             return (
-              <IonCol key={image.id} size="3">
+              <IonCol key={key} size="3">
                 <IonThumbnail className="imageThumbnail" onClick={() => showImage(true, imageUrl)}>
                   <IonImg src={imageUrl} />
                 </IonThumbnail>

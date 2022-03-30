@@ -13,6 +13,7 @@ import { deleteImage, getSupervision, sendImageUpload } from "../utils/supervisi
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import { getOrigin } from "../utils/request";
 import ImagePreview from "../components/ImagePreview";
+import ISupervision from "../interfaces/ISupervision";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import Header from "../components/Header";
 import PhotoItem from "../components/PhotoItem";
@@ -28,6 +29,7 @@ const Photos = (): JSX.Element => {
   const queryClient = useQueryClient();
 
   const { supervisionId = "0" } = useParams<PhotosProps>();
+  const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
 
   const [images, setImages] = useState<ISupervisionImage[]>([]);
   const [isImagePreviewOpen, setImagePreviewOpen] = useState<boolean>(false);
@@ -45,10 +47,27 @@ const Photos = (): JSX.Element => {
 
   // Set-up mutations for modifying data later
   // This mutationKey is used in ImageThumbnailRow to check if images are being uploaded
+  // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
   const imageUploadMutation = useMutation((fileUpload: ISupervisionImage) => sendImageUpload(fileUpload, dispatch), {
     mutationKey: "imageUpload",
     retry: onRetry,
+    onMutate: async (newData: ISupervisionImage) => {
+      // onMutate fires before the mutation function
+
+      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+      await queryClient.cancelQueries(supervisionQueryKey);
+
+      // Optimistically update by adding the new image
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+        return {
+          ...oldData,
+          images: [...(oldData && oldData.images ? oldData.images : []), newData],
+        } as ISupervision;
+      });
+    },
     onSuccess: () => {
+      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+
       // TODO - figure out a better way to do this when offline
       queryClient.invalidateQueries(["getSupervision", Number(supervisionId)]);
     },
@@ -57,7 +76,26 @@ const Photos = (): JSX.Element => {
 
   const imageDeleteMutation = useMutation((id: number) => deleteImage(id, dispatch), {
     retry: onRetry,
+    onMutate: async (idToDelete: number) => {
+      // onMutate fires before the mutation function
+
+      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+      await queryClient.cancelQueries(supervisionQueryKey);
+
+      // Optimistically update by removing the old image
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+        return {
+          ...oldData,
+          images: (oldData && oldData.images ? oldData.images : []).reduce(
+            (acc: ISupervisionImage[], image) => (image.id === idToDelete ? acc : [...acc, image]),
+            []
+          ),
+        } as ISupervision;
+      });
+    },
     onSuccess: () => {
+      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+
       // Fetch the supervision data again to update the image list after the delete has finished
       // TODO - figure out a better way to do this when offline
       queryClient.invalidateQueries(["getSupervision", Number(supervisionId)]);
@@ -135,13 +173,14 @@ const Photos = (): JSX.Element => {
                 const bm = moment(b.taken, DATE_TIME_FORMAT);
                 return bm.diff(am, "seconds");
               })
-              .map((imageItem, index) => {
+              .map((imageItem) => {
                 const thumbnailClicked = (): void => showImage(true, imageItem.base64 as string);
                 const deleteClicked = (): void => removeImageItem(imageItem.id);
+                const key = `image_${imageItem.id}`;
 
                 return (
                   <PhotoItem
-                    key={imageItem.id}
+                    key={key}
                     imageUrl={imageItem.base64}
                     taken={moment(imageItem.taken, DATE_TIME_FORMAT).toDate()}
                     isLoading={isLoading}
@@ -159,13 +198,18 @@ const Photos = (): JSX.Element => {
                 return bm.diff(am, "seconds");
               })
               .map((supervisionImage) => {
-                const imageUrl = `${getOrigin()}/api/images/get?id=${supervisionImage.id}`;
+                // When offline, show images using the base64 data, otherwise download the image from the backend
+                const imageUrl =
+                  supervisionImage.base64 && supervisionImage.base64.length > 0
+                    ? supervisionImage.base64
+                    : `${getOrigin()}/api/images/get?id=${supervisionImage.id}`;
                 const thumbnailClicked = (): void => showImage(true, imageUrl);
                 const deleteClicked = (): void => deleteImageObject(supervisionImage.id);
+                const key = `savedimage_${supervisionImage.id}`;
 
                 return (
                   <PhotoItem
-                    key={supervisionImage.id}
+                    key={key}
                     imageUrl={imageUrl}
                     taken={moment(supervisionImage.taken, DATE_TIME_FORMAT).toDate()}
                     isLoading={isLoading}
