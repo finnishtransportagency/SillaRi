@@ -64,8 +64,7 @@ const SentSupervisionReportsAccordion = ({
           isPanelOpen: index === 0,
           panel: (
             <div className="reportList ion-margin-bottom">
-              {supervisions.map((supervision, idx) => {
-                const sKey = `sentReport_${idx}`;
+              {supervisions.map((supervision) => {
                 const { id: supervisionId, routeBridge, routeTransport, startedTime } = supervision;
                 const { bridge, route } = routeBridge || {};
                 const { identifier = "", name = "", municipality = "" } = bridge || {};
@@ -73,6 +72,8 @@ const SentSupervisionReportsAccordion = ({
                 const { permitNumber } = permit || {};
                 const { tractorUnit = "" } = routeTransport || {};
                 const reportSignedTime = getReportSignedTime(supervision);
+
+                const sKey = `sentReport_${supervisionId}`;
 
                 return (
                   <IonItem key={sKey} fill="outline" lines="none" className="ion-margin-horizontal">
