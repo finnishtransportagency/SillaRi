@@ -117,6 +117,38 @@ public class LeluService {
         }
     }
 
+    //TODO Will eplace createOrUpdatePermitDevVersion eventually.
+    public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) throws LeluPermitSaveException {
+        LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
+
+        logger.debug("Map permit from: " + permitDTO);
+        PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
+        logger.debug("Permit mapped from LeLu model: {}", permitModel);
+
+        // Fetch company from DB with business ID. If not found, insert new company.
+        Integer companyId = getCompanyIdByBusinessId(permitModel.getCompany());
+        permitModel.setCompanyId(companyId);
+
+        // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
+        produceBridgeDataForRouteBridges(permitModel.getRoutes());
+
+        Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitModel.getPermitNumber(), permitModel.getLeluVersion());
+
+        if (permitId != null) {
+            throw new LeluPermitSaveException("Permit exists with same permit number and version. " + permitDTO.getNumber() + " " + permitDTO.getVersion());
+        } else {
+            logger.debug("Permit not found with id {}, create new", permitId);
+
+            // Insert new permit and all child records
+            // Missing route addresses (not yet in lelu model)
+            Integer permitModelId = permitRepository.createPermit(permitModel);
+
+            response.setPermitId(permitModelId);
+            response.setStatus(LeluPermitStatus.CREATED);
+            return response;
+        }
+    }
+
     private PermitModel getWholePermitModel(String permitNumber) {
         PermitModel oldPermitModel = permitRepository.getPermitByPermitNumber(permitNumber);
         if (oldPermitModel != null) {
@@ -140,44 +172,7 @@ public class LeluService {
     }
 
 
-    //TODO Will eplace createOrUpdatePermitDevVersion eventually.
-    public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) throws LeluDeleteRouteWithSupervisionsException {
-        LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
 
-        logger.debug("Map permit from: " + permitDTO);
-        PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
-        logger.debug("Permit mapped from LeLu model: {}", permitModel);
-
-        // Fetch company from DB with business ID. If not found, insert new company.
-        Integer companyId = getCompanyIdByBusinessId(permitModel.getCompany());
-        permitModel.setCompanyId(companyId);
-
-        // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
-        produceBridgeDataForRouteBridges(permitModel.getRoutes());
-
-        Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitModel.getPermitNumber(), permitModel.getLeluVersion());
-
-        if (permitId != null) {
-            logger.debug("Permit with id {} found, update", permitId);
-
-            permitModel.setId(permitId);
-            updatePermit(permitModel);
-
-            response.setPermitId(permitId);
-            response.setStatus(LeluPermitStatus.UPDATED);
-            return response;
-        } else {
-            logger.debug("Permit not found with id {}, create new", permitId);
-
-            // Insert new permit and all child records
-            // Missing route addresses (not yet in lelu model)
-            Integer permitModelId = permitRepository.createPermit(permitModel);
-
-            response.setPermitId(permitModelId);
-            response.setStatus(LeluPermitStatus.CREATED);
-            return response;
-        }
-    }
 
     public LeluRouteGeometryResponseDTO uploadRouteGeometry(Long routeId, MultipartFile file) throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
         logger.debug("uploadRouteGeometry: " + routeId + " " + file.getName());
