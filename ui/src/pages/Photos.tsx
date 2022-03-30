@@ -13,10 +13,9 @@ import { deleteImage, getSupervision, sendImageUpload } from "../utils/supervisi
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import { getOrigin } from "../utils/request";
 import ImagePreview from "../components/ImagePreview";
-import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
+import ISupervisionImage from "../interfaces/ISupervisionImage";
 import Header from "../components/Header";
 import PhotoItem from "../components/PhotoItem";
-import IImageItem from "../interfaces/IImageItem";
 
 interface PhotosProps {
   supervisionId: string;
@@ -30,7 +29,7 @@ const Photos = (): JSX.Element => {
 
   const { supervisionId = "0" } = useParams<PhotosProps>();
 
-  const [images, setImages] = useState<IImageItem[]>([]);
+  const [images, setImages] = useState<ISupervisionImage[]>([]);
   const [isImagePreviewOpen, setImagePreviewOpen] = useState<boolean>(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
 
@@ -46,7 +45,7 @@ const Photos = (): JSX.Element => {
 
   // Set-up mutations for modifying data later
   // This mutationKey is used in ImageThumbnailRow to check if images are being uploaded
-  const imageUploadMutation = useMutation((fileUpload: ISupervisionImageInput) => sendImageUpload(fileUpload, dispatch), {
+  const imageUploadMutation = useMutation((fileUpload: ISupervisionImage) => sendImageUpload(fileUpload, dispatch), {
     mutationKey: "imageUpload",
     retry: onRetry,
     onSuccess: () => {
@@ -85,7 +84,14 @@ const Photos = (): JSX.Element => {
       const uuid = uuidv4();
       const fname = `image_${uuid}.jpg`;
 
-      const newImage: IImageItem = { id: uuid, filename: fname, dataUrl: image.dataUrl, date: now };
+      const newImage: ISupervisionImage = {
+        id: now.getTime(),
+        supervisionId: Number(supervisionId),
+        objectKey: "",
+        filename: fname,
+        base64: image.dataUrl,
+        taken: moment(now).format(DATE_TIME_FORMAT),
+      };
       setImages([...images, newImage]);
     } catch (err) {
       console.log("TakePicture REJECTED:");
@@ -93,8 +99,8 @@ const Photos = (): JSX.Element => {
     }
   };
 
-  const removeImageItem = (uuid: string) => {
-    const imagesToEdit = images.filter((image) => image.id !== uuid);
+  const removeImageItem = (id: number) => {
+    const imagesToEdit = images.filter((image) => image.id !== id);
     setImages(imagesToEdit);
   };
 
@@ -107,13 +113,8 @@ const Photos = (): JSX.Element => {
 
   const saveImages = (): void => {
     images.forEach((image) => {
-      const fileUpload = {
-        supervisionId: supervisionId.toString(),
-        filename: image.filename,
-        base64: image.dataUrl,
-        taken: moment(image.date).format(DATE_TIME_FORMAT),
-      } as ISupervisionImageInput;
-
+      // Set the image id to -1 so the backend doesn't throw an error
+      const fileUpload = { ...image, id: -1 };
       imageUploadMutation.mutate(fileUpload);
     });
 
@@ -130,19 +131,19 @@ const Photos = (): JSX.Element => {
             images.length > 0 &&
             [...images]
               .sort((a, b) => {
-                const am = moment(a.date);
-                const bm = moment(b.date);
+                const am = moment(a.taken, DATE_TIME_FORMAT);
+                const bm = moment(b.taken, DATE_TIME_FORMAT);
                 return bm.diff(am, "seconds");
               })
-              .map((imageItem) => {
-                const thumbnailClicked = (): void => showImage(true, imageItem.dataUrl as string);
+              .map((imageItem, index) => {
+                const thumbnailClicked = (): void => showImage(true, imageItem.base64 as string);
                 const deleteClicked = (): void => removeImageItem(imageItem.id);
 
                 return (
                   <PhotoItem
                     key={imageItem.id}
-                    imageUrl={imageItem.dataUrl}
-                    taken={imageItem.date}
+                    imageUrl={imageItem.base64}
+                    taken={moment(imageItem.taken, DATE_TIME_FORMAT).toDate()}
                     isLoading={isLoading}
                     showImage={thumbnailClicked}
                     removeImage={deleteClicked}

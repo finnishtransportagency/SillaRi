@@ -3,7 +3,6 @@ import { getOrigin } from "./request";
 import { NETWORK_RESPONSE_NOT_OK } from "./constants";
 import { actions } from "../store/rootSlice";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
-import ISupervisionImageInput from "../interfaces/ISupervisionImageInput";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
@@ -289,7 +288,7 @@ export const updateSupervisionReport = async (updateRequest: ISupervisionReport,
   }
 };
 
-export const sendImageUpload = async (fileUpload: ISupervisionImageInput, dispatch: Dispatch): Promise<void> => {
+export const sendImageUpload = async (fileUpload: ISupervisionImage, dispatch: Dispatch): Promise<void> => {
   try {
     console.log("SendImageUpload");
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { sendImageUpload: false } });
