@@ -57,13 +57,20 @@ export const groupSupervisionsByDate = (
   return supervisionDays;
 };
 
+const getDisplayedDate = (supervision: ISupervision) => {
+  // Get the date and time displayed to the user, so the planned time or actual time depending on the status
+  const { currentStatus, startedTime, plannedTime } = supervision || {};
+  const { status } = currentStatus || {};
+  return status === SupervisionStatus.PLANNED ? plannedTime : startedTime;
+};
+
 export const groupSupervisionsByPlannedDate = (supervisions: ISupervision[] | undefined): ISupervisionDay[] => {
   const compareDates = (supervision: ISupervision, supervisionDay: ISupervisionDay) => {
-    return moment(supervision.plannedTime).isSame(moment(supervisionDay.date), "day");
+    return moment(getDisplayedDate(supervision)).isSame(moment(supervisionDay.date), "day");
   };
 
   const createSupervisionDay = (supervision: ISupervision): ISupervisionDay => {
-    return { date: moment(supervision.plannedTime).startOf("day").toDate(), supervisions: [supervision] };
+    return { date: moment(getDisplayedDate(supervision)).startOf("day").toDate(), supervisions: [supervision] };
   };
 
   return groupSupervisionsByDate(supervisions, compareDates, createSupervisionDay);
@@ -105,15 +112,10 @@ export const sortSupervisionsByBridgeOrder = (supervisions: ISupervision[] | und
 export const sortSupervisionsByTimeAndBridgeOrder = (supervisions: ISupervision[] | undefined): void => {
   if (supervisions && supervisions.length > 0) {
     supervisions.sort((a, b) => {
-      const { currentStatus: currentStatusA, startedTime: startedTimeA, plannedTime: plannedTimeA } = a || {};
-      const { currentStatus: currentStatusB, startedTime: startedTimeB, plannedTime: plannedTimeB } = b || {};
-      const { status: supervisionStatusA } = currentStatusA || {};
-      const { status: supervisionStatusB } = currentStatusB || {};
-
       // Sort using the same time as displayed to the user, so use the planned time or actual time depending on the status
       // Similar to the supervisionDays sort issue above, use startOf to use the time without seconds to get the correct order
-      const timeA = supervisionStatusA === SupervisionStatus.PLANNED ? plannedTimeA : startedTimeA;
-      const timeB = supervisionStatusB === SupervisionStatus.PLANNED ? plannedTimeB : startedTimeB;
+      const timeA = getDisplayedDate(a);
+      const timeB = getDisplayedDate(b);
       const timeDiff = moment(timeA).startOf("minute").diff(moment(timeB).startOf("minute"), "minutes");
 
       // Sort supervisions with the same time by first routeTransportId and then bridge ordinal
