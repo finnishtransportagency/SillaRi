@@ -139,7 +139,7 @@ public class ImageController {
     public boolean deleteImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deleteImage");
         try {
-            if (!canSupervisorUpdateSupervision(id)) {
+            if (!isSupervisionImageOfSupervisor(id)) {
                 throw new AccessDeniedException("Image not of the user");
             }
 
