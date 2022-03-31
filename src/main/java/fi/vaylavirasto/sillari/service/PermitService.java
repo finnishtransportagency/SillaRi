@@ -84,7 +84,7 @@ public class PermitService {
         return permitModel;
     }
 
-    //returns all bridges if trasportNumber null
+    //returns all bridges if routeIdToMaxTransportNumberMap null, other wise with next available trasportnumber given per route in routeIdToMaxTransportNumberMap
     private void fillPermitDetails(PermitModel permitModel, Map<Integer, Integer> routeIdToMaxTransportNumberMap) {
         if (permitModel != null) {
             if (permitModel.getAxleChart() != null) {
