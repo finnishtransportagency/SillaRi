@@ -17,9 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Base64;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PermitService {
@@ -52,13 +50,27 @@ public class PermitService {
 
     public PermitModel getPermitWithOnlyNextAvailableTransportInstance(Integer permitId) {
         PermitModel permitModel = permitRepository.getPermit(permitId);
-        logger.debug("hellohau:"+permitId);
+        logger.debug("hellohau:" + permitId);
+        Map<Integer, Integer> maxUsedTransportNumbers = createMaxUsedTransportNumbersMap(permitId);
+
+
         Integer maxUsedTransportNumber = routeTransportRepository.getRouteTransportsByPermitId(permitId).stream().max(Comparator.comparing(RouteTransportModel::getTransportNumber)).map(rt -> rt.getTransportNumber()).orElse(null);
-        logger.debug("hellohau:"+routeTransportRepository.getRouteTransportsByPermitId(permitId));
-        logger.debug("hellohau:"+maxUsedTransportNumber);
-        Integer nextAvailableTransportNumber = maxUsedTransportNumber == null ? 1 : maxUsedTransportNumber + 1;
-        fillPermitDetails(permitModel, nextAvailableTransportNumber);
+
+        logger.debug("hellohau:" + routeTransportRepository.getRouteTransportsByPermitId(permitId));
+        logger.debug("hellohau:" + maxUsedTransportNumbers);
+        fillPermitDetails(permitModel, maxUsedTransportNumbers);
         return permitModel;
+    }
+
+    private Map<Integer, Integer> createMaxUsedTransportNumbersMap(Integer permitId) {
+        List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByPermitId(permitId);
+        Map<Integer, Integer> returnMap = new HashMap();
+        for (RouteTransportModel routeTransportModel : routeTransportModels) {
+            if (returnMap.get(routeTransportModel.getRouteId()) == null || routeTransportModel.getTransportNumber() > returnMap.get(routeTransportModel.getRouteId())) {
+                returnMap.put(routeTransportModel.getRouteId(), routeTransportModel.getTransportNumber());
+            }
+        }
+        return returnMap;
     }
 
     public PermitModel getPermitOfRouteTransport(Integer routeTransportId) {
@@ -76,7 +88,7 @@ public class PermitService {
     }
 
     //returns all bridges if trasportNumber null
-    private void fillPermitDetails(PermitModel permitModel, Integer transportNumber) {
+    private void fillPermitDetails(PermitModel permitModel, Map<Integer, Integer> routeIdToMaxTransportNumberMap) {
         if (permitModel != null) {
             if (permitModel.getAxleChart() != null) {
                 List<AxleModel> axles = axleRepository.getAxlesOfChart(permitModel.getAxleChart().getId());
@@ -93,7 +105,8 @@ public class PermitService {
             // TODO - if this returns too much data, add this as a separate method in RouteController
             if (permitModel.getRoutes() != null) {
                 permitModel.getRoutes().forEach(routeModel -> {
-                    List<RouteBridgeModel> routeBridgeModels = transportNumber == null ? routeBridgeRepository.getRouteBridges(routeModel.getId()) : routeBridgeRepository.getRouteBridges(routeModel.getId(), transportNumber);
+                    Integer routeMaxTrasportNumber = routeIdToMaxTransportNumberMap == null ? null : routeIdToMaxTransportNumberMap.get(routeModel.getId());
+                    List<RouteBridgeModel> routeBridgeModels = routeMaxTrasportNumber == null ? routeBridgeRepository.getRouteBridges(routeModel.getId()) : routeBridgeRepository.getRouteBridges(routeModel.getId(), routeMaxTrasportNumber + 1);
                     routeModel.setRouteBridges(routeBridgeModels);
                 });
             }
