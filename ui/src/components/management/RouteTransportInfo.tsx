@@ -227,18 +227,22 @@ const RouteTransportInfo = ({
               </IonCol>
             </IonRow>
 
-            {!!routeTransportId && routeTransportId > 0 && (
-              <IonRow className="ion-margin">
-                <IonCol size="8" size-sm="4" size-lg="3" size-xl="2">
-                  <IonText>{t("management.transportDetail.password")}</IonText>
-                </IonCol>
+            <IonRow className="ion-margin">
+              <IonCol size="8" size-sm="4" size-lg="3" size-xl="2">
+                <IonText className="headingText">{t("management.transportDetail.password")}</IonText>
+              </IonCol>
+              {!!routeTransportId && routeTransportId > 0 ? (
                 <IonCol size="4" size-sm="8" size-lg="9" size-xl="10">
                   <IonText className="linkText" onClick={(evt) => showPassword(evt)}>
                     {t("management.companySummary.action.show")}
                   </IonText>
                 </IonCol>
-              </IonRow>
-            )}
+              ) : (
+                <IonCol>
+                  <IonText>{t("management.transportDetail.passwordNotGenerated")}</IonText>
+                </IonCol>
+              )}
+            </IonRow>
 
             <IonRow className="ion-margin">
               <IonCol>
@@ -278,12 +282,16 @@ const RouteTransportInfo = ({
                 </IonRow>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    <BridgeGrid
-                      supervisors={supervisors}
-                      permit={permit}
-                      modifiedRouteTransportDetail={modifiedRouteTransportDetail}
-                      setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-                    />
+                    {routeBridges.length > 0 ? (
+                      <BridgeGrid
+                        supervisors={supervisors}
+                        permit={permit}
+                        modifiedRouteTransportDetail={modifiedRouteTransportDetail}
+                        setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+                      />
+                    ) : (
+                      <IonText>{t("management.transportDetail.bridgeInfo.noBridges")}</IonText>
+                    )}
                   </IonCol>
                 </IonRow>
               </>
