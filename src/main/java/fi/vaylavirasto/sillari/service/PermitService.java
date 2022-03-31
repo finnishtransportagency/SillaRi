@@ -53,9 +53,6 @@ public class PermitService {
         logger.debug("hellohau:" + permitId);
         Map<Integer, Integer> maxUsedTransportNumbers = createMaxUsedTransportNumbersMap(permitId);
 
-
-        Integer maxUsedTransportNumber = routeTransportRepository.getRouteTransportsByPermitId(permitId).stream().max(Comparator.comparing(RouteTransportModel::getTransportNumber)).map(rt -> rt.getTransportNumber()).orElse(null);
-
         logger.debug("hellohau:" + routeTransportRepository.getRouteTransportsByPermitId(permitId));
         logger.debug("hellohau:" + maxUsedTransportNumbers);
         fillPermitDetails(permitModel, maxUsedTransportNumbers);
