@@ -22,6 +22,9 @@
       "checkTimeShort": "Tarkista aika",
       "invalidTime": "Virheellinen kellonaika",
       "fixTimes": "Tarkista ja korjaa ristiriitaiset kellonajat siltojen arvioiduista ylitysajoista ennen jatkamista."
+    },
+    "userConfirmation": {
+      "leavePage": "Haluatko varmasti poistua sivulta?"
     }
   },
   "main": {

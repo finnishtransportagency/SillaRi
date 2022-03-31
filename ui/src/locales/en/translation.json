@@ -22,6 +22,9 @@
       "checkTimeShort": "Check the time",
       "invalidTime": "Invalid time",
       "fixTimes": "Check and correct conflicting times for estimated bridge crossings before proceeding."
+    },
+    "userConfirmation": {
+      "leavePage": "Are you sure you want to leave the page?"
     }
   },
   "main": {

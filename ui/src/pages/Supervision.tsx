@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
+import { Prompt, useHistory, useParams } from "react-router-dom";
 import { IonContent, IonPage, useIonAlert } from "@ionic/react";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
@@ -133,28 +133,6 @@ const Supervision = (): JSX.Element => {
     }
   };
 
-  const showConfirmLeavePage = () => {
-    present({
-      header: t("supervision.warning.leavePage"),
-      message: t("supervision.warning.unsavedChanges"),
-      buttons: [
-        t("common.answer.no"),
-        {
-          text: t("common.answer.yes"),
-          handler: () => history.goBack(),
-        },
-      ],
-    });
-  };
-
-  const confirmGoBack = (): void => {
-    if (reportHasUnsavedChanges(modifiedReport, savedReport)) {
-      showConfirmLeavePage();
-    } else {
-      history.goBack();
-    }
-  };
-
   const takePhotosClicked = (): void => {
     saveReport(savedReport ? savedReport.draft : true);
     history.push(`/takephotos/${supervisionId}`);
@@ -175,7 +153,7 @@ const Supervision = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} includeSendingList confirmGoBack={confirmGoBack} />
+      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} includeSendingList />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />
@@ -199,6 +177,19 @@ const Supervision = (): JSX.Element => {
             />
           </>
         )}
+        <Prompt
+          message={(location, action) => {
+            console.log("action", action, "location", location.pathname);
+
+            // Do not prevent history.push() or history.replace(), only going back
+            if (action !== "POP") {
+              return true;
+            }
+
+            const detailMessage = t("supervision.warning.unsavedChanges");
+            return reportHasUnsavedChanges(modifiedReport, savedReport) ? detailMessage : "";
+          }}
+        />
       </IonContent>
     </IonPage>
   );

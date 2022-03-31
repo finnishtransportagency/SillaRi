@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
-import { IonApp, IonButton, IonContent, setupIonicReact } from "@ionic/react";
+import { IonApp, IonButton, IonContent, setupIonicReact, useIonAlert } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { withTranslation } from "react-i18next";
+import { useTranslation, withTranslation } from "react-i18next";
 import { onlineManager, QueryClient, QueryClientProvider } from "react-query";
 import { persistQueryClient } from "react-query/persistQueryClient-experimental";
 import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
@@ -60,6 +60,9 @@ const App: React.FC = () => {
   const [homePage, setHomePage] = useState<string>("/supervisions");
   const [errorCode, setErrorCode] = useState<number>(0);
   const [version, setVersion] = useState<string>("-");
+  const [present] = useIonAlert();
+
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const {
@@ -206,7 +209,18 @@ const App: React.FC = () => {
         {!userData ? (
           <IonContent className="ion-padding">{statusCode >= 400 ? <>{renderError(statusCode)}</> : <div>Starting app...</div>}</IonContent>
         ) : (
-          <IonReactRouter>
+          <IonReactRouter
+            getUserConfirmation={(message, callback) => {
+              present({
+                header: t("common.userConfirmation.leavePage"),
+                message: message,
+                buttons: [
+                  { text: t("common.answer.no"), handler: () => callback(false) },
+                  { text: t("common.answer.yes"), handler: () => callback(true) },
+                ],
+              });
+            }}
+          >
             <SidebarMenu roles={userData.roles} version={version} />
             <IonContent id="MainContent">
               <Switch>

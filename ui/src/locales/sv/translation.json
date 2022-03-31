@@ -22,6 +22,9 @@
       "checkTimeShort": "(SV) Check the time",
       "invalidTime": "(SV) Invalid time",
       "fixTimes": "(SV) Check and correct conflicting times for estimated bridge crossings before proceeding."
+    },
+    "userConfirmation": {
+      "leavePage": "(SV) Haluatko varmasti poistua sivulta?"
     }
   },
   "main": {
