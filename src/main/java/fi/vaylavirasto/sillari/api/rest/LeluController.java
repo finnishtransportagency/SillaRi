@@ -146,7 +146,7 @@ public class LeluController {
                 // Get Bridges From Trex To DB
 
                 //TODO call non dev version when time
-                LeluPermitResponseDTO permit = leluService.createOrUpdatePermitDevVersion(permitDTO);
+                LeluPermitResponseDTO permit = leluService.createPermit(permitDTO);
 
                 //update bridges from trex in the background so we can response lelu quicker
                 ExecutorService executor = Executors.newWorkStealingPool();

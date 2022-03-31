@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari;
 
 import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.lelu.permit.*;
+import fi.vaylavirasto.sillari.api.rest.error.LeluPermitSaveException;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
@@ -81,7 +82,7 @@ public class LeluServiceTest {
     private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository,supervisionStatusRepository, supervisionReportRepository, messageSource, leluRouteUploadUtil, awss3Client, trexService, supervisionService);
 
     @Test
-    public void testCreatePermitWithExistingCompany() {
+    public void testCreatePermitWithExistingCompany() throws LeluPermitSaveException {
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
         Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(1);
@@ -89,7 +90,7 @@ public class LeluServiceTest {
 
         LeluPermitResponseDTO response = null;
         try {
-            response = leluService.createOrUpdatePermit(getPermitDTO());
+            response = leluService.createPermit(getPermitDTO());
         } catch (LeluDeleteRouteWithSupervisionsException e) {
             e.printStackTrace();
         }
@@ -130,9 +131,9 @@ public class LeluServiceTest {
         LeluPermitResponseDTO response = null;
         try {
             System.out.println("TESTIOUS");
-            response = leluService.createOrUpdatePermit(getPermitDTO());
+            response = leluService.createPermit(getPermitDTO());
             System.out.println("TESTIOUS");
-        } catch (LeluDeleteRouteWithSupervisionsException e) {
+        } catch (LeluPermitSaveException e) {
             System.out.println("TESTIOUS");
             e.printStackTrace();
         }
@@ -160,7 +161,7 @@ public class LeluServiceTest {
     }
 
     @Test
-    public void testUpdatePermit() {
+    public void testUpdatePermit() throws LeluPermitSaveException {
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
         Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(2);
         Mockito.when(routeRepository.getRouteIdsWithLeluIds(Mockito.anyInt())).thenReturn(getRouteLeluIdAndIdMap());
@@ -168,7 +169,7 @@ public class LeluServiceTest {
 
         LeluPermitResponseDTO response = null;
         try {
-            response = leluService.createOrUpdatePermit(getPermitDTO());
+            response = leluService.createPermit(getPermitDTO());
         } catch (LeluDeleteRouteWithSupervisionsException e) {
             e.printStackTrace();
         }

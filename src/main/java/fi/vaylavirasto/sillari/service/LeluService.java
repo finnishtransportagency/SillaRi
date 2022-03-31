@@ -118,7 +118,7 @@ public class LeluService {
     }
 
     //TODO Will eplace createOrUpdatePermitDevVersion eventually.
-    public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) throws LeluPermitSaveException {
+    public LeluPermitResponseDTO createPermit(LeluPermitDTO permitDTO) throws LeluPermitSaveException {
         LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
 
         logger.debug("Map permit from: " + permitDTO);
