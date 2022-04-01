@@ -102,15 +102,15 @@
     "permitInfo": {
       "title": "Luvan tiedot",
       "permitNumber": "Luvan numero",
-      "routeDeparturePoint": "Reitin lähtöpiste",
-      "routeArrivalPoint": "Reitin päätepiste"
+      "routeDeparturePoint": "Reitin lähtöpaikka",
+      "routeArrivalPoint": "Reitin määräpaikka"
     },
     "routeInfo": {
       "title": "Reitin tiedot",
       "route": "Reitti",
       "showRouteOnMap": "Reitti kartalla",
-      "departurePoint": "Lähtöpiste",
-      "arrivalPoint": "Päätepiste"
+      "departurePoint": "Lähtöpaikka",
+      "arrivalPoint": "Määräpaikka"
     },
     "bridgesToSupervise": "Valvottavat sillat"
   },
