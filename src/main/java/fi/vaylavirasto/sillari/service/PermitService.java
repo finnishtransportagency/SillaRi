@@ -59,11 +59,15 @@ public class PermitService {
         return permitModel;
     }
 
+    //Returns map from routeId to max routeTransport.tranportNumber of that route, 0 if no routeTransports.
     private Map<Integer, Integer> createMaxUsedTransportNumbersMap(Integer permitId) {
         List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByPermitId(permitId);
         Map<Integer, Integer> returnMap = new HashMap();
         for (RouteTransportModel routeTransportModel : routeTransportModels) {
-            if (returnMap.get(routeTransportModel.getRouteId()) == null || routeTransportModel.getTransportNumber() > returnMap.get(routeTransportModel.getRouteId())) {
+            if (returnMap.get(routeTransportModel.getRouteId()) == null){
+                returnMap.put(routeTransportModel.getRouteId(), 0);
+            }
+            else if (routeTransportModel.getTransportNumber() > returnMap.get(routeTransportModel.getRouteId())) {
                 returnMap.put(routeTransportModel.getRouteId(), routeTransportModel.getTransportNumber());
             }
         }
