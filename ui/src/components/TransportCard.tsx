@@ -26,13 +26,13 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
       <IonLabel>
         <IonLabel className="headingText">
           <Moment format={DATE_TIME_FORMAT_MIN}>{transportDeparted ? departureTime : plannedDepartureTime}</Moment>
-          {!transportDeparted && <IonText>{` (${t("company.transport.estimatedDepartureTime")})`}</IonText>}
+          {!transportDeparted && <IonText>{` (${t("companyTransports.estimatedDepartureTime")})`}</IonText>}
         </IonLabel>
         <IonLabel>
           <small>{routeName}</small>
         </IonLabel>
         <IonLabel>
-          <small>{`${t("company.transportPermit")} ${permitNumber}`}</small>
+          <small>{`${t("companyTransports.transportPermit")} ${permitNumber}`}</small>
         </IonLabel>
       </IonLabel>
     </IonItem>
