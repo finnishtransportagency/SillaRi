@@ -63,9 +63,7 @@ public class PermitService {
         Map<Integer, Integer> returnMap = new HashMap();
         if (routeTransportModels != null) {
             for (RouteTransportModel routeTransportModel : routeTransportModels) {
-                if (returnMap.get(routeTransportModel.getRouteId()) == null) {
-                    returnMap.put(routeTransportModel.getRouteId(), 0);
-                } else if (routeTransportModel.getTransportNumber() > returnMap.get(routeTransportModel.getRouteId())) {
+                if (returnMap.get(routeTransportModel.getRouteId()) == null || routeTransportModel.getTransportNumber() > returnMap.get(routeTransportModel.getRouteId())) {
                     returnMap.put(routeTransportModel.getRouteId(), routeTransportModel.getTransportNumber());
                 }
             }
