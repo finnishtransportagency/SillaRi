@@ -43,7 +43,7 @@ public class PermitService {
 
     public PermitModel getPermit(Integer permitId) {
         PermitModel permitModel = permitRepository.getPermit(permitId);
-        fillPermitDetails(permitModel, null);
+        fillPermitDetails(permitModel);
         return permitModel;
     }
 
@@ -76,42 +76,62 @@ public class PermitService {
 
     public PermitModel getPermitOfRouteTransport(Integer routeTransportId) {
         PermitModel permitModel = permitRepository.getPermitByRouteTransportId(routeTransportId);
-        fillPermitDetails(permitModel, null);
+        fillPermitDetails(permitModel);
         return permitModel;
     }
 
     public PermitModel getPermitOfRouteTransport(Integer routeTransportId, boolean fillDetails) {
         PermitModel permitModel = permitRepository.getPermitByRouteTransportId(routeTransportId);
         if (fillDetails) {
-            fillPermitDetails(permitModel, null);
+            fillPermitDetails(permitModel);
         }
         return permitModel;
     }
 
-    //returns all bridges if routeIdToMaxTransportNumberMap null, other wise with next available trasportnumber given per route in routeIdToMaxTransportNumberMap
+    //fills permit with bridges with next available trasportnumber given per route in routeIdToMaxTransportNumberMap
     private void fillPermitDetails(PermitModel permitModel, Map<Integer, Integer> routeIdToMaxTransportNumberMap) {
         if (permitModel != null) {
-            if (permitModel.getAxleChart() != null) {
-                List<AxleModel> axles = axleRepository.getAxlesOfChart(permitModel.getAxleChart().getId());
-                permitModel.getAxleChart().setAxles(axles);
-            }
-
-            List<VehicleModel> vehicles = vehicleRepository.getVehiclesOfPermit(permitModel.getId());
-            permitModel.setVehicles(vehicles);
-
-            List<RouteModel> routes = routeRepository.getRoutesByPermitId(permitModel.getId());
-            permitModel.setRoutes(routes);
+            fillVehiclesAndRoutes(permitModel);
 
             // The transport company UI needs the route bridges for all routes in the permit
             // TODO - if this returns too much data, add this as a separate method in RouteController
             if (permitModel.getRoutes() != null) {
                 permitModel.getRoutes().forEach(routeModel -> {
-                    Integer routeMaxTrasportNumber = routeIdToMaxTransportNumberMap == null ? null : routeIdToMaxTransportNumberMap.get(routeModel.getId());
-                    List<RouteBridgeModel> routeBridgeModels = routeMaxTrasportNumber == null ? routeBridgeRepository.getRouteBridges(routeModel.getId()) : routeBridgeRepository.getRouteBridges(routeModel.getId(), routeMaxTrasportNumber + 1);
+                    Integer routeMaxTransportNumber = routeIdToMaxTransportNumberMap.isEmpty() ? 0 : routeIdToMaxTransportNumberMap.get(routeModel.getId());
+                    List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRouteBridges(routeModel.getId(), routeMaxTransportNumber + 1);
                     routeModel.setRouteBridges(routeBridgeModels);
                 });
             }
         }
+    }
+
+
+    private void fillPermitDetails(PermitModel permitModel) {
+        if (permitModel != null) {
+            fillVehiclesAndRoutes(permitModel);
+
+            // The transport company UI needs the route bridges for all routes in the permit
+            // TODO - if this returns too much data, add this as a separate method in RouteController
+            if (permitModel.getRoutes() != null) {
+                permitModel.getRoutes().forEach(routeModel -> {
+                    List<RouteBridgeModel> routeBridgeModels = routeBridgeRepository.getRouteBridges(routeModel.getId());
+                    routeModel.setRouteBridges(routeBridgeModels);
+                });
+            }
+        }
+    }
+
+    private void fillVehiclesAndRoutes(PermitModel permitModel) {
+        if (permitModel.getAxleChart() != null) {
+            List<AxleModel> axles = axleRepository.getAxlesOfChart(permitModel.getAxleChart().getId());
+            permitModel.getAxleChart().setAxles(axles);
+        }
+
+        List<VehicleModel> vehicles = vehicleRepository.getVehiclesOfPermit(permitModel.getId());
+        permitModel.setVehicles(vehicles);
+
+        List<RouteModel> routes = routeRepository.getRoutesByPermitId(permitModel.getId());
+        permitModel.setRoutes(routes);
     }
 
     public void getPermitPdf(HttpServletResponse response, @RequestParam String objectKey) throws IOException {
