@@ -85,13 +85,10 @@ public class PermitService {
         return permitModel;
     }
 
-    //fills permit with bridges with next available trasport number given per route in routeIdToMaxTransportNumberMap
+    //fills permit with bridges with next available transport number given per route in routeIdToMaxTransportNumberMap
     private void fillPermitDetails(PermitModel permitModel, Map<Integer, Integer> routeIdToMaxTransportNumberMap) {
         if (permitModel != null) {
             fillVehiclesAndRoutes(permitModel);
-
-            // The transport company UI needs the route bridges for all routes in the permit
-            // TODO - if this returns too much data, add this as a separate method in RouteController
             if (permitModel.getRoutes() != null) {
                 permitModel.getRoutes().forEach(routeModel -> {
                     Integer routeMaxTransportNumber =  routeIdToMaxTransportNumberMap.get(routeModel.getId());
