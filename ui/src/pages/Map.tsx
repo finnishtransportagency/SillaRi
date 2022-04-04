@@ -8,6 +8,7 @@ import MapContainer from "../components/MapContainer";
 interface MapProps {
   routeBridgeId?: string;
   routeId?: string;
+  transportNumber?: string;
 }
 
 const Map = (): JSX.Element => {
@@ -15,13 +16,13 @@ const Map = (): JSX.Element => {
 
   // The page route provides either routeBridgeId or routeId, but not both
   // These values are checked later, so don't use default values here
-  const { routeBridgeId, routeId } = useParams<MapProps>();
+  const { routeBridgeId, routeId, transportNumber } = useParams<MapProps>();
 
   return (
     <IonPage>
       <Header title={t("main.header.title")} />
       <IonContent>
-        <MapContainer routeBridgeIdParam={routeBridgeId} routeIdParam={routeId} />
+        <MapContainer routeBridgeIdParam={routeBridgeId} routeIdParam={routeId} transportNumberParam={transportNumber} />
       </IonContent>
     </IonPage>
   );

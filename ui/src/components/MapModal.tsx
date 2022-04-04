@@ -6,14 +6,15 @@ import MapContainer from "./MapContainer";
 interface MapModalProps {
   routeBridgeId?: string;
   routeId?: string;
+  transportNumber?: string;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }
 
-const MapModal = ({ routeBridgeId, routeId, isOpen, setIsOpen }: MapModalProps): JSX.Element => {
+const MapModal = ({ routeBridgeId, routeId, transportNumber, isOpen, setIsOpen }: MapModalProps): JSX.Element => {
   return (
     <IonModal isOpen={isOpen} onDidDismiss={() => setIsOpen(false)}>
-      <MapContainer routeBridgeIdParam={routeBridgeId} routeIdParam={routeId} />
+      <MapContainer routeBridgeIdParam={routeBridgeId} routeIdParam={routeId} transportNumberParam={transportNumber} />
 
       <IonFab vertical="top" horizontal="end" slot="fixed">
         <IonFabButton color="light" onClick={() => setIsOpen(false)}>

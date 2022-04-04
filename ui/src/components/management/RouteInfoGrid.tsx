@@ -159,7 +159,7 @@ const RouteInfoGrid = ({
                     </IonText>
                     <IonIcon className="otherIcon" icon={mapPoint} />
 
-                    <MapModal routeId={String(selectedRouteId)} isOpen={isMapModalOpen} setIsOpen={() => setMapModalOpen(false)} />
+                    <MapModal routeId={String(selectedRouteId)} transportNumber={String(selectedRouteId)} isOpen={isMapModalOpen} setIsOpen={() => setMapModalOpen(false)} />
                   </>
                 )}
               </IonCol>

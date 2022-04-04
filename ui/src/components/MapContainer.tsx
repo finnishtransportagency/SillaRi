@@ -32,6 +32,7 @@ import "./MapContainer.scss";
 interface MapContainerProps {
   routeBridgeIdParam?: string;
   routeIdParam?: string;
+  transportNumberParam?: string;
 }
 
 const MapContainer = ({ routeBridgeIdParam, routeIdParam }: MapContainerProps): JSX.Element => {
