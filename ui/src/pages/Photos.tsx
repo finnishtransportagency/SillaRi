@@ -11,7 +11,6 @@ import camera from "../theme/icons/camera_white.svg";
 import { onRetry } from "../utils/backendData";
 import { deleteImage, getSupervision, sendImageUpload } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
-import { getOrigin } from "../utils/request";
 import ImagePreview from "../components/ImagePreview";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
@@ -174,17 +173,16 @@ const Photos = (): JSX.Element => {
                 return bm.diff(am, "seconds");
               })
               .map((imageItem) => {
-                const thumbnailClicked = (): void => showImage(true, imageItem.base64 as string);
                 const deleteClicked = (): void => removeImageItem(imageItem.id);
                 const key = `image_${imageItem.id}`;
 
                 return (
                   <PhotoItem
                     key={key}
-                    imageUrl={imageItem.base64}
+                    image={imageItem}
                     taken={moment(imageItem.taken, DATE_TIME_FORMAT).toDate()}
                     isLoading={isLoading}
-                    showImage={thumbnailClicked}
+                    showImage={(imageUrl) => showImage(true, imageUrl)}
                     removeImage={deleteClicked}
                   />
                 );
@@ -198,22 +196,16 @@ const Photos = (): JSX.Element => {
                 return bm.diff(am, "seconds");
               })
               .map((supervisionImage) => {
-                // When offline, show images using the base64 data, otherwise download the image from the backend
-                const imageUrl =
-                  supervisionImage.base64 && supervisionImage.base64.length > 0
-                    ? supervisionImage.base64
-                    : `${getOrigin()}/api/images/get?id=${supervisionImage.id}`;
-                const thumbnailClicked = (): void => showImage(true, imageUrl);
                 const deleteClicked = (): void => deleteImageObject(supervisionImage.id);
                 const key = `savedimage_${supervisionImage.id}`;
 
                 return (
                   <PhotoItem
                     key={key}
-                    imageUrl={imageUrl}
+                    image={supervisionImage}
                     taken={moment(supervisionImage.taken, DATE_TIME_FORMAT).toDate()}
                     isLoading={isLoading}
-                    showImage={thumbnailClicked}
+                    showImage={(imageUrl) => showImage(true, imageUrl)}
                     removeImage={deleteClicked}
                   />
                 );

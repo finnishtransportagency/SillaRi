@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { IonCol, IonImg, IonRow, IonSpinner, IonThumbnail } from "@ionic/react";
+import { IonCol, IonRow, IonSpinner } from "@ionic/react";
 import { onlineManager, useIsMutating } from "react-query";
 import moment from "moment";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
-import { getOrigin } from "../utils/request";
 import ImagePreview from "./ImagePreview";
+import ImageThumbnail from "./ImageThumbnail";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import "./ImageThumbnailRow.css";
 
@@ -43,15 +43,11 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
             return bm.diff(am, "seconds");
           })
           .map((image) => {
-            // When offline, show images using the base64 data, otherwise download the image from the backend
-            const imageUrl = image.base64 && image.base64.length > 0 ? image.base64 : `${getOrigin()}/api/images/get?id=${image.id}`;
             const key = `image_${image.id}`;
 
             return (
               <IonCol key={key} size="3">
-                <IonThumbnail className="imageThumbnail" onClick={() => showImage(true, imageUrl)}>
-                  <IonImg src={imageUrl} />
-                </IonThumbnail>
+                <ImageThumbnail image={image} className="imageThumbnail" showImage={(imageUrl) => showImage(true, imageUrl)} />
               </IonCol>
             );
           })}

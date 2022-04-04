@@ -288,6 +288,27 @@ export const updateSupervisionReport = async (updateRequest: ISupervisionReport,
   }
 };
 
+export const getImageBase64 = async (id: number, dispatch: Dispatch): Promise<string> => {
+  try {
+    console.log("GetImageBase64");
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getImageBase64: false } });
+
+    const imageGetResponse = await fetch(`${getOrigin()}/api/images/getimagebase64?id=${id}`);
+
+    if (imageGetResponse.ok) {
+      const imageGetResult = await imageGetResponse.text();
+      // console.log("getImageBase64 response", imageGetResult);
+      return imageGetResult;
+    } else {
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getImageBase64: true } });
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
+    }
+  } catch (err) {
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getImageBase64: true } });
+    throw new Error(err as string);
+  }
+};
+
 export const sendImageUpload = async (fileUpload: ISupervisionImage, dispatch: Dispatch): Promise<void> => {
   try {
     console.log("SendImageUpload");
