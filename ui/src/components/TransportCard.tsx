@@ -3,7 +3,7 @@ import { IonItem, IonLabel, IonText } from "@ionic/react";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import Moment from "react-moment";
 import arrowRight from "../theme/icons/arrow-right.svg";
-import { DATE_TIME_FORMAT_MIN, TIME_FORMAT_MIN, TransportStatus } from "../utils/constants";
+import { DATE_FORMAT, TIME_FORMAT_MIN, TransportStatus } from "../utils/constants";
 import { useTranslation } from "react-i18next";
 import { getNextPlannedSupervisionTime } from "../utils/supervisionUtil";
 
@@ -14,7 +14,7 @@ interface TransportCardProps {
 const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { id: routeTransportId, currentStatus, departureTime, plannedDepartureTime, route, supervisions = [] } = transport || {};
+  const { id: routeTransportId, currentStatus, departureTime, plannedDepartureTime, tractorUnit = "", route, supervisions = [] } = transport || {};
 
   const { permit, name: routeName } = route || {};
   const { permitNumber } = permit || {};
@@ -28,8 +28,8 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
     <IonItem className="itemIcon iconLink" detail detailIcon={arrowRight} routerLink={`/routetransportdetail/${routeTransportId}`}>
       <IonLabel>
         <IonLabel className="headingText">
-          <Moment format={DATE_TIME_FORMAT_MIN}>{transportDeparted ? departureTime : plannedDepartureTime}</Moment>
-          {!transportDeparted && <IonText>{` (${t("companyTransports.estimatedDepartureTime")})`}</IonText>}
+          <Moment format={DATE_FORMAT}>{transportDeparted ? departureTime : plannedDepartureTime}</Moment>
+          <IonText>{` | ${tractorUnit}`}</IonText>
         </IonLabel>
         <IonLabel>
           <small>{routeName}</small>
