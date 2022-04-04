@@ -6,6 +6,7 @@ import fi.vaylavirasto.sillari.service.fim.FIMService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -194,6 +195,16 @@ public class RouteTransportService {
     public void addRouteTransportStatus(RouteTransportStatusModel routeTransportStatusModel) {
         if (routeTransportStatusModel != null) {
             routeTransportStatusRepository.insertTransportStatus(routeTransportStatusModel.getRouteTransportId(), routeTransportStatusModel.getStatus());
+        }
+    }
+
+    public Integer getMaxUsedTransportNumberOfRoute(Integer routeId) {
+        List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByRouteId(routeId);
+        RouteTransportModel routeTransportModel = routeTransportModels.stream().max(Comparator.comparing(RouteTransportModel::getTransportNumber)).orElse(null);
+        if (routeTransportModel != null) {
+            return routeTransportModel.getTransportNumber();
+        } else {
+            return 0;
         }
     }
 }

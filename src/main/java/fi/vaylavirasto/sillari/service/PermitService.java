@@ -48,7 +48,7 @@ public class PermitService {
     }
 
 
-    public PermitModel getPermitWithOnlyNextAvailableTransportInstance(Integer permitId) {
+    public PermitModel getPermitWithOnlyNextAvailableTransportInstances(Integer permitId) {
         PermitModel permitModel = permitRepository.getPermit(permitId);
 
         Map<Integer, Integer> maxUsedTransportNumbers = createMaxUsedTransportNumbersMap(permitId);
@@ -85,7 +85,7 @@ public class PermitService {
         return permitModel;
     }
 
-    //fills permit with bridges with next available trasportnumber given per route in routeIdToMaxTransportNumberMap
+    //fills permit with bridges with next available trasport number given per route in routeIdToMaxTransportNumberMap
     private void fillPermitDetails(PermitModel permitModel, Map<Integer, Integer> routeIdToMaxTransportNumberMap) {
         if (permitModel != null) {
             fillVehiclesAndRoutes(permitModel);
