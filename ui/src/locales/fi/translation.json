@@ -158,7 +158,7 @@
     "placeholder": "Lisää tekstiä tähän"
   },
   "supervision": {
-    "title": "Sillan valvonta",
+    "title": "Sillanvalvonta",
     "permitNumber": "Lupanumero",
     "supervisionStarted": "Valvonta aloitettu",
     "bridgeName": "Sillan tiedot",
@@ -276,6 +276,7 @@
     },
     "transportDetail": {
       "headerTitleAdd": "Lisää uusi kuljetus",
+      "headerTitleEdit": "Muokkaa kuljetusta",
       "headerTitleDetail": "Kuljetuksen tiedot",
       "transportPermit": "Kuljetuslupa",
       "validityPeriod": "Voimassaoloaika",
@@ -344,9 +345,6 @@
   },
   "transports": {
     "transportCodeInput": {
-      "header": {
-        "title": "Kuljetukset"
-      },
       "inputTitle": "Tuleva kuljetus",
       "inputLabel": "Kuljetuksen salasana",
       "inputPlaceholder": "Salasana",

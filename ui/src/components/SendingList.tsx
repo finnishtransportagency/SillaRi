@@ -97,7 +97,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
     >
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle class="headingBoldText">{`${t("sendingList.title")} (${unsentSupervisions.length})`}</IonTitle>
+          <IonTitle class="headingText">{`${t("sendingList.title")} (${unsentSupervisions.length})`}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={() => setOpen(false)}>
               <IonIcon className="otherIconLarge" icon={close} />
