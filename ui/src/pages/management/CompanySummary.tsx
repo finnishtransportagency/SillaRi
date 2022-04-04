@@ -46,7 +46,12 @@ const CompanySummary = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={name} somethingFailed={isFailed.getCompany} />
+      <Header
+        title={t("main.header.title")}
+        secondaryTitle={name}
+        titleStyle="headingBoldText ion-text-center"
+        somethingFailed={isFailed.getCompany}
+      />
       <IonContent color="light">
         {noNetworkNoData ? (
           <NoNetworkNoData />

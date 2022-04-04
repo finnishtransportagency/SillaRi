@@ -272,6 +272,7 @@
     },
     "transportDetail": {
       "headerTitleAdd": "Lägg till transport",
+      "headerTitleEdit": "(SV) Muokkaa kuljetusta",
       "headerTitleDetail": "Transportdetaljer",
       "transportPermit": "Transporttilstånd",
       "validityPeriod": "Giltighetstid",
@@ -340,9 +341,6 @@
   },
   "transports": {
     "transportCodeInput": {
-      "header": {
-        "title": "Transporter"
-      },
       "inputTitle": "Kommande transporter",
       "inputLabel": "Lösenord för transporten",
       "inputPlaceholder": "Lösenord",

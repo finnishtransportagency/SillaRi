@@ -272,6 +272,7 @@
     },
     "transportDetail": {
       "headerTitleAdd": "Add new transport",
+      "headerTitleEdit": "Edit transport",
       "headerTitleDetail": "Transport details",
       "transportPermit": "Transport permit",
       "validityPeriod": "Validity period",
@@ -340,9 +341,6 @@
   },
   "transports": {
     "transportCodeInput": {
-      "header": {
-        "title": "Transports"
-      },
       "inputTitle": "Upcoming transport",
       "inputLabel": "Transport password",
       "inputPlaceholder": "Password",

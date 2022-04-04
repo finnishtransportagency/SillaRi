@@ -40,10 +40,10 @@ const PermitPdfPreview = ({ id, isOpen, setOpen }: PermitPdfPreviewProps): JSX.E
     <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle class="headingBoldText">{t("permitPdf.title")}</IonTitle>
+          <IonTitle class="headingText">{t("permitPdf.title")}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={(evt) => closePreview(evt as MouseEvent)}>
-              <IonIcon className="otherIconLarge" icon={close}></IonIcon>
+              <IonIcon className="otherIconLarge" icon={close} />
             </IonButton>
           </IonButtons>
         </IonToolbar>

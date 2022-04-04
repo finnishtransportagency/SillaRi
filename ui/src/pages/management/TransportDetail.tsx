@@ -17,6 +17,7 @@ import { onRetry } from "../../utils/backendData";
 import { getPermitOfRouteTransport, getRouteTransport, getSupervisors } from "../../utils/managementBackendData";
 import IVehicle from "../../interfaces/IVehicle";
 import Loading from "../../components/Loading";
+import { isTransportEditable } from "../../utils/validation";
 
 interface TransportDetailProps {
   routeTransportId: string;
@@ -112,15 +113,15 @@ const TransportDetail = (): JSX.Element => {
     (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
 
   const loading = isLoadingSupervisorList;
-
   const notReady = noNetworkNoData || loading;
+
+  const title = isTransportEditable(modifiedRouteTransportDetail, selectedPermitDetail)
+    ? t("management.transportDetail.headerTitleEdit")
+    : t("management.transportDetail.headerTitleDetail");
 
   return (
     <IonPage>
-      <Header
-        title={t("management.transportDetail.headerTitleDetail")}
-        somethingFailed={isFailed.getRouteTransport || isFailed.getPermitOfRouteTransport || isFailed.getSupervisors}
-      />
+      <Header title={title} somethingFailed={isFailed.getRouteTransport || isFailed.getPermitOfRouteTransport || isFailed.getSupervisors} />
       <IonContent color="light">
         {notReady ? (
           noNetworkNoData ? (
