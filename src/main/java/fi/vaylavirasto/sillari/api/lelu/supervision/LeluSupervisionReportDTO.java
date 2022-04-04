@@ -17,7 +17,7 @@ public class LeluSupervisionReportDTO {
     private String drivingLineInfo; // Miksi ajolinjaa ei noudatettu?
 
     @Schema(description = "Speed limit complied with ", example  = "false")
-    private Boolean speedLimitOk;    // Ajonopeus on noudatettu
+    private Boolean speedLimitOk;    // Ajonopeutta on noudatettu
 
     @Schema(description = "Why is the speed limit not complied with? ", example  = "Piti mennä kovempaa.")
     private String speedLimitInfo;    // Miksi ajonopeutta ei noudatettu?",
