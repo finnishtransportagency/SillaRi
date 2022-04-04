@@ -16,7 +16,8 @@ const TransportCardListHeader = ({ companyTransports }: TransportCardListHeaderP
   const { company, transports = [] } = companyTransports || {};
   const { name } = company || {};
   const transportCount = transports.length;
-  // TODO supervision list is not currently refreshed when supervision is started, awaiting fix
+  // TODO supervision list is not currently refreshed when supervision is started, so next time is not updated
+  // To be fixed after offline functionality is available
   const nextSupervisionTime = getNextSupervisionTimeForCompany(transports);
 
   return (
