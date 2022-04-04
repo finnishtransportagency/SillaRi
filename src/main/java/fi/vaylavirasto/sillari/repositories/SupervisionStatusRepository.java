@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.SupervisionStatusMapper;
 import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
+import fi.vaylavirasto.sillari.model.tables.records.SupervisionStatusRecord;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class SupervisionStatusRepository {
@@ -24,6 +26,13 @@ public class SupervisionStatusRepository {
                 .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(supervisionId))
                 .orderBy(TableAlias.supervisionStatus.TIME.desc())
                 .fetch(new SupervisionStatusMapper());
+    }
+
+    public Map<Integer, List<SupervisionStatusModel>> getSupervisionStatusHistories(List<Integer> supervisionIds) {
+        return dsl.selectFrom(TableAlias.supervisionStatus)
+                .where(TableAlias.supervisionStatus.SUPERVISION_ID.in(supervisionIds))
+                .orderBy(TableAlias.supervisionStatus.SUPERVISION_ID, TableAlias.supervisionStatus.TIME.desc())
+                .fetchGroups(SupervisionStatusRecord::getSupervisionId, new SupervisionStatusMapper());
     }
 
     public void insertSupervisionStatus(SupervisionStatusModel status) {

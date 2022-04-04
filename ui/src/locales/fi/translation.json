@@ -85,15 +85,11 @@
     "logout": "Kirjaudu ulos",
     "versionLabel": "SillaRi versio"
   },
-  "company": {
+  "companyTransports": {
     "transportPermit": "Kuljetuslupa",
-    "validityPeriod": "Voimassaoloaika",
-    "transport": {
-      "transportDeparted": "Kuljetus lähtenyt",
-      "transportArrived": "Kuljetus päättynyt",
-      "nextTransport": "Seuraava kuljetus",
-      "estimatedDepartureTime": "arvioitu lähtöaika"
-    }
+    "estimatedDepartureTime": "arvioitu lähtöaika",
+    "nextSupervision": "Seuraava sillanvalvonta",
+    "estimate": "arvio"
   },
   "route": {
     "departureTime": "Lähtöaika",
