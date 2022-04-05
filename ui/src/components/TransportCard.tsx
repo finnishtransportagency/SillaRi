@@ -34,7 +34,7 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
       detailIcon={arrowRight}
       routerLink={`/routetransportdetail/${routeTransportId}`}
     >
-      <IonLabel>
+      <IonLabel color={transportDeparted ? undefined : "dark"}>
         <IonLabel className={transportDeparted ? "headingText" : "headingText upcomingTransport"}>
           <Moment format={DATE_TIME_FORMAT_MIN}>{transportDeparted ? departureTime : plannedDepartureTime}</Moment>
         </IonLabel>
