@@ -98,36 +98,6 @@ public class RouteTransportService {
         List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByPermitId(permitId);
 
         if (routeTransportModels != null) {
-            routeTransportModels.forEach(routeTransportModel -> {
-                routeTransportModel.setRoute(routeRepository.getRoute(routeTransportModel.getRouteId()));
-                // Sets also current status
-                routeTransportModel.setStatusHistory(routeTransportStatusRepository.getTransportStatusHistory(routeTransportModel.getId()));
-
-                List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportModel.getId());
-                if (supervisions != null) {
-                    supervisions.forEach(supervision -> {
-                        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
-                        // Supervisor name not shown in ui from this resource, so we don't waste time getting them
-                        //fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
-                        supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
-                    });
-                }
-                routeTransportModel.setSupervisions(supervisions);
-
-                if (includePassword) {
-                    // Only for use with the transport company admin UI
-                    routeTransportModel.setCurrentTransportPassword(routeTransportPasswordRepository.getTransportPassword(routeTransportModel.getId()));
-                }
-            });
-        }
-
-        return routeTransportModels;
-    }
-
-    public List<RouteTransportModel> getRouteTransportsOfPermit2(Integer permitId, boolean includePassword) {
-        List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByPermitId(permitId);
-
-        if (routeTransportModels != null) {
 
             List<RouteModel> routeModels = routeRepository.getRoutesById(
                 routeTransportModels.stream().map(RouteTransportModel::getRouteId).distinct().collect(Collectors.toList())
