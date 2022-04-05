@@ -8,7 +8,6 @@ import ISupervisionDay from "../interfaces/ISupervisionDay";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import {
   getCompanyTransportsList,
-  getImageBase64,
   getRouteTransportOfSupervisor,
   getSupervision,
   getSupervisionList,
@@ -224,33 +223,17 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   );
 
   // Prefetch the supervisions of each route transport
-  const routeTransportSupervisions = await Promise.all(
+  await Promise.all(
     routeTransports.flatMap((routeTransport) => {
       const { supervisions = [] } = routeTransport || {};
 
       return supervisions.map((supervision) => {
         const { id: supervisionId } = supervision || {};
 
-        return queryClient.fetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, dispatch), {
+        return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, dispatch), {
           retry: onRetry,
           staleTime: Infinity,
         });
-      });
-    })
-  );
-
-  // Prefetch the base64 image data of each supervision image
-  const supervisionImagesToFetch = routeTransportSupervisions
-    .filter((supervision) => supervision.images && supervision.images.length > 0)
-    .flatMap((supervision) => supervision.images);
-
-  await Promise.all(
-    supervisionImagesToFetch.map((supervisionImage) => {
-      const { id: imageId } = supervisionImage || {};
-
-      return queryClient.prefetchQuery(["getImageBase64", Number(imageId)], () => getImageBase64(Number(imageId), dispatch), {
-        retry: onRetry,
-        staleTime: Infinity,
       });
     })
   );

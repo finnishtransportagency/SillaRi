@@ -87,49 +87,6 @@ public class ImageController {
         }
     }
 
-    @Operation(summary = "Get image")
-    @GetMapping("/getimagebase64")
-    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public String getImageBase64(HttpServletResponse response, @RequestParam Integer id) throws IOException {
-        ServiceMetric serviceMetric = new ServiceMetric("ImageController", "getImageBase64");
-        String base64String = "";
-        try {
-            if (!isSupervisionImageOfSupervisor(id)) {
-                throw new AccessDeniedException("Image not of the user");
-            }
-
-            String objectKey = supervisionImageService.getSupervisionImage(id).getObjectKey();
-            if (activeProfile.equals("local")) {
-                // Get from local file system
-                String filename = objectKey.substring(objectKey.lastIndexOf("/"));
-
-                File inputFile = new File("/", filename);
-                if (inputFile.exists()) {
-                    FileInputStream in = new FileInputStream(inputFile);
-                    byte[] imageBytes = in.readAllBytes();
-                    in.close();
-                    String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(imageBytes);
-                    base64String = "data:image/jpeg;base64," + encodedString;
-                }
-            } else {
-                // Get from AWS
-                byte[] image = awss3Client.download(objectKey, awss3Client.getPhotoBucketName());
-                if (image != null) {
-                    response.setContentType("image/jpeg");
-                    OutputStream out = response.getOutputStream();
-                    ByteArrayInputStream in = new ByteArrayInputStream(image);
-                    byte[] imageBytes = in.readAllBytes();
-                    in.close();
-                    String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(imageBytes);
-                    base64String = "data:image/jpeg;base64," + encodedString;
-                }
-            }
-        } finally {
-            serviceMetric.end();
-        }
-        return base64String;
-    }
-
     @Operation(summary = "Upload image")
     @PostMapping("/upload")
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
@@ -149,6 +106,7 @@ public class ImageController {
             // model.setEncoding("");
             model.setTaken(fileInputModel.getTaken());
             model.setSupervisionId(fileInputModel.getSupervisionId());
+            model.setBase64(fileInputModel.getBase64());
             model = supervisionImageService.createFile(model);
 
             Tika tika = new Tika();

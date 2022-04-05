@@ -35,7 +35,7 @@ const Photos = (): JSX.Element => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", Number(supervisionId)],
+    supervisionQueryKey,
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
@@ -66,9 +66,7 @@ const Photos = (): JSX.Element => {
     },
     onSuccess: () => {
       // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
-
-      // TODO - figure out a better way to do this when offline
-      queryClient.invalidateQueries(["getSupervision", Number(supervisionId)]);
+      queryClient.invalidateQueries(supervisionQueryKey);
     },
   });
   const { isLoading: isSendingImageUpload } = imageUploadMutation;
@@ -96,8 +94,7 @@ const Photos = (): JSX.Element => {
       // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
 
       // Fetch the supervision data again to update the image list after the delete has finished
-      // TODO - figure out a better way to do this when offline
-      queryClient.invalidateQueries(["getSupervision", Number(supervisionId)]);
+      queryClient.invalidateQueries(supervisionQueryKey);
     },
   });
   const { isLoading: isSendingImageDelete } = imageDeleteMutation;
