@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class RouteTransportService {
@@ -115,6 +117,68 @@ public class RouteTransportService {
                 if (includePassword) {
                     // Only for use with the transport company admin UI
                     routeTransportModel.setCurrentTransportPassword(routeTransportPasswordRepository.getTransportPassword(routeTransportModel.getId()));
+                }
+            });
+        }
+
+        return routeTransportModels;
+    }
+
+    public List<RouteTransportModel> getRouteTransportsOfPermit2(Integer permitId, boolean includePassword) {
+        List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByPermitId(permitId);
+
+        if (routeTransportModels != null) {
+
+            List<RouteModel> routeModels = routeRepository.getRoutesById(
+                routeTransportModels.stream().map(RouteTransportModel::getRouteId).distinct().collect(Collectors.toList())
+            );
+
+            List<RouteTransportStatusModel> rtStatusModels = routeTransportStatusRepository.getTransportStatusHistory(
+                routeTransportModels.stream().map(RouteTransportModel::getId).collect(Collectors.toList())
+            );
+
+            List<SupervisionModel> supervisionModels = supervisionRepository.getSupervisionsByRouteTransportId(
+                routeTransportModels.stream().map(RouteTransportModel::getId).collect(Collectors.toList())
+            );
+
+            routeTransportModels.forEach(rtm -> {
+
+                rtm.setRoute(
+                    routeModels.stream().filter(rm -> rtm.getRouteId().equals(rm.getId())).findFirst().orElse(null)
+                );
+
+                rtm.setStatusHistory(
+                    rtStatusModels.stream().filter(rtsm -> rtm.getId().equals(rtsm.getRouteTransportId())).collect(Collectors.toList())
+                );
+
+                List<SupervisionModel> supervisions =
+                    supervisionModels.stream().filter(sm -> rtm.getId().equals(sm.getRouteTransportId())).collect(Collectors.toList());
+
+                if (supervisions != null) {
+
+                    Map<Integer, List<SupervisorModel>> supervisorModels = supervisorRepository.getSupervisorsBySupervisionId(
+                        supervisionModels.stream().map(SupervisionModel::getId).collect(Collectors.toList())
+                    );
+
+                    Map<Integer, List<SupervisionStatusModel>> supervisionStatusModels = supervisionStatusRepository.getSupervisionStatusHistories(
+                        supervisionModels.stream().map(SupervisionModel::getId).collect(Collectors.toList())
+                    );
+
+                    supervisions.forEach(supervision -> {
+
+                        supervision.setSupervisors(supervisorModels.get(supervision.getId()));
+
+                        // Supervisor name not shown in ui from this resource, so we don't waste time getting them
+                        //fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
+
+                        supervision.setStatusHistory(supervisionStatusModels.get(supervision.getId()));
+                    });
+                }
+                rtm.setSupervisions(supervisions);
+
+                if (includePassword) {
+                    // Only for use with the transport company admin UI
+                    rtm.setCurrentTransportPassword(routeTransportPasswordRepository.getTransportPassword(rtm.getId()));
                 }
             });
         }
