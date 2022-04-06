@@ -70,13 +70,28 @@ const SupervisionSummary = (): JSX.Element => {
 
       // Cancel any outgoing refetches so they don't overwrite the optimistic update below
       await queryClient.cancelQueries(supervisionQueryKey);
+      await queryClient.cancelQueries("getSupervisionSendingList");
 
       // Set the current status to FINISHED here since the backend won't be called yet when offline
+      let updatedSupervision: ISupervision;
       queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
-        return {
+        updatedSupervision = {
           ...oldData,
           currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.FINISHED },
         } as ISupervision;
+        return updatedSupervision;
+      });
+
+      // Add the finished supervision to the data used by the sending list so it is updated when offline
+      queryClient.setQueryData<ISupervision[]>("getSupervisionSendingList", (oldData) => {
+        return oldData
+          ? oldData.reduce(
+              (acc: ISupervision[], old) => {
+                return old.id === Number(supervisionId) ? acc : [...acc, old];
+              },
+              [updatedSupervision]
+            )
+          : [];
       });
 
       // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
