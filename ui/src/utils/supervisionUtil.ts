@@ -191,7 +191,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
       retry: onRetry,
       staleTime: Infinity,
     }),
-    queryClient.prefetchQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
+    queryClient.fetchQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
       retry: onRetry,
       staleTime: Infinity,
     }),
@@ -234,6 +234,19 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
           retry: onRetry,
           staleTime: Infinity,
         });
+      });
+    })
+  );
+
+  // Prefetch the supervisions in the sending list so that the modify button works offline
+  const supervisionSendingList = mainData[2];
+  await Promise.all(
+    supervisionSendingList.map((supervision) => {
+      const { id: supervisionId } = supervision || {};
+
+      return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, dispatch), {
+        retry: onRetry,
+        staleTime: Infinity,
       });
     })
   );
