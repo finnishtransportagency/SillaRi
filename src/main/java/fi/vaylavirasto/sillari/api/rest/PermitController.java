@@ -51,7 +51,7 @@ public class PermitController {
             if (!isOwnCompanyPermit(permitId)) {
                 throw new AccessDeniedException("Not user company permit.");
             }
-            PermitModel permit = permitService.getPermitWithOnlyNextAvailableTransportInstance(permitId);
+            PermitModel permit = permitService.getPermitWithOnlyNextAvailableTransportInstances(permitId);
             return ResponseEntity.ok().body(permit != null ? permit : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

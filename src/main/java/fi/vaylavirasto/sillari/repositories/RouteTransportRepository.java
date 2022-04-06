@@ -40,15 +40,20 @@ public class RouteTransportRepository {
     }
 
     public List<RouteTransportModel> getRouteTransportsByPermitId(Integer permitId) {
-        var a = dsl.select().from(TableAlias.routeTransport)
+        return dsl.select().from(TableAlias.routeTransport)
                 .innerJoin(TableAlias.route)
                 .on(TableAlias.route.ID.eq(TableAlias.routeTransport.ROUTE_ID))
                 .innerJoin(TableAlias.permit)
                 .on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
                 .where(TableAlias.permit.ID.eq(permitId))
                 .fetch(new RouteTransportMapper());
-        logger.debug("hellohau:"+a);
-        return a;
+
+    }
+
+    public List<RouteTransportModel> getRouteTransportsByRouteId(Integer routeId) {
+        return dsl.select().from(TableAlias.routeTransport)
+                .where(TableAlias.routeTransport.ROUTE_ID.eq(routeId))
+                .fetch(new RouteTransportMapper());
     }
 
     public List<RouteTransportModel> getRouteTransportsOfSupervisor(String username) {

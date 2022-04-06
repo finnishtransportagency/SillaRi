@@ -5,7 +5,7 @@ import { TransportStatus } from "./constants";
 import { unitOfTime } from "moment/moment";
 import { constructTimesForComparison } from "./managementUtil";
 
-export const isPermitValid = (permit: IPermit): boolean => {
+export const isPermitValid = (permit: IPermit | undefined): boolean => {
   if (permit) {
     const { validEndDate } = permit;
     const end = moment(validEndDate);
@@ -16,7 +16,7 @@ export const isPermitValid = (permit: IPermit): boolean => {
   }
 };
 
-export const isTransportEditable = (transport: IRouteTransport, permit: IPermit): boolean => {
+export const isTransportEditable = (transport: IRouteTransport | undefined, permit: IPermit | undefined): boolean => {
   if (transport) {
     const { currentStatus } = transport;
     const { status } = currentStatus || {};

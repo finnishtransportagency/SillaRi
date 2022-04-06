@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { onlineManager, useIsFetching, useIsMutating, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { IonBadge, IonButton, IonHeader, IonIcon, IonToolbar, IonButtons, IonMenuButton, IonTitle } from "@ionic/react";
+import { IonBadge, IonButton, IonHeader, IonIcon, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonText } from "@ionic/react";
 import { arrowBackOutline, cloudDownloadOutline, cloudOfflineOutline, cloudOutline, cloudUploadOutline, rainyOutline } from "ionicons/icons";
 import outgoing from "../theme/icons/outgoing_white_no_badge.svg";
 import { onRetry } from "../utils/backendData";
@@ -14,12 +14,14 @@ import ISupervision from "../interfaces/ISupervision";
 
 interface HeaderProps {
   title: string;
+  secondaryTitle?: string;
+  titleStyle?: string;
   somethingFailed?: boolean;
   includeSendingList?: boolean;
   confirmGoBack?: () => void;
 }
 
-const Header = ({ title, somethingFailed, includeSendingList, confirmGoBack }: HeaderProps): JSX.Element => {
+const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSendingList, confirmGoBack }: HeaderProps): JSX.Element => {
   const history = useHistory();
   const { pathname } = useLocation();
   const isFetching = useIsFetching();
@@ -72,7 +74,12 @@ const Header = ({ title, somethingFailed, includeSendingList, confirmGoBack }: H
             <IonIcon slot="icon-only" icon={arrowBackOutline} />
           </IonButton>
         </IonButtons>
-        <IonTitle className="headingBoldText">{title}</IonTitle>
+        <IonTitle className={titleStyle}>{title}</IonTitle>
+        {secondaryTitle && (
+          <IonText slot="end" className={`${titleStyle} ion-margin-end`}>
+            {secondaryTitle}
+          </IonText>
+        )}
         <IonButtons slot="end">
           <IonIcon slot="icon-only" icon={rainyOutline} className={`cloudIcon ${somethingFailed ? "" : "ion-hide"}`} />
           <IonIcon slot="icon-only" icon={cloudOfflineOutline} className={`cloudIcon ${!somethingFailed && !isOnline ? "" : "ion-hide"}`} />
@@ -116,6 +123,8 @@ const Header = ({ title, somethingFailed, includeSendingList, confirmGoBack }: H
 };
 
 Header.defaultProps = {
+  secondaryTitle: undefined,
+  titleStyle: "headingText",
   somethingFailed: false,
   includeSendingList: false,
 };
