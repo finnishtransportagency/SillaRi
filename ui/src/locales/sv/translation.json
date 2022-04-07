@@ -87,7 +87,6 @@
   },
   "companyTransports": {
     "transportPermit": "Transporttillstånd",
-    "estimatedDepartureTime": "Uppskattad avgångstid",
     "nextSupervision": "(SV) Seuraava sillanvalvonta",
     "estimate": "(SV) arvio"
   },
