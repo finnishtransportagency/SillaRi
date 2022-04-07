@@ -45,9 +45,19 @@ public class CompanyService {
         if (company == null) {
             return null;
         }
-        company.setPermits(permitRepository.getPermitsByCompanyId(company.getId()));
-        for (PermitModel permitModel : company.getPermits()) {
-            permitModel.setRoutes(routeRepository.getRoutesByPermitId(permitModel.getId()));
+        List<PermitModel> permits = permitRepository.getPermitsByCompanyId(company.getId());
+        company.setPermits(permits);
+
+        if (permits.size() > 0) {
+            List<RouteModel> routes = routeRepository.getRoutesByPermitId(
+                permits.stream().map(PermitModel::getId).collect(Collectors.toList())
+            );
+
+            for (PermitModel permitModel : company.getPermits()) {
+                permitModel.setRoutes(
+                    routes.stream().filter(r -> permitModel.getId().equals(r.getPermitId())).collect(Collectors.toList())
+                );
+            }
         }
         return company;
     }

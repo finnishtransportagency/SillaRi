@@ -87,7 +87,6 @@
   },
   "companyTransports": {
     "transportPermit": "Kuljetuslupa",
-    "estimatedDepartureTime": "arvioitu lähtöaika",
     "nextSupervision": "Seuraava sillanvalvonta",
     "estimate": "arvio"
   },
