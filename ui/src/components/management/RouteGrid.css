@@ -30,5 +30,5 @@
 }
 
 .routeGridStatusUnknown {
-  color: var(--ion-color-warning-shade);
+  color: var(--ion-color-danger);
 }
