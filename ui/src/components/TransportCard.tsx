@@ -6,6 +6,7 @@ import arrowRight from "../theme/icons/arrow-right.svg";
 import { DATE_FORMAT, TIME_FORMAT_MIN, TransportStatus } from "../utils/constants";
 import { useTranslation } from "react-i18next";
 import { getNextPlannedSupervisionTime } from "../utils/supervisionUtil";
+import "./TransportCard.css";
 
 interface TransportCardProps {
   transport: IRouteTransport;
@@ -25,9 +26,16 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
   const nextSupervisionTime = getNextPlannedSupervisionTime(supervisions);
 
   return (
-    <IonItem className="itemIcon iconLink" detail detailIcon={arrowRight} routerLink={`/routetransportdetail/${routeTransportId}`}>
-      <IonLabel>
-        <IonLabel className="headingText">
+    <IonItem
+      className={`itemIcon iconLink ion-margin-horizontal quarter-margin-bottom ${transportDeparted ? "departedTransport" : ""}`}
+      lines="full"
+      color={transportDeparted ? undefined : "light"}
+      detail
+      detailIcon={arrowRight}
+      routerLink={`/routetransportdetail/${routeTransportId}`}
+    >
+      <IonLabel color={transportDeparted ? undefined : "dark"}>
+        <IonLabel className={transportDeparted ? "headingText" : "headingText upcomingTransport"}>
           <Moment format={DATE_FORMAT}>{transportDeparted ? departureTime : plannedDepartureTime}</Moment>
           <IonText>{` | ${tractorUnit}`}</IonText>
         </IonLabel>

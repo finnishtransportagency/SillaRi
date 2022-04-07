@@ -35,7 +35,7 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
   };
 
   return (
-    <IonItem className="itemIcon iconLink" detail detailIcon={arrowRight} onClick={() => navigateToBridgeDetail()}>
+    <IonItem className="itemIcon iconLink quarter-margin-bottom" lines="full" detail detailIcon={arrowRight} onClick={() => navigateToBridgeDetail()}>
       <IonLabel>
         <IonLabel className="headingText">
           <Moment format={TIME_FORMAT_MIN}>{statusPlanned ? plannedTime : startedTime}</Moment>
