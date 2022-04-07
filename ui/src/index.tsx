@@ -9,8 +9,19 @@ import store from "./store/store";
 import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
+import { Storage } from "@capacitor/storage";
+import { changeLanguage } from "i18next";
 
 const rootElement = document.getElementById("root");
+
+const setUiLang = async () => {
+  const lang = await Storage.get({ key: "ui_lang" });
+  if (lang.value) {
+    changeLanguage(lang.value);
+  }
+};
+setUiLang();
+
 render(
   <Provider store={store}>
     <App />
