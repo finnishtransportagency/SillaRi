@@ -58,7 +58,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles, version }) => {
       <IonContent>
         <IonHeader>
           <IonToolbar color="primary">
-            <IonThumbnail slot="start">
+            <IonThumbnail slot="start" className="logo ion-margin-vertical ion-margin-start">
               <IonImg src={vayla_logo} alt="Väylävirasto" />
             </IonThumbnail>
             <IonTitle className="headingBoldText ion-text-center">{t("SidebarMenu.title")}</IonTitle>
