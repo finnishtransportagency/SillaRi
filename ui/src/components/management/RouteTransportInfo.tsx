@@ -265,7 +265,7 @@ const RouteTransportInfo = ({
               </IonCol>
             </IonRow>
 
-            {selectedRouteOption && isEditable && (
+            {selectedRouteOption && isEditable && routeBridges.length > 0 && (
               <MultiSupervisorsSelection
                 supervisors={supervisors}
                 modifiedRouteTransportDetail={modifiedRouteTransportDetail}
