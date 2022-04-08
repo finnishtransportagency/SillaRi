@@ -60,8 +60,7 @@ const RouteTransportInfo = ({
   const [supervisionTimesAlertOpen, setSupervisionTimesAlertOpen] = useState<boolean>(false);
 
   const { validStartDate, validEndDate } = permit || {};
-  const { routeBridges = [] } = selectedRouteOption || {};
-  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
+  const { plannedDepartureTime, supervisions = [] } = modifiedRouteTransportDetail || {};
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
@@ -265,7 +264,7 @@ const RouteTransportInfo = ({
               </IonCol>
             </IonRow>
 
-            {selectedRouteOption && isEditable && routeBridges.length > 0 && (
+            {selectedRouteOption && isEditable && supervisions.length > 0 && (
               <MultiSupervisorsSelection
                 supervisors={supervisors}
                 modifiedRouteTransportDetail={modifiedRouteTransportDetail}
@@ -277,12 +276,12 @@ const RouteTransportInfo = ({
               <>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    <IonText className="headingBoldText">{`${t("management.transportDetail.bridgesToSupervise")} (${routeBridges.length})`}</IonText>
+                    <IonText className="headingBoldText">{`${t("management.transportDetail.bridgesToSupervise")} (${supervisions.length})`}</IonText>
                   </IonCol>
                 </IonRow>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    {routeBridges.length > 0 ? (
+                    {supervisions.length > 0 ? (
                       <BridgeGrid
                         supervisors={supervisors}
                         permit={permit}
