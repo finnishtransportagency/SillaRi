@@ -48,10 +48,10 @@ const RouteStatusLog = ({ isOpen, setOpen, statusHistory }: RouteStatusLogProps)
     <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle class="headingBoldText">{t("management.companySummary.transportStatusLog")}</IonTitle>
+          <IonTitle class="headingText">{t("management.companySummary.transportStatusLog")}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={(evt) => closeStatusLog(evt as MouseEvent)}>
-              <IonIcon className="otherIconLarge" icon={close}></IonIcon>
+              <IonIcon className="otherIconLarge" icon={close} />
             </IonButton>
           </IonButtons>
         </IonToolbar>

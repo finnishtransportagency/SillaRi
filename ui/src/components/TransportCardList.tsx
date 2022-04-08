@@ -8,9 +8,10 @@ interface TransportCardListProps {
 
 const TransportCardList = ({ transports }: TransportCardListProps): JSX.Element => {
   return (
-    <div className="listContainer">
-      {transports.map((transport, index) => {
-        const key = `transport_${index}`;
+    <div className="listContainer selectedBackground ion-padding-bottom">
+      {transports.map((transport) => {
+        const { id: transportId } = transport;
+        const key = `transport_${transportId}`;
         return <TransportCard key={key} transport={transport} />;
       })}
     </div>

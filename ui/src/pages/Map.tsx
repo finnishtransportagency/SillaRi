@@ -19,7 +19,7 @@ const Map = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("main.header.title")} />
+      <Header title={t("main.header.title")} titleStyle="headingBoldText ion-text-center" />
       <IonContent>
         <MapContainer routeBridgeIdParam={routeBridgeId} routeIdParam={routeId} />
       </IonContent>

@@ -52,7 +52,7 @@ const SentSupervisionReportModal = ({
     <IonModal isOpen={isOpen} onDidDismiss={() => closeModal()}>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle class="headingBoldText">{t("supervision.summary.title")}</IonTitle>
+          <IonTitle class="headingText">{t("supervision.summary.title")}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={() => closeModal()}>
               <IonIcon className="otherIconLarge" icon={close} />

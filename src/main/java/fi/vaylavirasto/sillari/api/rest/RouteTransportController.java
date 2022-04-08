@@ -97,8 +97,9 @@ public class RouteTransportController {
             if (!isOwnCompanyPermit(routeTransport.getRoute().getPermitId())) {
                 throw new AccessDeniedException("Not own company permit for route transport");
             }
-            //right transport number is in bridges; they have been filtered to those with nest available transport number when fetched to ui withh /getpermit
-            routeTransport.setTransportNumber(routeTransport.getRoute().getRouteBridges().get(0).getTransportNumber());
+            //we can give just next use transport number available and not worry about, cause bridges have been filtered into ui with the next
+            // availabe transport number in /getPermit
+            routeTransport.setTransportNumber(routeTransportService.getMaxUsedTransportNumberOfRoute(routeTransport.getRouteId()) + 1);
             RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
             if (routeTransport.getSupervisions() != null && insertedRouteTransport != null) {
@@ -123,6 +124,8 @@ public class RouteTransportController {
             serviceMetric.end();
         }
     }
+
+
 
     @Operation(summary = "Update route transport")
     @PutMapping(value = "/updateroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -68,7 +68,12 @@ const Supervisions = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("main.header.title")} somethingFailed={isFailed.getCompanyTransportsList || isFailed.getSupervisionList} includeSendingList />
+      <Header
+        title={t("main.header.title")}
+        titleStyle="headingBoldText ion-text-center"
+        somethingFailed={isFailed.getCompanyTransportsList || isFailed.getSupervisionList}
+        includeSendingList
+      />
       <IonSegment className="mainSegment" value={currentSegment} onIonChange={changeSegment}>
         <IonSegmentButton className="mainSegmentButton" value="0">
           <IonLabel>{`${t("main.tab.transports")} (${transportsCount})`}</IonLabel>
@@ -77,7 +82,7 @@ const Supervisions = (): JSX.Element => {
           <IonLabel>{`${t("main.tab.bridges")} (${bridgesCount})`}</IonLabel>
         </IonSegmentButton>
       </IonSegment>
-      <IonContent>
+      <IonContent color="light">
         {currentSegment === "0" && <CompanyTransportsAccordion companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />}
         {currentSegment === "1" && <SupervisionList supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} />}
       </IonContent>

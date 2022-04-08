@@ -4,6 +4,7 @@ import ICompanyTransports from "../interfaces/ICompanyTransports";
 import TransportCardList from "./TransportCardList";
 import TransportCardListHeader from "./TransportCardListHeader";
 import NoNetworkNoData from "./NoNetworkNoData";
+import "./CompanyTransportsAccordion.css";
 
 interface CompanyTransportsAccordionProps {
   companyTransportsList: ICompanyTransports[];
@@ -17,6 +18,7 @@ const CompanyTransportsAccordion = ({ companyTransportsList, noNetworkNoData }: 
         <NoNetworkNoData />
       ) : (
         <CustomAccordion
+          className="companyAccordion"
           items={companyTransportsList.map((companyTransports, index) => {
             const key = `company_${index}`;
             const { transports } = companyTransports || {};

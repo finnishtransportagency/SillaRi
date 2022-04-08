@@ -13,7 +13,7 @@ import close from "../../theme/icons/close.svg";
 import { onRetry } from "../../utils/backendData";
 import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
-import { isTransportEditable } from "../../utils/validation";
+import { areSupervisionsValid, isTransportEditable } from "../../utils/validation";
 import RouteStatusLog from "./RouteStatusLog";
 import "./RouteGrid.css";
 
@@ -178,11 +178,12 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
               currentStatus,
               statusHistory = [],
               route,
-              supervisions,
+              supervisions = [],
             } = routeTransport;
             const { name: routeName } = route || {};
             const { transportPassword } = currentTransportPassword || {};
             const { status } = currentStatus || {};
+            const supervisionsOk = areSupervisionsValid(supervisions);
 
             const statusText = status ? t(`management.transportStatus.${status.toLowerCase()}`) : t("management.transportStatus.unknown");
             const action = isTransportEditable(routeTransport, permit)
@@ -257,7 +258,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                           </IonText>
                         )}
 
-                        {status === TransportStatus.PLANNED && (!supervisions || supervisions.length === 0) && (
+                        {status === TransportStatus.PLANNED && !supervisionsOk && (
                           <>
                             <IonIcon className="routeGridStatusUnknown" icon={warningOutline} />
                             <IonText className="routeGridStatusUnknown">{t("management.transportStatus.unknown")}</IonText>
