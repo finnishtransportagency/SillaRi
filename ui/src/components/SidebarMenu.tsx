@@ -1,4 +1,19 @@
-import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonTitle, IonToolbar } from "@ionic/react";
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonImg,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonMenu,
+  IonMenuToggle,
+  IonThumbnail,
+  IonTitle,
+  IonToolbar,
+} from "@ionic/react";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -10,7 +25,10 @@ import logout from "../theme/icons/logout.svg";
 import settings from "../theme/icons/settings.svg";
 import truck from "../theme/icons/truck.svg";
 import user from "../theme/icons/user.svg";
+import vayla_logo from "../theme/icons/vayla_fi_white_192x160.png";
+import close from "../theme/icons/close_large_white.svg";
 import "./SidebarMenu.css";
+import { menuController } from "@ionic/core/components";
 
 interface SidebarMenuProps {
   roles: string[];
@@ -40,7 +58,15 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles, version }) => {
       <IonContent>
         <IonHeader>
           <IonToolbar color="primary">
-            <IonTitle className="headingBoldText">{t("SidebarMenu.title")}</IonTitle>
+            <IonThumbnail slot="start">
+              <IonImg src={vayla_logo} alt="Väylävirasto" />
+            </IonThumbnail>
+            <IonTitle className="headingBoldText ion-text-center">{t("SidebarMenu.title")}</IonTitle>
+            <IonButtons slot="end">
+              <IonButton onClick={async () => menuController.close()}>
+                <IonIcon className="otherIconLarge" icon={close} />
+              </IonButton>
+            </IonButtons>
           </IonToolbar>
         </IonHeader>
         <IonList>
