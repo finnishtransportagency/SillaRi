@@ -28,6 +28,13 @@ public class RouteTransportStatusRepository {
                 .fetch(new RouteTransportStatusMapper());
     }
 
+    public List<RouteTransportStatusModel> getTransportStatusHistory(List<Integer> routeTransportId) {
+        return dsl.selectFrom(TableAlias.transportStatus)
+                .where(TableAlias.transportStatus.ROUTE_TRANSPORT_ID.in(routeTransportId))
+                .orderBy(TableAlias.transportStatus.ROUTE_TRANSPORT_ID.desc(), TableAlias.transportStatus.TIME.desc())
+                .fetch(new RouteTransportStatusMapper());
+    }
+
     public void insertTransportStatus(Integer routeTransportId, TransportStatusType statusType) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);

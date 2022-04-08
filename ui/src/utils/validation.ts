@@ -4,8 +4,9 @@ import IRouteTransport from "../interfaces/IRouteTransport";
 import { TransportStatus } from "./constants";
 import { unitOfTime } from "moment/moment";
 import { constructTimesForComparison } from "./managementUtil";
+import ISupervision from "../interfaces/ISupervision";
 
-export const isPermitValid = (permit: IPermit): boolean => {
+export const isPermitValid = (permit: IPermit | undefined): boolean => {
   if (permit) {
     const { validEndDate } = permit;
     const end = moment(validEndDate);
@@ -16,7 +17,17 @@ export const isPermitValid = (permit: IPermit): boolean => {
   }
 };
 
-export const isTransportEditable = (transport: IRouteTransport, permit: IPermit): boolean => {
+export const areSupervisionsValid = (supervisions: ISupervision[]): boolean => {
+  if (supervisions.length > 0) {
+    return supervisions.every((supervision) => {
+      return !!supervision.plannedTime && !!supervision.supervisors && supervision.supervisors.length > 0;
+    });
+  }
+  // Ignore transports with no supervisions
+  return true;
+};
+
+export const isTransportEditable = (transport: IRouteTransport | undefined, permit: IPermit | undefined): boolean => {
   if (transport) {
     const { currentStatus } = transport;
     const { status } = currentStatus || {};

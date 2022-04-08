@@ -32,11 +32,11 @@ public class PDFGenerator {
     public static final String pdf_road_address = "Tieosoite:";
     public static final String pdf_observations = "Havainnot";
     public static final String pdf_driving_line_reason = "Miksi ajolinjaa ei noudatettu:";
-    public static final String pdf_speed_reason = "Miksi ajonopeutta ei hyväksytä:";
+    public static final String pdf_speed_reason = "Miksi ajonopeutta ei noudatettu:";
     public static final String pdf_sign_time = "Kuittauksen ajankohta: {0}";
     public static final String pdf_supervisor = "Sillanvalvoja: ";
     public static final String pdf_driving_line = "Ajolinjaa on noudatettu: {0, choice, 0#kyllä|1#ei}";
-    public static final String pdf_speed = "Ajonopeus on hyväksytty: {0, choice, 0#kyllä|1#ei}";
+    public static final String pdf_speed = "Ajonopeutta on noudatettu: {0, choice, 0#kyllä|1#ei}";
     public static final String pdf_anomalies = "Poikkeavia havaintoja: {0, choice, 0#kyllä|1#ei}";
     public static final String pdf_joint_damage = "Liikuntasauman rikkoutuminen: {0, choice, 0#kyllä|1#ei}";
     public static final String pdf_bend_or_displacement = "Pysyvä taipuma tai muu siirtymä: {0, choice, 0#kyllä|1#ei}";

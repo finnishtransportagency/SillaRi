@@ -85,15 +85,10 @@
     "logout": "Logga ut",
     "versionLabel": "SillaRi version"
   },
-  "company": {
+  "companyTransports": {
     "transportPermit": "Transporttillstånd",
-    "validityPeriod": "Giltighetstid",
-    "transport": {
-      "transportDeparted": "Transport avgått",
-      "transportArrived": "Transport avslutad",
-      "nextTransport": "Nästa transport",
-      "estimatedDepartureTime": "Uppskattad avgångstid"
-    }
+    "nextSupervision": "(SV) Seuraava sillanvalvonta",
+    "estimate": "(SV) arvio"
   },
   "route": {
     "departureTime": "Avgångstid",
@@ -276,6 +271,7 @@
     },
     "transportDetail": {
       "headerTitleAdd": "Lägg till transport",
+      "headerTitleEdit": "(SV) Muokkaa kuljetusta",
       "headerTitleDetail": "Transportdetaljer",
       "transportPermit": "Transporttilstånd",
       "validityPeriod": "Giltighetstid",
@@ -346,9 +342,6 @@
   },
   "transports": {
     "transportCodeInput": {
-      "header": {
-        "title": "Transporter"
-      },
       "inputTitle": "Kommande transporter",
       "inputLabel": "Lösenord för transporten",
       "inputPlaceholder": "Lösenord",

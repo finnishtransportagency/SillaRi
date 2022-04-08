@@ -11,6 +11,7 @@ import PermitAccordionPanel from "../../components/management/PermitAccordionPan
 import { useTypedSelector } from "../../store/store";
 import { onRetry } from "../../utils/backendData";
 import { getCompany } from "../../utils/managementBackendData";
+import Loading from "../../components/Loading";
 
 const CompanySummary = (): JSX.Element => {
   const { t } = useTranslation();
@@ -22,7 +23,7 @@ const CompanySummary = (): JSX.Element => {
     selectedManagementPermitId,
   } = management;
 
-  const { data: selectedCompanyDetail } = useQuery(["getCompany"], () => getCompany(dispatch), {
+  const { isLoading: loadingData, data: selectedCompanyDetail } = useQuery(["getCompany"], () => getCompany(dispatch), {
     retry: onRetry,
   });
 
@@ -46,10 +47,17 @@ const CompanySummary = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={name} somethingFailed={isFailed.getCompany} />
+      <Header
+        title={t("main.header.title")}
+        secondaryTitle={name}
+        titleStyle="headingBoldText ion-text-center"
+        somethingFailed={isFailed.getCompany}
+      />
       <IonContent color="light">
         {noNetworkNoData ? (
           <NoNetworkNoData />
+        ) : loadingData ? (
+          <Loading />
         ) : name === "" || permits.length < 1 ? (
           <IonItem lines="none" color="warning">
             {t("management.companySummary.noPermitsWarning")}
