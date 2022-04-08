@@ -60,8 +60,7 @@ const RouteTransportInfo = ({
   const [supervisionTimesAlertOpen, setSupervisionTimesAlertOpen] = useState<boolean>(false);
 
   const { validStartDate, validEndDate } = permit || {};
-  const { routeBridges = [] } = selectedRouteOption || {};
-  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
+  const { plannedDepartureTime, supervisions = [] } = modifiedRouteTransportDetail || {};
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
@@ -227,18 +226,22 @@ const RouteTransportInfo = ({
               </IonCol>
             </IonRow>
 
-            {!!routeTransportId && routeTransportId > 0 && (
-              <IonRow className="ion-margin">
-                <IonCol size="8" size-sm="4" size-lg="3" size-xl="2">
-                  <IonText>{t("management.transportDetail.password")}</IonText>
-                </IonCol>
+            <IonRow className="ion-margin">
+              <IonCol size="8" size-sm="4" size-lg="3" size-xl="2">
+                <IonText className="headingText">{t("management.transportDetail.password")}</IonText>
+              </IonCol>
+              {!!routeTransportId && routeTransportId > 0 ? (
                 <IonCol size="4" size-sm="8" size-lg="9" size-xl="10">
                   <IonText className="linkText" onClick={(evt) => showPassword(evt)}>
                     {t("management.companySummary.action.show")}
                   </IonText>
                 </IonCol>
-              </IonRow>
-            )}
+              ) : (
+                <IonCol>
+                  <IonText>{t("management.transportDetail.passwordNotGenerated")}</IonText>
+                </IonCol>
+              )}
+            </IonRow>
 
             <IonRow className="ion-margin">
               <IonCol>
@@ -261,7 +264,7 @@ const RouteTransportInfo = ({
               </IonCol>
             </IonRow>
 
-            {selectedRouteOption && isEditable && (
+            {selectedRouteOption && isEditable && supervisions.length > 0 && (
               <MultiSupervisorsSelection
                 supervisors={supervisors}
                 modifiedRouteTransportDetail={modifiedRouteTransportDetail}
@@ -273,17 +276,21 @@ const RouteTransportInfo = ({
               <>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    <IonText className="headingBoldText">{`${t("management.transportDetail.bridgesToSupervise")} (${routeBridges.length})`}</IonText>
+                    <IonText className="headingBoldText">{`${t("management.transportDetail.bridgesToSupervise")} (${supervisions.length})`}</IonText>
                   </IonCol>
                 </IonRow>
                 <IonRow className="ion-margin">
                   <IonCol>
-                    <BridgeGrid
-                      supervisors={supervisors}
-                      permit={permit}
-                      modifiedRouteTransportDetail={modifiedRouteTransportDetail}
-                      setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-                    />
+                    {supervisions.length > 0 ? (
+                      <BridgeGrid
+                        supervisors={supervisors}
+                        permit={permit}
+                        modifiedRouteTransportDetail={modifiedRouteTransportDetail}
+                        setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+                      />
+                    ) : (
+                      <IonText>{t("management.transportDetail.bridgeInfo.noBridges")}</IonText>
+                    )}
                   </IonCol>
                 </IonRow>
               </>

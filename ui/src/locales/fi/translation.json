@@ -292,6 +292,7 @@
       "deleted": "Poistettu",
       "password": "Kuljetuksen salasana",
       "passwordUnknown": "Puuttuu",
+      "passwordNotGenerated": "Salasana muodostetaan ensimmäisen tallennuksen yhteydessä",
       "routeInfo": {
         "estimatedDepartureTime": "Kuljetuksen arvioitu lähtöaika",
         "route": "Reitti",
@@ -312,7 +313,8 @@
         "bridgeSupervisor": "Sillanvalvoja (1.) ja varavalvoja (2.)",
         "supervisor1": "Sillanvalvoja (1.)",
         "supervisor2": "Varavalvoja (2.)",
-        "copySupervisor": "Kopioi kaikille silloille"
+        "copySupervisor": "Kopioi kaikille silloille",
+        "noBridges": "Reitillä ei ole valvottavia siltoja"
       },
       "transportDepartureTime": {
         "header": "Arvioitu lähtöaika",
