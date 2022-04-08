@@ -1,7 +1,7 @@
 import { defineCustomElements } from "@ionic/pwa-elements/loader";
 
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 
 import { Provider } from "react-redux";
 import "./i18n";
@@ -22,11 +22,11 @@ const setUiLang = async () => {
 };
 setUiLang();
 
-render(
+const root = createRoot(rootElement as Element);
+root.render(
   <Provider store={store}>
     <App />
-  </Provider>,
-  rootElement
+  </Provider>
 );
 
 // ReactDOM.render(<App />, document.getElementById("root"));
