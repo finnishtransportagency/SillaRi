@@ -2,6 +2,9 @@ import ISupervision from "../interfaces/ISupervision";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import ISortOrder from "../interfaces/ISortOrder";
 import { TransportStatus } from "./constants";
+import IRouteTransportStatus from "../interfaces/IRouteTransportStatus";
+import moment from "moment";
+import { Moment } from "moment/moment";
 
 export const constructTimesForComparison = (departureTime: Date | undefined, supervisions: ISupervision[], currentIndex: number): Date[] => {
   const dates: Date[] = [];
@@ -41,6 +44,13 @@ export const filterTransports = (transports: IRouteTransport[], filter: string):
   });
 };
 
+export const getTransportDepartureTime = (statusHistory: IRouteTransportStatus[]): Moment | undefined => {
+  const departedStatus = statusHistory.filter((history) => {
+    return history.status === TransportStatus.DEPARTED;
+  });
+  return departedStatus.length > 0 ? moment(departedStatus[0].time) : undefined;
+};
+
 export const sortTransports = (transports: IRouteTransport[], sortOrder: ISortOrder) => {
   const transportStatusOrder = [
     TransportStatus.PLANNED,
@@ -57,16 +67,16 @@ export const sortTransports = (transports: IRouteTransport[], sortOrder: ISortOr
       tractorUnit: tractorA,
       route: routeA,
       plannedDepartureTime: plannedTimeA,
-      departureTime: departureTimeA,
       currentStatus: currentStatusA,
+      statusHistory: statusHistoryA = [],
     } = a;
 
     const {
       tractorUnit: tractorB,
       route: routeB,
       plannedDepartureTime: plannedTimeB,
-      departureTime: departureTimeB,
       currentStatus: currentStatusB,
+      statusHistory: statusHistoryB = [],
     } = b;
 
     switch (column) {
@@ -78,10 +88,15 @@ export const sortTransports = (transports: IRouteTransport[], sortOrder: ISortOr
         const { name: nameB = "" } = routeB || {};
         return nameA.localeCompare(nameB);
       }
-      /*case "time": {
+      case "time": {
         const { status: statusA } = currentStatusA || {};
         const { status: statusB } = currentStatusB || {};
-      }*/
+        const departureTimeA = getTransportDepartureTime(statusHistoryA);
+        const departureTimeB = getTransportDepartureTime(statusHistoryB);
+        const visibleTimeA = statusA === TransportStatus.PLANNED ? plannedTimeA : departureTimeA;
+        const visibleTimeB = statusB === TransportStatus.PLANNED ? plannedTimeB : departureTimeB;
+        return moment(visibleTimeA).diff(moment(visibleTimeB));
+      }
       case "status": {
         const { status: statusA } = currentStatusA || {};
         const { status: statusB } = currentStatusB || {};

@@ -18,7 +18,7 @@ import RouteStatusLog from "./RouteStatusLog";
 import "./RouteGrid.css";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISortOrder from "../../interfaces/ISortOrder";
-import { filterTransports, sortTransports } from "../../utils/managementUtil";
+import { filterTransports, getTransportDepartureTime, sortTransports } from "../../utils/managementUtil";
 
 interface RouteGridProps {
   permit: IPermit;
@@ -73,17 +73,10 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
     }
   );
 
-  const timePeriodText = (plannedDepartureTime?: Date, status?: TransportStatus, statusHistory?: IRouteTransportStatus[]) => {
-    if (status && statusHistory && statusHistory.length > 0) {
-      const sortedTimes = statusHistory
-        .filter((history) => {
-          return statusHistory.length === 1 || history.status !== TransportStatus.PLANNED;
-        })
-        .sort((a, b) => {
-          const am = moment(a.time);
-          const bm = moment(b.time);
-          return bm.diff(am, "seconds");
-        });
+  const timePeriodText = (plannedDepartureTime?: Date, currentStatus?: IRouteTransportStatus, statusHistory?: IRouteTransportStatus[]) => {
+    if (currentStatus && statusHistory && statusHistory.length > 0) {
+      const { status, time: currentStatusTime } = currentStatus;
+      const departureTime = getTransportDepartureTime(statusHistory);
 
       switch (status) {
         case TransportStatus.PLANNED: {
@@ -93,13 +86,11 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
         case TransportStatus.DEPARTED:
         case TransportStatus.STOPPED:
         case TransportStatus.IN_PROGRESS: {
-          const departureTime = moment(sortedTimes[0].time);
-          return `${t("management.companySummary.time.departureTime")} ${departureTime.format(DATE_TIME_FORMAT_MIN)}`;
+          return `${t("management.companySummary.time.departureTime")} ${departureTime ? departureTime.format(DATE_TIME_FORMAT_MIN) : ""}`;
         }
         case TransportStatus.ARRIVED: {
-          const arrivalTime = moment(sortedTimes[0].time);
-          const departureTime = moment(sortedTimes[sortedTimes.length - 1].time);
-          return `${departureTime.format(DATE_TIME_FORMAT_MIN)} - ${arrivalTime.format(DATE_TIME_FORMAT_MIN)}`;
+          const arrivalTime = moment(currentStatusTime);
+          return `${departureTime ? departureTime.format(DATE_TIME_FORMAT_MIN) : ""} - ${arrivalTime.format(DATE_TIME_FORMAT_MIN)}`;
         }
       }
     } else {
@@ -159,7 +150,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
           </IonItem>
         </IonCol>
         <IonCol size="24" size-lg="4">
-          <IonItem lines="none" color="light">
+          <IonItem lines="none" color="light" button onClick={() => sortColumn("time")} className={getColumnStyle("time")}>
             {t("management.companySummary.route.time").toUpperCase()}
           </IonItem>
         </IonCol>
@@ -231,7 +222,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                       <IonText className="headingText">{t("management.companySummary.route.time")}</IonText>
                     </IonCol>
                     <IonCol size="12">
-                      <IonText>{timePeriodText(plannedDepartureTime, status, statusHistory)}</IonText>
+                      <IonText>{timePeriodText(plannedDepartureTime, currentStatus, statusHistory)}</IonText>
                     </IonCol>
                   </IonRow>
                 </IonGrid>
