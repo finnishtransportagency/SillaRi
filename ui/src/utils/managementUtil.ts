@@ -50,7 +50,7 @@ export const sortTransports = (transports: IRouteTransport[], sortOrder: ISortOr
     TransportStatus.ARRIVED,
   ];
 
-  const { column, direction } = sortOrder;
+  const { column, ascending } = sortOrder;
 
   transports.sort((a, b) => {
     const {
@@ -101,7 +101,7 @@ export const sortTransports = (transports: IRouteTransport[], sortOrder: ISortOr
     }
   });
 
-  if (direction === "DESC") {
+  if (!ascending) {
     transports.reverse();
   }
 };

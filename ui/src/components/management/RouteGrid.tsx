@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonText, useIonPopover } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonRow, IonText, useIonPopover } from "@ionic/react";
 import { warningOutline } from "ionicons/icons";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
@@ -32,7 +32,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   const [isStatusLogOpen, setStatusLogOpen] = useState<boolean>(false);
   const [statusLog, setStatusLog] = useState<IRouteTransportStatus[]>([]);
   const [sortedTransports, setSortedTransports] = useState<IRouteTransport[]>([]);
-  const [sortOrder, setSortOrder] = useState<ISortOrder>({ column: "", direction: "ASC" });
+  const [sortOrder, setSortOrder] = useState<ISortOrder>({ column: "", ascending: true });
 
   const [popoverText, setPopoverText] = useState("");
   const [presentPassword, dismissPassword] = useIonPopover(
@@ -121,6 +121,14 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
     setStatusLogOpen(isOpen);
   };
 
+  const sortColumn = (columnId: string) => {
+    setSortOrder((prevState: ISortOrder) => {
+      const { column, ascending } = prevState;
+      // If column is the same, toggle ascending, otherwise default is ascending
+      return { column: columnId, ascending: column === columnId ? !ascending : true };
+    });
+  };
+
   useEffect(() => {
     if (routeTransportList && routeTransportList.length > 0) {
       const transports = filterTransports(routeTransportList, transportFilter);
@@ -132,23 +140,35 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   return (
     <IonGrid className="routeGrid ion-no-padding">
       <IonRow className="lightBackground ion-hide-lg-down">
-        <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
-          <IonText>{t("management.companySummary.route.tractorUnit").toUpperCase()}</IonText>
+        <IonCol size="24" size-lg="3">
+          <IonItem lines="none" color="light" button onClick={() => sortColumn("tractor")}>
+            {t("management.companySummary.route.tractorUnit").toUpperCase()}
+          </IonItem>
         </IonCol>
-        <IonCol size="24" size-lg="8" className="ion-padding-start ion-padding-top ion-padding-bottom">
-          <IonText>{t("management.companySummary.route.route").toUpperCase()}</IonText>
+        <IonCol size="24" size-lg="8">
+          <IonItem lines="none" color="light" button onClick={() => sortColumn("route")}>
+            {t("management.companySummary.route.route").toUpperCase()}
+          </IonItem>
         </IonCol>
-        <IonCol size="24" size-lg="4" className="ion-padding-start ion-padding-top ion-padding-bottom">
-          <IonText>{t("management.companySummary.route.time").toUpperCase()}</IonText>
+        <IonCol size="24" size-lg="4">
+          <IonItem lines="none" color="light">
+            {t("management.companySummary.route.time").toUpperCase()}
+          </IonItem>
         </IonCol>
-        <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
-          <IonText>{t("management.companySummary.route.password").toUpperCase()}</IonText>
+        <IonCol size="24" size-lg="3">
+          <IonItem lines="none" color="light">
+            {t("management.companySummary.route.password").toUpperCase()}
+          </IonItem>
         </IonCol>
-        <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
-          <IonText>{t("management.companySummary.route.status").toUpperCase()}</IonText>
+        <IonCol size="24" size-lg="3">
+          <IonItem lines="none" color="light" button onClick={() => sortColumn("status")}>
+            {t("management.companySummary.route.status").toUpperCase()}
+          </IonItem>
         </IonCol>
-        <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
-          <IonText>{t("management.companySummary.route.action").toUpperCase()}</IonText>
+        <IonCol size="24" size-lg="3">
+          <IonItem lines="none" color="light">
+            {t("management.companySummary.route.action").toUpperCase()}
+          </IonItem>
         </IonCol>
       </IonRow>
 
