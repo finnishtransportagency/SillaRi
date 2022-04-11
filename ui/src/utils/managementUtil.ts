@@ -79,6 +79,9 @@ export const sortTransports = (transports: IRouteTransport[], sortOrder: ISortOr
       statusHistory: statusHistoryB = [],
     } = b;
 
+    const { status: statusA } = currentStatusA || {};
+    const { status: statusB } = currentStatusB || {};
+
     switch (column) {
       case "tractor": {
         return tractorA.localeCompare(tractorB);
@@ -89,8 +92,6 @@ export const sortTransports = (transports: IRouteTransport[], sortOrder: ISortOr
         return nameA.localeCompare(nameB);
       }
       case "time": {
-        const { status: statusA } = currentStatusA || {};
-        const { status: statusB } = currentStatusB || {};
         const departureTimeA = getTransportDepartureTime(statusHistoryA);
         const departureTimeB = getTransportDepartureTime(statusHistoryB);
         const visibleTimeA = statusA === TransportStatus.PLANNED ? plannedTimeA : departureTimeA;
@@ -98,8 +99,6 @@ export const sortTransports = (transports: IRouteTransport[], sortOrder: ISortOr
         return moment(visibleTimeA).diff(moment(visibleTimeB));
       }
       case "status": {
-        const { status: statusA } = currentStatusA || {};
-        const { status: statusB } = currentStatusB || {};
         const a1 = transportStatusOrder.findIndex((item) => item === statusA);
         const b1 = transportStatusOrder.findIndex((item) => item === statusB);
         if (a1 > b1) {
