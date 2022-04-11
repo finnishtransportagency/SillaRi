@@ -129,6 +129,14 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
     });
   };
 
+  const getColumnStyle = (columnId: string): string | undefined => {
+    const { column, ascending } = sortOrder;
+    if (columnId === column) {
+      return ascending ? "ascendingColumn" : "descendingColumn";
+    }
+    return undefined;
+  };
+
   useEffect(() => {
     if (routeTransportList && routeTransportList.length > 0) {
       const transports = filterTransports(routeTransportList, transportFilter);
@@ -141,12 +149,12 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
     <IonGrid className="routeGrid ion-no-padding">
       <IonRow className="lightBackground ion-hide-lg-down">
         <IonCol size="24" size-lg="3">
-          <IonItem lines="none" color="light" button onClick={() => sortColumn("tractor")}>
+          <IonItem lines="none" color="light" button onClick={() => sortColumn("tractor")} className={getColumnStyle("tractor")}>
             {t("management.companySummary.route.tractorUnit").toUpperCase()}
           </IonItem>
         </IonCol>
         <IonCol size="24" size-lg="8">
-          <IonItem lines="none" color="light" button onClick={() => sortColumn("route")}>
+          <IonItem lines="none" color="light" button onClick={() => sortColumn("route")} className={getColumnStyle("route")}>
             {t("management.companySummary.route.route").toUpperCase()}
           </IonItem>
         </IonCol>
@@ -161,7 +169,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
           </IonItem>
         </IonCol>
         <IonCol size="24" size-lg="3">
-          <IonItem lines="none" color="light" button onClick={() => sortColumn("status")}>
+          <IonItem lines="none" color="light" button onClick={() => sortColumn("status")} className={getColumnStyle("status")}>
             {t("management.companySummary.route.status").toUpperCase()}
           </IonItem>
         </IonCol>

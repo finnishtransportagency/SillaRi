@@ -34,3 +34,11 @@
 .routeGridStatusUnknown {
   color: var(--ion-color-danger);
 }
+
+.ascendingColumn {
+  border-top: 4px solid var(--ion-color-primary);
+}
+
+.descendingColumn {
+  border-bottom: 4px solid var(--ion-color-primary);
+}
