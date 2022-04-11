@@ -1,4 +1,4 @@
-import React, { MouseEvent, useState } from "react";
+import React, { MouseEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
@@ -16,6 +16,9 @@ import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 import { areSupervisionsValid, isTransportEditable } from "../../utils/validation";
 import RouteStatusLog from "./RouteStatusLog";
 import "./RouteGrid.css";
+import IRouteTransport from "../../interfaces/IRouteTransport";
+import ISortOrder from "../../interfaces/ISortOrder";
+import { filterTransports, sortTransports } from "../../utils/managementUtil";
 
 interface RouteGridProps {
   permit: IPermit;
@@ -28,6 +31,8 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
 
   const [isStatusLogOpen, setStatusLogOpen] = useState<boolean>(false);
   const [statusLog, setStatusLog] = useState<IRouteTransportStatus[]>([]);
+  const [sortedTransports, setSortedTransports] = useState<IRouteTransport[]>([]);
+  const [sortOrder, setSortOrder] = useState<ISortOrder>({ column: "", direction: "ASC" });
 
   const [popoverText, setPopoverText] = useState("");
   const [presentPassword, dismissPassword] = useIonPopover(
@@ -116,6 +121,14 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
     setStatusLogOpen(isOpen);
   };
 
+  useEffect(() => {
+    if (routeTransportList && routeTransportList.length > 0) {
+      const transports = filterTransports(routeTransportList, transportFilter);
+      sortTransports(transports, sortOrder);
+      setSortedTransports(transports);
+    }
+  }, [routeTransportList, sortOrder, transportFilter]);
+
   return (
     <IonGrid className="routeGrid ion-no-padding">
       <IonRow className="lightBackground ion-hide-lg-down">
@@ -139,158 +152,131 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
         </IonCol>
       </IonRow>
 
-      {routeTransportList &&
-        routeTransportList
-          .filter((routeTransport) => {
-            const { currentStatus } = routeTransport;
-            const { status } = currentStatus || {};
+      {sortedTransports.length > 0 &&
+        sortedTransports.map((routeTransport) => {
+          const {
+            id: routeTransportId,
+            tractorUnit,
+            plannedDepartureTime,
+            currentTransportPassword,
+            currentStatus,
+            statusHistory = [],
+            route,
+            supervisions = [],
+          } = routeTransport;
+          const { name: routeName } = route || {};
+          const { transportPassword } = currentTransportPassword || {};
+          const { status } = currentStatus || {};
+          const supervisionsOk = areSupervisionsValid(supervisions);
 
-            switch (transportFilter) {
-              case "planned": {
-                return status === TransportStatus.PLANNED;
-              }
-              case "in_progress": {
-                return status === TransportStatus.DEPARTED || status === TransportStatus.STOPPED || status === TransportStatus.IN_PROGRESS;
-              }
-              case "completed": {
-                return status === TransportStatus.ARRIVED;
-              }
-              default: {
-                return true;
-              }
-            }
-          })
-          /*
-          .sort((a, b) => {
-            const am = moment(a.plannedDepartureTime);
-            const bm = moment(b.plannedDepartureTime);
-            return bm.diff(am, "seconds");
-          })
-          */
-          .sort((a, b) => b.id - a.id)
-          .map((routeTransport, index) => {
-            const key = `routetransport_${index}`;
-            const {
-              id: routeTransportId,
-              tractorUnit,
-              plannedDepartureTime,
-              currentTransportPassword,
-              currentStatus,
-              statusHistory = [],
-              route,
-              supervisions = [],
-            } = routeTransport;
-            const { name: routeName } = route || {};
-            const { transportPassword } = currentTransportPassword || {};
-            const { status } = currentStatus || {};
-            const supervisionsOk = areSupervisionsValid(supervisions);
+          const statusText = status ? t(`management.transportStatus.${status.toLowerCase()}`) : t("management.transportStatus.unknown");
+          const action = isTransportEditable(routeTransport, permit)
+            ? t("management.companySummary.action.modify")
+            : t("management.companySummary.action.details");
 
-            const statusText = status ? t(`management.transportStatus.${status.toLowerCase()}`) : t("management.transportStatus.unknown");
-            const action = isTransportEditable(routeTransport, permit)
-              ? t("management.companySummary.action.modify")
-              : t("management.companySummary.action.details");
+          const key = `routetransport_${routeTransportId}`;
 
-            return (
-              <IonRow key={key}>
-                <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
-                  <IonText className="headingText ion-hide-lg-up">{`${t("management.companySummary.route.tractorUnit")}: `}</IonText>
-                  <IonText>{tractorUnit ? tractorUnit.toUpperCase() : ""}</IonText>
-                </IonCol>
+          return (
+            <IonRow key={key}>
+              <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                <IonText className="headingText ion-hide-lg-up">{`${t("management.companySummary.route.tractorUnit")}: `}</IonText>
+                <IonText>{tractorUnit ? tractorUnit.toUpperCase() : ""}</IonText>
+              </IonCol>
 
-                <IonCol size="24" size-lg="8" className="ion-padding-start ion-padding-top ion-padding-bottom">
-                  <IonGrid className="routeSubGrid ion-no-padding">
-                    <IonRow>
-                      <IonCol size="12" className="ion-hide-lg-up">
-                        <IonText className="headingText">{t("management.companySummary.route.route")}</IonText>
-                      </IonCol>
-                      <IonCol size="12">
-                        <IonText>{routeName}</IonText>
-                      </IonCol>
-                    </IonRow>
-                  </IonGrid>
-                </IonCol>
+              <IonCol size="24" size-lg="8" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                <IonGrid className="routeSubGrid ion-no-padding">
+                  <IonRow>
+                    <IonCol size="12" className="ion-hide-lg-up">
+                      <IonText className="headingText">{t("management.companySummary.route.route")}</IonText>
+                    </IonCol>
+                    <IonCol size="12">
+                      <IonText>{routeName}</IonText>
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </IonCol>
 
-                <IonCol size="24" size-lg="4" className="ion-padding-start ion-padding-top ion-padding-bottom">
-                  <IonGrid className="routeSubGrid ion-no-padding">
-                    <IonRow>
-                      <IonCol size="12" className="ion-hide-lg-up">
-                        <IonText className="headingText">{t("management.companySummary.route.time")}</IonText>
-                      </IonCol>
-                      <IonCol size="12">
-                        <IonText>{timePeriodText(plannedDepartureTime, status, statusHistory)}</IonText>
-                      </IonCol>
-                    </IonRow>
-                  </IonGrid>
-                </IonCol>
+              <IonCol size="24" size-lg="4" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                <IonGrid className="routeSubGrid ion-no-padding">
+                  <IonRow>
+                    <IonCol size="12" className="ion-hide-lg-up">
+                      <IonText className="headingText">{t("management.companySummary.route.time")}</IonText>
+                    </IonCol>
+                    <IonCol size="12">
+                      <IonText>{timePeriodText(plannedDepartureTime, status, statusHistory)}</IonText>
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </IonCol>
 
-                <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
-                  <IonGrid className="routeSubGrid ion-no-padding">
-                    <IonRow>
-                      <IonCol size="5" size-sm="3" className="ion-hide-lg-up">
-                        <IonText className="headingText">{t("management.companySummary.route.password")}</IonText>
-                      </IonCol>
-                      <IonCol size="7" size-sm="9" size-lg="12">
-                        {transportPassword && transportPassword.length > 0 ? (
-                          <IonText className="linkText" onClick={(evt) => showPassword(evt, transportPassword)}>
-                            {t("management.companySummary.action.show")}
-                          </IonText>
-                        ) : (
-                          <IonText>{`(${t("management.transportDetail.passwordUnknown")})`}</IonText>
-                        )}
-                      </IonCol>
-                    </IonRow>
-                  </IonGrid>
-                </IonCol>
+              <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                <IonGrid className="routeSubGrid ion-no-padding">
+                  <IonRow>
+                    <IonCol size="5" size-sm="3" className="ion-hide-lg-up">
+                      <IonText className="headingText">{t("management.companySummary.route.password")}</IonText>
+                    </IonCol>
+                    <IonCol size="7" size-sm="9" size-lg="12">
+                      {transportPassword && transportPassword.length > 0 ? (
+                        <IonText className="linkText" onClick={(evt) => showPassword(evt, transportPassword)}>
+                          {t("management.companySummary.action.show")}
+                        </IonText>
+                      ) : (
+                        <IonText>{`(${t("management.transportDetail.passwordUnknown")})`}</IonText>
+                      )}
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </IonCol>
 
-                <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
-                  <IonGrid className="routeSubGrid ion-no-padding">
-                    <IonRow>
-                      <IonCol size="5" size-sm="3" className="ion-hide-lg-up">
-                        <IonText className="headingText">{t("management.companySummary.route.status")}</IonText>
-                      </IonCol>
-                      <IonCol size="7" size-sm="9" size-lg="12">
-                        {status !== TransportStatus.PLANNED && (
-                          <IonText
-                            className={`linkText routeGridStatus routeGridStatus_${status?.toLowerCase()}`}
-                            onClick={() => showStatusLog(true, statusHistory)}
-                          >
-                            {statusText}
-                          </IonText>
-                        )}
-
-                        {status === TransportStatus.PLANNED && !supervisionsOk && (
-                          <>
-                            <IonIcon className="routeGridStatusUnknown" icon={warningOutline} />
-                            <IonText className="routeGridStatusUnknown">{t("management.transportStatus.unknown")}</IonText>
-                          </>
-                        )}
-                      </IonCol>
-                    </IonRow>
-                  </IonGrid>
-                </IonCol>
-
-                <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
-                  <IonGrid className="routeSubGrid ion-no-padding">
-                    <IonRow>
-                      <IonCol size="5" size-sm="3" className="ion-hide-lg-up">
-                        <IonText className="headingText">{t("management.companySummary.route.action")}</IonText>
-                      </IonCol>
-                      <IonCol size="7" size-sm="9" size-lg="12">
-                        <Link
-                          to={`/management/transportDetail/${routeTransportId}`}
-                          onClick={() => {
-                            dispatch({ type: actions.SET_MANAGEMENT_PERMIT_ID, payload: permitId });
-                          }}
+              <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                <IonGrid className="routeSubGrid ion-no-padding">
+                  <IonRow>
+                    <IonCol size="5" size-sm="3" className="ion-hide-lg-up">
+                      <IonText className="headingText">{t("management.companySummary.route.status")}</IonText>
+                    </IonCol>
+                    <IonCol size="7" size-sm="9" size-lg="12">
+                      {status !== TransportStatus.PLANNED && (
+                        <IonText
+                          className={`linkText routeGridStatus routeGridStatus_${status?.toLowerCase()}`}
+                          onClick={() => showStatusLog(true, statusHistory)}
                         >
-                          <IonText className="linkText">{action}</IonText>
-                        </Link>
-                      </IonCol>
-                    </IonRow>
-                  </IonGrid>
-                </IonCol>
-              </IonRow>
-            );
-          })}
+                          {statusText}
+                        </IonText>
+                      )}
+
+                      {status === TransportStatus.PLANNED && !supervisionsOk && (
+                        <>
+                          <IonIcon className="routeGridStatusUnknown" icon={warningOutline} />
+                          <IonText className="routeGridStatusUnknown">{t("management.transportStatus.unknown")}</IonText>
+                        </>
+                      )}
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </IonCol>
+
+              <IonCol size="24" size-lg="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                <IonGrid className="routeSubGrid ion-no-padding">
+                  <IonRow>
+                    <IonCol size="5" size-sm="3" className="ion-hide-lg-up">
+                      <IonText className="headingText">{t("management.companySummary.route.action")}</IonText>
+                    </IonCol>
+                    <IonCol size="7" size-sm="9" size-lg="12">
+                      <Link
+                        to={`/management/transportDetail/${routeTransportId}`}
+                        onClick={() => {
+                          dispatch({ type: actions.SET_MANAGEMENT_PERMIT_ID, payload: permitId });
+                        }}
+                      >
+                        <IonText className="linkText">{action}</IonText>
+                      </Link>
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </IonCol>
+            </IonRow>
+          );
+        })}
 
       <RouteStatusLog isOpen={isStatusLogOpen} setOpen={setStatusLogOpen} statusHistory={statusLog} />
     </IonGrid>
