@@ -3,7 +3,11 @@ package fi.vaylavirasto.sillari;
 import fi.vaylavirasto.sillari.util.TransportPasswordGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles({"local"})
 public class TransportPasswordTest {
     @Test
     void transportPasswordGenerateTest() {

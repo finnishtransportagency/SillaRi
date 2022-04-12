@@ -1,5 +1,8 @@
 package fi.vaylavirasto.sillari;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest;
 import org.junit.jupiter.api.Test;
 
@@ -13,8 +16,11 @@ import org.springframework.http.MediaType;
 
 import java.util.Collections;
 
-
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles({"local"})
 class LeluApiTest {
+    @Value("${sillari.lelu.version}")
+    private String currentApiVersion;
 
     @Test
     public void testWithCorrectVersion() {
@@ -22,7 +28,7 @@ class LeluApiTest {
 
         String responseString = client.get()
                 .uri("/testGetWithVersion")
-                .header("lelu-api-accept-version", "1.1.1")
+                .header("lelu-api-accept-version", currentApiVersion)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
@@ -31,45 +37,81 @@ class LeluApiTest {
     }
 
     @Test
-    public void testWithOlderSameMajorVersion() {
-        WebClient client = buildClient();
+    public void testWithOldPatchVersion() {
+        String[] versions = currentApiVersion.split("\\.");
+        int newPatch = Integer.parseInt(versions[2]) - 1;
+        String newVersion = String.join(".", versions[0], versions[1], Integer.toString(newPatch));
 
-        String responseString = client.get()
-                .uri("/testGetWithVersion")
-                .header("lelu-api-accept-version", "1.0.0")
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        if (newPatch >= 0) {
+            WebClient client = buildClient();
 
-        assertEquals("api version match", responseString);
+            String responseString = client.get()
+                    .uri("/testGetWithVersion")
+                    .header("lelu-api-accept-version", newVersion)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
+            assertEquals("api version match", responseString);
+        }
+
+    }
+
+    @Test
+    public void testWithOldMinorVersion() {
+        String[] versions = currentApiVersion.split("\\.");
+        int newMinor = Integer.parseInt(versions[1]) - 1;
+        String newVersion = String.join(".", versions[0], Integer.toString(newMinor), versions[2]);
+
+        if (newMinor >= 0) {
+            WebClient client = buildClient();
+
+            String responseString = client.get()
+                    .uri("/testGetWithVersion")
+                    .header("lelu-api-accept-version", newVersion)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            assertEquals("api version match", responseString);
+        }
 
     }
 
     @Test
     void testWithOldMajorVersion() {
-        WebClient client = buildClient();
+        String[] versions = currentApiVersion.split("\\.");
+        int newMajor = Integer.parseInt(versions[0]) - 1;
+        String newVersion = String.join(".", Integer.toString(newMajor), versions[1], versions[2]);
 
-        assertThrows(BadRequest.class, () -> {
-            String responseString = client.get()
-                    .uri("/testGetWithVersion")
-                    .header("lelu-api-accept-version", "0.9.9")
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-        });
+        if (newMajor >= 0) {
+            WebClient client = buildClient();
+
+            assertThrows(BadRequest.class, () -> {
+                String responseString = client.get()
+                        .uri("/testGetWithVersion")
+                        .header("lelu-api-accept-version", newVersion)
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
+            });
+        }
 
     }
 
 
     @Test
     void testWithTooNewPatchVersion() {
+        String[] versions = currentApiVersion.split("\\.");
+        int newPatch = Integer.parseInt(versions[2]) + 1;
+        String newVersion = String.join(".", versions[0], versions[1], Integer.toString(newPatch));
+
         WebClient client = buildClient();
 
         assertThrows(BadRequest.class, () -> {
             String responseString = client.get()
                     .uri("/testGetWithVersion")
-                    .header("lelu-api-accept-version", "1.1.2")
+                    .header("lelu-api-accept-version", newVersion)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -79,12 +121,16 @@ class LeluApiTest {
 
     @Test
     void testWithTooNewMinorVersion() {
+        String[] versions = currentApiVersion.split("\\.");
+        int newMinor = Integer.parseInt(versions[1]) + 1;
+        String newVersion = String.join(".", versions[0], Integer.toString(newMinor), versions[2]);
+
         WebClient client = buildClient();
 
         assertThrows(BadRequest.class, () -> {
             String responseString = client.get()
                     .uri("/testGetWithVersion")
-                    .header("lelu-api-accept-version", "1.2.1")
+                    .header("lelu-api-accept-version", newVersion)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -92,6 +138,24 @@ class LeluApiTest {
 
     }
 
+    @Test
+    void testWithTooNewMajorVersion() {
+        String[] versions = currentApiVersion.split("\\.");
+        int newMajor = Integer.parseInt(versions[0]) + 1;
+        String newVersion = String.join(".", Integer.toString(newMajor), versions[1], versions[2]);
+
+        WebClient client = buildClient();
+
+        assertThrows(BadRequest.class, () -> {
+            String responseString = client.get()
+                    .uri("/testGetWithVersion")
+                    .header("lelu-api-accept-version", newVersion)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        });
+
+    }
 
     @Test
     void testWithNoVersion() {

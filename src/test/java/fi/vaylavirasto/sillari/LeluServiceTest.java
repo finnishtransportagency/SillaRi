@@ -29,7 +29,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles({"test"})
+@ActiveProfiles({"local"})
 public class LeluServiceTest {
     private static final Logger logger = LogManager.getLogger();
 
