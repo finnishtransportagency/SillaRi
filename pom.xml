@@ -259,7 +259,7 @@
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
         <!-- MONTHLY DEPENDENCY CHECK -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
             <version>7.0.4</version>
@@ -276,7 +276,7 @@
             <artifactId>dependency-check-utils</artifactId>
             <version>7.0.4</version>
             <type>maven-plugin</type>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
     <build>
@@ -417,7 +417,7 @@
                 </executions>
             </plugin>
             <!-- MONTHLY DEPENDENCY CHECK -->
-            <plugin>
+            <!--<plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <version>7.0.4</version>
@@ -428,7 +428,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
