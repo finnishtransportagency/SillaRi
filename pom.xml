@@ -17,7 +17,7 @@
     <properties>
         <leluApiVersion>0.0.1</leluApiVersion>
         <java.version>11</java.version>
-        <aws.sdk.version>1.12.186</aws.sdk.version>
+        <aws.sdk.version>1.12.197</aws.sdk.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <log4j2.version>2.17.1</log4j2.version>
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.6</version>
+            <version>1.6.7</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -259,26 +259,24 @@
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
         <!-- MONTHLY DEPENDENCY CHECK -->
-        <!--
-        <dependency>
+        <!--<dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>7.0.1</version>
+            <version>7.0.4</version>
             <type>maven-plugin</type>
         </dependency>
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-core</artifactId>
-            <version>7.0.1</version>
+            <version>7.0.4</version>
             <type>maven-plugin</type>
         </dependency>
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-utils</artifactId>
-            <version>7.0.1</version>
+            <version>7.0.4</version>
             <type>maven-plugin</type>
-        </dependency>
-        -->
+        </dependency>-->
     </dependencies>
 
     <build>
@@ -373,7 +371,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version>
                 <configuration>
                     <release>11</release>
                     <!-- Needed for MapStruct DTO mapping -->
@@ -419,11 +417,10 @@
                 </executions>
             </plugin>
             <!-- MONTHLY DEPENDENCY CHECK -->
-            <!--
-            <plugin>
+            <!--<plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>6.5.0</version>
+                <version>7.0.4</version>
                 <executions>
                     <execution>
                         <goals>
@@ -431,12 +428,11 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            -->
+            </plugin>-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.8.1</version>
+                <version>2.10.0</version>
                 <configuration>
                     <rulesUri>file:///${project.basedir}/maven-version-rules.xml</rulesUri>
                 </configuration>
