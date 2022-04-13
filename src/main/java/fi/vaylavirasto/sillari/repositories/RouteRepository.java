@@ -29,12 +29,28 @@ public class RouteRepository {
                 .fetch(this::mapRouteRecordWithAddresses);
     }
 
+    public List<RouteModel> getRoutesByPermitId(List<Integer> permitIds) {
+        return dsl.select().from(TableAlias.route)
+                .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
+                .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
+                .where(TableAlias.route.PERMIT_ID.in(permitIds))
+                .fetch(this::mapRouteRecordWithAddresses);
+    }
+
     public RouteModel getRoute(Integer id) {
         return dsl.select().from(TableAlias.route)
                 .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
                 .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
                 .where(TableAlias.route.ID.eq(id))
                 .fetchOne(this::mapRouteRecordWithAddresses);
+    }
+
+    public List<RouteModel> getRoutesById(List<Integer> ids) {
+        return dsl.select().from(TableAlias.route)
+                .leftJoin(TableAlias.departureAddress).on(TableAlias.route.DEPARTURE_ADDRESS_ID.eq(TableAlias.departureAddress.ID))
+                .leftJoin(TableAlias.arrivalAddress).on(TableAlias.route.ARRIVAL_ADDRESS_ID.eq(TableAlias.arrivalAddress.ID))
+                .where(TableAlias.route.ID.in(ids))
+                .fetch(this::mapRouteRecordWithAddresses);
     }
 
     public RouteModel getRouteWithLeluID(Long leluId) {

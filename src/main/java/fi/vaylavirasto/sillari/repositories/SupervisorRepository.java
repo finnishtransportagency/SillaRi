@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class SupervisorRepository {
@@ -37,6 +38,12 @@ public class SupervisorRepository {
                     }
                     return supervisor;
                 });
+    }
+
+    public Map<Integer, List<SupervisorModel>> getSupervisorsBySupervisionId(List<Integer> supervisionId) {
+        return dsl.select().from(TableAlias.supervisionSupervisor)
+                .where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(supervisionId))
+                .fetchGroups(TableAlias.supervisionSupervisor.SUPERVISION_ID, new SupervisionSupervisorMapper());
     }
 
     public List<SupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {

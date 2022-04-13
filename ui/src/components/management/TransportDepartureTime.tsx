@@ -41,15 +41,15 @@ const TransportDepartureTime = ({
   const { t } = useTranslation();
 
   const { plannedDepartureTime, supervisions = [] } = modifiedRouteTransportDetail || {};
-  const estimatedDeparture = plannedDepartureTime ? plannedDepartureTime : new Date();
 
   /*Event is needed for positioning the popup relative to the element which triggered the event*/
   const [popoverState, setShowPopover] = useState<{ showPopover: boolean; event: MouseEvent | undefined }>({ showPopover: false, event: undefined });
-  const [departureTime, setDepartureTime] = useState<Date>(estimatedDeparture);
+  const [departureTime, setDepartureTime] = useState<Date>(new Date());
   const [departureTimeValid, setDepartureTimeValid] = useState<boolean>(true);
 
   const showPopup = (evt: MouseEvent) => {
     evt.persist();
+    setDepartureTime(plannedDepartureTime ? plannedDepartureTime : new Date());
     setShowPopover({ showPopover: true, event: evt });
   };
 
@@ -80,7 +80,6 @@ const TransportDepartureTime = ({
   const cancelChanges = (evt: MouseEvent) => {
     evt.stopPropagation();
     hidePopup();
-    setDepartureTime(plannedDepartureTime ? plannedDepartureTime : new Date());
   };
 
   const updateSupervisionTimes = (): ISupervision[] => {

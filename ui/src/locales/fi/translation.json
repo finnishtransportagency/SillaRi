@@ -85,15 +85,10 @@
     "logout": "Kirjaudu ulos",
     "versionLabel": "SillaRi versio"
   },
-  "company": {
+  "companyTransports": {
     "transportPermit": "Kuljetuslupa",
-    "validityPeriod": "Voimassaoloaika",
-    "transport": {
-      "transportDeparted": "Kuljetus lähtenyt",
-      "transportArrived": "Kuljetus päättynyt",
-      "nextTransport": "Seuraava kuljetus",
-      "estimatedDepartureTime": "arvioitu lähtöaika"
-    }
+    "nextSupervision": "Seuraava sillanvalvonta",
+    "estimate": "arvio"
   },
   "route": {
     "departureTime": "Lähtöaika",
@@ -102,15 +97,15 @@
     "permitInfo": {
       "title": "Luvan tiedot",
       "permitNumber": "Luvan numero",
-      "routeDeparturePoint": "Reitin lähtöpiste",
-      "routeArrivalPoint": "Reitin päätepiste"
+      "routeDeparturePoint": "Reitin lähtöpaikka",
+      "routeArrivalPoint": "Reitin määräpaikka"
     },
     "routeInfo": {
       "title": "Reitin tiedot",
       "route": "Reitti",
       "showRouteOnMap": "Reitti kartalla",
-      "departurePoint": "Lähtöpiste",
-      "arrivalPoint": "Päätepiste"
+      "departurePoint": "Lähtöpaikka",
+      "arrivalPoint": "Määräpaikka"
     },
     "bridgesToSupervise": "Valvottavat sillat"
   },
@@ -158,7 +153,7 @@
     "placeholder": "Lisää tekstiä tähän"
   },
   "supervision": {
-    "title": "Sillan valvonta",
+    "title": "Sillanvalvonta",
     "permitNumber": "Lupanumero",
     "supervisionStarted": "Valvonta aloitettu",
     "bridgeName": "Sillan tiedot",
@@ -169,7 +164,7 @@
       "observations": "Havainnot",
       "drivingLineOk": "Ajolinjaa on noudatettu",
       "drivingLineInfo": "Miksi ajolinjaa ei noudatettu?",
-      "speedLimitOk": "Ajonopeus on noudatettu",
+      "speedLimitOk": "Ajonopeutta on noudatettu",
       "speedLimitInfo": "Miksi ajonopeutta ei noudatettu?",
       "anomalies": "Poikkeavia havaintoja",
       "anomaliesInfo": "Tarkenna poikkeavia havaintoja",
@@ -276,6 +271,7 @@
     },
     "transportDetail": {
       "headerTitleAdd": "Lisää uusi kuljetus",
+      "headerTitleEdit": "Muokkaa kuljetusta",
       "headerTitleDetail": "Kuljetuksen tiedot",
       "transportPermit": "Kuljetuslupa",
       "validityPeriod": "Voimassaoloaika",
@@ -296,6 +292,7 @@
       "deleted": "Poistettu",
       "password": "Kuljetuksen salasana",
       "passwordUnknown": "Puuttuu",
+      "passwordNotGenerated": "Salasana muodostetaan ensimmäisen tallennuksen yhteydessä",
       "routeInfo": {
         "estimatedDepartureTime": "Kuljetuksen arvioitu lähtöaika",
         "route": "Reitti",
@@ -316,7 +313,8 @@
         "bridgeSupervisor": "Sillanvalvoja (1.) ja varavalvoja (2.)",
         "supervisor1": "Sillanvalvoja (1.)",
         "supervisor2": "Varavalvoja (2.)",
-        "copySupervisor": "Kopioi kaikille silloille"
+        "copySupervisor": "Kopioi kaikille silloille",
+        "noBridges": "Reitillä ei ole valvottavia siltoja"
       },
       "transportDepartureTime": {
         "header": "Arvioitu lähtöaika",
@@ -344,9 +342,6 @@
   },
   "transports": {
     "transportCodeInput": {
-      "header": {
-        "title": "Kuljetukset"
-      },
       "inputTitle": "Tuleva kuljetus",
       "inputLabel": "Kuljetuksen salasana",
       "inputPlaceholder": "Salasana",

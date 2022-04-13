@@ -1,10 +1,7 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.dto.CompanyTransportsDTO;
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.PermitModel;
-import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.model.RouteTransportModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +26,10 @@ public class CompanyService {
     RouteTransportRepository transportRepository;
     @Autowired
     RouteTransportStatusRepository transportStatusRepository;
+    @Autowired
+    SupervisionRepository supervisionRepository;
+    @Autowired
+    SupervisionStatusRepository supervisionStatusRepository;
 
     public CompanyModel getCompany(Integer id) {
         CompanyModel company = companyRepository.getCompanyById(id);
@@ -44,9 +45,19 @@ public class CompanyService {
         if (company == null) {
             return null;
         }
-        company.setPermits(permitRepository.getPermitsByCompanyId(company.getId()));
-        for (PermitModel permitModel : company.getPermits()) {
-            permitModel.setRoutes(routeRepository.getRoutesByPermitId(permitModel.getId()));
+        List<PermitModel> permits = permitRepository.getPermitsByCompanyId(company.getId());
+        company.setPermits(permits);
+
+        if (permits.size() > 0) {
+            List<RouteModel> routes = routeRepository.getRoutesByPermitId(
+                permits.stream().map(PermitModel::getId).collect(Collectors.toList())
+            );
+
+            for (PermitModel permitModel : company.getPermits()) {
+                permitModel.setRoutes(
+                    routes.stream().filter(r -> permitModel.getId().equals(r.getPermitId())).collect(Collectors.toList())
+                );
+            }
         }
         return company;
     }
@@ -91,6 +102,17 @@ public class CompanyService {
                         permit.setCompany(company);
                     }
                 }
+
+                List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportAndSupervisorUsername(transport.getId(), username);
+
+                // Get all supervision status histories at once instead of looping the DB calls
+                List<Integer> supervisionIds = supervisions.stream().map(SupervisionModel::getId).collect(Collectors.toList());
+                Map<Integer, List<SupervisionStatusModel>> supervisionStatusHistories = supervisionStatusRepository.getSupervisionStatusHistories(supervisionIds);
+                for (SupervisionModel supervision : supervisions) {
+                    supervision.setStatusHistory(supervisionStatusHistories.get(supervision.getId()));
+                }
+
+                transport.setSupervisions(supervisions);
             }
 
             // Group transports by company (compares only the business_id of the company)

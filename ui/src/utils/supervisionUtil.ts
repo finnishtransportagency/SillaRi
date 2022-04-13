@@ -16,6 +16,7 @@ import {
 import { getUserData, onRetry } from "./backendData";
 import { SupervisionStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
+import { Moment } from "moment/moment";
 
 export const getReportSignedTime = (supervision: ISupervision): Date | undefined => {
   const { statusHistory = [] } = supervision;
@@ -174,6 +175,30 @@ export const reportHasUnsavedChanges = (modified: ISupervisionReport | undefined
         modified.otherObservations !== saved.otherObservations ||
         (modified.otherObservations && modified.otherObservationsInfo !== saved.otherObservationsInfo)))
   );
+};
+
+export const getNextPlannedSupervisionTime = (supervisions: ISupervision[]): Moment | undefined => {
+  // Ignore ongoing supervisions
+  const plannedTimes = supervisions
+    .filter((s) => {
+      const { currentStatus } = s || {};
+      const { status } = currentStatus || {};
+      return status === SupervisionStatus.PLANNED || status === SupervisionStatus.CANCELLED;
+    })
+    .map((s) => moment(s.plannedTime).startOf("minute"));
+  return plannedTimes.length > 0 ? moment.min(plannedTimes) : undefined;
+};
+
+export const getNextSupervisionTimeForCompany = (transports: IRouteTransport[]): Date | undefined => {
+  const timesPerTransport: Moment[] = [];
+  transports.forEach((transport) => {
+    const { supervisions = [] } = transport;
+    const nextPlannedTime = getNextPlannedSupervisionTime(supervisions);
+    if (nextPlannedTime !== undefined) {
+      timesPerTransport.push(moment(nextPlannedTime));
+    }
+  });
+  return timesPerTransport.length > 0 ? moment.min(timesPerTransport).toDate() : undefined;
 };
 
 export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Dispatch) => {
