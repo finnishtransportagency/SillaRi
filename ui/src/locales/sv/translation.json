@@ -87,7 +87,6 @@
   },
   "companyTransports": {
     "transportPermit": "Transporttillstånd",
-    "estimatedDepartureTime": "Uppskattad avgångstid",
     "nextSupervision": "(SV) Seuraava sillanvalvonta",
     "estimate": "(SV) arvio"
   },
@@ -293,6 +292,7 @@
       "deleted": "Borttagen",
       "password": "Lösenord för transporten",
       "passwordUnknown": "Okänd",
+      "passwordNotGenerated": "(SV) Salasana muodostetaan ensimmäisen tallennuksen yhteydessä",
       "routeInfo": {
         "estimatedDepartureTime": "Uppskattad avgångstid",
         "route": "Rutt",
@@ -313,7 +313,8 @@
         "bridgeSupervisor": "Broövervakare (1.) och stf. broövervakare (2.)",
         "supervisor1": "Broövervakare (1.)",
         "supervisor2": "stf. broövervakare(2.)",
-        "copySupervisor": "Kopiera till alla broar"
+        "copySupervisor": "Kopiera till alla broar",
+        "noBridges": "(SV) Reitillä ei ole valvottavia siltoja"
       },
       "transportDepartureTime": {
         "header": "Uppskattad avgångstid",

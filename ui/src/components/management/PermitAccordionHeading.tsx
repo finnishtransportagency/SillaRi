@@ -8,7 +8,7 @@ import IPermit from "../../interfaces/IPermit";
 import { actions } from "../../store/rootSlice";
 import { onRetry } from "../../utils/backendData";
 import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
-import { DATE_FORMAT, SupervisorType } from "../../utils/constants";
+import { DATE_FORMAT } from "../../utils/constants";
 import { isPermitValid } from "../../utils/validation";
 import PermitLinkText from "../PermitLinkText";
 
@@ -29,31 +29,6 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
       retry: onRetry,
     }
   );
-
-  const supervisionText = () => {
-    // Get the unique non-null supervisor types from each transport and map them to translated text
-    const supervisorTypes = routeTransportList
-      ? routeTransportList
-          .flatMap((routeTransport) => {
-            const { supervisions } = routeTransport;
-
-            return supervisions
-              ? supervisions
-                  .map((supervision) => {
-                    const { routeBridge } = supervision;
-                    const { contractNumber = 0 } = routeBridge || {};
-                    return contractNumber > 0 ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR;
-                  })
-                  .filter((v, i, a) => v && a.indexOf(v) === i)
-              : [];
-          })
-          .filter((v, i, a) => v && a.indexOf(v) === i)
-      : [];
-
-    return supervisorTypes.length > 0
-      ? supervisorTypes.map((st) => t(`management.supervisionType.${st.toLowerCase()}`)).join(", ")
-      : t("management.supervisionType.unknown");
-  };
 
   const doneTransportsCount = routeTransportList ? routeTransportList.length : 0;
 
@@ -81,11 +56,6 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
                   <Moment format={DATE_FORMAT}>{validStartDate}</Moment>
                   <IonText>{" - "}</IonText>
                   <Moment format={DATE_FORMAT}>{validEndDate}</Moment>
-                </small>
-              </IonCol>
-              <IonCol size="12" size-lg="6">
-                <small>
-                  <IonText>{`${t("management.companySummary.supervision")}: ${supervisionText()}`}</IonText>
                 </small>
               </IonCol>
             </IonRow>

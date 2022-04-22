@@ -7,9 +7,9 @@ sillari:
     version: @leluApiVersion@
     routeuploadpath: /data/lelu
   trex:
-    url: https://testioag.vayla.fi/trex/rajapinta/taitorakenne/v2/yleistiedot/silta
+    url: https://testiapi.vayla.fi/trex/rajapinta/taitorakenne/v2/yleistiedot/silta
   fim:
-    url: https://testioag.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/getGroup2?displayName=sillari_sillanvalvoja
+    url: https://testiapi.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/getGroup2?displayName=sillari_sillanvalvoja
     username: ${FIM_USERNAME}
     password: ${FIM_PASSWORD}
 spring:

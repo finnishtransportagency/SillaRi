@@ -16,6 +16,7 @@ import { finishSupervision, getSupervision } from "../utils/supervisionBackendDa
 import SupervisionFooter from "../components/SupervisionFooter";
 import { SupervisionListType, SupervisionStatus } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/supervisionUtil";
+import { isSupervisionReportValid } from "../utils/validation";
 
 interface SummaryProps {
   supervisionId: string;
@@ -114,6 +115,7 @@ const SupervisionSummary = (): JSX.Element => {
 
   const isLoading = isLoadingSupervision || isSendingFinishSupervision;
   const notAllowedToEdit = !report || supervisionStatus === SupervisionStatus.REPORT_SIGNED;
+  const reportValid = isSupervisionReportValid(report);
 
   const saveReport = (): void => {
     finishSupervisionMutation.mutate(supervisionId);
@@ -160,7 +162,8 @@ const SupervisionSummary = (): JSX.Element => {
             <SupervisionPhotos images={images} headingKey="supervision.photos" disabled={isLoading || notAllowedToEdit} />
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
-              disabled={isLoading || notAllowedToEdit}
+              saveDisabled={isLoading || notAllowedToEdit || !reportValid}
+              cancelDisabled={isLoading || notAllowedToEdit}
               saveChanges={saveReport}
               cancelChanges={editReport}
               saveLabel={t("supervision.buttons.saveToSendList")}

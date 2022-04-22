@@ -87,7 +87,6 @@
   },
   "companyTransports": {
     "transportPermit": "Transport permit",
-    "estimatedDepartureTime": "estimated departure",
     "nextSupervision": "Next supervision",
     "estimate": "estimate"
   },
@@ -293,6 +292,7 @@
       "deleted": "Deleted",
       "password": "Transport password",
       "passwordUnknown": "Unknown",
+      "passwordNotGenerated": "Password is generated on the first save",
       "routeInfo": {
         "estimatedDepartureTime": "Estimated departure time",
         "route": "Route",
@@ -313,7 +313,8 @@
         "bridgeSupervisor": "Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "Bridge supervisor (1.)",
         "supervisor2": "Backup supervisor (2.)",
-        "copySupervisor": "Copy to all bridges"
+        "copySupervisor": "Copy to all bridges",
+        "noBridges": "No bridges to supervise on the route"
       },
       "transportDepartureTime": {
         "header": "Estimated departure time",

@@ -17,6 +17,7 @@ import { cancelSupervision, deleteSupervisionImages, getSupervision, updateSuper
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { SupervisionStatus } from "../utils/constants";
 import { reportHasUnsavedChanges } from "../utils/supervisionUtil";
+import { isSupervisionReportValid } from "../utils/validation";
 
 interface SupervisionProps {
   supervisionId: string;
@@ -132,6 +133,7 @@ const Supervision = (): JSX.Element => {
   const supervisionInProgress = !isLoading && supervisionStatus === SupervisionStatus.IN_PROGRESS;
   const supervisionFinished = !isLoading && supervisionStatus === SupervisionStatus.FINISHED;
   const notAllowedToEdit = !savedReport || (!supervisionInProgress && !supervisionFinished);
+  const reportValid = isSupervisionReportValid(modifiedReport);
 
   // Save changes in report
   const saveReport = (isDraft: boolean): void => {
@@ -240,7 +242,8 @@ const Supervision = (): JSX.Element => {
             />
             <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} disabled={notAllowedToEdit} />
             <SupervisionFooter
-              disabled={isLoading || notAllowedToEdit}
+              saveDisabled={isLoading || notAllowedToEdit || !reportValid}
+              cancelDisabled={isLoading || notAllowedToEdit}
               saveChanges={saveReportClicked}
               cancelChanges={cancelSupervisionClicked}
               saveLabel={t("supervision.buttons.summary")}

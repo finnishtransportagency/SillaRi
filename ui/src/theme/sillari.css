@@ -110,6 +110,10 @@
   background-color: var(--ion-color-light);
 }
 
+.selectedBackground {
+  background-color: var(--ion-color-secondary-5);
+}
+
 ion-select,
 ion-input {
   border: 2px solid var(--ion-color-base);
@@ -166,6 +170,10 @@ ion-popover.large-popover {
 }
 .ion-margin-end {
   margin-right: var(--ion-margin, 16px);
+}
+
+.quarter-margin-bottom {
+  margin-bottom: 4px;
 }
 
 /** Additional Vayla colors **/

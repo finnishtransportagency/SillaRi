@@ -1,5 +1,7 @@
 .routeGrid {
-  border: 2px solid var(--ion-color-light);
+  border-width: 0 2px 2px 2px;
+  border-style: solid;
+  border-color: var(--ion-color-light);
   --ion-grid-columns: 24;
 }
 
@@ -30,5 +32,13 @@
 }
 
 .routeGridStatusUnknown {
-  color: var(--ion-color-warning-shade);
+  color: var(--ion-color-danger);
+}
+
+.ascendingColumn {
+  border-top: 4px solid var(--ion-color-primary);
+}
+
+.descendingColumn {
+  border-bottom: 4px solid var(--ion-color-primary);
 }

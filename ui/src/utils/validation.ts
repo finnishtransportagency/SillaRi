@@ -4,6 +4,8 @@ import IRouteTransport from "../interfaces/IRouteTransport";
 import { TransportStatus } from "./constants";
 import { unitOfTime } from "moment/moment";
 import { constructTimesForComparison } from "./managementUtil";
+import ISupervision from "../interfaces/ISupervision";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
 
 export const isPermitValid = (permit: IPermit | undefined): boolean => {
   if (permit) {
@@ -14,6 +16,16 @@ export const isPermitValid = (permit: IPermit | undefined): boolean => {
   } else {
     return false;
   }
+};
+
+export const areSupervisionsValid = (supervisions: ISupervision[]): boolean => {
+  if (supervisions.length > 0) {
+    return supervisions.every((supervision) => {
+      return !!supervision.plannedTime && !!supervision.supervisors && supervision.supervisors.length > 0;
+    });
+  }
+  // Ignore transports with no supervisions
+  return true;
 };
 
 export const isTransportEditable = (transport: IRouteTransport | undefined, permit: IPermit | undefined): boolean => {
@@ -57,4 +69,31 @@ export const hasSupervisionTimeErrors = (routeTransport: IRouteTransport): boole
     const previousTimes: Date[] = constructTimesForComparison(plannedDepartureTime, sortedSupervisions, index);
     return isPlannedTimeBefore(plannedTime, previousTimes, "minutes");
   });
+};
+
+export const isSupervisionReportValid = (report: ISupervisionReport | undefined): boolean => {
+  if (!report) {
+    return false;
+  }
+  const {
+    drivingLineOk,
+    drivingLineInfo,
+    speedLimitOk,
+    speedLimitInfo,
+    anomalies,
+    anomaliesDescription,
+    surfaceDamage,
+    jointDamage,
+    bendOrDisplacement,
+    otherObservations,
+    otherObservationsInfo,
+  } = report;
+  if (
+    (!drivingLineOk && !drivingLineInfo) ||
+    (!speedLimitOk && !speedLimitInfo) ||
+    (anomalies && !anomaliesDescription && !surfaceDamage && !jointDamage && !bendOrDisplacement && !otherObservations)
+  ) {
+    return false;
+  }
+  return !(otherObservations && !otherObservationsInfo);
 };

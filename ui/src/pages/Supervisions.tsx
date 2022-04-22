@@ -82,7 +82,7 @@ const Supervisions = (): JSX.Element => {
           <IonLabel>{`${t("main.tab.bridges")} (${bridgesCount})`}</IonLabel>
         </IonSegmentButton>
       </IonSegment>
-      <IonContent>
+      <IonContent color="light">
         {currentSegment === "0" && <CompanyTransportsAccordion companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />}
         {currentSegment === "1" && <SupervisionList supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} />}
       </IonContent>
