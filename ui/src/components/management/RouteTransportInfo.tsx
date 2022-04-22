@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { IonButton, IonCol, IonGrid, IonItemDivider, IonPopover, IonRow, IonText, useIonAlert, useIonPopover } from "@ionic/react";
+import { IonCol, IonContent, IonGrid, IonItemDivider, IonPopover, IonRow, IonText, IonToast, useIonAlert, useIonPopover } from "@ionic/react";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
@@ -26,6 +26,9 @@ import TransportPassword from "./TransportPassword";
 import IVehicle from "../../interfaces/IVehicle";
 import MultiSupervisorsSelection from "./MultiSupervisorsSelection";
 import SupervisionTimesAlert from "./SupervisionTimesAlert";
+import NoNetworkNoData from "../NoNetworkNoData";
+import Loading from "../Loading";
+import RouteTransportFooter from "./RouteTransportFooter";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -37,7 +40,10 @@ interface RouteTransportInfoProps {
   setSelectedRouteOption: Dispatch<SetStateAction<IRoute | undefined>>;
   selectedVehicle: IVehicle | undefined;
   setSelectedVehicle: Dispatch<SetStateAction<IVehicle | undefined>>;
+  toastMessage: string;
   setToastMessage: Dispatch<SetStateAction<string>>;
+  noNetworkNoData: boolean;
+  notReady: boolean;
 }
 
 const RouteTransportInfo = ({
@@ -50,7 +56,10 @@ const RouteTransportInfo = ({
   setSelectedRouteOption,
   selectedVehicle,
   setSelectedVehicle,
+  toastMessage,
   setToastMessage,
+  noNetworkNoData,
+  notReady,
 }: RouteTransportInfoProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -169,195 +178,171 @@ const RouteTransportInfo = ({
   };
 
   return (
-    <IonGrid className="ion-no-padding" fixed>
-      <IonRow>
-        <IonCol size="12" size-lg="4" className="whiteBackground">
-          <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin-top ion-margin-start ion-margin-end">
-              <IonCol size="12" size-sm="4" size-lg="5">
-                <IonText className="headingText">{t("management.transportDetail.transportPermit")}</IonText>
+    <>
+      <IonContent color="light">
+        {notReady ? (
+          noNetworkNoData ? (
+            <NoNetworkNoData />
+          ) : (
+            <Loading />
+          )
+        ) : (
+          <IonGrid className="ion-no-padding" fixed>
+            <IonRow>
+              <IonCol size="12" size-lg="4" className="whiteBackground">
+                <IonGrid className="ion-no-padding">
+                  <IonRow className="ion-margin-top ion-margin-start ion-margin-end">
+                    <IonCol size="12" size-sm="4" size-lg="5">
+                      <IonText className="headingText">{t("management.transportDetail.transportPermit")}</IonText>
+                    </IonCol>
+                    <IonCol size="12" size-sm="8" size-lg="7">
+                      <PermitLinkText permit={permit} />
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
               </IonCol>
-              <IonCol size="12" size-sm="8" size-lg="7">
-                <PermitLinkText permit={permit} />
+
+              <IonCol size="12" size-lg="5" className="whiteBackground">
+                <IonGrid className="ion-no-padding">
+                  <IonRow className="ion-margin-top ion-margin-start ion-margin-end">
+                    <IonCol size="12" size-sm="4" size-lg="5">
+                      <IonText className="headingText">{t("management.transportDetail.validityPeriod")}</IonText>
+                    </IonCol>
+                    <IonCol size="12" size-sm="8" size-lg="7">
+                      <IonText className={!isPermitValid(permit) ? "disabled" : ""}>{`${moment(validStartDate).format(DATE_FORMAT)} - ${moment(
+                        validEndDate
+                      ).format(DATE_FORMAT)}`}</IonText>
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
               </IonCol>
-            </IonRow>
-          </IonGrid>
-        </IonCol>
 
-        <IonCol size="12" size-lg="5" className="whiteBackground">
-          <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin-top ion-margin-start ion-margin-end">
-              <IonCol size="12" size-sm="4" size-lg="5">
-                <IonText className="headingText">{t("management.transportDetail.validityPeriod")}</IonText>
-              </IonCol>
-              <IonCol size="12" size-sm="8" size-lg="7">
-                <IonText className={!isPermitValid(permit) ? "disabled" : ""}>{`${moment(validStartDate).format(DATE_FORMAT)} - ${moment(
-                  validEndDate
-                ).format(DATE_FORMAT)}`}</IonText>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-        </IonCol>
-
-        <IonCol size="12" size-lg="3" className="whiteBackground">
-          {!!routeTransportId && routeTransportId > 0 && (
-            <IonGrid className="ion-no-padding">
-              <IonRow className="ion-margin-top ion-margin-start ion-margin-end">
-                <IonCol size="12" size-sm="4" size-lg="7">
-                  <IonText className="headingText">{t("management.transportDetail.transportId")}</IonText>
-                </IonCol>
-                <IonCol size="12" size-sm="8" size-lg="5">
-                  <IonText>{routeTransportId}</IonText>
-                </IonCol>
-              </IonRow>
-            </IonGrid>
-          )}
-        </IonCol>
-      </IonRow>
-
-      <IonRow>
-        <IonCol className="whiteBackground">
-          <IonGrid className="ion-no-padding">
-            <IonItemDivider />
-
-            <IonRow className="ion-margin">
-              <IonCol>
-                <IonText className="headingBoldText">{t("management.transportDetail.transportInformation")}</IonText>
+              <IonCol size="12" size-lg="3" className="whiteBackground">
+                {!!routeTransportId && routeTransportId > 0 && (
+                  <IonGrid className="ion-no-padding">
+                    <IonRow className="ion-margin-top ion-margin-start ion-margin-end">
+                      <IonCol size="12" size-sm="4" size-lg="7">
+                        <IonText className="headingText">{t("management.transportDetail.transportId")}</IonText>
+                      </IonCol>
+                      <IonCol size="12" size-sm="8" size-lg="5">
+                        <IonText>{routeTransportId}</IonText>
+                      </IonCol>
+                    </IonRow>
+                  </IonGrid>
+                )}
               </IonCol>
             </IonRow>
 
-            <IonRow className="ion-margin">
-              <IonCol size="8" size-sm="4" size-lg="3" size-xl="2">
-                <IonText className="headingText">{t("management.transportDetail.password")}</IonText>
-              </IonCol>
-              {!!routeTransportId && routeTransportId > 0 ? (
-                <IonCol size="4" size-sm="8" size-lg="9" size-xl="10">
-                  <IonText className="linkText" onClick={(evt) => showPassword(evt)}>
-                    {t("management.companySummary.action.show")}
-                  </IonText>
-                </IonCol>
-              ) : (
-                <IonCol>
-                  <IonText>{t("management.transportDetail.passwordNotGenerated")}</IonText>
-                </IonCol>
-              )}
-            </IonRow>
+            <IonRow>
+              <IonCol className="whiteBackground">
+                <IonGrid className="ion-no-padding">
+                  <IonItemDivider />
 
-            <IonRow className="ion-margin">
-              <IonCol>
-                <RouteInfoGrid
-                  routeTransportId={routeTransportId}
-                  permit={permit}
-                  modifiedRouteTransportDetail={modifiedRouteTransportDetail}
-                  setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-                  selectedRouteOption={selectedRouteOption}
-                  setSelectedRouteOption={setSelectedRouteOption}
-                  selectedVehicle={selectedVehicle}
-                  setSelectedVehicle={setSelectedVehicle}
-                />
-              </IonCol>
-            </IonRow>
+                  <IonRow className="ion-margin">
+                    <IonCol>
+                      <IonText className="headingBoldText">{t("management.transportDetail.transportInformation")}</IonText>
+                    </IonCol>
+                  </IonRow>
 
-            <IonRow className="ion-margin">
-              <IonCol>
-                <TransportInfoAccordion permit={permit} />
-              </IonCol>
-            </IonRow>
+                  <IonRow className="ion-margin">
+                    <IonCol size="8" size-sm="4" size-lg="3" size-xl="2">
+                      <IonText className="headingText">{t("management.transportDetail.password")}</IonText>
+                    </IonCol>
+                    {!!routeTransportId && routeTransportId > 0 ? (
+                      <IonCol size="4" size-sm="8" size-lg="9" size-xl="10">
+                        <IonText className="linkText" onClick={(evt) => showPassword(evt)}>
+                          {t("management.companySummary.action.show")}
+                        </IonText>
+                      </IonCol>
+                    ) : (
+                      <IonCol>
+                        <IonText>{t("management.transportDetail.passwordNotGenerated")}</IonText>
+                      </IonCol>
+                    )}
+                  </IonRow>
 
-            {selectedRouteOption && isEditable && supervisions.length > 0 && (
-              <MultiSupervisorsSelection
-                supervisors={supervisors}
-                modifiedRouteTransportDetail={modifiedRouteTransportDetail}
-                setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-              />
-            )}
-
-            {selectedRouteOption && (
-              <>
-                <IonRow className="ion-margin">
-                  <IonCol>
-                    <IonText className="headingBoldText">{`${t("management.transportDetail.bridgesToSupervise")} (${supervisions.length})`}</IonText>
-                  </IonCol>
-                </IonRow>
-                <IonRow className="ion-margin">
-                  <IonCol>
-                    {supervisions.length > 0 ? (
-                      <BridgeGrid
-                        supervisors={supervisors}
+                  <IonRow className="ion-margin">
+                    <IonCol>
+                      <RouteInfoGrid
+                        routeTransportId={routeTransportId}
                         permit={permit}
                         modifiedRouteTransportDetail={modifiedRouteTransportDetail}
                         setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+                        selectedRouteOption={selectedRouteOption}
+                        setSelectedRouteOption={setSelectedRouteOption}
+                        selectedVehicle={selectedVehicle}
+                        setSelectedVehicle={setSelectedVehicle}
                       />
-                    ) : (
-                      <IonText>{t("management.transportDetail.bridgeInfo.noBridges")}</IonText>
-                    )}
-                  </IonCol>
-                </IonRow>
-              </>
-            )}
+                    </IonCol>
+                  </IonRow>
+
+                  <IonRow className="ion-margin">
+                    <IonCol>
+                      <TransportInfoAccordion permit={permit} />
+                    </IonCol>
+                  </IonRow>
+
+                  {selectedRouteOption && isEditable && supervisions.length > 0 && (
+                    <MultiSupervisorsSelection
+                      supervisors={supervisors}
+                      modifiedRouteTransportDetail={modifiedRouteTransportDetail}
+                      setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+                    />
+                  )}
+
+                  {selectedRouteOption && (
+                    <>
+                      <IonRow className="ion-margin">
+                        <IonCol>
+                          <IonText className="headingBoldText">{`${t("management.transportDetail.bridgesToSupervise")} (${
+                            supervisions.length
+                          })`}</IonText>
+                        </IonCol>
+                      </IonRow>
+                      <IonRow className="ion-margin">
+                        <IonCol>
+                          {supervisions.length > 0 ? (
+                            <BridgeGrid
+                              supervisors={supervisors}
+                              permit={permit}
+                              modifiedRouteTransportDetail={modifiedRouteTransportDetail}
+                              setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+                            />
+                          ) : (
+                            <IonText>{t("management.transportDetail.bridgeInfo.noBridges")}</IonText>
+                          )}
+                        </IonCol>
+                      </IonRow>
+                    </>
+                  )}
+                </IonGrid>
+              </IonCol>
+            </IonRow>
+
+            <IonPopover className="large-popover" isOpen={supervisionTimesAlertOpen} onDidDismiss={() => setSupervisionTimesAlertOpen(false)}>
+              <SupervisionTimesAlert setOpen={setSupervisionTimesAlertOpen} />
+            </IonPopover>
           </IonGrid>
-        </IonCol>
-      </IonRow>
-
-      {isEditable && (
-        <IonRow className="ion-margin ion-justify-content-end">
-          {!!routeTransportId && routeTransportId > 0 && (
-            <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-              <IonButton
-                color="tertiary"
-                expand="block"
-                size="large"
-                disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption}
-                onClick={deleteRouteTransportDetail}
-              >
-                <IonText>{t("management.transportDetail.buttons.deleteTransport")}</IonText>
-              </IonButton>
-            </IonCol>
-          )}
-          <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-            <IonButton
-              color="secondary"
-              expand="block"
-              size="large"
-              disabled={isSendingTransportUpdate || isDeletingTransport}
-              onClick={() => history.goBack()}
-            >
-              <IonText>{t("common.buttons.cancel")}</IonText>
-            </IonButton>
-          </IonCol>
-          <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-            <IonButton
-              color="primary"
-              expand="block"
-              size="large"
-              disabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption || !selectedVehicle || !plannedDepartureTime}
-              onClick={() => validateSupervisionsAndSave()}
-            >
-              <IonText>{t("common.buttons.save")}</IonText>
-            </IonButton>
-          </IonCol>
-        </IonRow>
-      )}
-
-      {!isEditable && (
-        <IonRow className="ion-margin ion-justify-content-end">
-          <IonCol size="12" size-sm className="ion-padding-start ion-padding-bottom ion-text-center">
-            <IonButton
-              color="primary"
-              expand="block"
-              size="large"
-              disabled={isSendingTransportUpdate || isDeletingTransport}
-              onClick={() => history.goBack()}
-            >
-              <IonText>{t("common.buttons.back2")}</IonText>
-            </IonButton>
-          </IonCol>
-        </IonRow>
-      )}
-      <IonPopover className="large-popover" isOpen={supervisionTimesAlertOpen} onDidDismiss={() => setSupervisionTimesAlertOpen(false)}>
-        <SupervisionTimesAlert setOpen={setSupervisionTimesAlertOpen} />
-      </IonPopover>
-    </IonGrid>
+        )}
+        <IonToast
+          isOpen={toastMessage.length > 0}
+          message={toastMessage}
+          onDidDismiss={() => setToastMessage("")}
+          duration={5000}
+          position="top"
+          color="success"
+        />
+      </IonContent>
+      <RouteTransportFooter
+        isEditable={isEditable}
+        routeTransportId={routeTransportId}
+        deleteTransport={deleteRouteTransportDetail}
+        saveTransport={validateSupervisionsAndSave}
+        deleteDisabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption}
+        cancelDisabled={isSendingTransportUpdate || isDeletingTransport}
+        saveDisabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption || !selectedVehicle || !plannedDepartureTime}
+      />
+    </>
   );
 };
 

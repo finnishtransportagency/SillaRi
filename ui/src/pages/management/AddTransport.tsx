@@ -3,10 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { IonContent, IonPage, IonToast } from "@ionic/react";
+import { IonPage } from "@ionic/react";
 import Header from "../../components/Header";
-import NoNetworkNoData from "../../components/NoNetworkNoData";
-import Loading from "../../components/Loading";
 import RouteTransportInfo from "../../components/management/RouteTransportInfo";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
@@ -67,44 +65,26 @@ const AddTransport = (): JSX.Element => {
   const noNetworkNoData =
     (isFailed.getPermit && selectedPermitDetail === undefined) || (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
 
-  const loading = isLoadingSupervisorList;
-
-  const notReady = noNetworkNoData || loading;
+  const notReady = noNetworkNoData || isLoadingSupervisorList;
 
   return (
     <IonPage>
       <Header title={t("management.transportDetail.headerTitleAdd")} somethingFailed={isFailed.getPermit} />
-      <IonContent color="light">
-        {notReady ? (
-          noNetworkNoData ? (
-            <NoNetworkNoData />
-          ) : (
-            <Loading />
-          )
-        ) : (
-          <RouteTransportInfo
-            routeTransportId={0}
-            permit={selectedPermitDetail as IPermit}
-            supervisors={supervisorList as ISupervisor[]}
-            modifiedRouteTransportDetail={modifiedRouteTransportDetail as IRouteTransport}
-            setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-            selectedRouteOption={selectedRouteOption as IRoute}
-            setSelectedRouteOption={setSelectedRouteOption}
-            selectedVehicle={selectedVehicle}
-            setSelectedVehicle={setSelectedVehicle}
-            setToastMessage={setToastMessage}
-          />
-        )}
-
-        <IonToast
-          isOpen={toastMessage.length > 0}
-          message={toastMessage}
-          onDidDismiss={() => setToastMessage("")}
-          duration={5000}
-          position="top"
-          color="success"
-        />
-      </IonContent>
+      <RouteTransportInfo
+        routeTransportId={0}
+        permit={selectedPermitDetail as IPermit}
+        supervisors={supervisorList as ISupervisor[]}
+        modifiedRouteTransportDetail={modifiedRouteTransportDetail as IRouteTransport}
+        setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+        selectedRouteOption={selectedRouteOption as IRoute}
+        setSelectedRouteOption={setSelectedRouteOption}
+        selectedVehicle={selectedVehicle}
+        setSelectedVehicle={setSelectedVehicle}
+        toastMessage={toastMessage}
+        setToastMessage={setToastMessage}
+        noNetworkNoData={noNetworkNoData}
+        notReady={notReady}
+      />
     </IonPage>
   );
 };
