@@ -55,6 +55,20 @@ const queryClient = new QueryClient({
   },
 });
 
+// NOTE: these persistence utilities are experimental in react-query v3 and subject to change
+// However at time of writing, they have not changed for months, and v4 is in active development which will include proper versions
+// The maxAge value is the same as the cacheTime value so garbage collection occurs at the expected time
+const localStoragePersistor = createWebStoragePersistor({ storage: window.localStorage });
+if (onlineManager.isOnline()) {
+  // When online, clear the persisted data to always get the latest from the backend on application start-up
+  localStoragePersistor.removeClient();
+}
+persistQueryClient({
+  queryClient,
+  persistor: localStoragePersistor,
+  maxAge: REACT_QUERY_CACHE_TIME,
+});
+
 const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
   const [homePage, setHomePage] = useState<string>("/supervisions");
@@ -65,20 +79,6 @@ const App: React.FC = () => {
   const {
     networkStatus: { isFailed = {}, failedStatus = {} },
   } = useTypedSelector((state) => state.rootReducer);
-
-  // NOTE: these persistence utilities are experimental in react-query v3 and subject to change
-  // However at time of writing, they have not changed for months, and v4 is in active development which will include proper versions
-  // The maxAge value is the same as the cacheTime value so garbage collection occurs at the expected time
-  const localStoragePersistor = createWebStoragePersistor({ storage: window.localStorage });
-  if (onlineManager.isOnline()) {
-    // When online, clear the persisted data to always get the latest from the backend on application start-up
-    localStoragePersistor.removeClient();
-  }
-  persistQueryClient({
-    queryClient,
-    persistor: localStoragePersistor,
-    maxAge: REACT_QUERY_CACHE_TIME,
-  });
 
   useEffect(() => {
     // Add or remove the "dark" class based on if the media query matches
