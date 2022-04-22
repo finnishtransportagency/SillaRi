@@ -35,6 +35,10 @@
   color: var(--ion-color-danger);
 }
 
+.routeGridStatusSupervisionStarted {
+  color: var(--ion-color-warning);
+}
+
 .ascendingColumn {
   border-top: 4px solid var(--ion-color-primary);
 }

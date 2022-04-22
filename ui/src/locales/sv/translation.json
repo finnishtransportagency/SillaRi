@@ -337,7 +337,8 @@
       "departed": "På väg",
       "stopped": "Paus",
       "in_progress": "På väg",
-      "arrived": "Transporten avslutad"
+      "arrived": "Transporten avslutad",
+      "supervisionStarted": "(SV) Valvonta aloitettu"
     }
   },
   "transports": {

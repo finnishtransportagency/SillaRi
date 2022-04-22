@@ -13,7 +13,7 @@ import close from "../../theme/icons/close.svg";
 import { onRetry } from "../../utils/backendData";
 import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
-import { areSupervisionsValid, isTransportEditable } from "../../utils/validation";
+import { areSupervisionsValid, hasSupervisionStarted, isTransportEditable } from "../../utils/validation";
 import RouteStatusLog from "./RouteStatusLog";
 import "./RouteGrid.css";
 import IRouteTransport from "../../interfaces/IRouteTransport";
@@ -187,6 +187,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
           const { transportPassword } = currentTransportPassword || {};
           const { status } = currentStatus || {};
           const supervisionsOk = areSupervisionsValid(supervisions);
+          const supervisionStarted = hasSupervisionStarted(supervisions);
 
           const statusText = status ? t(`management.transportStatus.${status.toLowerCase()}`) : t("management.transportStatus.unknown");
           const action = isTransportEditable(routeTransport, permit)
@@ -263,7 +264,13 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                         </IonText>
                       )}
 
-                      {status === TransportStatus.PLANNED && !supervisionsOk && (
+                      {status === TransportStatus.PLANNED && supervisionStarted && (
+                        <>
+                          <IonIcon className="routeGridStatusSupervisionStarted" icon={warningOutline} />
+                          <IonText className="routeGridStatusSupervisionStarted">{t("management.transportStatus.supervisionStarted")}</IonText>
+                        </>
+                      )}
+                      {status === TransportStatus.PLANNED && !supervisionStarted && !supervisionsOk && (
                         <>
                           <IonIcon className="routeGridStatusUnknown" icon={warningOutline} />
                           <IonText className="routeGridStatusUnknown">{t("management.transportStatus.unknown")}</IonText>

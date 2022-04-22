@@ -337,7 +337,8 @@
       "departed": "Liikkeellä",
       "stopped": "Tauolla",
       "in_progress": "Liikkeellä",
-      "arrived": "Päättynyt"
+      "arrived": "Päättynyt",
+      "supervisionStarted": "Valvonta aloitettu"
     }
   },
   "transports": {

@@ -337,7 +337,8 @@
       "departed": "On the move",
       "stopped": "On a break",
       "in_progress": "On the move",
-      "arrived": "Arrived"
+      "arrived": "Arrived",
+      "supervisionStarted": "Supervision started"
     }
   },
   "transports": {

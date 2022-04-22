@@ -70,7 +70,7 @@ const TransportDetail = (): JSX.Element => {
       // The route transport currentStatus is needed by some components, but is set to undefined before saving
       const { plannedDepartureTime, supervisions = [] } = selectedRouteTransportDetail || {};
       const modifiedSupervisions = supervisions.map((supervision) => {
-        return { ...supervision, plannedTime: moment(supervision.plannedTime).toDate(), currentStatus: undefined, statusHistory: undefined };
+        return { ...supervision, plannedTime: moment(supervision.plannedTime).toDate(), statusHistory: undefined };
       });
       const modifiedRouteTransport = {
         ...selectedRouteTransportDetail,
