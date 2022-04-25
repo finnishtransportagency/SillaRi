@@ -319,4 +319,15 @@ export const removeSupervisionFromRouteTransportList = (queryClient: QueryClient
     }, []);
     queryClient.setQueryData(["getRouteTransportOfSupervisor", Number(routeTransportId)], routeTransport);
   }
+
+  // Make sure the supervision is also removed from the bridges list on the main page
+  const supervisionList = queryClient.getQueryData<ISupervision[]>(["getSupervisionList"]);
+  if (supervisionList) {
+    queryClient.setQueryData(
+      ["getSupervisionList"],
+      supervisionList.reduce((acc: ISupervision[], s) => {
+        return s.id === Number(supervisionId) ? acc : [...acc, s];
+      }, [])
+    );
+  }
 };
