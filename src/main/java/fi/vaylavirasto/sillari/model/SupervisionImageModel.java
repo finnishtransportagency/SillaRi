@@ -16,6 +16,6 @@ public class SupervisionImageModel extends BaseModel {
     // private String mimetype;
     // private String encoding;
 
-    // Used for input only
+    // Used for image file input, and also output for use in the supervision UI when offline
     private String base64;
 }
