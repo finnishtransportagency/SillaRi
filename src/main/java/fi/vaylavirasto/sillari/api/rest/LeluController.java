@@ -4,7 +4,6 @@ import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
@@ -349,7 +348,7 @@ public class LeluController {
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
-                SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(supervisionId));
+                SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(supervisionId), true);
                 if (supervision != null && supervision.getReport() != null) {
                     supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
                     List<byte[]> images = supervisionService.getImageFiles(supervision.getImages(), activeProfile.equals("local"));

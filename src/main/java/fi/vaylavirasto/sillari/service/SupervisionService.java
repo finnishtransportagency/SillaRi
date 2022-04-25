@@ -41,6 +41,8 @@ public class SupervisionService {
     @Autowired
     RouteTransportRepository routeTransportRepository;
     @Autowired
+    RouteTransportStatusRepository routeTransportStatusRepository;
+    @Autowired
     RouteRepository routeRepository;
     @Autowired
     PermitRepository permitRepository;
@@ -56,11 +58,12 @@ public class SupervisionService {
     private String activeProfile;
 
 
-    public SupervisionModel getSupervision(Integer supervisionId) {
+    public SupervisionModel getSupervision(Integer supervisionId, boolean fillDetails) {
         SupervisionModel supervision = supervisionRepository.getSupervisionById(supervisionId);
-        if (supervision != null) {
+        if (supervision != null && fillDetails) {
             fillSupervisionDetails(supervision);
             fillPermitDetails(supervision);
+            fillTransportDetails(supervision);
         }
         return supervision;
     }
@@ -91,6 +94,15 @@ public class SupervisionService {
                 route.setPermit(permitRepository.getPermit(route.getPermitId()));
             }
         }
+    }
+
+    private void fillTransportDetails(SupervisionModel supervision) {
+        RouteTransportModel routeTransport = routeTransportRepository.getRouteTransportById(supervision.getRouteTransportId());
+        if (routeTransport != null) {
+            // Sets also current status
+            routeTransport.setStatusHistory(routeTransportStatusRepository.getTransportStatusHistory(routeTransport.getId()));
+        }
+        supervision.setRouteTransport(routeTransport);
     }
 
     public List<SupervisionModel> getSupervisionsOfSupervisor(String username) {
@@ -148,7 +160,7 @@ public class SupervisionService {
 
     public SupervisionModel updateConformsToPermit(SupervisionModel supervision) {
         supervisionRepository.updateSupervision(supervision.getId(), supervision.getConformsToPermit());
-        return getSupervision(supervision.getId());
+        return getSupervision(supervision.getId(), true);
     }
 
     public void deleteSupervision(SupervisionModel supervisionModel) {
@@ -162,21 +174,21 @@ public class SupervisionService {
         supervisionStatusRepository.insertSupervisionStatus(status);
 
         supervisionReportRepository.createSupervisionReport(report);
-        return getSupervision(supervisionId);
+        return getSupervision(supervisionId, true);
     }
 
     // Ends the supervision by adding the status CROSSING_DENIED
     public SupervisionModel denyCrossing(Integer supervisionId, String denyReason, SillariUser user) {
         SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.CROSSING_DENIED, OffsetDateTime.now(), denyReason, user.getUsername());
         supervisionStatusRepository.insertSupervisionStatus(status);
-        return getSupervision(supervisionId);
+        return getSupervision(supervisionId, true);
     }
 
     // Ends the supervision by adding the status FINISHED
     public SupervisionModel finishSupervision(Integer supervisionId, SillariUser user) {
         SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.FINISHED, OffsetDateTime.now(), user.getUsername());
         supervisionStatusRepository.insertSupervisionStatus(status);
-        return getSupervision(supervisionId);
+        return getSupervision(supervisionId, true);
     }
 
     // Completes the supervision by adding the status REPORT_SIGNED
@@ -186,7 +198,7 @@ public class SupervisionService {
     }
 
     public void createSupervisionPdf(Integer supervisionId) {
-        SupervisionModel supervision = getSupervision(supervisionId);
+        SupervisionModel supervision = getSupervision(supervisionId, true);
         supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
 
         List<byte[]> images = getImageFiles(supervision.getImages(), activeProfile.equals("local"));
@@ -209,13 +221,13 @@ public class SupervisionService {
         supervisionStatusRepository.insertSupervisionStatus(status);
 
         supervisionReportRepository.deleteSupervisionReport(supervisionId);
-        return getSupervision(supervisionId);
+        return getSupervision(supervisionId, true);
     }
 
     // Updates the report fields
     public SupervisionModel updateSupervisionReport(SupervisionReportModel supervisionReportModel) {
         supervisionReportRepository.updateSupervisionReport(supervisionReportModel);
-        return getSupervision(supervisionReportModel.getSupervisionId());
+        return getSupervision(supervisionReportModel.getSupervisionId(), true);
     }
 
     public byte[] getSupervisionPdf(Long reportId) throws IOException {

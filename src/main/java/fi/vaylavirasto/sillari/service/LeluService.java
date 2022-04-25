@@ -337,7 +337,7 @@ public class LeluService {
                     routeBridge.setSupervisions(new ArrayList<>());
                     if (supervisions != null) {
                         supervisions.forEach(supervision -> {
-                            var filledSupervision = supervisionService.getSupervision(supervision.getId());
+                            var filledSupervision = supervisionService.getSupervision(supervision.getId(), true);
                             routeBridge.getSupervisions().add(filledSupervision);
                         });
                     }
@@ -358,7 +358,7 @@ public class LeluService {
                 routeBridge.setSupervisions(new ArrayList<>());
                 if (supervisions != null) {
                     supervisions.forEach(supervision -> {
-                        var filledSupervision = supervisionService.getSupervision(supervision.getId());
+                        var filledSupervision = supervisionService.getSupervision(supervision.getId(), true);
                         routeBridge.getSupervisions().add(filledSupervision);
                     });
                 }

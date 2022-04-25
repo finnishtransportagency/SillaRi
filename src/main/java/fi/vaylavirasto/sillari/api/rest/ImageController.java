@@ -213,7 +213,7 @@ public class ImageController {
 
     /* Check that supervision belongs to the user and report is not signed */
     private boolean canSupervisorUpdateSupervision(Integer supervisionId) {
-        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId, false);
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsOfSupervisorNoDetails(user.getUsername());
 
