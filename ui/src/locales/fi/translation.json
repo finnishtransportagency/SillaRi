@@ -5,6 +5,7 @@
       "back": "Peru",
       "back2": "Takaisin",
       "cancel": "Peruuta",
+      "continue": "Jatka",
       "search": "Hae",
       "edit": "Muokkaa",
       "save": "Tallenna",
@@ -142,7 +143,13 @@
     "supervisionMissing": "Sillanvalvontaa ei ole vielä suunniteltu",
     "supervisionStarted": "Valvonta aloitettu",
     "crossingDenied": "Sillan ylitys peruttu",
-    "supervisionFinished": "Valvonta päättynyt"
+    "supervisionFinished": "Valvonta päättynyt",
+    "warning": {
+      "confirmStartSupervision": "Haluatko varmasti aloittaa valvonnan?",
+      "confirmContinueSupervision": "Haluatko varmasti jatkaa valvontaa?",
+      "confirmDenyCrossing": "Halutko varmasti peruuttaa ylityksen?",
+      "transportNotStarted": "Kuljetus ei ole lähtenyt vielä liikkeelle."
+    }
   },
   "denyCrossing": {
     "cantCross": "Kuljetus ei voi ylittää siltaa",
