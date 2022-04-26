@@ -120,11 +120,7 @@ public class CompanyService {
                     .collect(Collectors.groupingBy(transport -> transport.getRoute().getPermit().getCompany()));
 
             companyTransportMap.forEach((companyModel, transports) -> {
-                CompanyTransportsDTO companyTransportsDTO = new CompanyTransportsDTO();
-                companyTransportsDTO.setCompany(companyModel);
-                companyTransportsDTO.setTransports(transports);
-                companyTransportsDTO.setTransportDepartureTimes(transports);
-
+                CompanyTransportsDTO companyTransportsDTO = new CompanyTransportsDTO(companyModel, transports);;
                 companyTransports.add(companyTransportsDTO);
             });
         }
