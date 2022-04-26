@@ -93,7 +93,7 @@ const SentSupervisionReportsAccordion = ({
                         <IonCol size-md="4">
                           <IonLabel className="headingText">{t("sendingList.tractorUnit")}</IonLabel>
                         </IonCol>
-                        <IonCol>{tractorUnit}</IonCol>
+                        <IonCol>{tractorUnit.toUpperCase()}</IonCol>
                       </IonRow>
                       <IonRow>
                         <IonCol size-md="4">

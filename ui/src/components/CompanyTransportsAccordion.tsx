@@ -19,17 +19,25 @@ const CompanyTransportsAccordion = ({ companyTransportsList, noNetworkNoData }: 
       ) : (
         <CustomAccordion
           className="companyAccordion"
-          items={companyTransportsList.map((companyTransports, index) => {
-            const key = `company_${index}`;
-            const { transports } = companyTransports || {};
+          items={companyTransportsList
+            .sort((a, b) => {
+              const { company: companyA } = a;
+              const { company: companyB } = b;
+              const { name: nameA = "" } = companyA || {};
+              const { name: nameB = "" } = companyB || {};
+              return nameA.localeCompare(nameB);
+            })
+            .map((companyTransports, index) => {
+              const key = `company_${index}`;
+              const { transports = [] } = companyTransports || {};
 
-            return {
-              uuid: key,
-              heading: <TransportCardListHeader companyTransports={companyTransports} />,
-              // isPanelOpen: index === 0,
-              panel: <TransportCardList transports={transports} />,
-            };
-          })}
+              return {
+                uuid: key,
+                heading: <TransportCardListHeader companyTransports={companyTransports} />,
+                // isPanelOpen: index === 0,
+                panel: <TransportCardList transports={transports} />,
+              };
+            })}
         />
       )}
     </div>

@@ -48,7 +48,7 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                 </IonCol>
               </IonRow>
               <IonRow>
-                <IonLabel>{`${t("sendingList.tractorUnit")}: ${tractorUnit}`}</IonLabel>
+                <IonLabel>{`${t("sendingList.tractorUnit")}: ${tractorUnit.toUpperCase()}`}</IonLabel>
               </IonRow>
               <IonRow>
                 <IonLabel>{`${t("sendingList.supervisionStarted")}: ${moment(startedTime).format(DATE_TIME_FORMAT_MIN)}`}</IonLabel>
