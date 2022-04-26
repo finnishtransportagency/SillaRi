@@ -348,7 +348,7 @@ public class LeluController {
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             try {
-                SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(supervisionId), true);
+                SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(supervisionId), true, false);
                 if (supervision != null && supervision.getReport() != null) {
                     supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
                     List<byte[]> images = supervisionService.getImageFiles(supervision.getImages(), activeProfile.equals("local"));
