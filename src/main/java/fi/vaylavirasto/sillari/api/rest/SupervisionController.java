@@ -45,7 +45,7 @@ public class SupervisionController {
             if (!isSupervisionOfSupervisor(supervisionId)) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
-            SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId);
+            SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId, true);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

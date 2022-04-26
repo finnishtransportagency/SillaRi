@@ -15,7 +15,7 @@ import { onRetry } from "../utils/backendData";
 import { finishSupervision, getSupervision } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
 import { SupervisionListType, SupervisionStatus } from "../utils/constants";
-import { invalidateOfflineData } from "../utils/supervisionUtil";
+import { removeSupervisionFromRouteTransportList } from "../utils/supervisionUtil";
 import { isSupervisionReportValid } from "../utils/validation";
 
 interface SummaryProps {
@@ -28,9 +28,11 @@ const SupervisionSummary = (): JSX.Element => {
   const history = useHistory();
   const queryClient = useQueryClient();
 
-  const { supervisionId = "0" } = useParams<SummaryProps>();
   const [toastMessage, setToastMessage] = useState("");
   const [present] = useIonAlert();
+
+  const { supervisionId = "0" } = useParams<SummaryProps>();
+  const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
 
   const {
     networkStatus: { isFailed = {} },
@@ -38,7 +40,7 @@ const SupervisionSummary = (): JSX.Element => {
   } = useTypedSelector((state) => state.rootReducer);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", Number(supervisionId)],
+    supervisionQueryKey,
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
@@ -60,17 +62,50 @@ const SupervisionSummary = (): JSX.Element => {
     }
   };
 
+  // Set-up mutations for modifying data later
+  // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
   const finishSupervisionMutation = useMutation((superId: string) => finishSupervision(Number(superId), dispatch), {
     retry: onRetry,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
+    onMutate: async () => {
+      // onMutate fires before the mutation function
 
-      // Invalidate queries to remove the finished supervision from the UI when using cached data
-      // TODO - figure out a better way to do this when offline, maybe using setQueryData to manually remove finished supervisions
-      invalidateOfflineData(queryClient, dispatch);
+      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+      await queryClient.cancelQueries(supervisionQueryKey);
+      await queryClient.cancelQueries("getSupervisionSendingList");
 
+      // Set the current status to FINISHED here since the backend won't be called yet when offline
+      let updatedSupervision: ISupervision;
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+        updatedSupervision = {
+          ...oldData,
+          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.FINISHED },
+        } as ISupervision;
+        return updatedSupervision;
+      });
+
+      // Add the finished supervision to the data used by the sending list so it is updated when offline
+      queryClient.setQueryData<ISupervision[]>("getSupervisionSendingList", (oldData) => {
+        return oldData
+          ? oldData.reduce(
+              (acc: ISupervision[], old) => {
+                return old.id === Number(supervisionId) ? acc : [...acc, old];
+              },
+              [updatedSupervision]
+            )
+          : [];
+      });
+
+      // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
+      // Also remove the finished supervision from the route transport list in the UI
+      // invalidateOfflineData(queryClient, dispatch);
+      removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
       setToastMessage(t("supervision.summary.saved"));
       returnToSupervisionList();
+    },
+    onSuccess: (data) => {
+      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+
+      queryClient.setQueryData(supervisionQueryKey, data);
     },
   });
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;

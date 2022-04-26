@@ -216,7 +216,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
       retry: onRetry,
       staleTime: Infinity,
     }),
-    queryClient.prefetchQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
+    queryClient.fetchQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
       retry: onRetry,
       staleTime: Infinity,
     }),
@@ -262,12 +262,24 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
       });
     })
   );
+
+  // Prefetch the supervisions in the sending list so that the modify button works offline
+  const supervisionSendingList = mainData[2];
+  await Promise.all(
+    supervisionSendingList.map((supervision) => {
+      const { id: supervisionId } = supervision || {};
+
+      return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, dispatch), {
+        retry: onRetry,
+        staleTime: Infinity,
+      });
+    })
+  );
 };
 
 export const invalidateOfflineData = (queryClient: QueryClient, dispatch: Dispatch) => {
   // Invalidate the queries to force UI updates when using cached data
   // Do this for the data that was fetched by prefetchOfflineData, rather than invalidating everything
-  // TODO - figure out a better way to do this when offline
   const companyTransportsList = queryClient.getQueryData<ICompanyTransports[]>(["getCompanyTransportsList"]) || [];
 
   companyTransportsList.forEach((companyTransports) => {
@@ -295,4 +307,27 @@ export const invalidateOfflineData = (queryClient: QueryClient, dispatch: Dispat
 
   // Repopulate the cache after invalidating
   prefetchOfflineData(queryClient, dispatch);
+};
+
+export const removeSupervisionFromRouteTransportList = (queryClient: QueryClient, routeTransportId: string, supervisionId: string) => {
+  // Remove the finished/denied supervision from the UI when using cached data
+  // This is a more efficient way than calling invalidateOfflineData to refetch everything
+  const routeTransport = queryClient.getQueryData<IRouteTransport>(["getRouteTransportOfSupervisor", Number(routeTransportId)]);
+  if (routeTransport && routeTransport.supervisions) {
+    routeTransport.supervisions = routeTransport.supervisions.reduce((acc: ISupervision[], s) => {
+      return s.id === Number(supervisionId) ? acc : [...acc, s];
+    }, []);
+    queryClient.setQueryData(["getRouteTransportOfSupervisor", Number(routeTransportId)], routeTransport);
+  }
+
+  // Make sure the supervision is also removed from the bridges list on the main page
+  const supervisionList = queryClient.getQueryData<ISupervision[]>(["getSupervisionList"]);
+  if (supervisionList) {
+    queryClient.setQueryData(
+      ["getSupervisionList"],
+      supervisionList.reduce((acc: ISupervision[], s) => {
+        return s.id === Number(supervisionId) ? acc : [...acc, s];
+      }, [])
+    );
+  }
 };

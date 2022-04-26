@@ -34,8 +34,8 @@ public class SupervisionImageMapper implements RecordMapper<Record, SupervisionI
         model.setFilename(record.get(TableAlias.supervisionImage.FILENAME));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
         model.setTaken(record.get(TableAlias.supervisionImage.TAKEN).format(formatter));
-        model.setMimetype("");
-        model.setEncoding("");
+        // model.setMimetype("");
+        // model.setEncoding("");
         model.setRowCreatedTime(record.get(TableAlias.supervisionImage.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.supervisionImage.ROW_UPDATED_TIME));
         return model;

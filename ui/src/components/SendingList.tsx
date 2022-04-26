@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQueryClient } from "react-query";
+import { onlineManager, useMutation, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import {
   IonButton,
@@ -50,7 +50,6 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const sendSupervisionMutation = useMutation((supervisionIds: string[]) => completeSupervisions(supervisionIds, dispatch), {
     retry: onRetry,
     onSuccess: () => {
-      // TODO - figure out a better way to do this when offline, maybe using setQueryData to manually remove sent supervision
       queryClient.invalidateQueries(["getSupervisionSendingList"]);
       setToastMessage(t("sendingList.sentOk"));
     },
@@ -69,7 +68,8 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   };
 
   const sendSelected = () => {
-    if (selectedIds.length > 0) {
+    // Only allow supervisions to be sent when online
+    if (selectedIds.length > 0 && onlineManager.isOnline()) {
       sendSupervisionMutation.mutate(selectedIds);
       setSelectedIds([]);
     }
@@ -137,7 +137,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
               color="primary"
               expand="block"
               size="large"
-              disabled={unsentSupervisions.length === 0 || selectedIds.length === 0 || isSendingSupervisions}
+              disabled={unsentSupervisions.length === 0 || selectedIds.length === 0 || isSendingSupervisions || !onlineManager.isOnline()}
               onClick={sendSelected}
             >
               {t("sendingList.sendSelected")}
