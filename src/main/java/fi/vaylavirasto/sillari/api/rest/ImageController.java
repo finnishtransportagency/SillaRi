@@ -4,7 +4,6 @@ import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
-import fi.vaylavirasto.sillari.model.FileInputModel;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.service.SupervisionImageService;
@@ -91,22 +90,23 @@ public class ImageController {
     @Operation(summary = "Upload image")
     @PostMapping("/upload")
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public SupervisionImageModel uploadImage(@RequestBody FileInputModel fileInputModel) {
+    public SupervisionImageModel uploadImage(@RequestBody SupervisionImageModel fileInputModel) {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "uploadImage");
         SupervisionImageModel model = new SupervisionImageModel();
         try {
 
-            if (!canSupervisorUpdateSupervision(Integer.parseInt(fileInputModel.getSupervisionId()))) {
+            if (!canSupervisorUpdateSupervision(fileInputModel.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
 
 
             model.setObjectKey("supervision/" + fileInputModel.getSupervisionId() + "/" + fileInputModel.getFilename());
             model.setFilename(fileInputModel.getFilename());
-            model.setMimetype("");
-            model.setEncoding("");
+            // model.setMimetype("");
+            // model.setEncoding("");
             model.setTaken(fileInputModel.getTaken());
-            model.setSupervisionId(Integer.parseInt(fileInputModel.getSupervisionId()));
+            model.setSupervisionId(fileInputModel.getSupervisionId());
+            model.setBase64(fileInputModel.getBase64());
             model = supervisionImageService.createFile(model);
 
             Tika tika = new Tika();

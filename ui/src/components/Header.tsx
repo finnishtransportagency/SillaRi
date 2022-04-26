@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { useIsFetching, useIsMutating, useQuery } from "react-query";
+import { onlineManager, useIsFetching, useIsMutating, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonBadge, IonButton, IonHeader, IonIcon, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonText } from "@ionic/react";
-import { arrowBackOutline, cloudDownloadOutline, cloudOfflineOutline, cloudOutline, cloudUploadOutline } from "ionicons/icons";
+import { arrowBackOutline, cloudDownloadOutline, cloudOfflineOutline, cloudOutline, cloudUploadOutline, rainyOutline } from "ionicons/icons";
 import outgoing from "../theme/icons/outgoing_white_no_badge.svg";
 import { onRetry } from "../utils/backendData";
 import { getSupervisionSendingList } from "../utils/supervisionBackendData";
@@ -39,6 +39,12 @@ const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSen
   const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : history.goBack;
 
   const [isSendingListOpen, setSendingListOpen] = useState<boolean>(false);
+  const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
+
+  useEffect(() => {
+    onlineManager.subscribe(() => setOnline(onlineManager.isOnline()));
+  }, []);
+
   const [sentSupervisions, setSentSupervisions] = useState<ISupervision[]>([]);
   const [unsentSupervisions, setUnsentSupervisions] = useState<ISupervision[]>([]);
 
@@ -75,17 +81,22 @@ const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSen
           </IonText>
         )}
         <IonButtons slot="end">
-          <IonIcon slot="icon-only" icon={cloudOfflineOutline} className={`cloudIcon ${somethingFailed ? "" : "ion-hide"}`} />
-          <IonIcon slot="icon-only" icon={cloudUploadOutline} className={`cloudIcon ${isMutating > 0 && !somethingFailed ? "" : "ion-hide"}`} />
+          <IonIcon slot="icon-only" icon={rainyOutline} className={`cloudIcon ${somethingFailed ? "" : "ion-hide"}`} />
+          <IonIcon slot="icon-only" icon={cloudOfflineOutline} className={`cloudIcon ${!somethingFailed && !isOnline ? "" : "ion-hide"}`} />
+          <IonIcon
+            slot="icon-only"
+            icon={cloudUploadOutline}
+            className={`cloudIcon ${isMutating > 0 && !somethingFailed && isOnline ? "" : "ion-hide"}`}
+          />
           <IonIcon
             slot="icon-only"
             icon={cloudDownloadOutline}
-            className={`cloudIcon ${isFetching > 0 && isMutating === 0 && !somethingFailed ? "" : "ion-hide"}`}
+            className={`cloudIcon ${isFetching > 0 && isMutating === 0 && !somethingFailed && isOnline ? "" : "ion-hide"}`}
           />
           <IonIcon
             slot="icon-only"
             icon={cloudOutline}
-            className={`cloudIcon ${isFetching === 0 && isMutating === 0 && !somethingFailed ? "" : "ion-hide"}`}
+            className={`cloudIcon ${isFetching === 0 && isMutating === 0 && !somethingFailed && isOnline ? "" : "ion-hide"}`}
           />
 
           {includeSendingList && (

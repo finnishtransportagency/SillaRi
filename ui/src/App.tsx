@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { IonApp, IonButton, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
+import { Storage as IonicStorage } from "@ionic/storage";
 import { withTranslation } from "react-i18next";
 import { onlineManager, QueryClient, QueryClientProvider } from "react-query";
 import { persistQueryClient } from "react-query/persistQueryClient-experimental";
-import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
+import { createAsyncStoragePersistor } from "react-query/createAsyncStoragePersistor-experimental";
 import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 import Supervisions from "./pages/Supervisions";
@@ -31,6 +32,7 @@ import { useTypedSelector } from "./store/store";
 import { getUserData, getVersionInfo } from "./utils/backendData";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/supervisionUtil";
+import IonicAsyncStorage from "./IonicAsyncStorage";
 
 /* Sillari.css */
 import "./theme/sillari.css";
@@ -55,6 +57,24 @@ const queryClient = new QueryClient({
   },
 });
 
+// NOTE 1: these persistence utilities are experimental in react-query v3 and subject to change
+// However at time of writing, they have not changed for months, and v4 is in active development which will include proper versions
+// The maxAge value is the same as the cacheTime value so garbage collection occurs at the expected time
+// NOTE 2: using localStorage doesn't work well with supervision images due to size limitations and performance issues
+// So use an AsyncStorage wrapper around Ionic Storage to store the data in IndexedDB instead, which solves these issues
+const store = new IonicStorage();
+store.create();
+const asyncStoragePersistor = createAsyncStoragePersistor({ storage: IonicAsyncStorage(store) });
+if (onlineManager.isOnline()) {
+  // When online, clear the persisted data to always get the latest from the backend on application start-up
+  asyncStoragePersistor.removeClient();
+}
+persistQueryClient({
+  queryClient,
+  persistor: asyncStoragePersistor,
+  maxAge: REACT_QUERY_CACHE_TIME,
+});
+
 const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
   const [homePage, setHomePage] = useState<string>("/supervisions");
@@ -65,20 +85,6 @@ const App: React.FC = () => {
   const {
     networkStatus: { isFailed = {}, failedStatus = {} },
   } = useTypedSelector((state) => state.rootReducer);
-
-  // NOTE: these persistence utilities are experimental in react-query v3 and subject to change
-  // However at time of writing, they have not changed for months, and v4 is in active development which will include proper versions
-  // The maxAge value is the same as the cacheTime value so garbage collection occurs at the expected time
-  const localStoragePersistor = createWebStoragePersistor({ storage: window.localStorage });
-  if (onlineManager.isOnline()) {
-    // When online, clear the persisted data to always get the latest from the backend on application start-up
-    localStoragePersistor.removeClient();
-  }
-  persistQueryClient({
-    queryClient,
-    persistor: localStoragePersistor,
-    maxAge: REACT_QUERY_CACHE_TIME,
-  });
 
   useEffect(() => {
     // Add or remove the "dark" class based on if the media query matches

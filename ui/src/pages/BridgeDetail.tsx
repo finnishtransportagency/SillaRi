@@ -25,13 +25,14 @@ const BridgeDetail = (): JSX.Element => {
   const queryClient = useQueryClient();
 
   const { supervisionId = "0" } = useParams<BridgeDetailProps>();
+  const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
 
   const {
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state) => state.rootReducer);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", Number(supervisionId)],
+    supervisionQueryKey,
     () => getSupervision(Number(supervisionId), dispatch),
     {
       retry: onRetry,
@@ -39,11 +40,24 @@ const BridgeDetail = (): JSX.Element => {
     }
   );
 
+  // Set-up mutations for modifying data later
+  // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
   const supervisionUpdateMutation = useMutation((updatedSupervision: ISupervision) => updateConformsToPermit(updatedSupervision, dispatch), {
     retry: onRetry,
+    onMutate: async (newData: ISupervision) => {
+      // onMutate fires before the mutation function
+
+      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+      await queryClient.cancelQueries(supervisionQueryKey);
+
+      // Optimistically update to the new supervision
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => ({ ...oldData, ...newData }));
+    },
     onSuccess: (data) => {
+      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+
       // Update the supervision from "getSupervision" with the updated supervision data in the response
-      queryClient.setQueryData(["getSupervision", Number(supervisionId)], data);
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, data);
     },
   });
 

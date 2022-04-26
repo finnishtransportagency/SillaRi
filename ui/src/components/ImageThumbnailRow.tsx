@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { IonCol, IonImg, IonRow, IonSpinner, IonThumbnail } from "@ionic/react";
-import { useIsMutating } from "react-query";
+import { IonCol, IonRow, IonSpinner } from "@ionic/react";
+import { onlineManager, useIsMutating } from "react-query";
 import moment from "moment";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
-import { getOrigin } from "../utils/request";
 import ImagePreview from "./ImagePreview";
+import ImageThumbnail from "./ImageThumbnail";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import "./ImageThumbnailRow.css";
 
@@ -27,13 +27,13 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
   // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
   return (
     <IonRow>
-      {isImageUploadMutating > 0 && (
+      {isImageUploadMutating > 0 && onlineManager.isOnline() && (
         <IonCol>
           <IonSpinner color="primary" className="imageSpinner" />
         </IonCol>
       )}
 
-      {isImageUploadMutating === 0 &&
+      {(isImageUploadMutating === 0 || !onlineManager.isOnline()) &&
         images &&
         images.length > 0 &&
         [...images]
@@ -43,13 +43,11 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
             return bm.diff(am, "seconds");
           })
           .map((image) => {
-            const imageUrl = `${getOrigin()}/api/images/get?id=${image.id}`;
+            const key = `image_${image.id}`;
 
             return (
-              <IonCol key={image.id} size="3">
-                <IonThumbnail className="imageThumbnail" onClick={() => showImage(true, imageUrl)}>
-                  <IonImg src={imageUrl} />
-                </IonThumbnail>
+              <IonCol key={key} size="3">
+                <ImageThumbnail image={image} className="imageThumbnail" showImage={(imageUrl) => showImage(true, imageUrl)} />
               </IonCol>
             );
           })}
