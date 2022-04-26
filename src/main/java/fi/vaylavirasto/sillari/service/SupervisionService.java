@@ -57,6 +57,9 @@ public class SupervisionService {
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
 
+    public SupervisionModel getSupervision(Integer supervisionId) {
+        return getSupervision(supervisionId, false);
+    }
 
     public SupervisionModel getSupervision(Integer supervisionId, boolean fillDetails) {
         SupervisionModel supervision = supervisionRepository.getSupervisionById(supervisionId);

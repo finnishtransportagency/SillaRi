@@ -222,7 +222,7 @@ public class SupervisionController {
 
     /* Check that supervision belongs to the user */
     private boolean isSupervisionOfSupervisor(Integer supervisionId) {
-        SupervisionModel supervision = supervisionService.getSupervision(supervisionId, false);
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getAllSupervisionsOfSupervisorNoDetails(user.getUsername());
 
@@ -231,7 +231,7 @@ public class SupervisionController {
 
     /* Check that supervision belongs to the user and report is not signed */
     private boolean canSupervisorUpdateSupervision(Integer supervisionId) {
-        SupervisionModel supervision = supervisionService.getSupervision(supervisionId, false);
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsOfSupervisorNoDetails(user.getUsername());
 
@@ -240,7 +240,7 @@ public class SupervisionController {
 
     /* Check that supervision is on the user's sending list */
     private boolean isSendingListSupervisionOfSupervisor(Integer supervisionId) {
-        SupervisionModel supervision = supervisionService.getSupervision(supervisionId, false);
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getFinishedButUnsignedSupervisionsNoDetails(user.getUsername());
 
