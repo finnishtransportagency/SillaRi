@@ -1,9 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { IonButton, IonCheckbox, IonCol, IonGrid, IonItem, IonLabel, IonRow } from "@ionic/react";
+import { IonButton, IonCheckbox, IonCol, IonGrid, IonItem, IonLabel, IonRow, useIonAlert } from "@ionic/react";
 import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
-import { SupervisionStatus } from "../utils/constants";
+import { SupervisionStatus, TransportStatus } from "../utils/constants";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { getUserData, onRetry } from "../utils/backendData";
@@ -25,6 +25,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   const dispatch = useDispatch();
   const history = useHistory();
   const queryClient = useQueryClient();
+  const [present] = useIonAlert();
 
   const { data: supervisorUser, isLoading: isLoadingSupervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
     retry: onRetry,
@@ -32,8 +33,12 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
   });
 
   const { username: currentSupervisor = "" } = supervisorUser || {};
-  const { id: supervisionId, conformsToPermit = false, currentStatus, finishedTime } = supervision || {};
+  const { id: supervisionId, conformsToPermit = false, currentStatus, finishedTime, routeTransport } = supervision || {};
   const { status: supervisionStatus, time: statusTime, username: statusUser } = currentStatus || {};
+  const { currentStatus: currentTransportStatus } = routeTransport || {};
+  const { status: transportStatus } = currentTransportStatus || {};
+
+  const transportInProgress = transportStatus && transportStatus !== TransportStatus.PLANNED;
 
   const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
 
@@ -77,7 +82,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
     },
   });
 
-  const supervisionStartClicked = () => {
+  const supervisionStartClicked = (): void => {
     const defaultReport: ISupervisionReport = {
       id: -1,
       supervisionId: Number(supervisionId),
@@ -98,8 +103,32 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
     supervisionStartMutation.mutate(defaultReport);
   };
 
-  const continueSupervisionClicked = () => {
+  const continueSupervisionClicked = (): void => {
     history.push(`/supervision/${supervisionId}`);
+  };
+
+  const denyCrossingClicked = (): void => {
+    history.push(`/denyCrossing/${supervisionId}`);
+  };
+
+  const confirmTransportInProgress = (onClickMethod: () => void, headerText: string) => {
+    if (transportInProgress) {
+      onClickMethod();
+    } else {
+      present({
+        header: headerText,
+        message: t("bridge.warning.transportNotStarted"),
+        buttons: [
+          t("common.buttons.back2"),
+          {
+            text: t("common.buttons.continue"),
+            handler: () => {
+              onClickMethod();
+            },
+          },
+        ],
+      });
+    }
   };
 
   return (
@@ -131,7 +160,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
                 color="primary"
                 expand="block"
                 size="large"
-                onClick={() => supervisionStartClicked()}
+                onClick={() => confirmTransportInProgress(supervisionStartClicked, t("bridge.warning.confirmStartSupervision"))}
               >
                 {t("bridge.startSupervision")}
               </IonButton>
@@ -142,7 +171,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
                 color="primary"
                 expand="block"
                 size="large"
-                onClick={() => continueSupervisionClicked()}
+                onClick={() => confirmTransportInProgress(continueSupervisionClicked, t("bridge.warning.confirmContinueSupervision"))}
               >
                 {t("bridge.continueSupervision")}
               </IonButton>
@@ -156,7 +185,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
               color="tertiary"
               expand="block"
               size="large"
-              routerLink={`/denyCrossing/${supervisionId}`}
+              onClick={() => confirmTransportInProgress(denyCrossingClicked, t("bridge.warning.confirmDenyCrossing"))}
             >
               {t("bridge.denyCrossing")}
             </IonButton>

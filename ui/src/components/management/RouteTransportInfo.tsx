@@ -129,7 +129,18 @@ const RouteTransportInfo = ({
   const saveRouteTransportDetail = () => {
     // The backend methods handle the status values, so these should be left undefined here
     if (!!routeTransportId && routeTransportId > 0) {
-      routeTransportUpdateMutation.mutate({ ...modifiedRouteTransportDetail, currentStatus: undefined, currentTransportPassword: undefined });
+      const { supervisions: updatedSupervisions = [] } = modifiedRouteTransportDetail;
+
+      // Clear previous supervision status and let backend handle it
+      const newSupervisions = updatedSupervisions.map((s) => {
+        return { ...s, currentStatus: undefined };
+      });
+      routeTransportUpdateMutation.mutate({
+        ...modifiedRouteTransportDetail,
+        currentStatus: undefined,
+        currentTransportPassword: undefined,
+        supervisions: newSupervisions,
+      });
     } else {
       routeTransportPlannedMutation.mutate({ ...modifiedRouteTransportDetail, currentStatus: undefined, currentTransportPassword: undefined });
     }

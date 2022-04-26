@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
@@ -44,6 +42,8 @@ public class SupervisionService {
     @Autowired
     RouteTransportRepository routeTransportRepository;
     @Autowired
+    RouteTransportStatusRepository routeTransportStatusRepository;
+    @Autowired
     RouteRepository routeRepository;
     @Autowired
     PermitRepository permitRepository;
@@ -60,14 +60,15 @@ public class SupervisionService {
 
 
     public SupervisionModel getSupervision(Integer supervisionId) {
-        return getSupervision(supervisionId, false);
+        return getSupervision(supervisionId, false, false);
     }
 
-    public SupervisionModel getSupervision(Integer supervisionId, boolean includeImageBase64) {
+    public SupervisionModel getSupervision(Integer supervisionId, boolean fillDetails, boolean includeImageBase64) {
         SupervisionModel supervision = supervisionRepository.getSupervisionById(supervisionId);
-        if (supervision != null) {
+        if (supervision != null && fillDetails) {
             fillSupervisionDetails(supervision);
             fillPermitDetails(supervision);
+            fillTransportDetails(supervision);
 
             if (includeImageBase64) {
                 // Populate the base64 image data for use in the UI when offline
@@ -103,6 +104,15 @@ public class SupervisionService {
                 route.setPermit(permitRepository.getPermit(route.getPermitId()));
             }
         }
+    }
+
+    private void fillTransportDetails(SupervisionModel supervision) {
+        RouteTransportModel routeTransport = routeTransportRepository.getRouteTransportById(supervision.getRouteTransportId());
+        if (routeTransport != null) {
+            // Sets also current status
+            routeTransport.setStatusHistory(routeTransportStatusRepository.getTransportStatusHistory(routeTransport.getId()));
+        }
+        supervision.setRouteTransport(routeTransport);
     }
 
     public List<SupervisionModel> getSupervisionsOfSupervisor(String username) {
@@ -160,7 +170,7 @@ public class SupervisionService {
 
     public SupervisionModel updateConformsToPermit(SupervisionModel supervision) {
         supervisionRepository.updateSupervision(supervision.getId(), supervision.getConformsToPermit());
-        return getSupervision(supervision.getId(), true);
+        return getSupervision(supervision.getId(), true, true);
     }
 
     public void deleteSupervision(SupervisionModel supervisionModel) {
@@ -174,21 +184,21 @@ public class SupervisionService {
         supervisionStatusRepository.insertSupervisionStatus(status);
 
         supervisionReportRepository.createSupervisionReport(report);
-        return getSupervision(supervisionId, true);
+        return getSupervision(supervisionId, true, true);
     }
 
     // Ends the supervision by adding the status CROSSING_DENIED
     public SupervisionModel denyCrossing(Integer supervisionId, String denyReason, SillariUser user) {
         SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.CROSSING_DENIED, OffsetDateTime.now(), denyReason, user.getUsername());
         supervisionStatusRepository.insertSupervisionStatus(status);
-        return getSupervision(supervisionId);
+        return getSupervision(supervisionId, true, false);
     }
 
     // Ends the supervision by adding the status FINISHED
     public SupervisionModel finishSupervision(Integer supervisionId, SillariUser user) {
         SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.FINISHED, OffsetDateTime.now(), user.getUsername());
         supervisionStatusRepository.insertSupervisionStatus(status);
-        return getSupervision(supervisionId, true);
+        return getSupervision(supervisionId, true, true);
     }
 
     // Completes the supervision by adding the status REPORT_SIGNED
@@ -198,7 +208,7 @@ public class SupervisionService {
     }
 
     public void createSupervisionPdf(Integer supervisionId) {
-        SupervisionModel supervision = getSupervision(supervisionId);
+        SupervisionModel supervision = getSupervision(supervisionId, true, false);
         supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
 
         List<byte[]> images = getImageFiles(supervision.getImages(), activeProfile.equals("local"));
@@ -221,13 +231,13 @@ public class SupervisionService {
         supervisionStatusRepository.insertSupervisionStatus(status);
 
         supervisionReportRepository.deleteSupervisionReport(supervisionId);
-        return getSupervision(supervisionId, true);
+        return getSupervision(supervisionId, true, true);
     }
 
     // Updates the report fields
     public SupervisionModel updateSupervisionReport(SupervisionReportModel supervisionReportModel) {
         supervisionReportRepository.updateSupervisionReport(supervisionReportModel);
-        return getSupervision(supervisionReportModel.getSupervisionId(), true);
+        return getSupervision(supervisionReportModel.getSupervisionId(), true, true);
     }
 
     public byte[] getSupervisionPdf(Long reportId) throws IOException {

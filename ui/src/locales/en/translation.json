@@ -5,6 +5,7 @@
       "back": "Back",
       "back2": "Back",
       "cancel": "Cancel",
+      "continue": "Continue",
       "search": "Search",
       "edit": "Edit",
       "save": "Save",
@@ -142,7 +143,13 @@
     "supervisionMissing": "Bridge supervision is not yet planned",
     "supervisionStarted": "Supervision started",
     "crossingDenied": "Bridge crossing cancelled",
-    "supervisionFinished": "Supervision finished"
+    "supervisionFinished": "Supervision finished",
+    "warning": {
+      "confirmStartSupervision": "Are you sure you want to start the supervision?",
+      "confirmContinueSupervision": "Are you sure you want to continue the supervision?",
+      "confirmDenyCrossing": "Are you sure you want to cancel the crossing?",
+      "transportNotStarted": "The transport has not yet started."
+    }
   },
   "denyCrossing": {
     "cantCross": "Transport cannot cross the bridge",
@@ -337,7 +344,8 @@
       "departed": "On the move",
       "stopped": "On a break",
       "in_progress": "On the move",
-      "arrived": "Arrived"
+      "arrived": "Arrived",
+      "supervisionStarted": "Supervision started"
     }
   },
   "transports": {
