@@ -3,10 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { IonContent, IonPage, IonToast } from "@ionic/react";
+import { IonPage } from "@ionic/react";
 import moment from "moment";
 import Header from "../../components/Header";
-import NoNetworkNoData from "../../components/NoNetworkNoData";
 import RouteTransportInfo from "../../components/management/RouteTransportInfo";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
@@ -16,7 +15,6 @@ import { useTypedSelector } from "../../store/store";
 import { onRetry } from "../../utils/backendData";
 import { getPermitOfRouteTransport, getRouteTransport, getSupervisors } from "../../utils/managementBackendData";
 import IVehicle from "../../interfaces/IVehicle";
-import Loading from "../../components/Loading";
 import { isTransportEditable } from "../../utils/validation";
 
 interface TransportDetailProps {
@@ -72,7 +70,7 @@ const TransportDetail = (): JSX.Element => {
       // The route transport currentStatus is needed by some components, but is set to undefined before saving
       const { plannedDepartureTime, supervisions = [] } = selectedRouteTransportDetail || {};
       const modifiedSupervisions = supervisions.map((supervision) => {
-        return { ...supervision, plannedTime: moment(supervision.plannedTime).toDate(), currentStatus: undefined, statusHistory: undefined };
+        return { ...supervision, plannedTime: moment(supervision.plannedTime).toDate(), statusHistory: undefined };
       });
       const modifiedRouteTransport = {
         ...selectedRouteTransportDetail,
@@ -112,8 +110,7 @@ const TransportDetail = (): JSX.Element => {
     (isFailed.getPermitOfRouteTransport && selectedPermitDetail === undefined) ||
     (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
 
-  const loading = isLoadingSupervisorList;
-  const notReady = noNetworkNoData || loading;
+  const notReady = noNetworkNoData || isLoadingSupervisorList;
 
   const title = isTransportEditable(modifiedRouteTransportDetail, selectedPermitDetail)
     ? t("management.transportDetail.headerTitleEdit")
@@ -122,37 +119,21 @@ const TransportDetail = (): JSX.Element => {
   return (
     <IonPage>
       <Header title={title} somethingFailed={isFailed.getRouteTransport || isFailed.getPermitOfRouteTransport || isFailed.getSupervisors} />
-      <IonContent color="light">
-        {notReady ? (
-          noNetworkNoData ? (
-            <NoNetworkNoData />
-          ) : (
-            <Loading />
-          )
-        ) : (
-          <RouteTransportInfo
-            routeTransportId={Number(routeTransportId)}
-            permit={selectedPermitDetail as IPermit}
-            supervisors={supervisorList as ISupervisor[]}
-            modifiedRouteTransportDetail={modifiedRouteTransportDetail as IRouteTransport}
-            setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-            selectedRouteOption={selectedRouteOption as IRoute}
-            setSelectedRouteOption={setSelectedRouteOption}
-            selectedVehicle={selectedVehicle}
-            setSelectedVehicle={setSelectedVehicle}
-            setToastMessage={setToastMessage}
-          />
-        )}
-
-        <IonToast
-          isOpen={toastMessage.length > 0}
-          message={toastMessage}
-          onDidDismiss={() => setToastMessage("")}
-          duration={5000}
-          position="top"
-          color="success"
-        />
-      </IonContent>
+      <RouteTransportInfo
+        routeTransportId={Number(routeTransportId)}
+        permit={selectedPermitDetail as IPermit}
+        supervisors={supervisorList as ISupervisor[]}
+        modifiedRouteTransportDetail={modifiedRouteTransportDetail as IRouteTransport}
+        setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+        selectedRouteOption={selectedRouteOption as IRoute}
+        setSelectedRouteOption={setSelectedRouteOption}
+        selectedVehicle={selectedVehicle}
+        setSelectedVehicle={setSelectedVehicle}
+        toastMessage={toastMessage}
+        setToastMessage={setToastMessage}
+        noNetworkNoData={noNetworkNoData}
+        notReady={notReady}
+      />
     </IonPage>
   );
 };

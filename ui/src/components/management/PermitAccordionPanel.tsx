@@ -56,6 +56,7 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
                   ]}
                   selectedValue={transportFilter}
                   onChange={(status) => setTransportFilter(status as string)}
+                  usePortal={true}
                 />
               </IonCol>
             </IonRow>

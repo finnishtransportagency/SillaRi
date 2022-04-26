@@ -7,7 +7,7 @@ sillari:
     version: @leluApiVersion@
     routeuploadpath: /tmp
   trex:
-    url: https://oag.vayla.fi/trex/rajapinta/taitorakenne/v2/yleistiedot/silta
+    url: https://api.vayla.fi/trex/rajapinta/taitorakenne/v2/yleistiedot/silta
   fim:
     url: https://api.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/getGroup2?displayName=sillari_sillanvalvoja
     username: ${FIM_USERNAME}

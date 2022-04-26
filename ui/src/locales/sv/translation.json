@@ -5,6 +5,7 @@
       "back": "Tillbaka",
       "back2": "Tillbaka",
       "cancel": "Avbryt",
+      "continue": "Fortsätt",
       "search": "Sök",
       "edit": "Redigera",
       "save": "Spara",
@@ -142,7 +143,13 @@
     "supervisionMissing": "Broövervakningen är inte planerad ännu",
     "supervisionStarted": "Övervakningen påbörjad",
     "crossingDenied": "Broöverfarten inställd",
-    "supervisionFinished": "Övervakningen avslutad"
+    "supervisionFinished": "Övervakningen avslutad",
+    "warning": {
+      "confirmStartSupervision": "(SV) Haluatko varmasti aloittaa valvonnan?",
+      "confirmContinueSupervision": "(SV) Haluatko varmasti jatkaa valvontaa?",
+      "confirmDenyCrossing": "(SV) Halutko varmasti peruuttaa ylityksen?",
+      "transportNotStarted": "(SV) Kuljetus ei ole lähtenyt vielä liikkeelle."
+    }
   },
   "denyCrossing": {
     "cantCross": "Transporten kan inte färdas över bron",
@@ -337,7 +344,8 @@
       "departed": "På väg",
       "stopped": "Paus",
       "in_progress": "På väg",
-      "arrived": "Transporten avslutad"
+      "arrived": "Transporten avslutad",
+      "supervisionStarted": "(SV) Valvonta aloitettu"
     }
   },
   "transports": {

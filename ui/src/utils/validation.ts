@@ -1,7 +1,7 @@
 import moment from "moment";
 import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
-import { TransportStatus } from "./constants";
+import { SupervisionStatus, TransportStatus } from "./constants";
 import { unitOfTime } from "moment/moment";
 import { constructTimesForComparison } from "./managementUtil";
 import ISupervision from "../interfaces/ISupervision";
@@ -28,11 +28,24 @@ export const areSupervisionsValid = (supervisions: ISupervision[]): boolean => {
   return true;
 };
 
+export const hasSupervisionStarted = (supervisions: ISupervision[]): boolean => {
+  return (
+    supervisions.length > 0 &&
+    supervisions.some((supervision) => {
+      const { currentStatus: currentSupervisionStatus } = supervision;
+      const { status: supervisionStatus } = currentSupervisionStatus || {};
+      // If supervision is new, it does not have a status yet
+      return supervisionStatus && supervisionStatus !== SupervisionStatus.PLANNED;
+    })
+  );
+};
+
 export const isTransportEditable = (transport: IRouteTransport | undefined, permit: IPermit | undefined): boolean => {
   if (transport) {
-    const { currentStatus } = transport;
+    const { currentStatus, supervisions = [] } = transport;
     const { status } = currentStatus || {};
-    return isPermitValid(permit) && status === TransportStatus.PLANNED;
+
+    return isPermitValid(permit) && status === TransportStatus.PLANNED && !hasSupervisionStarted(supervisions);
   } else {
     return false;
   }
