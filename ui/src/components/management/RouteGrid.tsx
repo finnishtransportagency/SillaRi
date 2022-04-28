@@ -257,7 +257,7 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
                     <IonCol size="7" size-sm="9" size-lg="12">
                       {status !== TransportStatus.PLANNED && (
                         <IonText
-                          className={`linkText routeGridStatus routeGridStatus_${status?.toLowerCase()}`}
+                          className={`ion-text-nowrap linkText routeGridStatus routeGridStatus_${status?.toLowerCase()}`}
                           onClick={() => showStatusLog(true, statusHistory)}
                         >
                           {statusText}

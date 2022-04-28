@@ -5,12 +5,11 @@ import Moment from "react-moment";
 import moment from "moment";
 import DatePicker from "../common/DatePicker";
 import TimePicker from "../common/TimePicker";
-import IPermit from "../../interfaces/IPermit";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import ISupervisor from "../../interfaces/ISupervisor";
 import { DATE_FORMAT, SupervisionStatus, TIME_FORMAT_MIN } from "../../utils/constants";
-import { isPlannedTimeBefore, isTransportEditable } from "../../utils/validation";
+import { isPlannedTimeBefore } from "../../utils/validation";
 import "./BridgeGrid.css";
 import SupervisorSelect from "./SupervisorSelect";
 import ValidationError from "../common/ValidationError";
@@ -18,12 +17,17 @@ import { constructTimesForComparison } from "../../utils/managementUtil";
 
 interface BridgeGridProps {
   supervisors: ISupervisor[];
-  permit: IPermit;
   modifiedRouteTransportDetail: IRouteTransport;
   setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
+  isEditable: boolean;
 }
 
-const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, setModifiedRouteTransportDetail }: BridgeGridProps): JSX.Element => {
+const BridgeGrid = ({
+  supervisors = [],
+  modifiedRouteTransportDetail,
+  setModifiedRouteTransportDetail,
+  isEditable,
+}: BridgeGridProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { supervisions = [] } = modifiedRouteTransportDetail || {};
@@ -90,13 +94,18 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
   return (
     <IonGrid className="bridgeGrid ion-no-padding">
       <IonRow className="lightBackground ion-hide-lg-down">
-        <IonCol size="12" size-lg="4" className="ion-padding">
+        <IonCol size="12" size-lg={isEditable ? "4" : "3"} className="ion-padding">
           <IonText>{t("management.transportDetail.bridgeInfo.bridge").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="12" size-lg="4" className="ion-padding">
+        <IonCol size="12" size-lg={isEditable ? "4" : "3"} className="ion-padding">
           <IonText>{t("management.transportDetail.bridgeInfo.estimatedCrossingTime").toUpperCase()}</IonText>
         </IonCol>
-        <IonCol size="12" size-lg="4" className="ion-padding">
+        {!isEditable && (
+          <IonCol size="12" size-lg="3" className="ion-padding">
+            <IonText>{t("management.transportDetail.bridgeInfo.supervision").toUpperCase()}</IonText>
+          </IonCol>
+        )}
+        <IonCol size="12" size-lg={isEditable ? "4" : "3"} className="ion-padding">
           <IonText>{t("management.transportDetail.bridgeInfo.bridgeSupervisor").toUpperCase()}</IonText>
         </IonCol>
       </IonRow>
@@ -128,7 +137,6 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
           const { firstName: firstName1 = "", lastName: lastName1 = "" } = supervisor1 || {};
           const { firstName: firstName2 = "", lastName: lastName2 = "" } = supervisor2 || {};
 
-          const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
           const key = `bridge_${index}`;
 
           const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
@@ -138,7 +146,7 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
 
           return (
             <IonRow key={key}>
-              <IonCol size="12" size-lg="4" className="ion-padding">
+              <IonCol size="12" size-lg={isEditable ? "4" : "3"} className="ion-padding">
                 <IonGrid className="ion-no-padding">
                   <IonRow>
                     <IonCol>
@@ -157,7 +165,7 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
                 </IonGrid>
               </IonCol>
 
-              <IonCol size="12" size-lg="4" className="ion-padding">
+              <IonCol size="12" size-lg={isEditable ? "4" : "3"} className="ion-padding">
                 <IonGrid className="ion-no-padding">
                   <IonRow>
                     <IonCol size="12" className="ion-hide-lg-up">
@@ -191,34 +199,43 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
                         {hasTimeError && <ValidationError label={t("common.validation.checkTimeShort")} />}
                       </IonCol>
                     )}
-                    {!isEditable && (
-                      <>
-                        <IonCol className="ion-margin-top">
-                          {supervisionStarted && (
-                            <IonText className={`ion-text-nowrap supervisionStatus supervisionStatus_${supervisionStatus?.toLowerCase()}`}>
-                              {statusText}
-                            </IonText>
-                          )}
-                        </IonCol>
-                        {supervisionStatus === SupervisionStatus.REPORT_SIGNED && (
-                          <IonCol className="ion-margin-top">
-                            <IonText className="linkText">{t("sendingList.report")}</IonText>
-                          </IonCol>
-                        )}
-                      </>
-                    )}
-                  </IonRow>
-
-                  <IonRow className="ion-margin-top ion-hide-lg-up">
-                    <IonCol size="12">
-                      <IonText className="headingText">{t("management.transportDetail.bridgeInfo.bridgeSupervisors")}</IonText>
-                    </IonCol>
                   </IonRow>
                 </IonGrid>
               </IonCol>
 
-              <IonCol size="12" size-lg="4" className="ion-padding">
+              {!isEditable && (
+                <IonCol size="12" size-lg="3" className="ion-padding">
+                  <IonRow className="ion-hide-lg-up ion-margin-bottom">
+                    <IonCol size="12">
+                      <IonText className="headingText">{t("management.transportDetail.bridgeInfo.supervision")}</IonText>
+                    </IonCol>
+                  </IonRow>
+                  <IonRow>
+                    <IonCol>
+                      {supervisionStarted && (
+                        <IonText className={`ion-text-nowrap supervisionStatus supervisionStatus_${supervisionStatus?.toLowerCase()}`}>
+                          {statusText}
+                        </IonText>
+                      )}
+                    </IonCol>
+                  </IonRow>
+                  <IonRow>
+                    {supervisionStatus === SupervisionStatus.REPORT_SIGNED && (
+                      <IonCol className="ion-margin-top">
+                        <IonText className="ion-text-nowrap linkText">{t("sendingList.report")}</IonText>
+                      </IonCol>
+                    )}
+                  </IonRow>
+                </IonCol>
+              )}
+
+              <IonCol size="12" size-lg={isEditable ? "4" : "3"} className="ion-padding">
                 <IonGrid className="ion-no-padding">
+                  <IonRow className="ion-margin-bottom ion-hide-lg-up">
+                    <IonCol size="12">
+                      <IonText className="headingText">{t("management.transportDetail.bridgeInfo.bridgeSupervisors")}</IonText>
+                    </IonCol>
+                  </IonRow>
                   <IonRow>
                     <IonCol size="12" className="ion-hide-lg-up">
                       <IonText className="headingText">{t("management.transportDetail.bridgeInfo.supervisor1")}</IonText>

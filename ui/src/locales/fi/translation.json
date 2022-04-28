@@ -313,6 +313,7 @@
       "bridgeInfo": {
         "bridge": "Silta",
         "estimatedCrossingTime": "Arvioitu ylitysaika",
+        "supervision": "Valvonta",
         "bridgeSupervisors": "Sillanvalvojat",
         "ownSupervisor": "Omat valvojat",
         "contractor": "Hoitourakoitsija",

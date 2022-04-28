@@ -315,9 +315,9 @@ const RouteTransportInfo = ({
                           {supervisions.length > 0 ? (
                             <BridgeGrid
                               supervisors={supervisors}
-                              permit={permit}
                               modifiedRouteTransportDetail={modifiedRouteTransportDetail}
                               setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+                              isEditable={isEditable}
                             />
                           ) : (
                             <IonText>{t("management.transportDetail.bridgeInfo.noBridges")}</IonText>

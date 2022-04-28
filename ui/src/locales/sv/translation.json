@@ -313,6 +313,7 @@
       "bridgeInfo": {
         "bridge": "Bron",
         "estimatedCrossingTime": "Uppskattad överfartstid",
+        "supervision": "Övervakning",
         "bridgeSupervisors": "Broövervakare",
         "ownSupervisor": "Egen övervakare",
         "contractor": "Underhållsentreprenör",

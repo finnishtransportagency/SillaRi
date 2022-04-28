@@ -313,6 +313,7 @@
       "bridgeInfo": {
         "bridge": "Bridge",
         "estimatedCrossingTime": "Estimated crossing time",
+        "supervision": "Supervision",
         "bridgeSupervisors": "Bridge supervisors",
         "ownSupervisor": "Own supervisors",
         "contractor": "Maintenance contractor",
