@@ -3,7 +3,7 @@ import CustomAccordion from "./common/CustomAccordion";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import { getReportSignedTime, groupSupervisionsBySignedDate, sortSentSupervisions } from "../utils/supervisionUtil";
-import { IonButton, IonCol, IonGrid, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
+import { IonCol, IonGrid, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import { DATE_FORMAT, DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import "./SentSupervisionReportsAccordion.css";
