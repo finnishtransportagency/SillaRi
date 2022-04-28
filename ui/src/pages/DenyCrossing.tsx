@@ -18,7 +18,7 @@ import {
   IonRow,
   IonTextarea,
 } from "@ionic/react";
-import { useTypedSelector } from "../store/store";
+import { useTypedSelector, RootState } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import PermitLinkItem from "../components/PermitLinkItem";
@@ -45,7 +45,7 @@ const DenyCrossing = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.rootReducer);
+  } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const [denyReason, setDenyReason] = useState<string | undefined>(undefined);
   const [otherReasonSelected, setOtherReasonSelected] = useState<boolean>(false);

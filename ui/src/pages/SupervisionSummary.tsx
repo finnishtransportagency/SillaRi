@@ -10,7 +10,7 @@ import SupervisionHeader from "../components/SupervisionHeader";
 import SupervisionObservationsSummary from "../components/SupervisionObservationsSummary";
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
-import { useTypedSelector } from "../store/store";
+import { useTypedSelector, RootState } from "../store/store";
 import { onRetry } from "../utils/backendData";
 import { finishSupervision, getSupervision } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
@@ -37,7 +37,7 @@ const SupervisionSummary = (): JSX.Element => {
   const {
     networkStatus: { isFailed = {} },
     selectedSupervisionListType,
-  } = useTypedSelector((state) => state.rootReducer);
+  } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,

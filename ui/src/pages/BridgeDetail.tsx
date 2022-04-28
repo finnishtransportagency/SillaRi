@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonContent, IonPage } from "@ionic/react";
-import { useTypedSelector } from "../store/store";
+import { useTypedSelector, RootState } from "../store/store";
 import BridgeDetailHeader from "../components/BridgeDetailHeader";
 import BridgeDetailFooter from "../components/BridgeDetailFooter";
 import CrossingInstructionsAccordion from "../components/CrossingInstructionsAccordion";
@@ -29,7 +29,7 @@ const BridgeDetail = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.rootReducer);
+  } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
