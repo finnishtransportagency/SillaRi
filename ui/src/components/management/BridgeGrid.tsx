@@ -9,7 +9,7 @@ import IPermit from "../../interfaces/IPermit";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import ISupervisor from "../../interfaces/ISupervisor";
-import { DATE_FORMAT, TIME_FORMAT_MIN } from "../../utils/constants";
+import { DATE_FORMAT, SupervisionStatus, TIME_FORMAT_MIN } from "../../utils/constants";
 import { isPlannedTimeBefore, isTransportEditable } from "../../utils/validation";
 import "./BridgeGrid.css";
 import SupervisorSelect from "./SupervisorSelect";
@@ -114,7 +114,14 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
           const { identifier, name } = bridge || {};
           const bridgeName = `${identifier} - ${name}`;
 
-          const { plannedTime, supervisors: supervisionSupervisors = [] } = supervision;
+          const { plannedTime, currentStatus, supervisors: supervisionSupervisors = [] } = supervision;
+          const { status: supervisionStatus } = currentStatus || {};
+          const supervisionStarted =
+            supervisionStatus && supervisionStatus !== SupervisionStatus.PLANNED && supervisionStatus !== SupervisionStatus.CANCELLED;
+          const statusText = supervisionStarted
+            ? t(`management.transportDetail.bridgeInfo.supervisionStatus.${supervisionStatus.toLowerCase()}`)
+            : "";
+
           const estimatedCrossingTime = moment(plannedTime);
           const supervisor1 = supervisionSupervisors.find((s) => s.priority === 1);
           const supervisor2 = supervisionSupervisors.find((s) => s.priority === 2);
@@ -158,38 +165,52 @@ const BridgeGrid = ({ supervisors = [], permit, modifiedRouteTransportDetail, se
                     </IonCol>
                   </IonRow>
                   <IonRow>
-                    <IonCol>
-                      {isEditable ? (
-                        <>
-                          <DatePicker
-                            value={estimatedCrossingTime.toDate()}
-                            onChange={(value) => setEstimatedCrossingDate(supervision, value)}
-                            hasError={hasDateError}
-                          />
-                          {hasDateError && <ValidationError label={t("common.validation.checkDateShort")} />}
-                        </>
-                      ) : (
+                    {isEditable ? (
+                      <IonCol>
+                        <DatePicker
+                          value={estimatedCrossingTime.toDate()}
+                          onChange={(value) => setEstimatedCrossingDate(supervision, value)}
+                          hasError={hasDateError}
+                        />
+                        {hasDateError && <ValidationError label={t("common.validation.checkDateShort")} />}
+                      </IonCol>
+                    ) : (
+                      <IonCol size="12">
                         <Moment format={DATE_FORMAT}>{estimatedCrossingTime}</Moment>
-                      )}
-                    </IonCol>
-                    <IonCol className="ion-margin-start">
-                      {isEditable ? (
-                        <>
-                          <TimePicker
-                            value={estimatedCrossingTime.toDate()}
-                            onChange={(value) => setEstimatedCrossingTime(supervision, value)}
-                            hasError={hasTimeError}
-                          />
-                          {hasTimeError && <ValidationError label={t("common.validation.checkTimeShort")} />}
-                        </>
-                      ) : (
+                        <IonText> </IonText>
                         <Moment format={TIME_FORMAT_MIN}>{estimatedCrossingTime}</Moment>
-                      )}
-                    </IonCol>
+                      </IonCol>
+                    )}
+                    {isEditable && (
+                      <IonCol className="ion-margin-start">
+                        <TimePicker
+                          value={estimatedCrossingTime.toDate()}
+                          onChange={(value) => setEstimatedCrossingTime(supervision, value)}
+                          hasError={hasTimeError}
+                        />
+                        {hasTimeError && <ValidationError label={t("common.validation.checkTimeShort")} />}
+                      </IonCol>
+                    )}
+                    {!isEditable && (
+                      <>
+                        <IonCol className="ion-margin-top">
+                          {supervisionStarted && (
+                            <IonText className={`ion-text-nowrap supervisionStatus supervisionStatus_${supervisionStatus?.toLowerCase()}`}>
+                              {statusText}
+                            </IonText>
+                          )}
+                        </IonCol>
+                        {supervisionStatus === SupervisionStatus.REPORT_SIGNED && (
+                          <IonCol className="ion-margin-top">
+                            <IonText className="linkText">{t("sendingList.report")}</IonText>
+                          </IonCol>
+                        )}
+                      </>
+                    )}
                   </IonRow>
 
-                  <IonRow className="ion-margin-top">
-                    <IonCol size="12" className="ion-hide-lg-up">
+                  <IonRow className="ion-margin-top ion-hide-lg-up">
+                    <IonCol size="12">
                       <IonText className="headingText">{t("management.transportDetail.bridgeInfo.bridgeSupervisors")}</IonText>
                     </IonCol>
                   </IonRow>

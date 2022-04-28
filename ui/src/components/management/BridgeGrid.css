@@ -5,3 +5,24 @@
 .bridgeGrid > ion-row {
   border-top: 2px solid var(--ion-color-light);
 }
+
+.supervisionStatus {
+  padding: 6px;
+  color: #000000 !important; /* always black due to colours defined below */
+}
+
+.supervisionStatus_in_progress {
+  background-color: var(--ion-color-success-25);
+}
+
+.supervisionStatus_crossing_denied {
+  background-color: var(--ion-color-danger-25);
+}
+
+.supervisionStatus_finished {
+  background-color: var(--ion-color-secondary-25);
+}
+
+.supervisionStatus_report_signed {
+  background-color: var(--ion-color-light);
+}

@@ -321,7 +321,13 @@
         "supervisor1": "Bridge supervisor (1.)",
         "supervisor2": "Backup supervisor (2.)",
         "copySupervisor": "Copy to all bridges",
-        "noBridges": "No bridges to supervise on the route"
+        "noBridges": "No bridges to supervise on the route",
+        "supervisionStatus": {
+          "in_progress": "Supervision in progress",
+          "crossing_denied": "Crossing cancelled",
+          "finished": "Supervision finished",
+          "report_signed": "Report completed"
+        }
       },
       "transportDepartureTime": {
         "header": "Estimated departure time",

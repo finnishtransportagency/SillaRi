@@ -23,6 +23,7 @@ http://ionicframework.com/docs/theming/ */
 
   /** secondary additional (Vayla blue) **/
   --ion-color-secondary-50: #80cdf0;
+  --ion-color-secondary-25: #b8e9ff;
   --ion-color-secondary-5: #f2fafe;
 
   /** tertiary (Vayla light blue) **/

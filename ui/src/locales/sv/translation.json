@@ -321,7 +321,13 @@
         "supervisor1": "Broövervakare (1.)",
         "supervisor2": "stf. broövervakare(2.)",
         "copySupervisor": "Kopiera till alla broar",
-        "noBridges": "(SV) Reitillä ei ole valvottavia siltoja"
+        "noBridges": "(SV) Reitillä ei ole valvottavia siltoja",
+        "supervisionStatus": {
+          "in_progress": "(SV) Valvonta käynnissä",
+          "crossing_denied": "Broöverfarten inställd",
+          "finished": "Övervakningen avslutad",
+          "report_signed": "(SV) Raportti valmis"
+        }
       },
       "transportDepartureTime": {
         "header": "Uppskattad avgångstid",
