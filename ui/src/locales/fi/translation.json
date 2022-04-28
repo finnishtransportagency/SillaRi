@@ -323,6 +323,7 @@
         "supervisor2": "Varavalvoja (2.)",
         "copySupervisor": "Kopioi kaikille silloille",
         "noBridges": "Reitillä ei ole valvottavia siltoja",
+        "report": "Valvontaraportti",
         "supervisionStatus": {
           "in_progress": "Valvonta käynnissä",
           "crossing_denied": "Ylitys peruttu",

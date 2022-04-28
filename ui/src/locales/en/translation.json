@@ -323,6 +323,7 @@
         "supervisor2": "Backup supervisor (2.)",
         "copySupervisor": "Copy to all bridges",
         "noBridges": "No bridges to supervise on the route",
+        "report": "Supervision report",
         "supervisionStatus": {
           "in_progress": "Supervision in progress",
           "crossing_denied": "Crossing cancelled",

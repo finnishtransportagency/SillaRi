@@ -113,11 +113,11 @@ const SentSupervisionReportsAccordion = ({
                           <IonLabel className="headingText">{t("sendingList.removed")}</IonLabel>
                         </IonCol>
                       </IonRow>*/}
-                      <IonRow>
+                      <IonRow className="ion-margin-bottom">
                         <IonCol>
-                          <IonButton buttonType="text" onClick={() => openSupervisionReport(supervisionId)}>
-                            <IonText className="linkText">{t("sendingList.report")}</IonText>
-                          </IonButton>
+                          <IonText className="ion-text-nowrap linkText" onClick={() => openSupervisionReport(supervisionId)}>
+                            {t("sendingList.report")}
+                          </IonText>
                         </IonCol>
                       </IonRow>
                     </IonGrid>

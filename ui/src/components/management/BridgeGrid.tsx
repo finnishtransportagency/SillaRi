@@ -19,6 +19,8 @@ interface BridgeGridProps {
   supervisors: ISupervisor[];
   modifiedRouteTransportDetail: IRouteTransport;
   setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
+  setReportModalOpen: Dispatch<SetStateAction<boolean>>;
+  setSelectedSupervisionId: Dispatch<SetStateAction<number | undefined>>;
   isEditable: boolean;
 }
 
@@ -26,6 +28,8 @@ const BridgeGrid = ({
   supervisors = [],
   modifiedRouteTransportDetail,
   setModifiedRouteTransportDetail,
+  setReportModalOpen,
+  setSelectedSupervisionId,
   isEditable,
 }: BridgeGridProps): JSX.Element => {
   const { t } = useTranslation();
@@ -91,6 +95,11 @@ const BridgeGrid = ({
     }
   };
 
+  const openSupervisionReport = (supervisionId: number) => {
+    setSelectedSupervisionId(supervisionId);
+    setReportModalOpen(true);
+  };
+
   return (
     <IonGrid className="bridgeGrid ion-no-padding">
       <IonRow className="lightBackground ion-hide-lg-down">
@@ -118,7 +127,7 @@ const BridgeGrid = ({
           return ordinalA - ordinalB;
         })
         .map((supervision, index, sortedSupervisions) => {
-          const { routeBridge } = supervision || {};
+          const { id: supervisionId, routeBridge } = supervision || {};
           const { id: routeBridgeId, bridge, contractNumber = 0 } = routeBridge || {};
           const { identifier, name } = bridge || {};
           const bridgeName = `${identifier} - ${name}`;
@@ -220,9 +229,11 @@ const BridgeGrid = ({
                     </IonCol>
                   </IonRow>
                   <IonRow>
-                    {supervisionStatus === SupervisionStatus.REPORT_SIGNED && (
+                    {supervisionStatus === SupervisionStatus.REPORT_SIGNED && !!supervisionId && (
                       <IonCol className="ion-margin-top">
-                        <IonText className="ion-text-nowrap linkText">{t("sendingList.report")}</IonText>
+                        <IonText className="ion-text-nowrap linkText" onClick={() => openSupervisionReport(supervisionId)}>
+                          {t("management.transportDetail.bridgeInfo.report")}
+                        </IonText>
                       </IonCol>
                     )}
                   </IonRow>

@@ -29,6 +29,7 @@ import SupervisionTimesAlert from "./SupervisionTimesAlert";
 import NoNetworkNoData from "../NoNetworkNoData";
 import Loading from "../Loading";
 import RouteTransportFooter from "./RouteTransportFooter";
+import SentSupervisionReportModal from "../SentSupervisionReportModal";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -67,6 +68,8 @@ const RouteTransportInfo = ({
   const queryClient = useQueryClient();
   const [present] = useIonAlert();
   const [supervisionTimesAlertOpen, setSupervisionTimesAlertOpen] = useState<boolean>(false);
+  const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
+  const [selectedSupervisionId, setSelectedSupervisionId] = useState<number | undefined>(undefined);
 
   const { validStartDate, validEndDate } = permit || {};
   const { plannedDepartureTime, supervisions = [] } = modifiedRouteTransportDetail || {};
@@ -317,6 +320,8 @@ const RouteTransportInfo = ({
                               supervisors={supervisors}
                               modifiedRouteTransportDetail={modifiedRouteTransportDetail}
                               setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+                              setReportModalOpen={setReportModalOpen}
+                              setSelectedSupervisionId={setSelectedSupervisionId}
                               isEditable={isEditable}
                             />
                           ) : (
@@ -342,6 +347,12 @@ const RouteTransportInfo = ({
           duration={5000}
           position="top"
           color="success"
+        />
+        <SentSupervisionReportModal
+          isOpen={reportModalOpen}
+          setOpen={setReportModalOpen}
+          selectedSupervisionId={selectedSupervisionId}
+          setSelectedSupervisionId={setSelectedSupervisionId}
         />
       </IonContent>
       <RouteTransportFooter

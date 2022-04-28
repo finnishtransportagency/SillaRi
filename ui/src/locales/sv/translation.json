@@ -323,6 +323,7 @@
         "supervisor2": "stf. broövervakare(2.)",
         "copySupervisor": "Kopiera till alla broar",
         "noBridges": "(SV) Reitillä ei ole valvottavia siltoja",
+        "report": "(SV) Valvontaraportti",
         "supervisionStatus": {
           "in_progress": "(SV) Valvonta käynnissä",
           "crossing_denied": "Broöverfarten inställd",
