@@ -1,4 +1,6 @@
 import React from "react";
+import { useQuery } from "react-query";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
   IonButton,
@@ -16,17 +18,24 @@ import {
 } from "@ionic/react";
 import moment from "moment";
 import close from "../theme/icons/close_large_white.svg";
+import { onRetry } from "../utils/backendData";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
+import { getCompanyTransportsList } from "../utils/supervisionBackendData";
 import "./OfflineInfo.css";
 
 interface OfflineInfoProps {
-  lastUpdated: Date;
   isOpen: boolean;
   setOpen: (isOpen: boolean) => void;
 }
 
-const OfflineInfo = ({ lastUpdated, isOpen, setOpen }: OfflineInfoProps): JSX.Element => {
+const OfflineInfo = ({ isOpen, setOpen }: OfflineInfoProps): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
+  const { dataUpdatedAt } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
 
   return (
     <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)} className="offlineInfoModal">
@@ -45,7 +54,7 @@ const OfflineInfo = ({ lastUpdated, isOpen, setOpen }: OfflineInfoProps): JSX.El
           <IonRow>
             <IonCol>
               <IonText>{`${t("offlineInfo.info1")} `}</IonText>
-              <IonText className="headingText">{moment(lastUpdated).format(DATE_TIME_FORMAT_MIN)}</IonText>
+              <IonText className="headingText">{moment(dataUpdatedAt).format(DATE_TIME_FORMAT_MIN)}</IonText>
               <IonText>.</IonText>
             </IonCol>
           </IonRow>
