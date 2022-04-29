@@ -47,7 +47,13 @@ const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSen
   const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
 
   useEffect(() => {
-    onlineManager.subscribe(() => setOnline(onlineManager.isOnline()));
+    onlineManager.subscribe(() => {
+      setOnline(onlineManager.isOnline());
+
+      if (onlineManager.isOnline()) {
+        setOfflineInfoOpen(false);
+      }
+    });
   }, []);
 
   const [sentSupervisions, setSentSupervisions] = useState<ISupervision[]>([]);
@@ -124,14 +130,12 @@ const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSen
         )}
       </IonToolbar>
 
-      {!isOnline && (
-        <IonItem className="offlineHeader" lines="none">
-          <IonLabel className="headingBoldText ion-text-center">{t("main.offline")}</IonLabel>
-          <IonButton slot="end" className="ion-no-padding" size="default" fill="clear" onClick={() => setOfflineInfoOpen(true)}>
-            <IonIcon slot="icon-only" icon={help} />
-          </IonButton>
-        </IonItem>
-      )}
+      <IonItem className={`offlineHeader ${isOnline ? "ion-hide" : ""}`} lines="none">
+        <IonLabel className="headingBoldText ion-text-center">{t("main.offline")}</IonLabel>
+        <IonButton slot="end" className="ion-no-padding" size="default" fill="clear" onClick={() => setOfflineInfoOpen(true)}>
+          <IonIcon slot="icon-only" icon={help} />
+        </IonButton>
+      </IonItem>
 
       <OfflineInfo lastUpdated={new Date(dataUpdatedAt)} isOpen={isOfflineInfoOpen} setOpen={setOfflineInfoOpen} />
     </IonHeader>
