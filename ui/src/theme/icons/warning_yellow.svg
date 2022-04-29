@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="UI-Style-Guide" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Style-Guideline" transform="translate(-355.000000, -5726.000000)">
+            <g id="static/icon/24x24/warning-outline" transform="translate(355.000000, 5726.000000)">
+                <polygon id="hit-area" points="0 0 24 0 24 24 0 24"></polygon>
+                <path d="M12,6.99 L19.53,20 L4.47,20 L12,6.99 M12,3 L1,22 L23,22 L12,3 L12,3 Z M13,17 L11,17 L11,19 L13,19 L13,17 Z M13,11 L11,11 L11,16 L13,16 L13,11 Z" id="Shape" fill="#FFC300"></path>
+            </g>
+        </g>
+    </g>
+</svg>

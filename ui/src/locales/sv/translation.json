@@ -401,7 +401,11 @@
   "offlineInfo": {
     "title": "Offline-tillstånd",
     "info1": "(SV) SillaRi's transports and bridges to be supervised were last updated",
-    "info2": "(SV) You can use SillaRi offline, in which case it is possible to save the bridge supervision report temporarily to this device.",
+    "info2": "(SV) You can use SillaRi in offline mode, in which case it is possible to save the bridge supervision report temporarily to this device.",
     "info3": "(SV) You can sent the supervision report later when the network connection is in use again and you login to SillaRi."
+  },
+  "sendingListOfflineNotice": {
+    "title": "(SV) Sending is not possible in offline mode",
+    "notice": "(SV) When the network connection is restored, login to SillaRi and send the supervision reports."
   }
 }

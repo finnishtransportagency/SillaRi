@@ -38,7 +38,7 @@
     },
     "noNetworkNoData": "Unable to retrieve data, trying again...",
     "loading": "Loading...",
-    "offline": "Offline"
+    "offline": "Offline mode"
   },
   "map": {
     "attribution": "Material"
@@ -399,9 +399,13 @@
     "content": "You do no not have permission to see this page."
   },
   "offlineInfo": {
-    "title": "Offline",
+    "title": "Offline mode",
     "info1": "SillaRi's transports and bridges to be supervised were last updated",
-    "info2": "You can use SillaRi offline, in which case it is possible to save the bridge supervision report temporarily to this device.",
+    "info2": "You can use SillaRi in offline mode, in which case it is possible to save the bridge supervision report temporarily to this device.",
     "info3": "You can sent the supervision report later when the network connection is in use again and you login to SillaRi."
+  },
+  "sendingListOfflineNotice": {
+    "title": "Sending is not possible in offline mode",
+    "notice": "When the network connection is restored, login to SillaRi and send the supervision reports."
   }
 }
