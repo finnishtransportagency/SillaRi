@@ -158,7 +158,7 @@ const Photos = (): JSX.Element => {
   // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
   return (
     <IonPage>
-      <Header title={t("supervision.photos")} confirmGoBack={saveImages} />
+      <Header title={t("supervision.photos")} confirmGoBack={saveImages} includeOfflineBanner />
       <IonContent>
         <IonList>
           {images &&

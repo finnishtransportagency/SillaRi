@@ -24,6 +24,7 @@ import { onRetry } from "../utils/backendData";
 import { completeSupervisions } from "../utils/supervisionBackendData";
 import { useHistory } from "react-router";
 import CustomAccordion from "./common/CustomAccordion";
+import OfflineBanner from "./OfflineBanner";
 import SentSupervisionReportsAccordion from "./SentSupervisionReportsAccordion";
 import "./SendingList.css";
 import SendingListItem from "./SendingListItem";
@@ -104,6 +105,8 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
             </IonButton>
           </IonButtons>
         </IonToolbar>
+
+        <OfflineBanner />
       </IonHeader>
       <IonContent>
         {unsentSupervisions.length === 0 ? (

@@ -1,0 +1,5 @@
+.offlineBanner {
+  /* always use black background regardless of dark mode */
+  --background: #000000;
+  --color: #ffffff;
+}

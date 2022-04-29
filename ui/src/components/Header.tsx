@@ -2,15 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { onlineManager, useIsFetching, useIsMutating, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { IonBadge, IonButton, IonButtons, IonHeader, IonIcon, IonItem, IonLabel, IonMenuButton, IonText, IonTitle, IonToolbar } from "@ionic/react";
+import { IonBadge, IonButton, IonButtons, IonHeader, IonIcon, IonMenuButton, IonText, IonTitle, IonToolbar } from "@ionic/react";
 import { arrowBackOutline, cloudDownloadOutline, cloudOfflineOutline, cloudOutline, cloudUploadOutline, rainyOutline } from "ionicons/icons";
-import help from "../theme/icons/help_white.svg";
 import outgoing from "../theme/icons/outgoing_white_no_badge.svg";
 import { onRetry } from "../utils/backendData";
 import { getSupervisionSendingList } from "../utils/supervisionBackendData";
 import SendingList from "./SendingList";
-import OfflineInfo from "./OfflineInfo";
+import OfflineBanner from "./OfflineBanner";
 import "./Header.css";
 import { isSupervisionSigned } from "../utils/supervisionUtil";
 import ISupervision from "../interfaces/ISupervision";
@@ -21,18 +19,26 @@ interface HeaderProps {
   titleStyle?: string;
   somethingFailed?: boolean;
   includeSendingList?: boolean;
+  includeOfflineBanner?: boolean;
   confirmGoBack?: () => void;
 }
 
-const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSendingList, confirmGoBack }: HeaderProps): JSX.Element => {
-  const { t } = useTranslation();
+const Header = ({
+  title,
+  secondaryTitle,
+  titleStyle,
+  somethingFailed,
+  includeSendingList,
+  includeOfflineBanner,
+  confirmGoBack,
+}: HeaderProps): JSX.Element => {
   const history = useHistory();
   const { pathname } = useLocation();
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
   const dispatch = useDispatch();
 
-  const { data: supervisionList = [], dataUpdatedAt } = useQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
+  const { data: supervisionList = [] } = useQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
     retry: onRetry,
     staleTime: Infinity,
     enabled: includeSendingList,
@@ -43,17 +49,10 @@ const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSen
   const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : history.goBack;
 
   const [isSendingListOpen, setSendingListOpen] = useState<boolean>(false);
-  const [isOfflineInfoOpen, setOfflineInfoOpen] = useState<boolean>(false);
   const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
 
   useEffect(() => {
-    onlineManager.subscribe(() => {
-      setOnline(onlineManager.isOnline());
-
-      if (onlineManager.isOnline()) {
-        setOfflineInfoOpen(false);
-      }
-    });
+    onlineManager.subscribe(() => setOnline(onlineManager.isOnline()));
   }, []);
 
   const [sentSupervisions, setSentSupervisions] = useState<ISupervision[]>([]);
@@ -130,14 +129,7 @@ const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSen
         )}
       </IonToolbar>
 
-      <IonItem className={`offlineHeader ${isOnline ? "ion-hide" : ""}`} lines="none">
-        <IonLabel className="headingBoldText ion-text-center">{t("main.offline")}</IonLabel>
-        <IonButton slot="end" className="ion-no-padding" size="default" fill="clear" onClick={() => setOfflineInfoOpen(true)}>
-          <IonIcon slot="icon-only" icon={help} />
-        </IonButton>
-      </IonItem>
-
-      <OfflineInfo lastUpdated={new Date(dataUpdatedAt)} isOpen={isOfflineInfoOpen} setOpen={setOfflineInfoOpen} />
+      {includeOfflineBanner && <OfflineBanner />}
     </IonHeader>
   );
 };
@@ -147,6 +139,7 @@ Header.defaultProps = {
   titleStyle: "headingText",
   somethingFailed: false,
   includeSendingList: false,
+  includeOfflineBanner: false,
 };
 
 export default Header;

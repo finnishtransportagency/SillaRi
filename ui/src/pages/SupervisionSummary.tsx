@@ -152,7 +152,13 @@ const SupervisionSummary = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("supervision.summary.title")} somethingFailed={isFailed.getSupervision} includeSendingList confirmGoBack={confirmGoBack} />
+      <Header
+        title={t("supervision.summary.title")}
+        somethingFailed={isFailed.getSupervision}
+        includeSendingList
+        includeOfflineBanner
+        confirmGoBack={confirmGoBack}
+      />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />
