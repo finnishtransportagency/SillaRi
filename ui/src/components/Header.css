@@ -1,3 +1,9 @@
 .cloudIcon {
   margin-right: 8px !important;
 }
+
+.offlineHeader {
+  /* always use black background regardless of dark mode */
+  --background: #000000;
+  --color: #ffffff;
+}

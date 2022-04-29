@@ -10,6 +10,7 @@
       "edit": "Edit",
       "save": "Save",
       "send": "Send",
+      "close": "Close",
       "closeAlert": "Close alert"
     },
     "answer": {
@@ -36,7 +37,8 @@
       "bridges": "Bridges"
     },
     "noNetworkNoData": "Unable to retrieve data, trying again...",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "offline": "Offline"
   },
   "map": {
     "attribution": "Material"
@@ -395,5 +397,11 @@
     },
     "title": "Access Denied!",
     "content": "You do no not have permission to see this page."
+  },
+  "offlineInfo": {
+    "title": "Offline",
+    "info1": "SillaRi's transports and bridges to be supervised were last updated",
+    "info2": "You can use SillaRi offline, in which case it is possible to save the bridge supervision report temporarily to this device.",
+    "info3": "You can sent the supervision report later when the network connection is in use again and you login to SillaRi."
   }
 }

@@ -10,6 +10,7 @@
       "edit": "Redigera",
       "save": "Spara",
       "send": "Sänd",
+      "close": "Stäng",
       "closeAlert": "(SV) Close alert"
     },
     "answer": {
@@ -36,7 +37,8 @@
       "bridges": "Broar"
     },
     "noNetworkNoData": "Data kan inte hämtas, försöker igen...",
-    "loading": "Laddar..."
+    "loading": "Laddar...",
+    "offline": "Offline-tillstånd"
   },
   "map": {
     "attribution": "Material"
@@ -395,5 +397,11 @@
     },
     "title": "Tillträde beviljas ej!",
     "content": "Du har inte rätten att se den här sidan."
+  },
+  "offlineInfo": {
+    "title": "Offline-tillstånd",
+    "info1": "(SV) SillaRi's transports and bridges to be supervised were last updated",
+    "info2": "(SV) You can use SillaRi offline, in which case it is possible to save the bridge supervision report temporarily to this device.",
+    "info3": "(SV) You can sent the supervision report later when the network connection is in use again and you login to SillaRi."
   }
 }

@@ -10,6 +10,7 @@
       "edit": "Muokkaa",
       "save": "Tallenna",
       "send": "Lähetä",
+      "close": "Sulje",
       "closeAlert": "Sulje ilmoitus"
     },
     "answer": {
@@ -36,7 +37,8 @@
       "bridges": "Sillat"
     },
     "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen...",
-    "loading": "Ladataan..."
+    "loading": "Ladataan...",
+    "offline": "Offline-tila"
   },
   "map": {
     "attribution": "Aineisto"
@@ -395,5 +397,11 @@
     },
     "title": "Pääsy estetty!",
     "content": "Sinulla ei ole oikeuksia nähdä tätä sivua."
+  },
+  "offlineInfo": {
+    "title": "Offline-tila",
+    "info1": "SillaRin kuljetukset ja valvottavat sillat on päivitetty viimeksi",
+    "info2": "Voit käyttää SillaRia offline-tilassa, jolloin sillanvalvonnan raportti on mahdollista tallentaa väliaikaiseksi tälle laitteelle.",
+    "info3": "Valvontaraportin voit lähettää myöhemmin, kun verkkoyhteys on jälleen käytössä ja kirjaudut SillaRiin."
   }
 }
