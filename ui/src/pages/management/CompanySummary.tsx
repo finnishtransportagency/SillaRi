@@ -8,7 +8,7 @@ import NoNetworkNoData from "../../components/NoNetworkNoData";
 import CustomAccordion from "../../components/common/CustomAccordion";
 import PermitAccordionHeading from "../../components/management/PermitAccordionHeading";
 import PermitAccordionPanel from "../../components/management/PermitAccordionPanel";
-import { useTypedSelector } from "../../store/store";
+import { useTypedSelector, RootState } from "../../store/store";
 import { onRetry } from "../../utils/backendData";
 import { getCompany } from "../../utils/managementBackendData";
 import Loading from "../../components/Loading";
@@ -17,7 +17,7 @@ const CompanySummary = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const management = useTypedSelector((state) => state.rootReducer);
+  const management = useTypedSelector((state: RootState) => state.rootReducer);
   const {
     networkStatus: { isFailed = {} },
     selectedManagementPermitId,

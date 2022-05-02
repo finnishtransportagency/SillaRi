@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import type { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton } from "@ionic/react";
 import Header from "../components/Header";
-import { useTypedSelector } from "../store/store";
+import { useTypedSelector, RootState } from "../store/store";
 import { onRetry } from "../utils/backendData";
 import { getCompanyTransportsList, getSupervisionList } from "../utils/supervisionBackendData";
 import SupervisionList from "../components/SupervisionList";
@@ -31,7 +31,7 @@ const Supervisions = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.rootReducer);
+  } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const { data: companyTransportsList = [] } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
     retry: onRetry,

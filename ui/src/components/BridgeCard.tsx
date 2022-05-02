@@ -45,7 +45,9 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
         <IonLabel>
           <small>
             {`${identifier}, ${municipality}`}
-            {routeTransport && <IonText>{` | ${t("bridgeCard.tractorUnit")} ${tractorUnit ? tractorUnit : tractorUnitMissing}`}</IonText>}
+            {routeTransport && (
+              <IonText>{` | ${t("bridgeCard.tractorUnit")} ${tractorUnit ? tractorUnit.toUpperCase() : tractorUnitMissing}`}</IonText>
+            )}
           </small>
         </IonLabel>
       </IonLabel>

@@ -14,7 +14,7 @@ import {
   getSupervisionSendingList,
 } from "./supervisionBackendData";
 import { getUserData, onRetry } from "./backendData";
-import { SupervisionStatus } from "./constants";
+import { SupervisionStatus, TransportStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 import { Moment } from "moment/moment";
 
@@ -199,6 +199,14 @@ export const getNextSupervisionTimeForCompany = (transports: IRouteTransport[]):
     }
   });
   return timesPerTransport.length > 0 ? moment.min(timesPerTransport).toDate() : undefined;
+};
+
+export const getTransportTime = (transport: IRouteTransport): Date | undefined => {
+  const { plannedDepartureTime, statusHistory = [] } = transport;
+  const departedStatus = statusHistory.filter((history) => {
+    return history.status === TransportStatus.DEPARTED;
+  });
+  return departedStatus.length > 0 ? departedStatus[0].time : plannedDepartureTime;
 };
 
 export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Dispatch) => {

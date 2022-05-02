@@ -10,7 +10,7 @@ import RouteTransportDetailHeader from "../components/RouteTransportDetailHeader
 import TransportInfoAccordion from "../components/TransportInfoAccordion";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
-import { useTypedSelector } from "../store/store";
+import { useTypedSelector, RootState } from "../store/store";
 import { onRetry } from "../utils/backendData";
 import { getRouteTransportOfSupervisor } from "../utils/supervisionBackendData";
 import BridgeCardList from "../components/BridgeCardList";
@@ -26,7 +26,7 @@ const RouteTransportDetail = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.rootReducer);
+  } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
 

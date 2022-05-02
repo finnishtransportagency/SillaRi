@@ -28,7 +28,7 @@ import IUserData from "./interfaces/IUserData";
 import Photos from "./pages/Photos";
 import UserInfo from "./pages/UserInfo";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
-import { useTypedSelector } from "./store/store";
+import { useTypedSelector, RootState } from "./store/store";
 import { getUserData, getVersionInfo } from "./utils/backendData";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/supervisionUtil";
@@ -84,7 +84,7 @@ const App: React.FC = () => {
 
   const {
     networkStatus: { isFailed = {}, failedStatus = {} },
-  } = useTypedSelector((state) => state.rootReducer);
+  } = useTypedSelector((state: RootState) => state.rootReducer);
 
   useEffect(() => {
     // Add or remove the "dark" class based on if the media query matches
