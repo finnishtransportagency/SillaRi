@@ -27,7 +27,7 @@ const RouteTransportDetailHeader = ({ routeTransport, permit }: RouteTransportDe
       </IonItem>
       <IonItem className="header itemIcon" detail detailIcon="" lines="none">
         <IonLabel className="headingText">{t("route.tractorUnit")}</IonLabel>
-        <IonLabel>{tractorUnit}</IonLabel>
+        <IonLabel>{tractorUnit.toUpperCase()}</IonLabel>
       </IonItem>
 
       <PermitLinkItem permit={permit} isHeader />
