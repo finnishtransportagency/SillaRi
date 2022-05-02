@@ -16,7 +16,7 @@ const TransportCardList = ({ transports }: TransportCardListProps): JSX.Element 
           // Sort by time visible in TransportCard - planned departure time or departure time
           const timeA = getTransportTime(a);
           const timeB = getTransportTime(b);
-          return moment(timeA).diff(timeB);
+          return moment(timeA).diff(moment(timeB));
         })
         .map((transport) => {
           const { id: transportId } = transport;
