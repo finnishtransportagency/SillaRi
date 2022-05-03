@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.time.OffsetDateTime;
 
 @Service
 public class CompanyService {
@@ -45,7 +46,7 @@ public class CompanyService {
         if (company == null) {
             return null;
         }
-        List<PermitModel> permits = permitRepository.getPermitsByCompanyId(company.getId());
+        List<PermitModel> permits = permitRepository.getPermitsByCompanyId(company.getId(), OffsetDateTime.now());
         company.setPermits(permits);
 
         if (permits.size() > 0) {
