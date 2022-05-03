@@ -59,7 +59,7 @@ public class SupervisionController {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionsOfSupervisor");
         try {
             SillariUser user = uiService.getSillariUser();
-            List<SupervisionModel> supervisions = supervisionService.getSupervisionsOfSupervisor(user.getUsername());
+            List<SupervisionModel> supervisions = supervisionService.getSupervisionsOfSupervisor(user);
             return ResponseEntity.ok().body(supervisions != null ? supervisions : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -73,7 +73,7 @@ public class SupervisionController {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionSendingListOfSupervisor");
         try {
             SillariUser user = uiService.getSillariUser();
-            List<SupervisionModel> supervisions = supervisionService.getFinishedSupervisions(user.getUsername());
+            List<SupervisionModel> supervisions = supervisionService.getFinishedSupervisions(user);
             return ResponseEntity.ok().body(supervisions != null ? supervisions : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -224,7 +224,7 @@ public class SupervisionController {
     private boolean isSupervisionOfSupervisor(Integer supervisionId) {
         SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
         SillariUser user = uiService.getSillariUser();
-        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getAllSupervisionsOfSupervisorNoDetails(user.getUsername());
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getAllSupervisionsOfSupervisorNoDetails(user);
 
         return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
     }
@@ -233,7 +233,7 @@ public class SupervisionController {
     private boolean canSupervisorUpdateSupervision(Integer supervisionId) {
         SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
         SillariUser user = uiService.getSillariUser();
-        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsOfSupervisorNoDetails(user.getUsername());
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsOfSupervisorNoDetails(user);
 
         return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
     }
@@ -242,7 +242,7 @@ public class SupervisionController {
     private boolean isSendingListSupervisionOfSupervisor(Integer supervisionId) {
         SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
         SillariUser user = uiService.getSillariUser();
-        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getFinishedButUnsignedSupervisionsNoDetails(user.getUsername());
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getFinishedButUnsignedSupervisionsNoDetails(user);
 
         return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
     }

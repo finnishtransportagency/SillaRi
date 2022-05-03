@@ -109,8 +109,8 @@ public class PermitController {
 
     /* Check that sillanvalvoja-user has right to view permit*/
     private boolean isPermitOfSupervisor(SillariUser user, Integer permitId) {
-        List<SupervisorModel> supervisors = supervisionService.getSupervisorsByPermitId(permitId);
-        return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
+        List<String> supervisors = supervisionService.getSupervisorsByPermitId(permitId);
+        return supervisors.contains(user.getBusinessId());
     }
 
     /* Check role-specifically if user has right to permit*/

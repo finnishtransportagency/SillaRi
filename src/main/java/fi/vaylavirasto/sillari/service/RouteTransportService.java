@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.fim.FIMService;
@@ -156,7 +157,7 @@ public class RouteTransportService {
         return routeTransportModels;
     }
 
-    public RouteTransportModel getRouteTransportOfSupervisor(Integer routeTransportId, String username) {
+    public RouteTransportModel getRouteTransportOfSupervisor(Integer routeTransportId, SillariUser user) {
         RouteTransportModel routeTransport = routeTransportRepository.getRouteTransportById(routeTransportId);
 
         if (routeTransport != null) {
@@ -181,7 +182,7 @@ public class RouteTransportService {
 
             // Set supervisions with bridge data to route transport.
             // Not all bridges from route are added, only those where the supervisor has supervisions.
-            List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportAndSupervisorUsername(routeTransportId, username);
+            List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportAndSupervisor(routeTransportId, user.getBusinessId());
             if (supervisions != null) {
                 supervisions.forEach(supervision -> {
                     supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));

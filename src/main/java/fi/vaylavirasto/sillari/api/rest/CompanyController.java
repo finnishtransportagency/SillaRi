@@ -54,7 +54,7 @@ public class CompanyController {
         ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getCompanyTransportListOfSupervisor");
         try {
             SillariUser user = uiService.getSillariUser();
-            List<CompanyTransportsDTO> companyList = companyService.getCompanyTransportListOfSupervisor(user.getUsername());
+            List<CompanyTransportsDTO> companyList = companyService.getCompanyTransportListOfSupervisor(user);
             return ResponseEntity.ok().body(companyList != null ? companyList : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

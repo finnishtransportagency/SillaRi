@@ -56,13 +56,12 @@ public class RouteTransportRepository {
                 .fetch(new RouteTransportMapper());
     }
 
-    public List<RouteTransportModel> getRouteTransportsOfSupervisor(String username) {
+    public List<RouteTransportModel> getRouteTransportsOfSupervisor(String supervisor) {
         return dsl.select(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME,
                         TableAlias.routeTransport.TRACTOR_UNIT, TableAlias.routeTransport.ROW_CREATED_TIME, TableAlias.routeTransport.ROW_UPDATED_TIME, TableAlias.routeTransport.TRANSPORT_NUMBER)
                 .from(TableAlias.routeTransport)
                 .innerJoin(TableAlias.supervision).on(TableAlias.routeTransport.ID.eq(TableAlias.supervision.ROUTE_TRANSPORT_ID))
-                .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
-                .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
+                .where(TableAlias.supervision.SUPERVISOR.eq(supervisor))
                 // Ignore routeTransports with only completed supervisions
                 .and(notExists(selectOne().from(TableAlias.supervisionStatus
                         .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)

@@ -115,8 +115,8 @@ public class SupervisionService {
         supervision.setRouteTransport(routeTransport);
     }
 
-    public List<SupervisionModel> getSupervisionsOfSupervisor(String username) {
-        List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsBySupervisorUsername(username);
+    public List<SupervisionModel> getSupervisionsOfSupervisor(SillariUser user) {
+        List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsBySupervisor(user.getBusinessId());
         for (SupervisionModel supervision : supervisions) {
             // Sets also current status and status timestamps
             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
@@ -130,21 +130,21 @@ public class SupervisionService {
     }
 
 
-    public List<SupervisionModel> getFinishedButUnsignedSupervisionsNoDetails(String username) {
-        return supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisorUsername(username);
+    public List<SupervisionModel> getFinishedButUnsignedSupervisionsNoDetails(SillariUser user) {
+        return supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisor(user.getBusinessId());
     }
 
-    public List<SupervisionModel> getUnsignedSupervisionsOfSupervisorNoDetails(String username) {
-        return supervisionRepository.getUnsignedSupervisionsBySupervisorUsername(username);
+    public List<SupervisionModel> getUnsignedSupervisionsOfSupervisorNoDetails(SillariUser user) {
+        return supervisionRepository.getUnsignedSupervisionsBySupervisor(user.getBusinessId());
     }
 
-    public List<SupervisionModel> getAllSupervisionsOfSupervisorNoDetails(String username) {
-        return supervisionRepository.getAllSupervisionsOfSupervisor(username);
+    public List<SupervisionModel> getAllSupervisionsOfSupervisorNoDetails(SillariUser user) {
+        return supervisionRepository.getAllSupervisionsOfSupervisor(user.getBusinessId());
     }
 
 
-    public List<SupervisionModel> getFinishedSupervisions(String username) {
-        List<SupervisionModel> supervisions = supervisionRepository.getFinishedSupervisionsBySupervisorUsername(username);
+    public List<SupervisionModel> getFinishedSupervisions(SillariUser user) {
+        List<SupervisionModel> supervisions = supervisionRepository.getFinishedSupervisionsBySupervisor(user.getBusinessId());
         for (SupervisionModel supervision : supervisions) {
             // The sending list needs supervision started time, bridge, routeTransport and permit details
             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
@@ -354,20 +354,20 @@ public class SupervisionService {
         }
     }
 
-    public List<SupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
-        return supervisorRepository.getSupervisorsByRouteBridgeId(routeBridgeId);
+    public List<String> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
+        return supervisionRepository.getSupervisorsByRouteBridgeId(routeBridgeId);
     }
 
-    public List<SupervisorModel> getSupervisorsByRouteId(Integer routeId) {
-        return supervisorRepository.getSupervisorsByRouteId(routeId);
+    public List<String> getSupervisorsByRouteId(Integer routeId) {
+        return supervisionRepository.getSupervisorsByRouteId(routeId);
     }
 
-    public List<SupervisorModel> getSupervisorsByRouteTransportId(Integer routeBridgeId) {
-        return supervisorRepository.getSupervisorsByRouteTransportId(routeBridgeId);
+    public List<String> getSupervisorsByRouteTransportId(Integer routeTransportId) {
+        return supervisionRepository.getSupervisorsByRouteTransportId(routeTransportId);
     }
 
-    public List<SupervisorModel> getSupervisorsByPermitId(Integer routeId) {
-        return supervisorRepository.getSupervisorsByPermitId(routeId);
+    public List<String> getSupervisorsByPermitId(Integer permitId) {
+        return supervisionRepository.getSupervisorsByPermitId(permitId);
     }
 
 
