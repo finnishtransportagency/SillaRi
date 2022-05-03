@@ -18,6 +18,7 @@ public class SupervisionModel extends BaseModel {
     private Integer routeTransportId;
     private OffsetDateTime plannedTime;
     private Boolean conformsToPermit;
+    private String supervisor;
     private SupervisorType supervisorType;
     private SupervisionStatusModel currentStatus;
     private List<SupervisionStatusModel> statusHistory;

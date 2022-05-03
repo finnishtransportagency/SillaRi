@@ -343,7 +343,7 @@ public class PermitRepository {
                                 routeBridge.getOrdinal(),
                                 routeBridge.getCrossingInstruction(),
                                 routeBridge.getContractNumber(),
-                                routeBridge.getContractBusinessIdentifier(),
+                                routeBridge.getContractBusinessId(),
                                 routeBridge.getTransportNumber())
                         .execute();
             } else {
