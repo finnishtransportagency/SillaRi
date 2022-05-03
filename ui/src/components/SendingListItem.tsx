@@ -16,7 +16,7 @@ interface SendingListItemProps {
 const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen }: SendingListItemProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { id: supervisionId, routeBridge, routeTransport, startedTime } = supervision;
+  const { id: supervisionId, routeBridge, routeTransport, startedTime, savedOffline } = supervision;
   const { bridge, route } = routeBridge || {};
   const { identifier = "", name = "" } = bridge || {};
   const { permit } = route || {};
@@ -52,6 +52,11 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
               </IonRow>
               <IonRow>
                 <IonLabel>{`${t("sendingList.supervisionStarted")}: ${moment(startedTime).format(DATE_TIME_FORMAT_MIN)}`}</IonLabel>
+                {savedOffline && (
+                  <IonLabel className="sendingListOfflineSuffix">
+                    <IonText className="headingText">{`(${t("sendingList.offlineSuffix")})`}</IonText>
+                  </IonLabel>
+                )}
               </IonRow>
               <IonRow>
                 <IonButton

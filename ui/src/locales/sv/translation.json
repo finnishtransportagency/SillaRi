@@ -223,7 +223,8 @@
     "sendSelected": "Sänd de valda",
     "sentOk": "De valda övervakningsrapporterna har sänts",
     "nothingToSend": "Inga övervakningsrapporter att sända",
-    "sentReports": "(SV) Sent supervision reports"
+    "sentReports": "(SV) Sent supervision reports",
+    "offlineSuffix": "Offline"
   },
   "permitPdf": {
     "title": "Transporttillstånd",

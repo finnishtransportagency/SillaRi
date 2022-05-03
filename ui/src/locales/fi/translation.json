@@ -223,7 +223,8 @@
     "sendSelected": "Lähetä valitut",
     "sentOk": "Valitut valvonnat on lähetetty",
     "nothingToSend": "Ei lähetettäviä valvontaraportteja.",
-    "sentReports": "Lähetetyt valvontaraportit"
+    "sentReports": "Lähetetyt valvontaraportit",
+    "offlineSuffix": "Offline"
   },
   "permitPdf": {
     "title": "Kuljetuslupa",

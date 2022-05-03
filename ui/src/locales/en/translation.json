@@ -223,7 +223,8 @@
     "sendSelected": "Send selected",
     "sentOk": "Selected supervisions have been sent",
     "nothingToSend": "No supervision reports to send.",
-    "sentReports": "Sent supervision reports"
+    "sentReports": "Sent supervision reports",
+    "offlineSuffix": "Offline"
   },
   "permitPdf": {
     "title": "Transport permit",

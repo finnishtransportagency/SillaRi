@@ -79,6 +79,7 @@ const SupervisionSummary = (): JSX.Element => {
         updatedSupervision = {
           ...oldData,
           currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.FINISHED },
+          savedOffline: true,
         } as ISupervision;
         return updatedSupervision;
       });
