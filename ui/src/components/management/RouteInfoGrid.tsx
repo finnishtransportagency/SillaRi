@@ -39,7 +39,8 @@ const RouteInfoGrid = ({
 
   const [isMapModalOpen, setMapModalOpen] = useState<boolean>(false);
 
-  const { routes: permitRoutes = [], vehicles = [] } = permit || {};
+  const { company, routes: permitRoutes = [], vehicles = [] } = permit || {};
+  const { businessId = "" } = company || {};
   const { id: selectedRouteId, name: selectedRouteName, departureAddress, arrivalAddress } = selectedRouteOption || {};
   const { streetAddress: departureStreetAddress } = departureAddress || {};
   const { streetAddress: arrivalStreetAddress } = arrivalAddress || {};
@@ -65,14 +66,16 @@ const RouteInfoGrid = ({
         // This is a new route transport, so make sure supervision details are available for BridgeGrid
         const { routeBridges = [] } = selectedRoute || {};
         const newSupervisions: ISupervision[] = routeBridges.map((routeBridge) => {
-          const { id: routeBridgeId, contractNumber = 0 } = routeBridge;
+          const { id: routeBridgeId, contractBusinessId = "" } = routeBridge;
           return {
             id: 0,
             routeBridgeId,
             routeTransportId,
             plannedTime: plannedDepartureTime ? moment(plannedDepartureTime).toDate() : moment().toDate(),
             conformsToPermit: false,
-            supervisorType: contractNumber > 0 ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR,
+            // If contractBusinessId is provided from LeLu, supervisor is the area contractor. Otherwise, it's the current company.
+            supervisor: contractBusinessId ? contractBusinessId : businessId,
+            supervisorType: contractBusinessId ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR,
             supervisors: [],
             routeBridge: routeBridge,
           };

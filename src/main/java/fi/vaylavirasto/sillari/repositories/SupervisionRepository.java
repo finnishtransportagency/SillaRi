@@ -179,12 +179,14 @@ public class SupervisionRepository {
                             TableAlias.supervision.ROUTE_BRIDGE_ID,
                             TableAlias.supervision.ROUTE_TRANSPORT_ID,
                             TableAlias.supervision.PLANNED_TIME,
+                            TableAlias.supervision.SUPERVISOR,
                             TableAlias.supervision.SUPERVISOR_TYPE,
                             TableAlias.supervision.CONFORMS_TO_PERMIT
                     ).values(
                     supervisionModel.getRouteBridgeId(),
                     supervisionModel.getRouteTransportId(),
                     supervisionModel.getPlannedTime(),
+                    supervisionModel.getSupervisor(),
                     supervisionModel.getSupervisorType().toString(),
                     false)
                     .returningResult(TableAlias.supervision.ID)
