@@ -314,6 +314,7 @@ export const sendImageUpload = async (fileUpload: ISupervisionImage, dispatch: D
   }
 };
 
+
 export const deleteImage = async (id: number, dispatch: Dispatch): Promise<boolean> => {
   try {
     console.log("DeleteImage");
