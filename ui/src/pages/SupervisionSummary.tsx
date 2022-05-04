@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { onlineManager, useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonContent, IonPage, IonToast, useIonAlert } from "@ionic/react";
 import { useHistory, useParams } from "react-router-dom";
@@ -79,7 +79,7 @@ const SupervisionSummary = (): JSX.Element => {
         updatedSupervision = {
           ...oldData,
           currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.FINISHED },
-          savedOffline: true,
+          savedOffline: !onlineManager.isOnline(),
         } as ISupervision;
         return updatedSupervision;
       });
