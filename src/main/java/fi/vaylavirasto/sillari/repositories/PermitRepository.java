@@ -152,7 +152,9 @@ public class PermitRepository {
             insertTransportDimensions(ctx, permitModel);
             insertUnloadedTransportDimensions(ctx, permitModel);
             insertVehicles(ctx, permitModel);
-            insertAxleChart(ctx, permitModel);
+            if (permitModel.getAxleChart() != null) {
+                insertAxleChart(ctx, permitModel);
+            }
 
             for (RouteModel routeModel : permitModel.getRoutes()) {
                 routeModel.setPermitId(permitModel.getId());

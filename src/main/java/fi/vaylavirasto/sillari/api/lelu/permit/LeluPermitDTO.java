@@ -48,12 +48,10 @@ public class LeluPermitDTO {
     private List<LeluVehicleDTO> vehicles;
 
     @Valid
-    @NotNull(message = "{permit.axle.chart.not.null}")
-    @Schema(description = "Axle chart of the transport, including all vehicles.", required = true)
+    @Schema(description = "Axle chart of the transport, including all vehicles.")
     private LeluAxleChartDTO axleChart;
 
-    @NotNull(message = "{permit.transport.total.mass.not.null}")
-    @Schema(description = "Total mass of the transport, including all vehicles (t).", required = true, example = "456.7")
+    @Schema(description = "Total mass of the transport, including all vehicles (t).", example = "456.7")
     private Double transportTotalMass;
 
     @Valid
