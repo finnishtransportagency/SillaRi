@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { IonApp, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { Storage as IonicStorage } from "@ionic/storage";
+import { Drivers, Storage as IonicStorage } from "@ionic/storage";
 import { withTranslation } from "react-i18next";
 import { onlineManager, QueryClient, QueryClientProvider } from "react-query";
 import { persistQueryClient } from "react-query/persistQueryClient-experimental";
@@ -63,7 +63,10 @@ const queryClient = new QueryClient({
 // The maxAge value is the same as the cacheTime value so garbage collection occurs at the expected time
 // NOTE 2: using localStorage doesn't work well with supervision images due to size limitations and performance issues
 // So use an AsyncStorage wrapper around Ionic Storage to store the data in IndexedDB instead, which solves these issues
-const store = new IonicStorage();
+const store = new IonicStorage({
+  name: "_ionicstorage",
+  driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
+});
 store.create();
 const asyncStoragePersistor = createAsyncStoragePersistor({ storage: IonicAsyncStorage(store) });
 if (onlineManager.isOnline()) {
