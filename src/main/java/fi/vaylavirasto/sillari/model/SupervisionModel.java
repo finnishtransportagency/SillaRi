@@ -3,7 +3,6 @@ package fi.vaylavirasto.sillari.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
 import java.util.Comparator;
@@ -18,7 +17,7 @@ public class SupervisionModel extends BaseModel {
     private Integer routeTransportId;
     private OffsetDateTime plannedTime;
     private Boolean conformsToPermit;
-    private String supervisor;
+    private String supervisorCompany;
     private SupervisorType supervisorType;
     private SupervisionStatusModel currentStatus;
     private List<SupervisionStatusModel> statusHistory;

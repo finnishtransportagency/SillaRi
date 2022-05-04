@@ -14,7 +14,7 @@ export default interface ISupervision {
   routeTransport?: IRouteTransport;
   plannedTime: Date;
   conformsToPermit: boolean;
-  supervisor?: string;
+  supervisorCompany?: string;
   supervisorType: SupervisorType;
   denyCrossingReason?: string;
   supervisors?: ISupervisor[];
