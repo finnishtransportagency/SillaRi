@@ -405,6 +405,8 @@
     "accessDenied": "Pääsy estetty",
     "loginToUse": "Kirjaudu sisään käyttääksesi sovellusta.",
     "login": "Kirjaudu sisään",
+    "noData": "SillaRin tietoja ei voida hakea",
+    "tryAgainLater": "Yritä uudelleen verkkoyhteyden palattua.",
     "noRights": "Sinulla ei ole oikeuksia käyttää SillaRi-sovellusta.",
     "unhandledError": "Käsittelemätön virhetilanne",
     "startingApp": "Aloitetaan sovellus..."

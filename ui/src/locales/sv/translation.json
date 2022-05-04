@@ -405,6 +405,8 @@
     "accessDenied": "Tillträde beviljas ej",
     "loginToUse": "(SV) Login to use the application.",
     "login": "(SV) Login",
+    "noData": "(SV) SillaRi's data cannot be retrieved",
+    "tryAgainLater": "(SV) Try again when the network connection is restored.",
     "noRights": "(SV) You do not have permission to use the SillaRi application.",
     "unhandledError": "(SV) Unhandled error condition",
     "startingApp": "(SV) Starting application..."

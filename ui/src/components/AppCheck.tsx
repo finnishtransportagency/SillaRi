@@ -157,7 +157,7 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
             </IonCol>
           </IonRow>
 
-          {isSupervisionApp && (
+          {isSupervisionApp && supervisorUser && (
             <IonRow>
               <IonCol>
                 <IonGrid className="appCheckDetailsGrid ion-padding">
@@ -186,6 +186,25 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
                       <IonButton color="primary" expand="block" size="large" onClick={() => setOkToContinue(true)}>
                         {t("main.useOffline")}
                       </IonButton>
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </IonCol>
+            </IonRow>
+          )}
+
+          {(!isSupervisionApp || !supervisorUser) && (
+            <IonRow>
+              <IonCol>
+                <IonGrid className="appCheckDetailsGrid ion-padding">
+                  <IonRow>
+                    <IonCol>
+                      <IonText className="headingText">{t("appCheck.noData")}</IonText>
+                    </IonCol>
+                  </IonRow>
+                  <IonRow className="ion-margin-top">
+                    <IonCol>
+                      <IonText>{t("appCheck.tryAgainLater")}</IonText>
                     </IonCol>
                   </IonRow>
                 </IonGrid>
