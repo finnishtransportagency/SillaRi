@@ -18,7 +18,6 @@ import {
 } from "@ionic/react";
 import moment from "moment";
 import close from "../theme/icons/close_large_white.svg";
-import { onRetry } from "../utils/backendData";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import { getCompanyTransportsList } from "../utils/supervisionBackendData";
 import "./OfflineInfo.css";
@@ -34,7 +33,7 @@ const OfflineInfo = ({ isOpen, setOpen }: OfflineInfoProps): JSX.Element => {
 
   // Use the date when the main page data was updated
   const { dataUpdatedAt } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
-    retry: onRetry,
+    // retry: onRetry,
     staleTime: Infinity,
   });
 

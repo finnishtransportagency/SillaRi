@@ -211,7 +211,7 @@ const App: React.FC = () => {
           />
         ) : (
           <IonReactRouter>
-            <SidebarMenu roles={userData.roles} version={version} />
+            <SidebarMenu version={version} />
             <IonContent id="MainContent">
               <Switch>
                 <Route exact path="/supervisions">
@@ -273,7 +273,7 @@ const App: React.FC = () => {
                 </Route>
                 <Route exact path="/userinfo">
                   {userHasRole("SILLARI_KULJETTAJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
-                    <UserInfo userData={userData} />
+                    <UserInfo />
                   ) : (
                     <AccessDenied />
                   )}
