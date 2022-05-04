@@ -409,12 +409,12 @@
     "tryAgainLater": "Yritä uudelleen verkkoyhteyden palattua.",
     "noRights": "Sinulla ei ole oikeuksia käyttää SillaRi-sovellusta.",
     "unhandledError": "Käsittelemätön virhetilanne",
-    "startingApp": "Aloitetaan sovellus..."
+    "startingApp": "Käynnistetään sovellus..."
   },
   "offlineInfo": {
     "title": "Offline-tila",
     "info1": "SillaRin kuljetukset ja valvottavat sillat on päivitetty viimeksi",
-    "info2": "Voit käyttää SillaRia offline-tilassa, jolloin sillanvalvonnan raportti on mahdollista tallentaa väliaikaiseksi tälle laitteelle.",
+    "info2": "Voit käyttää SillaRia offline-tilassa, jolloin sillanvalvonnan raportti on mahdollista tallentaa väliaikaisesti tälle laitteelle.",
     "info3": "Valvontaraportin voit lähettää myöhemmin, kun verkkoyhteys on jälleen käytössä ja kirjaudut SillaRiin."
   },
   "sendingListOfflineNotice": {
