@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { onlineManager, useIsFetching, useIsMutating, useQuery } from "react-query";
+import { useIsFetching, useIsMutating, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonBadge, IonButton, IonButtons, IonHeader, IonIcon, IonMenuButton, IonText, IonTitle, IonToolbar } from "@ionic/react";
-import { arrowBackOutline, cloudDownloadOutline, cloudOfflineOutline, cloudOutline, cloudUploadOutline, rainyOutline } from "ionicons/icons";
+import { arrowBackOutline } from "ionicons/icons";
 import outgoing from "../theme/icons/outgoing_white_no_badge.svg";
 import { onRetry } from "../utils/backendData";
 import { getSupervisionSendingList } from "../utils/supervisionBackendData";
@@ -53,11 +53,6 @@ const Header = ({
 
   const [isSendingListOpen, setSendingListOpen] = useState<boolean>(false);
   const [isUnsentOfflineOpen, setUnsentOfflineOpen] = useState<boolean>(false);
-  const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
-
-  useEffect(() => {
-    onlineManager.subscribe(() => setOnline(onlineManager.isOnline()));
-  }, []);
 
   const [sentSupervisions, setSentSupervisions] = useState<ISupervision[]>([]);
   const [unsentSupervisions, setUnsentSupervisions] = useState<ISupervision[]>([]);
@@ -83,6 +78,14 @@ const Header = ({
     }
   }, [supervisionList]);
 
+  const isGettingData = isFetching > 0;
+  const isSendingData = isMutating > 0;
+
+  useEffect(() => {
+    // The cloud icons have been removed, so just write the info to the console instead
+    console.log("fetching from backend", isGettingData, "- sending to backend", isSendingData, "- something failed", somethingFailed);
+  }, [isGettingData, isSendingData, somethingFailed]);
+
   return (
     <IonHeader>
       <IonToolbar color="primary">
@@ -99,24 +102,6 @@ const Header = ({
           </IonText>
         )}
         <IonButtons slot="end">
-          <IonIcon slot="icon-only" icon={rainyOutline} className={`cloudIcon ${somethingFailed ? "" : "ion-hide"}`} />
-          <IonIcon slot="icon-only" icon={cloudOfflineOutline} className={`cloudIcon ${!somethingFailed && !isOnline ? "" : "ion-hide"}`} />
-          <IonIcon
-            slot="icon-only"
-            icon={cloudUploadOutline}
-            className={`cloudIcon ${isMutating > 0 && !somethingFailed && isOnline ? "" : "ion-hide"}`}
-          />
-          <IonIcon
-            slot="icon-only"
-            icon={cloudDownloadOutline}
-            className={`cloudIcon ${isFetching > 0 && isMutating === 0 && !somethingFailed && isOnline ? "" : "ion-hide"}`}
-          />
-          <IonIcon
-            slot="icon-only"
-            icon={cloudOutline}
-            className={`cloudIcon ${isFetching === 0 && isMutating === 0 && !somethingFailed && isOnline ? "" : "ion-hide"}`}
-          />
-
           {includeSendingList && (
             <IonButton shape="round" className="otherIcon" onClick={() => setSendingListOpen(true)}>
               <IonBadge className="iconBadge" color="secondary">
