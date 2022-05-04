@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { onlineManager, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import type { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton } from "@ionic/react";
@@ -74,7 +74,7 @@ const Supervisions = (): JSX.Element => {
         somethingFailed={isFailed.getCompanyTransportsList || isFailed.getSupervisionList}
         includeSendingList
         includeOfflineBanner
-        includeUnsentOfflineCheck={onlineManager.isOnline()}
+        // includeUnsentOfflineCheck={onlineManager.isOnline()}
       />
       <IonSegment className="mainSegment" value={currentSegment} onIonChange={changeSegment}>
         <IonSegmentButton className="mainSegmentButton" value="0">

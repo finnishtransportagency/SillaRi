@@ -9,7 +9,7 @@ import { onRetry } from "../utils/backendData";
 import { getSupervisionSendingList } from "../utils/supervisionBackendData";
 import SendingList from "./SendingList";
 import OfflineBanner from "./OfflineBanner";
-import UnsentOfflineModal from "./UnsentOfflineModal";
+// import UnsentOfflineModal from "./UnsentOfflineModal";
 import "./Header.css";
 import { isSupervisionSigned } from "../utils/supervisionUtil";
 import ISupervision from "../interfaces/ISupervision";
@@ -21,7 +21,7 @@ interface HeaderProps {
   somethingFailed?: boolean;
   includeSendingList?: boolean;
   includeOfflineBanner?: boolean;
-  includeUnsentOfflineCheck?: boolean;
+  // includeUnsentOfflineCheck?: boolean;
   confirmGoBack?: () => void;
 }
 
@@ -32,7 +32,7 @@ const Header = ({
   somethingFailed,
   includeSendingList,
   includeOfflineBanner,
-  includeUnsentOfflineCheck,
+  // includeUnsentOfflineCheck,
   confirmGoBack,
 }: HeaderProps): JSX.Element => {
   const history = useHistory();
@@ -52,7 +52,7 @@ const Header = ({
   const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : history.goBack;
 
   const [isSendingListOpen, setSendingListOpen] = useState<boolean>(false);
-  const [isUnsentOfflineOpen, setUnsentOfflineOpen] = useState<boolean>(false);
+  // const [isUnsentOfflineOpen, setUnsentOfflineOpen] = useState<boolean>(false);
 
   const [sentSupervisions, setSentSupervisions] = useState<ISupervision[]>([]);
   const [unsentSupervisions, setUnsentSupervisions] = useState<ISupervision[]>([]);
@@ -74,7 +74,8 @@ const Header = ({
 
       // Store whether a supervision was saved to the sending list when offline
       // Note: this only works if the user does not refresh the page after coming back online
-      setUnsentOfflineOpen(supervisionList.some((supervision) => supervision.savedOffline));
+      // NOTE: this has been removed until later as it's related to further development
+      // setUnsentOfflineOpen(supervisionList.some((supervision) => supervision.savedOffline));
     }
   }, [supervisionList]);
 
@@ -121,13 +122,16 @@ const Header = ({
           />
         )}
 
-        {includeUnsentOfflineCheck && (
+        {/*
+        // NOTE: this has been removed until later as it's related to further development
+        includeUnsentOfflineCheck && (
           <UnsentOfflineModal
             isUnsentOfflineOpen={isUnsentOfflineOpen}
             setUnsentOfflineOpen={setUnsentOfflineOpen}
             setSendingListOpen={setSendingListOpen}
           />
-        )}
+        )
+        */}
       </IonToolbar>
 
       {includeOfflineBanner && <OfflineBanner />}
@@ -141,7 +145,7 @@ Header.defaultProps = {
   somethingFailed: false,
   includeSendingList: false,
   includeOfflineBanner: false,
-  includeUnsentOfflineCheck: false,
+  // includeUnsentOfflineCheck: false,
 };
 
 export default Header;
