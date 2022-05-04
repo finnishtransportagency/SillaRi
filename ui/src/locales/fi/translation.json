@@ -36,9 +36,11 @@
       "transports": "Kuljetukset",
       "bridges": "Sillat"
     },
+    "noNetwork": "Ei verkkoyhteyttä",
     "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen...",
     "loading": "Ladataan...",
-    "offline": "Offline-tila"
+    "offline": "Offline-tila",
+    "useOffline": "Käytä SillaRia offline-tilassa"
   },
   "map": {
     "attribution": "Aineisto"
@@ -398,6 +400,14 @@
     },
     "title": "Pääsy estetty!",
     "content": "Sinulla ei ole oikeuksia nähdä tätä sivua."
+  },
+  "appCheck": {
+    "accessDenied": "Pääsy estetty",
+    "loginToUse": "Kirjaudu sisään käyttääksesi sovellusta.",
+    "login": "Kirjaudu sisään",
+    "noRights": "Sinulla ei ole oikeuksia käyttää SillaRi-sovellusta.",
+    "unhandledError": "Käsittelemätön virhetilanne",
+    "startingApp": "Aloitetaan sovellus..."
   },
   "offlineInfo": {
     "title": "Offline-tila",

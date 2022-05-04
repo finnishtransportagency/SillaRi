@@ -36,9 +36,11 @@
       "transports": "Transporter",
       "bridges": "Broar"
     },
+    "noNetwork": "(SV) No network connection",
     "noNetworkNoData": "Data kan inte hämtas, försöker igen...",
     "loading": "Laddar...",
-    "offline": "Offline-tillstånd"
+    "offline": "Offline-tillstånd",
+    "useOffline": "(SV) Use SillaRi in offline mode"
   },
   "map": {
     "attribution": "Material"
@@ -398,6 +400,14 @@
     },
     "title": "Tillträde beviljas ej!",
     "content": "Du har inte rätten att se den här sidan."
+  },
+  "appCheck": {
+    "accessDenied": "Tillträde beviljas ej",
+    "loginToUse": "(SV) Login to use the application.",
+    "login": "(SV) Login",
+    "noRights": "(SV) You do not have permission to use the SillaRi application.",
+    "unhandledError": "(SV) Unhandled error condition",
+    "startingApp": "(SV) Starting application..."
   },
   "offlineInfo": {
     "title": "Offline-tillstånd",

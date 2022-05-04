@@ -36,9 +36,11 @@
       "transports": "Transports",
       "bridges": "Bridges"
     },
+    "noNetwork": "No network connection",
     "noNetworkNoData": "Unable to retrieve data, trying again...",
     "loading": "Loading...",
-    "offline": "Offline mode"
+    "offline": "Offline mode",
+    "useOffline": "Use SillaRi in offline mode"
   },
   "map": {
     "attribution": "Material"
@@ -397,7 +399,15 @@
       "title": "SillaRi"
     },
     "title": "Access Denied!",
-    "content": "You do no not have permission to see this page."
+    "content": "You do not have permission to see this page."
+  },
+  "appCheck": {
+    "accessDenied": "Access denied",
+    "loginToUse": "Login to use the application.",
+    "login": "Login",
+    "noRights": "You do not have permission to use the SillaRi application.",
+    "unhandledError": "Unhandled error condition",
+    "startingApp": "Starting application..."
   },
   "offlineInfo": {
     "title": "Offline mode",

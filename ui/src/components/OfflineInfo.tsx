@@ -32,6 +32,7 @@ const OfflineInfo = ({ isOpen, setOpen }: OfflineInfoProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  // Use the date when the main page data was updated
   const { dataUpdatedAt } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
     retry: onRetry,
     staleTime: Infinity,
