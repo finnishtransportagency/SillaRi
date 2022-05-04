@@ -418,5 +418,13 @@
   "sendingListOfflineNotice": {
     "title": "Offline-tilassa lähettäminen ei ole mahdollista",
     "notice": "Verkkoyhteyden palattua, kirjaudu SillaRiin ja lähetä valvontaraportit."
+  },
+  "unsentOffline": {
+    "title": "Lähettämättömiä raportteja",
+    "notice": "Lähetyslistalla on lähettämättömiä valvontaraportteja",
+    "question": "Haluatko siirtyä lähetyslistalle?",
+    "goToSendingList": "Siirry lähetyslistalle",
+    "continueToMain": "Jatka SillaRin päänäkymään",
+    "info": "Pääset lähetyslistalle myös päänäkymästä."
   }
 }

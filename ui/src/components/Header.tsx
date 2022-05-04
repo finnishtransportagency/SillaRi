@@ -9,6 +9,7 @@ import { onRetry } from "../utils/backendData";
 import { getSupervisionSendingList } from "../utils/supervisionBackendData";
 import SendingList from "./SendingList";
 import OfflineBanner from "./OfflineBanner";
+import UnsentOfflineModal from "./UnsentOfflineModal";
 import "./Header.css";
 import { isSupervisionSigned } from "../utils/supervisionUtil";
 import ISupervision from "../interfaces/ISupervision";
@@ -20,6 +21,7 @@ interface HeaderProps {
   somethingFailed?: boolean;
   includeSendingList?: boolean;
   includeOfflineBanner?: boolean;
+  includeUnsentOfflineCheck?: boolean;
   confirmGoBack?: () => void;
 }
 
@@ -30,6 +32,7 @@ const Header = ({
   somethingFailed,
   includeSendingList,
   includeOfflineBanner,
+  includeUnsentOfflineCheck,
   confirmGoBack,
 }: HeaderProps): JSX.Element => {
   const history = useHistory();
@@ -49,6 +52,7 @@ const Header = ({
   const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : history.goBack;
 
   const [isSendingListOpen, setSendingListOpen] = useState<boolean>(false);
+  const [isUnsentOfflineOpen, setUnsentOfflineOpen] = useState<boolean>(false);
   const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
 
   useEffect(() => {
@@ -72,6 +76,10 @@ const Header = ({
         return !isSupervisionSigned(statusHistory);
       });
       setUnsentSupervisions(unsent);
+
+      // Store whether a supervision was saved to the sending list when offline
+      // Note: this only works if the user does not refresh the page after coming back online
+      setUnsentOfflineOpen(supervisionList.some((supervision) => supervision.savedOffline));
     }
   }, [supervisionList]);
 
@@ -127,6 +135,14 @@ const Header = ({
             unsentSupervisions={unsentSupervisions}
           />
         )}
+
+        {includeUnsentOfflineCheck && (
+          <UnsentOfflineModal
+            isUnsentOfflineOpen={isUnsentOfflineOpen}
+            setUnsentOfflineOpen={setUnsentOfflineOpen}
+            setSendingListOpen={setSendingListOpen}
+          />
+        )}
       </IonToolbar>
 
       {includeOfflineBanner && <OfflineBanner />}
@@ -140,6 +156,7 @@ Header.defaultProps = {
   somethingFailed: false,
   includeSendingList: false,
   includeOfflineBanner: false,
+  includeUnsentOfflineCheck: false,
 };
 
 export default Header;

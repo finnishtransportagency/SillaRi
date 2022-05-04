@@ -418,5 +418,13 @@
   "sendingListOfflineNotice": {
     "title": "(SV) Sending is not possible in offline mode",
     "notice": "(SV) When the network connection is restored, login to SillaRi and send the supervision reports."
+  },
+  "unsentOffline": {
+    "title": "(SV) Unsent reports",
+    "notice": "(SV) The sending list has unsent supervision reports",
+    "question": "(SV) Do you want to go to the sending list?",
+    "goToSendingList": "(SV) Go to sending list",
+    "continueToMain": "(SV) Continue to SillaRi's main page",
+    "info": "(SV) You can also get to the sending list from the main page."
   }
 }
