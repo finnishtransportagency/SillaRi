@@ -11,7 +11,7 @@ import vaylaLogo from "../theme/icons/vayla_alla_fi_rgb.png";
 import { getUserData } from "../utils/backendData";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import { getCompanyTransportsList } from "../utils/supervisionBackendData";
-import OfflineInfo from "./OfflineInfo";
+import OfflineInfoModal from "./OfflineInfoModal";
 import "./AppCheck.css";
 
 interface AppCheckProps {
@@ -39,7 +39,7 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
     staleTime: Infinity,
   });
 
-  // Use the same date as OfflineInfo.tsx
+  // Use the same date as OfflineInfoModal.tsx
   const { dataUpdatedAt } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
     // retry: onRetry,
     staleTime: Infinity,
@@ -170,7 +170,7 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
                         <IonIcon slot="icon-only" icon={help} />
                       </IonButton>
 
-                      <OfflineInfo isOpen={isOfflineInfoOpen} setOpen={setOfflineInfoOpen} />
+                      <OfflineInfoModal isOpen={isOfflineInfoOpen} setOpen={setOfflineInfoOpen} />
                     </IonCol>
                   </IonRow>
                   <IonRow>

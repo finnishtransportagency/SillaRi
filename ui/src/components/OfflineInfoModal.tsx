@@ -20,14 +20,14 @@ import moment from "moment";
 import close from "../theme/icons/close_large_white.svg";
 import { DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import { getCompanyTransportsList } from "../utils/supervisionBackendData";
-import "./OfflineInfo.css";
+import "./OfflineInfoModal.css";
 
-interface OfflineInfoProps {
+interface OfflineInfoModalProps {
   isOpen: boolean;
   setOpen: (isOpen: boolean) => void;
 }
 
-const OfflineInfo = ({ isOpen, setOpen }: OfflineInfoProps): JSX.Element => {
+const OfflineInfoModal = ({ isOpen, setOpen }: OfflineInfoModalProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -81,4 +81,4 @@ const OfflineInfo = ({ isOpen, setOpen }: OfflineInfoProps): JSX.Element => {
   );
 };
 
-export default OfflineInfo;
+export default OfflineInfoModal;

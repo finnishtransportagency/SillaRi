@@ -3,7 +3,7 @@ import { onlineManager } from "react-query";
 import { useTranslation } from "react-i18next";
 import { IonButton, IonIcon, IonItem, IonLabel } from "@ionic/react";
 import help from "../theme/icons/help_white.svg";
-import OfflineInfo from "./OfflineInfo";
+import OfflineInfoModal from "./OfflineInfoModal";
 import "./OfflineBanner.css";
 
 const OfflineBanner = (): JSX.Element => {
@@ -29,7 +29,7 @@ const OfflineBanner = (): JSX.Element => {
         <IonIcon slot="icon-only" icon={help} />
       </IonButton>
 
-      <OfflineInfo isOpen={isOfflineInfoOpen} setOpen={setOfflineInfoOpen} />
+      <OfflineInfoModal isOpen={isOfflineInfoOpen} setOpen={setOfflineInfoOpen} />
     </IonItem>
   );
 };
