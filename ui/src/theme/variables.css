@@ -62,6 +62,9 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-warning-shade: #e0ac00;
   --ion-color-warning-tint: #ffc91a;
 
+  /** warning additional (Vayla yellow) **/
+  --ion-color-warning-10: #fff9e6;
+
   /** danger **/
   --ion-color-danger: #c73f00;
   --ion-color-danger-rgb: 199, 63, 0;

@@ -10,6 +10,7 @@
       "edit": "Muokkaa",
       "save": "Tallenna",
       "send": "Lähetä",
+      "close": "Sulje",
       "closeAlert": "Sulje ilmoitus"
     },
     "answer": {
@@ -35,8 +36,11 @@
       "transports": "Kuljetukset",
       "bridges": "Sillat"
     },
+    "noNetwork": "Ei verkkoyhteyttä",
     "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen...",
-    "loading": "Ladataan..."
+    "loading": "Ladataan...",
+    "offline": "Offline-tila",
+    "useOffline": "Käytä SillaRia offline-tilassa"
   },
   "map": {
     "attribution": "Aineisto"
@@ -221,7 +225,8 @@
     "sendSelected": "Lähetä valitut",
     "sentOk": "Valitut valvonnat on lähetetty",
     "nothingToSend": "Ei lähetettäviä valvontaraportteja.",
-    "sentReports": "Lähetetyt valvontaraportit"
+    "sentReports": "Lähetetyt valvontaraportit",
+    "offlineSuffix": "Offline"
   },
   "permitPdf": {
     "title": "Kuljetuslupa",
@@ -403,5 +408,33 @@
     },
     "title": "Pääsy estetty!",
     "content": "Sinulla ei ole oikeuksia nähdä tätä sivua."
+  },
+  "appCheck": {
+    "accessDenied": "Pääsy estetty",
+    "loginToUse": "Kirjaudu sisään käyttääksesi sovellusta.",
+    "login": "Kirjaudu sisään",
+    "noData": "SillaRin tietoja ei voida hakea",
+    "tryAgainLater": "Yritä uudelleen verkkoyhteyden palattua.",
+    "noRights": "Sinulla ei ole oikeuksia käyttää SillaRi-sovellusta.",
+    "unhandledError": "Käsittelemätön virhetilanne",
+    "startingApp": "Käynnistetään sovellus..."
+  },
+  "offlineInfo": {
+    "title": "Offline-tila",
+    "info1": "SillaRin kuljetukset ja valvottavat sillat on päivitetty viimeksi",
+    "info2": "Voit käyttää SillaRia offline-tilassa, jolloin sillanvalvonnan raportti on mahdollista tallentaa väliaikaisesti tälle laitteelle.",
+    "info3": "Valvontaraportin voit lähettää myöhemmin, kun verkkoyhteys on jälleen käytössä ja kirjaudut SillaRiin."
+  },
+  "sendingListOfflineNotice": {
+    "title": "Offline-tilassa lähettäminen ei ole mahdollista",
+    "notice": "Verkkoyhteyden palattua, kirjaudu SillaRiin ja lähetä valvontaraportit."
+  },
+  "unsentOffline": {
+    "title": "Lähettämättömiä raportteja",
+    "notice": "Lähetyslistalla on lähettämättömiä valvontaraportteja",
+    "question": "Haluatko siirtyä lähetyslistalle?",
+    "goToSendingList": "Siirry lähetyslistalle",
+    "continueToMain": "Jatka SillaRin päänäkymään",
+    "info": "Pääset lähetyslistalle myös päänäkymästä."
   }
 }

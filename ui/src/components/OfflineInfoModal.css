@@ -1,0 +1,7 @@
+.offlineInfoModal ion-content {
+  --background: var(--ion-color-light);
+}
+
+.offlineInfoGrid {
+  background-color: var(--ion-background-color);
+}

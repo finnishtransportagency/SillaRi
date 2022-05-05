@@ -1,17 +1,24 @@
 import { IonContent, IonPage, IonItem, IonLabel, IonList, IonIcon, IonText, IonRow, IonCol, IonGrid } from "@ionic/react";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
+import { useDispatch } from "react-redux";
 import Header from "../components/Header";
 import IUserData from "../interfaces/IUserData";
 import infoOutline from "../theme/icons/info-outline.svg";
+import { getUserData, onRetry } from "../utils/backendData";
 import "./UserInfo.css";
 
-interface UserInfoProps {
-  userData: IUserData;
-}
-
-const UserInfo: React.FC<UserInfoProps> = ({ userData }) => {
+const UserInfo: React.FC = () => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
+  // Get the user data from the cache when offline or the backend when online
+  const { data } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const userData = data ?? ({} as IUserData);
 
   const getRolesString = (roles: string[]) => {
     let rolesString = "";
