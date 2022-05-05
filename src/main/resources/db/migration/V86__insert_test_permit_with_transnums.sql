@@ -15,6 +15,9 @@ INTO route_seq_1;
 SELECT nextval('route_id_seq') AS id
 INTO route_seq_2;
 
+INSERT INTO sillari.company ("name", business_id) VALUES ('Havator', '2083639-0') ON CONFLICT DO NOTHING ;
+
+SELECT id INTO company_seq FROM sillari.company WHERE business_id='2083639-0';
 
 INSERT INTO sillari.address (id, streetaddress, row_created_time, row_updated_time)
 VALUES ((SELECT id from address_seq_1 LIMIT 1), 'Järvikatu, Vaasa', '2022-04-12 12:45:47.507337 +00:00', null);
@@ -24,8 +27,8 @@ VALUES ((SELECT id from address_seq_2 LIMIT 1), 'Merisatamantie, Pori', '2022-04
 INSERT INTO sillari.permit (id, company_id, permit_number, transport_total_mass, lelu_version, additional_details,
                             lelu_last_modified_date, valid_start_date, valid_end_date, pdf_object_key, row_created_time,
                             row_updated_time)
-VALUES ((SELECT id from permit_seq_1 LIMIT 1), (SELECT id from sillari.company where company.business_id = '2083639-0'),
-        'CGI_Havtator_test_permit', 137, 3, null, '2022-03-21 13:22:57.000000 +00:00',
+VALUES ((SELECT id from permit_seq_1 LIMIT 1), (SELECT id from company_seq LIMIT 1),
+        'CGI_Havator_test_permit', 137, 3, null, '2022-03-21 13:22:57.000000 +00:00',
         '2022-03-16 08:00:00.000000 +00:00',
         '2022-12-31 23:59:59.000000 +00:00', null, '2022-04-12 12:45:47.507337 +00:00', null);
 
@@ -1558,3 +1561,4 @@ DROP TABLE permit_seq_1;
 DROP TABLE axle_chart_seq_1;
 DROP TABLE route_seq_1;
 DROP TABLE route_seq_2;
+DROP TABLE company_seq;
