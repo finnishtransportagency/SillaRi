@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class AWSS3Client {
@@ -136,6 +137,10 @@ public class AWSS3Client {
     }
 
     public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName) {
+        return upload(key, bytes, contenttype, bucketName, sillariPhotosRoleSessionName, null);
+    }
+
+    public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, Map<String, String> userMetadata) {
         try {
             init(sillariPhotosRoleSessionName);
             logger.info("upload " + bucketName + " contenttype " + contenttype);
@@ -143,6 +148,9 @@ public class AWSS3Client {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contenttype);
             metadata.setContentLength(bytes.length);
+            if (userMetadata != null) {
+                userMetadata.forEach((k, v) -> metadata.addUserMetadata(k, v));
+            }
             PutObjectRequest request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
             s3Client.putObject(request);
         } catch(Exception e) {

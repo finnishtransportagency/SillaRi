@@ -4,6 +4,8 @@ import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
+import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
+import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.service.SupervisionImageService;
@@ -24,7 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Timed
@@ -123,7 +127,21 @@ public class ImageController {
                 Files.write(outputFile.toPath(), decodedString);
             } else {
                 // Upload to AWS
-                awss3Client.upload(model.getObjectKey(), decodedString,  contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME);
+
+
+                //set coord and street address metadata to S3 for KTV
+                SupervisionModel supervision = supervisionService.getSupervision(model.getSupervisionId(), true, false);
+                BridgeModel bridge = supervision.getRouteBridge().getBridge();
+                CoordinatesDTO coords = bridge.getCoordinates();
+
+                Map<String, String> metadata = new HashMap<>();
+                if (coords != null) {
+                    metadata.put("x_coord", "" + coords.getX());
+                    metadata.put("y_coord", "" + coords.getY());
+                }
+                metadata.put("roadAddress", bridge.getRoadAddress());
+
+                awss3Client.upload(model.getObjectKey(), decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, metadata);
             }
         } catch(Exception e) {
             e.printStackTrace();
