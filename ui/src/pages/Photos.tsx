@@ -116,7 +116,7 @@ const Photos = (): JSX.Element => {
       });
       const now = new Date();
       const uuid = uuidv4();
-      const fname = `image_${uuid}.jpg`;
+      const fname = `image_${uuid}.${image.format}`;
 
       const newImage: ISupervisionImage = {
         id: now.getTime(),
