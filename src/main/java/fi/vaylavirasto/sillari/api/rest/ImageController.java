@@ -98,16 +98,12 @@ public class ImageController {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "uploadImage");
         SupervisionImageModel model = new SupervisionImageModel();
         try {
-
             if (!canSupervisorUpdateSupervision(fileInputModel.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
 
-
             model.setObjectKey("supervision/" + fileInputModel.getSupervisionId() + "/" + fileInputModel.getFilename());
             model.setFilename(fileInputModel.getFilename());
-            // model.setMimetype("");
-            // model.setEncoding("");
             model.setTaken(fileInputModel.getTaken());
             model.setSupervisionId(fileInputModel.getSupervisionId());
             model.setBase64(fileInputModel.getBase64());
