@@ -125,7 +125,7 @@ public class ImageController {
                 contentType = "application/octet-stream";
             }
 
-            if (activeProfile.equals("Xlocal")) { //todo
+            if (activeProfile.equals("local")) {
                 // Save to local file system
                 File outputFile = new File("/", fileInputModel.getFilename());
                 Files.write(outputFile.toPath(), decodedString);
@@ -138,8 +138,6 @@ public class ImageController {
                 BridgeModel bridge = supervision.getRouteBridge().getBridge();
 
                 CoordinatesDTO coords = bridgeService.getBridgeCoordinates(bridge.getId());
-
-                logger.debug("hello coords: " + coords);
 
                 Map<String, String> metadata = new HashMap<>();
                 if (coords != null) {

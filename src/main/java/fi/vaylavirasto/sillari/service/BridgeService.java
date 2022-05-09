@@ -28,8 +28,22 @@ public class BridgeService {
     }
 
     public CoordinatesDTO getBridgeCoordinates(Integer bridgeId){
-        Double x = Double.valueOf(bridgeRepository.getBridgeXCoord(bridgeId));
-        Double y = Double.valueOf(bridgeRepository.getBridgeYCoord(bridgeId));
-        return new CoordinatesDTO(x, y);
+        String xString = bridgeRepository.getBridgeXCoord(bridgeId);
+        String yString = bridgeRepository.getBridgeXCoord(bridgeId);
+        if(xString != null && yString != null) {
+            try {
+                Double x = Double.valueOf(xString);
+                Double y = Double.valueOf(yString);
+                return new CoordinatesDTO(x, y);
+            }
+            catch (NumberFormatException numberFormatException){
+                logger.warn("Coodinates wrong: " + numberFormatException.getMessage() );
+                return null;
+            }
+        }
+        else{
+            return null;
+        }
+
     }
 }
