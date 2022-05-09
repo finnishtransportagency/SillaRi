@@ -30,20 +30,6 @@ public class BridgeRepository {
                 .fetchOne(geojsonField);
     }
 
-    /*public String getBridgeXCoord(Integer id) {
-        Field<String> geojsonField = DSL.field("ST_X(geom)", String.class);
-        return dsl.select(geojsonField).from(TableAlias.bridge)
-                .where(TableAlias.bridge.ID.eq(id))
-                .fetchOne(geojsonField);
-    }*/
-
-    /*public String getBridgeYCoord(Integer id) {
-        Field<String> geojsonField = DSL.field("ST_Y(geom)", String.class);
-        return dsl.select(geojsonField).from(TableAlias.bridge)
-                .where(TableAlias.bridge.ID.eq(id))
-                .fetchOne(geojsonField);
-    }*/
-
     public CoordinatesDTO getBridgeCoordinates(Integer id) {
         Field<String> xString = DSL.field("ST_X(geom)", String.class);
         Field<String> yString = DSL.field("ST_Y(geom)", String.class);
