@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
+import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
 import fi.vaylavirasto.sillari.mapper.BridgeMapper;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
@@ -27,6 +28,22 @@ public class BridgeRepository {
         return dsl.select(geojsonField).from(TableAlias.bridge)
                 .where(TableAlias.bridge.ID.eq(id))
                 .fetchOne(geojsonField);
+    }
+
+    public CoordinatesDTO getBridgeCoordinates(Integer id) {
+        Field<String> xString = DSL.field("ST_X(geom)", String.class);
+        Field<String> yString = DSL.field("ST_Y(geom)", String.class);
+        Record2<String, String> result = dsl.select(xString, yString).from(TableAlias.bridge)
+                .where(TableAlias.bridge.ID.eq(id))
+                .fetchOne();
+        if (result != null) {
+            String x = result.value1();
+            String y = result.value2();
+            if (x != null && y != null) {
+                return new CoordinatesDTO(x, y);
+            }
+        }
+        return null;
     }
 
     public Map<String, Integer> getBridgeIdsWithOIDs(List<String> oids) {
