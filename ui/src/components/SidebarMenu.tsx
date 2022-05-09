@@ -17,6 +17,9 @@ import {
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
+import { useDispatch } from "react-redux";
+import { menuController } from "@ionic/core/components";
 import Cookies from "js-cookie";
 import { unregister } from "../serviceWorkerRegistration";
 import calendar from "../theme/icons/calendar.svg";
@@ -27,17 +30,24 @@ import truck from "../theme/icons/truck.svg";
 import user from "../theme/icons/user.svg";
 import vayla_logo from "../theme/icons/vayla_fi_white_192x160.png";
 import close from "../theme/icons/close_large_white.svg";
+import { getUserData, onRetry } from "../utils/backendData";
 import "./SidebarMenu.css";
-import { menuController } from "@ionic/core/components";
 
 interface SidebarMenuProps {
-  roles: string[];
   version: string;
 }
 
-const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles, version }) => {
+const SidebarMenu: React.FC<SidebarMenuProps> = ({ version }) => {
   const { t } = useTranslation();
   const history = useHistory();
+  const dispatch = useDispatch();
+
+  // Get the user data from the cache when offline or the backend when online
+  const { data: userData } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const roles = userData?.roles || [];
 
   const logoutFromApp = () => {
     // Unregister service worker

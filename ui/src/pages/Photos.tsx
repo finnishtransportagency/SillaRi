@@ -116,7 +116,7 @@ const Photos = (): JSX.Element => {
       });
       const now = new Date();
       const uuid = uuidv4();
-      const fname = `image_${uuid}.jpg`;
+      const fname = `image_${uuid}.${image.format}`;
 
       const newImage: ISupervisionImage = {
         id: now.getTime(),
@@ -158,7 +158,7 @@ const Photos = (): JSX.Element => {
   // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
   return (
     <IonPage>
-      <Header title={t("supervision.photos")} confirmGoBack={saveImages} />
+      <Header title={t("supervision.photos")} confirmGoBack={saveImages} includeOfflineBanner />
       <IonContent>
         <IonList>
           {images &&
@@ -169,9 +169,9 @@ const Photos = (): JSX.Element => {
                 const bm = moment(b.taken, DATE_TIME_FORMAT);
                 return bm.diff(am, "seconds");
               })
-              .map((imageItem) => {
+              .map((imageItem, index) => {
                 const deleteClicked = (): void => removeImageItem(imageItem.id);
-                const key = `image_${imageItem.id}`;
+                const key = `image_${index}`;
 
                 return (
                   <PhotoItem
@@ -192,9 +192,9 @@ const Photos = (): JSX.Element => {
                 const bm = moment(b.taken, DATE_TIME_FORMAT);
                 return bm.diff(am, "seconds");
               })
-              .map((supervisionImage) => {
+              .map((supervisionImage, index) => {
                 const deleteClicked = (): void => deleteImageObject(supervisionImage.id);
-                const key = `savedimage_${supervisionImage.id}`;
+                const key = `savedimage_${index}`;
 
                 return (
                   <PhotoItem

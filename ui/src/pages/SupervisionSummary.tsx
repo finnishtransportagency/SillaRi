@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { onlineManager, useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonContent, IonPage, IonToast, useIonAlert } from "@ionic/react";
 import { useHistory, useParams } from "react-router-dom";
@@ -10,7 +10,7 @@ import SupervisionHeader from "../components/SupervisionHeader";
 import SupervisionObservationsSummary from "../components/SupervisionObservationsSummary";
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import ISupervision from "../interfaces/ISupervision";
-import { useTypedSelector } from "../store/store";
+import { useTypedSelector, RootState } from "../store/store";
 import { onRetry } from "../utils/backendData";
 import { finishSupervision, getSupervision } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
@@ -37,7 +37,7 @@ const SupervisionSummary = (): JSX.Element => {
   const {
     networkStatus: { isFailed = {} },
     selectedSupervisionListType,
-  } = useTypedSelector((state) => state.rootReducer);
+  } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
@@ -79,6 +79,7 @@ const SupervisionSummary = (): JSX.Element => {
         updatedSupervision = {
           ...oldData,
           currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.FINISHED },
+          savedOffline: !onlineManager.isOnline(),
         } as ISupervision;
         return updatedSupervision;
       });
@@ -152,7 +153,13 @@ const SupervisionSummary = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("supervision.summary.title")} somethingFailed={isFailed.getSupervision} includeSendingList confirmGoBack={confirmGoBack} />
+      <Header
+        title={t("supervision.summary.title")}
+        somethingFailed={isFailed.getSupervision}
+        includeSendingList
+        includeOfflineBanner
+        confirmGoBack={confirmGoBack}
+      />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

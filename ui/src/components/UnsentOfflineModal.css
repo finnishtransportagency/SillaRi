@@ -1,0 +1,7 @@
+.unsentOfflineModal ion-content {
+  --background: var(--ion-color-light);
+}
+
+.unsentOfflineGrid {
+  background-color: var(--ion-background-color);
+}

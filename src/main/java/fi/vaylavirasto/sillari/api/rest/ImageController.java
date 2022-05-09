@@ -4,8 +4,11 @@ import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
+import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
+import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.service.BridgeService;
 import fi.vaylavirasto.sillari.service.SupervisionImageService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
@@ -22,9 +25,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Timed
@@ -38,6 +44,8 @@ public class ImageController {
     SupervisionImageService supervisionImageService;
     @Autowired
     SupervisionService supervisionService;
+    @Autowired
+    BridgeService bridgeService;
 
     @Autowired
     UIService uiService;
@@ -56,14 +64,17 @@ public class ImageController {
                 throw new AccessDeniedException("Image not of the user");
             }
 
-            String objectKey = supervisionImageService.getSupervisionImage(id).getObjectKey();
+            // Determine the content type from the file extension, which could be jpg, jpeg, png or gif
+            SupervisionImageModel supervisionImageModel = supervisionImageService.getSupervisionImage(id);
+            String filename = supervisionImageModel.getFilename();
+            String extension = filename.substring(filename.lastIndexOf(".") + 1);
+            String contentType = extension.equals("jpg") ? "image/jpeg" : "image/" + extension;
+
             if (activeProfile.equals("local")) {
                 // Get from local file system
-                String filename = objectKey.substring(objectKey.lastIndexOf("/"));
-
                 File inputFile = new File("/", filename);
                 if (inputFile.exists()) {
-                    response.setContentType("image/jpeg");
+                    response.setContentType(contentType);
                     OutputStream out = response.getOutputStream();
                     FileInputStream in = new FileInputStream(inputFile);
                     IOUtils.copy(in, out);
@@ -72,9 +83,10 @@ public class ImageController {
                 }
             } else {
                 // Get from AWS
+                String objectKey = supervisionImageModel.getObjectKey();
                 byte[] image = awss3Client.download(objectKey, awss3Client.getPhotoBucketName());
                 if (image != null) {
-                    response.setContentType("image/jpeg");
+                    response.setContentType(contentType);
                     OutputStream out = response.getOutputStream();
                     ByteArrayInputStream in = new ByteArrayInputStream(image);
                     IOUtils.copy(in, out);
@@ -94,16 +106,12 @@ public class ImageController {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "uploadImage");
         SupervisionImageModel model = new SupervisionImageModel();
         try {
-
             if (!canSupervisorUpdateSupervision(fileInputModel.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
 
-
             model.setObjectKey("supervision/" + fileInputModel.getSupervisionId() + "/" + fileInputModel.getFilename());
             model.setFilename(fileInputModel.getFilename());
-            // model.setMimetype("");
-            // model.setEncoding("");
             model.setTaken(fileInputModel.getTaken());
             model.setSupervisionId(fileInputModel.getSupervisionId());
             model.setBase64(fileInputModel.getBase64());
@@ -111,7 +119,7 @@ public class ImageController {
 
             Tika tika = new Tika();
             int dataStart = fileInputModel.getBase64().indexOf(",") + 1;
-            byte[] decodedString = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(fileInputModel.getBase64().substring(dataStart).getBytes("UTF-8"));
+            byte[] decodedString = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(fileInputModel.getBase64().substring(dataStart).getBytes(StandardCharsets.UTF_8));
             String contentType = tika.detect(decodedString);
             if (contentType == null) {
                 contentType = "application/octet-stream";
@@ -123,7 +131,22 @@ public class ImageController {
                 Files.write(outputFile.toPath(), decodedString);
             } else {
                 // Upload to AWS
-                awss3Client.upload(model.getObjectKey(), decodedString,  contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME);
+
+
+                //set coord and street address metadata to S3 for KTV
+                SupervisionModel supervision = supervisionService.getSupervision(model.getSupervisionId(), false, false);
+                BridgeModel bridge = supervision.getRouteBridge().getBridge();
+
+                CoordinatesDTO coords = bridgeService.getBridgeCoordinates(bridge.getId());
+
+                Map<String, String> metadata = new HashMap<>();
+                if (coords != null) {
+                    metadata.put("x_coord", "" + coords.getX());
+                    metadata.put("y_coord", "" + coords.getY());
+                }
+                metadata.put("roadAddress", bridge.getRoadAddress());
+
+                awss3Client.upload(model.getObjectKey(), decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, metadata);
             }
         } catch(Exception e) {
             e.printStackTrace();

@@ -3,7 +3,7 @@ import CustomAccordion from "./common/CustomAccordion";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import { getReportSignedTime, groupSupervisionsBySignedDate, sortSentSupervisions } from "../utils/supervisionUtil";
-import { IonButton, IonCol, IonGrid, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
+import { IonCol, IonGrid, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import { DATE_FORMAT, DATE_TIME_FORMAT_MIN } from "../utils/constants";
 import "./SentSupervisionReportsAccordion.css";
@@ -93,7 +93,7 @@ const SentSupervisionReportsAccordion = ({
                         <IonCol size-md="4">
                           <IonLabel className="headingText">{t("sendingList.tractorUnit")}</IonLabel>
                         </IonCol>
-                        <IonCol>{tractorUnit}</IonCol>
+                        <IonCol>{tractorUnit ? tractorUnit.toUpperCase() : ""}</IonCol>
                       </IonRow>
                       <IonRow>
                         <IonCol size-md="4">
@@ -113,11 +113,11 @@ const SentSupervisionReportsAccordion = ({
                           <IonLabel className="headingText">{t("sendingList.removed")}</IonLabel>
                         </IonCol>
                       </IonRow>*/}
-                      <IonRow>
+                      <IonRow className="ion-margin-bottom">
                         <IonCol>
-                          <IonButton buttonType="text" onClick={() => openSupervisionReport(supervisionId)}>
-                            <IonText className="linkText">{t("sendingList.report")}</IonText>
-                          </IonButton>
+                          <IonText className="ion-text-nowrap linkText" onClick={() => openSupervisionReport(supervisionId)}>
+                            {t("sendingList.report")}
+                          </IonText>
                         </IonCol>
                       </IonRow>
                     </IonGrid>

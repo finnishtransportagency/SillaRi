@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { onlineManager, useIsFetching, useIsMutating, useQuery } from "react-query";
+import { useIsFetching, useIsMutating, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { IonBadge, IonButton, IonHeader, IonIcon, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonText } from "@ionic/react";
-import { arrowBackOutline, cloudDownloadOutline, cloudOfflineOutline, cloudOutline, cloudUploadOutline, rainyOutline } from "ionicons/icons";
+import { IonBadge, IonButton, IonButtons, IonHeader, IonIcon, IonMenuButton, IonText, IonTitle, IonToolbar } from "@ionic/react";
+import { arrowBackOutline } from "ionicons/icons";
 import outgoing from "../theme/icons/outgoing_white_no_badge.svg";
 import { onRetry } from "../utils/backendData";
 import { getSupervisionSendingList } from "../utils/supervisionBackendData";
 import SendingList from "./SendingList";
+import OfflineBanner from "./OfflineBanner";
+// import UnsentOfflineModal from "./UnsentOfflineModal";
 import "./Header.css";
 import { isSupervisionSigned } from "../utils/supervisionUtil";
 import ISupervision from "../interfaces/ISupervision";
@@ -18,10 +20,21 @@ interface HeaderProps {
   titleStyle?: string;
   somethingFailed?: boolean;
   includeSendingList?: boolean;
+  includeOfflineBanner?: boolean;
+  // includeUnsentOfflineCheck?: boolean;
   confirmGoBack?: () => void;
 }
 
-const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSendingList, confirmGoBack }: HeaderProps): JSX.Element => {
+const Header = ({
+  title,
+  secondaryTitle,
+  titleStyle,
+  somethingFailed,
+  includeSendingList,
+  includeOfflineBanner,
+  // includeUnsentOfflineCheck,
+  confirmGoBack,
+}: HeaderProps): JSX.Element => {
   const history = useHistory();
   const { pathname } = useLocation();
   const isFetching = useIsFetching();
@@ -39,11 +52,7 @@ const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSen
   const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : history.goBack;
 
   const [isSendingListOpen, setSendingListOpen] = useState<boolean>(false);
-  const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
-
-  useEffect(() => {
-    onlineManager.subscribe(() => setOnline(onlineManager.isOnline()));
-  }, []);
+  // const [isUnsentOfflineOpen, setUnsentOfflineOpen] = useState<boolean>(false);
 
   const [sentSupervisions, setSentSupervisions] = useState<ISupervision[]>([]);
   const [unsentSupervisions, setUnsentSupervisions] = useState<ISupervision[]>([]);
@@ -62,8 +71,21 @@ const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSen
         return !isSupervisionSigned(statusHistory);
       });
       setUnsentSupervisions(unsent);
+
+      // Store whether a supervision was saved to the sending list when offline
+      // Note: this only works if the user does not refresh the page after coming back online
+      // NOTE: this has been removed until later as it's related to further development
+      // setUnsentOfflineOpen(supervisionList.some((supervision) => supervision.savedOffline));
     }
   }, [supervisionList]);
+
+  const isGettingData = isFetching > 0;
+  const isSendingData = isMutating > 0;
+
+  useEffect(() => {
+    // The cloud icons have been removed, so just write the info to the console instead
+    console.log("fetching from backend", isGettingData, "- sending to backend", isSendingData, "- something failed", somethingFailed);
+  }, [isGettingData, isSendingData, somethingFailed]);
 
   return (
     <IonHeader>
@@ -81,24 +103,6 @@ const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSen
           </IonText>
         )}
         <IonButtons slot="end">
-          <IonIcon slot="icon-only" icon={rainyOutline} className={`cloudIcon ${somethingFailed ? "" : "ion-hide"}`} />
-          <IonIcon slot="icon-only" icon={cloudOfflineOutline} className={`cloudIcon ${!somethingFailed && !isOnline ? "" : "ion-hide"}`} />
-          <IonIcon
-            slot="icon-only"
-            icon={cloudUploadOutline}
-            className={`cloudIcon ${isMutating > 0 && !somethingFailed && isOnline ? "" : "ion-hide"}`}
-          />
-          <IonIcon
-            slot="icon-only"
-            icon={cloudDownloadOutline}
-            className={`cloudIcon ${isFetching > 0 && isMutating === 0 && !somethingFailed && isOnline ? "" : "ion-hide"}`}
-          />
-          <IonIcon
-            slot="icon-only"
-            icon={cloudOutline}
-            className={`cloudIcon ${isFetching === 0 && isMutating === 0 && !somethingFailed && isOnline ? "" : "ion-hide"}`}
-          />
-
           {includeSendingList && (
             <IonButton shape="round" className="otherIcon" onClick={() => setSendingListOpen(true)}>
               <IonBadge className="iconBadge" color="secondary">
@@ -117,7 +121,20 @@ const Header = ({ title, secondaryTitle, titleStyle, somethingFailed, includeSen
             unsentSupervisions={unsentSupervisions}
           />
         )}
+
+        {/*
+        // NOTE: this has been removed until later as it's related to further development
+        includeUnsentOfflineCheck && (
+          <UnsentOfflineModal
+            isUnsentOfflineOpen={isUnsentOfflineOpen}
+            setUnsentOfflineOpen={setUnsentOfflineOpen}
+            setSendingListOpen={setSendingListOpen}
+          />
+        )
+        */}
       </IonToolbar>
+
+      {includeOfflineBanner && <OfflineBanner />}
     </IonHeader>
   );
 };
@@ -127,6 +144,8 @@ Header.defaultProps = {
   titleStyle: "headingText",
   somethingFailed: false,
   includeSendingList: false,
+  includeOfflineBanner: false,
+  // includeUnsentOfflineCheck: false,
 };
 
 export default Header;

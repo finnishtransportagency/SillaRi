@@ -32,6 +32,13 @@ public class PermitRepository {
                 .fetch(new PermitMapper(true));
     }
 
+    public List<PermitModel> getPermitsByCompanyId(Integer companyId, OffsetDateTime validAfter) {
+        return dsl.select().from(TableAlias.permit)
+                .where(TableAlias.permit.COMPANY_ID.eq(companyId))
+                .and(TableAlias.permit.VALID_END_DATE.greaterThan(validAfter.minusDays(1)))
+                .fetch(new PermitMapper(true));
+    }
+
     public PermitModel getPermit(Integer id) {
         return dsl.select().from(TableAlias.permit)
                 .leftJoin(TableAlias.axleChart)
@@ -145,7 +152,9 @@ public class PermitRepository {
             insertTransportDimensions(ctx, permitModel);
             insertUnloadedTransportDimensions(ctx, permitModel);
             insertVehicles(ctx, permitModel);
-            insertAxleChart(ctx, permitModel);
+            if (permitModel.getAxleChart() != null) {
+                insertAxleChart(ctx, permitModel);
+            }
 
             for (RouteModel routeModel : permitModel.getRoutes()) {
                 routeModel.setPermitId(permitModel.getId());

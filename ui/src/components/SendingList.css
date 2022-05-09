@@ -1,3 +1,7 @@
 .sendingListModal ion-content {
   --background: var(--ion-color-light);
 }
+
+.sendingListOfflineSuffix {
+  margin-left: 4px;
+}

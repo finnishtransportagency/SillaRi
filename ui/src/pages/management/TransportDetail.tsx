@@ -11,7 +11,7 @@ import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervisor from "../../interfaces/ISupervisor";
-import { useTypedSelector } from "../../store/store";
+import { useTypedSelector, RootState } from "../../store/store";
 import { onRetry } from "../../utils/backendData";
 import { getPermitOfRouteTransport, getRouteTransport, getSupervisors } from "../../utils/managementBackendData";
 import IVehicle from "../../interfaces/IVehicle";
@@ -30,7 +30,7 @@ const TransportDetail = (): JSX.Element => {
   const [selectedRouteOption, setSelectedRouteOption] = useState<IRoute | undefined>(undefined);
   const [selectedVehicle, setSelectedVehicle] = useState<IVehicle | undefined>(undefined);
 
-  const management = useTypedSelector((state) => state.rootReducer);
+  const management = useTypedSelector((state: RootState) => state.rootReducer);
   const {
     networkStatus: { isFailed = {} },
   } = management;

@@ -10,6 +10,7 @@
       "edit": "Edit",
       "save": "Save",
       "send": "Send",
+      "close": "Close",
       "closeAlert": "Close alert"
     },
     "answer": {
@@ -35,8 +36,11 @@
       "transports": "Transports",
       "bridges": "Bridges"
     },
+    "noNetwork": "No network connection",
     "noNetworkNoData": "Unable to retrieve data, trying again...",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "offline": "Offline mode",
+    "useOffline": "Use SillaRi in offline mode"
   },
   "map": {
     "attribution": "Material"
@@ -132,9 +136,6 @@
     "crossingInstructions": {
       "title": "Instructions"
     },
-    "trafficSupervisors": {
-      "title": "Traffic supervisors"
-    },
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Transport conforms to permit",
     "startSupervision": "Start supervision",
@@ -221,7 +222,8 @@
     "sendSelected": "Send selected",
     "sentOk": "Selected supervisions have been sent",
     "nothingToSend": "No supervision reports to send.",
-    "sentReports": "Sent supervision reports"
+    "sentReports": "Sent supervision reports",
+    "offlineSuffix": "Offline"
   },
   "permitPdf": {
     "title": "Transport permit",
@@ -313,6 +315,7 @@
       "bridgeInfo": {
         "bridge": "Bridge",
         "estimatedCrossingTime": "Estimated crossing time",
+        "supervision": "Supervision",
         "bridgeSupervisors": "Bridge supervisors",
         "ownSupervisor": "Own supervisors",
         "contractor": "Maintenance contractor",
@@ -321,7 +324,14 @@
         "supervisor1": "Bridge supervisor (1.)",
         "supervisor2": "Backup supervisor (2.)",
         "copySupervisor": "Copy to all bridges",
-        "noBridges": "No bridges to supervise on the route"
+        "noBridges": "No bridges to supervise on the route",
+        "report": "Supervision report",
+        "supervisionStatus": {
+          "in_progress": "Supervision in progress",
+          "crossing_denied": "Crossing cancelled",
+          "finished": "Supervision finished",
+          "report_signed": "Report completed"
+        }
       },
       "transportDepartureTime": {
         "header": "Estimated departure time",
@@ -394,6 +404,34 @@
       "title": "SillaRi"
     },
     "title": "Access Denied!",
-    "content": "You do no not have permission to see this page."
+    "content": "You do not have permission to see this page."
+  },
+  "appCheck": {
+    "accessDenied": "Access denied",
+    "loginToUse": "Login to use the application.",
+    "login": "Login",
+    "noData": "SillaRi's data cannot be retrieved",
+    "tryAgainLater": "Try again when the network connection is restored.",
+    "noRights": "You do not have permission to use the SillaRi application.",
+    "unhandledError": "Unhandled error condition",
+    "startingApp": "Starting application..."
+  },
+  "offlineInfo": {
+    "title": "Offline mode",
+    "info1": "SillaRi's transports and bridges to be supervised were last updated",
+    "info2": "You can use SillaRi in offline mode, in which case it is possible to save the bridge supervision report temporarily to this device.",
+    "info3": "You can sent the supervision report later when the network connection is in use again and you login to SillaRi."
+  },
+  "sendingListOfflineNotice": {
+    "title": "Sending is not possible in offline mode",
+    "notice": "When the network connection is restored, login to SillaRi and send the supervision reports."
+  },
+  "unsentOffline": {
+    "title": "Unsent reports",
+    "notice": "The sending list has unsent supervision reports",
+    "question": "Do you want to go to the sending list?",
+    "goToSendingList": "Go to sending list",
+    "continueToMain": "Continue to SillaRi's main page",
+    "info": "You can also get to the sending list from the main page."
   }
 }

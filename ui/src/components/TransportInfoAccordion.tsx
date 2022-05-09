@@ -12,7 +12,7 @@ interface TransportInfoAccordionProps {
 const TransportInfoAccordion = ({ permit }: TransportInfoAccordionProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { transportDimensions, transportTotalMass: totalMass = 0, vehicles = [] } = permit || {};
+  const { transportDimensions, transportTotalMass, vehicles = [] } = permit || {};
   const { height = 0, width = 0, length = 0 } = transportDimensions || {};
 
   return (
@@ -95,7 +95,7 @@ const TransportInfoAccordion = ({ permit }: TransportInfoAccordionProps): JSX.El
                         <IonText className="headingText">{t("transportInfo.totalMass")}</IonText>
                       </IonCol>
                       <IonCol size="12" size-sm="6">
-                        <IonText>{`${totalMass} t`}</IonText>
+                        {transportTotalMass && <IonText>{`${transportTotalMass} t`}</IonText>}
                       </IonCol>
                     </IonRow>
                   </IonGrid>

@@ -37,7 +37,7 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
       <IonLabel color={transportDeparted ? undefined : "dark"}>
         <IonLabel className={transportDeparted ? "headingText" : "headingText upcomingTransport"}>
           <Moment format={DATE_FORMAT}>{transportDeparted ? departureTime : plannedDepartureTime}</Moment>
-          <IonText>{` | ${tractorUnit}`}</IonText>
+          <IonText>{tractorUnit ? ` | ${tractorUnit.toUpperCase()}` : ""}</IonText>
         </IonLabel>
         <IonLabel>
           <small>{routeName}</small>
