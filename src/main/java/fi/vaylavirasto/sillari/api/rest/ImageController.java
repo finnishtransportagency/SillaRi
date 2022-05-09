@@ -56,14 +56,17 @@ public class ImageController {
                 throw new AccessDeniedException("Image not of the user");
             }
 
-            String objectKey = supervisionImageService.getSupervisionImage(id).getObjectKey();
+            // Determine the content type from the file extension, which could be jpg, jpeg, png or gif
+            SupervisionImageModel supervisionImageModel = supervisionImageService.getSupervisionImage(id);
+            String filename = supervisionImageModel.getFilename();
+            String extension = filename.substring(filename.lastIndexOf(".") + 1);
+            String contentType = extension.equals("jpg") ? "image/jpeg" : "image/" + extension;
+
             if (activeProfile.equals("local")) {
                 // Get from local file system
-                String filename = objectKey.substring(objectKey.lastIndexOf("/"));
-
                 File inputFile = new File("/", filename);
                 if (inputFile.exists()) {
-                    response.setContentType("image/jpeg");
+                    response.setContentType(contentType);
                     OutputStream out = response.getOutputStream();
                     FileInputStream in = new FileInputStream(inputFile);
                     IOUtils.copy(in, out);
@@ -72,9 +75,10 @@ public class ImageController {
                 }
             } else {
                 // Get from AWS
+                String objectKey = supervisionImageModel.getObjectKey();
                 byte[] image = awss3Client.download(objectKey, awss3Client.getPhotoBucketName());
                 if (image != null) {
-                    response.setContentType("image/jpeg");
+                    response.setContentType(contentType);
                     OutputStream out = response.getOutputStream();
                     ByteArrayInputStream in = new ByteArrayInputStream(image);
                     IOUtils.copy(in, out);
@@ -94,16 +98,12 @@ public class ImageController {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "uploadImage");
         SupervisionImageModel model = new SupervisionImageModel();
         try {
-
             if (!canSupervisorUpdateSupervision(fileInputModel.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
 
-
             model.setObjectKey("supervision/" + fileInputModel.getSupervisionId() + "/" + fileInputModel.getFilename());
             model.setFilename(fileInputModel.getFilename());
-            // model.setMimetype("");
-            // model.setEncoding("");
             model.setTaken(fileInputModel.getTaken());
             model.setSupervisionId(fileInputModel.getSupervisionId());
             model.setBase64(fileInputModel.getBase64());

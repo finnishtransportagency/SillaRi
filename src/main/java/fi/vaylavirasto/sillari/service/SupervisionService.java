@@ -322,12 +322,13 @@ public class SupervisionService {
     private void fillImageBase64(SupervisionModel supervision) {
         if (supervision.getImages() != null) {
             supervision.getImages().forEach(supervisionImageModel -> {
-                String objectKey = new String(Base64.getDecoder().decode(supervisionImageModel.getObjectKey()));
+                // Determine the content type from the file extension, which could be jpg, jpeg, png or gif
+                String filename = supervisionImageModel.getFilename();
+                String extension = filename.substring(filename.lastIndexOf(".") + 1);
+                String contentType = extension.equals("jpg") ? "image/jpeg" : "image/" + extension;
 
                 if (activeProfile.equals("local")) {
                     // Get from local file system
-                    String filename = objectKey.substring(objectKey.lastIndexOf("/"));
-
                     File inputFile = new File("/", filename);
                     if (inputFile.exists()) {
                         try {
@@ -335,19 +336,20 @@ public class SupervisionService {
                             byte[] imageBytes = in.readAllBytes();
                             in.close();
                             String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(imageBytes);
-                            supervisionImageModel.setBase64("data:image/jpeg;base64," + encodedString);
+                            supervisionImageModel.setBase64("data:" + contentType + ";base64," + encodedString);
                         } catch (IOException e) {
                             logger.debug("No local input file");
                         }
                     }
                 } else {
                     // Get from AWS
+                    String objectKey = new String(Base64.getDecoder().decode(supervisionImageModel.getObjectKey()));
                     byte[] image = awss3Client.download(objectKey, awss3Client.getPhotoBucketName());
                     if (image != null) {
                         ByteArrayInputStream in = new ByteArrayInputStream(image);
                         byte[] imageBytes = in.readAllBytes();
                         String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(imageBytes);
-                        supervisionImageModel.setBase64("data:image/jpeg;base64," + encodedString);
+                        supervisionImageModel.setBase64("data:\" + contentType + \";base64," + encodedString);
                     }
                 }
             });
