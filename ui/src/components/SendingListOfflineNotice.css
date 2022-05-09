@@ -4,5 +4,5 @@
 
 .offlineNoticeGrid {
   background-color: var(--ion-color-warning-10);
-  border: var(--ion-color-warning) 2px solid;
+  border: var(--ion-color-warning) 1px solid;
 }
