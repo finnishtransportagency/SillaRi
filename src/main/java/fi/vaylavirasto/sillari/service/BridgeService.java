@@ -28,7 +28,7 @@ public class BridgeService {
     }
 
     public CoordinatesDTO getBridgeCoordinates(Integer bridgeId){
-        String xString = bridgeRepository.getBridgeXCoord(bridgeId);
+        /*String xString = bridgeRepository.getBridgeXCoord(bridgeId);
         String yString = bridgeRepository.getBridgeXCoord(bridgeId);
         if(xString != null && yString != null) {
             try {
@@ -43,7 +43,7 @@ public class BridgeService {
         }
         else{
             return null;
-        }
-
+        }*/
+        return bridgeRepository.getBridgeCoordinates(bridgeId);
     }
 }
