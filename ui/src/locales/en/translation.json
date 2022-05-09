@@ -136,9 +136,6 @@
     "crossingInstructions": {
       "title": "Instructions"
     },
-    "trafficSupervisors": {
-      "title": "Traffic supervisors"
-    },
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Transport conforms to permit",
     "startSupervision": "Start supervision",

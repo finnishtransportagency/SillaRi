@@ -9,7 +9,6 @@ import BridgeDetailFooter from "../components/BridgeDetailFooter";
 import CrossingInstructionsAccordion from "../components/CrossingInstructionsAccordion";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
-import TrafficSupervisorsAccordion from "../components/TrafficSupervisorsAccordion";
 import IPermit from "../interfaces/IPermit";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
@@ -93,7 +92,6 @@ const BridgeDetail = (): JSX.Element => {
           <>
             <BridgeDetailHeader routeBridge={routeBridge as IRouteBridge} />
             <CrossingInstructionsAccordion routeBridge={routeBridge as IRouteBridge} />
-            <TrafficSupervisorsAccordion />
             <BridgeDetailFooter
               permit={permit as IPermit}
               supervision={supervision as ISupervision}

@@ -136,9 +136,6 @@
     "crossingInstructions": {
       "title": "Instructioner"
     },
-    "trafficSupervisors": {
-      "title": "Trafikledare"
-    },
     "permitNumber": "Tillståndsnummer",
     "conformsToPermit": "Transporten är lovenlig",
     "startSupervision": "Påbörja övervakningen",
