@@ -119,6 +119,11 @@ ion-input {
   border: 2px solid var(--ion-color-base);
 }
 
+ion-textarea {
+  --background: var(--ion-color-light) !important;
+  padding-left: 16px;
+}
+
 ion-button,
 ion-segment-button {
   text-transform: none;
