@@ -27,23 +27,11 @@ public class BridgeService {
         }
     }
 
-    public CoordinatesDTO getBridgeCoordinates(Integer bridgeId){
-        /*String xString = bridgeRepository.getBridgeXCoord(bridgeId);
-        String yString = bridgeRepository.getBridgeXCoord(bridgeId);
-        if(xString != null && yString != null) {
-            try {
-                Double x = Double.valueOf(xString);
-                Double y = Double.valueOf(yString);
-                return new CoordinatesDTO(x, y);
-            }
-            catch (NumberFormatException numberFormatException){
-                logger.warn("Coodinates wrong: " + numberFormatException.getMessage() );
-                return null;
-            }
+    public CoordinatesDTO getBridgeCoordinates(Integer bridgeId) {
+        CoordinatesDTO coords = bridgeRepository.getBridgeCoordinates(bridgeId);
+        if (coords.getX() != null && coords.getY() != null) {
+            return coords;
         }
-        else{
-            return null;
-        }*/
-        return bridgeRepository.getBridgeCoordinates(bridgeId);
+        return null;
     }
 }

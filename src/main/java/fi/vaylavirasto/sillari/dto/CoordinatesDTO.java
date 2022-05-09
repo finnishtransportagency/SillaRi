@@ -19,10 +19,10 @@ public class CoordinatesDTO {
 
     public CoordinatesDTO(String xString, String yString) {
         try {
-            Double x = Double.valueOf(xString);
-            Double y = Double.valueOf(yString);
-            this.setX(x);
-            this.setY(y);
+            double x = Double.parseDouble(xString);
+            double y = Double.parseDouble(yString);
+            this.x = x;
+            this.y = y;
         } catch (NumberFormatException ignored) {
         }
     }
