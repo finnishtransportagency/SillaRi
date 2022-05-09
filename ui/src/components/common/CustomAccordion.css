@@ -6,6 +6,15 @@
   border-top: 4px solid transparent;
 }
 
+.customAccordion:hover [slot="header"] {
+  border-top: 4px solid var(--ion-color-light);
+}
+
+.customAccordion .accordion-expanding [slot="header"],
+.customAccordion .accordion-collapsing [slot="header"] {
+  border-top: 4px solid var(--ion-color-primary);
+}
+
 .customAccordion .accordion-expanded [slot="header"] {
   border-top: 4px solid var(--ion-color-primary);
   --background: var(--ion-color-secondary-5);
