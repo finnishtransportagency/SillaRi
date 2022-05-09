@@ -136,9 +136,6 @@
     "crossingInstructions": {
       "title": "Ohjeet"
     },
-    "trafficSupervisors": {
-      "title": "Liikenteenohjaajat"
-    },
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Kuljetus on luvanmukainen",
     "startSupervision": "Aloita valvonta",
