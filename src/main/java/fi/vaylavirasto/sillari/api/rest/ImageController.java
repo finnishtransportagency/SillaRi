@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
 import java.util.HashMap;
@@ -115,7 +116,7 @@ public class ImageController {
 
             Tika tika = new Tika();
             int dataStart = fileInputModel.getBase64().indexOf(",") + 1;
-            byte[] decodedString = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(fileInputModel.getBase64().substring(dataStart).getBytes("UTF-8"));
+            byte[] decodedString = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(fileInputModel.getBase64().substring(dataStart).getBytes(StandardCharsets.UTF_8));
             String contentType = tika.detect(decodedString);
             if (contentType == null) {
                 contentType = "application/octet-stream";
@@ -130,7 +131,7 @@ public class ImageController {
 
 
                 //set coord and street address metadata to S3 for KTV
-                SupervisionModel supervision = supervisionService.getSupervision(model.getSupervisionId(), true, false);
+                SupervisionModel supervision = supervisionService.getSupervision(model.getSupervisionId(), false, false);
                 BridgeModel bridge = supervision.getRouteBridge().getBridge();
                 CoordinatesDTO coords = bridge.getCoordinates();
 

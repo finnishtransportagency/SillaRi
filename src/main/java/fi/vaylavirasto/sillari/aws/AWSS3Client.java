@@ -143,7 +143,7 @@ public class AWSS3Client {
     public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, Map<String, String> userMetadata) {
         try {
             init(sillariPhotosRoleSessionName);
-            logger.info("upload " + bucketName + " contenttype " + contenttype);
+            logger.info("upload " + bucketName + " contenttype " + contenttype + " userMetadata " + userMetadata);
             ByteArrayInputStream byteInputStream = new ByteArrayInputStream(bytes);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contenttype);
