@@ -116,7 +116,12 @@
 
 ion-select,
 ion-input {
-  border: 2px solid var(--ion-color-base);
+  border: 1px solid var(--ion-color-step-150);
+}
+
+ion-textarea {
+  --background: var(--ion-color-light) !important;
+  padding-left: 16px;
 }
 
 ion-button,
