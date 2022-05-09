@@ -169,9 +169,9 @@ const Photos = (): JSX.Element => {
                 const bm = moment(b.taken, DATE_TIME_FORMAT);
                 return bm.diff(am, "seconds");
               })
-              .map((imageItem) => {
+              .map((imageItem, index) => {
                 const deleteClicked = (): void => removeImageItem(imageItem.id);
-                const key = `image_${imageItem.id}`;
+                const key = `image_${index}`;
 
                 return (
                   <PhotoItem
@@ -192,9 +192,9 @@ const Photos = (): JSX.Element => {
                 const bm = moment(b.taken, DATE_TIME_FORMAT);
                 return bm.diff(am, "seconds");
               })
-              .map((supervisionImage) => {
+              .map((supervisionImage, index) => {
                 const deleteClicked = (): void => deleteImageObject(supervisionImage.id);
-                const key = `savedimage_${supervisionImage.id}`;
+                const key = `savedimage_${index}`;
 
                 return (
                   <PhotoItem
