@@ -32,7 +32,14 @@ const BridgeDetailHeader = ({ routeBridge }: BridgeDetailHeaderProps): JSX.Eleme
         <IonLabel className="headingText">{t("bridge.identifier")}</IonLabel>
         <IonLabel>{identifier}</IonLabel>
       </IonItem>
-      <IonItem className="itemIcon iconLink" detail detailIcon={mapPoint} routerLink={`/bridgemap/${routeBridgeId}`} disabled={!isOnline}>
+      <IonItem
+        className="itemIcon iconLink"
+        detail
+        detailIcon={mapPoint}
+        routerLink={`/bridgemap/${routeBridgeId}`}
+        disabled={!isOnline}
+        lines="none"
+      >
         <IonLabel className="headingText">{t("bridge.location")}</IonLabel>
         <IonLabel>{municipality}</IonLabel>
       </IonItem>
