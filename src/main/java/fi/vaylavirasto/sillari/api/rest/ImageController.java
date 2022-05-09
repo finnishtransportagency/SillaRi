@@ -8,6 +8,7 @@ import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.service.BridgeService;
 import fi.vaylavirasto.sillari.service.SupervisionImageService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
@@ -43,6 +44,8 @@ public class ImageController {
     SupervisionImageService supervisionImageService;
     @Autowired
     SupervisionService supervisionService;
+    @Autowired
+    BridgeService bridgeService;
 
     @Autowired
     UIService uiService;
@@ -122,7 +125,7 @@ public class ImageController {
                 contentType = "application/octet-stream";
             }
 
-            if (activeProfile.equals("local")) {
+            if (activeProfile.equals("Xlocal")) { //todo
                 // Save to local file system
                 File outputFile = new File("/", fileInputModel.getFilename());
                 Files.write(outputFile.toPath(), decodedString);
@@ -133,7 +136,10 @@ public class ImageController {
                 //set coord and street address metadata to S3 for KTV
                 SupervisionModel supervision = supervisionService.getSupervision(model.getSupervisionId(), false, false);
                 BridgeModel bridge = supervision.getRouteBridge().getBridge();
-                CoordinatesDTO coords = bridge.getCoordinates();
+
+                CoordinatesDTO coords = bridgeService.getBridgeCoordinates(bridge.getId());
+
+                logger.debug("hello coords: " + coords);
 
                 Map<String, String> metadata = new HashMap<>();
                 if (coords != null) {

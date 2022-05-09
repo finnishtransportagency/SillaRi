@@ -1,6 +1,5 @@
 package fi.vaylavirasto.sillari.service;
 
-import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
@@ -36,10 +35,6 @@ public class RouteService {
                 routeBridges.forEach(routeBridge -> {
                     String bridgeGeoJson = bridgeRepository.getBridgeGeoJson(routeBridge.getBridge().getId());
                     routeBridge.getBridge().setGeojson(bridgeGeoJson);
-
-                    Double x = Double.valueOf(bridgeRepository.getBridgeXCoord(routeBridge.getBridge().getId()));
-                    Double y = Double.valueOf(bridgeRepository.getBridgeYCoord(routeBridge.getBridge().getId()));
-                    routeBridge.getBridge().setCoordinates(new CoordinatesDTO(x, y));
                 });
             }
             route.setRouteBridges(routeBridges);

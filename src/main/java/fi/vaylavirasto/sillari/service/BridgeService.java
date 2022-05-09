@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.repositories.BridgeRepository;
 import org.apache.logging.log4j.LogManager;
@@ -24,5 +25,11 @@ public class BridgeService {
             bridgeRepository.createBridge(bridge);
             logger.debug("createdBridge");
         }
+    }
+
+    public CoordinatesDTO getBridgeCoordinates(Integer bridgeId){
+        Double x = Double.valueOf(bridgeRepository.getBridgeXCoord(bridgeId));
+        Double y = Double.valueOf(bridgeRepository.getBridgeYCoord(bridgeId));
+        return new CoordinatesDTO(x, y);
     }
 }
