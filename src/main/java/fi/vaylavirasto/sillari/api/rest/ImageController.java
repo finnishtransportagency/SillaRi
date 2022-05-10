@@ -145,6 +145,9 @@ public class ImageController {
                     metadata.put("y_coord", "" + coords.getY());
                 }
                 metadata.put("roadAddress", bridge.getRoadAddress());
+                metadata.put("sillariBridgeOid", "" + bridge.getOid());
+                metadata.put("sillariBridgeName", "" + bridge.getName());
+                metadata.put("imageIdentifier", "" + model.getId());
 
                 awss3Client.upload(model.getObjectKey(), decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, metadata);
             }
