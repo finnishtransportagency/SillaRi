@@ -353,7 +353,7 @@ public class LeluController {
                     supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
                     List<byte[]> images = supervisionService.getImageFiles(supervision.getImages(), activeProfile.equals("local"));
                     byte[] reportPDF = new PDFGenerator().generateReportPDF(supervision, images);
-                    supervisionService.savePdf(reportPDF, supervision.getId());
+                    supervisionService.savePdf(reportPDF, supervision.getId(), supervision.getRouteBridge().getBridge());
                     response.setContentType("application/pdf");
                     OutputStream out = response.getOutputStream();
                     out.write(reportPDF);
