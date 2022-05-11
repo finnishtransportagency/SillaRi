@@ -23,6 +23,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
 
@@ -149,7 +152,13 @@ public class AWSS3Client {
             metadata.setContentType(contenttype);
             metadata.setContentLength(bytes.length);
             if (userMetadata != null) {
-                userMetadata.forEach((k, v) -> metadata.addUserMetadata(k, HttpUtility.UrlEncode(v)));
+                userMetadata.forEach((k, v) -> {
+                    try {
+                        metadata.addUserMetadata(k, URLEncoder.encode(v, StandardCharsets.UTF_8.toString()));
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             }
             PutObjectRequest request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
             s3Client.putObject(request);
