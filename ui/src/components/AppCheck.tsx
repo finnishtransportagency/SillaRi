@@ -28,7 +28,12 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
   const dispatch = useDispatch();
 
   const [isOfflineInfoOpen, setOfflineInfoOpen] = useState<boolean>(false);
-  const [isSupervisionApp, setSupervisionApp] = useState<boolean>(false);
+  const [isSupervisionAppAllowed, setSupervisionAppAllowed] = useState<boolean>(false);
+
+  // Check the path, since only the supervision app can be used offline
+  // Use window.location since the useLocation hook can't be used as this is rendered outside of IonReactRouter
+  const { pathname } = window.location;
+  const isSupervisionApp = !pathname.includes("/transport") && !pathname.includes("/management");
 
   // Get the user data from the cache when offline or the backend when online
   const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
@@ -53,7 +58,7 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
     if (supervisorUser && supervisorUser.roles.length > 0) {
       if (supervisorUser.roles.includes("SILLARI_SILLANVALVOJA")) {
         setHomePage("/supervisions");
-        setSupervisionApp(true);
+        setSupervisionAppAllowed(true);
       } else if (supervisorUser.roles.includes("SILLARI_AJOJARJESTELIJA")) {
         setHomePage("/management");
       } else if (supervisorUser.roles.includes("SILLARI_KULJETTAJA")) {
@@ -167,7 +172,7 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
             </IonCol>
           </IonRow>
 
-          {isSupervisionApp && supervisorUser && dataUpdatedAt > 0 && (
+          {isSupervisionApp && isSupervisionAppAllowed && supervisorUser && dataUpdatedAt > 0 && (
             <IonRow>
               <IonCol>
                 <IonGrid className="appCheckDetailsGrid ion-padding">
@@ -203,7 +208,7 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
             </IonRow>
           )}
 
-          {(!isSupervisionApp || !supervisorUser || dataUpdatedAt === 0) && (
+          {(!isSupervisionApp || !isSupervisionAppAllowed || !supervisorUser || dataUpdatedAt === 0) && (
             <IonRow>
               <IonCol>
                 <IonGrid className="appCheckDetailsGrid ion-padding">
