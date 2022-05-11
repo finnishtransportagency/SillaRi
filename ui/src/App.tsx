@@ -81,7 +81,7 @@ persistQueryClient({
 
 const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
-  const [homePage, setHomePage] = useState<string>("/supervisions");
+  const [homePage, setHomePage] = useState<string>("");
   const [errorCode, setErrorCode] = useState<number>(0);
   const [version, setVersion] = useState<string>("-");
   const [isInitialisedOffline, setInitialisedOffline] = useState<boolean>(false);
@@ -201,7 +201,7 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <IonApp>
-        {(!userData || isInitialisedOffline) && !isOkToContinue ? (
+        {(!userData || homePage.length === 0 || isInitialisedOffline) && !isOkToContinue ? (
           <AppCheck
             statusCode={statusCode}
             isInitialisedOffline={isInitialisedOffline}
