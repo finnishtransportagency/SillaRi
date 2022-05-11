@@ -279,19 +279,10 @@ public class SupervisionService {
 
 
             CoordinatesDTO coords = bridgeService.getBridgeCoordinates(bridge.getId());
-
-            Map<String, String> metadata = new HashMap<>();
-            if (coords != null) {
-                metadata.put("x_coord", "" + coords.getX());
-                metadata.put("y_coord", "" + coords.getY());
-            }
-            metadata.put("roadAddress", bridge.getRoadAddress());
-            metadata.put("sillariBridgeOid", "" + bridge.getOid());
-            metadata.put("sillariBridgeName", "" + bridge.getName());
-            metadata.put("imageIdentifier", "" + supervisionId);
+            bridge.setCoordinates(coords);
 
             // Upload to AWS
-            boolean success = awss3Client.upload(objectKey, reportPDF, "application/pdf", awss3Client.getSupervisionBucketName(), AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
+            boolean success = awss3Client.upload(objectKey, reportPDF, "application/pdf", awss3Client.getSupervisionBucketName(), AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME, supervisionId, bridge);
             logger.debug("Uploaded to AWS: " + objectKey);
             if (!success) {
                 throw new LeluPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
