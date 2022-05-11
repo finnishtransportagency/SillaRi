@@ -2,8 +2,8 @@ import React from "react";
 import Select, { components } from "react-select";
 import type { DropdownIndicatorProps, InputActionMeta, InputProps } from "react-select";
 import { IonIcon } from "@ionic/react";
-import arrowOpen from "../../theme/icons/arrow-open.svg";
-import arrowOpenWarning from "../../theme/icons/arrow-open-warning.svg";
+import dropdownArrow from "../../theme/icons/dropdown_arrow.svg";
+import dropdownArrowDanger from "../../theme/icons/dropdown_arrow_danger.svg";
 
 interface CustomSelectProps {
   options: { value: string | number; label: string }[];
@@ -20,7 +20,7 @@ const DropdownIndicator = (props: DropdownIndicatorProps<{ value: string | numbe
 
   return (
     <components.DropdownIndicator {...props}>
-      <IonIcon className="otherIcon" icon={hasError ? arrowOpenWarning : arrowOpen} />
+      <IonIcon className="otherIcon" icon={hasError ? dropdownArrowDanger : dropdownArrow} />
     </components.DropdownIndicator>
   );
 };

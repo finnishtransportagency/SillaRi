@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.service;
 import fi.vaylavirasto.sillari.api.rest.error.LeluPdfUploadException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
+import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.fim.FIMService;
@@ -21,9 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SupervisionService {
@@ -53,6 +52,8 @@ public class SupervisionService {
     SupervisionImageService supervisionImageService;
     @Autowired
     FIMService fimService;
+    @Autowired
+    BridgeService bridgeService;
 
 
     @Value("${spring.profiles.active:Unknown}")
@@ -216,7 +217,7 @@ public class SupervisionService {
 
         if (pdf != null) {
             try {
-                savePdf(pdf, supervision.getId());
+                savePdf(pdf, supervision.getId(), supervision.getRouteBridge().getBridge());
             } catch (LeluPdfUploadException e) {
                 // TODO what to do?
                 e.printStackTrace();
@@ -260,7 +261,8 @@ public class SupervisionService {
         return null;
     }
 
-    public void savePdf(byte[] reportPDF, int supervisionId) throws LeluPdfUploadException {
+
+    public void savePdf(byte[] reportPDF, int supervisionId, BridgeModel bridge) throws LeluPdfUploadException {
         logger.debug("save pdf: " + supervisionId);
         String objectKey = "" + supervisionId;
         if (activeProfile.equals("local")) {
@@ -274,6 +276,20 @@ public class SupervisionService {
                 throw new LeluPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
+
+
+            CoordinatesDTO coords = bridgeService.getBridgeCoordinates(bridge.getId());
+
+            Map<String, String> metadata = new HashMap<>();
+            if (coords != null) {
+                metadata.put("x_coord", "" + coords.getX());
+                metadata.put("y_coord", "" + coords.getY());
+            }
+            metadata.put("roadAddress", bridge.getRoadAddress());
+            metadata.put("sillariBridgeOid", "" + bridge.getOid());
+            metadata.put("sillariBridgeName", "" + bridge.getName());
+            metadata.put("imageIdentifier", "" + supervisionId);
+
             // Upload to AWS
             boolean success = awss3Client.upload(objectKey, reportPDF, "application/pdf", awss3Client.getSupervisionBucketName(), AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
             logger.debug("Uploaded to AWS: " + objectKey);

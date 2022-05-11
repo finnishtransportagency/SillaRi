@@ -19,14 +19,16 @@ interface AppCheckProps {
   isInitialisedOffline: boolean;
   setOkToContinue: (okToContinue: boolean) => void;
   setUserData: (userData?: IUserData) => void;
+  setHomePage: (homePage: string) => void;
   logoutFromApp: () => void;
 }
 
-const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserData, logoutFromApp }: AppCheckProps): JSX.Element => {
+const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserData, setHomePage, logoutFromApp }: AppCheckProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const [isOfflineInfoOpen, setOfflineInfoOpen] = useState<boolean>(false);
+  const [isSupervisionAppAllowed, setSupervisionAppAllowed] = useState<boolean>(false);
 
   // Check the path, since only the supervision app can be used offline
   // Use window.location since the useLocation hook can't be used as this is rendered outside of IonReactRouter
@@ -34,7 +36,7 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
   const isSupervisionApp = !pathname.includes("/transport") && !pathname.includes("/management");
 
   // Get the user data from the cache when offline or the backend when online
-  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+  const { data: supervisorUser, isLoading: isLoadingUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
     // retry: onRetry,
     staleTime: Infinity,
   });
@@ -51,83 +53,30 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
     // So set the user data on the App page from here instead, regardless of whether it is undefined
     setUserData(supervisorUser);
 
+    // Also set the home page here depending on the user role so that the routing works when offline
+    // Only the supervision app can be used offline though
+    if (supervisorUser && supervisorUser.roles.length > 0) {
+      if (supervisorUser.roles.includes("SILLARI_SILLANVALVOJA")) {
+        setHomePage("/supervisions");
+        setSupervisionAppAllowed(true);
+      } else if (supervisorUser.roles.includes("SILLARI_AJOJARJESTELIJA")) {
+        setHomePage("/management");
+      } else if (supervisorUser.roles.includes("SILLARI_KULJETTAJA")) {
+        setHomePage("/transport");
+      }
+    }
+
     if (!isInitialisedOffline && supervisorUser) {
       // The application was initialised online and the user data is available, so continue to show the rest of the UI
       // When offline, the 'use offline' button below will handle this instead
       setOkToContinue(true);
     }
-  }, [supervisorUser, isInitialisedOffline, setOkToContinue, setUserData]);
+  }, [supervisorUser, isInitialisedOffline, setOkToContinue, setUserData, setHomePage]);
 
   return (
     <IonContent>
-      <IonGrid className="appCheckHeaderGrid ion-padding">
-        <IonRow>
-          <IonCol className="ion-text-center">
-            <IonImg className="appCheckMainLogo" src={vaylaLogo} alt="Väylävirasto" />
-          </IonCol>
-        </IonRow>
-        <IonRow>
-          <IonCol className="ion-text-center">
-            <IonText className="appCheckMainTitle">{t("main.title")}</IonText>
-          </IonCol>
-        </IonRow>
-      </IonGrid>
-
-      {/* 401 - Returned by Väylä access control. */}
-      {!isInitialisedOffline && !supervisorUser && statusCode === 401 && (
-        <IonGrid className="appCheckDetailsGrid ion-padding">
-          <IonRow>
-            <IonCol>
-              <IonText className="headingText">{t("appCheck.accessDenied")}</IonText>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonText>{t("appCheck.loginToUse")}</IonText>
-            </IonCol>
-          </IonRow>
-
-          <IonRow className="ion-margin-top">
-            <IonCol>
-              <IonButton color="primary" expand="block" size="large" onClick={logoutFromApp}>
-                {t("appCheck.login")}
-              </IonButton>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-      )}
-
-      {/* 403 - Returned by SillaRi backend if user does not have SillaRi roles. */}
-      {!isInitialisedOffline && !supervisorUser && statusCode === 403 && (
-        <IonGrid className="appCheckDetailsGrid ion-padding">
-          <IonRow>
-            <IonCol>
-              <IonText className="headingText">{t("appCheck.accessDenied")}</IonText>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonText>{t("appCheck.noRights")}</IonText>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-      )}
-
-      {/* Other error */}
-      {!isInitialisedOffline && !supervisorUser && statusCode >= 400 && statusCode !== 401 && statusCode !== 403 && (
-        /*<IonContent className="ion-padding">{statusCode >= 400 ? <>{renderError(statusCode)}</> : <div>Starting app...</div>}</IonContent>*/
-        <IonGrid className="appCheckDetailsGrid ion-padding">
-          <IonRow>
-            <IonCol>
-              <IonText className="headingText">{`${t("appCheck.unhandledError")}: `}</IonText>
-              <IonText>{statusCode}</IonText>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-      )}
-
-      {/* Online */}
-      {!isInitialisedOffline && !supervisorUser && statusCode < 400 && (
+      {/* Loading, online or offline */}
+      {((!isInitialisedOffline && !supervisorUser && statusCode < 400) || (isInitialisedOffline && isLoadingUser)) && (
         <IonGrid className="appCheckDetailsGrid ion-padding">
           <IonRow>
             <IonCol>
@@ -137,12 +86,108 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
         </IonGrid>
       )}
 
-      {/* Offline */}
-      {isInitialisedOffline && (
+      {/* Online */}
+      {!isInitialisedOffline && !supervisorUser && statusCode >= 400 && (
         <IonGrid className="ion-no-padding">
           <IonRow>
             <IonCol>
               <IonGrid className="appCheckHeaderGrid ion-padding">
+                <IonRow>
+                  <IonCol className="ion-text-center">
+                    <IonImg className="appCheckMainLogo" src={vaylaLogo} alt="Väylävirasto" />
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol className="ion-text-center">
+                    <IonText className="appCheckMainTitle">{t("main.title")}</IonText>
+                  </IonCol>
+                </IonRow>
+              </IonGrid>
+            </IonCol>
+          </IonRow>
+
+          {/* 401 - Returned by Väylä access control. */}
+          {!isInitialisedOffline && !supervisorUser && statusCode === 401 && (
+            <IonRow>
+              <IonCol>
+                <IonGrid className="appCheckDetailsGrid ion-padding">
+                  <IonRow>
+                    <IonCol>
+                      <IonText className="headingText">{t("appCheck.accessDenied")}</IonText>
+                    </IonCol>
+                  </IonRow>
+                  <IonRow className="ion-margin-top">
+                    <IonCol>
+                      <IonText>{t("appCheck.loginToUse")}</IonText>
+                    </IonCol>
+                  </IonRow>
+
+                  <IonRow className="ion-margin-top">
+                    <IonCol>
+                      <IonButton color="primary" expand="block" size="large" onClick={logoutFromApp}>
+                        {t("appCheck.login")}
+                      </IonButton>
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </IonCol>
+            </IonRow>
+          )}
+
+          {/* 403 - Returned by SillaRi backend if user does not have SillaRi roles. */}
+          {!isInitialisedOffline && !supervisorUser && statusCode === 403 && (
+            <IonRow>
+              <IonCol>
+                <IonGrid className="appCheckDetailsGrid ion-padding">
+                  <IonRow>
+                    <IonCol>
+                      <IonText className="headingText">{t("appCheck.accessDenied")}</IonText>
+                    </IonCol>
+                  </IonRow>
+                  <IonRow className="ion-margin-top">
+                    <IonCol>
+                      <IonText>{t("appCheck.noRights")}</IonText>
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </IonCol>
+            </IonRow>
+          )}
+
+          {/* Other error */}
+          {!isInitialisedOffline && !supervisorUser && statusCode >= 400 && statusCode !== 401 && statusCode !== 403 && (
+            <IonRow>
+              <IonCol>
+                <IonGrid className="appCheckDetailsGrid ion-padding">
+                  <IonRow>
+                    <IonCol>
+                      <IonText className="headingText">{`${t("appCheck.unhandledError")}: `}</IonText>
+                      <IonText>{statusCode}</IonText>
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </IonCol>
+            </IonRow>
+          )}
+        </IonGrid>
+      )}
+
+      {/* Offline */}
+      {isInitialisedOffline && !isLoadingUser && (
+        <IonGrid className="ion-no-padding">
+          <IonRow>
+            <IonCol>
+              <IonGrid className="appCheckHeaderGrid ion-padding">
+                <IonRow>
+                  <IonCol className="ion-text-center">
+                    <IonImg className="appCheckMainLogo" src={vaylaLogo} alt="Väylävirasto" />
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol className="ion-text-center">
+                    <IonText className="appCheckMainTitle">{t("main.title")}</IonText>
+                  </IonCol>
+                </IonRow>
                 <IonRow>
                   <IonCol className="ion-text-center">
                     <IonIcon className="appCheckNoNetwork appCheckCloudIcon" size="large" icon={cloudOfflineOutline} />
@@ -157,7 +202,7 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
             </IonCol>
           </IonRow>
 
-          {isSupervisionApp && supervisorUser && (
+          {isSupervisionApp && isSupervisionAppAllowed && supervisorUser && dataUpdatedAt > 0 && (
             <IonRow>
               <IonCol>
                 <IonGrid className="appCheckDetailsGrid ion-padding">
@@ -193,7 +238,7 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
             </IonRow>
           )}
 
-          {(!isSupervisionApp || !supervisorUser) && (
+          {(!isSupervisionApp || !isSupervisionAppAllowed || !supervisorUser || dataUpdatedAt === 0) && (
             <IonRow>
               <IonCol>
                 <IonGrid className="appCheckDetailsGrid ion-padding">
