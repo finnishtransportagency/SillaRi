@@ -149,7 +149,7 @@ public class AWSS3Client {
             metadata.setContentType(contenttype);
             metadata.setContentLength(bytes.length);
             if (userMetadata != null) {
-                userMetadata.forEach((k, v) -> metadata.addUserMetadata(k, v));
+                userMetadata.forEach((k, v) -> metadata.addUserMetadata(k, HttpUtility.UrlEncode(v)));
             }
             PutObjectRequest request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
             s3Client.putObject(request);
