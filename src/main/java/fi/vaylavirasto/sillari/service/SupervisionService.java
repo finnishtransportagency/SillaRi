@@ -286,6 +286,9 @@ public class SupervisionService {
                 metadata.put("y_coord", "" + coords.getY());
             }
             metadata.put("roadAddress", bridge.getRoadAddress());
+            metadata.put("sillariBridgeOid", "" + bridge.getOid());
+            metadata.put("sillariBridgeName", "" + bridge.getName());
+            metadata.put("imageIdentifier", "" + model.getId());
 
             // Upload to AWS
             boolean success = awss3Client.upload(objectKey, reportPDF, "application/pdf", awss3Client.getSupervisionBucketName(), AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
