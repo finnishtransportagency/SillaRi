@@ -31,7 +31,7 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
   // Check the path, since only the supervision app can be used offline
   // Use window.location since the useLocation hook can't be used as this is rendered outside of IonReactRouter
   const { pathname } = window.location;
-  const isSupervisionApp = !pathname.includes("/transport") && !pathname.includes("/management");
+  const isSupervisionApp = pathname !== "/" && !pathname.includes("/transport") && !pathname.includes("/management");
 
   // Get the user data from the cache when offline or the backend when online
   const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
@@ -157,7 +157,7 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
             </IonCol>
           </IonRow>
 
-          {isSupervisionApp && supervisorUser && (
+          {isSupervisionApp && supervisorUser && dataUpdatedAt > 0 && (
             <IonRow>
               <IonCol>
                 <IonGrid className="appCheckDetailsGrid ion-padding">
@@ -193,7 +193,7 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
             </IonRow>
           )}
 
-          {(!isSupervisionApp || !supervisorUser) && (
+          {(!isSupervisionApp || !supervisorUser || dataUpdatedAt === 0) && (
             <IonRow>
               <IonCol>
                 <IonGrid className="appCheckDetailsGrid ion-padding">
