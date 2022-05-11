@@ -207,6 +207,7 @@ const App: React.FC = () => {
             isInitialisedOffline={isInitialisedOffline}
             setOkToContinue={setOkToContinue}
             setUserData={setUserData}
+            setHomePage={setHomePage}
             logoutFromApp={logoutFromApp}
           />
         ) : (

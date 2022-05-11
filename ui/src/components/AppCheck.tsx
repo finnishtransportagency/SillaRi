@@ -19,19 +19,16 @@ interface AppCheckProps {
   isInitialisedOffline: boolean;
   setOkToContinue: (okToContinue: boolean) => void;
   setUserData: (userData?: IUserData) => void;
+  setHomePage: (homePage: string) => void;
   logoutFromApp: () => void;
 }
 
-const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserData, logoutFromApp }: AppCheckProps): JSX.Element => {
+const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserData, setHomePage, logoutFromApp }: AppCheckProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const [isOfflineInfoOpen, setOfflineInfoOpen] = useState<boolean>(false);
-
-  // Check the path, since only the supervision app can be used offline
-  // Use window.location since the useLocation hook can't be used as this is rendered outside of IonReactRouter
-  const { pathname } = window.location;
-  const isSupervisionApp = pathname !== "/" && !pathname.includes("/transport") && !pathname.includes("/management");
+  const [isSupervisionApp, setSupervisionApp] = useState<boolean>(false);
 
   // Get the user data from the cache when offline or the backend when online
   const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
@@ -51,12 +48,25 @@ const AppCheck = ({ statusCode, isInitialisedOffline, setOkToContinue, setUserDa
     // So set the user data on the App page from here instead, regardless of whether it is undefined
     setUserData(supervisorUser);
 
+    // Also set the home page here depending on the user role so that the routing works when offline
+    // Only the supervision app can be used offline though
+    if (supervisorUser && supervisorUser.roles.length > 0) {
+      if (supervisorUser.roles.includes("SILLARI_SILLANVALVOJA")) {
+        setHomePage("/supervisions");
+        setSupervisionApp(true);
+      } else if (supervisorUser.roles.includes("SILLARI_AJOJARJESTELIJA")) {
+        setHomePage("/management");
+      } else if (supervisorUser.roles.includes("SILLARI_KULJETTAJA")) {
+        setHomePage("/transport");
+      }
+    }
+
     if (!isInitialisedOffline && supervisorUser) {
       // The application was initialised online and the user data is available, so continue to show the rest of the UI
       // When offline, the 'use offline' button below will handle this instead
       setOkToContinue(true);
     }
-  }, [supervisorUser, isInitialisedOffline, setOkToContinue, setUserData]);
+  }, [supervisorUser, isInitialisedOffline, setOkToContinue, setUserData, setHomePage]);
 
   return (
     <IonContent>
