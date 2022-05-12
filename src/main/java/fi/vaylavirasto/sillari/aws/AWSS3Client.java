@@ -37,7 +37,7 @@ public class AWSS3Client {
     private static final Logger logger = LogManager.getLogger();
     public static final String SILLARI_PHOTOS_ROLE_SESSION_NAME = "SILLARI-PHOTOS";
     public static final String SILLARI_PERMITS_ROLE_SESSION_NAME = "SILLARI-PERMITS";
-    private AmazonS3 s3Client=null;
+    private AmazonS3 s3Client = null;
 
     private static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
 
@@ -54,7 +54,7 @@ public class AWSS3Client {
     public AWSS3Client() {
 
         environment = System.getenv("environment");
-        if("localhost".equals(environment)) {
+        if ("localhost".equals(environment)) {
             accessKey = System.getenv("accessKey");
             secretKey = System.getenv("secretKey");
         }
@@ -62,43 +62,40 @@ public class AWSS3Client {
         logger.info(environment);
     }
 
-    public String getPermitBucketName(){
-        if("dev".equals(environment) || "localhost".equals(environment)) {
+    public String getPermitBucketName() {
+        if ("dev".equals(environment) || "localhost".equals(environment)) {
             return SILLARI_PERMIT_PDF_BUCKET_DEV;
-        }
-        else{
-            return SILLARI_PERMIT_PDF_BUCKET_DEV+"-"+environment;
+        } else {
+            return SILLARI_PERMIT_PDF_BUCKET_DEV + "-" + environment;
         }
     }
 
-    public String getSupervisionBucketName(){
-        if("dev".equals(environment) || "localhost".equals(environment)) {
+    public String getSupervisionBucketName() {
+        if ("dev".equals(environment) || "localhost".equals(environment)) {
             return SILLARI_SUPERVISION_PDF_BUCKET_DEV;
-        }
-        else{
-            return SILLARI_SUPERVISION_PDF_BUCKET_DEV+"-"+environment;
+        } else {
+            return SILLARI_SUPERVISION_PDF_BUCKET_DEV + "-" + environment;
         }
     }
 
-    public String getPhotoBucketName(){
-        if("dev".equals(environment) || "localhost".equals(environment)) {
+    public String getPhotoBucketName() {
+        if ("dev".equals(environment) || "localhost".equals(environment)) {
             return SILLARI_PHOTOS_BUCKET_DEV;
-        }
-        else{
-            return SILLARI_PHOTOS_BUCKET_DEV+"-"+environment;
+        } else {
+            return SILLARI_PHOTOS_BUCKET_DEV + "-" + environment;
         }
     }
 
     private void init(String sillariPhotosRoleSessionName) {
-        if(roleResponse != null) {
+        if (roleResponse != null) {
             long now = new Date().getTime();
-            if(roleResponse.getCredentials().getExpiration().getTime() < now + 60*1000L) {
+            if (roleResponse.getCredentials().getExpiration().getTime() < now + 60 * 1000L) {
                 logger.debug("renew credentials " + roleResponse.getCredentials().getExpiration());
-                s3Client=null;
+                s3Client = null;
             }
         }
-        if(s3Client == null) {
-            if("localhost".equals(environment) || "dev".equals(environment)) {
+        if (s3Client == null) {
+            if ("localhost".equals(environment) || "dev".equals(environment)) {
                 // localhost and dev: assume role is needed
                 AWSSecurityTokenService stsClient;
                 if ("localhost".equals(environment)) {
@@ -155,7 +152,7 @@ public class AWSS3Client {
         metadata.put("sillariBridgeId", "" + bridge.getId());
         metadata.put("sillariBridgeName", "" + bridge.getName());
         metadata.put("imageIdentifier", "" + imageIdentifier);
-        return upload(key,bytes, contenttype, bucketName, sillariPhotosRoleSessionName, metadata);
+        return upload(key, bytes, contenttype, bucketName, sillariPhotosRoleSessionName, metadata);
     }
 
     public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, Map<String, String> userMetadata) {
@@ -167,23 +164,36 @@ public class AWSS3Client {
             metadata.setContentType(contenttype);
             metadata.setContentLength(bytes.length);
             if (userMetadata != null) {
-                userMetadata.forEach((k, v) -> {
-                    String encoded = v;
-                    try {
-                        encoded = URLEncoder.encode(v, StandardCharsets.UTF_8.toString());
-                    } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException(e);
-                    } catch (Exception e) {
-                        logger.warn("couldn't encode S3 metadata. Using unecoded value. " + v + " " + e);
+                for (Map.Entry<String, String> entry : userMetadata.entrySet()) {
+                    String k = entry.getKey();
+                    String v = entry.getValue();
+                    if (v != null) {
+                        try {
+                            metadata.addUserMetadata(k, URLEncoder.encode(v, StandardCharsets.UTF_8.toString()));
+                        } catch (Exception e) {
+                            logger.warn("Couldn't encode S3 metadata. Using unecoded value. " + v + " " + e + " " + e.getMessage());
+                            metadata.addUserMetadata(k, v);
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        //do we nnnnnned to seeet if null
                     }
-
-                    metadata.addUserMetadata(k, encoded);
-                });
+                }
             }
             PutObjectRequest request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
-            s3Client.putObject(request);
-        } catch(Exception e) {
-            logger.error(e);
+            try {
+                s3Client.putObject(request);
+            }
+            catch (Exception e) {
+                logger.warn("Couldn't post file to S3. Re-trying without custom metadata" + e + " " + e.getMessage());
+                metadata = new ObjectMetadata();
+                metadata.setContentType(contenttype);
+                metadata.setContentLength(bytes.length);
+                request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
+                s3Client.putObject(request);
+            }
+        } catch (Exception e) {
+            logger.error("S3 upload failed. " + e + " " + e.getMessage());
             return false;
         }
         return true;
@@ -196,7 +206,7 @@ public class AWSS3Client {
             GetObjectRequest request = new GetObjectRequest(bucketName, objectKey);
             S3Object object = s3Client.getObject(request);
             return IOUtils.toByteArray(object.getObjectContent());
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
         return null;
@@ -207,7 +217,7 @@ public class AWSS3Client {
             init(SILLARI_PHOTOS_ROLE_SESSION_NAME);
             DeleteObjectRequest request = new DeleteObjectRequest(bucketName, objectKey);
             s3Client.deleteObject(request);
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
     }
