@@ -168,11 +168,16 @@ public class AWSS3Client {
             metadata.setContentLength(bytes.length);
             if (userMetadata != null) {
                 userMetadata.forEach((k, v) -> {
+                    String encoded = v;
                     try {
-                        metadata.addUserMetadata(k, URLEncoder.encode(v, StandardCharsets.UTF_8.toString()));
+                        encoded = URLEncoder.encode(v, StandardCharsets.UTF_8.toString());
                     } catch (UnsupportedEncodingException e) {
                         throw new RuntimeException(e);
+                    } catch (Exception e) {
+                        logger.warn("couldn't encode S3 metadata. Using unecoded value. " + v + " " + e);
                     }
+
+                    metadata.addUserMetadata(k, encoded);
                 });
             }
             PutObjectRequest request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
