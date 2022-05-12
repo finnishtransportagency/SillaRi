@@ -144,13 +144,26 @@ public class AWSS3Client {
 
     public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, Integer imageIdentifier, BridgeModel bridge) {
         Map<String, String> metadata = new HashMap<>();
+        String bridgeName;
+
         if (bridge.getCoordinates() != null) {
             metadata.put("x_coord", "" + bridge.getCoordinates().getX());
             metadata.put("y_coord", "" + bridge.getCoordinates().getY());
         }
+
+        if (bridge.getName() != null) {
+            try {
+                // Bridge names include scandic letters, so must encode them
+                bridgeName = URLEncoder.encode(bridge.getName(), StandardCharsets.UTF_8.toString());
+            } catch (UnsupportedEncodingException e) {
+                logger.warn("Couldn't encode S3 metadata. Using unencoded value. " + bridge.getName() + " " + e + " " + e.getMessage());
+                bridgeName = bridge.getName();
+            }
+            metadata.put("sillariBridgeName", "" + bridgeName);
+        }
+
         metadata.put("roadAddress", bridge.getRoadAddress());
         metadata.put("sillariBridgeId", "" + bridge.getId());
-        metadata.put("sillariBridgeName", "" + bridge.getName());
         metadata.put("imageIdentifier", "" + imageIdentifier);
         return upload(key, bytes, contenttype, bucketName, sillariPhotosRoleSessionName, metadata);
     }
