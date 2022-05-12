@@ -137,19 +137,12 @@ public class ImageController {
                 SupervisionModel supervision = supervisionService.getSupervision(model.getSupervisionId(), false, false);
                 BridgeModel bridge = supervision.getRouteBridge().getBridge();
 
-                CoordinatesDTO coords = bridgeService.getBridgeCoordinates(bridge.getId());
+                bridge.setCoordinates(bridgeService.getBridgeCoordinates(bridge.getId()));
 
-                Map<String, String> metadata = new HashMap<>();
-                if (coords != null) {
-                    metadata.put("x_coord", "" + coords.getX());
-                    metadata.put("y_coord", "" + coords.getY());
-                }
-                metadata.put("roadAddress", bridge.getRoadAddress());
-                metadata.put("sillariBridgeOid", "" + bridge.getOid());
-                metadata.put("sillariBridgeName", "" + bridge.getName());
-                metadata.put("imageIdentifier", "" + model.getId());
 
-                awss3Client.upload(model.getObjectKey(), decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, metadata);
+
+
+                awss3Client.upload(model.getObjectKey(), decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, model.getId(), bridge);
             }
         } catch(Exception e) {
             e.printStackTrace();

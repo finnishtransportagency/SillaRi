@@ -18,12 +18,17 @@ import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
 import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
 import com.amazonaws.services.securitytoken.model.Credentials;
 import com.amazonaws.util.IOUtils;
+import fi.vaylavirasto.sillari.model.BridgeModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -140,6 +145,19 @@ public class AWSS3Client {
         return upload(key, bytes, contenttype, bucketName, sillariPhotosRoleSessionName, null);
     }
 
+    public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, Integer imageIdentifier, BridgeModel bridge) {
+        Map<String, String> metadata = new HashMap<>();
+        if (bridge.getCoordinates() != null) {
+            metadata.put("x_coord", "" + bridge.getCoordinates().getX());
+            metadata.put("y_coord", "" + bridge.getCoordinates().getY());
+        }
+        metadata.put("roadAddress", bridge.getRoadAddress());
+        metadata.put("sillariBridgeId", "" + bridge.getId());
+        metadata.put("sillariBridgeName", "" + bridge.getName());
+        metadata.put("imageIdentifier", "" + imageIdentifier);
+        return upload(key,bytes, contenttype, bucketName, sillariPhotosRoleSessionName, metadata);
+    }
+
     public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, Map<String, String> userMetadata) {
         try {
             init(sillariPhotosRoleSessionName);
@@ -149,7 +167,13 @@ public class AWSS3Client {
             metadata.setContentType(contenttype);
             metadata.setContentLength(bytes.length);
             if (userMetadata != null) {
-                userMetadata.forEach((k, v) -> metadata.addUserMetadata(k, v));
+                userMetadata.forEach((k, v) -> {
+                    try {
+                        metadata.addUserMetadata(k, URLEncoder.encode(v, StandardCharsets.UTF_8.toString()));
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             }
             PutObjectRequest request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
             s3Client.putObject(request);
