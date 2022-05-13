@@ -161,7 +161,9 @@ public class AWSS3Client {
         }
 
         metadata.put("roadAddress", bridge.getRoadAddress());
-        metadata.put("sillariBridgeId", "" + bridge.getId());
+        metadata.put("sillariBridgeId", "" + bridge.getId()); // TODO remove bridge id after no longer required in KTV integration
+        metadata.put("bridgeOid", bridge.getOid());
+        metadata.put("bridgeIdentifier", bridge.getIdentifier());
         metadata.put("imageIdentifier", "" + imageIdentifier);
         return upload(key, bytes, contenttype, bucketName, sillariPhotosRoleSessionName, metadata);
     }
