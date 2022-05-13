@@ -178,27 +178,17 @@ public class AWSS3Client {
             metadata.setContentLength(bytes.length);
             if (userMetadata != null) {
                 for (Map.Entry<String, String> entry : userMetadata.entrySet()) {
-                    String k = entry.getKey();
-                    String v = entry.getValue();
-                    if (v != null) {
-                        try {
-                            metadata.addUserMetadata(k, URLEncoder.encode(v, StandardCharsets.UTF_8.toString()));
-                        } catch (Exception e) {
-                            logger.warn("Couldn't encode S3 metadata. Using unecoded value. " + v + " " + e + " " + e.getMessage());
-                            metadata.addUserMetadata(k, v);
-                            throw new RuntimeException(e);
-                        }
-                    } else {
-                        //do we nnnnnned to seeet if null
-                    }
+                    metadata.addUserMetadata(entry.getKey(), entry.getValue());
                 }
             }
             PutObjectRequest request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
+
+            // Try uploading the file to S3. If upload fails, try uploading it without custom metadata.
+            // That way we at least have the file in storage - but the upload to Kuvatietovarasto will fail without metadata.
             try {
                 s3Client.putObject(request);
-            }
-            catch (Exception e) {
-                logger.warn("Couldn't post file to S3. Re-trying without custom metadata" + e + " " + e.getMessage());
+            } catch (Exception e) {
+                logger.warn("Couldn't post file with key {} to S3. Re-trying without custom metadata. ERROR={}", key, e + " " + e.getMessage());
                 metadata = new ObjectMetadata();
                 metadata.setContentType(contenttype);
                 metadata.setContentLength(bytes.length);
