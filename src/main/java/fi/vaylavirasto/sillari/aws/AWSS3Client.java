@@ -144,7 +144,6 @@ public class AWSS3Client {
 
     public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, Integer imageIdentifier, BridgeModel bridge) {
         Map<String, String> metadata = new HashMap<>();
-        String bridgeName;
 
         if (bridge.getCoordinates() != null) {
             metadata.put("x_coord", "" + bridge.getCoordinates().getX());
@@ -154,12 +153,11 @@ public class AWSS3Client {
         if (bridge.getName() != null) {
             try {
                 // Bridge names include scandic letters, so must encode them
-                bridgeName = URLEncoder.encode(bridge.getName(), StandardCharsets.UTF_8.toString());
+                String bridgeName = URLEncoder.encode(bridge.getName(), StandardCharsets.UTF_8.toString());
+                metadata.put("sillariBridgeName", bridgeName);
             } catch (UnsupportedEncodingException e) {
-                logger.warn("Couldn't encode S3 metadata. Using unencoded value. " + bridge.getName() + " " + e + " " + e.getMessage());
-                bridgeName = bridge.getName();
+                logger.warn("Couldn't encode bridge name '{}' for file '{}'. Skipping bridge name from S3 metadata. ERROR={}", bridge.getName(), key, e + " " + e.getMessage());
             }
-            metadata.put("sillariBridgeName", "" + bridgeName);
         }
 
         metadata.put("roadAddress", bridge.getRoadAddress());
@@ -188,7 +186,7 @@ public class AWSS3Client {
             try {
                 s3Client.putObject(request);
             } catch (Exception e) {
-                logger.warn("Couldn't post file with key {} to S3. Re-trying without custom metadata. ERROR={}", key, e + " " + e.getMessage());
+                logger.warn("Couldn't post file with key '{}' to S3. Re-trying without custom metadata={}. ERROR={}", key, userMetadata, e + " " + e.getMessage());
                 metadata = new ObjectMetadata();
                 metadata.setContentType(contenttype);
                 metadata.setContentLength(bytes.length);
