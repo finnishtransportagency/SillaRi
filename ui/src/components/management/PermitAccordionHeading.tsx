@@ -54,14 +54,14 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
               </IonCol>
             </IonRow>
             <IonRow>
-              <IonCol size="12" size-lg="6" className={!isPermitValid(permit) ? "disabled" : ""}>
+              <IonCol className={!isPermitValid(permit) ? "disabled" : ""}>
                 <small>
                   <Moment format={DATE_FORMAT}>{validStartDate}</Moment>
                   <IonText>{" - "}</IonText>
                   <Moment format={DATE_FORMAT}>{validEndDate}</Moment>
                 </small>
               </IonCol>
-              <IonCol size="12" size-lg="6">
+              <IonCol>
                 {routeTransportList && routeTransportList.length > 0 && (
                   <small>
                     {permitIncludesSupervisions ? t("management.companySummary.includesSupervisions") : t("management.companySummary.noSupervisions")}
