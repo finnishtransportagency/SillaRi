@@ -11,7 +11,7 @@ import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
 import { isPermitValid } from "../../utils/validation";
 import PermitLinkText from "../PermitLinkText";
-import { includesSupervisions } from "../../utils/managementUtil";
+import { permitIncludesSupervisions } from "../../utils/managementUtil";
 
 interface PermitAccordionHeadingProps {
   permit: IPermit;
@@ -21,9 +21,9 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { id: permitId, validStartDate, validEndDate } = permit;
+  const { id: permitId, validStartDate, validEndDate, routes = [] } = permit;
 
-  const { data: routeTransportList, isLoading: isLoadingRouteTransports } = useQuery(
+  const { data: routeTransportList } = useQuery(
     ["getRouteTransportsOfPermit", Number(permitId)],
     () => getRouteTransportsOfPermit(Number(permitId), dispatch),
     {
@@ -38,7 +38,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
       ? permit.routes.map((route) => (route.transportCount ? route.transportCount : 0)).reduce((prevCount, count) => prevCount + count)
       : 0;
 
-  const permitIncludesSupervisions = !isLoadingRouteTransports && includesSupervisions(routeTransportList);
+  const includesSupervisions = permitIncludesSupervisions(routes);
 
   return (
     <IonGrid className="ion-no-padding" ref={ref}>
@@ -62,11 +62,9 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
                 </small>
               </IonCol>
               <IonCol>
-                {routeTransportList && routeTransportList.length > 0 && (
-                  <small>
-                    {permitIncludesSupervisions ? t("management.companySummary.includesSupervisions") : t("management.companySummary.noSupervisions")}
-                  </small>
-                )}
+                <small>
+                  {includesSupervisions ? t("management.companySummary.includesSupervisions") : t("management.companySummary.noSupervisions")}
+                </small>
               </IonCol>
             </IonRow>
           </IonGrid>
