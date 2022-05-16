@@ -119,3 +119,13 @@ export const sortTransports = (transports: IRouteTransport[], sortOrder: ISortOr
     transports.reverse();
   }
 };
+
+export const includesSupervisions = (routeTransports: IRouteTransport[] | undefined): boolean => {
+  if (routeTransports) {
+    return routeTransports.some((routeTransport) => {
+      const { supervisions = [] } = routeTransport;
+      return supervisions.length > 0;
+    });
+  }
+  return false;
+};

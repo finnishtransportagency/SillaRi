@@ -11,6 +11,7 @@ import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
 import { isPermitValid } from "../../utils/validation";
 import PermitLinkText from "../PermitLinkText";
+import { includesSupervisions } from "../../utils/managementUtil";
 
 interface PermitAccordionHeadingProps {
   permit: IPermit;
@@ -22,7 +23,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
 
   const { id: permitId, validStartDate, validEndDate } = permit;
 
-  const { data: routeTransportList } = useQuery(
+  const { data: routeTransportList, isLoading: isLoadingRouteTransports } = useQuery(
     ["getRouteTransportsOfPermit", Number(permitId)],
     () => getRouteTransportsOfPermit(Number(permitId), dispatch),
     {
@@ -36,6 +37,8 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
     permit.routes && permit.routes.length > 0
       ? permit.routes.map((route) => (route.transportCount ? route.transportCount : 0)).reduce((prevCount, count) => prevCount + count)
       : 0;
+
+  const permitIncludesSupervisions = !isLoadingRouteTransports && includesSupervisions(routeTransportList);
 
   return (
     <IonGrid className="ion-no-padding" ref={ref}>
@@ -57,6 +60,13 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
                   <IonText>{" - "}</IonText>
                   <Moment format={DATE_FORMAT}>{validEndDate}</Moment>
                 </small>
+              </IonCol>
+              <IonCol size="12" size-lg="6">
+                {routeTransportList && routeTransportList.length > 0 && (
+                  <small>
+                    {permitIncludesSupervisions ? t("management.companySummary.includesSupervisions") : t("management.companySummary.noSupervisions")}
+                  </small>
+                )}
               </IonCol>
             </IonRow>
           </IonGrid>

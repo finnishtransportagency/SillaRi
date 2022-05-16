@@ -239,6 +239,8 @@
       "permitListTitle": "Transporttillstånd och hantering",
       "transports": "Transporter",
       "supervision": "Övervakning",
+      "includesSupervisions": "(SV) Sisältää sillanvalvontoja",
+      "noSupervisions": "(SV) Ei sisällä sillanvalvontoja",
       "addTransportButtonLabel": "Lägg till en transport",
       "filter": {
         "show": "Visa",
