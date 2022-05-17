@@ -188,7 +188,7 @@ public class ImageController {
 
             String objectKey = supervisionImageService.getSupervisionImage(id).getObjectKey();
             // Delete image from AWS bucket or local file system
-            deleteFile(objectKey);
+            expireFile(objectKey);
 
             // Delete the image row from the database
             supervisionImageService.deleteSupervisionImage(id);
@@ -213,7 +213,7 @@ public class ImageController {
             // Delete images from AWS bucket or local file system
             for (SupervisionImageModel image : images) {
                 String decodedKey = new String(Base64.getDecoder().decode(image.getObjectKey()));
-                expireFile(decodedKey);
+                deleteFile(decodedKey);
             }
 
             // Delete image rows from the database
