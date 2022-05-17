@@ -37,7 +37,7 @@ public class AWSS3Client {
     private static final Logger logger = LogManager.getLogger();
     public static final String SILLARI_PHOTOS_ROLE_SESSION_NAME = "SILLARI-PHOTOS";
     public static final String SILLARI_PERMITS_ROLE_SESSION_NAME = "SILLARI-PERMITS";
-    private static final String KTV_OBJECT_IDENTIFIER_COMMON_PREFIX = "sil";
+    private static final String KTV_OBJECT_IDENTIFIER_COMMON_PREFIX = "SIL";
     private AmazonS3 s3Client = null;
 
     private static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
@@ -165,7 +165,7 @@ public class AWSS3Client {
         metadata.put("sillariBridgeId", "" + bridge.getId()); // TODO remove bridge id after no longer required in KTV integration
         metadata.put("bridgeOid", bridge.getOid());
         metadata.put("bridgeIdentifier", bridge.getIdentifier());
-        metadata.put("objectIdentifier", "" + KTV_OBJECT_IDENTIFIER_COMMON_PREFIX + (objectIdentifierPrefix != null ? objectIdentifierPrefix : "") + objectIdentifier);
+        metadata.put("objectIdentifier", KTV_OBJECT_IDENTIFIER_COMMON_PREFIX + "-" + (objectIdentifierPrefix != null ? objectIdentifierPrefix : "") + "-" + objectIdentifier);
         return upload(key, bytes, contenttype, bucketName, sillariPhotosRoleSessionName, metadata);
     }
 
