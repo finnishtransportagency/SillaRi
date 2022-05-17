@@ -142,7 +142,7 @@ public class AWSS3Client {
         return upload(key, bytes, contenttype, bucketName, sillariPhotosRoleSessionName, null);
     }
 
-    public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, Integer imageIdentifier, BridgeModel bridge) {
+    public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, Integer objectIdentifier, String objectIdentifierPrefix, BridgeModel bridge) {
         Map<String, String> metadata = new HashMap<>();
 
         if (bridge.getCoordinates() != null) {
@@ -164,7 +164,7 @@ public class AWSS3Client {
         metadata.put("sillariBridgeId", "" + bridge.getId()); // TODO remove bridge id after no longer required in KTV integration
         metadata.put("bridgeOid", bridge.getOid());
         metadata.put("bridgeIdentifier", bridge.getIdentifier());
-        metadata.put("imageIdentifier", "" + imageIdentifier);
+        metadata.put("objectIdentifier", "" + (objectIdentifierPrefix != null ? objectIdentifierPrefix : "") + objectIdentifier);
         return upload(key, bytes, contenttype, bucketName, sillariPhotosRoleSessionName, metadata);
     }
 

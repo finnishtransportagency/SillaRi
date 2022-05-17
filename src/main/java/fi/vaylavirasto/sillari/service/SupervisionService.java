@@ -27,6 +27,7 @@ import java.util.*;
 @Service
 public class SupervisionService {
     private static final Logger logger = LogManager.getLogger();
+    private static final String PDF_KTV_PREFIX = "pdf";
 
     @Autowired
     SupervisionRepository supervisionRepository;
@@ -282,7 +283,7 @@ public class SupervisionService {
             bridge.setCoordinates(coords);
 
             // Upload to AWS
-            boolean success = awss3Client.upload(objectKey, reportPDF, "application/pdf", awss3Client.getSupervisionBucketName(), AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME, supervisionId, bridge);
+            boolean success = awss3Client.upload(objectKey, reportPDF, "application/pdf", awss3Client.getSupervisionBucketName(), AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME, supervisionId, PDF_KTV_PREFIX, bridge);
             logger.debug("Uploaded to AWS: " + objectKey);
             if (!success) {
                 throw new LeluPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);

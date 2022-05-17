@@ -37,6 +37,7 @@ import java.util.Map;
 @RequestMapping("/images")
 public class ImageController {
     private static final Logger logger = LogManager.getLogger();
+    private static final String IMAGE_KTV_PREFIX = "img";
 
     @Autowired
     AWSS3Client awss3Client;
@@ -140,9 +141,7 @@ public class ImageController {
                 bridge.setCoordinates(bridgeService.getBridgeCoordinates(bridge.getId()));
 
 
-
-
-                awss3Client.upload(model.getObjectKey(), decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, model.getId(), bridge);
+                awss3Client.upload(model.getObjectKey(), decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, model.getId(), IMAGE_KTV_PREFIX, bridge);
             }
         } catch(Exception e) {
             e.printStackTrace();
