@@ -25,11 +25,11 @@ import java.util.stream.Collectors;
 public class PDFGenerator {
 
     public static final String pdf_title = "Sillanvalvontaraportti";
-    public static final String pdf_permit_number = "Lupanumero:";
-    public static final String pdf_route_name = "Reitin nimi:";
-    public static final String pdf_supervision_start_time = "Valvonta aloitettu:";
-    public static final String pdf_bridge = "Silta:";
-    public static final String pdf_road_address = "Tieosoite:";
+    public static final String pdf_permit_number = "Lupanumero: ";
+    public static final String pdf_route_name = "Reitin nimi: ";
+    public static final String pdf_supervision_start_time = "Valvonta aloitettu: ";
+    public static final String pdf_bridge = "Silta: ";
+    public static final String pdf_road_address = "Tieosoite: ";
     public static final String pdf_observations = "Havainnot";
     public static final String pdf_driving_line_reason = "Miksi ajolinjaa ei noudatettu:";
     public static final String pdf_speed_reason = "Miksi ajonopeutta ei noudatettu:";
@@ -62,7 +62,7 @@ public class PDFGenerator {
     public byte[] generateReportPDF(SupervisionModel supervision, List<byte[]> images) {
 
 
-        logger.debug("Generate pdf for supervision {}, isLocalEnv={}", supervision);
+        logger.debug("Generate pdf for supervision {}", supervision);
         BridgeModel bridge = supervision.getRouteBridge().getBridge();
         RouteModel route = supervision.getRouteBridge().getRoute();
         SupervisionReportModel report = supervision.getReport();
@@ -113,8 +113,9 @@ public class PDFGenerator {
             newLine();
             contentStream.showText(MessageFormat.format(pdf_sign_time, signTime));
 
-            newLine();
-            contentStream.showText(pdf_supervisor + deduceSupervisorWhoSupervisedWholeName(supervision));
+            // TODO add supervisor company instead
+            /*newLine();
+            contentStream.showText(pdf_supervisor + deduceSupervisorWhoSupervisedWholeName(supervision));*/
 
             newLine();
             newLine();
@@ -359,14 +360,15 @@ public class PDFGenerator {
         }
     }
 
-    private String deduceSupervisorWhoSupervisedWholeName(SupervisionModel supervision) {
+    // TODO remove when supervisor company is available
+    /*private String deduceSupervisorWhoSupervisedWholeName(SupervisionModel supervision) {
 
         SupervisorModel supervisor = supervision.getSupervisorWhoSupervised();
         String supervisorFirstName = supervisor != null ? supervisor.getFirstName() : "";
         String supervisorLastName = supervisor != null ? supervisor.getLastName() : "";
         return supervisorFirstName + " " + supervisorLastName;
 
-    }
+    }*/
 
 
 }
