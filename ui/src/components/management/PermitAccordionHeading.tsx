@@ -11,6 +11,7 @@ import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
 import { isPermitValid } from "../../utils/validation";
 import PermitLinkText from "../PermitLinkText";
+import { permitIncludesSupervisions } from "../../utils/managementUtil";
 
 interface PermitAccordionHeadingProps {
   permit: IPermit;
@@ -20,7 +21,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { id: permitId, validStartDate, validEndDate } = permit;
+  const { id: permitId, validStartDate, validEndDate, routes = [] } = permit;
 
   const { data: routeTransportList } = useQuery(
     ["getRouteTransportsOfPermit", Number(permitId)],
@@ -37,6 +38,8 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
       ? permit.routes.map((route) => (route.transportCount ? route.transportCount : 0)).reduce((prevCount, count) => prevCount + count)
       : 0;
 
+  const includesSupervisions = permitIncludesSupervisions(routes);
+
   return (
     <IonGrid className="ion-no-padding" ref={ref}>
       <IonRow className="ion-margin ion-align-items-center">
@@ -51,11 +54,16 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
               </IonCol>
             </IonRow>
             <IonRow>
-              <IonCol size="12" size-lg="6" className={!isPermitValid(permit) ? "disabled" : ""}>
+              <IonCol className={!isPermitValid(permit) ? "disabled" : ""}>
                 <small>
                   <Moment format={DATE_FORMAT}>{validStartDate}</Moment>
                   <IonText>{" - "}</IonText>
                   <Moment format={DATE_FORMAT}>{validEndDate}</Moment>
+                </small>
+              </IonCol>
+              <IonCol>
+                <small>
+                  {includesSupervisions ? t("management.companySummary.includesSupervisions") : t("management.companySummary.noSupervisions")}
                 </small>
               </IonCol>
             </IonRow>

@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.repositories;
 import fi.vaylavirasto.sillari.mapper.BridgeMapper;
 import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
+import fi.vaylavirasto.sillari.model.tables.records.RouteBridgeRecord;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class RouteBridgeRepository {
@@ -47,6 +49,13 @@ public class RouteBridgeRepository {
                 .and(TableAlias.routeBridge.TRANSPORT_NUMBER.eq(transportNumber))
                 .and(TableAlias.bridge.IDENTIFIER.eq(bridgeIdentifier))
                 .fetchOne(this::mapRouteBridgeRecordWithBridge);
+    }
+
+    public Map<Integer, List<RouteBridgeModel>> getRouteBridges(List<Integer> routeIds) {
+        return dsl.selectFrom(TableAlias.routeBridge)
+                .where(TableAlias.routeBridge.ROUTE_ID.in(routeIds))
+                .orderBy(TableAlias.routeBridge.TRANSPORT_NUMBER, TableAlias.routeBridge.ORDINAL)
+                .fetchGroups(RouteBridgeRecord::getRouteId, new RouteBridgeMapper());
     }
 
     private RouteBridgeModel mapRouteBridgeRecordWithBridge(Record record) {
