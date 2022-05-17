@@ -30,6 +30,10 @@ logging:
   config: classpath:log4j2-dev.xml
 server:
   port: 8081
+  compression:
+    enabled: true
+    mime-types: application/json
+    min-response-size: 1024
   servlet: # 2.0
     context-path: /api
 management:
