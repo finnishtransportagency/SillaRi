@@ -223,6 +223,7 @@ public class AWSS3Client {
 
 
     public void tagExpired(String objectKey, String bucketName) {
+        init(SILLARI_PHOTOS_ROLE_SESSION_NAME);
         List<Tag> newTags = new ArrayList<Tag>();
         newTags.add(new Tag(EXPIRED_TAG, "true"));
         s3Client.setObjectTagging(new SetObjectTaggingRequest(bucketName, objectKey, new ObjectTagging(newTags)));
