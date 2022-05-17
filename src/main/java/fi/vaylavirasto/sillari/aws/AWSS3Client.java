@@ -7,11 +7,7 @@ import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
 import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
@@ -27,9 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class AWSS3Client {
@@ -38,6 +32,7 @@ public class AWSS3Client {
     public static final String SILLARI_PHOTOS_ROLE_SESSION_NAME = "SILLARI-PHOTOS";
     public static final String SILLARI_PERMITS_ROLE_SESSION_NAME = "SILLARI-PERMITS";
     private static final String KTV_OBJECT_IDENTIFIER_COMMON_PREFIX = "SIL";
+    private static final String EXPIRED_TAG = "expired";
     private AmazonS3 s3Client = null;
 
     private static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
@@ -227,4 +222,9 @@ public class AWSS3Client {
     }
 
 
+    public void tagExpired(String objectKey, String bucketName) {
+        List<Tag> newTags = new ArrayList<Tag>();
+        newTags.add(new Tag(EXPIRED_TAG, "true"));
+        s3Client.setObjectTagging(new SetObjectTaggingRequest(bucketName, objectKey, new ObjectTagging(newTags)));
+    }
 }

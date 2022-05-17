@@ -173,6 +173,32 @@ public class ImageController {
         return true;
     }
 
+
+    //todo remove. This is for testing image expiration. Expiration should not remove pics from KTV.
+    //So we dont delete it from S3 but tag it expired,
+    @Operation(summary = "Expire image")
+    @DeleteMapping("/expire")
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public boolean expireImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
+        ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deleteImage");
+        try {
+            if (!isSupervisionImageOfSupervisor(id)) {
+                throw new AccessDeniedException("Image not of the user");
+            }
+
+            String objectKey = supervisionImageService.getSupervisionImage(id).getObjectKey();
+            // Delete image from AWS bucket or local file system
+            deleteFile(objectKey);
+
+            // Delete the image row from the database
+            supervisionImageService.deleteSupervisionImage(id);
+        } finally {
+            serviceMetric.end();
+        }
+        return true;
+    }
+
+
     @Operation(summary = "Delete all supervision images")
     @DeleteMapping("/deletesupervisionimages")
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
@@ -187,7 +213,7 @@ public class ImageController {
             // Delete images from AWS bucket or local file system
             for (SupervisionImageModel image : images) {
                 String decodedKey = new String(Base64.getDecoder().decode(image.getObjectKey()));
-                deleteFile(decodedKey);
+                expireFile(decodedKey);
             }
 
             // Delete image rows from the database
@@ -197,6 +223,25 @@ public class ImageController {
         }
         return true;
     }
+
+
+    //todo remove. This is for testing image expiration. Expiration should not remove pics from KTV.
+    //So we dont delete it from S3 but tag it expired,
+    private void expireFile(String decodedKey) throws IOException {
+        if (activeProfile.equals("xlocal")) {
+            // Delete from local file system
+            String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
+
+            File deleteFile = new File("/", filename);
+            if (deleteFile.exists()) {
+                Files.delete(deleteFile.toPath());
+            }
+        } else {
+            // Delete from AWS
+            awss3Client.tagExpired(decodedKey, awss3Client.getPhotoBucketName());
+        }
+    }
+
 
     private void deleteFile(String decodedKey) throws IOException {
         if (activeProfile.equals("local")) {
