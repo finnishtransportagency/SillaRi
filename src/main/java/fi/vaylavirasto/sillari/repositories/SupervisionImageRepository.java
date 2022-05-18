@@ -7,6 +7,7 @@ import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
+import org.jooq.Record1;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -23,29 +24,26 @@ public class SupervisionImageRepository {
     private DSLContext dsl;
 
     public Integer insertFileIfNotExists(SupervisionImageModel supervisionImage) {
-        Integer existingId = getFileIdByObjectKey(supervisionImage.getObjectKey());
+        Integer existingId = getFileIdByFilename(supervisionImage.getFilename());
 
         if (existingId == null || existingId == 0) {
-            Integer imageId = dsl.nextval(Sequences.SUPERVISION_IMAGE_ID_SEQ).intValue();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
             LocalDateTime taken = LocalDateTime.parse(supervisionImage.getTaken(), formatter);
 
-            dsl.insertInto(TableAlias.supervisionImage,
-                            TableAlias.supervisionImage.ID,
-                            TableAlias.supervisionImage.SUPERVISION_ID,
-                            TableAlias.supervisionImage.FILENAME,
-                            TableAlias.supervisionImage.OBJECT_KEY,
-                            TableAlias.supervisionImage.TAKEN)
-                    .select(dsl.select(DSL.val(imageId),
-                                    DSL.val(supervisionImage.getSupervisionId()),
-                                    DSL.val(supervisionImage.getFilename()),
-                                    DSL.val(supervisionImage.getObjectKey()),
-                                    DSL.val(taken))
-                            .whereNotExists(dsl.selectOne()
-                                    .from(TableAlias.supervisionImage)
-                                    .where(TableAlias.supervisionImage.OBJECT_KEY.eq(supervisionImage.getObjectKey()))))
-                    .execute();
-            return imageId;
+            return dsl.transactionResult(configuration -> {
+                DSLContext ctx = DSL.using(configuration);
+
+                Record1<Integer> imageIdResult = ctx.insertInto(TableAlias.supervisionImage,
+                                TableAlias.supervisionImage.SUPERVISION_ID,
+                                TableAlias.supervisionImage.FILENAME,
+                                TableAlias.supervisionImage.TAKEN)
+                        .values(supervisionImage.getSupervisionId(),
+                                supervisionImage.getFilename(),
+                                taken)
+                        .returningResult(TableAlias.supervisionImage.ID)
+                        .fetchOne(); // Execute and return zero or one record
+                return imageIdResult != null ? imageIdResult.value1() : null;
+            });
         } else {
             return existingId;
         }
@@ -65,10 +63,27 @@ public class SupervisionImageRepository {
 
     }
 
+    public Integer getFileIdByFilename(String filename) {
+        return dsl.select().from(TableAlias.supervisionImage)
+                .where(TableAlias.supervisionImage.FILENAME.eq(filename))
+                .fetchOne(TableAlias.supervisionImage.ID);
+
+    }
+
     public List<SupervisionImageModel> getFiles(Integer supervisionId) {
         return dsl.select().from(TableAlias.supervisionImage)
                 .where(TableAlias.supervisionImage.SUPERVISION_ID.eq(supervisionId))
                 .fetch(new SupervisionImageMapper(true));
+    }
+
+    public void updateObjectKey(Integer imageId, String objectKey) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+            ctx.update(TableAlias.supervisionImage)
+                    .set(TableAlias.supervisionImage.OBJECT_KEY, objectKey)
+                    .where(TableAlias.supervisionImage.ID.eq(imageId))
+                    .execute();
+        });
     }
 
     public int deleteFileByImageId(Integer id) {

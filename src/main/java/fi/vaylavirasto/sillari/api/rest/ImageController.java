@@ -109,40 +109,46 @@ public class ImageController {
                 throw new AccessDeniedException("Supervision not of the user");
             }
 
-            String objectIdentifier = ObjectKeyGenerator.generateObjectIdentifier(IMAGE_KTV_PREFIX, fileInputModel.getId());
-            String objectKey = ObjectKeyGenerator.generateObjectKey(objectIdentifier, fileInputModel.getSupervisionId());
-
-            image.setObjectKey(objectKey);
+            // Image ID (supervision_image.id) must be included in object key, or we can't delete it later from KTV using Lambda ObjectRemoved trigger.
+            // So we have to save the image first to get the ID, and then update the objectKey after that.
             image.setFilename(fileInputModel.getFilename());
             image.setTaken(fileInputModel.getTaken());
             image.setSupervisionId(fileInputModel.getSupervisionId());
             image.setBase64(fileInputModel.getBase64());
             image = supervisionImageService.createFile(image);
 
-            Tika tika = new Tika();
-            int dataStart = fileInputModel.getBase64().indexOf(",") + 1;
-            byte[] decodedString = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(fileInputModel.getBase64().substring(dataStart).getBytes(StandardCharsets.UTF_8));
-            String contentType = tika.detect(decodedString);
-            if (contentType == null) {
-                contentType = "application/octet-stream";
-            }
+            if (image.getId() != null) {
+                String objectIdentifier = ObjectKeyGenerator.generateObjectIdentifier(IMAGE_KTV_PREFIX, image.getId());
+                String objectKey = ObjectKeyGenerator.generateObjectKey(objectIdentifier, image.getSupervisionId());
+                image.setObjectKey(objectKey);
+                // Update the saved image with the generated object key
+                supervisionImageService.updateObjectKey(image.getId(), objectKey);
 
-            if (activeProfile.equals("local")) {
-                // Save to local file system
-                File outputFile = new File("/", fileInputModel.getFilename());
-                Files.write(outputFile.toPath(), decodedString);
-            } else {
-                // Upload to AWS
+                Tika tika = new Tika();
+                int dataStart = fileInputModel.getBase64().indexOf(",") + 1;
+                byte[] decodedString = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(fileInputModel.getBase64().substring(dataStart).getBytes(StandardCharsets.UTF_8));
+                String contentType = tika.detect(decodedString);
+                if (contentType == null) {
+                    contentType = "application/octet-stream";
+                }
+
+                if (activeProfile.equals("local")) {
+                    // Save to local file system
+                    File outputFile = new File("/", fileInputModel.getFilename());
+                    Files.write(outputFile.toPath(), decodedString);
+                } else {
+                    // Upload to AWS
 
 
-                //set coord and street address metadata to S3 for KTV
-                SupervisionModel supervision = supervisionService.getSupervision(image.getSupervisionId(), false, false);
-                BridgeModel bridge = supervision.getRouteBridge().getBridge();
+                    //set coord and street address metadata to S3 for KTV
+                    SupervisionModel supervision = supervisionService.getSupervision(image.getSupervisionId(), false, false);
+                    BridgeModel bridge = supervision.getRouteBridge().getBridge();
 
-                bridge.setCoordinates(bridgeService.getBridgeCoordinates(bridge.getId()));
+                    bridge.setCoordinates(bridgeService.getBridgeCoordinates(bridge.getId()));
 
 
-                awss3Client.upload(objectKey, objectIdentifier, decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, bridge);
+                    awss3Client.upload(objectKey, objectIdentifier, decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, bridge);
+                }
             }
         } catch(Exception e) {
             e.printStackTrace();
