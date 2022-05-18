@@ -4,7 +4,7 @@ import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
-import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
+import fi.vaylavirasto.sillari.aws.ObjectKeyGenerator;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
@@ -28,9 +28,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Timed
@@ -105,18 +103,21 @@ public class ImageController {
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public SupervisionImageModel uploadImage(@RequestBody SupervisionImageModel fileInputModel) {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "uploadImage");
-        SupervisionImageModel model = new SupervisionImageModel();
+        SupervisionImageModel image = new SupervisionImageModel();
         try {
             if (!canSupervisorUpdateSupervision(fileInputModel.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
 
-            model.setObjectKey("supervision/" + fileInputModel.getSupervisionId() + "/" + fileInputModel.getFilename());
-            model.setFilename(fileInputModel.getFilename());
-            model.setTaken(fileInputModel.getTaken());
-            model.setSupervisionId(fileInputModel.getSupervisionId());
-            model.setBase64(fileInputModel.getBase64());
-            model = supervisionImageService.createFile(model);
+            String objectIdentifier = ObjectKeyGenerator.generateObjectIdentifier(IMAGE_KTV_PREFIX, fileInputModel.getId());
+            String objectKey = ObjectKeyGenerator.generateObjectKey(objectIdentifier, fileInputModel.getSupervisionId());
+
+            image.setObjectKey(objectKey);
+            image.setFilename(fileInputModel.getFilename());
+            image.setTaken(fileInputModel.getTaken());
+            image.setSupervisionId(fileInputModel.getSupervisionId());
+            image.setBase64(fileInputModel.getBase64());
+            image = supervisionImageService.createFile(image);
 
             Tika tika = new Tika();
             int dataStart = fileInputModel.getBase64().indexOf(",") + 1;
@@ -135,20 +136,20 @@ public class ImageController {
 
 
                 //set coord and street address metadata to S3 for KTV
-                SupervisionModel supervision = supervisionService.getSupervision(model.getSupervisionId(), false, false);
+                SupervisionModel supervision = supervisionService.getSupervision(image.getSupervisionId(), false, false);
                 BridgeModel bridge = supervision.getRouteBridge().getBridge();
 
                 bridge.setCoordinates(bridgeService.getBridgeCoordinates(bridge.getId()));
 
 
-                awss3Client.upload(model.getObjectKey(), decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, model.getId(), IMAGE_KTV_PREFIX, bridge);
+                awss3Client.upload(objectKey, objectIdentifier, decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, bridge);
             }
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
             serviceMetric.end();
         }
-        return model;
+        return image;
     }
 
     @Operation(summary = "Delete image")

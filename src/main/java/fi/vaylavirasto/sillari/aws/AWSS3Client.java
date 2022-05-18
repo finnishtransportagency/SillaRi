@@ -31,7 +31,6 @@ public class AWSS3Client {
     private static final Logger logger = LogManager.getLogger();
     public static final String SILLARI_PHOTOS_ROLE_SESSION_NAME = "SILLARI-PHOTOS";
     public static final String SILLARI_PERMITS_ROLE_SESSION_NAME = "SILLARI-PERMITS";
-    private static final String KTV_OBJECT_IDENTIFIER_COMMON_PREFIX = "SIL";
     private static final String EXPIRED_TAG = "expired";
     private AmazonS3 s3Client = null;
 
@@ -39,7 +38,7 @@ public class AWSS3Client {
 
     private static final String SILLARI_PERMIT_PDF_BUCKET_DEV = "sillari-permits";
 
-    private static final String SILLARI_SUPERVISION_PDF_BUCKET_DEV = "sillari-supervisions";
+    private static final String SILLARI_REPORT_PDF_BUCKET_DEV = "sillari-reports";
 
     private final String roleArn;
     private String accessKey;
@@ -68,9 +67,9 @@ public class AWSS3Client {
 
     public String getSupervisionBucketName() {
         if ("dev".equals(environment) || "localhost".equals(environment)) {
-            return SILLARI_SUPERVISION_PDF_BUCKET_DEV;
+            return SILLARI_REPORT_PDF_BUCKET_DEV;
         } else {
-            return SILLARI_SUPERVISION_PDF_BUCKET_DEV + "-" + environment;
+            return SILLARI_REPORT_PDF_BUCKET_DEV + "-" + environment;
         }
     }
 
@@ -138,7 +137,7 @@ public class AWSS3Client {
         return upload(key, bytes, contenttype, bucketName, sillariPhotosRoleSessionName, null);
     }
 
-    public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, Integer objectIdentifier, String objectIdentifierPrefix, BridgeModel bridge) {
+    public boolean upload(String objectKey, String objectIdentifier, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, BridgeModel bridge) {
         Map<String, String> metadata = new HashMap<>();
 
         if (bridge.getCoordinates() != null) {
@@ -152,7 +151,7 @@ public class AWSS3Client {
                 String bridgeName = URLEncoder.encode(bridge.getName(), StandardCharsets.UTF_8.toString());
                 metadata.put("sillariBridgeName", bridgeName);
             } catch (UnsupportedEncodingException e) {
-                logger.warn("Couldn't encode bridge name '{}' for file '{}'. Skipping bridge name from S3 metadata. ERROR={}", bridge.getName(), key, e + " " + e.getMessage());
+                logger.warn("Couldn't encode bridge name '{}' for file '{}'. Skipping bridge name from S3 metadata. ERROR={}", bridge.getName(), objectKey, e + " " + e.getMessage());
             }
         }
 
@@ -160,8 +159,8 @@ public class AWSS3Client {
         metadata.put("sillariBridgeId", "" + bridge.getId()); // TODO remove bridge id after no longer required in KTV integration
         metadata.put("bridgeOid", bridge.getOid());
         metadata.put("bridgeIdentifier", bridge.getIdentifier());
-        metadata.put("objectIdentifier", KTV_OBJECT_IDENTIFIER_COMMON_PREFIX + "-" + (objectIdentifierPrefix != null ? objectIdentifierPrefix : "") + "-" + objectIdentifier);
-        return upload(key, bytes, contenttype, bucketName, sillariPhotosRoleSessionName, metadata);
+        metadata.put("objectIdentifier", objectIdentifier);
+        return upload(objectKey, bytes, contenttype, bucketName, sillariPhotosRoleSessionName, metadata);
     }
 
     public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, Map<String, String> userMetadata) {
