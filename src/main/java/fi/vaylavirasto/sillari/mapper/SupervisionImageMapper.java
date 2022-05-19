@@ -28,8 +28,10 @@ public class SupervisionImageMapper implements RecordMapper<Record, SupervisionI
         model.setSupervisionId(record.get(TableAlias.supervisionImage.SUPERVISION_ID));
         if (this.base64on) {
             model.setObjectKey(Base64.getEncoder().encodeToString(record.get(TableAlias.supervisionImage.OBJECT_KEY).getBytes()));
+            model.setKtvObjectId(Base64.getEncoder().encodeToString(record.get(TableAlias.supervisionImage.KTV_OBJECT_ID).getBytes()));
         } else {
             model.setObjectKey(record.get(TableAlias.supervisionImage.OBJECT_KEY));
+            model.setKtvObjectId(record.get(TableAlias.supervisionImage.KTV_OBJECT_ID));
         }
         model.setFilename(record.get(TableAlias.supervisionImage.FILENAME));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");

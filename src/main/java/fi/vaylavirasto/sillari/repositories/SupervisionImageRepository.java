@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
+import fi.vaylavirasto.sillari.aws.ObjectKeyGenerator;
 import fi.vaylavirasto.sillari.mapper.SupervisionImageMapper;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.model.Sequences;
@@ -33,13 +34,23 @@ public class SupervisionImageRepository {
             return dsl.transactionResult(configuration -> {
                 DSLContext ctx = DSL.using(configuration);
 
+                Integer imageId = ctx.nextval(Sequences.SUPERVISION_IMAGE_ID_SEQ).intValue();
+                String objectIdentifier = ObjectKeyGenerator.generateObjectIdentifier(ObjectKeyGenerator.IMAGE_KTV_PREFIX, imageId);
+                String objectKey = ObjectKeyGenerator.generateObjectKey(objectIdentifier, supervisionImage.getSupervisionId());
+
                 Record1<Integer> imageIdResult = ctx.insertInto(TableAlias.supervisionImage,
+                                TableAlias.supervisionImage.ID,
                                 TableAlias.supervisionImage.SUPERVISION_ID,
                                 TableAlias.supervisionImage.FILENAME,
-                                TableAlias.supervisionImage.TAKEN)
-                        .values(supervisionImage.getSupervisionId(),
+                                TableAlias.supervisionImage.TAKEN,
+                                TableAlias.supervisionImage.OBJECT_KEY,
+                                TableAlias.supervisionImage.KTV_OBJECT_ID)
+                        .values(imageId,
+                                supervisionImage.getSupervisionId(),
                                 supervisionImage.getFilename(),
-                                taken)
+                                taken,
+                                objectKey,
+                                objectIdentifier)
                         .returningResult(TableAlias.supervisionImage.ID)
                         .fetchOne(); // Execute and return zero or one record
                 return imageIdResult != null ? imageIdResult.value1() : null;
@@ -74,16 +85,6 @@ public class SupervisionImageRepository {
         return dsl.select().from(TableAlias.supervisionImage)
                 .where(TableAlias.supervisionImage.SUPERVISION_ID.eq(supervisionId))
                 .fetch(new SupervisionImageMapper(true));
-    }
-
-    public void updateObjectKey(Integer imageId, String objectKey) {
-        dsl.transaction(configuration -> {
-            DSLContext ctx = DSL.using(configuration);
-            ctx.update(TableAlias.supervisionImage)
-                    .set(TableAlias.supervisionImage.OBJECT_KEY, objectKey)
-                    .where(TableAlias.supervisionImage.ID.eq(imageId))
-                    .execute();
-        });
     }
 
     public int deleteFileByImageId(Integer id) {

@@ -25,11 +25,6 @@ public class SupervisionImageService {
         return supervisionImageRepository.getFile(id);
     }
 
-    public SupervisionImageModel updateObjectKey(Integer id, String objectKey) {
-        supervisionImageRepository.updateObjectKey(id, objectKey);
-        return supervisionImageRepository.getFile(id);
-    }
-
     public int deleteSupervisionImage(Integer id) {
         return supervisionImageRepository.deleteFileByImageId(id);
     }

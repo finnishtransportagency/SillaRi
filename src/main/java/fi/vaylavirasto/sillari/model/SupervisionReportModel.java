@@ -23,4 +23,6 @@ public class SupervisionReportModel extends BaseModel {
     private String otherObservationsInfo;
     private String additionalInfo;
     private Boolean draft;
+    private String pdfObjectKey;
+    private String pdfKtvObjectId;
 }

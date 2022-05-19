@@ -51,8 +51,6 @@ public class SupervisionService {
     @Autowired
     AWSS3Client awss3Client;
     @Autowired
-    SupervisionImageService supervisionImageService;
-    @Autowired
     FIMService fimService;
     @Autowired
     BridgeService bridgeService;
@@ -214,7 +212,7 @@ public class SupervisionService {
         SupervisionModel supervision = getSupervision(supervisionId, true, false);
 
         if (supervision != null && supervision.getReport() != null) {
-            supervision.setImages(supervisionImageService.getSupervisionImages(supervisionId));
+            supervision.setImages(supervisionImageRepository.getFiles(supervisionId));
             List<byte[]> images = getImageFiles(supervision.getImages(), activeProfile.equals("local"));
 
             byte[] pdf = new PDFGenerator().generateReportPDF(supervision, images);
