@@ -141,7 +141,7 @@ public class ImageController {
                     awss3Client.upload(objectKey, objectIdentifier, decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, bridge);
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             serviceMetric.end();
@@ -226,18 +226,8 @@ public class ImageController {
     //todo remove. This is for testing image expiration. Expiration should not remove pics from KTV.
     //So we dont delete it from S3 but tag it expired,
     private void expireFile(String decodedKey) throws IOException {
-        if (activeProfile.equals("xlocal")) {
-            // Delete from local file system
-            String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
-
-            File deleteFile = new File("/", filename);
-            if (deleteFile.exists()) {
-                Files.delete(deleteFile.toPath());
-            }
-        } else {
-            // Delete from AWS
-            awss3Client.tagExpired(decodedKey, awss3Client.getPhotoBucketName());
-        }
+        // Delete from AWS
+        awss3Client.tagExpired(decodedKey, awss3Client.getPhotoBucketName());
     }
 
 
@@ -269,7 +259,7 @@ public class ImageController {
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getAllSupervisionsOfSupervisorNoDetails(user.getUsername());
 
-        return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervisionOfImage.getId()));
+        return supervisionsOfSupervisor.stream().anyMatch(s -> s.getId().equals(supervisionOfImage.getId()));
     }
 
     /* Check that supervision belongs to the user and report is not signed */
@@ -278,6 +268,6 @@ public class ImageController {
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsOfSupervisorNoDetails(user.getUsername());
 
-        return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
+        return supervisionsOfSupervisor.stream().anyMatch(s -> s.getId().equals(supervision.getId()));
     }
 }
