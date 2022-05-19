@@ -67,10 +67,10 @@ public class SupervisionImageRepository {
 
     }
 
-    public Integer getFileIdByObjectKey(String objectKey) {
+    public String getFileNameByObjectKey(String objectKey) {
         return dsl.select().from(TableAlias.supervisionImage)
                 .where(TableAlias.supervisionImage.OBJECT_KEY.eq(objectKey))
-                .fetchOne(TableAlias.supervisionImage.ID);
+                .fetchOne(TableAlias.supervisionImage.FILENAME);
 
     }
 

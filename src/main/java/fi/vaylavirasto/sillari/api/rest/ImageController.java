@@ -234,9 +234,7 @@ public class ImageController {
     private void deleteFile(String decodedKey) throws IOException {
         if (activeProfile.equals("local")) {
             // Delete from local file system
-            String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
-
-            File deleteFile = new File("/", filename);
+            File deleteFile = new File(supervisionImageService.getFileNameByObjectKey(decodedKey));
             if (deleteFile.exists()) {
                 Files.delete(deleteFile.toPath());
             }

@@ -20,6 +20,10 @@ public class SupervisionImageService {
         return supervisionImageRepository.getFile(id);
     }
 
+    public String getFileNameByObjectKey(String objectKey) {
+        return supervisionImageRepository.getFileNameByObjectKey(objectKey);
+    }
+
     public SupervisionImageModel createFile(SupervisionImageModel supervisionImage) {
         Integer id = supervisionImageRepository.insertFileIfNotExists(supervisionImage);
         return supervisionImageRepository.getFile(id);
