@@ -334,44 +334,5 @@ public class LeluController {
         }
     }
 
-
-
-
-    // TODO remove after old test supervisions have pdf created or move to some test tools controller
-    // For testing purposes only; generate report for given supervision id; save to local disk or S3; return pdf in rest response
-    @GetMapping(value = "/generatereportpdf")
-    @ResponseBody
-    @Operation(summary = "Generate bridge supervision report pdf by report id acquired from /lelu/supervisions. Use with GET request in browser to open PDF.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
-    public void generateSupervisionReport(HttpServletResponse response, @RequestParam Long supervisionId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPdfUploadException {
-        logger.debug("Lelu generateReport " + supervisionId);
-
-        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
-            try {
-                SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(supervisionId), true, false);
-                if (supervision != null && supervision.getReport() != null) {
-                    supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
-                    List<byte[]> images = supervisionService.getImageFiles(supervision.getImages(), activeProfile.equals("local"));
-                    byte[] reportPDF = new PDFGenerator().generateReportPDF(supervision, images);
-                    supervisionService.savePdf(reportPDF, supervision.getId(), supervision.getReport().getId(), supervision.getRouteBridge().getBridge());
-                    response.setContentType("application/pdf");
-                    OutputStream out = response.getOutputStream();
-                    out.write(reportPDF);
-                    out.close();
-                    return;
-                } else {
-                    throw new LeluPdfUploadException("Supervision or report not found with supervision id " + supervisionId, HttpStatus.NOT_FOUND);
-                }
-            } catch (LeluPdfUploadException e) {
-                throw e;
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                logger.error(e.getClass().getName());
-                throw new LeluPdfUploadException("Error generating pdf file", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
-        }
-    }
 }
 
