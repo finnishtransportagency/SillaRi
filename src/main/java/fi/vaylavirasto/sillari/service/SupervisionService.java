@@ -211,7 +211,6 @@ public class SupervisionService {
         SupervisionModel supervision = getSupervision(supervisionId, true, false);
 
         if (supervision != null && supervision.getReport() != null) {
-            supervision.setImages(supervisionImageRepository.getFiles(supervisionId));
             List<byte[]> images = getImageFiles(supervision.getImages(), activeProfile.equals("local"));
 
             byte[] pdf = new PDFGenerator().generateReportPDF(supervision, images);
@@ -223,7 +222,11 @@ public class SupervisionService {
                     // TODO what to do?
                     e.printStackTrace();
                 }
+            } else {
+                logger.error("Report pdf null, pdf generation failed for supervision {}", supervisionId);
             }
+        } else {
+            logger.error("supervision or report null, cannot create pdf for supervision={}", supervisionId);
         }
     }
 
@@ -293,23 +296,21 @@ public class SupervisionService {
             }
         }
 
-        // Save object key and ktv id to DB
+        // Save object key and KTV id to DB
         report.setPdfObjectKey(objectKey);
         report.setPdfKtvObjectId(objectIdentifier);
         supervisionReportRepository.updatePdfDetails(report);
     }
 
 
-    public List<byte[]> getImageFiles(List<SupervisionImageModel> imageMetadatas, boolean isLocal) {
+    public List<byte[]> getImageFiles(List<SupervisionImageModel> imageModels, boolean isLocal) {
         List<byte[]> images = new ArrayList<>();
-        for (SupervisionImageModel imageMetadata : imageMetadatas) {
+        for (SupervisionImageModel imageModel : imageModels) {
 
-
-            String objectKey = imageMetadata.getObjectKey();
+            String objectKey = imageModel.getObjectKey();
             String decodedKey = new String(Base64.getDecoder().decode(objectKey));
+            String filename = imageModel.getFilename();
 
-
-            String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
             if (isLocal) {
                 // Get from local file system
                 File inputFile = new File("/", filename);
