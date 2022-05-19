@@ -102,6 +102,25 @@ public class SupervisionReportRepository {
         });
     }
 
+    public String getPdfObjectKey(Integer supervisionId) {
+        return dsl.select(TableAlias.supervisionReport.PDF_OBJECT_KEY)
+                .from(TableAlias.supervisionReport)
+                .where(TableAlias.supervisionReport.SUPERVISION_ID.eq(supervisionId))
+                .fetchOne(TableAlias.supervisionReport.PDF_OBJECT_KEY);
+    }
+
+    public void updatePdfDetails(SupervisionReportModel report) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            ctx.update(TableAlias.supervisionReport)
+                    .set(TableAlias.supervisionReport.PDF_OBJECT_KEY, report.getPdfObjectKey())
+                    .set(TableAlias.supervisionReport.PDF_KTV_OBJECT_ID, report.getPdfKtvObjectId())
+                    .where(TableAlias.supervisionReport.ID.eq(report.getId()))
+                    .execute();
+        });
+    }
+
     public void deleteSupervisionReport(Integer supervisionId) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);

@@ -1,6 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.aws.ObjectKeyGenerator;
+import fi.vaylavirasto.sillari.util.ObjectKeyUtil;
 import fi.vaylavirasto.sillari.mapper.SupervisionImageMapper;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.model.Sequences;
@@ -35,8 +35,8 @@ public class SupervisionImageRepository {
                 DSLContext ctx = DSL.using(configuration);
 
                 Integer imageId = ctx.nextval(Sequences.SUPERVISION_IMAGE_ID_SEQ).intValue();
-                String objectIdentifier = ObjectKeyGenerator.generateObjectIdentifier(ObjectKeyGenerator.IMAGE_KTV_PREFIX, imageId);
-                String objectKey = ObjectKeyGenerator.generateObjectKey(objectIdentifier, supervisionImage.getSupervisionId());
+                String objectIdentifier = ObjectKeyUtil.generateObjectIdentifier(ObjectKeyUtil.IMAGE_KTV_PREFIX, imageId);
+                String objectKey = ObjectKeyUtil.generateObjectKey(objectIdentifier, supervisionImage.getSupervisionId());
 
                 Record1<Integer> imageIdResult = ctx.insertInto(TableAlias.supervisionImage,
                                 TableAlias.supervisionImage.ID,

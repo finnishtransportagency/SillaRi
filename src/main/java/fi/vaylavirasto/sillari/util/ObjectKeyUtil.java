@@ -1,6 +1,6 @@
-package fi.vaylavirasto.sillari.aws;
+package fi.vaylavirasto.sillari.util;
 
-public class ObjectKeyGenerator {
+public class ObjectKeyUtil {
     private static final String OBJECT_IDENTIFIER_COMMON_PREFIX = "SIL";
     public static final String IMAGE_KTV_PREFIX = "img";
     public static final String PDF_KTV_PREFIX = "pdf";

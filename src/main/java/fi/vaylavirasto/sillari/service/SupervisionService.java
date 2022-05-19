@@ -3,7 +3,7 @@ package fi.vaylavirasto.sillari.service;
 import fi.vaylavirasto.sillari.api.rest.error.LeluPdfUploadException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
-import fi.vaylavirasto.sillari.aws.ObjectKeyGenerator;
+import fi.vaylavirasto.sillari.util.ObjectKeyUtil;
 import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
@@ -28,7 +28,6 @@ import java.util.*;
 @Service
 public class SupervisionService {
     private static final Logger logger = LogManager.getLogger();
-    private static final String PDF_KTV_PREFIX = "pdf";
 
     @Autowired
     SupervisionRepository supervisionRepository;
@@ -219,7 +218,7 @@ public class SupervisionService {
 
             if (pdf != null) {
                 try {
-                    savePdf(pdf, supervision.getId(), supervision.getReport().getId(), supervision.getRouteBridge().getBridge());
+                    savePdf(pdf, supervision.getReport(), supervision.getRouteBridge().getBridge());
                 } catch (LeluPdfUploadException e) {
                     // TODO what to do?
                     e.printStackTrace();
@@ -244,8 +243,9 @@ public class SupervisionService {
         return getSupervision(supervisionReportModel.getSupervisionId(), true, true);
     }
 
-    public byte[] getSupervisionPdf(Long reportId) throws IOException {
-        String objectKey = "" + reportId;
+    public byte[] getSupervisionPdf(Long supervisionId) throws IOException {
+        String objectKey = supervisionReportRepository.getPdfObjectKey(Math.toIntExact(supervisionId));
+
         if (activeProfile.equals("local")) {
             // Get from local file system
             String filename = objectKey + ".pdf";
@@ -265,11 +265,11 @@ public class SupervisionService {
     }
 
 
-    public void savePdf(byte[] reportPDF, int supervisionId, Integer reportId, BridgeModel bridge) throws LeluPdfUploadException {
-        logger.debug("save pdf: " + supervisionId);
+    public void savePdf(byte[] reportPDF, SupervisionReportModel report, BridgeModel bridge) throws LeluPdfUploadException {
+        logger.debug("save pdf for supervision: " + report.getSupervisionId());
 
-        String objectIdentifier = ObjectKeyGenerator.generateObjectIdentifier(PDF_KTV_PREFIX, reportId);
-        String objectKey = ObjectKeyGenerator.generateObjectKey(objectIdentifier, supervisionId);
+        String objectIdentifier = ObjectKeyUtil.generateObjectIdentifier(ObjectKeyUtil.PDF_KTV_PREFIX, report.getId());
+        String objectKey = ObjectKeyUtil.generateObjectKey(objectIdentifier, report.getSupervisionId());
 
         if (activeProfile.equals("local")) {
             // Save to local file system
@@ -282,8 +282,6 @@ public class SupervisionService {
                 throw new LeluPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
-
-
             CoordinatesDTO coords = bridgeService.getBridgeCoordinates(bridge.getId());
             bridge.setCoordinates(coords);
 
@@ -294,6 +292,11 @@ public class SupervisionService {
                 throw new LeluPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
+
+        // Save object key and ktv id to DB
+        report.setPdfObjectKey(objectKey);
+        report.setPdfKtvObjectId(objectIdentifier);
+        supervisionReportRepository.updatePdfDetails(report);
     }
 
 
