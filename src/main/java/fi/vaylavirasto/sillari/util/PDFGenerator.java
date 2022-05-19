@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -274,25 +273,19 @@ public class PDFGenerator {
 
     }
 
-    private void handleImages(List<SupervisionImageModel> imageMetadatas, List<byte[]> images, PDDocument document) {
+    private void handleImages(List<SupervisionImageModel> imageModels, List<byte[]> images, PDDocument document) {
         int n = 0;
-        for (SupervisionImageModel imageData : imageMetadatas) {
-
-            String objectKey = imageData.getObjectKey();
-            String decodedKey = new String(Base64.getDecoder().decode(objectKey));
+        for (SupervisionImageModel imageData : imageModels) {
             PDImageXObject pdImage = null;
-
-            String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
-
             byte[] imageBytes = null;
             try {
                 imageBytes = images.get(n);
             } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
-                logger.error("No corresponding image bytes for metadata " + objectKey);
+                logger.error("No corresponding image bytes for metadata " + imageData.getFilename());
             }
             if (imageBytes != null) {
                 try {
-                    pdImage = PDImageXObject.createFromByteArray(document, imageBytes, filename);
+                    pdImage = PDImageXObject.createFromByteArray(document, imageBytes, imageData.getFilename());
                 } catch (IOException e) {
                     logger.error("Image creation from AWS failed: " + e.getClass().getName() + e.getMessage());
                 }
