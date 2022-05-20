@@ -237,10 +237,13 @@ public class LeluController {
 
     /**
      * Get supervision of a route.
-     * Lelu uses this to yksittäistä sillanvalvontaa reitti id:n (routeId), sillan nimen (identifier) ja transportNumberin perusteella
+     * Lelu uses this to poll individual supervisions
+     * to see which supervision have report generated (status REPORT_SIGNED)
+     * and gets the report pdf:s with /supervisionReport
      *
      * @param routeId
-     * @param apiVersion
+     * @param bridgeIdentifier
+     * @param transportNumber
      * @param apiVersion
      * @return
      * @throws APIVersionException
@@ -266,7 +269,7 @@ public class LeluController {
 
     /**
      * Get supervisions of a route.
-     * Lelu uses this to see which supervision have report generated (status REPORT_SIGNED)
+     * Lelu did use this to see which supervision have report generated (status REPORT_SIGNED)
      * and gets the report pdf:s with /supervisionReport
      *
      * @param routeId
@@ -274,6 +277,7 @@ public class LeluController {
      * @param apiVersion
      * @return
      * @throws APIVersionException
+     * @deprecated Lelu now polls singular bridges with "/supervision(routeId, bridgeIdentifier, transportNumber...)"
      */
     @RequestMapping(value = "/supervisions", method = RequestMethod.GET)
     @ResponseBody
@@ -283,6 +287,7 @@ public class LeluController {
             @ApiResponse(responseCode = "200 OK", description = ""),
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
     })
+    @Deprecated
     public LeluRouteResponseDTO getSupervisions(@RequestParam Long routeId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
         logger.debug("Lelu getSupervisions " + routeId);
 
@@ -296,7 +301,7 @@ public class LeluController {
 
     /**
      * Get the pdf supervision report from S3 (disk on dev localhost).
-     * LeLu calls this after getting REPORT_SIGNED-status of a report from /supervisions.
+     * LeLu calls this after getting REPORT_SIGNED-status of a report from /supervision.
      * The report has been generated and status set to REPORT_SIGNED when /completesupervisions has happened in app
      *
      * @param reportId   This is actually technically supervision id but is called reportId in the LeLu-interface.
