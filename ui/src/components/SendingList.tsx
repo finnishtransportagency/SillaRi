@@ -18,6 +18,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import moment from "moment";
+import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
 import close from "../theme/icons/close_large_white.svg";
 import { onRetry } from "../utils/backendData";
@@ -49,13 +50,16 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
   const [selectedSupervisionId, setSelectedSupervisionId] = useState<number | undefined>(undefined);
 
-  const sendSupervisionMutation = useMutation((supervisionIds: string[]) => completeSupervisions(supervisionIds, dispatch), {
-    retry: onRetry,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["getSupervisionSendingList"]);
-      setToastMessage(t("sendingList.sentOk"));
-    },
-  });
+  const sendSupervisionMutation = useMutation(
+    (completeCrossingInput: ICompleteCrossingInput) => completeSupervisions(completeCrossingInput, dispatch),
+    {
+      retry: onRetry,
+      onSuccess: () => {
+        queryClient.invalidateQueries(["getSupervisionSendingList"]);
+        setToastMessage(t("sendingList.sentOk"));
+      },
+    }
+  );
   const { isLoading: isSendingSupervisions } = sendSupervisionMutation;
 
   const selectSupervision = (supervisionId: string, checked: boolean) => {
@@ -72,7 +76,8 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const sendSelected = () => {
     // Only allow supervisions to be sent when online
     if (selectedIds.length > 0 && onlineManager.isOnline()) {
-      sendSupervisionMutation.mutate(selectedIds);
+      const completeCrossingInput: ICompleteCrossingInput = { supervisionIds: selectedIds, completeTime: new Date() };
+      sendSupervisionMutation.mutate(completeCrossingInput);
       setSelectedIds([]);
     }
   };

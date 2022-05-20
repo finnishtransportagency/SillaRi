@@ -426,7 +426,7 @@
   },
   "sendingListOfflineNotice": {
     "title": "Offline-tilassa lähettäminen ei ole mahdollista",
-    "notice": "Verkkoyhteyden palattua, kirjaudu SillaRiin ja lähetä valvontaraportit."
+    "notice": "Voit lähettää valvontaraportit verkkoyhteyden palattua."
   },
   "unsentOffline": {
     "title": "Lähettämättömiä raportteja",
