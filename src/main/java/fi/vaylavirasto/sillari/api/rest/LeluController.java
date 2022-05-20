@@ -270,7 +270,7 @@ public class LeluController {
     /**
      * Get supervisions of a route.
      * Lelu did use this to see which supervision have report generated (status REPORT_SIGNED)
-     * and gets the report pdf:s with /supervisionReport
+     * and got the report pdf:s with /supervisionReport
      *
      * @param routeId
      * @param apiVersion
@@ -301,19 +301,21 @@ public class LeluController {
 
     /**
      * Get the pdf supervision report from S3 (disk on dev localhost).
-     * LeLu calls this after getting REPORT_SIGNED-status of a report from /supervision.
+     * LeLu called this after getting REPORT_SIGNED-status of a report from /supervisions.
      * The report has been generated and status set to REPORT_SIGNED when /completesupervisions has happened in app
      *
      * @param reportId   This is actually technically supervision id but is called reportId in the LeLu-interface.
      * @param apiVersion requested LeLu API version
-     * @throws APIVersionException when requested API version does not correspond to the current version
-     * @throws LeluPdfDownloadException when file download fails
      * @return PDF file as byte[]
+     * @throws APIVersionException      when requested API version does not correspond to the current version
+     * @throws LeluPdfDownloadException when file download fails
+     * @deprecated Lelu now polls singular bridges with "/supervision(routeId, bridgeIdentifier, transportNumber...) and gets json no more pdf to leleu"
      */
     @GetMapping(value = "/supervisionreport")
     @ResponseBody
     @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
+    @Deprecated
     public void getSupervisionReport(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPdfDownloadException {
         logger.debug("LeLu getReport " + reportId);
 
