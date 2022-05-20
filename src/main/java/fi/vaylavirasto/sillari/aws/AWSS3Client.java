@@ -31,7 +31,7 @@ public class AWSS3Client {
     private static final Logger logger = LogManager.getLogger();
     public static final String SILLARI_PHOTOS_ROLE_SESSION_NAME = "SILLARI-PHOTOS";
     public static final String SILLARI_PERMITS_ROLE_SESSION_NAME = "SILLARI-PERMITS";
-    private static final String EXPIRED_TAG = "expired";
+    private static final String EXPIRED_TAG = "supervision_expired";
     private AmazonS3 s3Client = null;
 
     private static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
