@@ -1,6 +1,6 @@
 sillari:
   wmts:
-    url: https://oag.vayla.fi/rasteripalvelu-mml/wmts/maasto/1.0.0/
+    url: https://api.vayla.fi/rasteripalvelu-mml/wmts/maasto/1.0.0/
   geoserver:
     url: https://sillaripreprod.testivaylapilvi.fi/geoserver/
   lelu:
