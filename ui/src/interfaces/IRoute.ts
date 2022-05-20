@@ -11,5 +11,5 @@ export default interface IRoute {
   arrivalAddress: IAddress;
   geojson: string;
   routeBridges: IRouteBridge[];
-  transportCount?: number
+  transportCount?: number;
 }
