@@ -137,7 +137,7 @@ public class PDFGenerator {
                         contentStream.showText(line);
                         newLine();
                     } catch (IOException e) {
-                        logger.debug("caught: " + e.getClass().getName() + e.getMessage());
+                        logger.warn("Problem generating pdf: " + line + " " + e.getClass().getName() + e.getMessage());
                     }
                 }
             }
@@ -189,8 +189,7 @@ public class PDFGenerator {
                 try {
                     contentStream.close();
                 } catch (Exception e) {
-                    // TODO what to do?
-                    logger.warn("caughth: " + e.getClass().getName() + e.getMessage());
+                    logger.warn("Closing pdf content stream fail: " + e.getClass().getName() + e.getMessage());
                 }
             }
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -350,7 +349,6 @@ public class PDFGenerator {
                     .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(supervisionStatusType))
                     .findFirst().orElseThrow().getTime().format(formatter);
         } catch (Exception e) {
-            logger.debug("caught: " + e.getClass().getName() + e.getMessage());
             return "-";
         }
     }
