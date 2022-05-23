@@ -24,7 +24,13 @@ public class SupervisionPdfRepository {
     @Autowired
     private DSLContext dsl;
 
-    public SupervisionPdfModel getSupervisionPdf(Integer supervisionId) {
+    public SupervisionPdfModel getSupervisionPdf(Integer id) {
+        return dsl.selectFrom(TableAlias.supervisionPdf)
+                .where(TableAlias.supervisionPdf.ID.eq(id))
+                .fetchOne(new SupervisionPdfMapper());
+    }
+
+    public SupervisionPdfModel getSupervisionPdfBySupervisionId(Integer supervisionId) {
         return dsl.selectFrom(TableAlias.supervisionPdf)
                 .where(TableAlias.supervisionPdf.SUPERVISION_ID.eq(supervisionId))
                 .fetchOne(new SupervisionPdfMapper());

@@ -19,4 +19,13 @@ public class SupervisionPdfModel extends BaseModel {
     private OffsetDateTime statusTime;
     private OffsetDateTime rowCreatedTime;
     private OffsetDateTime rowUpdatedTime;
+
+    public SupervisionPdfModel() {
+    }
+
+    public SupervisionPdfModel(Integer supervisionId, String filename) {
+        this.supervisionId = supervisionId;
+        this.filename = filename;
+    }
+
 }

@@ -30,6 +30,16 @@ public class SupervisionService {
     private static final Logger logger = LogManager.getLogger();
 
     @Autowired
+    AWSS3Client awss3Client;
+    @Autowired
+    FIMService fimService;
+    @Autowired
+    BridgeService bridgeService;
+    @Autowired
+    SupervisionPdfService pdfService;
+
+
+    @Autowired
     SupervisionRepository supervisionRepository;
     @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
@@ -47,12 +57,6 @@ public class SupervisionService {
     RouteRepository routeRepository;
     @Autowired
     PermitRepository permitRepository;
-    @Autowired
-    AWSS3Client awss3Client;
-    @Autowired
-    FIMService fimService;
-    @Autowired
-    BridgeService bridgeService;
 
 
     @Value("${spring.profiles.active:Unknown}")
@@ -211,13 +215,16 @@ public class SupervisionService {
         SupervisionModel supervision = getSupervision(supervisionId, true, false);
 
         if (supervision != null && supervision.getReport() != null) {
+            // Update pdf details to DB and set pdf status to IN_PROGRESS
+            SupervisionPdfModel pdfModel = pdfService.createSupervisionPdf(new SupervisionPdfModel(supervisionId, "supervision_" + supervisionId + ".pdf"));
+
             List<byte[]> images = getImageFiles(supervision.getImages(), activeProfile.equals("local"));
 
             byte[] pdf = new PDFGenerator().generateReportPDF(supervision, images);
 
             if (pdf != null) {
                 try {
-                    savePdf(pdf, supervision.getReport(), supervision.getRouteBridge().getBridge());
+                    savePdf(pdf, pdfModel, supervision.getRouteBridge().getBridge());
                 } catch (LeluPdfUploadException e) {
                     // TODO what to do?
                     e.printStackTrace();
@@ -247,36 +254,36 @@ public class SupervisionService {
     }
 
     public byte[] getSupervisionPdf(Long supervisionId) throws IOException {
-        String objectKey = supervisionReportRepository.getPdfObjectKey(Math.toIntExact(supervisionId));
+        SupervisionPdfModel pdfModel = pdfService.getSupervisionPdfBySupervisionId(Math.toIntExact(supervisionId));
 
-        if (activeProfile.equals("local")) {
-            // Get from local file system
-            String filename = objectKey + ".pdf";
-
-            File inputFile = new File("/", filename);
-            if (inputFile.exists()) {
-                FileInputStream in = new FileInputStream(inputFile);
-                return in.readAllBytes();
+        if (pdfModel != null) {
+            if (activeProfile.equals("local")) {
+                // Get from local file system
+                File inputFile = new File("/", pdfModel.getFilename());
+                if (inputFile.exists()) {
+                    FileInputStream in = new FileInputStream(inputFile);
+                    return in.readAllBytes();
+                } else {
+                    logger.error("no file");
+                }
             } else {
-                logger.error("no file");
+                // Get from AWS
+                return awss3Client.download(pdfModel.getObjectKey(), awss3Client.getSupervisionBucketName());
             }
-        } else {
-            // Get from AWS
-            return awss3Client.download(objectKey, awss3Client.getSupervisionBucketName());
         }
         return null;
     }
 
 
-    public void savePdf(byte[] reportPDF, SupervisionReportModel report, BridgeModel bridge) throws LeluPdfUploadException {
-        logger.debug("save pdf for supervision: " + report.getSupervisionId());
+    public void savePdf(byte[] reportPDF, SupervisionPdfModel pdfModel, BridgeModel bridge) throws LeluPdfUploadException {
+        logger.debug("save pdf for supervision: " + pdfModel.getSupervisionId());
 
-        String objectIdentifier = ObjectKeyUtil.generateObjectIdentifier(ObjectKeyUtil.PDF_KTV_PREFIX, report.getId());
-        String objectKey = ObjectKeyUtil.generateObjectKey(objectIdentifier, report.getSupervisionId());
+        String objectIdentifier = pdfModel.getKtvObjectId();
+        String objectKey = pdfModel.getObjectKey();
 
         if (activeProfile.equals("local")) {
             // Save to local file system
-            File outputFile = new File("/", objectKey + ".pdf");
+            File outputFile = new File("/", pdfModel.getFilename());
             try {
                 Files.write(outputFile.toPath(), reportPDF);
                 logger.debug("wrote pdf local file: " + outputFile.getAbsolutePath() + outputFile.getName());
@@ -296,10 +303,6 @@ public class SupervisionService {
             }
         }
 
-        // Save object key and KTV id to DB
-        report.setPdfObjectKey(objectKey);
-        report.setPdfKtvObjectId(objectIdentifier);
-        supervisionReportRepository.updatePdfDetails(report);
     }
 
 

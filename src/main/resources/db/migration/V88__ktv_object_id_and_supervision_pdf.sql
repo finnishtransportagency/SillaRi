@@ -1,5 +1,3 @@
-/*TODO remove alter report after code is updated to use supervision_pdf*/
-alter table sillari.supervision_report add column if not exists pdf_ktv_object_id text;
 alter table sillari.supervision_image add column if not exists ktv_object_id text;
 
 create sequence IF NOT EXISTS sillari.supervision_pdf_id_seq;
