@@ -9,13 +9,13 @@ import java.time.OffsetDateTime;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
-public class SupervisionReportPdfModel extends BaseModel {
+public class SupervisionPdfModel extends BaseModel {
     private Integer id;
-    private Integer supervisionReportId;
+    private Integer supervisionId;
     private String filename;
     private String objectKey;
     private String ktvObjectId;
-    private ReportPdfStatusType status;
+    private SupervisionPdfStatusType status;
     private OffsetDateTime statusTime;
     private OffsetDateTime rowCreatedTime;
     private OffsetDateTime rowUpdatedTime;

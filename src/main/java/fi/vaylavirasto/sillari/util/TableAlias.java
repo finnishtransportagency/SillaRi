@@ -22,7 +22,7 @@ public class TableAlias {
     public static final Supervision supervision = Tables.SUPERVISION.as("sn");
     public static final SupervisionStatus supervisionStatus = Tables.SUPERVISION_STATUS.as("sns");
     public static final SupervisionReport supervisionReport = Tables.SUPERVISION_REPORT.as("snr");
-    public static final SupervisionReportPdf supervisionReportPdf = Tables.SUPERVISION_REPORT_PDF.as("srp");
     public static final SupervisionImage supervisionImage = Tables.SUPERVISION_IMAGE.as("sni");
+    public static final SupervisionPdf supervisionPdf = Tables.SUPERVISION_PDF.as("snp");
     public static final SupervisionSupervisor supervisionSupervisor = Tables.SUPERVISION_SUPERVISOR.as("ss");
 }
