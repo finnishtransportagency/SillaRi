@@ -35,9 +35,6 @@ public class ImageController {
     @Autowired
     SupervisionService supervisionService;
     @Autowired
-    BridgeService bridgeService;
-
-    @Autowired
     UIService uiService;
 
 
@@ -87,12 +84,7 @@ public class ImageController {
                     contentType = "application/octet-stream";
                 }
 
-                // Set bridge details metadata to S3 for KTV
-                SupervisionModel supervision = supervisionService.getSupervision(image.getSupervisionId(), false, false);
-                BridgeModel bridge = supervision.getRouteBridge().getBridge();
-                bridge.setCoordinates(bridgeService.getBridgeCoordinates(bridge.getId()));
-
-                supervisionImageService.saveImageFile(image, bridge, decodedString, contentType);
+                supervisionImageService.saveImageFile(image, decodedString, contentType);
             }
         } catch (Exception e) {
             e.printStackTrace();

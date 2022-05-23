@@ -2,9 +2,13 @@ package fi.vaylavirasto.sillari.service;
 
 import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
+import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
+import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.repositories.BridgeRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionImageRepository;
+import fi.vaylavirasto.sillari.repositories.SupervisionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,10 @@ public class SupervisionImageService {
     AWSS3Client awss3Client;
     @Autowired
     SupervisionImageRepository supervisionImageRepository;
+    @Autowired
+    SupervisionRepository supervisionRepository;
+    @Autowired
+    BridgeRepository bridgeRepository;
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
@@ -89,7 +97,7 @@ public class SupervisionImageService {
         }
     }
 
-    public void saveImageFile(SupervisionImageModel image, BridgeModel bridge, byte[] decodedString, String contentType) throws IOException {
+    public void saveImageFile(SupervisionImageModel image, byte[] decodedString, String contentType) throws IOException {
         if (activeProfile.equals("local")) {
             // Save to local file system
             File outputFile = new File("/", image.getFilename());
@@ -98,6 +106,14 @@ public class SupervisionImageService {
             // Upload to AWS
             String objectIdentifier = image.getKtvObjectId();
             String objectKey = image.getObjectKey();
+
+            // Set bridge details metadata to S3 for KTV
+            SupervisionModel supervision = supervisionRepository.getSupervisionById(image.getSupervisionId());
+            BridgeModel bridge = supervision.getRouteBridge().getBridge();
+            CoordinatesDTO coords = bridgeRepository.getBridgeCoordinates(bridge.getId());
+            if (coords.getX() != null && coords.getY() != null) {
+                bridge.setCoordinates(coords);
+            }
 
             awss3Client.upload(objectKey, objectIdentifier, decodedString, contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, bridge);
         }
