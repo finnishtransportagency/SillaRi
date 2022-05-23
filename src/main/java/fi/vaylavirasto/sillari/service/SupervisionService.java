@@ -38,6 +38,8 @@ public class SupervisionService {
     @Autowired
     BridgeService bridgeService;
     @Autowired
+    SupervisionImageService imageService;
+    @Autowired
     SupervisionPdfService pdfService;
 
 
@@ -251,8 +253,16 @@ public class SupervisionService {
     public SupervisionModel cancelSupervision(Integer supervisionId, OffsetDateTime cancelTime, SillariUser user) {
         SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.CANCELLED, cancelTime, user.getUsername());
         supervisionStatusRepository.insertSupervisionStatus(status);
-
         supervisionReportRepository.deleteSupervisionReport(supervisionId);
+
+        // Delete supervision images from DB and AWS S3 bucket (or local file system in local environment)
+        // Deleting pdf files is not necessary, since cancelSupervision is not allowed when supervision report is ready.
+        try {
+            imageService.deleteSupervisionImages(supervisionId);
+        } catch (IOException e) {
+            logger.error("Deleting images from local file system failed, supervisionId={}", supervisionId);
+        }
+
         return getSupervision(supervisionId, true, true);
     }
 

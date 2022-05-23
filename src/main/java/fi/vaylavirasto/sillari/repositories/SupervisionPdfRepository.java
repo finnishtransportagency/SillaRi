@@ -82,4 +82,14 @@ public class SupervisionPdfRepository {
         }
     }
 
+    public void deleteSupervisionPdf(Integer supervisionId) {
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+
+            ctx.delete(TableAlias.supervisionPdf)
+                    .where(TableAlias.supervisionPdf.SUPERVISION_ID.eq(supervisionId))
+                    .execute();
+        });
+    }
+
 }
