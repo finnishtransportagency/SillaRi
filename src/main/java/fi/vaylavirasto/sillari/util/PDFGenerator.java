@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.util;
 
+import fi.vaylavirasto.sillari.api.rest.error.PDFGenerationException;
 import fi.vaylavirasto.sillari.model.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.WordUtils;
@@ -58,7 +59,7 @@ public class PDFGenerator {
     public PDFGenerator() {
     }
 
-    public byte[] generateReportPDF(SupervisionModel supervision, List<byte[]> images) {
+    public byte[] generateReportPDF(SupervisionModel supervision, List<byte[]> images) throws PDFGenerationException {
 
 
         logger.debug("Generate pdf for supervision {}", supervision);
