@@ -1,9 +1,9 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.api.rest.error.LeluPdfUploadException;
+import fi.vaylavirasto.sillari.api.rest.error.PDFGenerationException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
-import fi.vaylavirasto.sillari.util.ObjectKeyUtil;
 import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 @Service
 public class SupervisionService {
@@ -217,21 +219,31 @@ public class SupervisionService {
         if (supervision != null && supervision.getReport() != null) {
             // Update pdf details to DB and set pdf status to IN_PROGRESS
             SupervisionPdfModel pdfModel = pdfService.createSupervisionPdf(new SupervisionPdfModel(supervisionId, "supervision_" + supervisionId + ".pdf"));
-
             List<byte[]> images = getImageFiles(supervision.getImages(), activeProfile.equals("local"));
 
-            byte[] pdf = new PDFGenerator().generateReportPDF(supervision, images);
-
-            if (pdf != null) {
-                try {
-                    savePdf(pdf, pdfModel, supervision.getRouteBridge().getBridge());
-                } catch (LeluPdfUploadException e) {
-                    // TODO what to do?
-                    e.printStackTrace();
-                }
-            } else {
-                logger.error("Report pdf null, pdf generation failed for supervision {}", supervisionId);
+            byte[] pdf = new byte[0];
+            try {
+                pdf = new PDFGenerator().generateReportPDF(supervision, images);
+            } catch (PDFGenerationException e) {
+                logger.warn("Generating pdf report for supervision failed. " + supervisionId + " " + e.getMessage());
+                pdfModel.setStatus(SupervisionPdfStatusType.FAILED);
+                pdfService.updateSupervisionPdfStatus(pdfModel);
+                return;
             }
+
+            logger.debug("Generated pdf report for supervision: " + supervisionId);
+
+            try {
+                savePdf(pdf, pdfModel, supervision.getRouteBridge().getBridge());
+                pdfModel.setStatus(SupervisionPdfStatusType.SUCCESS);
+                pdfService.updateSupervisionPdfStatus(pdfModel);
+                logger.debug("Saved pdf report for supervision: " + supervisionId);
+            } catch (LeluPdfUploadException e) {
+                logger.warn("Saving pdf report for supervision failed. " + supervisionId + " " + e.getMessage());
+                pdfModel.setStatus(SupervisionPdfStatusType.FAILED);
+                pdfService.updateSupervisionPdfStatus(pdfModel);
+            }
+
         } else {
             logger.error("supervision or report null, cannot create pdf for supervision={}", supervisionId);
         }

@@ -184,18 +184,13 @@ public class PDFGenerator {
                 newLine();
                 contentStream.endText();
 
-                try {
-                    handleImages(imageMetadatas, images, document);
-                } catch (Exception e) {
-                    // TODO what to do?
-                    logger.error("caughth: " + e.getClass().getName() + e.getMessage());
-                }
+                handleImages(imageMetadatas, images, document);
 
                 try {
                     contentStream.close();
                 } catch (Exception e) {
                     // TODO what to do?
-                    logger.error("caughth: " + e.getClass().getName() + e.getMessage());
+                    logger.warn("caughth: " + e.getClass().getName() + e.getMessage());
                 }
             }
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -205,16 +200,16 @@ public class PDFGenerator {
 
             logger.debug("Generated pdf");
             return IOUtils.toByteArray(inputStream);
-
+        } catch (PDFGenerationException pdfGenerationException) {
+            throw pdfGenerationException;
         } catch (Exception e) {
-            // TODO what to do?
             logger.error("PDF generation failed: " + e.getClass().getName() + e.getMessage());
+            throw new PDFGenerationException(e.getClass().getName() + " " + e.getMessage());
         }
 
-        return null;
     }
 
-    private void newLine() throws IOException {
+    private void newLine() throws IOException, PDFGenerationException {
         contentStream.newLineAtOffset(0, -LINE_SPACING);
         y -= LINE_SPACING;
         if (y < 20) {
@@ -222,7 +217,7 @@ public class PDFGenerator {
         }
     }
 
-    private void newPage() {
+    private void newPage() throws PDFGenerationException {
         y = page.getMediaBox().getHeight() - TOP_MARGIN;
         try {
             contentStream.endText();
@@ -246,12 +241,13 @@ public class PDFGenerator {
 
         } catch (IOException e) {
             logger.error("New page failed: " + e.getClass().getName() + e.getMessage());
+            throw new PDFGenerationException(e.getClass().getName() + " " + e.getMessage());
         }
 
     }
 
 
-    private void newImagePage() {
+    private void newImagePage() throws PDFGenerationException {
         y = page.getMediaBox().getHeight() - TOP_MARGIN;
         try {
             contentStream.endText();
@@ -270,11 +266,12 @@ public class PDFGenerator {
             contentStream = new PDPageContentStream(document, page);
         } catch (IOException e) {
             logger.error("New image page failed: " + e.getClass().getName() + e.getMessage());
+            throw new PDFGenerationException(e.getClass().getName() + " " + e.getMessage());
         }
 
     }
 
-    private void handleImages(List<SupervisionImageModel> imageModels, List<byte[]> images, PDDocument document) {
+    private void handleImages(List<SupervisionImageModel> imageModels, List<byte[]> images, PDDocument document) throws PDFGenerationException {
         int n = 0;
         for (SupervisionImageModel imageData : imageModels) {
             PDImageXObject pdImage = null;
@@ -283,12 +280,14 @@ public class PDFGenerator {
                 imageBytes = images.get(n);
             } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
                 logger.error("No corresponding image bytes for metadata " + imageData.getFilename());
+                throw new PDFGenerationException(indexOutOfBoundsException.getClass().getName() + " " + indexOutOfBoundsException.getMessage());
             }
             if (imageBytes != null) {
                 try {
                     pdImage = PDImageXObject.createFromByteArray(document, imageBytes, imageData.getFilename());
                 } catch (IOException e) {
                     logger.error("Image creation from AWS failed: " + e.getClass().getName() + e.getMessage());
+                    throw new PDFGenerationException(e.getClass().getName() + " " + e.getMessage());
                 }
             }
             n++;
@@ -333,6 +332,8 @@ public class PDFGenerator {
                 y -= 20;
             } catch (IOException e) {
                 logger.error("Draw image failed: " + e.getClass().getName() + e.getMessage());
+                throw new PDFGenerationException(e.getClass().getName() + " " + e.getMessage());
+
             }
 
 

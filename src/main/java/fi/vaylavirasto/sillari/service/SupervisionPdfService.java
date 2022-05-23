@@ -7,6 +7,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+
 @Service
 public class SupervisionPdfService {
     private static final Logger logger = LogManager.getLogger();
@@ -24,6 +26,11 @@ public class SupervisionPdfService {
     public SupervisionPdfModel createSupervisionPdf(SupervisionPdfModel pdfModel) {
         Integer pdfId = supervisionPdfRepository.createSupervisionPdf(pdfModel);
         return getSupervisionPdf(pdfId);
+    }
+
+    public void updateSupervisionPdfStatus(SupervisionPdfModel pdfModel) {
+        pdfModel.setStatusTime(OffsetDateTime.now());
+        supervisionPdfRepository.updateSupervisionPdfStatus(pdfModel);
     }
 
 }
