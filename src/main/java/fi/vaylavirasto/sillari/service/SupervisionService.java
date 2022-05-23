@@ -224,20 +224,17 @@ public class SupervisionService {
             byte[] pdf = new byte[0];
             try {
                 pdf = new PDFGenerator().generateReportPDF(supervision, images);
-            } catch (PDFGenerationException e) {
-                logger.warn("Generating pdf report for supervision failed. " + supervisionId + " " + e.getMessage());
-                pdfModel.setStatus(SupervisionPdfStatusType.FAILED);
-                pdfService.updateSupervisionPdfStatus(pdfModel);
-                return;
-            }
 
-            logger.debug("Generated pdf report for supervision: " + supervisionId);
+                logger.debug("Generated pdf report for supervision: " + supervisionId);
 
-            try {
                 savePdf(pdf, pdfModel, supervision.getRouteBridge().getBridge());
                 pdfModel.setStatus(SupervisionPdfStatusType.SUCCESS);
                 pdfService.updateSupervisionPdfStatus(pdfModel);
                 logger.debug("Saved pdf report for supervision: " + supervisionId);
+            } catch (PDFGenerationException e) {
+                logger.warn("Generating pdf report for supervision failed. " + supervisionId + " " + e.getMessage());
+                pdfModel.setStatus(SupervisionPdfStatusType.FAILED);
+                pdfService.updateSupervisionPdfStatus(pdfModel);
             } catch (LeluPdfUploadException e) {
                 logger.warn("Saving pdf report for supervision failed. " + supervisionId + " " + e.getMessage());
                 pdfModel.setStatus(SupervisionPdfStatusType.FAILED);
