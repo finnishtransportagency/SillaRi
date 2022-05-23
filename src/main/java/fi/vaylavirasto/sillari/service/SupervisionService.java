@@ -257,18 +257,28 @@ public class SupervisionService {
         SupervisionPdfModel pdfModel = pdfService.getSupervisionPdfBySupervisionId(Math.toIntExact(supervisionId));
 
         if (pdfModel != null) {
-            if (activeProfile.equals("local")) {
-                // Get from local file system
-                File inputFile = new File("/", pdfModel.getFilename());
-                if (inputFile.exists()) {
-                    FileInputStream in = new FileInputStream(inputFile);
-                    return in.readAllBytes();
+            SupervisionPdfStatusType pdfStatus = pdfModel.getStatus();
+
+            if (pdfStatus.equals(SupervisionPdfStatusType.IN_PROGRESS)) {
+                logger.warn("PDF still in progress for supervisionId " + supervisionId);
+            } else if (pdfStatus.equals(SupervisionPdfStatusType.FAILED)) {
+                logger.warn("PDF generation failed for supervisionId {}, no file available", supervisionId);
+            } else if (pdfStatus.equals(SupervisionPdfStatusType.SUCCESS)) {
+
+                if (activeProfile.equals("local")) {
+                    // Get from local file system
+                    File inputFile = new File("/", pdfModel.getFilename());
+                    if (inputFile.exists()) {
+                        FileInputStream in = new FileInputStream(inputFile);
+                        return in.readAllBytes();
+                    } else {
+                        logger.error("No pdf file in local filesystem with filename " + pdfModel.getFilename());
+                    }
                 } else {
-                    logger.error("no file");
+                    // Get from AWS
+                    return awss3Client.download(pdfModel.getObjectKey(), awss3Client.getSupervisionBucketName());
                 }
-            } else {
-                // Get from AWS
-                return awss3Client.download(pdfModel.getObjectKey(), awss3Client.getSupervisionBucketName());
+
             }
         }
         return null;
@@ -286,7 +296,7 @@ public class SupervisionService {
             File outputFile = new File("/", pdfModel.getFilename());
             try {
                 Files.write(outputFile.toPath(), reportPDF);
-                logger.debug("wrote pdf local file: " + outputFile.getAbsolutePath() + outputFile.getName());
+                logger.debug("wrote pdf local file: " + outputFile.getAbsolutePath() + ", filename: " + outputFile.getName());
             } catch (IOException e) {
                 logger.error("Error writing file." + e.getClass().getName() + " " + e.getMessage());
                 throw new LeluPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
