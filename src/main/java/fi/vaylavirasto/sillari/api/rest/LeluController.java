@@ -10,14 +10,9 @@ import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.service.BridgeService;
 import fi.vaylavirasto.sillari.service.LeluService;
-import fi.vaylavirasto.sillari.service.SupervisionImageService;
-import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.logging.log4j.LogManager;
@@ -32,9 +27,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.*;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,9 +38,6 @@ public class LeluController {
     private static final Logger logger = LogManager.getLogger();
     private static final String LELU_API_VERSION_HEADER_NAME = "lelu-api-accept-version";
 
-    @Value("${spring.profiles.active:Unknown}")
-    private String activeProfile;
-
     @Value("${sillari.lelu.version}")
     private String currentApiVersion;
 
@@ -56,19 +46,13 @@ public class LeluController {
     private final TRexService trexService;
     private final BridgeService bridgeService;
     private final MessageSource messageSource;
-    private final SupervisionService supervisionService;
-
 
     @Autowired
-    SupervisionImageService supervisionImageService;
-
-    @Autowired
-    public LeluController(LeluService leluService, TRexService trexService, BridgeService bridgeService, MessageSource messageSource, SupervisionService supervisionService) {
+    public LeluController(LeluService leluService, TRexService trexService, BridgeService bridgeService, MessageSource messageSource) {
         this.leluService = leluService;
         this.trexService = trexService;
         this.bridgeService = bridgeService;
         this.messageSource = messageSource;
-        this.supervisionService = supervisionService;
 
     }
 
@@ -292,47 +276,6 @@ public class LeluController {
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             return leluService.getWholeRoute(routeId);
-        } else {
-            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
-        }
-    }
-
-
-    /**
-     * Get the pdf supervision report from S3 (disk on dev localhost).
-     * LeLu called this after getting REPORT_SIGNED-status of a report from /supervisions.
-     * The report has been generated and status set to REPORT_SIGNED when /completesupervisions has happened in app
-     *
-     * @param reportId   This is actually technically supervision id but is called reportId in the LeLu-interface.
-     * @param apiVersion requested LeLu API version
-     * @return PDF file as byte[]
-     * @throws APIVersionException      when requested API version does not correspond to the current version
-     * @throws PDFDownloadException     when file download fails
-     * @deprecated Lelu now polls singular bridges with "/supervision(routeId, bridgeIdentifier, transportNumber...) and gets json no more pdf to leleu"
-     */
-    @GetMapping(value = "/supervisionreport")
-    @ResponseBody
-    @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
-    @Deprecated
-    public void getSupervisionReport(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, PDFDownloadException {
-        logger.debug("LeLu getReport " + reportId);
-
-        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
-            try {
-                byte[] file = supervisionService.getSupervisionPdf(reportId);
-                if (file != null) {
-                    response.setContentType("application/pdf");
-                    OutputStream out = response.getOutputStream();
-                    out.write(file);
-                    out.close();
-                    return;
-                } else {
-                    throw new PDFDownloadException(messageSource.getMessage("lelu.supervision.pdf.download.failed", null, Locale.ROOT), HttpStatus.NOT_FOUND);
-                }
-            } catch (IOException e) {
-                throw new PDFDownloadException("Error downloading pdf file", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
         }

@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.api.rest.error.PDFDownloadException;
 import fi.vaylavirasto.sillari.api.rest.error.PDFUploadException;
 import fi.vaylavirasto.sillari.api.rest.error.PDFGenerationException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -276,35 +278,20 @@ public class SupervisionService {
         return getSupervision(supervisionReportModel.getSupervisionId(), true, true);
     }
 
-    public byte[] getSupervisionPdf(Long supervisionId) throws IOException {
-        SupervisionPdfModel pdfModel = pdfService.getSupervisionPdfBySupervisionId(Math.toIntExact(supervisionId));
+    public void getSupervisionPdf(HttpServletResponse response, Integer supervisionId) throws IOException, PDFDownloadException {
+        SupervisionPdfModel pdfModel = pdfService.getSupervisionPdfBySupervisionId(supervisionId);
 
         if (pdfModel != null) {
             SupervisionPdfStatusType pdfStatus = pdfModel.getStatus();
 
             if (pdfStatus.equals(SupervisionPdfStatusType.IN_PROGRESS)) {
-                logger.warn("PDF still in progress for supervisionId " + supervisionId);
+                throw new PDFDownloadException("PDF still in progress", HttpStatus.NOT_FOUND);
             } else if (pdfStatus.equals(SupervisionPdfStatusType.FAILED)) {
-                logger.warn("PDF generation failed for supervisionId {}, no file available", supervisionId);
+                throw new PDFDownloadException("PDF generation failed, no file available", HttpStatus.NOT_FOUND);
             } else if (pdfStatus.equals(SupervisionPdfStatusType.SUCCESS)) {
-
-                if (activeProfile.equals("local")) {
-                    // Get from local file system
-                    File inputFile = new File("/", pdfModel.getFilename());
-                    if (inputFile.exists()) {
-                        FileInputStream in = new FileInputStream(inputFile);
-                        return in.readAllBytes();
-                    } else {
-                        logger.error("No pdf file in local filesystem with filename " + pdfModel.getFilename());
-                    }
-                } else {
-                    // Get from AWS
-                    return awss3Client.download(pdfModel.getObjectKey(), awss3Client.getSupervisionBucketName());
-                }
-
+                s3FileService.getFile(response, awss3Client.getSupervisionBucketName(), pdfModel.getObjectKey(), pdfModel.getFilename(), "application/pdf");
             }
         }
-        return null;
     }
 
 

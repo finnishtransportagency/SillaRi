@@ -2,19 +2,30 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vaylavirasto.sillari.api.rest.error.PDFDownloadException;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
+import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.fim.FIMService;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Groups;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJson;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Locale;
 
 @RestController
 @Profile({"local", "dev"})
@@ -26,11 +37,51 @@ public class DevToolsController {
     TRexService tRexService;
     @Autowired
     FIMService fimService;
+    @Autowired
+    SupervisionService supervisionService;
 
     @RequestMapping(value = "/resttest", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
     public String resttest() {
         return "Hello world.";
+    }
+
+    /**
+     * Get the pdf supervision report from S3 (disk on dev localhost).
+     * The report has been generated and status set to REPORT_SIGNED when /completesupervisions has happened in app
+     *
+     * @param supervisionId supervision ID
+     * @return PDF file as byte[]
+     * @throws PDFDownloadException when file download fails or report is not yet ready
+     */
+    @GetMapping(value = "/supervisionreport")
+    @ResponseBody
+    @Operation(summary = "Get bridge supervision report pdf by supervision ID")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
+    public void getSupervisionReport(HttpServletResponse response, @RequestParam Integer supervisionId) throws PDFDownloadException {
+        try {
+            SupervisionModel supervision = supervisionService.getSupervision(supervisionId, true, false);
+            boolean reportCreated = false;
+
+            if (supervision != null && supervision.getCurrentStatus() != null) {
+                SupervisionStatusType status = supervision.getCurrentStatus().getStatus();
+                if (status == SupervisionStatusType.REPORT_SIGNED) {
+                    reportCreated = true;
+
+                    supervisionService.getSupervisionPdf(response, supervisionId);
+                    if (response.getContentType() == null) {
+                        throw new PDFDownloadException("Unable to download supervision report pdf file", HttpStatus.NOT_FOUND);
+                    }
+                }
+            }
+
+            if (!reportCreated) {
+                throw new PDFDownloadException("Supervision not ready", HttpStatus.METHOD_NOT_ALLOWED);
+            }
+
+        } catch (IOException e) {
+            throw new PDFDownloadException("Error downloading pdf file", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(value = "/testGetSupervisorsRawFromFim", method = RequestMethod.GET)
