@@ -270,7 +270,7 @@ public class PDFGenerator {
 
     }
 
-    private void handleImages(List<SupervisionImageModel> imageModels, List<byte[]> images, PDDocument document) throws PDFGenerationException {
+    private void handleImages(List<SupervisionImageModel> imageModels, List<byte[]> images, PDDocument document) {
         int n = 0;
         for (SupervisionImageModel imageData : imageModels) {
             PDImageXObject pdImage = null;
@@ -278,15 +278,13 @@ public class PDFGenerator {
             try {
                 imageBytes = images.get(n);
             } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
-                logger.error("No corresponding image bytes for metadata " + imageData.getFilename());
-                throw new PDFGenerationException(indexOutOfBoundsException.getClass().getName() + " " + indexOutOfBoundsException.getMessage());
+                logger.error("No corresponding image bytes for metadata. Proceeding pdf report without the image " + imageData.getFilename());
             }
             if (imageBytes != null) {
                 try {
                     pdImage = PDImageXObject.createFromByteArray(document, imageBytes, imageData.getFilename());
                 } catch (IOException e) {
-                    logger.error("Image creation from AWS failed: " + e.getClass().getName() + e.getMessage());
-                    throw new PDFGenerationException(e.getClass().getName() + " " + e.getMessage());
+                    logger.error("Image creation from AWS failed. Proceeding pdf report without the image " + e.getClass().getName() + e.getMessage());
                 }
             }
             n++;
@@ -317,7 +315,11 @@ public class PDFGenerator {
 
             y -= 20 + newHeight;
             if (y <= 20) {
-                newImagePage();
+                try {
+                    newImagePage();
+                } catch (PDFGenerationException e) {
+                    logger.error("newImagePage failed. Proceeding pdf report without the image " + e.getClass().getName() + e.getMessage());
+                }
                 y -= 20 + newHeight;
             }
             try {
@@ -326,12 +328,13 @@ public class PDFGenerator {
                 contentStream.newLineAtOffset(50, y - 20);
                 contentStream.showText(pdf_photo + n + ". " + imageData.getTaken());
                 contentStream.endText();
-
-                contentStream.drawImage(pdImage, 30, y, newWidth, newHeight);
+                if(pdImage != null) {
+                    contentStream.drawImage(pdImage, 30, y, newWidth, newHeight);
+                }
                 y -= 20;
-            } catch (IOException e) {
-                logger.error("Draw image failed: " + e.getClass().getName() + e.getMessage());
-                throw new PDFGenerationException(e.getClass().getName() + " " + e.getMessage());
+            } catch (Exception e) {
+                logger.error("Draw image failed. Proceeding pdf report without the image " + e.getClass().getName() + e.getMessage());
+                e.printStackTrace();
 
             }
 
