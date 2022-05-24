@@ -35,7 +35,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -215,7 +214,7 @@ public class LeluController {
     })
     public LeluPermiPdfResponseDTO uploadPermitPdf(@RequestParam(required = true) String permitNumber, @RequestParam(required = true) Integer permitVersion,
                                                    @RequestPart("file") MultipartFile file)
-            throws LeluPdfUploadException {
+            throws PDFUploadException {
         logger.debug("Lelu uploadpermitpdf {}", permitNumber);
         logger.debug("FILE name:" + file.getName());
         logger.debug("FILE OriginalFilename:" + file.getOriginalFilename());
@@ -308,7 +307,7 @@ public class LeluController {
      * @param apiVersion requested LeLu API version
      * @return PDF file as byte[]
      * @throws APIVersionException      when requested API version does not correspond to the current version
-     * @throws LeluPdfDownloadException when file download fails
+     * @throws PDFDownloadException     when file download fails
      * @deprecated Lelu now polls singular bridges with "/supervision(routeId, bridgeIdentifier, transportNumber...) and gets json no more pdf to leleu"
      */
     @GetMapping(value = "/supervisionreport")
@@ -316,7 +315,7 @@ public class LeluController {
     @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
     @Deprecated
-    public void getSupervisionReport(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPdfDownloadException {
+    public void getSupervisionReport(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, PDFDownloadException {
         logger.debug("LeLu getReport " + reportId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
@@ -329,10 +328,10 @@ public class LeluController {
                     out.close();
                     return;
                 } else {
-                    throw new LeluPdfDownloadException(messageSource.getMessage("lelu.supervision.pdf.download.failed", null, Locale.ROOT), HttpStatus.NOT_FOUND);
+                    throw new PDFDownloadException(messageSource.getMessage("lelu.supervision.pdf.download.failed", null, Locale.ROOT), HttpStatus.NOT_FOUND);
                 }
             } catch (IOException e) {
-                throw new LeluPdfDownloadException("Error downloading pdf file", HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new PDFDownloadException("Error downloading pdf file", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);

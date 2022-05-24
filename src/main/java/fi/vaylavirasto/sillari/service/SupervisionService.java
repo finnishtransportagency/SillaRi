@@ -1,10 +1,9 @@
 package fi.vaylavirasto.sillari.service;
 
-import fi.vaylavirasto.sillari.api.rest.error.LeluPdfUploadException;
+import fi.vaylavirasto.sillari.api.rest.error.PDFUploadException;
 import fi.vaylavirasto.sillari.api.rest.error.PDFGenerationException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
-import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.fim.FIMService;
@@ -34,11 +33,11 @@ public class SupervisionService {
     @Autowired
     AWSS3Client awss3Client;
     @Autowired
+    S3FileService s3FileService;
+    @Autowired
     FIMService fimService;
     @Autowired
     BridgeService bridgeService;
-    @Autowired
-    SupervisionImageService imageService;
     @Autowired
     SupervisionPdfService pdfService;
 
@@ -229,7 +228,7 @@ public class SupervisionService {
 
                 logger.debug("Generated pdf report for supervision: " + supervisionId);
 
-                savePdf(pdf, pdfModel, supervision.getRouteBridge().getBridge());
+                savePdf(pdf, pdfModel);
                 pdfModel.setStatus(SupervisionPdfStatusType.SUCCESS);
                 pdfService.updateSupervisionPdfStatus(pdfModel);
                 logger.debug("Saved pdf report for supervision: " + supervisionId);
@@ -237,7 +236,7 @@ public class SupervisionService {
                 logger.warn("Generating pdf report for supervision failed. " + supervisionId + " " + e.getMessage());
                 pdfModel.setStatus(SupervisionPdfStatusType.FAILED);
                 pdfService.updateSupervisionPdfStatus(pdfModel);
-            } catch (LeluPdfUploadException e) {
+            } catch (PDFUploadException e) {
                 logger.warn("Saving pdf report for supervision failed. " + supervisionId + " " + e.getMessage());
                 pdfModel.setStatus(SupervisionPdfStatusType.FAILED);
                 pdfService.updateSupervisionPdfStatus(pdfModel);
@@ -257,11 +256,16 @@ public class SupervisionService {
 
         // Delete supervision images from DB and AWS S3 bucket (or local file system in local environment)
         // Deleting pdf files is not necessary, since cancelSupervision is not allowed when supervision report is ready.
+        List<SupervisionImageModel> images = supervisionImageRepository.getSupervisionImages(supervisionId);
         try {
-            imageService.deleteSupervisionImages(supervisionId);
+            for (SupervisionImageModel image : images) {
+                String decodedKey = new String(Base64.getDecoder().decode(image.getObjectKey()));
+                s3FileService.deleteFile(awss3Client.getPhotoBucketName(), decodedKey, image.getFilename());
+            }
         } catch (IOException e) {
             logger.error("Deleting images from local file system failed, supervisionId={}", supervisionId);
         }
+        supervisionImageRepository.deleteSupervisionImages(supervisionId);
 
         return getSupervision(supervisionId, true, true);
     }
@@ -304,34 +308,18 @@ public class SupervisionService {
     }
 
 
-    public void savePdf(byte[] reportPDF, SupervisionPdfModel pdfModel, BridgeModel bridge) throws LeluPdfUploadException {
+    public void savePdf(byte[] reportPDF, SupervisionPdfModel pdfModel) throws PDFUploadException {
         logger.debug("save pdf for supervision: " + pdfModel.getSupervisionId());
 
-        String objectIdentifier = pdfModel.getKtvObjectId();
-        String objectKey = pdfModel.getObjectKey();
-
-        if (activeProfile.equals("local")) {
-            // Save to local file system
-            File outputFile = new File("/", pdfModel.getFilename());
-            try {
-                Files.write(outputFile.toPath(), reportPDF);
-                logger.debug("wrote pdf local file: " + outputFile.getAbsolutePath() + ", filename: " + outputFile.getName());
-            } catch (IOException e) {
-                logger.error("Error writing file." + e.getClass().getName() + " " + e.getMessage());
-                throw new LeluPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            CoordinatesDTO coords = bridgeService.getBridgeCoordinates(bridge.getId());
-            bridge.setCoordinates(coords);
-
-            // Upload to AWS
-            boolean success = awss3Client.upload(objectKey, objectIdentifier, reportPDF, "application/pdf", awss3Client.getSupervisionBucketName(), AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME, bridge);
-            logger.debug("Uploaded to AWS: " + objectKey);
+        try {
+            boolean success = s3FileService.saveFile(reportPDF, awss3Client.getSupervisionBucketName(), pdfModel.getSupervisionId(), pdfModel.getObjectKey(), pdfModel.getKtvObjectId(), pdfModel.getFilename(), "application/pdf");
             if (!success) {
-                throw new LeluPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new PDFUploadException("Error uploading file to AWS.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
+        } catch (IOException e) {
+            logger.error("Error writing file to local file system." + e.getClass().getName() + " " + e.getMessage());
+            throw new PDFUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
 

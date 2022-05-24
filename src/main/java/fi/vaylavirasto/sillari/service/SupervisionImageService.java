@@ -72,7 +72,7 @@ public class SupervisionImageService {
         if (contentType == null) {
             contentType = "application/octet-stream";
         }
-        s3FileService.saveFile(image.getSupervisionId(), decodedString, awss3Client.getPhotoBucketName(), image.getObjectKey(), image.getKtvObjectId(), image.getFilename(), contentType);
+        s3FileService.saveFile(decodedString, awss3Client.getPhotoBucketName(), image.getSupervisionId(), image.getObjectKey(), image.getKtvObjectId(), image.getFilename(), contentType);
     }
 
     //todo remove. This is for testing image expiration. Expiration should not remove pics from KTV.

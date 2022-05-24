@@ -290,10 +290,10 @@ public class LeluService {
         }
     }
 
-    public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) throws LeluPdfUploadException {
+    public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) throws PDFUploadException {
         Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitNumber, permitVersion);
         if (permitId == null) {
-            throw new LeluPdfUploadException(messageSource.getMessage("lelu.permit.not.found", null, Locale.ROOT), HttpStatus.NOT_FOUND);
+            throw new PDFUploadException(messageSource.getMessage("lelu.permit.not.found", null, Locale.ROOT), HttpStatus.NOT_FOUND);
         }
         String objectKey = "permitPdf/" + permitNumber + "_" + permitVersion + "/" + file.getOriginalFilename();
 
@@ -305,18 +305,18 @@ public class LeluService {
                 Files.write(outputFile.toPath(), file.getBytes());
             } catch (IOException e) {
                 logger.error("Error writing file." + e.getClass().getName() + " " + e.getMessage());
-                throw new LeluPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new PDFUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             // Upload to AWS
             try {
                 boolean success = awss3Client.upload(objectKey, file.getBytes(), "application/pdf", awss3Client.getPermitBucketName(), AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
                 if (!success) {
-                    throw new LeluPdfUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
+                    throw new PDFUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             } catch (IOException e) {
                 logger.error("Error uploading file to aws." + e.getClass().getName() + " " + e.getMessage());
-                throw new LeluPdfUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new PDFUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
         permitRepository.updatePermitPdf(permitId, objectKey);

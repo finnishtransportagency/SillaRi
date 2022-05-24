@@ -7,6 +7,8 @@ import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.repositories.BridgeRepository;
 import fi.vaylavirasto.sillari.repositories.SupervisionRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ import java.nio.file.Files;
 
 @Service
 public class S3FileService {
+    private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     AWSS3Client awss3Client;
     @Autowired
@@ -53,11 +57,14 @@ public class S3FileService {
         }
     }
 
-    public void saveFile(Integer supervisionId, byte[] decodedString, String bucketName, String objectKey, String objectIdentifier, String filename, String contentType) throws IOException {
+    public boolean saveFile(byte[] decodedString, String bucketName, Integer supervisionId, String objectKey, String objectIdentifier, String filename, String contentType) throws IOException {
         if (activeProfile.equals("local")) {
             // Save to local file system
             File outputFile = new File("/", filename);
             Files.write(outputFile.toPath(), decodedString);
+
+            logger.debug("wrote local file: " + outputFile.getAbsolutePath() + ", filename: " + outputFile.getName());
+            return true;
         } else {
             // Upload to AWS
 
@@ -70,7 +77,13 @@ public class S3FileService {
             }
 
             // TODO check session name
-            awss3Client.upload(objectKey, objectIdentifier, decodedString, contentType, bucketName, AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, bridge);
+            boolean success = awss3Client.upload(objectKey, objectIdentifier, decodedString, contentType, bucketName, AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, bridge);
+            if (success) {
+                logger.debug("Uploaded to AWS: " + objectKey);
+            } else {
+                logger.warn("Upload to AWS failed: " + objectKey);
+            }
+            return success;
         }
     }
 
