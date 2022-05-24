@@ -2,10 +2,8 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
-import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
-import fi.vaylavirasto.sillari.service.BridgeService;
 import fi.vaylavirasto.sillari.service.SupervisionImageService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
@@ -13,7 +11,6 @@ import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -71,20 +67,15 @@ public class ImageController {
             image.setFilename(fileInputModel.getFilename());
             image.setTaken(fileInputModel.getTaken());
             image.setSupervisionId(fileInputModel.getSupervisionId());
-            image.setBase64(fileInputModel.getBase64());
             // Object key and KTV object id are generated when image is inserted to DB
             image = supervisionImageService.createSupervisionImage(image);
 
             if (image.getId() != null && image.getObjectKey() != null && image.getKtvObjectId() != null) {
-                Tika tika = new Tika();
-                int dataStart = fileInputModel.getBase64().indexOf(",") + 1;
-                byte[] decodedString = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(fileInputModel.getBase64().substring(dataStart).getBytes(StandardCharsets.UTF_8));
-                String contentType = tika.detect(decodedString);
-                if (contentType == null) {
-                    contentType = "application/octet-stream";
-                }
+                // Base64 string is not saved to DB, get it from fileInputModel
+                image.setBase64(fileInputModel.getBase64());
 
-                supervisionImageService.saveImageFile(image, decodedString, contentType);
+                // Upload image to AWS S3 bucket
+                supervisionImageService.saveImageFile(image);
             }
         } catch (Exception e) {
             e.printStackTrace();
