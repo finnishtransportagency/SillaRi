@@ -34,12 +34,12 @@ public class SupervisionImageService {
     private String activeProfile;
 
     public SupervisionImageModel getSupervisionImage(Integer id) {
-        return supervisionImageRepository.getFile(id);
+        return supervisionImageRepository.getSupervisionImage(id);
     }
 
     public SupervisionImageModel createSupervisionImage(SupervisionImageModel supervisionImage) {
-        Integer id = supervisionImageRepository.insertFileIfNotExists(supervisionImage);
-        return supervisionImageRepository.getFile(id);
+        Integer id = supervisionImageRepository.insertSupervisionImageIfNotExists(supervisionImage);
+        return supervisionImageRepository.getSupervisionImage(id);
     }
 
     public void deleteSupervisionImage(Integer id) throws IOException {
@@ -49,11 +49,11 @@ public class SupervisionImageService {
         deleteFile(image.getObjectKey(), image.getFilename());
 
         // Delete the image row from the database
-        supervisionImageRepository.deleteFileByImageId(id);
+        supervisionImageRepository.deleteSupervisionImage(id);
     }
 
     public void deleteSupervisionImages(Integer supervisionId) throws IOException {
-        List<SupervisionImageModel> images = supervisionImageRepository.getFiles(supervisionId);
+        List<SupervisionImageModel> images = supervisionImageRepository.getSupervisionImages(supervisionId);
 
         // Delete images from AWS bucket or local file system
         for (SupervisionImageModel image : images) {
@@ -62,7 +62,7 @@ public class SupervisionImageService {
         }
 
         // Delete image rows from the database
-        supervisionImageRepository.deleteFilesBySupervisionId(supervisionId);
+        supervisionImageRepository.deleteSupervisionImages(supervisionId);
     }
 
     public void getImageFile(HttpServletResponse response, SupervisionImageModel supervisionImageModel) throws IOException {
@@ -147,7 +147,7 @@ public class SupervisionImageService {
             awss3Client.tagExpired(image.getObjectKey(), awss3Client.getPhotoBucketName());
         }
 
-        supervisionImageRepository.deleteFileByImageId(imageId);
+        supervisionImageRepository.deleteSupervisionImage(imageId);
     }
 
 }
