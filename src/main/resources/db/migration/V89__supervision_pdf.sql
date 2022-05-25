@@ -1,4 +1,5 @@
-alter table sillari.supervision_image add column if not exists ktv_object_id text;
+alter table sillari.supervision_report drop column if exists pdf_object_key;
+alter table sillari.supervision_report drop column if exists pdf_ktv_object_id;
 
 create sequence IF NOT EXISTS sillari.supervision_pdf_id_seq;
 
