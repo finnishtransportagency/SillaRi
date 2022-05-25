@@ -32,6 +32,9 @@ public class TRexPicService {
         return bridgeModel;
     }
 
+    //•	Sitten voitte kysyä mitä kuvia milläkin rakenteella on: https://testiapi.vayla.fi/trex/rajapinta/rakennekuva-api/v1/kuvatiedot?oid=<rakenneoid>
+    //	Tämä palauttaa listan kuvien tiedoista.
+
     public TrexPicInfoResponseJson getPicInfoJson(String bridgeOid) throws TRexRestException {
 
         logger.trace("bridgeOid: " + bridgeOid);
@@ -60,7 +63,8 @@ public class TRexPicService {
     }
 
 
-    public TrexPicBinResponseJson getPicBinJson(String bridgeOid) throws TRexRestException {
+    //•	Kuvien binäärejä voitte sitten kysyä: https://testiapi.vayla.fi/trex/rajapinta/rakennekuva-api/v1/yleiskuva?oid=<rakenneoid>&id=<kuvaid>
+    public TrexPicBinResponseJson getPicBinJson(String bridgeOid, String picId) throws TRexRestException {
 
         logger.trace("bridgeOid: " + bridgeOid);
 
@@ -71,6 +75,7 @@ public class TRexPicService {
                         .uri(uriBuilder -> uriBuilder
                                 .path(binPath)
                                 .queryParam("oid", bridgeOid)
+                                .queryParam("kuvaId", picId)
                                 .build())
                         .retrieve()
                         .bodyToMono(TrexPicBinResponseJson.class)
