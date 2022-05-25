@@ -321,30 +321,6 @@ public class LeluService {
 
     }
 
-    public LeluRouteResponseDTO getWholeRoute(Long leluRouteId) {
-        RouteModel route = routeRepository.getRouteWithLeluID(leluRouteId);
-        if (route != null) {
-
-            List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(route.getId());
-            route.setRouteBridges(routeBridges);
-
-            if (routeBridges != null) {
-                for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
-                    List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
-                    routeBridge.setSupervisions(new ArrayList<>());
-                    if (supervisions != null) {
-                        supervisions.forEach(supervision -> {
-                            var filledSupervision = supervisionService.getSupervision(supervision.getId(), true, false);
-                            routeBridge.getSupervisions().add(filledSupervision);
-                        });
-                    }
-                }
-            }
-        }
-        logger.debug("HELLO!: " + route);
-        return dtoMapper.fromModelToDTO(route);
-    }
-
     public LeluBridgeSupervisionResponseDTO getSupervision(Long leluRouteId, String bridgeIdentifier, Integer transportNumber) throws LeluRouteNotFoundException {
         RouteModel route = routeRepository.getRouteWithLeluID(leluRouteId);
         if (route != null) {
@@ -355,7 +331,7 @@ public class LeluService {
                 routeBridge.setSupervisions(new ArrayList<>());
                 if (supervisions != null) {
                     supervisions.forEach(supervision -> {
-                        var filledSupervision = supervisionService.getSupervision(supervision.getId(), true, false);
+                        SupervisionModel filledSupervision = supervisionService.getSupervision(supervision.getId(), true, false);
                         routeBridge.getSupervisions().add(filledSupervision);
                     });
                 }

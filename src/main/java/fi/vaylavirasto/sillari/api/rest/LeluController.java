@@ -250,36 +250,4 @@ public class LeluController {
         }
     }
 
-    /**
-     * Get supervisions of a route.
-     * Lelu did use this to see which supervision have report generated (status REPORT_SIGNED)
-     * and got the report pdf:s with /supervisionReport
-     *
-     * @param routeId
-     * @param apiVersion
-     * @param apiVersion
-     * @return
-     * @throws APIVersionException
-     * @deprecated Lelu now polls singular bridges with "/supervision(routeId, bridgeIdentifier, transportNumber...)"
-     */
-    @RequestMapping(value = "/supervisions", method = RequestMethod.GET)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get bridge supervisions of a route")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200 OK", description = ""),
-            @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
-    })
-    @Deprecated
-    public LeluRouteResponseDTO getSupervisions(@RequestParam Long routeId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
-        logger.debug("Lelu getSupervisions " + routeId);
-
-        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
-            return leluService.getWholeRoute(routeId);
-        } else {
-            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
-        }
-    }
-
 }
-
