@@ -29,8 +29,7 @@ import java.util.*;
 public class AWSS3Client {
 
     private static final Logger logger = LogManager.getLogger();
-    public static final String SILLARI_PHOTOS_ROLE_SESSION_NAME = "SILLARI-PHOTOS";
-    public static final String SILLARI_PERMITS_ROLE_SESSION_NAME = "SILLARI-PERMITS";
+    public static final String SILLARI_BACKEND_ROLE_SESSION_NAME = "SILLARI-BACKEND";
     private static final String EXPIRED_TAG = "supervision_expired";
     private AmazonS3 s3Client = null;
 
@@ -199,7 +198,7 @@ public class AWSS3Client {
 
     public byte[] download(String objectKey, String bucketName) {
         try {
-            init(SILLARI_PHOTOS_ROLE_SESSION_NAME);
+            init(SILLARI_BACKEND_ROLE_SESSION_NAME);
             logger.info("download " + bucketName + " objectKey " + objectKey);
             GetObjectRequest request = new GetObjectRequest(bucketName, objectKey);
             S3Object object = s3Client.getObject(request);
@@ -212,7 +211,7 @@ public class AWSS3Client {
 
     public void delete(String objectKey, String bucketName) {
         try {
-            init(SILLARI_PHOTOS_ROLE_SESSION_NAME);
+            init(SILLARI_BACKEND_ROLE_SESSION_NAME);
             DeleteObjectRequest request = new DeleteObjectRequest(bucketName, objectKey);
             s3Client.deleteObject(request);
         } catch (Exception e) {
@@ -223,7 +222,7 @@ public class AWSS3Client {
 
     public void tagExpired(String objectKey, String bucketName) {
         try {
-            init(SILLARI_PHOTOS_ROLE_SESSION_NAME);
+            init(SILLARI_BACKEND_ROLE_SESSION_NAME);
             List<Tag> newTags = new ArrayList<>();
             newTags.add(new Tag(EXPIRED_TAG, "true"));
             s3Client.setObjectTagging(new SetObjectTaggingRequest(bucketName, objectKey, new ObjectTagging(newTags)));

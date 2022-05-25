@@ -76,8 +76,7 @@ public class S3FileService {
                 bridge.setCoordinates(coords);
             }
 
-            // TODO check session name
-            boolean success = awss3Client.upload(objectKey, objectIdentifier, decodedString, contentType, bucketName, AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME, bridge);
+            boolean success = awss3Client.upload(objectKey, objectIdentifier, decodedString, contentType, bucketName, AWSS3Client.SILLARI_BACKEND_ROLE_SESSION_NAME, bridge);
             if (success) {
                 logger.debug("Uploaded to AWS: " + objectKey);
             } else {

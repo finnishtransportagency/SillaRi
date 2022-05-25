@@ -306,7 +306,7 @@ public class LeluService {
         } else {
             // Upload to AWS
             try {
-                boolean success = awss3Client.upload(objectKey, file.getBytes(), "application/pdf", awss3Client.getPermitBucketName(), AWSS3Client.SILLARI_PERMITS_ROLE_SESSION_NAME);
+                boolean success = awss3Client.upload(objectKey, file.getBytes(), "application/pdf", awss3Client.getPermitBucketName(), AWSS3Client.SILLARI_BACKEND_ROLE_SESSION_NAME);
                 if (!success) {
                     throw new PDFUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
