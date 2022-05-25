@@ -46,8 +46,6 @@ public class LeluService {
     private RouteBridgeRepository routeBridgeRepository;
     private BridgeRepository bridgeRepository;
     private SupervisionRepository supervisionRepository;
-    private SupervisionStatusRepository supervisionStatusRepository;
-    private SupervisionReportRepository supervisionReportRepository;
     private SupervisionService supervisionService;
     private final MessageSource messageSource;
     private LeluRouteUploadUtil leluRouteUploadUtil;
@@ -58,7 +56,7 @@ public class LeluService {
     private String activeProfile;
 
     @Autowired
-    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, SupervisionStatusRepository supervisionStatusRepository, SupervisionReportRepository supervisionReportRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
+    public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
                        TRexService trexService, SupervisionService supervisionService) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
@@ -68,8 +66,6 @@ public class LeluService {
         this.messageSource = messageSource;
         this.leluRouteUploadUtil = leluRouteUploadUtil;
         this.supervisionRepository = supervisionRepository;
-        this.supervisionStatusRepository = supervisionStatusRepository;
-        this.supervisionReportRepository = supervisionReportRepository;
         this.supervisionService = supervisionService;
         this.awss3Client = awss3Client;
         this.trexService = trexService;
