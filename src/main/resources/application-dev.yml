@@ -8,6 +8,9 @@ sillari:
     routeuploadpath: /data/lelu
   trex:
     url: https://testiapi.vayla.fi/trex/rajapinta/taitorakenne/v2/yleistiedot/silta
+    pic-url: https://testiapi.vayla.fi/trex/rajapinta/rakennekuva-api/v1/
+    pic-bin-path: yleiskuva
+    pic-info-path: kuvatiedot
   fim:
     url: https://testiapi.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/getGroup2?displayName=sillari_sillanvalvoja
     username: ${FIM_USERNAME}

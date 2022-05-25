@@ -8,6 +8,9 @@ sillari:
     routeuploadpath: /tmp
   trex:
     url: http://localhost:8080/api/devtools/localHardCodedBridgeInfoJson
+    pic-url: http://localhost:8080/api/devtools/localHardCodedPicJson
+    pic-bin-path: yleiskuva
+    pic-info-path: kuvatiedot
   fim:
     url: http://localhost:8080/api/devtools/localHardCodedSupervisors
     #url: https://testiapi.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/getGroup2?displayName=sillari_sillanvalvoja

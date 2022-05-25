@@ -10,7 +10,7 @@ import fi.vaylavirasto.sillari.service.SupervisionImageService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.fim.FIMService;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Groups;
-import fi.vaylavirasto.sillari.service.trex.TRexService;
+import fi.vaylavirasto.sillari.service.trex.TRexBridgeInfoService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJson;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -34,7 +34,7 @@ public class DevToolsController {
     private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger();
 
     @Autowired
-    TRexService tRexService;
+    TRexBridgeInfoService tRexBridgeInfoService;
     @Autowired
     FIMService fimService;
     @Autowired
@@ -232,7 +232,7 @@ public class DevToolsController {
         logger.debug("HELLO test connections");
         TrexBridgeInfoResponseJson b = null;
         try {
-            b = tRexService.getBridgeInfo("1.2.246.578.1.15.401830");
+            b = tRexBridgeInfoService.getBridgeInfo("1.2.246.578.1.15.401830");
             if (b == null) {
                 logger.error("trex fail  bridge null");
                 return null;
@@ -253,7 +253,7 @@ public class DevToolsController {
     @RequestMapping(value = "/trexTest", method = RequestMethod.GET)
     @Operation(summary = "Get bridge info with oid")
     public TrexBridgeInfoResponseJson trexTest(@RequestParam(value = "oid") String oid) throws TRexRestException {
-        return tRexService.getBridgeInfo(oid);
+        return tRexBridgeInfoService.getBridgeInfo(oid);
     }
 
 

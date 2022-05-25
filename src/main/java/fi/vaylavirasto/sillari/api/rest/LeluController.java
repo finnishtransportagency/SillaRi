@@ -5,12 +5,11 @@ import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.service.BridgeService;
 import fi.vaylavirasto.sillari.service.LeluService;
-import fi.vaylavirasto.sillari.service.trex.TRexService;
+import fi.vaylavirasto.sillari.service.trex.TRexBridgeInfoService;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -43,14 +42,14 @@ public class LeluController {
 
 
     private final LeluService leluService;
-    private final TRexService trexService;
+    private final TRexBridgeInfoService trexBridgeInfoService;
     private final BridgeService bridgeService;
     private final MessageSource messageSource;
 
     @Autowired
-    public LeluController(LeluService leluService, TRexService trexService, BridgeService bridgeService, MessageSource messageSource) {
+    public LeluController(LeluService leluService, TRexBridgeInfoService trexBridgeInfoService, BridgeService bridgeService, MessageSource messageSource) {
         this.leluService = leluService;
-        this.trexService = trexService;
+        this.trexBridgeInfoService = trexBridgeInfoService;
         this.bridgeService = bridgeService;
         this.messageSource = messageSource;
 
@@ -155,7 +154,7 @@ public class LeluController {
     private void getBridgeFromTrexToDB(String oid) {
         logger.debug("get bridge {}", oid);
         try {
-            BridgeModel bridge = trexService.getBridge(oid);
+            BridgeModel bridge = trexBridgeInfoService.getBridge(oid);
             bridgeService.createOrUpdateBridge(bridge);
             logger.debug("bridge inserted or updated: {}", bridge);
         } catch (TRexRestException e) {

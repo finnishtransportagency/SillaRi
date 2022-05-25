@@ -8,13 +8,12 @@ import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluSupervisionStatus;
 import fi.vaylavirasto.sillari.api.rest.error.*;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
-import fi.vaylavirasto.sillari.service.trex.TRexService;
+import fi.vaylavirasto.sillari.service.trex.TRexBridgeInfoService;
 import fi.vaylavirasto.sillari.util.LeluRouteUploadUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,14 +49,14 @@ public class LeluService {
     private final MessageSource messageSource;
     private LeluRouteUploadUtil leluRouteUploadUtil;
     private AWSS3Client awss3Client;
-    private final TRexService trexService;
+    private final TRexBridgeInfoService trexBridgeInfoService;
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
 
     @Autowired
     public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
-                       TRexService trexService, SupervisionService supervisionService) {
+                       TRexBridgeInfoService trexBridgeInfoService, SupervisionService supervisionService) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
         this.routeRepository = routeRepository;
@@ -68,7 +67,7 @@ public class LeluService {
         this.supervisionRepository = supervisionRepository;
         this.supervisionService = supervisionService;
         this.awss3Client = awss3Client;
-        this.trexService = trexService;
+        this.trexBridgeInfoService = trexBridgeInfoService;
     }
 
     // TODO
@@ -231,7 +230,7 @@ public class LeluService {
 
         logger.debug("Bridge missing with oid {} get from trex", routeBridge.getBridge().getOid());
         try {
-            BridgeModel newBridge = trexService.getBridge(oid);
+            BridgeModel newBridge = trexBridgeInfoService.getBridge(oid);
             Integer newBridgeId = bridgeRepository.createBridge(newBridge);
             return newBridgeId;
         } catch (TRexRestException e) {
