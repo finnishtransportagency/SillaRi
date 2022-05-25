@@ -101,27 +101,6 @@ public class ImageController {
         return true;
     }
 
-
-    //todo remove. This is for testing image expiration. Expiration should not remove pics from KTV.
-    //So we dont delete it from S3 but tag it expired,
-    @Operation(summary = "Expire image")
-    @DeleteMapping("/expire")
-    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public boolean expireImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
-        ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deleteImage");
-        try {
-            if (!isSupervisionImageOfSupervisor(id)) {
-                throw new AccessDeniedException("Image not of the user");
-            }
-            // Set image as expired in AWS bucket, delete image from DB
-            supervisionImageService.expireSupervisionImage(id);
-        } finally {
-            serviceMetric.end();
-        }
-        return true;
-    }
-
-
     @Operation(summary = "Delete all supervision images")
     @DeleteMapping("/deletesupervisionimages")
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")

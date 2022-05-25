@@ -6,6 +6,7 @@ import fi.vaylavirasto.sillari.api.rest.error.PDFDownloadException;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.service.SupervisionImageService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.fim.FIMService;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Groups;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Locale;
 
 @RestController
 @Profile({"local", "dev"})
@@ -39,6 +39,8 @@ public class DevToolsController {
     FIMService fimService;
     @Autowired
     SupervisionService supervisionService;
+    @Autowired
+    SupervisionImageService imageService;
 
     @RequestMapping(value = "/resttest", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
@@ -81,6 +83,19 @@ public class DevToolsController {
 
         } catch (IOException e) {
             throw new PDFDownloadException("Error downloading pdf file", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(summary = "Expire image")
+    @DeleteMapping("/expire")
+    public boolean expireImage(@RequestParam Integer id) {
+        try {
+            // Set image as expired in AWS bucket, delete image from DB
+            imageService.expireSupervisionImage(id);
+            return true;
+        } catch (IOException e) {
+            logger.error("Expire image failed", e);
+            return false;
         }
     }
 

@@ -75,13 +75,11 @@ public class SupervisionImageService {
         s3FileService.saveFile(decodedString, awss3Client.getPhotoBucketName(), image.getSupervisionId(), image.getObjectKey(), image.getKtvObjectId(), image.getFilename(), contentType);
     }
 
-    //todo remove. This is for testing image expiration. Expiration should not remove pics from KTV.
-    //So we dont delete it from S3 but tag it expired,
     public void expireSupervisionImage(Integer imageId) throws IOException {
         SupervisionImageModel image = getSupervisionImage(imageId);
-
+        // Set image as expired in AWS bucket (or delete it from local filesystem)
         s3FileService.expireFile(awss3Client.getPhotoBucketName(), image.getObjectKey(), image.getFilename());
-
+        // Delete image from DB
         supervisionImageRepository.deleteSupervisionImage(imageId);
     }
 
