@@ -8,7 +8,6 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -73,15 +72,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handleCustomException(ex.getStatusCode(), ex.getMessage());
     }
 
-    @ExceptionHandler(LeluPdfUploadException.class)
-    public ResponseEntity<Object> leluPermitPdfUploadException(LeluPdfUploadException ex) {
-        logger.error("LeluPermitPdfUploadException 'reason':'{}'", ex.getMessage());
+    @ExceptionHandler(PDFUploadException.class)
+    public ResponseEntity<Object> pdfUploadException(PDFUploadException ex) {
+        logger.error("PDFUploadException 'reason':'{}'", ex.getMessage());
         return handleCustomException(ex.getStatusCode(), ex.getMessage());
     }
 
-    @ExceptionHandler(LeluPdfDownloadException.class)
-    public ResponseEntity<Object> leluPermitPdfDownloadException(LeluPdfDownloadException ex) {
-        logger.error("LeluPdfDownloadException 'reason':'{}'", ex.getMessage());
+    @ExceptionHandler(PDFDownloadException.class)
+    public ResponseEntity<Object> pdfDownloadException(PDFDownloadException ex) {
+        logger.error("PDFDownloadException 'reason':'{}'", ex.getMessage());
         return handleCustomException(ex.getStatusCode(), ex.getMessage());
     }
 

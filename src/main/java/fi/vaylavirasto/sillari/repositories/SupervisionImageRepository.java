@@ -24,8 +24,8 @@ public class SupervisionImageRepository {
     @Autowired
     private DSLContext dsl;
 
-    public Integer insertFileIfNotExists(SupervisionImageModel supervisionImage) {
-        Integer existingId = getFileIdByFilename(supervisionImage.getFilename());
+    public Integer insertSupervisionImageIfNotExists(SupervisionImageModel supervisionImage) {
+        Integer existingId = getSupervisionImageIdByFilename(supervisionImage.getFilename());
 
         if (existingId == null || existingId == 0) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
@@ -60,40 +60,33 @@ public class SupervisionImageRepository {
         }
     }
 
-    public SupervisionImageModel getFile(Integer fileId) {
+    public SupervisionImageModel getSupervisionImage(Integer id) {
         return dsl.select().from(TableAlias.supervisionImage)
-                .where(TableAlias.supervisionImage.ID.eq(fileId))
+                .where(TableAlias.supervisionImage.ID.eq(id))
                 .fetchOne(new SupervisionImageMapper());
 
     }
 
-    public String getFileNameByObjectKey(String objectKey) {
-        return dsl.select().from(TableAlias.supervisionImage)
-                .where(TableAlias.supervisionImage.OBJECT_KEY.eq(objectKey))
-                .fetchOne(TableAlias.supervisionImage.FILENAME);
-
-    }
-
-    public Integer getFileIdByFilename(String filename) {
+    public Integer getSupervisionImageIdByFilename(String filename) {
         return dsl.select().from(TableAlias.supervisionImage)
                 .where(TableAlias.supervisionImage.FILENAME.eq(filename))
                 .fetchOne(TableAlias.supervisionImage.ID);
 
     }
 
-    public List<SupervisionImageModel> getFiles(Integer supervisionId) {
+    public List<SupervisionImageModel> getSupervisionImages(Integer supervisionId) {
         return dsl.select().from(TableAlias.supervisionImage)
                 .where(TableAlias.supervisionImage.SUPERVISION_ID.eq(supervisionId))
                 .fetch(new SupervisionImageMapper(true));
     }
 
-    public int deleteFileByImageId(Integer id) {
+    public int deleteSupervisionImage(Integer id) {
         return dsl.delete(TableAlias.supervisionImage)
                 .where(TableAlias.supervisionImage.ID.eq(id))
                 .execute();
     }
 
-    public int deleteFilesBySupervisionId(Integer supervisionId) {
+    public int deleteSupervisionImages(Integer supervisionId) {
         return dsl.delete(TableAlias.supervisionImage)
                 .where(TableAlias.supervisionImage.SUPERVISION_ID.eq(supervisionId))
                 .execute();

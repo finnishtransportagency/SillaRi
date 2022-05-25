@@ -26,8 +26,6 @@ public class SupervisionReportMapper implements RecordMapper<Record, Supervision
         model.setOtherObservationsInfo(record.get(TableAlias.supervisionReport.OTHER_OBSERVATIONS_INFO));
         model.setAdditionalInfo(record.get(TableAlias.supervisionReport.ADDITIONAL_INFO));
         model.setDraft(record.get(TableAlias.supervisionReport.DRAFT));
-        model.setPdfObjectKey(record.get(TableAlias.supervisionReport.PDF_OBJECT_KEY));
-        model.setPdfKtvObjectId(record.get(TableAlias.supervisionReport.PDF_KTV_OBJECT_ID));
         model.setRowCreatedTime(record.get(TableAlias.supervisionReport.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.supervisionReport.ROW_UPDATED_TIME));
         return model;

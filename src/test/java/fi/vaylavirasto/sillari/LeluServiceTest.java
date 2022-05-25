@@ -5,7 +5,7 @@ import fi.vaylavirasto.sillari.api.lelu.permit.*;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
-import fi.vaylavirasto.sillari.service.LeluRouteUploadUtil;
+import fi.vaylavirasto.sillari.util.LeluRouteUploadUtil;
 import fi.vaylavirasto.sillari.service.LeluService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.trex.TRexService;
@@ -53,10 +53,6 @@ public class LeluServiceTest {
     @Mock
     private SupervisionService supervisionService;
     @Mock
-    private SupervisionStatusRepository supervisionStatusRepository;
-    @Mock
-    private SupervisionReportRepository supervisionReportRepository;
-    @Mock
     private AWSS3Client awss3Client;
     @Mock
     private TRexService trexService;
@@ -78,7 +74,7 @@ public class LeluServiceTest {
 
 
     @InjectMocks
-    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository,supervisionStatusRepository, supervisionReportRepository, messageSource, leluRouteUploadUtil, awss3Client, trexService, supervisionService);
+    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository, messageSource, leluRouteUploadUtil, awss3Client, trexService, supervisionService);
 
     @Test
     public void testCreatePermitWithExistingCompany() {
