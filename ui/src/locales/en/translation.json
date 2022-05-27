@@ -242,6 +242,15 @@
       "includesSupervisions": "Includes bridge supervisions",
       "noSupervisions": "Does not include bridge supervisions",
       "addTransportButtonLabel": "Add transport",
+      "transportCount": "Transport times",
+      "showByRoute": "Show by route",
+      "transportCountModal": {
+        "permit": "Permit",
+        "countByRoute": "Transport times by route",
+        "used": "Used",
+        "amount": "Amount in permit",
+        "unlimited": "Unlimited"
+      },
       "filter": {
         "show": "Show",
         "status": {

@@ -7,6 +7,7 @@ import RouteGrid from "./RouteGrid";
 import IPermit from "../../interfaces/IPermit";
 import { actions } from "../../store/rootSlice";
 import { isPermitValid } from "../../utils/validation";
+import TransportCountModal from "./TransportCountModal";
 
 interface PermitAccordionPanelProps {
   permit: IPermit;
@@ -17,16 +18,16 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
   const dispatch = useDispatch();
 
   const [transportFilter, setTransportFilter] = useState<string>("");
+  const [transportCountModalOpen, setTransportCountModalOpen] = useState<boolean>(false);
 
   const { id: permitId } = permit;
 
   return (
     <IonGrid className="ion-no-padding">
-      <IonRow className="ion-margin">
-        <IonCol size="12" size-sm="6" className="ion-padding-bottom ion-text-center">
+      <IonRow className="ion-margin ion-hide-md-up">
+        <IonCol size="12" className="ion-padding-bottom ion-text-center">
           {isPermitValid(permit) && (
             <IonButton
-              className="ion-hide-md-up"
               color="secondary"
               expand="block"
               size="large"
@@ -40,7 +41,15 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
             </IonButton>
           )}
         </IonCol>
-        <IonCol size="12" size-sm="6">
+      </IonRow>
+      <IonRow className="ion-margin ion-align-items-center ion-justify-content-between">
+        <IonCol size="6">
+          <IonText>{`${t("management.companySummary.transportCount")}: `}</IonText>
+          <IonText className="linkText" onClick={() => setTransportCountModalOpen(true)}>
+            {t("management.companySummary.showByRoute")}
+          </IonText>
+        </IonCol>
+        <IonCol size="6">
           <IonGrid className="ion-no-padding">
             <IonRow>
               <IonCol size="4" size-sm="4" className="ion-padding ion-text-right">
@@ -69,6 +78,7 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
           <RouteGrid permit={permit} transportFilter={transportFilter} />
         </IonCol>
       </IonRow>
+      <TransportCountModal isOpen={transportCountModalOpen} setOpen={setTransportCountModalOpen} permit={permit} />
     </IonGrid>
   );
 };
