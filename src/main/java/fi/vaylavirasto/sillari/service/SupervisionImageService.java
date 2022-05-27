@@ -24,8 +24,6 @@ public class SupervisionImageService {
     @Autowired
     SupervisionImageRepository supervisionImageRepository;
 
-    private final DateMapper dateMapper = new DateMapper();
-
     public SupervisionImageModel getSupervisionImage(Integer id) {
         return supervisionImageRepository.getSupervisionImage(id);
     }
@@ -77,7 +75,7 @@ public class SupervisionImageService {
             contentType = "application/octet-stream";
         }
 
-        OffsetDateTime createdTime = dateMapper.stringToOffsetDate(image.getTaken());
+        OffsetDateTime createdTime = DateMapper.stringToOffsetDate(image.getTaken());
         s3FileService.saveFile(decodedString, contentType, awss3Client.getPhotoBucketName(), image.getObjectKey(), image.getKtvObjectId(), image.getFilename(), createdTime, image.getSupervisionId());
     }
 

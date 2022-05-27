@@ -1,10 +1,10 @@
 package fi.vaylavirasto.sillari.repositories;
 
+import fi.vaylavirasto.sillari.mapper.SupervisionImageMapper;
+import fi.vaylavirasto.sillari.model.Sequences;
+import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.util.DateMapper;
 import fi.vaylavirasto.sillari.util.ObjectKeyUtil;
-import fi.vaylavirasto.sillari.mapper.SupervisionImageMapper;
-import fi.vaylavirasto.sillari.model.SupervisionImageModel;
-import fi.vaylavirasto.sillari.model.Sequences;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Repository
@@ -25,13 +24,11 @@ public class SupervisionImageRepository {
     @Autowired
     private DSLContext dsl;
 
-    private final DateMapper dateMapper = new DateMapper();
-
     public Integer insertSupervisionImageIfNotExists(SupervisionImageModel supervisionImage) {
         Integer existingId = getSupervisionImageIdByFilename(supervisionImage.getFilename());
 
         if (existingId == null || existingId == 0) {
-            LocalDateTime taken = dateMapper.stringToLocalDate(supervisionImage.getTaken());
+            LocalDateTime taken = DateMapper.stringToLocalDate(supervisionImage.getTaken());
 
             return dsl.transactionResult(configuration -> {
                 DSLContext ctx = DSL.using(configuration);

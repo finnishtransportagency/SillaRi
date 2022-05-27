@@ -113,7 +113,8 @@ public class S3FileService {
         dto.setPermitNumber(permit.getPermitNumber());
         dto.setSupervisionStartedTime(supervision.getStartedTime());
         dto.setSupervisionFinishedTime(supervision.getFinishedTime());
-        if (report != null) {
+        // Add exceptional info only if report is ready
+        if (report != null && supervision.getCurrentStatus() != null && supervision.getCurrentStatus().getStatus().equals(SupervisionStatusType.REPORT_SIGNED)) {
             boolean exceptional = report.getAnomalies() || !report.getSpeedLimitOk() || !report.getDrivingLineOk();
             dto.setSupervisionExceptional(exceptional);
         }
