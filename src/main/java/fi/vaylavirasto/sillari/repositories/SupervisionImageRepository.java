@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.repositories;
 
+import fi.vaylavirasto.sillari.util.DateMapper;
 import fi.vaylavirasto.sillari.util.ObjectKeyUtil;
 import fi.vaylavirasto.sillari.mapper.SupervisionImageMapper;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
@@ -24,12 +25,13 @@ public class SupervisionImageRepository {
     @Autowired
     private DSLContext dsl;
 
+    private final DateMapper dateMapper = new DateMapper();
+
     public Integer insertSupervisionImageIfNotExists(SupervisionImageModel supervisionImage) {
         Integer existingId = getSupervisionImageIdByFilename(supervisionImage.getFilename());
 
         if (existingId == null || existingId == 0) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
-            LocalDateTime taken = LocalDateTime.parse(supervisionImage.getTaken(), formatter);
+            LocalDateTime taken = dateMapper.stringToLocalDate(supervisionImage.getTaken());
 
             return dsl.transactionResult(configuration -> {
                 DSLContext ctx = DSL.using(configuration);

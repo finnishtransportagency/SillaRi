@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.service;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.repositories.SupervisionImageRepository;
+import fi.vaylavirasto.sillari.util.DateMapper;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
 import java.util.Base64;
 import java.util.List;
 
@@ -21,6 +23,8 @@ public class SupervisionImageService {
     S3FileService s3FileService;
     @Autowired
     SupervisionImageRepository supervisionImageRepository;
+
+    private final DateMapper dateMapper = new DateMapper();
 
     public SupervisionImageModel getSupervisionImage(Integer id) {
         return supervisionImageRepository.getSupervisionImage(id);
@@ -72,7 +76,9 @@ public class SupervisionImageService {
         if (contentType == null) {
             contentType = "application/octet-stream";
         }
-        s3FileService.saveFile(decodedString, awss3Client.getPhotoBucketName(), image.getSupervisionId(), image.getObjectKey(), image.getKtvObjectId(), image.getFilename(), contentType);
+
+        OffsetDateTime createdTime = dateMapper.stringToOffsetDate(image.getTaken());
+        s3FileService.saveFile(decodedString, contentType, awss3Client.getPhotoBucketName(), image.getObjectKey(), image.getKtvObjectId(), image.getFilename(), createdTime, image.getSupervisionId());
     }
 
     public void expireSupervisionImage(Integer imageId) throws IOException {

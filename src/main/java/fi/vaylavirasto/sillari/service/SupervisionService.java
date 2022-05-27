@@ -299,7 +299,7 @@ public class SupervisionService {
         logger.debug("save pdf for supervision: " + pdfModel.getSupervisionId());
 
         try {
-            boolean success = s3FileService.saveFile(reportPDF, awss3Client.getSupervisionBucketName(), pdfModel.getSupervisionId(), pdfModel.getObjectKey(), pdfModel.getKtvObjectId(), pdfModel.getFilename(), "application/pdf");
+            boolean success = s3FileService.saveFile(reportPDF, "application/pdf", awss3Client.getSupervisionBucketName(), pdfModel.getObjectKey(), pdfModel.getKtvObjectId(), pdfModel.getFilename(), pdfModel.getRowCreatedTime(), pdfModel.getSupervisionId());
             if (!success) {
                 throw new PDFUploadException("Error uploading file to AWS.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
