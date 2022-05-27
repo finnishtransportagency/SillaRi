@@ -8,6 +8,10 @@ import IPermit from "../../interfaces/IPermit";
 import { actions } from "../../store/rootSlice";
 import { isPermitValid } from "../../utils/validation";
 import TransportCountModal from "./TransportCountModal";
+import { useQuery } from "react-query";
+import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
+import { onRetry } from "../../utils/backendData";
+import IRouteTransport from "../../interfaces/IRouteTransport";
 
 interface PermitAccordionPanelProps {
   permit: IPermit;
@@ -21,6 +25,14 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
   const [transportCountModalOpen, setTransportCountModalOpen] = useState<boolean>(false);
 
   const { id: permitId } = permit;
+
+  const { data: routeTransportList } = useQuery(
+    ["getRouteTransportsOfPermit", Number(permitId)],
+    () => getRouteTransportsOfPermit(Number(permitId), dispatch),
+    {
+      retry: onRetry,
+    }
+  );
 
   return (
     <IonGrid className="ion-no-padding">
@@ -75,10 +87,15 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
 
       <IonRow className="ion-margin">
         <IonCol>
-          <RouteGrid permit={permit} transportFilter={transportFilter} />
+          <RouteGrid permit={permit} routeTransports={routeTransportList as IRouteTransport[]} transportFilter={transportFilter} />
         </IonCol>
       </IonRow>
-      <TransportCountModal isOpen={transportCountModalOpen} setOpen={setTransportCountModalOpen} permit={permit} />
+      <TransportCountModal
+        isOpen={transportCountModalOpen}
+        setOpen={setTransportCountModalOpen}
+        permit={permit}
+        routeTransports={routeTransportList as IRouteTransport[]}
+      />
     </IonGrid>
   );
 };

@@ -16,31 +16,20 @@ import {
 import { useTranslation } from "react-i18next";
 import close from "../../theme/icons/close.svg";
 import IPermit from "../../interfaces/IPermit";
-import { useQuery } from "react-query";
-import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
-import { onRetry } from "../../utils/backendData";
-import { useDispatch } from "react-redux";
 import "./TransportCountModal.css";
+import IRouteTransport from "../../interfaces/IRouteTransport";
 
 interface TransportCountModalProps {
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   permit: IPermit;
+  routeTransports: IRouteTransport[];
 }
 
-const TransportCountModal = ({ isOpen, setOpen, permit }: TransportCountModalProps): JSX.Element => {
+const TransportCountModal = ({ isOpen, setOpen, permit, routeTransports = [] }: TransportCountModalProps): JSX.Element => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
 
-  const { id: permitId, permitNumber, routes = [] } = permit;
-
-  const { data: routeTransportList } = useQuery(
-    ["getRouteTransportsOfPermit", Number(permitId)],
-    () => getRouteTransportsOfPermit(Number(permitId), dispatch),
-    {
-      retry: onRetry,
-    }
-  );
+  const { permitNumber, routes = [] } = permit;
 
   const closeModal = () => {
     setOpen(false);
@@ -71,8 +60,8 @@ const TransportCountModal = ({ isOpen, setOpen, permit }: TransportCountModalPro
           {routes.map((route) => {
             const { id, name = "", transportCount = 0 } = route || {};
             const key = `route_${id}`;
-            const transports = routeTransportList
-              ? routeTransportList.filter((transport) => {
+            const transports = routeTransports
+              ? routeTransports.filter((transport) => {
                   const { route: transportRoute } = transport || {};
                   const { id: routeId = -1 } = transportRoute || {};
                   return id === routeId;
