@@ -40,9 +40,8 @@ const TransportCountModal = ({ isOpen, setOpen, permit, routeTransports = [] }: 
       <IonHeader>
         <IonToolbar color="light">
           <IonTitle class="headingText">
-            <IonText>{t("management.companySummary.transportCountModal.countByRoute")}</IonText>
+            <IonText>{t("management.companySummary.transportCountModal.title", { permit: permitNumber })}</IonText>
           </IonTitle>
-          <IonText slot="end">{`${t("management.companySummary.transportCountModal.permit")}: ${permitNumber}`}</IonText>
           <IonButtons slot="end">
             <IonButton onClick={() => closeModal()}>
               <IonIcon className="otherIconLarge" icon={close} />
@@ -54,7 +53,7 @@ const TransportCountModal = ({ isOpen, setOpen, permit, routeTransports = [] }: 
         <IonGrid className="transportCountGrid ion-margin ion-no-padding">
           <IonRow className="lightBackground ion-padding ion-justify-content-between">
             <IonCol size="6">{t("management.companySummary.route.route").toUpperCase()}</IonCol>
-            <IonCol>{t("management.companySummary.transportCountModal.used").toUpperCase()}</IonCol>
+            <IonCol size="3">{t("management.companySummary.transportCountModal.used").toUpperCase()}</IonCol>
             <IonCol>{t("management.companySummary.transportCountModal.amount").toUpperCase()}</IonCol>
           </IonRow>
           {routes.map((route) => {
@@ -71,7 +70,7 @@ const TransportCountModal = ({ isOpen, setOpen, permit, routeTransports = [] }: 
             return (
               <IonRow key={key} className="ion-padding">
                 <IonCol size="6">{name}</IonCol>
-                <IonCol>{transports.length}</IonCol>
+                <IonCol size="3">{transports.length}</IonCol>
                 <IonCol>{transportCount !== 0 ? transportCount : t("management.companySummary.transportCountModal.unlimited")}</IonCol>
               </IonRow>
             );

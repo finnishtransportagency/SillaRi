@@ -245,8 +245,7 @@
       "transportCount": "Transport times",
       "showByRoute": "Show by route",
       "transportCountModal": {
-        "permit": "Permit",
-        "countByRoute": "Transport times by route",
+        "title": "Transport times of permit {{permit}} by route ",
         "used": "Used",
         "amount": "Amount in permit",
         "unlimited": "Unlimited"

@@ -245,8 +245,7 @@
       "transportCount": "Kuljetuskerrat",
       "showByRoute": "Näytä reittikohtaisesti",
       "transportCountModal": {
-        "permit": "Lupa",
-        "countByRoute": "Reittikohtaiset kuljetuskerrat",
+        "title": "Luvan {{permit}} reittikohtaiset kuljetuskerrat",
         "used": "Käytetty",
         "amount": "Määrä luvalla",
         "unlimited": "Rajoittamaton"
