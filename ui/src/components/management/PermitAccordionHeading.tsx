@@ -1,13 +1,10 @@
 import React, { ForwardedRef, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import IPermit from "../../interfaces/IPermit";
 import { actions } from "../../store/rootSlice";
-import { onRetry } from "../../utils/backendData";
-import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
 import { isPermitValid } from "../../utils/validation";
 import PermitLinkText from "../PermitLinkText";
@@ -23,34 +20,16 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
 
   const { id: permitId, validStartDate, validEndDate, routes = [] } = permit;
 
-  const { data: routeTransportList } = useQuery(
-    ["getRouteTransportsOfPermit", Number(permitId)],
-    () => getRouteTransportsOfPermit(Number(permitId), dispatch),
-    {
-      retry: onRetry,
-    }
-  );
-
-  const doneTransportsCount = routeTransportList ? routeTransportList.length : 0;
-
-  const totalTransportCount =
-    permit.routes && permit.routes.length > 0
-      ? permit.routes.map((route) => (route.transportCount ? route.transportCount : 0)).reduce((prevCount, count) => prevCount + count)
-      : 0;
-
   const includesSupervisions = permitIncludesSupervisions(routes);
 
   return (
     <IonGrid className="ion-no-padding" ref={ref}>
-      <IonRow className="ion-margin ion-align-items-center">
-        <IonCol size="12" size-md="8">
+      <IonRow className="ion-margin-vertical ion-align-items-center ion-justify-content-between">
+        <IonCol size="12" size-md="6">
           <IonGrid className="ion-no-padding">
             <IonRow>
               <IonCol>
                 <PermitLinkText permit={permit} className="headingText" />
-              </IonCol>
-              <IonCol>
-                <IonText>{`${t("management.companySummary.transports")}: ${doneTransportsCount}/${totalTransportCount}`}</IonText>
               </IonCol>
             </IonRow>
             <IonRow>
@@ -70,12 +49,12 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
           </IonGrid>
         </IonCol>
 
-        <IonCol size="12" size-md="4" className="ion-hide-md-down">
+        <IonCol size="12" size-md="auto" className="ion-hide-md-down">
           {isPermitValid(permit) && (
             <IonButton
               color="secondary"
               // expand="block"
-              size="large"
+              size="default"
               routerLink={`/management/addTransport/${permitId}`}
               onClick={(evt) => {
                 dispatch({ type: actions.SET_MANAGEMENT_PERMIT_ID, payload: permitId });
