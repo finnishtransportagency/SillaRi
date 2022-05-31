@@ -1,4 +1,4 @@
-package fi.vaylavirasto.sillari.service;
+package fi.vaylavirasto.sillari.util;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

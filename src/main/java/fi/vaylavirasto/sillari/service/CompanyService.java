@@ -24,6 +24,8 @@ public class CompanyService {
     @Autowired
     RouteRepository routeRepository;
     @Autowired
+    RouteBridgeRepository routeBridgeRepository;
+    @Autowired
     RouteTransportRepository transportRepository;
     @Autowired
     RouteTransportStatusRepository transportStatusRepository;
@@ -59,6 +61,14 @@ public class CompanyService {
                     routes.stream().filter(r -> permitModel.getId().equals(r.getPermitId())).collect(Collectors.toList())
                 );
             }
+
+            if (routes.size() > 0) {
+                // Get routeBridges without bridge details, needed only for checking routeBridge count
+                List<Integer> routeIds = routes.stream().map(RouteModel::getId).collect(Collectors.toList());
+                Map<Integer, List<RouteBridgeModel>> routeBridgeMap = routeBridgeRepository.getRouteBridges(routeIds);
+                routes.forEach(route -> route.setRouteBridges(routeBridgeMap.get(route.getId())));
+            }
+
         }
         return company;
     }

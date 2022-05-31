@@ -1,6 +1,6 @@
 sillari:
   wmts:
-    url: https://oag.vayla.fi/rasteripalvelu-mml/wmts/maasto/1.0.0/
+    url: https://testiapi.vayla.fi/rasteripalvelu-mml/wmts/maasto/1.0.0/
   geoserver:
     url: http://sillari-geoserver:8080/geoserver/
   lelu:
@@ -31,6 +31,10 @@ logging:
   config: classpath:log4j2-local.xml
 server:
   port: 8080
+  compression:
+    enabled: true
+    mime-types: application/json
+    min-response-size: 1024
   servlet: # 2.0
     context-path: /api
 management:

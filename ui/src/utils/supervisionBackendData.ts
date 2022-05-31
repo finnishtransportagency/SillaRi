@@ -1,4 +1,5 @@
 import type { Dispatch } from "redux";
+import moment from "moment";
 import { getOrigin } from "./request";
 import { NETWORK_RESPONSE_NOT_OK } from "./constants";
 import { actions } from "../store/rootSlice";
@@ -7,7 +8,11 @@ import ISupervision from "../interfaces/ISupervision";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
 import IRouteTransport from "../interfaces/IRouteTransport";
+import ICancelCrossingInput from "../interfaces/ICancelCrossingInput";
+import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
+import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
+import IStartCrossingInput from "../interfaces/IStartCrossingInput";
 
 export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICompanyTransports[]> => {
   try {
@@ -137,10 +142,14 @@ export const updateConformsToPermit = async (updateRequest: ISupervision, dispat
   }
 };
 
-export const startSupervision = async (report: ISupervisionReport, dispatch: Dispatch): Promise<ISupervision> => {
+export const startSupervision = async (startCrossingInput: IStartCrossingInput, dispatch: Dispatch): Promise<ISupervision> => {
   try {
-    console.log("StartSupervision", report);
+    console.log("StartSupervision", startCrossingInput);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { startSupervision: false } });
+
+    // The time can't be used as a parameter in this case since there is a post body, so include it in the body instead
+    const { initialReport, startTime } = startCrossingInput;
+    const report = { ...initialReport, startTime };
 
     const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision`, {
       method: "POST",
@@ -163,17 +172,23 @@ export const startSupervision = async (report: ISupervisionReport, dispatch: Dis
   }
 };
 
-export const cancelSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
+export const cancelSupervision = async (cancelCrossingInput: ICancelCrossingInput, dispatch: Dispatch): Promise<ISupervision> => {
   try {
-    console.log("CancelSupervision", supervisionId);
+    console.log("CancelSupervision", cancelCrossingInput);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { cancelSupervision: false } });
 
-    const cancelSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/cancelsupervision?supervisionId=${supervisionId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const { supervisionId, cancelTime } = cancelCrossingInput;
+    const time = encodeURIComponent(moment(cancelTime).format());
+
+    const cancelSupervisionResponse = await fetch(
+      `${getOrigin()}/api/supervision/cancelsupervision?supervisionId=${supervisionId}&cancelTime=${time}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (cancelSupervisionResponse.ok) {
       const cancelledSupervision = (await cancelSupervisionResponse.json()) as Promise<ISupervision>;
@@ -193,10 +208,15 @@ export const denyCrossing = async (denyCrossingInput: IDenyCrossingInput, dispat
     console.log("DenyCrossing", denyCrossingInput);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { denyCrossing: false } });
 
-    const { supervisionId, denyReason } = denyCrossingInput;
-    const denyCrossingResponse = await fetch(`${getOrigin()}/api/supervision/denycrossing?supervisionId=${supervisionId}&denyReason=${denyReason}`, {
-      method: "POST",
-    });
+    const { supervisionId, denyReason, denyTime } = denyCrossingInput;
+    const time = encodeURIComponent(moment(denyTime).format());
+
+    const denyCrossingResponse = await fetch(
+      `${getOrigin()}/api/supervision/denycrossing?supervisionId=${supervisionId}&denyReason=${denyReason}&denyTime=${time}`,
+      {
+        method: "POST",
+      }
+    );
 
     if (denyCrossingResponse.ok) {
       const supervision = (await denyCrossingResponse.json()) as Promise<ISupervision>;
@@ -211,17 +231,23 @@ export const denyCrossing = async (denyCrossingInput: IDenyCrossingInput, dispat
   }
 };
 
-export const finishSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
+export const finishSupervision = async (finishCrossingInput: IFinishCrossingInput, dispatch: Dispatch): Promise<ISupervision> => {
   try {
-    console.log("FinishSupervision", supervisionId);
+    console.log("FinishSupervision", finishCrossingInput);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { finishSupervision: false } });
 
-    const finishSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/finishsupervision?supervisionId=${supervisionId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const { supervisionId, finishTime } = finishCrossingInput;
+    const time = encodeURIComponent(moment(finishTime).format());
+
+    const finishSupervisionResponse = await fetch(
+      `${getOrigin()}/api/supervision/finishsupervision?supervisionId=${supervisionId}&finishTime=${time}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (finishSupervisionResponse.ok) {
       const finishedSupervision = (await finishSupervisionResponse.json()) as Promise<ISupervision>;
@@ -236,17 +262,23 @@ export const finishSupervision = async (supervisionId: number, dispatch: Dispatc
   }
 };
 
-export const completeSupervisions = async (supervisionIds: string[], dispatch: Dispatch): Promise<void> => {
+export const completeSupervisions = async (completeCrossingInput: ICompleteCrossingInput, dispatch: Dispatch): Promise<void> => {
   try {
-    console.log("CompleteSupervisions", supervisionIds);
+    console.log("CompleteSupervisions", completeCrossingInput);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { completeSupervisions: false } });
 
-    const completeSupervisionsResponse = await fetch(`${getOrigin()}/api/supervision/completesupervisions?supervisionIds=${supervisionIds.join()}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const { supervisionIds, completeTime } = completeCrossingInput;
+    const time = encodeURIComponent(moment(completeTime).format());
+
+    const completeSupervisionsResponse = await fetch(
+      `${getOrigin()}/api/supervision/completesupervisions?supervisionIds=${supervisionIds.join()}&completeTime=${time}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (completeSupervisionsResponse.ok) {
       // TODO - check if any data should be returned

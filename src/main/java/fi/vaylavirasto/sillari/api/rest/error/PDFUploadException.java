@@ -8,10 +8,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 @NoArgsConstructor
-public class LeluPdfDownloadException extends Exception {
+public class PDFUploadException extends Exception {
     private HttpStatus statusCode;
-
-    public LeluPdfDownloadException(String message, HttpStatus statusCode)  {
+    public PDFUploadException(String message, HttpStatus statusCode)  {
         super(message);
         this.statusCode = statusCode;
     }

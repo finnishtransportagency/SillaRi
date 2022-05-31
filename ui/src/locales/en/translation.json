@@ -239,7 +239,17 @@
       "permitListTitle": "Transport permits and management",
       "transports": "Transports",
       "supervision": "Supervision",
+      "includesSupervisions": "Includes bridge supervisions",
+      "noSupervisions": "Does not include bridge supervisions",
       "addTransportButtonLabel": "Add transport",
+      "transportCount": "Transport times",
+      "showByRoute": "Show by route",
+      "transportCountModal": {
+        "title": "Transport times of permit {{permit}} by route ",
+        "used": "Used",
+        "amount": "Amount in permit",
+        "unlimited": "Unlimited"
+      },
       "filter": {
         "show": "Show",
         "status": {
@@ -424,7 +434,7 @@
   },
   "sendingListOfflineNotice": {
     "title": "Sending is not possible in offline mode",
-    "notice": "When the network connection is restored, login to SillaRi and send the supervision reports."
+    "notice": "You can send the supervision reports when the network connection is restored."
   },
   "unsentOffline": {
     "title": "Unsent reports",

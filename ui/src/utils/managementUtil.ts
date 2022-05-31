@@ -5,6 +5,7 @@ import { TransportStatus } from "./constants";
 import IRouteTransportStatus from "../interfaces/IRouteTransportStatus";
 import moment from "moment";
 import { Moment } from "moment/moment";
+import IRoute from "../interfaces/IRoute";
 
 export const constructTimesForComparison = (departureTime: Date | undefined, supervisions: ISupervision[], currentIndex: number): Date[] => {
   const dates: Date[] = [];
@@ -118,4 +119,11 @@ export const sortTransports = (transports: IRouteTransport[], sortOrder: ISortOr
   if (!ascending) {
     transports.reverse();
   }
+};
+
+export const permitIncludesSupervisions = (routes: IRoute[]): boolean => {
+  return routes.some((route) => {
+    const { routeBridges = [] } = route || {};
+    return routeBridges && routeBridges.length > 0;
+  });
 };
