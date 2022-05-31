@@ -12,12 +12,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -120,7 +122,7 @@ public class SupervisionController {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            SupervisionModel supervisionModel = supervisionService.startSupervision(report, user);
+            SupervisionModel supervisionModel = supervisionService.startSupervision(report, report.getStartTime(), user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -130,14 +132,15 @@ public class SupervisionController {
     @Operation(summary = "Cancel supervision, delete supervision report")
     @PostMapping(value = "/cancelsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> cancelSupervision(@RequestParam Integer supervisionId) {
+    public ResponseEntity<?> cancelSupervision(@RequestParam Integer supervisionId,
+                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime cancelTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "cancelSupervision");
         try {
             if (!canSupervisorUpdateSupervision(supervisionId)) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            SupervisionModel supervisionModel = supervisionService.cancelSupervision(supervisionId, user);
+            SupervisionModel supervisionModel = supervisionService.cancelSupervision(supervisionId, cancelTime, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -147,14 +150,15 @@ public class SupervisionController {
     @Operation(summary = "Deny crossing")
     @PostMapping(value = "/denycrossing", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> denyCrossing(@RequestParam Integer supervisionId, @RequestParam String denyReason) {
+    public ResponseEntity<?> denyCrossing(@RequestParam Integer supervisionId, @RequestParam String denyReason,
+                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime denyTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "denyCrossing");
         try {
             if (!canSupervisorUpdateSupervision(supervisionId)) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            SupervisionModel supervisionModel = supervisionService.denyCrossing(supervisionId, denyReason, user);
+            SupervisionModel supervisionModel = supervisionService.denyCrossing(supervisionId, denyReason, denyTime, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -164,14 +168,15 @@ public class SupervisionController {
     @Operation(summary = "Finish supervision")
     @PostMapping(value = "/finishsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> finishSupervision(@RequestParam Integer supervisionId) {
+    public ResponseEntity<?> finishSupervision(@RequestParam Integer supervisionId,
+                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime finishTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "finishSupervision");
         try {
             if (!canSupervisorUpdateSupervision(supervisionId)) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            SupervisionModel supervisionModel = supervisionService.finishSupervision(supervisionId, user);
+            SupervisionModel supervisionModel = supervisionService.finishSupervision(supervisionId, finishTime, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -181,7 +186,8 @@ public class SupervisionController {
     @Operation(summary = "Complete supervisions")
     @PostMapping(value = "/completesupervisions", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> completeSupervisions(@RequestParam List<Integer> supervisionIds) {
+    public ResponseEntity<?> completeSupervisions(@RequestParam List<Integer> supervisionIds,
+                                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime completeTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "completeSupervisions");
         try {
             if (supervisionIds.stream().anyMatch(id->!isSendingListSupervisionOfSupervisor(id))){
@@ -190,7 +196,7 @@ public class SupervisionController {
             SillariUser user = uiService.getSillariUser();
 
             if (supervisionIds != null && !supervisionIds.isEmpty()) {
-                supervisionIds.forEach(supervisionId -> supervisionService.completeSupervision(supervisionId, user));
+                supervisionIds.forEach(supervisionId -> supervisionService.completeSupervision(supervisionId, completeTime, user));
 
                 // Don't wait for pdf generation before returning the response
                 ExecutorService executor = Executors.newWorkStealingPool();

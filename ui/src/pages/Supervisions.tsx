@@ -73,6 +73,8 @@ const Supervisions = (): JSX.Element => {
         titleStyle="headingBoldText ion-text-center"
         somethingFailed={isFailed.getCompanyTransportsList || isFailed.getSupervisionList}
         includeSendingList
+        includeOfflineBanner
+        // includeUnsentOfflineCheck={onlineManager.isOnline()}
       />
       <IonSegment className="mainSegment" value={currentSegment} onIonChange={changeSegment}>
         <IonSegmentButton className="mainSegmentButton" value="0">

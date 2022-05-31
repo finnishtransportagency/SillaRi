@@ -25,4 +25,5 @@ export default interface ISupervision {
   finishedTime?: Date; // Not in DB, first FINISHED status timestamp filtered from statusHistory
   report?: ISupervisionReport;
   images?: ISupervisionImage[];
+  savedOffline?: boolean; // Only used client-side, not in backend model
 }

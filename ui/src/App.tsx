@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
-import { IonApp, IonButton, IonContent, setupIonicReact } from "@ionic/react";
+import { IonApp, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { Storage as IonicStorage } from "@ionic/storage";
+import { Drivers, Storage as IonicStorage } from "@ionic/storage";
 import { withTranslation } from "react-i18next";
 import { onlineManager, QueryClient, QueryClientProvider } from "react-query";
 import { persistQueryClient } from "react-query/persistQueryClient-experimental";
@@ -22,6 +22,7 @@ import AddTransport from "./pages/management/AddTransport";
 import TransportCodeInput from "./pages/transport/TransportCodeInput";
 import Transport from "./pages/transport/Transport";
 import TransportDetail from "./pages/management/TransportDetail";
+import AppCheck from "./components/AppCheck";
 import SidebarMenu from "./components/SidebarMenu";
 import AccessDenied from "./pages/AccessDenied";
 import IUserData from "./interfaces/IUserData";
@@ -62,7 +63,10 @@ const queryClient = new QueryClient({
 // The maxAge value is the same as the cacheTime value so garbage collection occurs at the expected time
 // NOTE 2: using localStorage doesn't work well with supervision images due to size limitations and performance issues
 // So use an AsyncStorage wrapper around Ionic Storage to store the data in IndexedDB instead, which solves these issues
-const store = new IonicStorage();
+const store = new IonicStorage({
+  name: "_ionicstorage",
+  driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
+});
 store.create();
 const asyncStoragePersistor = createAsyncStoragePersistor({ storage: IonicAsyncStorage(store) });
 if (onlineManager.isOnline()) {
@@ -77,9 +81,11 @@ persistQueryClient({
 
 const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
-  const [homePage, setHomePage] = useState<string>("/supervisions");
+  const [homePage, setHomePage] = useState<string>("");
   const [errorCode, setErrorCode] = useState<number>(0);
   const [version, setVersion] = useState<string>("-");
+  const [isInitialisedOffline, setInitialisedOffline] = useState<boolean>(false);
+  const [isOkToContinue, setOkToContinue] = useState<boolean>(false);
   const dispatch = useDispatch();
 
   const {
@@ -141,7 +147,14 @@ const App: React.FC = () => {
         setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
       }
     };
-    fetchUserData();
+
+    // Only fetch user data from the backend (and login if necessary) when online
+    // When offline, the user data will be set on this page later via AppCheck.tsx
+    if (onlineManager.isOnline()) {
+      fetchUserData();
+    } else {
+      setInitialisedOffline(true);
+    }
 
     // Fetch the user data on first render only, using a workaround utilising useEffect with empty dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -167,31 +180,6 @@ const App: React.FC = () => {
     [userData]
   );
 
-  const renderError = (code: number) => {
-    // 401 - Returned by Väylä access control.
-    // 403 - Returned by SillaRi backend if user does not have SillaRi roles.
-    return (
-      <>
-        {code === 401 ? (
-          <div>
-            <h1>Pääsy estetty</h1>
-            <p>Kirjaudu sisään käyttääksesi sovellusta.</p>
-            <IonButton color="primary" expand="block" size="large" onClick={logoutFromApp}>
-              Kirjaudu sisään
-            </IonButton>
-          </div>
-        ) : code === 403 ? (
-          <div>
-            <h1>Pääsy estetty</h1>
-            <p>Sinulla ei ole oikeuksia käyttää SillaRi-sovellusta.</p>
-          </div>
-        ) : (
-          <div>Käsittelemätön virhetilanne: {code}</div>
-        )}
-      </>
-    );
-  };
-
   useEffect(() => {
     const prefetchData = async () => {
       // Only the supervisions app allows offline use, so only prefetch data for those users
@@ -201,7 +189,11 @@ const App: React.FC = () => {
         await prefetchOfflineData(queryClient, dispatch);
       }
     };
-    prefetchData();
+
+    // Only prefetch data when online
+    if (onlineManager.isOnline()) {
+      prefetchData();
+    }
   }, [userHasRole, dispatch]);
 
   const statusCode = failedStatus.getUserData > 0 ? failedStatus.getUserData : errorCode;
@@ -209,11 +201,18 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <IonApp>
-        {!userData ? (
-          <IonContent className="ion-padding">{statusCode >= 400 ? <>{renderError(statusCode)}</> : <div>Starting app...</div>}</IonContent>
+        {(!userData || homePage.length === 0 || isInitialisedOffline) && !isOkToContinue ? (
+          <AppCheck
+            statusCode={statusCode}
+            isInitialisedOffline={isInitialisedOffline}
+            setOkToContinue={setOkToContinue}
+            setUserData={setUserData}
+            setHomePage={setHomePage}
+            logoutFromApp={logoutFromApp}
+          />
         ) : (
           <IonReactRouter>
-            <SidebarMenu roles={userData.roles} version={version} />
+            <SidebarMenu version={version} />
             <IonContent id="MainContent">
               <Switch>
                 <Route exact path="/supervisions">
@@ -275,7 +274,7 @@ const App: React.FC = () => {
                 </Route>
                 <Route exact path="/userinfo">
                   {userHasRole("SILLARI_KULJETTAJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
-                    <UserInfo userData={userData} />
+                    <UserInfo />
                   ) : (
                     <AccessDenied />
                   )}

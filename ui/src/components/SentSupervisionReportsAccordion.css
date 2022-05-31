@@ -2,7 +2,7 @@
   border: none;
 }
 
-.secondaryAccordion .accordion-animated [slot="header"]  {
+.secondaryAccordion .accordion-animated [slot="header"] {
   border: none;
   --background: var(--ion-color-tertiary);
 }

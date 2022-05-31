@@ -10,6 +10,7 @@
       "edit": "Redigera",
       "save": "Spara",
       "send": "Sänd",
+      "close": "Stäng",
       "closeAlert": "(SV) Close alert"
     },
     "answer": {
@@ -35,8 +36,11 @@
       "transports": "Transporter",
       "bridges": "Broar"
     },
+    "noNetwork": "(SV) No network connection",
     "noNetworkNoData": "Data kan inte hämtas, försöker igen...",
-    "loading": "Laddar..."
+    "loading": "Laddar...",
+    "offline": "Offline-tillstånd",
+    "useOffline": "(SV) Use SillaRi in offline mode"
   },
   "map": {
     "attribution": "Material"
@@ -132,9 +136,6 @@
     "crossingInstructions": {
       "title": "Instructioner"
     },
-    "trafficSupervisors": {
-      "title": "Trafikledare"
-    },
     "permitNumber": "Tillståndsnummer",
     "conformsToPermit": "Transporten är lovenlig",
     "startSupervision": "Påbörja övervakningen",
@@ -221,7 +222,8 @@
     "sendSelected": "Sänd de valda",
     "sentOk": "De valda övervakningsrapporterna har sänts",
     "nothingToSend": "Inga övervakningsrapporter att sända",
-    "sentReports": "(SV) Sent supervision reports"
+    "sentReports": "(SV) Sent supervision reports",
+    "offlineSuffix": "Offline"
   },
   "permitPdf": {
     "title": "Transporttillstånd",
@@ -237,7 +239,17 @@
       "permitListTitle": "Transporttillstånd och hantering",
       "transports": "Transporter",
       "supervision": "Övervakning",
-      "addTransportButtonLabel": "Lägg till en transport",
+      "includesSupervisions": "(SV) Sisältää sillanvalvontoja",
+      "noSupervisions": "(SV) Ei sisällä sillanvalvontoja",
+      "addTransportButtonLabel": "Lägg till transport",
+      "transportCount": "(SV) Kuljetuskerrat",
+      "showByRoute": "(SV) Näytä reittikohtaisesti",
+      "transportCountModal": {
+        "title": "(SV) Luvan {{permit}} reittikohtaiset kuljetuskerrat",
+        "used": "(SV) Käytetty",
+        "amount": "(SV) Määrä luvalla",
+        "unlimited": "(SV) Rajoittamaton"
+      },
       "filter": {
         "show": "Visa",
         "status": {
@@ -313,6 +325,7 @@
       "bridgeInfo": {
         "bridge": "Bron",
         "estimatedCrossingTime": "Uppskattad överfartstid",
+        "supervision": "Övervakning",
         "bridgeSupervisors": "Broövervakare",
         "ownSupervisor": "Egen övervakare",
         "contractor": "Underhållsentreprenör",
@@ -321,7 +334,14 @@
         "supervisor1": "Broövervakare (1.)",
         "supervisor2": "stf. broövervakare(2.)",
         "copySupervisor": "Kopiera till alla broar",
-        "noBridges": "(SV) Reitillä ei ole valvottavia siltoja"
+        "noBridges": "(SV) Reitillä ei ole valvottavia siltoja",
+        "report": "(SV) Valvontaraportti",
+        "supervisionStatus": {
+          "in_progress": "(SV) Valvonta käynnissä",
+          "crossing_denied": "Broöverfarten inställd",
+          "finished": "Övervakningen avslutad",
+          "report_signed": "(SV) Raportti valmis"
+        }
       },
       "transportDepartureTime": {
         "header": "Uppskattad avgångstid",
@@ -395,5 +415,33 @@
     },
     "title": "Tillträde beviljas ej!",
     "content": "Du har inte rätten att se den här sidan."
+  },
+  "appCheck": {
+    "accessDenied": "Tillträde beviljas ej",
+    "loginToUse": "(SV) Login to use the application.",
+    "login": "(SV) Login",
+    "noData": "(SV) SillaRi's data cannot be retrieved",
+    "tryAgainLater": "(SV) Try again when the network connection is restored.",
+    "noRights": "(SV) You do not have permission to use the SillaRi application.",
+    "unhandledError": "(SV) Unhandled error condition",
+    "startingApp": "(SV) Starting application..."
+  },
+  "offlineInfo": {
+    "title": "Offline-tillstånd",
+    "info1": "(SV) SillaRi's transports and bridges to be supervised were last updated",
+    "info2": "(SV) You can use SillaRi in offline mode, in which case it is possible to save the bridge supervision report temporarily to this device.",
+    "info3": "(SV) You can sent the supervision report later when the network connection is in use again and you login to SillaRi."
+  },
+  "sendingListOfflineNotice": {
+    "title": "(SV) Sending is not possible in offline mode",
+    "notice": "(SV) You can send the supervision reports when the network connection is restored."
+  },
+  "unsentOffline": {
+    "title": "(SV) Unsent reports",
+    "notice": "(SV) The sending list has unsent supervision reports",
+    "question": "(SV) Do you want to go to the sending list?",
+    "goToSendingList": "(SV) Go to sending list",
+    "continueToMain": "(SV) Continue to SillaRi's main page",
+    "info": "(SV) You can also get to the sending list from the main page."
   }
 }

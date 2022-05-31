@@ -5,6 +5,7 @@ import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
 import { SupervisionStatus, TransportStatus } from "../utils/constants";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import IStartCrossingInput from "../interfaces/IStartCrossingInput";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { getUserData, onRetry } from "../utils/backendData";
 import { startSupervision } from "../utils/supervisionBackendData";
@@ -53,9 +54,9 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
 
   // Set-up mutations for modifying data later
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
-  const supervisionStartMutation = useMutation((initialReport: ISupervisionReport) => startSupervision(initialReport, dispatch), {
+  const supervisionStartMutation = useMutation((startCrossingInput: IStartCrossingInput) => startSupervision(startCrossingInput, dispatch), {
     retry: onRetry,
-    onMutate: async (newData: ISupervisionReport) => {
+    onMutate: async (newData: IStartCrossingInput) => {
       // onMutate fires before the mutation function
 
       // Cancel any outgoing refetches so they don't overwrite the optimistic update below
@@ -66,8 +67,9 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
       queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
         return {
           ...oldData,
-          report: { ...oldData?.report, ...newData },
-          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.IN_PROGRESS },
+          report: { ...oldData?.report, ...newData.initialReport },
+          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.IN_PROGRESS, time: newData.startTime },
+          startedTime: newData.startTime,
         } as ISupervision;
       });
 
@@ -100,7 +102,8 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
       additionalInfo: "",
       draft: true,
     };
-    supervisionStartMutation.mutate(defaultReport);
+    const startCrossingInput: IStartCrossingInput = { initialReport: defaultReport, startTime: new Date() };
+    supervisionStartMutation.mutate(startCrossingInput);
   };
 
   const continueSupervisionClicked = (): void => {

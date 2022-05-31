@@ -42,8 +42,8 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
             const bm = moment(b.taken, DATE_TIME_FORMAT);
             return bm.diff(am, "seconds");
           })
-          .map((image) => {
-            const key = `image_${image.id}`;
+          .map((image, index) => {
+            const key = `image_${index}`;
 
             return (
               <IonCol key={key} size="3">

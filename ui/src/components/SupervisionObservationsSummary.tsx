@@ -31,21 +31,21 @@ const SupervisionObservationsSummary = ({ report }: SupervisionObservationsSumma
         <IonLabel>{t("supervision.summary.observations").toUpperCase()}</IonLabel>
       </IonItem>
 
-      <IonItem>
+      <IonItem lines="full">
         <IonLabel className="headingText">{t("supervision.summary.drivingLine")}</IonLabel>
         <IonLabel>
           <IonLabel>{drivingLineOk ? t("supervision.summary.approved") : t("supervision.summary.notApproved")}</IonLabel>
           <IonLabel>{drivingLineOk ? "" : drivingLineInfo}</IonLabel>
         </IonLabel>
       </IonItem>
-      <IonItem>
+      <IonItem lines="full">
         <IonLabel className="headingText">{t("supervision.summary.speedLimit")}</IonLabel>
         <IonLabel>
           <IonLabel>{speedLimitOk ? t("supervision.summary.approved") : t("supervision.summary.notApproved")}</IonLabel>
           <IonLabel>{speedLimitOk ? "" : speedLimitInfo}</IonLabel>
         </IonLabel>
       </IonItem>
-      <IonItem>
+      <IonItem lines="full">
         <IonLabel className="headingText">{t("supervision.summary.anomalies")}</IonLabel>
         <IonLabel>
           {!anomalies ? (
@@ -62,7 +62,7 @@ const SupervisionObservationsSummary = ({ report }: SupervisionObservationsSumma
         </IonLabel>
       </IonItem>
 
-      <IonItem>
+      <IonItem lines="full">
         <IonLabel className="headingText">{t("supervision.summary.additionalInfo")}</IonLabel>
         <IonLabel>{additionalInfo}</IonLabel>
       </IonItem>

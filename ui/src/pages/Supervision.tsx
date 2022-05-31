@@ -10,11 +10,12 @@ import SupervisionFooter from "../components/SupervisionFooter";
 import SupervisionHeader from "../components/SupervisionHeader";
 import SupervisionObservations from "../components/SupervisionObservations";
 import SupervisionPhotos from "../components/SupervisionPhotos";
+import ICancelCrossingInput from "../interfaces/ICancelCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
+import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { useTypedSelector, RootState } from "../store/store";
 import { onRetry } from "../utils/backendData";
 import { cancelSupervision, deleteSupervisionImages, getSupervision, updateSupervisionReport } from "../utils/supervisionBackendData";
-import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { SupervisionStatus } from "../utils/constants";
 import { reportHasUnsavedChanges } from "../utils/supervisionUtil";
 import { isSupervisionReportValid } from "../utils/validation";
@@ -103,9 +104,9 @@ const Supervision = (): JSX.Element => {
   });
   const { isLoading: isSendingDeleteImages } = deleteImagesMutation;
 
-  const cancelSupervisionMutation = useMutation((superId: string) => cancelSupervision(Number(superId), dispatch), {
+  const cancelSupervisionMutation = useMutation((cancelCrossingInput: ICancelCrossingInput) => cancelSupervision(cancelCrossingInput, dispatch), {
     retry: onRetry,
-    onMutate: async () => {
+    onMutate: async (newData: ICancelCrossingInput) => {
       // onMutate fires before the mutation function
 
       // Cancel any outgoing refetches so they don't overwrite the optimistic update below
@@ -116,7 +117,7 @@ const Supervision = (): JSX.Element => {
         return {
           ...oldData,
           report: undefined,
-          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.CANCELLED },
+          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.CANCELLED, time: newData.cancelTime },
         } as ISupervision;
       });
 
@@ -169,7 +170,8 @@ const Supervision = (): JSX.Element => {
         {
           text: t("supervision.buttons.cancel"),
           handler: () => {
-            cancelSupervisionMutation.mutate(supervisionId);
+            const cancelCrossingInput: ICancelCrossingInput = { supervisionId: Number(supervisionId), cancelTime: new Date() };
+            cancelSupervisionMutation.mutate(cancelCrossingInput);
           },
         },
       ],
@@ -226,7 +228,13 @@ const Supervision = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} includeSendingList confirmGoBack={confirmGoBack} />
+      <Header
+        title={t("supervision.title")}
+        somethingFailed={isFailed.getSupervision}
+        includeSendingList
+        includeOfflineBanner
+        confirmGoBack={confirmGoBack}
+      />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

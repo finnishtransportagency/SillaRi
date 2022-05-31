@@ -1,4 +1,4 @@
-package fi.vaylavirasto.sillari.service;
+package fi.vaylavirasto.sillari.util;
 
 import fi.vaylavirasto.sillari.api.rest.LeluRouteUploadResponseWrapper;
 

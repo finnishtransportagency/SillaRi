@@ -70,7 +70,7 @@ const DenyCrossing = (): JSX.Element => {
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
   const denyCrossingMutation = useMutation((denyCrossingInput: IDenyCrossingInput) => denyCrossing(denyCrossingInput, dispatch), {
     retry: onRetry,
-    onMutate: async () => {
+    onMutate: async (newData: IDenyCrossingInput) => {
       // onMutate fires before the mutation function
 
       // Cancel any outgoing refetches so they don't overwrite the optimistic update below
@@ -80,7 +80,8 @@ const DenyCrossing = (): JSX.Element => {
       queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
         return {
           ...oldData,
-          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.CROSSING_DENIED },
+          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.CROSSING_DENIED, time: newData.denyTime },
+          crossingDeniedTime: newData.denyTime,
         } as ISupervision;
       });
 
@@ -126,7 +127,7 @@ const DenyCrossing = (): JSX.Element => {
 
   const denyCrossingClicked = () => {
     if (denyReason) {
-      const denyCrossingInput: IDenyCrossingInput = { supervisionId: Number(supervisionId), denyReason: denyReason };
+      const denyCrossingInput: IDenyCrossingInput = { supervisionId: Number(supervisionId), denyReason: denyReason, denyTime: new Date() };
       denyCrossingMutation.mutate(denyCrossingInput);
     }
   };
@@ -135,7 +136,7 @@ const DenyCrossing = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} includeSendingList />
+      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} includeSendingList includeOfflineBanner />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

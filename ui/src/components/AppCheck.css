@@ -1,0 +1,24 @@
+.appCheckHeaderGrid {
+  background-color: var(--ion-color-light);
+}
+
+.appCheckDetailsGrid {
+  background-color: var(--ion-background-color);
+}
+
+.appCheckMainLogo {
+  height: 125px;
+}
+
+.appCheckMainTitle {
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.appCheckCloudIcon {
+  margin-top: 100px;
+}
+
+.appCheckNoNetwork {
+  color: var(--ion-color-dark);
+}

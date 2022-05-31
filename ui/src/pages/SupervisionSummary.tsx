@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { onlineManager, useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonContent, IonPage, IonToast, useIonAlert } from "@ionic/react";
 import { useHistory, useParams } from "react-router-dom";
@@ -9,6 +9,7 @@ import NoNetworkNoData from "../components/NoNetworkNoData";
 import SupervisionHeader from "../components/SupervisionHeader";
 import SupervisionObservationsSummary from "../components/SupervisionObservationsSummary";
 import SupervisionPhotos from "../components/SupervisionPhotos";
+import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector, RootState } from "../store/store";
 import { onRetry } from "../utils/backendData";
@@ -64,9 +65,9 @@ const SupervisionSummary = (): JSX.Element => {
 
   // Set-up mutations for modifying data later
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
-  const finishSupervisionMutation = useMutation((superId: string) => finishSupervision(Number(superId), dispatch), {
+  const finishSupervisionMutation = useMutation((finishCrossingInput: IFinishCrossingInput) => finishSupervision(finishCrossingInput, dispatch), {
     retry: onRetry,
-    onMutate: async () => {
+    onMutate: async (newData: IFinishCrossingInput) => {
       // onMutate fires before the mutation function
 
       // Cancel any outgoing refetches so they don't overwrite the optimistic update below
@@ -78,7 +79,9 @@ const SupervisionSummary = (): JSX.Element => {
       queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
         updatedSupervision = {
           ...oldData,
-          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.FINISHED },
+          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.FINISHED, time: newData.finishTime },
+          savedOffline: !onlineManager.isOnline(),
+          finishedTime: newData.finishTime,
         } as ISupervision;
         return updatedSupervision;
       });
@@ -118,7 +121,8 @@ const SupervisionSummary = (): JSX.Element => {
   const reportValid = isSupervisionReportValid(report);
 
   const saveReport = (): void => {
-    finishSupervisionMutation.mutate(supervisionId);
+    const finishCrossingInput: IFinishCrossingInput = { supervisionId: Number(supervisionId), finishTime: new Date() };
+    finishSupervisionMutation.mutate(finishCrossingInput);
   };
 
   const editReport = (): void => {
@@ -152,7 +156,13 @@ const SupervisionSummary = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("supervision.summary.title")} somethingFailed={isFailed.getSupervision} includeSendingList confirmGoBack={confirmGoBack} />
+      <Header
+        title={t("supervision.summary.title")}
+        somethingFailed={isFailed.getSupervision}
+        includeSendingList
+        includeOfflineBanner
+        confirmGoBack={confirmGoBack}
+      />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />

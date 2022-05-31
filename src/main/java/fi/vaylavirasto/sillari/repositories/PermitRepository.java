@@ -152,7 +152,9 @@ public class PermitRepository {
             insertTransportDimensions(ctx, permitModel);
             insertUnloadedTransportDimensions(ctx, permitModel);
             insertVehicles(ctx, permitModel);
-            insertAxleChart(ctx, permitModel);
+            if (permitModel.getAxleChart() != null) {
+                insertAxleChart(ctx, permitModel);
+            }
 
             for (RouteModel routeModel : permitModel.getRoutes()) {
                 routeModel.setPermitId(permitModel.getId());
@@ -390,6 +392,9 @@ public class PermitRepository {
                         .where(TableAlias.supervisionReport.SUPERVISION_ID.in(supervisionIds))
                         .execute();
                 ctx.delete(TableAlias.supervisionImage)
+                        .where(TableAlias.supervisionImage.SUPERVISION_ID.in(supervisionIds))
+                        .execute();
+                ctx.delete(TableAlias.supervisionPdf)
                         .where(TableAlias.supervisionImage.SUPERVISION_ID.in(supervisionIds))
                         .execute();
                 ctx.delete(TableAlias.supervisionSupervisor)
