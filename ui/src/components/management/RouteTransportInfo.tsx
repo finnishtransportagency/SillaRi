@@ -8,7 +8,6 @@ import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
-import ISupervisor from "../../interfaces/ISupervisor";
 import { onRetry } from "../../utils/backendData";
 import {
   createRouteTransport,
@@ -24,7 +23,6 @@ import RouteInfoGrid from "./RouteInfoGrid";
 import TransportInfoAccordion from "../TransportInfoAccordion";
 import TransportPassword from "./TransportPassword";
 import IVehicle from "../../interfaces/IVehicle";
-import MultiSupervisorsSelection from "./MultiSupervisorsSelection";
 import SupervisionTimesAlert from "./SupervisionTimesAlert";
 import NoNetworkNoData from "../NoNetworkNoData";
 import Loading from "../Loading";
@@ -34,7 +32,6 @@ import SentSupervisionReportModal from "../SentSupervisionReportModal";
 interface RouteTransportInfoProps {
   routeTransportId: number;
   permit: IPermit;
-  supervisors: ISupervisor[];
   modifiedRouteTransportDetail: IRouteTransport;
   setModifiedRouteTransportDetail: Dispatch<SetStateAction<IRouteTransport | undefined>>;
   selectedRouteOption: IRoute;
@@ -50,7 +47,6 @@ interface RouteTransportInfoProps {
 const RouteTransportInfo = ({
   routeTransportId,
   permit,
-  supervisors,
   modifiedRouteTransportDetail,
   setModifiedRouteTransportDetail,
   selectedRouteOption,
@@ -296,14 +292,6 @@ const RouteTransportInfo = ({
                     </IonCol>
                   </IonRow>
 
-                  {selectedRouteOption && isEditable && supervisions.length > 0 && (
-                    <MultiSupervisorsSelection
-                      supervisors={supervisors}
-                      modifiedRouteTransportDetail={modifiedRouteTransportDetail}
-                      setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-                    />
-                  )}
-
                   {selectedRouteOption && (
                     <>
                       <IonRow className="ion-margin">
@@ -317,7 +305,6 @@ const RouteTransportInfo = ({
                         <IonCol>
                           {supervisions.length > 0 ? (
                             <BridgeGrid
-                              supervisors={supervisors}
                               modifiedRouteTransportDetail={modifiedRouteTransportDetail}
                               setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
                               setReportModalOpen={setReportModalOpen}

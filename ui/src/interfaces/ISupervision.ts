@@ -1,7 +1,6 @@
 import ISupervisionImage from "./ISupervisionImage";
 import ISupervisionStatus from "./ISupervisionStatus";
 import ISupervisionReport from "./ISupervisionReport";
-import ISupervisor from "./ISupervisor";
 import { SupervisorType } from "../utils/constants";
 import IRouteBridge from "./IRouteBridge";
 import IRouteTransport from "./IRouteTransport";
@@ -17,7 +16,6 @@ export default interface ISupervision {
   supervisorCompany?: string;
   supervisorType: SupervisorType;
   denyCrossingReason?: string;
-  supervisors?: ISupervisor[];
   statusHistory?: ISupervisionStatus[];
   currentStatus?: ISupervisionStatus; // Not in DB, latest status picked from statusHistory
   startedTime?: Date; // Not in DB, first IN_PROGRESS status timestamp filtered from statusHistory

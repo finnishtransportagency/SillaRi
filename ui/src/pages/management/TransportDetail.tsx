@@ -10,10 +10,9 @@ import RouteTransportInfo from "../../components/management/RouteTransportInfo";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
-import ISupervisor from "../../interfaces/ISupervisor";
 import { useTypedSelector, RootState } from "../../store/store";
 import { onRetry } from "../../utils/backendData";
-import { getPermitOfRouteTransport, getRouteTransport, getSupervisors } from "../../utils/managementBackendData";
+import { getPermitOfRouteTransport, getRouteTransport } from "../../utils/managementBackendData";
 import IVehicle from "../../interfaces/IVehicle";
 import { isTransportEditable } from "../../utils/validation";
 
@@ -45,6 +44,7 @@ const TransportDetail = (): JSX.Element => {
       refetchOnWindowFocus: false,
     }
   );
+
   const { isLoading: isLoadingPermit, data: selectedPermitDetail } = useQuery(
     ["getPermitOfRouteTransport", Number(routeTransportId)],
     () => getPermitOfRouteTransport(Number(routeTransportId), dispatch),
@@ -53,12 +53,6 @@ const TransportDetail = (): JSX.Element => {
       refetchOnWindowFocus: false,
     }
   );
-  const { isLoading: isLoadingSupervisorList, data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), {
-    retry: onRetry,
-    refetchOnWindowFocus: false,
-  });
-  console.log("supervisorList:", supervisorList);
-  console.log("isLoadingSupervisorList:", isLoadingSupervisorList);
 
   const { routeId, tractorUnit } = selectedRouteTransportDetail || {};
 
@@ -107,10 +101,9 @@ const TransportDetail = (): JSX.Element => {
 
   const noNetworkNoData =
     (isFailed.getRouteTransport && selectedRouteTransportDetail === undefined) ||
-    (isFailed.getPermitOfRouteTransport && selectedPermitDetail === undefined) ||
-    (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
+    (isFailed.getPermitOfRouteTransport && selectedPermitDetail === undefined);
 
-  const notReady = noNetworkNoData || isLoadingSupervisorList;
+  const notReady = noNetworkNoData || isLoadingTransport || isLoadingPermit;
 
   const title = isTransportEditable(modifiedRouteTransportDetail, selectedPermitDetail)
     ? t("management.transportDetail.headerTitleEdit")
@@ -122,7 +115,6 @@ const TransportDetail = (): JSX.Element => {
       <RouteTransportInfo
         routeTransportId={Number(routeTransportId)}
         permit={selectedPermitDetail as IPermit}
-        supervisors={supervisorList as ISupervisor[]}
         modifiedRouteTransportDetail={modifiedRouteTransportDetail as IRouteTransport}
         setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
         selectedRouteOption={selectedRouteOption as IRoute}

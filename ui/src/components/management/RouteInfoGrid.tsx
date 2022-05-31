@@ -76,7 +76,6 @@ const RouteInfoGrid = ({
             // If contractBusinessId is provided from LeLu, supervisor is the area contractor. Otherwise, it's the current company.
             supervisorCompany: contractBusinessId ? contractBusinessId : businessId,
             supervisorType: contractBusinessId ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR,
-            supervisors: [],
             routeBridge: routeBridge,
           };
         });

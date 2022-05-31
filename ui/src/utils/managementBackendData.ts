@@ -6,7 +6,6 @@ import ICompany from "../interfaces/ICompany";
 import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
-import ISupervisor from "../interfaces/ISupervisor";
 
 export const getCompany = async (dispatch: Dispatch): Promise<ICompany> => {
   try {
@@ -201,26 +200,6 @@ export const deleteRouteTransport = async (routeTransportId: number, dispatch: D
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteRouteTransport: true } });
-    throw new Error(err as string);
-  }
-};
-
-export const getSupervisors = async (dispatch: Dispatch): Promise<ISupervisor[]> => {
-  try {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: false } });
-
-    const supervisorsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisors`);
-
-    if (supervisorsResponse.ok) {
-      const supervisors = (await supervisorsResponse.json()) as Promise<ISupervisor[]>;
-      console.log("getSupervisors", supervisors);
-      return await supervisors;
-    } else {
-      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
-      throw new Error(NETWORK_RESPONSE_NOT_OK);
-    }
-  } catch (err) {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
     throw new Error(err as string);
   }
 };
