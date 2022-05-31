@@ -1,12 +1,12 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
-import fi.vaylavirasto.sillari.api.rest.error.FIMRestException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
-import fi.vaylavirasto.sillari.model.*;
+import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
+import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
-import fi.vaylavirasto.sillari.service.fim.FIMService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -35,8 +34,6 @@ public class SupervisionController {
     UIService uiService;
     @Autowired
     SupervisionService supervisionService;
-    @Autowired
-    FIMService fimService;
 
     @Operation(summary = "Get supervision")
     @GetMapping(value = "/getsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -81,20 +78,6 @@ public class SupervisionController {
             serviceMetric.end();
         }
     }
-
-    @Operation(summary = "Get supervisors")
-    @GetMapping(value = "/getsupervisors", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication) || @sillariRightsChecker.isSillariAjojarjestelija(authentication)")
-    public ResponseEntity<?> getSupervisors() throws FIMRestException, ExecutionException, InterruptedException {
-        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisors");
-        try {
-            List<SupervisorModel> supervisorsFromFIM = fimService.getSupervisors();
-            return ResponseEntity.ok().body(supervisorsFromFIM != null ? supervisorsFromFIM : new EmptyJsonResponse());
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
 
     @Operation(summary = "Update conforms to permit attribute in supervision")
     @PutMapping(value = "/updateconformstopermit", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -25,7 +25,6 @@ public class SupervisionMapper implements RecordMapper<Record, SupervisionModel>
         model.setRowCreatedTime(record.get(TableAlias.supervision.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.supervision.ROW_UPDATED_TIME));
         model.setStatusHistory(new ArrayList<>());
-        model.setSupervisors(new ArrayList<>());
         model.setImages(new ArrayList<>());
         return model;
     }

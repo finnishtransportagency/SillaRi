@@ -1,13 +1,12 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.api.rest.error.PDFDownloadException;
-import fi.vaylavirasto.sillari.api.rest.error.PDFUploadException;
 import fi.vaylavirasto.sillari.api.rest.error.PDFGenerationException;
+import fi.vaylavirasto.sillari.api.rest.error.PDFUploadException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
-import fi.vaylavirasto.sillari.service.fim.FIMService;
 import fi.vaylavirasto.sillari.util.PDFGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,8 +36,6 @@ public class SupervisionService {
     @Autowired
     S3FileService s3FileService;
     @Autowired
-    FIMService fimService;
-    @Autowired
     BridgeService bridgeService;
     @Autowired
     SupervisionPdfService pdfService;
@@ -50,8 +47,6 @@ public class SupervisionService {
     SupervisionStatusRepository supervisionStatusRepository;
     @Autowired
     SupervisionReportRepository supervisionReportRepository;
-    @Autowired
-    SupervisorRepository supervisorRepository;
     @Autowired
     SupervisionImageRepository supervisionImageRepository;
     @Autowired
@@ -90,18 +85,9 @@ public class SupervisionService {
     private void fillSupervisionDetails(SupervisionModel supervision) {
         Integer supervisionId = supervision.getId();
         supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
-        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
-        fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
         supervision.setImages(supervisionImageRepository.getSupervisionImages(supervisionId));
         // Sets also current status and status timestamps
         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
-    }
-
-    private void setIdsFromDb(List<SupervisorModel> supervisorsFromDbInBoth, List<SupervisorModel> supervisorsFromFIM) {
-        for (SupervisorModel supervisorFromDb : supervisorsFromDbInBoth) {
-            SupervisorModel supervisorFromFIM = supervisorsFromFIM.stream().filter(s -> s.getUsername().equals(supervisorFromDb.getUsername())).findFirst().orElseThrow();
-            supervisorFromFIM.setId(supervisorFromDb.getId());
-        }
     }
 
     private void fillPermitDetails(SupervisionModel supervision) {

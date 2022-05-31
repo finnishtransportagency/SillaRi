@@ -26,8 +26,6 @@ public class SupervisionRepository {
     @Autowired
     private DSLContext dsl;
     @Autowired
-    SupervisorRepository supervisorRepository;
-    @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
 
     public SupervisionModel getSupervisionById(Integer id) {
@@ -183,14 +181,7 @@ public class SupervisionRepository {
                     .returningResult(TableAlias.supervision.ID)
                     .fetchOne(); // Execute and return zero or one record
 
-            Integer supervisionId = supervisionIdResult != null ? supervisionIdResult.value1() : null;
-            supervisionModel.setId(supervisionId);
-
-            supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getPriority(), supervisorModel.getUsername());
-            });
-
-            return supervisionId;
+            return supervisionIdResult != null ? supervisionIdResult.value1() : null;
         });
     }
 
@@ -203,11 +194,6 @@ public class SupervisionRepository {
                     .set(TableAlias.supervision.SUPERVISOR_TYPE, supervisionModel.getSupervisorType().toString())
                     .where(TableAlias.supervision.ID.eq(supervisionModel.getId()))
                     .execute();
-
-            supervisorRepository.deleteSupervisionSupervisors(ctx, supervisionModel.getId());
-            supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
-            });
         });
     }
 
@@ -226,7 +212,6 @@ public class SupervisionRepository {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
-            supervisorRepository.deleteSupervisionSupervisors(ctx, supervisionModel.getId());
             supervisionStatusRepository.deleteSupervisionStatuses(ctx, supervisionModel.getId());
 
             ctx.delete(TableAlias.supervision)

@@ -9,8 +9,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class LeluBridgeSupervisionResponseDTO {
-    @Schema(description = "Bridge crossing supervisor ")
-    private LeluSupervisor supervisor;
+    @Schema(description = "Business ID of the supervising company")
+    private String supervisor;
 
     @Schema(description = "Status of the supervision, those with status 'REPORT_SIGNED' have report available from /getSupervisionReport ")
     LeluSupervisionStatus supervisionStatus;
@@ -22,7 +22,7 @@ public class LeluBridgeSupervisionResponseDTO {
     LeluSupervisionReportDTO supervisionReport;
 
     @Schema(description = "Supervision report has exceptional values")
-    private boolean exceptional=false;
+    private boolean exceptional = false;
 
     @Schema(description = "Order number of crossing, provided by lelu in incoming permit->route->bridge.", example = "1")
     private Integer transportNumber;
