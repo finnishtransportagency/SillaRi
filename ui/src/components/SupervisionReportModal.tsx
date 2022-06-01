@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonModal, IonTitle, IonToolbar } from "@ionic/react";
 import "./SentSupervisionReportsAccordion.css";
 import { useTranslation } from "react-i18next";
@@ -7,46 +7,17 @@ import close from "../theme/icons/close_large_white.svg";
 import SupervisionHeader from "./SupervisionHeader";
 import SupervisionPhotos from "./SupervisionPhotos";
 import SupervisionObservationsSummary from "./SupervisionObservationsSummary";
-import { useQuery } from "react-query";
-import { getSupervision } from "../utils/supervisionBackendData";
-import { onRetry } from "../utils/backendData";
-import { useDispatch } from "react-redux";
 
-interface SentSupervisionReportModalProps {
+interface SupervisionReportModalProps {
   isOpen: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  selectedSupervisionId: number | undefined;
-  setSelectedSupervisionId: Dispatch<SetStateAction<number | undefined>>;
+  supervision: ISupervision;
+  closeModal: () => void;
 }
 
-const SentSupervisionReportModal = ({
-  isOpen,
-  setOpen,
-  selectedSupervisionId,
-  setSelectedSupervisionId,
-}: SentSupervisionReportModalProps): JSX.Element => {
+const SupervisionReportModal = ({ isOpen, supervision, closeModal }: SupervisionReportModalProps): JSX.Element => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-
-  const { data: supervision } = useQuery(
-    ["getSupervision", Number(selectedSupervisionId)],
-    () => getSupervision(Number(selectedSupervisionId), dispatch),
-    {
-      retry: onRetry,
-      staleTime: Infinity,
-      enabled: selectedSupervisionId !== undefined,
-      onSuccess: (data) => {
-        console.log("GetSupervision done", data.id);
-      },
-    }
-  );
 
   const { report, images = [] } = supervision || {};
-
-  const closeModal = () => {
-    setSelectedSupervisionId(undefined);
-    setOpen(false);
-  };
 
   return (
     <IonModal isOpen={isOpen} onDidDismiss={() => closeModal()}>
@@ -69,4 +40,4 @@ const SentSupervisionReportModal = ({
   );
 };
 
-export default SentSupervisionReportModal;
+export default SupervisionReportModal;
