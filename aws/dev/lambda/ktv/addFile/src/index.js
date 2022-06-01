@@ -6,8 +6,7 @@ const secretClient = new AWS.SecretsManager({
 });
 
 
-const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
-
+const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
 
 exports.handler = async (event, context) => {
   console.log("Received event:", JSON.stringify(event, null, 2));
