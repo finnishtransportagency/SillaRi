@@ -64,7 +64,6 @@ const SentSupervisionReportModal = ({
         <SupervisionHeader supervision={supervision as ISupervision} />
         <SupervisionPhotos images={images} headingKey="supervision.photos" disabled={true} />
         <SupervisionObservationsSummary report={report} />
-        {/*TODO download pdf button?*/}
       </IonContent>
     </IonModal>
   );

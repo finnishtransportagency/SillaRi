@@ -1,6 +1,5 @@
 import React, { MouseEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonRow, IonText, useIonPopover } from "@ionic/react";
@@ -10,8 +9,6 @@ import IPermit from "../../interfaces/IPermit";
 import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
 import { actions } from "../../store/rootSlice";
 import close from "../../theme/icons/close.svg";
-import { onRetry } from "../../utils/backendData";
-import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
 import { DATE_TIME_FORMAT_MIN, TransportStatus } from "../../utils/constants";
 import { areSupervisionsValid, hasSupervisionStarted, isTransportEditable } from "../../utils/validation";
 import RouteStatusLog from "./RouteStatusLog";
@@ -22,12 +19,15 @@ import { filterTransports, getTransportDepartureTime, sortTransports } from "../
 
 interface RouteGridProps {
   permit: IPermit;
+  routeTransports: IRouteTransport[];
   transportFilter: string;
 }
 
-const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => {
+const RouteGrid = ({ permit, routeTransports = [], transportFilter }: RouteGridProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
+  const { id: permitId } = permit;
 
   const [isStatusLogOpen, setStatusLogOpen] = useState<boolean>(false);
   const [statusLog, setStatusLog] = useState<IRouteTransportStatus[]>([]);
@@ -60,16 +60,6 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
         setPopoverText("");
         dismissPassword();
       },
-    }
-  );
-
-  const { id: permitId } = permit;
-
-  const { data: routeTransportList } = useQuery(
-    ["getRouteTransportsOfPermit", Number(permitId)],
-    () => getRouteTransportsOfPermit(Number(permitId), dispatch),
-    {
-      retry: onRetry,
     }
   );
 
@@ -129,12 +119,12 @@ const RouteGrid = ({ permit, transportFilter }: RouteGridProps): JSX.Element => 
   };
 
   useEffect(() => {
-    if (routeTransportList && routeTransportList.length > 0) {
-      const transports = filterTransports(routeTransportList, transportFilter);
+    if (routeTransports && routeTransports.length > 0) {
+      const transports = filterTransports(routeTransports, transportFilter);
       sortTransports(transports, sortOrder);
       setSortedTransports(transports);
     }
-  }, [routeTransportList, sortOrder, transportFilter]);
+  }, [routeTransports, sortOrder, transportFilter]);
 
   return (
     <IonGrid className="routeGrid ion-no-padding">
