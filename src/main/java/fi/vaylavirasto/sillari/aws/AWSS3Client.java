@@ -64,7 +64,7 @@ public class AWSS3Client {
         }
     }
 
-    public String getSupervisionBucketName() {
+    public String getReportBucketName() {
         if ("dev".equals(environment) || "localhost".equals(environment)) {
             return SILLARI_REPORT_PDF_BUCKET_DEV;
         } else {
@@ -80,7 +80,7 @@ public class AWSS3Client {
         }
     }
 
-    private void init(String sillariPhotosRoleSessionName) {
+    private void init(String roleSessionName) {
         if (roleResponse != null) {
             long now = new Date().getTime();
             if (roleResponse.getCredentials().getExpiration().getTime() < now + 60 * 1000L) {
@@ -106,7 +106,7 @@ public class AWSS3Client {
                 }
                 AssumeRoleRequest roleRequest = new AssumeRoleRequest()
                         .withRoleArn(roleArn)
-                        .withRoleSessionName(sillariPhotosRoleSessionName);
+                        .withRoleSessionName(roleSessionName);
 
                 roleResponse = stsClient.assumeRole(roleRequest);
                 Credentials myCreds = roleResponse.getCredentials();
@@ -132,60 +132,60 @@ public class AWSS3Client {
         }
     }
 
-    public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName) {
-        return upload(key, bytes, contenttype, bucketName, sillariPhotosRoleSessionName, null);
+    public boolean upload(String key, byte[] bytes, String contentType, String bucketName, String roleSessionName) {
+        return upload(key, bytes, contentType, bucketName, roleSessionName, null);
     }
 
-    public boolean upload(byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, SupervisionMetadataDTO dto) {
+    public boolean upload(byte[] bytes, String contentType, String bucketName, String roleSessionName, SupervisionMetadataDTO dto) {
         Map<String, String> metadata = new HashMap<>();
 
-        metadata.put("objectIdentifier", dto.getObjectIdentifier());
+        metadata.put("objectidentifier", dto.getObjectIdentifier());
         metadata.put("filename", dto.getFilename());
         if (dto.getCreatedTime() != null) {
-            metadata.put("createdTime", dto.getCreatedTime().toString());
+            metadata.put("createdtime", dto.getCreatedTime().toString());
         }
-        metadata.put("supervisionId", "" + dto.getSupervisionId());
-        metadata.put("permitNumber", dto.getPermitNumber());
+        metadata.put("supervisionid", "" + dto.getSupervisionId());
+        metadata.put("permitnumber", dto.getPermitNumber());
         if (dto.getSupervisionStartedTime() != null) {
-            metadata.put("supervisionStartedTime", dto.getSupervisionStartedTime().toString());
+            metadata.put("supervisionstartedtime", dto.getSupervisionStartedTime().toString());
         }
         if (dto.getSupervisionFinishedTime() != null) {
-            metadata.put("supervisionFinishedTime", dto.getSupervisionFinishedTime().toString());
+            metadata.put("supervisionfinishedtime", dto.getSupervisionFinishedTime().toString());
         }
         if (dto.getSupervisionExceptional() != null) {
-            metadata.put("supervisionExceptional", dto.getSupervisionExceptional() ? "true" : "false");
+            metadata.put("supervisionexceptional", dto.getSupervisionExceptional() ? "true" : "false");
         }
 
         if (dto.getBridgeName() != null) {
             try {
                 // Bridge names include scandic letters, so must encode them
                 String bridgeName = URLEncoder.encode(dto.getBridgeName(), StandardCharsets.UTF_8.toString());
-                metadata.put("bridgeName", bridgeName);
+                metadata.put("bridgename", bridgeName);
             } catch (UnsupportedEncodingException e) {
                 logger.warn("Couldn't encode bridge name '{}' for file '{}'. Skipping bridge name from S3 metadata. ERROR={}", dto.getBridgeName(), dto.getObjectKey(), e + " " + e.getMessage());
             }
         }
 
-        metadata.put("bridgeIdentifier", dto.getBridgeIdentifier());
-        metadata.put("bridgOid", dto.getBridgeOid());
+        metadata.put("bridgeidentifier", dto.getBridgeIdentifier());
+        metadata.put("bridgeoid", dto.getBridgeOid());
 
         if (dto.getBridgeXCoordinate() != null && dto.getBridgeYCoordinate() != null) {
             metadata.put("x_coord", "" + dto.getBridgeXCoordinate());
             metadata.put("y_coord", "" + dto.getBridgeYCoordinate());
         }
 
-        metadata.put("roadAddress", dto.getBridgeRoadAddress());
+        metadata.put("roadaddress", dto.getBridgeRoadAddress());
 
-        return upload(dto.getObjectKey(), bytes, contenttype, bucketName, sillariPhotosRoleSessionName, metadata);
+        return upload(dto.getObjectKey(), bytes, contentType, bucketName, roleSessionName, metadata);
     }
 
-    public boolean upload(String key, byte[] bytes, String contenttype, String bucketName, String sillariPhotosRoleSessionName, Map<String, String> userMetadata) {
+    public boolean upload(String key, byte[] bytes, String contentType, String bucketName, String roleSessionName, Map<String, String> userMetadata) {
         try {
-            init(sillariPhotosRoleSessionName);
-            logger.info("upload " + bucketName + " contenttype " + contenttype + " userMetadata " + userMetadata);
+            init(roleSessionName);
+            logger.info("upload " + bucketName + " contentType " + contentType + " userMetadata " + userMetadata);
             ByteArrayInputStream byteInputStream = new ByteArrayInputStream(bytes);
             ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(contenttype);
+            metadata.setContentType(contentType);
             metadata.setContentLength(bytes.length);
             if (userMetadata != null) {
                 for (Map.Entry<String, String> entry : userMetadata.entrySet()) {
@@ -201,7 +201,7 @@ public class AWSS3Client {
             } catch (Exception e) {
                 logger.warn("Couldn't post file with key '{}' to S3. Re-trying without custom metadata={}. ERROR={}", key, userMetadata, e + " " + e.getMessage());
                 metadata = new ObjectMetadata();
-                metadata.setContentType(contenttype);
+                metadata.setContentType(contentType);
                 metadata.setContentLength(bytes.length);
                 request = new PutObjectRequest(bucketName, key, byteInputStream, metadata);
                 s3Client.putObject(request);
