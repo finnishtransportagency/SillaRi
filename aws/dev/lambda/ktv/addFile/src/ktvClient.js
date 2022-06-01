@@ -58,7 +58,7 @@ module.exports = {
             tunnisteavaruus: ID_SPACE,
             tunniste: objectidentifier,
             kuvatyyppi: PIC_TYPE,
-            nimi: imageKey,
+            nimi: filename,
             image: objectData,
             tie: roadAddressParts[0] || null,
             tieosa: roadAddressParts[1] || null,
