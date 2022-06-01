@@ -229,7 +229,7 @@ export const getSupervisors = async (dispatch: Dispatch): Promise<ISupervisor[]>
 export const getSupervisionOfTransportCompany = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("GetSupervisionOfTransportCompany", supervisionId);
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: false } });
 
     const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionoftransportcompany?supervisionId=${supervisionId}`);
 
@@ -237,11 +237,11 @@ export const getSupervisionOfTransportCompany = async (supervisionId: number, di
       const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;
       return await supervision;
     } else {
-      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: true } });
       throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: true } });
     throw new Error(err as string);
   }
 };
