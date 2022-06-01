@@ -241,7 +241,15 @@
       "supervision": "Övervakning",
       "includesSupervisions": "(SV) Sisältää sillanvalvontoja",
       "noSupervisions": "(SV) Ei sisällä sillanvalvontoja",
-      "addTransportButtonLabel": "Lägg till en transport",
+      "addTransportButtonLabel": "Lägg till transport",
+      "transportCount": "(SV) Kuljetuskerrat",
+      "showByRoute": "(SV) Näytä reittikohtaisesti",
+      "transportCountModal": {
+        "title": "(SV) Luvan {{permit}} reittikohtaiset kuljetuskerrat",
+        "used": "(SV) Käytetty",
+        "amount": "(SV) Määrä luvalla",
+        "unlimited": "(SV) Rajoittamaton"
+      },
       "filter": {
         "show": "Visa",
         "status": {

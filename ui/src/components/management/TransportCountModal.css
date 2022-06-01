@@ -1,0 +1,9 @@
+.transportCountGrid {
+  border-width: 0 2px 2px 2px;
+  border-style: solid;
+  border-color: var(--ion-color-light);
+}
+
+.transportCountGrid > ion-row {
+  border-top: 2px solid var(--ion-color-light);
+}

@@ -242,6 +242,14 @@
       "includesSupervisions": "Sisältää sillanvalvontoja",
       "noSupervisions": "Ei sisällä sillanvalvontoja",
       "addTransportButtonLabel": "Lisää kuljetus",
+      "transportCount": "Kuljetuskerrat",
+      "showByRoute": "Näytä reittikohtaisesti",
+      "transportCountModal": {
+        "title": "Luvan {{permit}} reittikohtaiset kuljetuskerrat",
+        "used": "Käytetty",
+        "amount": "Määrä luvalla",
+        "unlimited": "Rajoittamaton"
+      },
       "filter": {
         "show": "Näytä",
         "status": {
