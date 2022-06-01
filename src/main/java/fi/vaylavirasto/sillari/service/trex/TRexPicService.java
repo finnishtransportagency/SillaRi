@@ -1,7 +1,9 @@
 package fi.vaylavirasto.sillari.service.trex;
 
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
+import fi.vaylavirasto.sillari.model.PicInfoModel;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJsonMapper;
+import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.TrexPicInfoResponseJson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
@@ -22,14 +24,20 @@ public class TRexPicService {
 
     @Value("${sillari.trex.pic-bin-path}")
     private String binPath;
+
+    @Value("${sillari.trex.username}")
+    private String username;
+    @Value("${sillari.trex.password}")
+    private String password;
+
     private final TrexBridgeInfoResponseJsonMapper dtoMapper = Mappers.getMapper(TrexBridgeInfoResponseJsonMapper.class);
 
     public PicInfoModel getPicInfo(String oid) throws TRexRestException {
         logger.debug("getPicInfo oid: " + oid);
-        TrexPicInfoResponseJson picInfo = getBridgeInfo(oid);
+        TrexPicInfoResponseJson picInfo = getPicInfoJson(oid);
         PicInfoModel picInfoModel = dtoMapper.fromDTOToModel(picInfo);
         logger.debug("picInfoModel: " + picInfoModel);
-        return bridgeModel;
+        return picInfoModel;
     }
 
     //•	Sitten voitte kysyä mitä kuvia milläkin rakenteella on: https://testiapi.vayla.fi/trex/rajapinta/rakennekuva-api/v1/kuvatiedot?oid=<rakenneoid>
@@ -47,11 +55,12 @@ public class TRexPicService {
                                 .path(infoPath)
                                 .queryParam("oid", bridgeOid)
                                 .build())
+                        .headers(h -> h.setBasicAuth(username, password))
                         .retrieve()
                         .bodyToMono(TrexPicInfoResponseJson.class)
                         .block();
                 logger.debug("picInfo: " + picInfo);
-                return bridgeInfo;
+                return picInfo;
             } catch (WebClientResponseException e) {
                 logger.error(e.getMessage() + e.getStatusCode());
                 throw new TRexRestException(e.getMessage(), e.getStatusCode());
@@ -77,6 +86,7 @@ public class TRexPicService {
                                 .queryParam("oid", bridgeOid)
                                 .queryParam("kuvaId", picId)
                                 .build())
+                        .headers(h -> h.setBasicAuth(username, password))
                         .retrieve()
                         .bodyToMono(TrexPicBinResponseJson.class)
                         .block();
