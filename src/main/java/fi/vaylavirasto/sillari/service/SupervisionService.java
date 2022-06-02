@@ -57,6 +57,8 @@ public class SupervisionService {
     RouteRepository routeRepository;
     @Autowired
     PermitRepository permitRepository;
+    @Autowired
+    CompanyRepository companyRepository;
 
 
     @Value("${spring.profiles.active:Unknown}")
@@ -382,5 +384,8 @@ public class SupervisionService {
         return supervisionRepository.getSupervisorsByPermitId(permitId);
     }
 
+    public CompanyModel getCompanyOfSupervision(SupervisionModel supervision) {
+        return companyRepository.getCompanyByRouteBridgeId(supervision.getRouteBridgeId());
+    }
 
 }

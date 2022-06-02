@@ -27,7 +27,7 @@ import SupervisionTimesAlert from "./SupervisionTimesAlert";
 import NoNetworkNoData from "../NoNetworkNoData";
 import Loading from "../Loading";
 import RouteTransportFooter from "./RouteTransportFooter";
-import SentSupervisionReportModal from "../SentSupervisionReportModal";
+import SupervisionReport from "./SupervisionReport";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -335,7 +335,7 @@ const RouteTransportInfo = ({
           position="top"
           color="success"
         />
-        <SentSupervisionReportModal
+        <SupervisionReport
           isOpen={reportModalOpen}
           setOpen={setReportModalOpen}
           selectedSupervisionId={selectedSupervisionId}

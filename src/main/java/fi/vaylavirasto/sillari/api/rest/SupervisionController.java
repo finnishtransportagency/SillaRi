@@ -51,6 +51,22 @@ public class SupervisionController {
         }
     }
 
+    @Operation(summary = "Get supervision of transport company")
+    @GetMapping(value = "/getsupervisionoftransportcompany", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
+    public ResponseEntity<?> getSupervisionOfTransportCompany(@RequestParam Integer supervisionId) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionOfTransportCompany");
+        try {
+            if (!isSupervisionOfTransportCompany(supervisionId)) {
+                throw new AccessDeniedException("Supervision not of the transport company");
+            }
+            SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId, true, true);
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Get supervisions of supervisor")
     @GetMapping(value = "/getsupervisionsofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
@@ -216,6 +232,19 @@ public class SupervisionController {
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getAllSupervisionsOfSupervisorNoDetails(user);
 
         return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
+    }
+
+    /* Check that supervision is of the transport company */
+    private boolean isSupervisionOfTransportCompany(Integer supervisionId) {
+        SillariUser user = uiService.getSillariUser();
+
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+        if (supervision != null) {
+            CompanyModel company = supervisionService.getCompanyOfSupervision(supervision);
+            return user.getBusinessId().equals(company.getBusinessId());
+        }
+
+        return false;
     }
 
     /* Check that supervision belongs to the user and report is not signed */

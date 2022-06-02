@@ -6,6 +6,7 @@ import ICompany from "../interfaces/ICompany";
 import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
+import ISupervision from "../interfaces/ISupervision";
 
 export const getCompany = async (dispatch: Dispatch): Promise<ICompany> => {
   try {
@@ -200,6 +201,26 @@ export const deleteRouteTransport = async (routeTransportId: number, dispatch: D
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteRouteTransport: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const getSupervisionOfTransportCompany = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
+  try {
+    console.log("GetSupervisionOfTransportCompany", supervisionId);
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: false } });
+
+    const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionoftransportcompany?supervisionId=${supervisionId}`);
+
+    if (supervisionResponse.ok) {
+      const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;
+      return await supervision;
+    } else {
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: true } });
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
+    }
+  } catch (err) {
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: true } });
     throw new Error(err as string);
   }
 };
