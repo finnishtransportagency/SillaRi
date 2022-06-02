@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.service.trex;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.model.PicInfoModel;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJsonMapper;
+import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.KuvatiedotItem;
 import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.TrexPicInfoResponseJson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +12,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TRexPicService {
@@ -34,11 +39,14 @@ public class TRexPicService {
 
     public PicInfoModel getPicInfo(String oid) throws TRexRestException {
         logger.debug("getPicInfo oid: " + oid);
-        TrexPicInfoResponseJson picInfo = getPicInfoJson(oid);
-        PicInfoModel picInfoModel = dtoMapper.fromDTOToModel(picInfo);
-        logger.debug("picInfoModel: " + picInfoModel);
+        TrexPicInfoResponseJson picInfoResponseJson = getPicInfoJson(oid);
+        KuvatiedotItem kuvatiedotItem = picInfoResponseJson.getKuvatiedot().stream().filter(i -> i.getPaakuva().isTotuusarvo()).findFirst().orElseThrow();
+
+        PicInfoModel picInfoModel = dtoMapper.fromDTOToModel(kuvatiedotItem);
+
         return picInfoModel;
     }
+
 
     //•	Sitten voitte kysyä mitä kuvia milläkin rakenteella on: https://testiapi.vayla.fi/trex/rajapinta/rakennekuva-api/v1/kuvatiedot?oid=<rakenneoid>
     //	Tämä palauttaa listan kuvien tiedoista.

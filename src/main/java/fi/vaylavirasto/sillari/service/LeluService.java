@@ -14,6 +14,7 @@ import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.trex.TRexBridgeInfoService;
+import fi.vaylavirasto.sillari.service.trex.TRexPicService;
 import fi.vaylavirasto.sillari.util.LeluRouteUploadUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,13 +51,14 @@ public class LeluService {
     private LeluRouteUploadUtil leluRouteUploadUtil;
     private AWSS3Client awss3Client;
     private final TRexBridgeInfoService trexBridgeInfoService;
+    private final TRexPicService tRexPicService;
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
 
     @Autowired
     public LeluService(PermitRepository permitRepository, CompanyRepository companyRepository, RouteRepository routeRepository, RouteBridgeRepository routeBridgeRepository, BridgeRepository bridgeRepository, SupervisionRepository supervisionRepository, MessageSource messageSource, LeluRouteUploadUtil leluRouteUploadUtil, AWSS3Client awss3Client,
-                       TRexBridgeInfoService trexBridgeInfoService, SupervisionService supervisionService) {
+                       TRexBridgeInfoService trexBridgeInfoService, TRexPicService tRexPicService, SupervisionService supervisionService) {
         this.permitRepository = permitRepository;
         this.companyRepository = companyRepository;
         this.routeRepository = routeRepository;
@@ -68,6 +70,7 @@ public class LeluService {
         this.supervisionService = supervisionService;
         this.awss3Client = awss3Client;
         this.trexBridgeInfoService = trexBridgeInfoService;
+        this.tRexPicService = tRexPicService;
     }
 
     // TODO
@@ -222,6 +225,15 @@ public class LeluService {
                 } else {
                     routeBridge.setBridgeId(addTrexBridgeToDB(routeBridge, oid));
                 }
+
+
+                //get the pic form trex pic rest. TODO save it
+                try {
+                    var picInfo = tRexPicService.getPicInfo(oid);
+                } catch (TRexRestException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
     }

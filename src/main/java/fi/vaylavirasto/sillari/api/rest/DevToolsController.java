@@ -12,6 +12,7 @@ import fi.vaylavirasto.sillari.service.fim.FIMService;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Groups;
 import fi.vaylavirasto.sillari.service.trex.TRexBridgeInfoService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJson;
+import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.TrexPicInfoResponseJson;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -256,6 +257,52 @@ public class DevToolsController {
         return tRexBridgeInfoService.getBridgeInfo(oid);
     }
 
+    //this can be set as "trex pic url" in local dev env so we get some bridge pic info for deving and testing when we don't connection to trex,
+    @RequestMapping(value = "/localHardCodedPicJson", method = RequestMethod.GET)
+    public TrexPicInfoResponseJson trexHardPicInfo() {
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        try {
+            var a = objectMapper.readValue(trexHardString(), TrexPicInfoResponseJson.class);
+            return a;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+
+    private String trexHardPicInfoString() {
+        return "{\n" +
+                "    \"kuvatiedot\": [{\n" +
+                "            \"id\": 805038,\n" +
+                "            \"paakuva\": {\n" +
+                "                \"totuusarvo\": false\n" +
+                "            },\n" +
+                "            \"kuvaluokka\": {\n" +
+                "                \"tunnus\": \"Y\",\n" +
+                "                \"nimi\": \"Yleiskuva\"\n" +
+                "            },\n" +
+                "            \"kuvaluokkatarkenne\": [],\n" +
+                "            \"luotu\": \"2022-05-31T05:53:03.768Z\",\n" +
+                "            \"muokattu\": \"2022-05-31T05:53:17.564Z\"\n" +
+                "        }, {\n" +
+                "            \"id\": 805020,\n" +
+                "            \"paakuva\": {\n" +
+                "                \"totuusarvo\": true\n" +
+                "            },\n" +
+                "            \"kuvaluokka\": {\n" +
+                "                \"tunnus\": \"Y\",\n" +
+                "                \"nimi\": \"Yleiskuva\"\n" +
+                "            },\n" +
+                "            \"kuvaluokkatarkenne\": [],\n" +
+                "            \"luotu\": \"2022-05-31T05:53:46.109Z\",\n" +
+                "            \"muokattu\": \"2022-05-31T05:53:54.541Z\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}\n";
+
+    }
 
     //this can be set as "trex url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,
     @RequestMapping(value = "/localHardCodedBridgeInfoJson", method = RequestMethod.GET)
