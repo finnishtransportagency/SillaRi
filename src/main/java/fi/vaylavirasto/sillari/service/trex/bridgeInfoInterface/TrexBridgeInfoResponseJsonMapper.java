@@ -1,6 +1,8 @@
 package fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface;
 
 import fi.vaylavirasto.sillari.model.BridgeModel;
+import fi.vaylavirasto.sillari.model.PicInfoModel;
+import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.TrexPicInfoResponseJson;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -22,23 +24,26 @@ public interface TrexBridgeInfoResponseJsonMapper {
     BridgeModel fromDTOToModel(TrexBridgeInfoResponseJson dto);
 
     default String createRoadAddress(List<TieosoitteetItem> tieosoitteetItems) {
-        if(!tieosoitteetItems.isEmpty() && tieosoitteetItems.get(0).getTienumero() != null) {
+        if (!tieosoitteetItems.isEmpty() && tieosoitteetItems.get(0).getTienumero() != null) {
             TieosoitteetItem tieosoitteetItem = tieosoitteetItems.get(0);
             return "" + tieosoitteetItem.getTienumero() + "-" + tieosoitteetItem.getTieosa() + "-" + tieosoitteetItem.getEtaisyys() + "-" + tieosoitteetItem.getAjorata();
-        }
-        else{
+        } else {
             return null;
         }
     }
 
-    default String createMunicipality(List<SijaintikunnatItem> sijaintikunnatItemList){
+    PicInfoModel fromDTOToModel(TrexPicInfoResponseJson picInfo);
+
+    default String createMunicipality(List<SijaintikunnatItem> sijaintikunnatItemList) {
         StringBuilder municipality = new StringBuilder();
         try {
             for (SijaintikunnatItem k : sijaintikunnatItemList) {
                 municipality.append(k.getNimi()).append(" ");
             }
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
         }
         return municipality.toString().trim();
     }
+
+
 }
