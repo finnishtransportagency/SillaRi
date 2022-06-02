@@ -29,7 +29,7 @@ public interface TrexBridgeInfoResponseJsonMapper {
             @Mapping(target = "id", source = "dto.id"),
             @Mapping(target = "mainPic", source = "dto.paakuva.totuusarvo"),
     })
-    PicInfoModel fromDTOToModel(KuvatiedotItem kuvatiedotItem);
+    PicInfoModel fromDTOToModel(KuvatiedotItem dto);
 
 
     default String createRoadAddress(List<TieosoitteetItem> tieosoitteetItems) {
