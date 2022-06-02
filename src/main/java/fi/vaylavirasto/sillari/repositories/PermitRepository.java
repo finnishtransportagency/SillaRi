@@ -79,6 +79,13 @@ public class PermitRepository {
                 .fetchAny(this::mapPermitRecordWithAxleChartAndDimensions);
     }
 
+    public PermitModel getPermitByRouteId(Integer routeId) {
+        return dsl.select().from(TableAlias.permit)
+                .innerJoin(TableAlias.route).on(TableAlias.route.PERMIT_ID.eq(TableAlias.permit.ID))
+                .where(TableAlias.route.ID.eq(routeId))
+                .fetchOne(new PermitMapper());
+    }
+
     private PermitModel mapPermitRecordWithAxleChartAndDimensions(Record record) {
         PermitMapper permitMapper = new PermitMapper(true);
         PermitModel permit = permitMapper.map(record);
