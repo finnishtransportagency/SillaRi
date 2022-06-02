@@ -229,7 +229,8 @@ public class LeluService {
 
                 //get the pic form trex pic rest. TODO save it
                 try {
-                    var picInfo = tRexPicService.getPicInfo(oid);
+                    PicInfoModel picInfo = tRexPicService.getPicInfo(oid);
+                    logger.debug("Jippihei got picinfo from trex: " + picInfo);
                 } catch (TRexRestException e) {
                     e.printStackTrace();
                 }
