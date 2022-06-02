@@ -258,12 +258,12 @@ public class DevToolsController {
     }
 
     //this can be set as "trex pic url" in local dev env so we get some bridge pic info for deving and testing when we don't connection to trex,
-    @RequestMapping(value = "/localHardCodedPicJson", method = RequestMethod.GET)
+    @RequestMapping(value = "/localHardCodedPicJson/kuvatiedot", method = RequestMethod.GET)
     public TrexPicInfoResponseJson trexHardPicInfo() {
         ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         try {
-            var a = objectMapper.readValue(trexHardString(), TrexPicInfoResponseJson.class);
+            var a = objectMapper.readValue(trexHardPicInfoString(), TrexPicInfoResponseJson.class);
             return a;
         } catch (Exception e) {
             logger.error(e.getMessage());
