@@ -100,7 +100,7 @@ const BridgeGrid = ({
         })
         .map((supervision, index, sortedSupervisions) => {
           const { id: supervisionId, routeBridge } = supervision || {};
-          const { bridge, contractNumber = 0 } = routeBridge || {};
+          const { bridge, contractBusinessId = "" } = routeBridge || {};
           const { identifier, name } = bridge || {};
           const bridgeName = `${identifier} - ${name}`;
 
@@ -132,10 +132,10 @@ const BridgeGrid = ({
                     </IonCol>
                   </IonRow>
 
-                  {contractNumber && (
+                  {contractBusinessId && (
                     <IonRow className="ion-margin-top">
                       <IonCol>
-                        <IonText>{`${t("management.transportDetail.bridgeInfo.contractNumber")}: ${contractNumber}`}</IonText>
+                        <IonText>{`${t("management.transportDetail.bridgeInfo.contractor")}: ${contractBusinessId}`}</IonText>
                       </IonCol>
                     </IonRow>
                   )}

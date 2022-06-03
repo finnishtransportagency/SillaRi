@@ -329,7 +329,6 @@
         "bridgeSupervisors": "Bridge supervisors",
         "ownSupervisor": "Own supervisors",
         "contractor": "Maintenance contractor",
-        "contractNumber": "Contract number",
         "bridgeSupervisor": "Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "Bridge supervisor (1.)",
         "supervisor2": "Backup supervisor (2.)",
