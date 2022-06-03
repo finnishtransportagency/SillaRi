@@ -122,12 +122,10 @@ public class LeluController {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             try {
-                // Get Bridges From Trex To DB
+                LeluPermitResponseDTO permit = leluService.createPermit(permitDTO);
 
-                //TODO call non dev version when time
-                LeluPermitResponseDTO permit = leluService.createOrUpdatePermitDevVersion(permitDTO);
-
-                //update bridges from trex in the background so we can response lelu quicker
+                // Get Bridges From TREX to DB
+                // Update bridges from TREX in the background, so we can get the response to Lelu quicker
                 ExecutorService executor = Executors.newWorkStealingPool();
                 executor.submit(() -> {
                     permitDTO.getRoutes().forEach(r -> r.getBridges().forEach(b -> getBridgeFromTrexToDB(b.getOid())));

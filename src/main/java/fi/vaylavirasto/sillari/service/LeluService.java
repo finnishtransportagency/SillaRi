@@ -4,7 +4,6 @@ package fi.vaylavirasto.sillari.service;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
@@ -70,108 +69,49 @@ public class LeluService {
         this.trexService = trexService;
     }
 
-    // TODO
-    //this used currently to ease lelu testing.
-    //Deletes everything under the permit with lelu permit id if given.
-    //Will be replaced by createOrUpdatePermit eventually.
-    public LeluPermitResponseDTO createOrUpdatePermitDevVersion(LeluPermitDTO permitDTO) throws LeluDeleteRouteWithSupervisionsException {
-        LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
-
-        logger.trace("Map permit from: " + permitDTO);
-        PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
-        logger.trace("Permit mapped from LeLu model: {}", permitModel);
-
-        // Fetch company from DB with business ID. If not found, insert new company.
-        Integer companyId = getCompanyIdByBusinessId(permitModel.getCompany());
-        permitModel.setCompanyId(companyId);
-
-        // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
-        produceBridgeDataForRouteBridges(permitModel.getRoutes());
-        PermitModel oldPermitModel = getWholePermitModel(permitModel.getPermitNumber());
-
-        if (oldPermitModel != null) {
-            logger.debug("Permit with id {} found, delete and create new", oldPermitModel);
-
-
-            deletePermit(oldPermitModel);
-
-            Integer permitModelId = permitRepository.createPermit(permitModel);
-
-            response.setPermitId(permitModelId);
-            response.setStatus(LeluPermitStatus.CREATED);
-            return response;
-        } else {
-            logger.debug("Permit not found with id {}, create new", permitModel.getPermitNumber());
-
-            // Insert new permit and all child records
-            // Missing route addresses (not yet in lelu model)
-            Integer permitModelId = permitRepository.createPermit(permitModel);
-
-            response.setPermitId(permitModelId);
-            response.setStatus(LeluPermitStatus.CREATED);
-            return response;
-        }
-    }
-
-    private PermitModel getWholePermitModel(String permitNumber) {
-        PermitModel oldPermitModel = permitRepository.getPermitByPermitNumber(permitNumber);
-        if (oldPermitModel != null) {
-            List<RouteModel> routes = routeRepository.getRoutesByPermitId(oldPermitModel.getId());
-            oldPermitModel.setRoutes(routes);
-
-            if (routes != null) {
-                for (RouteModel route : oldPermitModel.getRoutes()) {
-                    List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(route.getId());
-                    route.setRouteBridges(routeBridges);
-
-                    if (routeBridges != null) {
-                        for (RouteBridgeModel routeBridge : route.getRouteBridges()) {
-                            routeBridge.setSupervisions(supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId()));
-                        }
-                    }
-                }
-            }
-        }
-        return oldPermitModel;
-    }
-
-
-    //TODO Will eplace createOrUpdatePermitDevVersion eventually.
-    public LeluPermitResponseDTO createOrUpdatePermit(LeluPermitDTO permitDTO) throws LeluDeleteRouteWithSupervisionsException {
+    public LeluPermitResponseDTO createPermit(LeluPermitDTO permitDTO) throws LeluPermitSaveException {
         LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
 
         logger.debug("Map permit from: " + permitDTO);
         PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
         logger.debug("Permit mapped from LeLu model: {}", permitModel);
 
+        // Check if permits already exist with the same permit number
+        handlePreviousPermitVersions(permitModel);
+        permitModel.setIsCurrentVersion(true);
+
         // Fetch company from DB with business ID. If not found, insert new company.
-        Integer companyId = getCompanyIdByBusinessId(permitModel.getCompany());
+        Integer companyId = getOrCreateCompany(permitModel.getCompany());
         permitModel.setCompanyId(companyId);
 
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
         produceBridgeDataForRouteBridges(permitModel.getRoutes());
 
-        Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitModel.getPermitNumber(), permitModel.getLeluVersion());
+        // Insert new permit and all child records
+        Integer permitModelId = permitRepository.createPermit(permitModel);
 
-        if (permitId != null) {
-            logger.debug("Permit with id {} found, update", permitId);
+        response.setPermitId(permitModelId);
+        //response.setStatus(LeluPermitStatus.CREATED);
+        return response;
+    }
 
-            permitModel.setId(permitId);
-            updatePermit(permitModel);
-
-            response.setPermitId(permitId);
-            response.setStatus(LeluPermitStatus.UPDATED);
-            return response;
-        } else {
-            logger.debug("Permit not found with id {}, create new", permitId);
-
-            // Insert new permit and all child records
-            // Missing route addresses (not yet in lelu model)
-            Integer permitModelId = permitRepository.createPermit(permitModel);
-
-            response.setPermitId(permitModelId);
-            response.setStatus(LeluPermitStatus.CREATED);
-            return response;
+    private void handlePreviousPermitVersions(PermitModel permitModel) throws LeluPermitSaveException {
+        List<PermitModel> oldPermits = permitRepository.getPermitsByPermitNumber(permitModel.getPermitNumber());
+        if (oldPermits != null && !oldPermits.isEmpty()) {
+            logger.debug("{} permits with same permitNumber {} found", oldPermits.size(), permitModel.getPermitNumber());
+            // Check if same leluVersion exists
+            List<PermitModel> permitsWithSameVersion = oldPermits.stream().filter(oldPermit -> oldPermit.getLeluVersion().equals(permitModel.getLeluVersion())).collect(Collectors.toList());
+            if (permitsWithSameVersion.isEmpty()) {
+                for (PermitModel oldPermit : oldPermits) {
+                    // If permit with previous version is marked as current, update it
+                    if (oldPermit.getIsCurrentVersion()) {
+                        permitRepository.updatePermitCurrentVersion(oldPermit.getId(), false);
+                    }
+                }
+            } else {
+                logger.error("Permit with same permitNumber {} and lelu version {} already exists", permitModel.getPermitNumber(), permitModel.getLeluVersion());
+                throw new LeluPermitSaveException(messageSource.getMessage("lelu.permit.exists.with.version", null, Locale.ROOT));
+            }
         }
     }
 
@@ -196,7 +136,7 @@ public class LeluService {
     }
 
 
-    private Integer getCompanyIdByBusinessId(CompanyModel companyModel) {
+    private Integer getOrCreateCompany(CompanyModel companyModel) {
         Integer companyId = companyRepository.getCompanyIdByBusinessId(companyModel.getBusinessId());
         if (companyId == null) {
             logger.debug("Create new company with business ID {}", companyModel.getBusinessId());
@@ -227,12 +167,10 @@ public class LeluService {
     }
 
     private Integer addTrexBridgeToDB(RouteBridgeModel routeBridge, String oid) {
-
-        logger.debug("Bridge missing with oid {} get from trex", routeBridge.getBridge().getOid());
+        logger.debug("Bridge missing with oid {}, get from trex", routeBridge.getBridge().getOid());
         try {
             BridgeModel newBridge = trexService.getBridge(oid);
-            Integer newBridgeId = bridgeRepository.createBridge(newBridge);
-            return newBridgeId;
+            return bridgeRepository.createBridge(newBridge);
         } catch (TRexRestException e) {
             //TODO if its Lelu by hand added so create bridge with LeLu data..?
             logger.warn("Bridge missing with oid {} not found in trex", routeBridge.getBridge().getOid());
@@ -252,38 +190,6 @@ public class LeluService {
         return bridgeRepository.getBridgeIdsWithOIDs(uniqueOIDs);
     }
 
-
-    private void deletePermit(PermitModel permitModel) {
-        permitRepository.deletePermit(permitModel);
-    }
-
-    private void updatePermit(PermitModel permitModel) throws LeluDeleteRouteWithSupervisionsException {
-        // Check if old routes are all included in permit, routes not included anymore should be deleted
-        // Routes with same lelu ID should be updated and not inserted as new, set existing sillari ID to those route models
-        Map<Long, Integer> oldRouteIdLeluIdMap = routeRepository.getRouteIdsWithLeluIds(permitModel.getId());
-        List<Long> newLeluIds = permitModel.getRoutes().stream().map(RouteModel::getLeluId).collect(Collectors.toList());
-
-        List<Integer> routeIdsToRemove = new ArrayList<>();
-
-        for (Long oldLeluId : oldRouteIdLeluIdMap.keySet()) {
-            if (!newLeluIds.contains(oldLeluId)) {
-                routeIdsToRemove.add(oldRouteIdLeluIdMap.get(oldLeluId));
-            }
-        }
-
-        for (RouteModel newRoute : permitModel.getRoutes()) {
-            if (oldRouteIdLeluIdMap.containsKey(newRoute.getLeluId())) {
-                newRoute.setId(oldRouteIdLeluIdMap.get(newRoute.getLeluId()));
-            }
-        }
-
-        //check if there exists supervisions for permits's routes, then update is not allowed, need to create a new version
-        if (permitRepository.hasSupervisions(routeIdsToRemove)) {
-            throw new LeluDeleteRouteWithSupervisionsException((messageSource.getMessage("lelu.route.has.supervisions", null, Locale.ROOT)));
-        } else {
-            permitRepository.updatePermit(permitModel, routeIdsToRemove);
-        }
-    }
 
     public LeluPermiPdfResponseDTO uploadPermitPdf(String permitNumber, Integer permitVersion, MultipartFile file) throws PDFUploadException {
         Integer permitId = permitRepository.getPermitIdByPermitNumberAndVersion(permitNumber, permitVersion);

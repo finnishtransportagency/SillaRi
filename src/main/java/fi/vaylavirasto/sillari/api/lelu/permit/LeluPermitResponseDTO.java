@@ -18,6 +18,7 @@ public class LeluPermitResponseDTO {
     @Schema(description = "Number identifying the permit", example = "1234/2021")
     private String permitNumber;
 
+    // TODO new status?
     @Schema(description = "Status of the permit, CREATED/UPDATED", example = "CREATED")
     private LeluPermitStatus status;
 

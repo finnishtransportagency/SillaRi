@@ -1,7 +1,7 @@
 package fi.vaylavirasto.sillari;
 
-import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.lelu.permit.*;
+import fi.vaylavirasto.sillari.api.rest.error.LeluPermitSaveException;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
@@ -69,8 +69,6 @@ public class LeluServiceTest {
 
     @Captor
     ArgumentCaptor<PermitModel> permitModelCaptor;
-    @Captor
-    ArgumentCaptor<List<Integer>> routeIdsToDeleteCaptor;
 
 
     @InjectMocks
@@ -79,14 +77,13 @@ public class LeluServiceTest {
     @Test
     public void testCreatePermitWithExistingCompany() {
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
-        Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(1);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
         LeluPermitResponseDTO response = null;
         try {
-            response = leluService.createOrUpdatePermit(getPermitDTO());
-        } catch (LeluDeleteRouteWithSupervisionsException e) {
+            response = leluService.createPermit(getPermitDTO());
+        } catch (LeluPermitSaveException e) {
             e.printStackTrace();
         }
 
@@ -108,28 +105,21 @@ public class LeluServiceTest {
         assertNotNull(response);
         assertEquals(1, response.getPermitId().intValue());
         assertEquals("1234/2021", response.getPermitNumber());
-        assertEquals(LeluPermitStatus.CREATED, response.getStatus());
+        //assertEquals(LeluPermitStatus.CREATED, response.getStatus());
         assertNotNull(response.getTimestamp());
     }
 
     @Test
     public void testCreatePermitWithNewCompany() {
-        System.out.println("TESTIOUS");
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(null);
         Mockito.when(companyRepository.createCompany(Mockito.any(CompanyModel.class))).thenReturn(2);
-
-        Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(2);
-        Mockito.when(permitRepository.hasSupervisions(Mockito.anyList())).thenReturn(false);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
         LeluPermitResponseDTO response = null;
         try {
-            System.out.println("TESTIOUS");
-            response = leluService.createOrUpdatePermit(getPermitDTO());
-            System.out.println("TESTIOUS");
-        } catch (LeluDeleteRouteWithSupervisionsException e) {
-            System.out.println("TESTIOUS");
+            response = leluService.createPermit(getPermitDTO());
+        } catch (LeluPermitSaveException e) {
             e.printStackTrace();
         }
 
@@ -151,57 +141,11 @@ public class LeluServiceTest {
         assertNotNull(response);
         assertEquals(2, response.getPermitId().intValue());
         assertEquals("1234/2021", response.getPermitNumber());
-        assertEquals(LeluPermitStatus.CREATED, response.getStatus());
+        //assertEquals(LeluPermitStatus.CREATED, response.getStatus());
         assertNotNull(response.getTimestamp());
     }
 
-    @Test
-    public void testUpdatePermit() {
-        Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
-        Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(2);
-        Mockito.when(routeRepository.getRouteIdsWithLeluIds(Mockito.anyInt())).thenReturn(getRouteLeluIdAndIdMap());
-        Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
-
-        LeluPermitResponseDTO response = null;
-        try {
-            response = leluService.createOrUpdatePermit(getPermitDTO());
-        } catch (LeluDeleteRouteWithSupervisionsException e) {
-            e.printStackTrace();
-        }
-
-        // Verify that permitRepository.updatePermit is called and capture parameters
-        Mockito.verify(permitRepository).updatePermit(permitModelCaptor.capture(), routeIdsToDeleteCaptor.capture());
-        PermitModel permitModel = permitModelCaptor.getValue();
-        logger.debug("Captured permitModel: {}", permitModel);
-        List<Integer> routeIdsToDelete = routeIdsToDeleteCaptor.getValue();
-        logger.debug("Captured routeIdsToDelete: {}", routeIdsToDelete);
-
-        // Check that all values are correctly mapped from Lelu DTOs to models
-        assertPermitDTOMappedToModel(permitModel);
-
-        // Route with Lelu ID 43567 is found from DB but not found in permitModel, check it's marked for deletion
-        assertNotNull(routeIdsToDelete);
-        assertEquals(1, routeIdsToDelete.size());
-        assertEquals(4, routeIdsToDelete.get(0).intValue());
-
-        // Assert existing route IDs are added, third one is new and has no ID
-        assertEquals(1, permitModel.getRoutes().get(0).getId().intValue());
-        assertEquals(2, permitModel.getRoutes().get(1).getId().intValue());
-        assertNull(permitModel.getRoutes().get(2).getId());
-
-        // Assert company ID is added to permit
-        assertEquals(1, permitModel.getCompanyId().intValue());
-
-        // Assert correct bridge IDs are added to route bridges
-        assertBridgeIdsAdded(permitModel);
-
-        // Assert the resulting response
-        assertNotNull(response);
-        assertEquals(2, response.getPermitId().intValue());
-        assertEquals("1234/2021", response.getPermitNumber());
-        assertEquals(LeluPermitStatus.UPDATED, response.getStatus());
-        assertNotNull(response.getTimestamp());
-    }
+    // TODO test permit version
 
     private LeluPermitDTO getPermitDTO() {
         LeluPermitDTO permit = new LeluPermitDTO();
@@ -303,14 +247,6 @@ public class LeluServiceTest {
         map.put("5.5.555.555.5.55.555555", 5);
         map.put("6.6.666.666.6.66.666666", 6);
         map.put("7.7.777.777.7.77.777777", 7);
-        return map;
-    }
-
-    private Map<Long, Integer> getRouteLeluIdAndIdMap() {
-        Map<Long, Integer> map = new HashMap<>();
-        map.put((long) 12345, 1);
-        map.put((long) 23456, 2);
-        map.put((long) 43567, 4);
         return map;
     }
 
