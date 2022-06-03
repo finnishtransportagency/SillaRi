@@ -24,5 +24,4 @@ public class TableAlias {
     public static final SupervisionReport supervisionReport = Tables.SUPERVISION_REPORT.as("snr");
     public static final SupervisionImage supervisionImage = Tables.SUPERVISION_IMAGE.as("sni");
     public static final SupervisionPdf supervisionPdf = Tables.SUPERVISION_PDF.as("snp");
-    public static final SupervisionSupervisor supervisionSupervisor = Tables.SUPERVISION_SUPERVISOR.as("ss");
 }

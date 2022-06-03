@@ -352,7 +352,7 @@ public class PermitRepository {
                                 routeBridge.getOrdinal(),
                                 routeBridge.getCrossingInstruction(),
                                 routeBridge.getContractNumber(),
-                                routeBridge.getContractBusinessIdentifier(),
+                                routeBridge.getContractBusinessId(),
                                 routeBridge.getTransportNumber())
                         .execute();
             } else {
@@ -403,9 +403,6 @@ public class PermitRepository {
                         .execute();
                 ctx.delete(TableAlias.supervisionPdf)
                         .where(TableAlias.supervisionImage.SUPERVISION_ID.in(supervisionIds))
-                        .execute();
-                ctx.delete(TableAlias.supervisionSupervisor)
-                        .where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(supervisionIds))
                         .execute();
                 ctx.delete(TableAlias.supervision)
                         .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridge.getId()))

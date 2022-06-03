@@ -2,6 +2,7 @@ import IRoute from "./IRoute";
 import IVehicle from "./IVehicle";
 import ITransportDimensions from "./ITransportDimensions";
 import IAxleChart from "./IAxleChart";
+import ICompany from "./ICompany";
 
 export default interface IPermit {
   id: number;
@@ -9,6 +10,7 @@ export default interface IPermit {
   permitNumber: string;
   validStartDate: string;
   validEndDate: string;
+  company?: ICompany;
   routes?: IRoute[];
   transportDimensions?: ITransportDimensions;
   vehicles?: IVehicle[];

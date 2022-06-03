@@ -24,6 +24,8 @@ public class PermitService {
     @Autowired
     PermitRepository permitRepository;
     @Autowired
+    CompanyRepository companyRepository;
+    @Autowired
     AxleRepository axleRepository;
     @Autowired
     VehicleRepository vehicleRepository;
@@ -50,6 +52,9 @@ public class PermitService {
 
     public PermitModel getPermitWithOnlyNextAvailableTransportInstances(Integer permitId) {
         PermitModel permitModel = permitRepository.getPermit(permitId);
+        if (permitModel != null && permitModel.getCompanyId() != null) {
+            permitModel.setCompany(companyRepository.getCompanyById(permitModel.getCompanyId()));
+        }
 
         Map<Integer, Integer> maxUsedTransportNumbers = createMaxUsedTransportNumbersMap(permitId);
         logger.debug("maxUsedTransportNumbers: "+maxUsedTransportNumbers);

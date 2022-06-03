@@ -3,7 +3,6 @@ package fi.vaylavirasto.sillari.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
 import java.util.Comparator;
@@ -18,10 +17,10 @@ public class SupervisionModel extends BaseModel {
     private Integer routeTransportId;
     private OffsetDateTime plannedTime;
     private Boolean conformsToPermit;
+    private String supervisorCompany;
     private SupervisorType supervisorType;
     private SupervisionStatusModel currentStatus;
     private List<SupervisionStatusModel> statusHistory;
-    private List<SupervisorModel> supervisors;
     private SupervisionReportModel report;
     private List<SupervisionImageModel> images;
 
@@ -69,36 +68,13 @@ public class SupervisionModel extends BaseModel {
     }
 
 
-    private String deduceSupervisorWhoSupervisedUserName() {
-        return getStatusHistory().stream()
-                .filter(supervisionStatusModel -> supervisionStatusModel.getStatus().equals(SupervisionStatusType.REPORT_SIGNED))
-                .findFirst().orElseThrow().getUsername();
-
-    }
-
-
-    public boolean getExceptional(){
-        if(getReport() == null){
+    // Used only by LeluDTOMapper
+    public boolean getExceptional() {
+        if (getReport() == null) {
             return false;
-        }
-        else {
+        } else {
             return report.getAnomalies() || !report.getSpeedLimitOk() || !report.getDrivingLineOk();
         }
-
-    }
-
-    public SupervisorModel getSupervisorWhoSupervised() {
-        try {
-            String userName = deduceSupervisorWhoSupervisedUserName();
-            List<SupervisorModel> supervisors = ((getSupervisors() == null || getSupervisors().isEmpty()) ? null : getSupervisors());
-            SupervisorModel supervisor = supervisors.stream().filter(s -> s.getUsername().equals(userName)).findFirst().orElseThrow();
-            return supervisor;
-        }
-        catch (Exception e){
-            //no supervision signed probably
-            return null;
-        }
-
     }
 
 }

@@ -82,7 +82,7 @@ public class RouteBridgeController {
     }
 
     private boolean isRouteBridgeOfSupervisor(SillariUser user, Integer routeBridgeId) {
-        List<SupervisorModel> supervisors = supervisionService.getSupervisorsByRouteBridgeId(routeBridgeId);
-        return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
+        List<String> supervisors = supervisionService.getSupervisorsByRouteBridgeId(routeBridgeId);
+        return supervisors.contains(user.getBusinessId());
     }
 }

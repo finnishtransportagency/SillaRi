@@ -1,8 +1,8 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
-import fi.vaylavirasto.sillari.service.fim.FIMService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,11 +30,7 @@ public class RouteTransportService {
     @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
     @Autowired
-    SupervisorRepository supervisorRepository;
-    @Autowired
     RouteTransportPasswordRepository routeTransportPasswordRepository;
-    @Autowired
-    FIMService fimService;
 
 
     public RouteTransportModel getRouteTransport(Integer routeTransportId, boolean includePassword) {
@@ -48,8 +44,6 @@ public class RouteTransportService {
             List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportId);
             if (supervisions != null) {
                 supervisions.forEach(supervision -> {
-                    supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
-                    fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
                     supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });
             }
@@ -77,9 +71,6 @@ public class RouteTransportService {
                 List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportId);
                 if (supervisions != null) {
                     supervisions.forEach(supervision -> {
-                        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
-                        // Supervisor name not shown in ui from this resource, so we don't waste time getting them
-                        //fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
                         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                     });
                 }
@@ -126,21 +117,11 @@ public class RouteTransportService {
 
                 if (supervisions != null) {
 
-                    Map<Integer, List<SupervisorModel>> supervisorModels = supervisorRepository.getSupervisorsBySupervisionId(
-                        supervisionModels.stream().map(SupervisionModel::getId).collect(Collectors.toList())
-                    );
-
                     Map<Integer, List<SupervisionStatusModel>> supervisionStatusModels = supervisionStatusRepository.getSupervisionStatusHistories(
                         supervisionModels.stream().map(SupervisionModel::getId).collect(Collectors.toList())
                     );
 
                     supervisions.forEach(supervision -> {
-
-                        supervision.setSupervisors(supervisorModels.get(supervision.getId()));
-
-                        // Supervisor name not shown in ui from this resource, so we don't waste time getting them
-                        //fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
-
                         supervision.setStatusHistory(supervisionStatusModels.get(supervision.getId()));
                     });
                 }
@@ -156,7 +137,7 @@ public class RouteTransportService {
         return routeTransportModels;
     }
 
-    public RouteTransportModel getRouteTransportOfSupervisor(Integer routeTransportId, String username) {
+    public RouteTransportModel getRouteTransportOfSupervisor(Integer routeTransportId, SillariUser user) {
         RouteTransportModel routeTransport = routeTransportRepository.getRouteTransportById(routeTransportId);
 
         if (routeTransport != null) {
@@ -181,14 +162,9 @@ public class RouteTransportService {
 
             // Set supervisions with bridge data to route transport.
             // Not all bridges from route are added, only those where the supervisor has supervisions.
-            List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportAndSupervisorUsername(routeTransportId, username);
+            List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportAndSupervisor(routeTransportId, user.getBusinessId());
             if (supervisions != null) {
                 supervisions.forEach(supervision -> {
-                    supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervision.getId()));
-
-                    // Supervisor name not shown in ui from this resource, so we don't waste time getting them
-                    //fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
-
                     // Sets also current status and status timestamps
                     supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
                 });

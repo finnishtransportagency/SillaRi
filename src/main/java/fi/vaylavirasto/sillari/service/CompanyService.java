@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.dto.CompanyTransportsDTO;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
@@ -89,11 +90,11 @@ public class CompanyService {
         return companyRepository.getCompanyByRouteId(routeId);
     }
 
-    public List<CompanyTransportsDTO> getCompanyTransportListOfSupervisor(String username) {
+    public List<CompanyTransportsDTO> getCompanyTransportListOfSupervisor(SillariUser user) {
         List<CompanyTransportsDTO> companyTransports = new ArrayList<>();
 
         // Get route transports where the supervisor has supervisions
-        List<RouteTransportModel> routeTransports = transportRepository.getRouteTransportsOfSupervisor(username);
+        List<RouteTransportModel> routeTransports = transportRepository.getRouteTransportsOfSupervisor(user.getBusinessId());
 
         if (routeTransports != null && !routeTransports.isEmpty()) {
             for (RouteTransportModel transport : routeTransports) {
@@ -114,7 +115,7 @@ public class CompanyService {
                     }
                 }
 
-                List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportAndSupervisorUsername(transport.getId(), username);
+                List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportAndSupervisor(transport.getId(), user.getBusinessId());
 
                 // Get all supervision status histories at once instead of looping the DB calls
                 List<Integer> supervisionIds = supervisions.stream().map(SupervisionModel::getId).collect(Collectors.toList());

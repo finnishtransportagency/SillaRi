@@ -77,7 +77,7 @@ public class RouteTransportController {
                 throw new AccessDeniedException("Not own company route permit");
             }
             SillariUser user = uiService.getSillariUser();
-            RouteTransportModel routeTransport = routeTransportService.getRouteTransportOfSupervisor(routeTransportId, user.getUsername());
+            RouteTransportModel routeTransport = routeTransportService.getRouteTransportOfSupervisor(routeTransportId, user);
             return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -213,11 +213,11 @@ public class RouteTransportController {
         return user.getBusinessId().equals(cm.getBusinessId());
     }
 
-    /* Check that route transport contains supervision by the supervisos */
+    /* Check that route transport contains supervision by the supervisor */
     private boolean isRouteTransportOfSupervisor(Integer routeTransportId) {
         SillariUser user = uiService.getSillariUser();
-        List<SupervisorModel> supervisors = supervisionService.getSupervisorsByRouteTransportId(routeTransportId);
-        return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
+        List<String> supervisors = supervisionService.getSupervisorsByRouteTransportId(routeTransportId);
+        return supervisors.contains(user.getBusinessId());
     }
 
 }
