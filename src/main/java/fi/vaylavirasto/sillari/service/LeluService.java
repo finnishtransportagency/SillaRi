@@ -227,10 +227,27 @@ public class LeluService {
                 }
 
 
-                //get the pic form trex pic rest. TODO save it
+
                 try {
                     PicInfoModel picInfo = tRexPicService.getPicInfo(oid);
                     logger.debug("Jippihei got picinfo from trex: " + picInfo);
+
+                    byte[] picBytes = tRexPicService.getPicBinJson(oid, String.valueOf(picInfo.getId()));
+
+                    BridgeImageModel bridgeImageModel = new BridgeImageModel();
+                    bridgeImageModel.setBridgeId(bridgeId);
+                    bridgeImageModel.setFilename(oid + ".jpeg");
+                    bridgeImageModel.setObjectKey(oid);
+                    String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(picBytes);
+                    bridgeImageModel.setBase64("data:" + "jpeg/image" + ";base64," + encodedString);
+
+                    try {
+                        tRexPicService.saveImageFile(bridgeImageModel);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
                 } catch (TRexRestException e) {
                     e.printStackTrace();
                 }

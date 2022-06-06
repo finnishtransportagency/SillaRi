@@ -87,6 +87,27 @@ public class S3FileService {
         }
     }
 
+    public boolean saveFile(byte[] decodedString, String contentType, String bucketName, String objectKey, String filename, OffsetDateTime fileCreated) throws IOException {
+        if (activeProfile.equals("local")) {
+            // Save to local file system
+            File outputFile = new File("/", filename);
+            Files.write(outputFile.toPath(), decodedString);
+
+            logger.debug("wrote local file: " + outputFile.getAbsolutePath() + ", filename: " + outputFile.getName());
+            return true;
+        } else {
+            // Upload to AWS
+
+            boolean success = awss3Client.upload(objectKey, decodedString, contentType, bucketName, AWSS3Client.SILLARI_BACKEND_ROLE_SESSION_NAME);
+            if (success) {
+                logger.debug("Uploaded to AWS: " + objectKey);
+            } else {
+                logger.warn("Upload to AWS failed: " + objectKey);
+            }
+            return success;
+        }
+    }
+
     private SupervisionMetadataDTO getSupervisionMetadata(Integer supervisionId, String objectKey, String objectIdentifier, String filename, OffsetDateTime fileCreated) {
         SupervisionMetadataDTO dto = new SupervisionMetadataDTO();
 
