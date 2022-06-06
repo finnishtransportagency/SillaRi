@@ -46,10 +46,10 @@ public class LeluService {
     private BridgeRepository bridgeRepository;
     private SupervisionRepository supervisionRepository;
     private SupervisionService supervisionService;
-    private final MessageSource messageSource;
+    private MessageSource messageSource;
     private LeluRouteUploadUtil leluRouteUploadUtil;
     private AWSS3Client awss3Client;
-    private final TRexService trexService;
+    private TRexService trexService;
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;

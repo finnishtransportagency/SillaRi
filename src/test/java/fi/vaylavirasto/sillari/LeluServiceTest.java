@@ -14,17 +14,13 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -56,15 +52,10 @@ public class LeluServiceTest {
     private AWSS3Client awss3Client;
     @Mock
     private TRexService trexService;
-
-
-    @Autowired
+    @Mock
     private MessageSource messageSource;
-
-    @Autowired
+    @Mock
     private LeluRouteUploadUtil leluRouteUploadUtil;
-
-
 
 
     @Captor
@@ -196,7 +187,7 @@ public class LeluServiceTest {
         Mockito.when(permitRepository.getPermitsByPermitNumber(Mockito.anyString())).thenReturn(getPreviousPermitVersions());
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(2);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
-        Mockito.when(messageSource.getMessage(Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn("previousSameVersionError");
+        Mockito.when(messageSource.getMessage(Mockito.anyString(), Mockito.any(), Mockito.any(Locale.class))).thenReturn("previousSameVersionError");
 
         LeluPermitDTO newPermit = getPermitDTO();
         newPermit.setVersion(2);
