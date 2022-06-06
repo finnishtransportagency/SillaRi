@@ -2,8 +2,10 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.api.rest.error.PDFDownloadException;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
+import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import fi.vaylavirasto.sillari.service.SupervisionImageService;
@@ -23,6 +25,8 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -271,6 +275,8 @@ public class DevToolsController {
         return null;
     }
 
+    yleiskuva
+
 
     private String trexHardPicInfoString() {
         return "{\n" +
@@ -303,6 +309,30 @@ public class DevToolsController {
                 "}\n";
 
     }
+
+    private String trexHardPicBinary)
+
+    {
+
+    }
+
+    @Operation(summary = "Get image")
+    @GetMapping("/get")
+    public void trexHardPicBinary(HttpServletResponse response, @RequestParam Integer id) throws IOException {
+        ServiceMetric serviceMetric = new ServiceMetric("ImageController", "getImage");
+        try {
+            if (!isSupervisionImageOfSupervisor(id)) {
+                throw new AccessDeniedException("Image not of the user");
+            }
+
+            SupervisionImageModel supervisionImageModel = supervisionImageService.getSupervisionImage(id);
+            // Get the file from S3 bucket or local file system and write to response
+            supervisionImageService.getImageFile(response, supervisionImageModel);
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
 
     //this can be set as "trex url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,
     @RequestMapping(value = "/localHardCodedBridgeInfoJson", method = RequestMethod.GET)
