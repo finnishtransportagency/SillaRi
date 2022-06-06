@@ -1,11 +1,10 @@
 package fi.vaylavirasto.sillari.api.rest;
 
+import com.amazonaws.util.IOUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.api.rest.error.PDFDownloadException;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
-import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import fi.vaylavirasto.sillari.service.SupervisionImageService;
@@ -25,12 +24,21 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 @RestController
 @Profile({"local", "dev"})
@@ -275,7 +283,94 @@ public class DevToolsController {
         return null;
     }
 
-    yleiskuva
+    //this can be set as "trex pic url" in local dev env so we get some bridge pic bin for deving and testing when we don't connection to trex,
+    @RequestMapping(value = "/localHardCodedPicJson/yleiskuva", method = RequestMethod.GET)
+    public void trexHardPicBin(HttpServletResponse response) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        getDevJpg(response);
+    }
+
+
+    //generate random jpg for local testing
+    private void getDevJpg(HttpServletResponse response) throws Exception {
+
+        final String FILENAME = "testPic.jpg";
+        generateDevJpg(FILENAME, 100, 100, 5);
+
+        // Get from local file system
+
+        File inputFile = new File(FILENAME);
+        if (inputFile.exists()) {
+            response.setContentType("image/jpeg");
+            OutputStream out = response.getOutputStream();
+            FileInputStream in = new FileInputStream(inputFile);
+            IOUtils.copy(in, out);
+            out.close();
+            in.close();
+        }
+
+    }
+
+    private void generateDevJpg(String fileName, int width, int height, int pixSize) throws Exception {
+        int x, y = 0;
+
+        BufferedImage bufferedImage = new BufferedImage(pixSize * width, pixSize * height, BufferedImage.TYPE_3BYTE_BGR);
+
+        Graphics2D graphics2D = (Graphics2D) bufferedImage.getGraphics();
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                x = i * pixSize;
+                y = j * pixSize;
+
+                if ((i * j) % 6 == 0) {
+                    graphics2D.setColor(Color.GRAY);
+                } else if ((i + j) % 5 == 0) {
+                    graphics2D.setColor(Color.BLUE);
+                } else {
+                    graphics2D.setColor(Color.WHITE);
+                }
+
+                graphics2D.fillRect(y, x, pixSize, pixSize);
+
+            }
+
+        }
+
+        graphics2D.dispose();
+
+        saveDevJpgToFile(bufferedImage, new File(fileName));
+
+    }
+
+    /**
+     * Saves jpeg to file
+     */
+
+    private void saveDevJpgToFile(BufferedImage img, File file) throws IOException {
+
+        ImageWriter writer = null;
+
+        java.util.Iterator iter = ImageIO.getImageWritersByFormatName("jpg");
+
+        if (iter.hasNext()) {
+            writer = (ImageWriter) iter.next();
+        }
+
+        ImageOutputStream ios = ImageIO.createImageOutputStream(file);
+
+        writer.setOutput(ios);
+
+        ImageWriteParam param = new JPEGImageWriteParam(java.util.Locale.getDefault());
+
+        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+
+        param.setCompressionQuality(0.98f);
+
+        writer.write(null, new IIOImage(img, null, null), param);
+
+    }
 
 
     private String trexHardPicInfoString() {
@@ -308,29 +403,6 @@ public class DevToolsController {
                 "    ]\n" +
                 "}\n";
 
-    }
-
-    private String trexHardPicBinary)
-
-    {
-
-    }
-
-    @Operation(summary = "Get image")
-    @GetMapping("/get")
-    public void trexHardPicBinary(HttpServletResponse response, @RequestParam Integer id) throws IOException {
-        ServiceMetric serviceMetric = new ServiceMetric("ImageController", "getImage");
-        try {
-            if (!isSupervisionImageOfSupervisor(id)) {
-                throw new AccessDeniedException("Image not of the user");
-            }
-
-            SupervisionImageModel supervisionImageModel = supervisionImageService.getSupervisionImage(id);
-            // Get the file from S3 bucket or local file system and write to response
-            supervisionImageService.getImageFile(response, supervisionImageModel);
-        } finally {
-            serviceMetric.end();
-        }
     }
 
 
