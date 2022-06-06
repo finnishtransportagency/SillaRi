@@ -52,6 +52,11 @@ public class TRexPicService {
 
     private final TrexBridgeInfoResponseJsonMapper dtoMapper = Mappers.getMapper(TrexBridgeInfoResponseJsonMapper.class);
 
+    public SupervisionImageModel createSupervisionImage(SupervisionImageModel supervisionImage) {
+        Integer id = supervisionImageRepository.insertSupervisionImageIfNotExists(supervisionImage);
+        return supervisionImageRepository.getSupervisionImage(id);
+    }
+
     public void saveImageFile(BridgeImageModel image) throws IOException {
         Tika tika = new Tika();
         int dataStart = image.getBase64().indexOf(",") + 1;
