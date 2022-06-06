@@ -10,6 +10,8 @@ export default interface IPermit {
   permitNumber: string;
   validStartDate: string;
   validEndDate: string;
+  leluVersion: number;
+  isCurrentVersion: boolean;
   company?: ICompany;
   routes?: IRoute[];
   transportDimensions?: ITransportDimensions;

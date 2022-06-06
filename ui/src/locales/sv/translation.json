@@ -241,6 +241,7 @@
       "supervision": "Övervakning",
       "includesSupervisions": "(SV) Sisältää sillanvalvontoja",
       "noSupervisions": "(SV) Ei sisällä sillanvalvontoja",
+      "permitVersion": "(SV) Lupaversio",
       "addTransportButtonLabel": "Lägg till transport",
       "transportCount": "(SV) Kuljetuskerrat",
       "showByRoute": "(SV) Näytä reittikohtaisesti",

@@ -12,6 +12,7 @@ import { useTypedSelector, RootState } from "../../store/store";
 import { onRetry } from "../../utils/backendData";
 import { getCompany } from "../../utils/managementBackendData";
 import Loading from "../../components/Loading";
+import "./CompanySummary.css";
 
 const CompanySummary = (): JSX.Element => {
   const { t } = useTranslation();
@@ -79,12 +80,12 @@ const CompanySummary = (): JSX.Element => {
                         items={permits
                           .sort((a, b) => a.permitNumber.localeCompare(b.permitNumber))
                           .map((permit, index) => {
-                            const { id: permitId, permitNumber } = permit;
-                            const key = `permit_${permitNumber}`;
+                            const { id: permitId, permitNumber, leluVersion, isCurrentVersion } = permit;
+                            const key = `permit_${permitNumber}_${leluVersion}`;
 
                             return {
                               uuid: key,
-                              // headingColor: "primary",
+                              itemClassName: isCurrentVersion ? "" : "outdatedVersion",
                               heading: <PermitAccordionHeading ref={(el: HTMLIonGridElement) => setRef(permitId, el)} permit={permit} />,
                               isPanelOpen: selectedManagementPermitId ? selectedManagementPermitId === permitId : index === 0,
                               panel: <PermitAccordionPanel permit={permit} />,

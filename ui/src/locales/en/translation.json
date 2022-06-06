@@ -241,6 +241,7 @@
       "supervision": "Supervision",
       "includesSupervisions": "Includes bridge supervisions",
       "noSupervisions": "Does not include bridge supervisions",
+      "permitVersion": "Permit version",
       "addTransportButtonLabel": "Add transport",
       "transportCount": "Transport times",
       "showByRoute": "Show by route",

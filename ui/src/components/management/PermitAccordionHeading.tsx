@@ -18,7 +18,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { id: permitId, validStartDate, validEndDate, routes = [] } = permit;
+  const { id: permitId, validStartDate, validEndDate, leluVersion, isCurrentVersion, routes = [] } = permit;
 
   const includesSupervisions = permitIncludesSupervisions(routes);
 
@@ -30,6 +30,9 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
             <IonRow>
               <IonCol>
                 <PermitLinkText permit={permit} className="headingText" />
+              </IonCol>
+              <IonCol>
+                <IonText>{`${t("management.companySummary.permitVersion")} ${leluVersion}`}</IonText>
               </IonCol>
             </IonRow>
             <IonRow>
@@ -53,7 +56,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
           {isPermitValid(permit) && (
             <IonButton
               color="secondary"
-              // expand="block"
+              disabled={!isCurrentVersion}
               size="default"
               routerLink={`/management/addTransport/${permitId}`}
               onClick={(evt) => {
