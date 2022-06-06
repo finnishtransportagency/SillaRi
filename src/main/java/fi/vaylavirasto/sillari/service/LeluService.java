@@ -4,6 +4,7 @@ package fi.vaylavirasto.sillari.service;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
@@ -77,8 +78,7 @@ public class LeluService {
         logger.debug("Permit mapped from LeLu model: {}", permitModel);
 
         // Check if permits already exist with the same permit number
-        handlePreviousPermitVersions(permitModel);
-        permitModel.setIsCurrentVersion(true);
+        handlePreviousPermitVersions(permitModel, response);
 
         // Fetch company from DB with business ID. If not found, insert new company.
         Integer companyId = getOrCreateCompany(permitModel.getCompany());
@@ -91,11 +91,12 @@ public class LeluService {
         Integer permitModelId = permitRepository.createPermit(permitModel);
 
         response.setPermitId(permitModelId);
-        //response.setStatus(LeluPermitStatus.CREATED);
         return response;
     }
 
-    private void handlePreviousPermitVersions(PermitModel permitModel) throws LeluPermitSaveException {
+    private void handlePreviousPermitVersions(PermitModel permitModel, LeluPermitResponseDTO response) throws LeluPermitSaveException {
+        // Check if we already have permits with the same permit number
+        // If we have previous versions, create new permit version and mark old ones as not current.
         List<PermitModel> oldPermits = permitRepository.getPermitsByPermitNumber(permitModel.getPermitNumber());
         if (oldPermits != null && !oldPermits.isEmpty()) {
             logger.debug("{} permits with same permitNumber {} found", oldPermits.size(), permitModel.getPermitNumber());
@@ -108,11 +109,15 @@ public class LeluService {
                         permitRepository.updatePermitCurrentVersion(oldPermit.getId(), false);
                     }
                 }
+                response.setStatus(LeluPermitStatus.NEW_VERSION_CREATED);
             } else {
                 logger.error("Permit with same permitNumber {} and lelu version {} already exists", permitModel.getPermitNumber(), permitModel.getLeluVersion());
                 throw new LeluPermitSaveException(messageSource.getMessage("lelu.permit.exists.with.version", null, Locale.ROOT));
             }
+        } else {
+            response.setStatus(LeluPermitStatus.CREATED);
         }
+        permitModel.setIsCurrentVersion(true);
     }
 
     public LeluRouteGeometryResponseDTO uploadRouteGeometry(Long routeId, MultipartFile file) throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
