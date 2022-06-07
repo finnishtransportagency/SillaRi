@@ -123,8 +123,11 @@ public class TRexPicService {
 
         if (bridgeOid != null) {
             WebClient webClient = buildClient();
+
             try {
-                byte[] picBin = webClient.get()
+                byte[] picBin = webClient.mutate().codecs(configurer -> configurer
+                                .defaultCodecs()
+                                .maxInMemorySize(16 * 1024 * 1024)).build().get()
                         .uri(uriBuilder -> uriBuilder
                                 .path(binPath)
                                 .queryParam("oid", bridgeOid)
