@@ -8,6 +8,7 @@ import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import static org.jooq.impl.DSL.*;
+
 @Repository
 public class PermitRepository {
     private static final Logger logger = LogManager.getLogger();
@@ -29,7 +32,18 @@ public class PermitRepository {
         return dsl.select().from(TableAlias.permit)
                 .where(TableAlias.permit.COMPANY_ID.eq(companyId))
                 .and(TableAlias.permit.VALID_END_DATE.greaterThan(validAfter.minusDays(1)))
+                .and(isPermitVersionRelevant())
                 .fetch(new PermitMapper(true));
+    }
+
+    private Condition isPermitVersionRelevant() {
+        return TableAlias.permit.IS_CURRENT_VERSION.isTrue().or(
+                exists(select(TableAlias.routeTransport.ID)
+                        .from(TableAlias.routeTransport)
+                        .innerJoin(TableAlias.route).on(TableAlias.routeTransport.ROUTE_ID.eq(TableAlias.route.ID))
+                        .where(TableAlias.route.PERMIT_ID.eq(TableAlias.permit.ID))
+                )
+        );
     }
 
     public List<PermitModel> getPermitsByPermitNumber(String permitNumber) {
