@@ -119,7 +119,7 @@ public class TRexPicService {
     //•	Kuvien binäärejä voitte sitten kysyä: https://testiapi.vayla.fi/trex/rajapinta/rakennekuva-api/v1/yleiskuva?oid=<rakenneoid>&id=<kuvaid>
     public byte[] getPicBinJson(String bridgeOid, String picId) throws TRexRestException {
 
-        logger.trace("bridgeOid: " + bridgeOid);
+        logger.debug("bridgeOid: " + bridgeOid);
 
         if (bridgeOid != null) {
             WebClient webClient = buildClient();
