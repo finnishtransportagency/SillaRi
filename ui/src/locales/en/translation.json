@@ -365,7 +365,8 @@
       "stopped": "On a break",
       "in_progress": "On the move",
       "arrived": "Arrived",
-      "supervisionStarted": "Supervision started"
+      "supervisionStarted": "Supervision started",
+      "outdatedPermit": "Add to new permit version"
     }
   },
   "transports": {

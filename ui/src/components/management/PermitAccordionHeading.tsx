@@ -31,9 +31,11 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
               <IonCol>
                 <PermitLinkText permit={permit} className="headingText" />
               </IonCol>
-              <IonCol className={!isCurrentVersion ? "disabled" : ""}>
-                <IonText>{`${t("management.companySummary.permitVersion")} ${leluVersion}`}</IonText>
-              </IonCol>
+              {!isCurrentVersion && (
+                <IonCol className="disabled">
+                  <IonText>{`${t("management.companySummary.permitVersion")} ${leluVersion}`}</IonText>
+                </IonCol>
+              )}
             </IonRow>
             <IonRow>
               <IonCol className={!isPermitValid(permit) ? "disabled" : ""}>

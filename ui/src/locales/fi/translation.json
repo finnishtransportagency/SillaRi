@@ -365,7 +365,8 @@
       "stopped": "Tauolla",
       "in_progress": "Liikkeellä",
       "arrived": "Päättynyt",
-      "supervisionStarted": "Valvonta aloitettu"
+      "supervisionStarted": "Valvonta aloitettu",
+      "outdatedPermit": "Tee uudelle lupaversiolle"
     }
   },
   "transports": {

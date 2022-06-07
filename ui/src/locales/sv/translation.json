@@ -365,7 +365,8 @@
       "stopped": "Paus",
       "in_progress": "På väg",
       "arrived": "Transporten avslutad",
-      "supervisionStarted": "(SV) Valvonta aloitettu"
+      "supervisionStarted": "(SV) Valvonta aloitettu",
+      "outdatedPermit": "(SV) Tee uudelle lupaversiolle"
     }
   },
   "transports": {
