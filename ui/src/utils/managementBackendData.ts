@@ -6,7 +6,7 @@ import ICompany from "../interfaces/ICompany";
 import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
-import ISupervisor from "../interfaces/ISupervisor";
+import ISupervision from "../interfaces/ISupervision";
 
 export const getCompany = async (dispatch: Dispatch): Promise<ICompany> => {
   try {
@@ -205,22 +205,22 @@ export const deleteRouteTransport = async (routeTransportId: number, dispatch: D
   }
 };
 
-export const getSupervisors = async (dispatch: Dispatch): Promise<ISupervisor[]> => {
+export const getSupervisionOfTransportCompany = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: false } });
+    console.log("GetSupervisionOfTransportCompany", supervisionId);
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: false } });
 
-    const supervisorsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisors`);
+    const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionoftransportcompany?supervisionId=${supervisionId}`);
 
-    if (supervisorsResponse.ok) {
-      const supervisors = (await supervisorsResponse.json()) as Promise<ISupervisor[]>;
-      console.log("getSupervisors", supervisors);
-      return await supervisors;
+    if (supervisionResponse.ok) {
+      const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;
+      return await supervision;
     } else {
-      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: true } });
       throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: true } });
     throw new Error(err as string);
   }
 };

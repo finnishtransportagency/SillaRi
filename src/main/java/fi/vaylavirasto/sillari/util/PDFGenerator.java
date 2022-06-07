@@ -113,9 +113,8 @@ public class PDFGenerator {
             newLine();
             contentStream.showText(MessageFormat.format(pdf_sign_time, signTime));
 
-            // TODO add supervisor company instead
-            /*newLine();
-            contentStream.showText(pdf_supervisor + deduceSupervisorWhoSupervisedWholeName(supervision));*/
+            newLine();
+            contentStream.showText(pdf_supervisor + supervision.getSupervisorCompany());
 
             newLine();
             newLine();
@@ -355,16 +354,5 @@ public class PDFGenerator {
             return "-";
         }
     }
-
-    // TODO remove when supervisor company is available
-    /*private String deduceSupervisorWhoSupervisedWholeName(SupervisionModel supervision) {
-
-        SupervisorModel supervisor = supervision.getSupervisorWhoSupervised();
-        String supervisorFirstName = supervisor != null ? supervisor.getFirstName() : "";
-        String supervisorLastName = supervisor != null ? supervisor.getLastName() : "";
-        return supervisorFirstName + " " + supervisorLastName;
-
-    }*/
-
 
 }

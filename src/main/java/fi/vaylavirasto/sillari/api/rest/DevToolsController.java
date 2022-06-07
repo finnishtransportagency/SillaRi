@@ -113,27 +113,23 @@ public class DevToolsController {
     }
 
     @RequestMapping(value = "/testGetSupervisorsRawFromFim", method = RequestMethod.GET)
-    @Operation(summary = "Test basic get request with constant bridge")
-    public Groups testConnectionToFim() throws TRexRestException {
-
+    @Operation(summary = "Test get SillaRi supervisor users from FIM")
+    public Groups testConnectionToFim() {
         logger.debug("Test connections to fim");
 
         try {
-            Groups groups = fimService.getSupervisorsXML();
+            Groups groups = fimService.getSupervisorUsersXML();
             if (groups == null) {
-                logger.error("trex fail  bridge null");
+                logger.error("FIM fail no xml");
                 return null;
-
             } else {
-                logger.debug("success getting bridge from trex: " + groups.toString());
+                logger.debug("success getting user xml from fim");
                 return groups;
             }
         } catch (Exception e) {
             logger.error("fimrest fail " + e.getClass().getName() + " " + e.getMessage());
             return null;
         }
-
-
     }
 
     //this can be set as "fim url" in local dev env so we get some bridge info for deving and testing when we don't connection to trex,

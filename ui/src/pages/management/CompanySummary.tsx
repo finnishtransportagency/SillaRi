@@ -79,8 +79,8 @@ const CompanySummary = (): JSX.Element => {
                         items={permits
                           .sort((a, b) => a.permitNumber.localeCompare(b.permitNumber))
                           .map((permit, index) => {
-                            const { id: permitId } = permit;
-                            const key = `permit_${index}`;
+                            const { id: permitId, permitNumber } = permit;
+                            const key = `permit_${permitNumber}`;
 
                             return {
                               uuid: key,
