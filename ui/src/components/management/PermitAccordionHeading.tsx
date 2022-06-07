@@ -31,7 +31,7 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
               <IonCol>
                 <PermitLinkText permit={permit} className="headingText" />
               </IonCol>
-              <IonCol>
+              <IonCol className={!isCurrentVersion ? "disabled" : ""}>
                 <IonText>{`${t("management.companySummary.permitVersion")} ${leluVersion}`}</IonText>
               </IonCol>
             </IonRow>
@@ -53,10 +53,9 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
         </IonCol>
 
         <IonCol size="12" size-md="auto" className="ion-hide-md-down">
-          {isPermitValid(permit) && (
+          {isPermitValid(permit) && isCurrentVersion && (
             <IonButton
               color="secondary"
-              disabled={!isCurrentVersion}
               size="default"
               routerLink={`/management/addTransport/${permitId}`}
               onClick={(evt) => {

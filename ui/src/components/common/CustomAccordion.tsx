@@ -7,7 +7,6 @@ interface CustomAccordionProps {
   className?: string;
   items: {
     uuid: string;
-    itemClassName?: string;
     headingColor?: string;
     heading: ReactNode;
     isPanelOpen?: boolean;
@@ -23,9 +22,9 @@ const CustomAccordion = ({ className, items }: CustomAccordionProps): JSX.Elemen
       value={items.filter((item) => item.isPanelOpen ?? false).map((item) => item.uuid)}
     >
       {items.map((item) => {
-        const { uuid, itemClassName, headingColor, heading, panel } = item;
+        const { uuid, headingColor, heading, panel } = item;
         return (
-          <IonAccordion className={itemClassName || ""} value={uuid} key={uuid} toggleIcon={arrowOpen}>
+          <IonAccordion value={uuid} key={uuid} toggleIcon={arrowOpen}>
             <IonItem slot="header" lines="none" color={headingColor}>
               {heading}
             </IonItem>
