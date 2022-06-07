@@ -83,13 +83,21 @@ const CompanySummary = (): JSX.Element => {
                             }
                             return a.permitNumber.localeCompare(b.permitNumber);
                           })
-                          .map((permit, index) => {
+                          .map((permit, index, permitList) => {
                             const { id: permitId, permitNumber, leluVersion } = permit;
                             const key = `permit_${permitNumber}_${leluVersion}`;
 
+                            const hasMultipleVersions = permitList.filter((p) => p.permitNumber === permitNumber).length > 1;
+
                             return {
                               uuid: key,
-                              heading: <PermitAccordionHeading ref={(el: HTMLIonGridElement) => setRef(permitId, el)} permit={permit} />,
+                              heading: (
+                                <PermitAccordionHeading
+                                  ref={(el: HTMLIonGridElement) => setRef(permitId, el)}
+                                  permit={permit}
+                                  hasMultiplePermitVersions={hasMultipleVersions}
+                                />
+                              ),
                               isPanelOpen: selectedManagementPermitId ? selectedManagementPermitId === permitId : index === 0,
                               panel: <PermitAccordionPanel permit={permit} />,
                             };

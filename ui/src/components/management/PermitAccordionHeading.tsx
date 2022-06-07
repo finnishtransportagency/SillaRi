@@ -12,9 +12,13 @@ import { permitIncludesSupervisions } from "../../utils/managementUtil";
 
 interface PermitAccordionHeadingProps {
   permit: IPermit;
+  hasMultiplePermitVersions: boolean;
 }
 
-const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: ForwardedRef<HTMLIonGridElement>): JSX.Element => {
+const PermitAccordionHeading = (
+  { permit, hasMultiplePermitVersions }: PermitAccordionHeadingProps,
+  ref: ForwardedRef<HTMLIonGridElement>
+): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -31,8 +35,8 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
               <IonCol>
                 <PermitLinkText permit={permit} className="headingText" />
               </IonCol>
-              {!isCurrentVersion && (
-                <IonCol className="disabled">
+              {hasMultiplePermitVersions && (
+                <IonCol className={isCurrentVersion ? "" : "disabled"}>
                   <IonText>{`${t("management.companySummary.permitVersion")} ${leluVersion}`}</IonText>
                 </IonCol>
               )}
