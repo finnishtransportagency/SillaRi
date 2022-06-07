@@ -241,6 +241,8 @@ public class LeluService {
                     String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(picBytes);
                     bridgeImageModel.setBase64("data:" + "jpeg/image" + ";base64," + encodedString);
 
+                    bridgeImageModel = tRexPicService.createBridgeImage(bridgeImageModel);
+
                     try {
                         tRexPicService.saveImageFile(bridgeImageModel);
                     } catch (IOException e) {

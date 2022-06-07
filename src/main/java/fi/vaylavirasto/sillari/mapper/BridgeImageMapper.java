@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 public class BridgeImageMapper implements RecordMapper<Record, BridgeImageModel> {
-    private boolean base64on;
+    private final boolean base64on;
 
     public BridgeImageMapper() {
         this.base64on = false;
@@ -25,20 +25,15 @@ public class BridgeImageMapper implements RecordMapper<Record, BridgeImageModel>
     public BridgeImageModel map(Record record) {
         BridgeImageModel model = new BridgeImageModel();
         model.setId(record.get(TableAlias.bridgeImage.ID));
-        model.setSupervisionId(record.get(TableAlias.bridgeImage.SUPERVISION_ID));
+        model.setBridgeId(record.get(TableAlias.bridgeImage.BRIDGE_ID));
 
         String objectKey = record.get(TableAlias.bridgeImage.OBJECT_KEY);
-        String objectId = record.get(TableAlias.bridgeImage.KTV_OBJECT_ID);
         if (this.base64on) {
             if (objectKey != null) {
                 model.setObjectKey(Base64.getEncoder().encodeToString(objectKey.getBytes()));
             }
-            if (objectId != null) {
-                model.setKtvObjectId(Base64.getEncoder().encodeToString(objectId.getBytes()));
-            }
         } else {
             model.setObjectKey(objectKey);
-            model.setKtvObjectId(objectId);
         }
         model.setFilename(record.get(TableAlias.bridgeImage.FILENAME));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");

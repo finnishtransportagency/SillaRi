@@ -5,6 +5,7 @@ import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.BridgeImageModel;
 import fi.vaylavirasto.sillari.model.PicInfoModel;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
+import fi.vaylavirasto.sillari.repositories.BridgeImageRepository;
 import fi.vaylavirasto.sillari.service.S3FileService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJsonMapper;
 import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.KuvatiedotItem;
@@ -49,12 +50,14 @@ public class TRexPicService {
     AWSS3Client awss3Client;
     @Autowired
     S3FileService s3FileService;
+    @Autowired
+    BridgeImageRepository bridgeImageRepository;
 
     private final TrexBridgeInfoResponseJsonMapper dtoMapper = Mappers.getMapper(TrexBridgeInfoResponseJsonMapper.class);
 
-    public SupervisionImageModel createSupervisionImage(SupervisionImageModel supervisionImage) {
-        Integer id = supervisionImageRepository.insertSupervisionImageIfNotExists(supervisionImage);
-        return supervisionImageRepository.getSupervisionImage(id);
+    public BridgeImageModel createBridgeImage(BridgeImageModel bridgeImage) {
+        Integer id = bridgeImageRepository.insertBridgeImageIfNotExists(bridgeImage);
+        return bridgeImageRepository.getBridgeImage(id);
     }
 
     public void saveImageFile(BridgeImageModel image) throws IOException {
@@ -132,7 +135,7 @@ public class TRexPicService {
                         .bodyToMono(byte[].class)
                         .block();
                 logger.debug("picBin: " + picBin);
-                return bridgeBin;
+                return picBin;
             } catch (WebClientResponseException e) {
                 logger.error(e.getMessage() + e.getStatusCode());
                 throw new TRexRestException(e.getMessage(), e.getStatusCode());
