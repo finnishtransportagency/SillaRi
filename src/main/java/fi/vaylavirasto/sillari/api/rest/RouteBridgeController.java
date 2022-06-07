@@ -69,7 +69,10 @@ public class RouteBridgeController {
                 throw new AccessDeniedException("Viewing routebridge not allowed to the user");
             }
 
+            logger.debug("HEllo: " +routeBridgeId);
             RouteBridgeModel routeBridge = routeBridgeService.getRouteBridge(routeBridgeId);
+            logger.debug("HEllo: " +routeBridge.getBridge());
+            logger.debug("HEllo: " +routeBridge.getBridgeId());
             BridgeImageModel bridgeImageModel = tRexPicService.getBridgeImage(routeBridge.getBridgeId());
             // Get the file from S3 bucket or local file system and write to response
             tRexPicService.getImageFile(response, bridgeImageModel);

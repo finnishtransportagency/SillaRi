@@ -61,6 +61,13 @@ public class BridgeImageRepository {
 
     }
 
+    public BridgeImageModel getBridgeImageWithBridgeId(Integer bridgeid) {
+        return dsl.select().from(TableAlias.bridgeImage)
+                .where(TableAlias.bridgeImage.BRIDGE_ID.eq(bridgeid))
+                .fetchOne(new BridgeImageMapper());
+
+    }
+
     public Integer getBridgeImageIdByFilename(String filename) {
         return dsl.select().from(TableAlias.bridgeImage)
                 .where(TableAlias.bridgeImage.FILENAME.eq(filename))
