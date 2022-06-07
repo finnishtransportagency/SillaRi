@@ -233,6 +233,7 @@ public class LeluService {
                     logger.debug("Jippihei got picinfo from trex: " + picInfo);
 
                     byte[] picBytes = tRexPicService.getPicBinJson(oid, String.valueOf(picInfo.getId()));
+                    logger.debug("Jippihei got picbytes from trex: " + picInfo);
 
                     BridgeImageModel bridgeImageModel = new BridgeImageModel();
                     bridgeImageModel.setBridgeId(bridgeId);
