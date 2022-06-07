@@ -54,14 +54,20 @@ public class TRexPicService {
     private final TrexBridgeInfoResponseJsonMapper dtoMapper = Mappers.getMapper(TrexBridgeInfoResponseJsonMapper.class);
 
     public BridgeImageModel createBridgeImage(BridgeImageModel bridgeImage) {
+        logger.debug("createBridgeImage: " + bridgeImage.toString());
         Integer id = bridgeImageRepository.insertBridgeImageIfNotExists(bridgeImage);
-        return bridgeImageRepository.getBridgeImage(id);
+        logger.debug("createBridgeImage ineetd: " + id);
+        var bi = bridgeImageRepository.getBridgeImage(id);
+        logger.debug("createdBridgeImage: " + bridgeImage);
+        return bi;
     }
 
     public void saveImageFile(BridgeImageModel image) throws IOException {
         Tika tika = new Tika();
         int dataStart = image.getBase64().indexOf(",") + 1;
+        logger.debug("datastart_ " + dataStart);
         byte[] decodedString = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(image.getBase64().substring(dataStart).getBytes(StandardCharsets.UTF_8));
+        logger.debug("decodedString " + decodedString);
         String contentType = tika.detect(decodedString);
         if (contentType == null) {
             contentType = "application/octet-stream";

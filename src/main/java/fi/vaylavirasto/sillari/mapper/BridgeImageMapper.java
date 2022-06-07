@@ -36,8 +36,6 @@ public class BridgeImageMapper implements RecordMapper<Record, BridgeImageModel>
             model.setObjectKey(objectKey);
         }
         model.setFilename(record.get(TableAlias.bridgeImage.FILENAME));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
-        model.setTaken(record.get(TableAlias.bridgeImage.TAKEN).format(formatter));
         model.setRowCreatedTime(record.get(TableAlias.bridgeImage.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.bridgeImage.ROW_UPDATED_TIME));
         return model;
