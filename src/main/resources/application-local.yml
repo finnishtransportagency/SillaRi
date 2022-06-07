@@ -8,7 +8,7 @@ sillari:
     routeuploadpath: /tmp
   trex:
     url: http://localhost:8080/api/devtools/localHardCodedBridgeInfoJson
-    pic-url: http://localhost:8080/api/devtools/localHardCodedPicJson
+    pic-url: http://localhost:8080/api/devtools/localHardCodedPicJson/
     pic-bin-path: yleiskuva
     pic-info-path: kuvatiedot
     username: na
