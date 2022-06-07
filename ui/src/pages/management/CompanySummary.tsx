@@ -77,7 +77,12 @@ const CompanySummary = (): JSX.Element => {
                     <IonCol>
                       <CustomAccordion
                         items={permits
-                          .sort((a, b) => a.permitNumber.localeCompare(b.permitNumber))
+                          .sort((a, b) => {
+                            if (a.permitNumber === b.permitNumber) {
+                              return b.leluVersion - a.leluVersion;
+                            }
+                            return a.permitNumber.localeCompare(b.permitNumber);
+                          })
                           .map((permit, index) => {
                             const { id: permitId, permitNumber, leluVersion } = permit;
                             const key = `permit_${permitNumber}_${leluVersion}`;
