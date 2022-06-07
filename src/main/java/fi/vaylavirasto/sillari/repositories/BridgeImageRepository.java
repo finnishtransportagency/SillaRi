@@ -33,7 +33,7 @@ public class BridgeImageRepository {
             return dsl.transactionResult(configuration -> {
                 DSLContext ctx = DSL.using(configuration);
 
-                Integer imageId = ctx.nextval(Sequences.SUPERVISION_IMAGE_ID_SEQ).intValue();
+                Integer imageId = ctx.nextval(Sequences.BRIDGE_IMAGE_ID_SEQ).intValue();
                 Record1<Integer> imageIdResult = ctx.insertInto(TableAlias.bridgeImage,
                                 TableAlias.bridgeImage.ID,
                                 TableAlias.bridgeImage.BRIDGE_ID,
@@ -68,9 +68,9 @@ public class BridgeImageRepository {
 
     }
 
-    public List<BridgeImageModel> getBridgeImages(Integer supervisionId) {
+    public List<BridgeImageModel> getBridgeImages(Integer bridgeId) {
         return dsl.select().from(TableAlias.bridgeImage)
-                .where(TableAlias.bridgeImage.SUPERVISION_ID.eq(supervisionId))
+                .where(TableAlias.bridgeImage.BRIDGE_ID.eq(bridgeId))
                 .fetch(new BridgeImageMapper(true));
     }
 
@@ -80,9 +80,9 @@ public class BridgeImageRepository {
                 .execute();
     }
 
-    public int deleteBridgeImages(Integer supervisionId) {
+    public int deleteBridgeImages(Integer bridgeId) {
         return dsl.delete(TableAlias.bridgeImage)
-                .where(TableAlias.bridgeImage.SUPERVISION_ID.eq(supervisionId))
+                .where(TableAlias.bridgeImage.BRIDGE_ID.eq(bridgeId))
                 .execute();
     }
 
