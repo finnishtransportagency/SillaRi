@@ -21,12 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TRexPicService {
@@ -151,5 +149,18 @@ public class TRexPicService {
 
     private WebClient buildClient() {
         return WebClient.create(trexUrl);
+    }
+
+    public BridgeImageModel getBridgeImage(Integer routeBridgeId) {
+        return null;
+    }
+
+    public void getImageFile(HttpServletResponse response, BridgeImageModel bridgeImageModel) throws IOException {
+        // Determine the content type from the file extension, which could be jpg, jpeg, png or gif
+        String filename = bridgeImageModel.getFilename();
+        String extension = filename.substring(filename.lastIndexOf(".") + 1);
+        String contentType = extension.equals("jpg") ? "image/jpeg" : "image/" + extension;
+
+        s3FileService.getFile(response, awss3Client.getTrexPhotoBucketName(), bridgeImageModel.getObjectKey(), filename, contentType);
     }
 }
