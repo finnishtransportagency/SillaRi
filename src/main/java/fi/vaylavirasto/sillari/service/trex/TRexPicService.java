@@ -157,8 +157,8 @@ public class TRexPicService {
         return WebClient.create(trexUrl);
     }
 
-    public BridgeImageModel getBridgeImage(Integer routeBridgeId) {
-        return null;
+    public BridgeImageModel getBridgeImage(Integer bridgeId) {
+        return bridgeImageRepository.getBridgeImage(bridgeId);
     }
 
     public void getImageFile(HttpServletResponse response, BridgeImageModel bridgeImageModel) throws IOException {
