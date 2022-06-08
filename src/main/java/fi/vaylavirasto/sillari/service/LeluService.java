@@ -107,7 +107,7 @@ public class LeluService {
                 logger.error("Permit with same permitNumber {} and lelu version {} already exists", permitModel.getPermitNumber(), permitModel.getLeluVersion());
                 throw new LeluPermitSaveException(HttpStatus.CONFLICT, messageSource.getMessage("lelu.permit.exists.with.version", null, Locale.ROOT));
             } else if (!permitsWithGreaterVersion.isEmpty()) {
-                logger.error("Permits with same permitNumber {} and greater lelu version {} exist", permitModel.getPermitNumber(), permitModel.getLeluVersion());
+                logger.error("Permits with same permitNumber {} and greater lelu version than {} exist", permitModel.getPermitNumber(), permitModel.getLeluVersion());
                 throw new LeluPermitSaveException(HttpStatus.NOT_ACCEPTABLE, messageSource.getMessage("lelu.permits.exist.with.greater.version", null, Locale.ROOT));
             } else {
                 for (PermitModel oldPermit : oldPermits) {
