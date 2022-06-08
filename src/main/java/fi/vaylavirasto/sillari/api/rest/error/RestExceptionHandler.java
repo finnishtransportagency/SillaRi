@@ -63,7 +63,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(LeluPermitSaveException.class)
     public ResponseEntity<Object> leluPermitSaveException(LeluPermitSaveException ex) {
         logger.error("LeluPermitSaveException 'id':'{}'", ex.getMessage());
-        return handleCustomException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        return handleCustomException(ex.getStatusCode(), ex.getMessage());
     }
 
     @ExceptionHandler(LeluRouteGeometryUploadException.class)

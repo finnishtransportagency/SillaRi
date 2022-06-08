@@ -59,7 +59,7 @@ const UserInfo: React.FC = () => {
                     <IonLabel>{userData.username}</IonLabel>
                   </IonLabel>
                 </IonItem>
-                {(userData.roles.includes("SILLARI_SILLANVALVOJA") || userData.roles.includes("SILLARI_AJOJARJESTELIJA")) && (
+                {userData.roles.includes("SILLARI_AJOJARJESTELIJA") && (
                   <IonItem lines="full">
                     <IonLabel>
                       <IonLabel className="itemLabel">{t("userInfo.nameLabel")}</IonLabel>
@@ -69,7 +69,7 @@ const UserInfo: React.FC = () => {
                     </IonLabel>
                   </IonItem>
                 )}
-                {(userData.roles.includes("SILLARI_SILLANVALVOJA") || userData.roles.includes("SILLARI_AJOJARJESTELIJA")) && (
+                {userData.roles.includes("SILLARI_AJOJARJESTELIJA") && (
                   <IonItem lines="full">
                     <IonLabel>
                       <IonLabel className="itemLabel">{t("userInfo.emailLabel")}</IonLabel>
@@ -77,7 +77,7 @@ const UserInfo: React.FC = () => {
                     </IonLabel>
                   </IonItem>
                 )}
-                {(userData.roles.includes("SILLARI_SILLANVALVOJA") || userData.roles.includes("SILLARI_AJOJARJESTELIJA")) && (
+                {userData.roles.includes("SILLARI_AJOJARJESTELIJA") && (
                   <IonItem lines="full">
                     <IonLabel>
                       <IonLabel className="itemLabel">{t("userInfo.phoneNumberLabel")}</IonLabel>
@@ -103,7 +103,7 @@ const UserInfo: React.FC = () => {
             </IonCol>
           </IonRow>
         </IonGrid>
-        {(userData.roles.includes("SILLARI_SILLANVALVOJA") || userData.roles.includes("SILLARI_AJOJARJESTELIJA")) && (
+        {userData.roles.includes("SILLARI_AJOJARJESTELIJA") && (
           <IonGrid className="ion-no-padding ion-margin-top" fixed>
             <IonRow>
               <IonCol size="12">
