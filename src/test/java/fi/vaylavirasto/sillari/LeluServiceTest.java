@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
@@ -192,11 +193,12 @@ public class LeluServiceTest {
         LeluPermitDTO newPermit = getPermitDTO();
         newPermit.setVersion(2);
 
-        Exception exception = assertThrows(LeluPermitSaveException.class, () -> {
+        LeluPermitSaveException exception = assertThrows(LeluPermitSaveException.class, () -> {
             leluService.createPermit(newPermit);
         });
 
         assertEquals("previousSameVersionError", exception.getMessage());
+        assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
     }
 
     private LeluPermitDTO getPermitDTO() {
