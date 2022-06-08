@@ -1,7 +1,7 @@
 package fi.vaylavirasto.sillari;
 
-import fi.vaylavirasto.sillari.api.rest.error.LeluDeleteRouteWithSupervisionsException;
 import fi.vaylavirasto.sillari.api.lelu.permit.*;
+import fi.vaylavirasto.sillari.api.rest.error.LeluPermitSaveException;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
@@ -15,17 +15,14 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -59,21 +56,14 @@ public class LeluServiceTest {
     private TRexBridgeInfoService trexBridgeInfoService;
     @Mock
     private TRexPicService tRexPicService;
-
-
-    @Autowired
+    @Mock
     private MessageSource messageSource;
-
-    @Autowired
+    @Mock
     private LeluRouteUploadUtil leluRouteUploadUtil;
-
-
 
 
     @Captor
     ArgumentCaptor<PermitModel> permitModelCaptor;
-    @Captor
-    ArgumentCaptor<List<Integer>> routeIdsToDeleteCaptor;
 
 
     @InjectMocks
@@ -82,14 +72,14 @@ public class LeluServiceTest {
     @Test
     public void testCreatePermitWithExistingCompany() {
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
-        Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
+        Mockito.when(permitRepository.getPermitsByPermitNumber(Mockito.anyString())).thenReturn(null);
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(1);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
         LeluPermitResponseDTO response = null;
         try {
-            response = leluService.createOrUpdatePermit(getPermitDTO());
-        } catch (LeluDeleteRouteWithSupervisionsException e) {
+            response = leluService.createPermit(getPermitDTO());
+        } catch (LeluPermitSaveException e) {
             e.printStackTrace();
         }
 
@@ -111,28 +101,21 @@ public class LeluServiceTest {
         assertNotNull(response);
         assertEquals(1, response.getPermitId().intValue());
         assertEquals("1234/2021", response.getPermitNumber());
-        assertEquals(LeluPermitStatus.CREATED, response.getStatus());
         assertNotNull(response.getTimestamp());
     }
 
     @Test
     public void testCreatePermitWithNewCompany() {
-        System.out.println("TESTIOUS");
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(null);
         Mockito.when(companyRepository.createCompany(Mockito.any(CompanyModel.class))).thenReturn(2);
-
-        Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(null);
+        Mockito.when(permitRepository.getPermitsByPermitNumber(Mockito.anyString())).thenReturn(null);
         Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(2);
-        Mockito.when(permitRepository.hasSupervisions(Mockito.anyList())).thenReturn(false);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
         LeluPermitResponseDTO response = null;
         try {
-            System.out.println("TESTIOUS");
-            response = leluService.createOrUpdatePermit(getPermitDTO());
-            System.out.println("TESTIOUS");
-        } catch (LeluDeleteRouteWithSupervisionsException e) {
-            System.out.println("TESTIOUS");
+            response = leluService.createPermit(getPermitDTO());
+        } catch (LeluPermitSaveException e) {
             e.printStackTrace();
         }
 
@@ -154,56 +137,90 @@ public class LeluServiceTest {
         assertNotNull(response);
         assertEquals(2, response.getPermitId().intValue());
         assertEquals("1234/2021", response.getPermitNumber());
+        assertNotNull(response.getTimestamp());
+    }
+
+    @Test
+    public void testPermitHasNoPreviousVersions() throws LeluPermitSaveException {
+        Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
+        Mockito.when(permitRepository.getPermitsByPermitNumber(Mockito.anyString())).thenReturn(null);
+        Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(1);
+        Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
+
+        LeluPermitResponseDTO response = leluService.createPermit(getPermitDTO());
+
+        // Assert the resulting response
+        assertNotNull(response);
+        assertEquals(1, response.getPermitId().intValue());
+        assertEquals("1234/2021", response.getPermitNumber());
         assertEquals(LeluPermitStatus.CREATED, response.getStatus());
         assertNotNull(response.getTimestamp());
     }
 
     @Test
-    public void testUpdatePermit() {
+    public void testPermitHasPreviousVersions() throws LeluPermitSaveException {
         Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
-        Mockito.when(permitRepository.getPermitIdByPermitNumberAndVersion(Mockito.anyString(), Mockito.anyInt())).thenReturn(2);
-        Mockito.when(routeRepository.getRouteIdsWithLeluIds(Mockito.anyInt())).thenReturn(getRouteLeluIdAndIdMap());
+        Mockito.when(permitRepository.getPermitsByPermitNumber(Mockito.anyString())).thenReturn(getPreviousPermitVersions());
+        Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(3);
         Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
 
-        LeluPermitResponseDTO response = null;
-        try {
-            response = leluService.createOrUpdatePermit(getPermitDTO());
-        } catch (LeluDeleteRouteWithSupervisionsException e) {
-            e.printStackTrace();
-        }
+        LeluPermitDTO newPermit = getPermitDTO();
+        newPermit.setVersion(3);
 
-        // Verify that permitRepository.updatePermit is called and capture parameters
-        Mockito.verify(permitRepository).updatePermit(permitModelCaptor.capture(), routeIdsToDeleteCaptor.capture());
+        LeluPermitResponseDTO response = leluService.createPermit(newPermit);
+
+        // Verify that permit version is marked as not current for previous permit with id 2 (id 1 is already not current)
+        Mockito.verify(permitRepository).updatePermitCurrentVersion(2, false);
+
+        // Verify that new permit version is marked as current
+        Mockito.verify(permitRepository).createPermit(permitModelCaptor.capture());
         PermitModel permitModel = permitModelCaptor.getValue();
-        logger.debug("Captured permitModel: {}", permitModel);
-        List<Integer> routeIdsToDelete = routeIdsToDeleteCaptor.getValue();
-        logger.debug("Captured routeIdsToDelete: {}", routeIdsToDelete);
-
-        // Check that all values are correctly mapped from Lelu DTOs to models
-        assertPermitDTOMappedToModel(permitModel);
-
-        // Route with Lelu ID 43567 is found from DB but not found in permitModel, check it's marked for deletion
-        assertNotNull(routeIdsToDelete);
-        assertEquals(1, routeIdsToDelete.size());
-        assertEquals(4, routeIdsToDelete.get(0).intValue());
-
-        // Assert existing route IDs are added, third one is new and has no ID
-        assertEquals(1, permitModel.getRoutes().get(0).getId().intValue());
-        assertEquals(2, permitModel.getRoutes().get(1).getId().intValue());
-        assertNull(permitModel.getRoutes().get(2).getId());
-
-        // Assert company ID is added to permit
-        assertEquals(1, permitModel.getCompanyId().intValue());
-
-        // Assert correct bridge IDs are added to route bridges
-        assertBridgeIdsAdded(permitModel);
+        assertTrue(permitModel.getIsCurrentVersion());
 
         // Assert the resulting response
         assertNotNull(response);
-        assertEquals(2, response.getPermitId().intValue());
+        assertEquals(3, response.getPermitId().intValue());
         assertEquals("1234/2021", response.getPermitNumber());
-        assertEquals(LeluPermitStatus.UPDATED, response.getStatus());
+        assertEquals(LeluPermitStatus.NEW_VERSION_CREATED, response.getStatus());
         assertNotNull(response.getTimestamp());
+    }
+
+    @Test
+    public void testPermitHasPreviousSameVersion() {
+        Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
+        Mockito.when(permitRepository.getPermitsByPermitNumber(Mockito.anyString())).thenReturn(getPreviousPermitVersions());
+        Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(2);
+        Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
+        Mockito.when(messageSource.getMessage(Mockito.anyString(), Mockito.any(), Mockito.any(Locale.class))).thenReturn("previousSameVersionError");
+
+        LeluPermitDTO newPermit = getPermitDTO();
+        newPermit.setVersion(2);
+
+        LeluPermitSaveException exception = assertThrows(LeluPermitSaveException.class, () -> {
+            leluService.createPermit(newPermit);
+        });
+
+        assertEquals("previousSameVersionError", exception.getMessage());
+        assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
+    }
+
+    @Test
+    public void testPermitHasPreviousGreaterVersions() {
+        Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
+        Mockito.when(permitRepository.getPermitsByPermitNumber(Mockito.anyString())).thenReturn(getPreviousPermitVersions2());
+        Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(2);
+        Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
+        Mockito.when(messageSource.getMessage(Mockito.anyString(), Mockito.any(), Mockito.any(Locale.class))).thenReturn("previousGreaterVersionError");
+
+        LeluPermitDTO newPermit = getPermitDTO();
+        newPermit.setVersion(2);
+
+        LeluPermitSaveException exception = assertThrows(LeluPermitSaveException.class, () -> {
+            leluService.createPermit(newPermit);
+        });
+
+        assertEquals("previousGreaterVersionError", exception.getMessage());
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, exception.getStatusCode());
     }
 
     private LeluPermitDTO getPermitDTO() {
@@ -309,12 +326,40 @@ public class LeluServiceTest {
         return map;
     }
 
-    private Map<Long, Integer> getRouteLeluIdAndIdMap() {
-        Map<Long, Integer> map = new HashMap<>();
-        map.put((long) 12345, 1);
-        map.put((long) 23456, 2);
-        map.put((long) 43567, 4);
-        return map;
+    private List<PermitModel> getPreviousPermitVersions() {
+        List<PermitModel> permits = new ArrayList<>();
+
+        PermitModel permit1 = new PermitModel();
+        permit1.setId(1);
+        permit1.setLeluVersion(1);
+        permit1.setIsCurrentVersion(false);
+        permits.add(permit1);
+
+        PermitModel permit2 = new PermitModel();
+        permit2.setId(2);
+        permit2.setLeluVersion(2);
+        permit2.setIsCurrentVersion(true);
+        permits.add(permit2);
+
+        return permits;
+    }
+
+    private List<PermitModel> getPreviousPermitVersions2() {
+        List<PermitModel> permits = new ArrayList<>();
+
+        PermitModel permit1 = new PermitModel();
+        permit1.setId(1);
+        permit1.setLeluVersion(1);
+        permit1.setIsCurrentVersion(false);
+        permits.add(permit1);
+
+        PermitModel permit3 = new PermitModel();
+        permit3.setId(3);
+        permit3.setLeluVersion(3);
+        permit3.setIsCurrentVersion(true);
+        permits.add(permit3);
+
+        return permits;
     }
 
     private void assertPermitDTOMappedToModel(PermitModel permitModel) {

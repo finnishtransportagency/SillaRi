@@ -28,6 +28,7 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         model.setCompanyId(record.get(TableAlias.permit.COMPANY_ID));
         model.setPermitNumber(record.get(TableAlias.permit.PERMIT_NUMBER));
         model.setLeluVersion(record.get(TableAlias.permit.LELU_VERSION));
+        model.setIsCurrentVersion(record.get(TableAlias.permit.IS_CURRENT_VERSION));
         model.setLeluLastModifiedDate(record.get(TableAlias.permit.LELU_LAST_MODIFIED_DATE));
         model.setValidStartDate(record.get(TableAlias.permit.VALID_START_DATE));
         model.setValidEndDate(record.get(TableAlias.permit.VALID_END_DATE));

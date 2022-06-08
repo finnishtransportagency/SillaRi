@@ -44,8 +44,9 @@ export const isTransportEditable = (transport: IRouteTransport | undefined, perm
   if (transport) {
     const { currentStatus, supervisions = [] } = transport;
     const { status } = currentStatus || {};
+    const { isCurrentVersion = false } = permit || {};
 
-    return isPermitValid(permit) && status === TransportStatus.PLANNED && !hasSupervisionStarted(supervisions);
+    return isPermitValid(permit) && isCurrentVersion && status === TransportStatus.PLANNED && !hasSupervisionStarted(supervisions);
   } else {
     return false;
   }
