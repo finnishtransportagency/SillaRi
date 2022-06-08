@@ -117,7 +117,8 @@ public class LeluController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200 OK", description = "Permit saved/updated"),
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
-            @ApiResponse(responseCode = "409 CONFLICT", description = "Permit already exists with the same permit number and version"),
+            @ApiResponse(responseCode = "406 NOT_ACCEPTABLE", description = "Permit already exists with the same permit number and greater version number"),
+            @ApiResponse(responseCode = "409 CONFLICT", description = "Permit already exists with the same permit number and version")
     })
     public ResponseEntity<LeluPermitResponseDTO> savePermit(@Valid @RequestBody LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPermitSaveException {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {

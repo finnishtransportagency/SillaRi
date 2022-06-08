@@ -102,7 +102,14 @@ public class LeluService {
             logger.debug("{} permits with same permitNumber {} found", oldPermits.size(), permitModel.getPermitNumber());
             // Check if same leluVersion exists
             List<PermitModel> permitsWithSameVersion = oldPermits.stream().filter(oldPermit -> oldPermit.getLeluVersion().equals(permitModel.getLeluVersion())).collect(Collectors.toList());
-            if (permitsWithSameVersion.isEmpty()) {
+            List<PermitModel> permitsWithGreaterVersion = oldPermits.stream().filter(oldPermit -> oldPermit.getLeluVersion() > permitModel.getLeluVersion()).collect(Collectors.toList());
+            if (!permitsWithSameVersion.isEmpty()) {
+                logger.error("Permit with same permitNumber {} and lelu version {} already exists", permitModel.getPermitNumber(), permitModel.getLeluVersion());
+                throw new LeluPermitSaveException(HttpStatus.CONFLICT, messageSource.getMessage("lelu.permit.exists.with.version", null, Locale.ROOT));
+            } else if (!permitsWithGreaterVersion.isEmpty()) {
+                logger.error("Permits with same permitNumber {} and greater lelu version {} exist", permitModel.getPermitNumber(), permitModel.getLeluVersion());
+                throw new LeluPermitSaveException(HttpStatus.NOT_ACCEPTABLE, messageSource.getMessage("lelu.permit.exists.with.version", null, Locale.ROOT));
+            } else {
                 for (PermitModel oldPermit : oldPermits) {
                     // If permit with previous version is marked as current, update it
                     if (oldPermit.getIsCurrentVersion()) {
@@ -110,9 +117,6 @@ public class LeluService {
                     }
                 }
                 response.setStatus(LeluPermitStatus.NEW_VERSION_CREATED);
-            } else {
-                logger.error("Permit with same permitNumber {} and lelu version {} already exists", permitModel.getPermitNumber(), permitModel.getLeluVersion());
-                throw new LeluPermitSaveException(HttpStatus.CONFLICT, messageSource.getMessage("lelu.permit.exists.with.version", null, Locale.ROOT));
             }
         } else {
             response.setStatus(LeluPermitStatus.CREATED);

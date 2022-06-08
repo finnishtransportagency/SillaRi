@@ -201,6 +201,25 @@ public class LeluServiceTest {
         assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
     }
 
+    @Test
+    public void testPermitHasPreviousGreaterVersions() {
+        Mockito.when(companyRepository.getCompanyIdByBusinessId(Mockito.anyString())).thenReturn(1);
+        Mockito.when(permitRepository.getPermitsByPermitNumber(Mockito.anyString())).thenReturn(getPreviousPermitVersions2());
+        Mockito.when(permitRepository.createPermit(Mockito.any(PermitModel.class))).thenReturn(2);
+        Mockito.when(bridgeRepository.getBridgeIdsWithOIDs(Mockito.anyList())).thenReturn(getBridgeOIDAndIdMap());
+        Mockito.when(messageSource.getMessage(Mockito.anyString(), Mockito.any(), Mockito.any(Locale.class))).thenReturn("previousGreaterVersionError");
+
+        LeluPermitDTO newPermit = getPermitDTO();
+        newPermit.setVersion(2);
+
+        LeluPermitSaveException exception = assertThrows(LeluPermitSaveException.class, () -> {
+            leluService.createPermit(newPermit);
+        });
+
+        assertEquals("previousGreaterVersionError", exception.getMessage());
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, exception.getStatusCode());
+    }
+
     private LeluPermitDTO getPermitDTO() {
         LeluPermitDTO permit = new LeluPermitDTO();
         permit.setNumber("1234/2021");
@@ -318,6 +337,24 @@ public class LeluServiceTest {
         permit2.setLeluVersion(2);
         permit2.setIsCurrentVersion(true);
         permits.add(permit2);
+
+        return permits;
+    }
+
+    private List<PermitModel> getPreviousPermitVersions2() {
+        List<PermitModel> permits = new ArrayList<>();
+
+        PermitModel permit1 = new PermitModel();
+        permit1.setId(1);
+        permit1.setLeluVersion(1);
+        permit1.setIsCurrentVersion(false);
+        permits.add(permit1);
+
+        PermitModel permit3 = new PermitModel();
+        permit3.setId(3);
+        permit3.setLeluVersion(3);
+        permit3.setIsCurrentVersion(true);
+        permits.add(permit3);
 
         return permits;
     }
