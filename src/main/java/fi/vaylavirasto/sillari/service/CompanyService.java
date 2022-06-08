@@ -35,15 +35,6 @@ public class CompanyService {
     @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
 
-    public CompanyModel getCompany(Integer id) {
-        CompanyModel company = companyRepository.getCompanyById(id);
-        company.setPermits(permitRepository.getPermitsByCompanyId(id));
-        for (PermitModel permitModel : company.getPermits()) {
-            permitModel.setRoutes(routeRepository.getRoutesByPermitId(permitModel.getId()));
-        }
-        return company;
-    }
-
     public CompanyModel getCompanyByBusinessId(String businessId) {
         CompanyModel company = companyRepository.getCompanyByBusinessId(businessId);
         if (company == null) {

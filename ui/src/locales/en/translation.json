@@ -241,6 +241,7 @@
       "supervision": "Supervision",
       "includesSupervisions": "Includes bridge supervisions",
       "noSupervisions": "Does not include bridge supervisions",
+      "permitVersion": "Permit version",
       "addTransportButtonLabel": "Add transport",
       "transportCount": "Transport times",
       "showByRoute": "Show by route",
@@ -364,7 +365,8 @@
       "stopped": "On a break",
       "in_progress": "On the move",
       "arrived": "Arrived",
-      "supervisionStarted": "Supervision started"
+      "supervisionStarted": "Supervision started",
+      "outdatedPermit": "Add to new permit version"
     }
   },
   "transports": {

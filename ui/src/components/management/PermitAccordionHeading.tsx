@@ -12,13 +12,17 @@ import { permitIncludesSupervisions } from "../../utils/managementUtil";
 
 interface PermitAccordionHeadingProps {
   permit: IPermit;
+  hasMultiplePermitVersions: boolean;
 }
 
-const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: ForwardedRef<HTMLIonGridElement>): JSX.Element => {
+const PermitAccordionHeading = (
+  { permit, hasMultiplePermitVersions }: PermitAccordionHeadingProps,
+  ref: ForwardedRef<HTMLIonGridElement>
+): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { id: permitId, validStartDate, validEndDate, routes = [] } = permit;
+  const { id: permitId, validStartDate, validEndDate, leluVersion, isCurrentVersion, routes = [] } = permit;
 
   const includesSupervisions = permitIncludesSupervisions(routes);
 
@@ -31,6 +35,11 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
               <IonCol>
                 <PermitLinkText permit={permit} className="headingText" />
               </IonCol>
+              {hasMultiplePermitVersions && (
+                <IonCol className={isCurrentVersion ? "" : "disabled"}>
+                  <IonText>{`${t("management.companySummary.permitVersion")} ${leluVersion}`}</IonText>
+                </IonCol>
+              )}
             </IonRow>
             <IonRow>
               <IonCol className={!isPermitValid(permit) ? "disabled" : ""}>
@@ -50,10 +59,9 @@ const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: Fo
         </IonCol>
 
         <IonCol size="12" size-md="auto" className="ion-hide-md-down">
-          {isPermitValid(permit) && (
+          {isPermitValid(permit) && isCurrentVersion && (
             <IonButton
               color="secondary"
-              // expand="block"
               size="default"
               routerLink={`/management/addTransport/${permitId}`}
               onClick={(evt) => {

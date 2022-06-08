@@ -18,7 +18,7 @@ public class LeluPermitResponseDTO {
     @Schema(description = "Number identifying the permit", example = "1234/2021")
     private String permitNumber;
 
-    @Schema(description = "Status of the permit, CREATED/UPDATED", example = "CREATED")
+    @Schema(description = "Status of the permit, CREATED/NEW_VERSION_CREATED", example = "CREATED")
     private LeluPermitStatus status;
 
     @Schema(description = "When the request was received", example = "2021-06-01T09:00:00.000Z")

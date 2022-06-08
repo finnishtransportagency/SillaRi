@@ -241,6 +241,7 @@
       "supervision": "Sillanvalvonta",
       "includesSupervisions": "Sisältää sillanvalvontoja",
       "noSupervisions": "Ei sisällä sillanvalvontoja",
+      "permitVersion": "Lupaversio",
       "addTransportButtonLabel": "Lisää kuljetus",
       "transportCount": "Kuljetuskerrat",
       "showByRoute": "Näytä reittikohtaisesti",
@@ -364,7 +365,8 @@
       "stopped": "Tauolla",
       "in_progress": "Liikkeellä",
       "arrived": "Päättynyt",
-      "supervisionStarted": "Valvonta aloitettu"
+      "supervisionStarted": "Valvonta aloitettu",
+      "outdatedPermit": "Tee uudelle lupaversiolle"
     }
   },
   "transports": {

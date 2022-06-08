@@ -9,12 +9,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.springframework.security.access.AccessDeniedException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -63,7 +63,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(LeluPermitSaveException.class)
     public ResponseEntity<Object> leluPermitSaveException(LeluPermitSaveException ex) {
         logger.error("LeluPermitSaveException 'id':'{}'", ex.getMessage());
-        return handleCustomException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        return handleCustomException(ex.getStatusCode(), ex.getMessage());
     }
 
     @ExceptionHandler(LeluRouteGeometryUploadException.class)
@@ -87,12 +87,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(LeluRouteNotFoundException.class)
     public ResponseEntity<Object> leluRouteNotFoundException(LeluRouteNotFoundException ex) {
         logger.error("LeluRouteNotFoundException 'reason':'{}'", ex.getMessage());
-        return handleCustomException(HttpStatus.NOT_FOUND, ex.getMessage());
-    }
-
-    @ExceptionHandler(LeluDeleteRouteWithSupervisionsException.class)
-    public ResponseEntity<Object> leluDeleteRouteWithSupervisionsException(LeluDeleteRouteWithSupervisionsException ex) {
-        logger.error("LeluDeleteRouteWithSupervisionsException 'reason':'{}'", ex.getMessage());
         return handleCustomException(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
