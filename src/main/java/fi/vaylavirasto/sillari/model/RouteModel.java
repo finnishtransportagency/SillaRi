@@ -20,6 +20,7 @@ public class RouteModel extends BaseModel {
     private Boolean alternativeRoute;
     private String geojson;
     private List<RouteBridgeModel> routeBridges;
+    private List<RouteTransportCountModel> routeTransportCounts;
 
     // Parents
     private AddressModel departureAddress;

@@ -16,6 +16,8 @@ public class RouteTransportService {
     @Autowired
     RouteTransportRepository routeTransportRepository;
     @Autowired
+    RouteTransportCountRepository routeTransportCountRepository;
+    @Autowired
     RouteTransportStatusRepository routeTransportStatusRepository;
     @Autowired
     RouteRepository routeRepository;
@@ -89,18 +91,16 @@ public class RouteTransportService {
         List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByPermitId(permitId);
 
         if (routeTransportModels != null) {
+            List<Integer> routeIds = routeTransportModels.stream().map(RouteTransportModel::getRouteId).distinct().collect(Collectors.toList());
+            List<Integer> routeTransportIds = routeTransportModels.stream().map(RouteTransportModel::getId).collect(Collectors.toList());
 
-            List<RouteModel> routeModels = routeRepository.getRoutesById(
-                routeTransportModels.stream().map(RouteTransportModel::getRouteId).distinct().collect(Collectors.toList())
-            );
+            List<RouteModel> routeModels = routeRepository.getRoutesById(routeIds);
+            Map<Integer, List<RouteTransportCountModel>> routeTransportCountList = routeTransportCountRepository.getRouteTransportCountsByRouteId(routeIds);
 
-            List<RouteTransportStatusModel> rtStatusModels = routeTransportStatusRepository.getTransportStatusHistory(
-                routeTransportModels.stream().map(RouteTransportModel::getId).collect(Collectors.toList())
-            );
+            routeModels.forEach(route -> route.setRouteTransportCounts(routeTransportCountList.get(route.getId())));
 
-            List<SupervisionModel> supervisionModels = supervisionRepository.getSupervisionsByRouteTransportId(
-                routeTransportModels.stream().map(RouteTransportModel::getId).collect(Collectors.toList())
-            );
+            List<RouteTransportStatusModel> rtStatusModels = routeTransportStatusRepository.getTransportStatusHistory(routeTransportIds);
+            List<SupervisionModel> supervisionModels = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportIds);
 
             routeTransportModels.forEach(rtm -> {
 
@@ -216,5 +216,10 @@ public class RouteTransportService {
         } else {
             return 0;
         }
+    }
+
+    public Integer getNextAvailableRouteTransportCount(Integer routeId) {
+        RouteTransportCountModel countModel = routeTransportCountRepository.getNextAvailableRouteTransportCount(routeId);
+        return countModel.getCount();
     }
 }

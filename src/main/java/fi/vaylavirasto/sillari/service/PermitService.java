@@ -44,11 +44,8 @@ public class PermitService {
     private static final Logger logger = LogManager.getLogger();
 
     public PermitModel getPermit(Integer permitId) {
-        PermitModel permitModel = permitRepository.getPermit(permitId);
-        fillPermitDetails(permitModel);
-        return permitModel;
+        return permitRepository.getPermit(permitId);
     }
-
 
     public PermitModel getPermitWithOnlyNextAvailableTransportInstances(Integer permitId) {
         PermitModel permitModel = permitRepository.getPermit(permitId);
@@ -58,6 +55,10 @@ public class PermitService {
 
         Map<Integer, Integer> maxUsedTransportNumbers = createMaxUsedTransportNumbersMap(permitId);
         logger.debug("maxUsedTransportNumbers: "+maxUsedTransportNumbers);
+
+        List<RouteModel> routes = routeRepository.getRoutesByPermitId(permitId);
+        permitModel.setRoutes(routes);
+
         fillPermitDetails(permitModel, maxUsedTransportNumbers);
         return permitModel;
     }
@@ -78,12 +79,14 @@ public class PermitService {
 
     public PermitModel getPermitOfRouteTransport(Integer routeTransportId) {
         PermitModel permitModel = permitRepository.getPermitByRouteTransportId(routeTransportId);
+        // TODO check if all data is necessary
         fillPermitDetails(permitModel);
         return permitModel;
     }
 
     public PermitModel getPermitOfRouteTransport(Integer routeTransportId, boolean fillDetails) {
         PermitModel permitModel = permitRepository.getPermitByRouteTransportId(routeTransportId);
+        // TODO always false?!
         if (fillDetails) {
             fillPermitDetails(permitModel);
         }
@@ -93,7 +96,8 @@ public class PermitService {
     //fills permit with bridges with next available transport number given per route in routeIdToMaxTransportNumberMap
     private void fillPermitDetails(PermitModel permitModel, Map<Integer, Integer> routeIdToMaxTransportNumberMap) {
         if (permitModel != null) {
-            fillVehiclesAndRoutes(permitModel);
+            fillVehiclesAndAxles(permitModel);
+
             if (permitModel.getRoutes() != null) {
                 permitModel.getRoutes().forEach(routeModel -> {
                     Integer routeMaxTransportNumber =  routeIdToMaxTransportNumberMap.get(routeModel.getId());
@@ -112,7 +116,9 @@ public class PermitService {
 
     private void fillPermitDetails(PermitModel permitModel) {
         if (permitModel != null) {
-            fillVehiclesAndRoutes(permitModel);
+            fillVehiclesAndAxles(permitModel);
+
+            permitModel.setRoutes(routeRepository.getRoutesByPermitId(permitModel.getId()));
 
             // The transport company UI needs the route bridges for all routes in the permit
             // TODO - if this returns too much data, add this as a separate method in RouteController
@@ -125,7 +131,7 @@ public class PermitService {
         }
     }
 
-    private void fillVehiclesAndRoutes(PermitModel permitModel) {
+    private void fillVehiclesAndAxles(PermitModel permitModel) {
         if (permitModel.getAxleChart() != null) {
             List<AxleModel> axles = axleRepository.getAxlesOfChart(permitModel.getAxleChart().getId());
             permitModel.getAxleChart().setAxles(axles);
@@ -133,9 +139,6 @@ public class PermitService {
 
         List<VehicleModel> vehicles = vehicleRepository.getVehiclesOfPermit(permitModel.getId());
         permitModel.setVehicles(vehicles);
-
-        List<RouteModel> routes = routeRepository.getRoutesByPermitId(permitModel.getId());
-        permitModel.setRoutes(routes);
     }
 
     public void getPermitPdf(HttpServletResponse response, @RequestParam String objectKey) throws IOException {
