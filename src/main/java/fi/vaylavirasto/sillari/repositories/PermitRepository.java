@@ -295,6 +295,7 @@ public class PermitRepository {
         Integer routeID = routeIdResult != null ? routeIdResult.value1() : null;
         routeModel.setId(routeID);
 
+        insertRouteTransportCounts(ctx, routeModel);
         insertRouteBridges(ctx, routeModel);
     }
 
@@ -322,6 +323,26 @@ public class PermitRepository {
         Integer departureAddressId = departureAddressIdResult != null ? departureAddressIdResult.value1() : null;
         routeModel.getDepartureAddress().setId(departureAddressId);
         return departureAddressId;
+    }
+
+    private void insertRouteTransportCounts(DSLContext context, RouteModel route) {
+        Integer totalTransportCount = route.getTransportCount();
+
+        if (totalTransportCount != null && totalTransportCount > 0) {
+            for (int i = 0; i < totalTransportCount; i++) {
+                Integer count = i + 1;
+
+                context.insertInto(TableAlias.routeTransportCount,
+                                TableAlias.routeTransportCount.ROUTE_ID,
+                                TableAlias.routeTransportCount.COUNT,
+                                TableAlias.routeTransportCount.USED
+                        ).values(
+                                route.getId(),
+                                count,
+                                false)
+                        .execute();
+            }
+        }
     }
 
     private void insertRouteBridges(DSLContext ctx, RouteModel route) {
