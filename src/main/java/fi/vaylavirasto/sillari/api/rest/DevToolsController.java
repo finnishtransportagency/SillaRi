@@ -282,8 +282,6 @@ public class DevToolsController {
     //this can be set as "trex pic url" in local dev env so we get some bridge pic bin for deving and testing when we don't connection to trex,
     @RequestMapping(value = "/localHardCodedPicJson/yleiskuva", method = RequestMethod.GET)
     public void trexHardPicBin(HttpServletResponse response) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         getDevJpg(response);
     }
 
