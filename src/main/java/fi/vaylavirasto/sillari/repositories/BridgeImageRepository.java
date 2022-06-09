@@ -4,7 +4,6 @@ import fi.vaylavirasto.sillari.mapper.BridgeImageMapper;
 import fi.vaylavirasto.sillari.model.Sequences;
 import fi.vaylavirasto.sillari.model.BridgeImageModel;
 import fi.vaylavirasto.sillari.util.DateMapper;
-import fi.vaylavirasto.sillari.util.ObjectKeyUtil;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
