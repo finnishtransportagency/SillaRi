@@ -271,7 +271,7 @@ public class DevToolsController {
         ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         try {
-            var a = objectMapper.readValue(trexHardPicInfoString(), TrexPicInfoResponseJson.class);
+            TrexPicInfoResponseJson a = objectMapper.readValue(trexHardPicInfoString(), TrexPicInfoResponseJson.class);
             return a;
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -408,7 +408,7 @@ public class DevToolsController {
         ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         try {
-            var a = objectMapper.readValue(trexHardString(), TrexBridgeInfoResponseJson.class);
+            TrexBridgeInfoResponseJson a = objectMapper.readValue(trexHardString(), TrexBridgeInfoResponseJson.class);
             return a;
         } catch (Exception e) {
             logger.error(e.getMessage());

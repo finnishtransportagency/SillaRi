@@ -54,12 +54,9 @@ public class TRexPicService {
     private final TrexBridgeInfoResponseJsonMapper dtoMapper = Mappers.getMapper(TrexBridgeInfoResponseJsonMapper.class);
 
     public BridgeImageModel createBridgeImage(BridgeImageModel bridgeImage) {
-        logger.debug("createBridgeImage: " + bridgeImage.toString());
         Integer id = bridgeImageRepository.insertBridgeImageIfNotExists(bridgeImage);
-        logger.debug("createBridgeImage ineetd: " + id);
-        var bi = bridgeImageRepository.getBridgeImage(id);
-        logger.debug("createdBridgeImage: " + bridgeImage);
-        return bi;
+        BridgeImageModel bridgeImageModel = bridgeImageRepository.getBridgeImage(id);
+        return bridgeImageModel;
     }
 
     public void saveImageFile(BridgeImageModel image) throws IOException {
