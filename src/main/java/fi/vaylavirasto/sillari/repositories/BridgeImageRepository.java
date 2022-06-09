@@ -78,7 +78,7 @@ public class BridgeImageRepository {
     public List<BridgeImageModel> getBridgeImages(Integer bridgeId) {
         return dsl.select().from(TableAlias.bridgeImage)
                 .where(TableAlias.bridgeImage.BRIDGE_ID.eq(bridgeId))
-                .fetch(new BridgeImageMapper(true));
+                .fetch(new BridgeImageMapper());
     }
 
     public int deleteBridgeImage(Integer id) {
