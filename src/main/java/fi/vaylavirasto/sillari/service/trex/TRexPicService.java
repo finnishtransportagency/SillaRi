@@ -4,7 +4,6 @@ import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.BridgeImageModel;
 import fi.vaylavirasto.sillari.model.PicInfoModel;
-import fi.vaylavirasto.sillari.model.SupervisionImageModel;
 import fi.vaylavirasto.sillari.repositories.BridgeImageRepository;
 import fi.vaylavirasto.sillari.service.S3FileService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJsonMapper;
@@ -73,6 +72,16 @@ public class TRexPicService {
 
         OffsetDateTime createdTime = DateMapper.stringToOffsetDate(image.getTaken());
         s3FileService.saveFile(decodedString, contentType, awss3Client.getPhotoBucketName(), image.getObjectKey(), image.getFilename(), createdTime);
+    }
+
+    public void deleteImageFile(String objectkey, String filename) throws IOException {
+        // Delete image from AWS bucket or local file system
+        s3FileService.deleteFile(awss3Client.getTrexPhotoBucketName(), objectkey, filename);
+    }
+
+    public void deleteImage(String objectkey){
+        // Delete the image row from the database
+        bridgeImageRepository.deleteBridgeImage(objectkey);
     }
 
     public PicInfoModel getPicInfo(String oid) throws TRexRestException {
