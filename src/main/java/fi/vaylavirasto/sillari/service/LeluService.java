@@ -189,6 +189,7 @@ public class LeluService {
                     bridgeImageModel.setBridgeId(bridgeId);
                     bridgeImageModel.setFilename(oid + ".jpeg");
                     bridgeImageModel.setObjectKey(oid);
+                    bridgeImageModel.setTaken(picInfo.getTaken());
 
                     tRexPicService.deleteImage(bridgeImageModel.getObjectKey());
                     bridgeImageModel = tRexPicService.createBridgeImage(bridgeImageModel);
