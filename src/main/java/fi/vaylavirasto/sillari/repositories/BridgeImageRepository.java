@@ -23,19 +23,17 @@ public class BridgeImageRepository {
     @Autowired
     private DSLContext dsl;
 
-    public Integer insertBridgeImageIfNotExists(BridgeImageModel bridgeImage) {
-        Integer existingId = getBridgeImageIdByFilename(bridgeImage.getFilename());
+    public Integer insertBridgeImage(BridgeImageModel bridgeImage) {
 
-        if (existingId == null || existingId == 0) {
-            LocalDateTime taken = DateMapper.stringToLocalDate(bridgeImage.getTaken());
+        LocalDateTime taken = DateMapper.stringToLocalDate(bridgeImage.getTaken());
 
-            return dsl.transactionResult(configuration -> {
-                DSLContext ctx = DSL.using(configuration);
+        return dsl.transactionResult(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
 
-                Integer imageId = ctx.nextval(Sequences.BRIDGE_IMAGE_ID_SEQ).intValue();
-                Record1<Integer> imageIdResult = ctx.insertInto(TableAlias.bridgeImage,
-                                TableAlias.bridgeImage.ID,
-                                TableAlias.bridgeImage.BRIDGE_ID,
+            Integer imageId = ctx.nextval(Sequences.BRIDGE_IMAGE_ID_SEQ).intValue();
+            Record1<Integer> imageIdResult = ctx.insertInto(TableAlias.bridgeImage,
+                    TableAlias.bridgeImage.ID,
+                    TableAlias.bridgeImage.BRIDGE_ID,
                                 TableAlias.bridgeImage.FILENAME,
                                 TableAlias.bridgeImage.TAKEN,
                                 TableAlias.bridgeImage.OBJECT_KEY)
@@ -48,10 +46,9 @@ public class BridgeImageRepository {
                         .fetchOne(); // Execute and return zero or one record
                 return imageIdResult != null ? imageIdResult.value1() : null;
             });
-        } else {
-            return existingId;
-        }
+
     }
+
 
     public BridgeImageModel getBridgeImage(Integer id) {
         return dsl.select().from(TableAlias.bridgeImage)
@@ -80,7 +77,7 @@ public class BridgeImageRepository {
                 .fetch(new BridgeImageMapper());
     }
 
-    public int deleteBridgeImage(Integer id) {
+    public int deleteBridgeImage(String objectKey) {
         return dsl.delete(TableAlias.bridgeImage)
                 .where(TableAlias.bridgeImage.ID.eq(id))
                 .execute();
