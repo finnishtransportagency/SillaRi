@@ -155,8 +155,10 @@ public class LeluController {
         logger.debug("get bridge {}", oid);
         try {
             BridgeModel bridge = trexBridgeInfoService.getBridge(oid);
-            bridgeService.createOrUpdateBridge(bridge);
+            Integer bridgeId = bridgeService.createOrUpdateBridge(bridge);
             logger.debug("bridge inserted or updated: {}", bridge);
+            leluService.handleTrexPics(oid, bridgeId);
+
         } catch (TRexRestException e) {
             logger.warn("Trex fail getting bridge: {}", oid, e);
         } catch (Exception e) {
