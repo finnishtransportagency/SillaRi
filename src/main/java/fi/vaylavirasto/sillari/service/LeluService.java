@@ -189,6 +189,7 @@ public class LeluService {
                     bridgeImageModel.setBridgeId(bridgeId);
                     bridgeImageModel.setFilename(oid + ".jpeg");
                     bridgeImageModel.setObjectKey(oid);
+                    bridgeImageModel.setTaken(picInfo.getTaken());
                     String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(picBytes);
                     logger.debug("encodedString " + encodedString);
 

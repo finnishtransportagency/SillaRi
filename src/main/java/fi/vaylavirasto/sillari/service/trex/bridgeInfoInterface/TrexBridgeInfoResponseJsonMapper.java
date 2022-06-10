@@ -28,6 +28,7 @@ public interface TrexBridgeInfoResponseJsonMapper {
     @Mappings({
             @Mapping(target = "id", source = "dto.id"),
             @Mapping(target = "mainPic", source = "dto.paakuva.totuusarvo"),
+            @Mapping(target = "taken", source = "dto.luotu"),
     })
     PicInfoModel fromDTOToModel(KuvatiedotItem dto);
 

@@ -8,4 +8,5 @@ import lombok.*;
 public class PicInfoModel {
     private long id;
     private boolean mainPic;
+    private String taken;
 }
