@@ -189,16 +189,17 @@ public class LeluService {
                     bridgeImageModel.setBridgeId(bridgeId);
                     bridgeImageModel.setFilename(oid + ".jpeg");
                     bridgeImageModel.setObjectKey(oid);
-                    String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(picBytes);
-                    logger.debug("encodedString " + encodedString);
 
+                    tRexPicService.deleteImage(bridgeImageModel.getObjectKey());
                     bridgeImageModel = tRexPicService.createBridgeImage(bridgeImageModel);
+
+                    String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(picBytes);
                     bridgeImageModel.setBase64("data:" + "jpeg/image" + ";base64," + encodedString);
                     logger.debug("createdBridgeImage with 64: " + bridgeImageModel);
 
                     try {
                         // Delete old image from AWS bucket or local file system
-                        tRexPicService.deleteImage(bridgeImageModel.getObjectKey(), bridgeImageModel.getFilename());
+                        tRexPicService.deleteImageFile(bridgeImageModel.getObjectKey(), bridgeImageModel.getFilename());
                         tRexPicService.saveImageFile(bridgeImageModel);
                     } catch (IOException e) {
                         e.printStackTrace();
