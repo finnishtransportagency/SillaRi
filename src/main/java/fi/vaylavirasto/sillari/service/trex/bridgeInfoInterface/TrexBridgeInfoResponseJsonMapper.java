@@ -3,14 +3,14 @@ package fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.model.PicInfoModel;
 import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.KuvatiedotItem;
-import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.TrexPicInfoResponseJson;
+import fi.vaylavirasto.sillari.util.DateMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
 import java.util.List;
 
-@Mapper
+@Mapper(uses = DateMapper.class)
 public interface TrexBridgeInfoResponseJsonMapper {
     @Mappings({
             @Mapping(target="identifier", source = "dto.tunnus"),

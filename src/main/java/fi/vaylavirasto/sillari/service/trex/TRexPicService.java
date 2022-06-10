@@ -70,7 +70,7 @@ public class TRexPicService {
             contentType = "application/octet-stream";
         }
 
-        OffsetDateTime createdTime = DateMapper.stringToOffsetDate(image.getTaken());
+        OffsetDateTime createdTime = image.getTaken();
         s3FileService.saveFile(decodedString, contentType, awss3Client.getPhotoBucketName(), image.getObjectKey(), image.getFilename(), createdTime);
     }
 

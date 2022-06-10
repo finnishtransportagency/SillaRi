@@ -3,6 +3,7 @@ package fi.vaylavirasto.sillari.api.rest;
 import com.amazonaws.util.IOUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.vaylavirasto.sillari.api.rest.error.PDFDownloadException;
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
@@ -247,7 +248,7 @@ public class DevToolsController {
                 return null;
 
             } else {
-                logger.debug("success getting bridge from trex: " + b.toString());
+                logger.debug("success getting bridge from trex: " + b);
                 return b;
             }
         } catch (Exception e) {
@@ -269,6 +270,7 @@ public class DevToolsController {
     @RequestMapping(value = "/localHardCodedPicJson/kuvatiedot", method = RequestMethod.GET)
     public TrexPicInfoResponseJson trexHardPicInfo() {
         ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.registerModule(new JavaTimeModule());
 
         try {
             TrexPicInfoResponseJson a = objectMapper.readValue(trexHardPicInfoString(), TrexPicInfoResponseJson.class);

@@ -25,7 +25,7 @@ public class BridgeImageRepository {
 
     public Integer insertBridgeImage(BridgeImageModel bridgeImage) {
 
-        LocalDateTime taken = DateMapper.stringToLocalDate(bridgeImage.getTaken());
+        LocalDateTime taken = DateMapper.offsetDateToLocalDate(bridgeImage.getTaken());
 
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
@@ -64,18 +64,6 @@ public class BridgeImageRepository {
 
     }
 
-    public Integer getBridgeImageIdByFilename(String filename) {
-        return dsl.select().from(TableAlias.bridgeImage)
-                .where(TableAlias.bridgeImage.FILENAME.eq(filename))
-                .fetchOne(TableAlias.bridgeImage.ID);
-
-    }
-
-    public List<BridgeImageModel> getBridgeImages(Integer bridgeId) {
-        return dsl.select().from(TableAlias.bridgeImage)
-                .where(TableAlias.bridgeImage.BRIDGE_ID.eq(bridgeId))
-                .fetch(new BridgeImageMapper());
-    }
 
     public int deleteBridgeImage(String objectKey) {
         return dsl.delete(TableAlias.bridgeImage)
@@ -83,11 +71,6 @@ public class BridgeImageRepository {
                 .execute();
     }
 
-    public int deleteBridgeImages(Integer bridgeId) {
-        return dsl.delete(TableAlias.bridgeImage)
-                .where(TableAlias.bridgeImage.BRIDGE_ID.eq(bridgeId))
-                .execute();
-    }
 
 }
 

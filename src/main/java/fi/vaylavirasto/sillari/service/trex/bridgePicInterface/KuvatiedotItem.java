@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.service.trex.bridgePicInterface;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.Data;
@@ -26,6 +27,6 @@ class KuvatiedotItem {
     private List<String> kuvaluokkatarkenne;
     private long id;
     private Paakuva paakuva;
-    private String muokattu;
-    private String luotu;
+    LocalDateTime muokattu;
+    LocalDateTime luotu;
 }
