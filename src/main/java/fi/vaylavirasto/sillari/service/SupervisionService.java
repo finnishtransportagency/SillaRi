@@ -247,14 +247,12 @@ public class SupervisionService {
         // Delete supervision images from DB and AWS S3 bucket (or local file system in local environment)
         // Deleting pdf files is not necessary, since cancelSupervision is not allowed when supervision report is ready.
         List<SupervisionImageModel> images = supervisionImageRepository.getSupervisionImages(supervisionId);
-        try {
-            for (SupervisionImageModel image : images) {
-                String decodedKey = new String(Base64.getDecoder().decode(image.getObjectKey()));
-                s3FileService.deleteFile(awss3Client.getPhotoBucketName(), decodedKey, image.getFilename());
-            }
-        } catch (IOException e) {
-            logger.error("Deleting images from local file system failed, supervisionId={}", supervisionId);
+
+        for (SupervisionImageModel image : images) {
+            String decodedKey = new String(Base64.getDecoder().decode(image.getObjectKey()));
+            s3FileService.deleteFile(awss3Client.getPhotoBucketName(), decodedKey, image.getFilename());
         }
+
         supervisionImageRepository.deleteSupervisionImages(supervisionId);
 
         return getSupervision(supervisionId, true, true);

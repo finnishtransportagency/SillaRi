@@ -242,7 +242,7 @@ public class AWSS3Client {
             DeleteObjectRequest request = new DeleteObjectRequest(bucketName, objectKey);
             s3Client.deleteObject(request);
         } catch (Exception e) {
-            logger.error(e);
+            logger.error("Failed deleting from S3. " + bucketName + " " + objectKey + " " + e.getMessage());
         }
     }
 
