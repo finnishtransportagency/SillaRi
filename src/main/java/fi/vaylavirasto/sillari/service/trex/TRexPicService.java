@@ -44,46 +44,9 @@ public class TRexPicService {
     @Value("${sillari.trex.password}")
     private String password;
 
-    @Autowired
-    AWSS3Client awss3Client;
-    @Autowired
-    S3FileService s3FileService;
-    @Autowired
-    BridgeImageRepository bridgeImageRepository;
 
     private final TrexBridgeInfoResponseJsonMapper dtoMapper = Mappers.getMapper(TrexBridgeInfoResponseJsonMapper.class);
 
-    public BridgeImageModel createBridgeImage(BridgeImageModel bridgeImage) {
-        bridgeImageRepository.deleteBridgeImage(bridgeImage.getObjectKey());
-        Integer id = bridgeImageRepository.insertBridgeImage(bridgeImage);
-        BridgeImageModel bridgeImageModel = bridgeImageRepository.getBridgeImage(id);
-        return bridgeImageModel;
-    }
-
-    public void saveImageFile(BridgeImageModel image){
-        Tika tika = new Tika();
-        int dataStart = image.getBase64().indexOf(",") + 1;
-        logger.debug("datastart_ " + dataStart);
-        byte[] decodedString = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(image.getBase64().substring(dataStart).getBytes(StandardCharsets.UTF_8));
-        logger.debug("decodedString " + decodedString);
-        String contentType = tika.detect(decodedString);
-        if (contentType == null) {
-            contentType = "application/octet-stream";
-        }
-
-        OffsetDateTime createdTime = image.getTaken();
-        s3FileService.saveFile(decodedString, contentType, awss3Client.getPhotoBucketName(), image.getObjectKey(), image.getFilename(), createdTime);
-    }
-
-    public void deleteImageFile(String objectkey, String filename){
-        // Delete image from AWS bucket or local file system
-        s3FileService.deleteFile(awss3Client.getTrexPhotoBucketName(), objectkey, filename);
-    }
-
-    public void deleteImage(String objectkey){
-        // Delete the image row from the database
-        bridgeImageRepository.deleteBridgeImage(objectkey);
-    }
 
     public PicInfoModel getPicInfo(String oid) {
         logger.debug("getPicInfo oid: " + oid);
@@ -98,13 +61,45 @@ public class TRexPicService {
             KuvatiedotItem kuvatiedotItem = picInfoResponseJson.getKuvatiedot().stream().filter(i -> i.getPaakuva().isTotuusarvo()).findFirst().orElseThrow();
             PicInfoModel picInfoModel = dtoMapper.fromDTOToModel(kuvatiedotItem);
             return picInfoModel;
-        }
-        catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             logger.warn("Couldn't get bridge pics from trex. Probably no pics in trex fot the bridge. " + e.getMessage());
         }
         return null;
     }
 
+
+    public BridgeImageModel getPicFromTrex(String oid, Integer bridgeId) {
+
+        PicInfoModel picInfo = getPicInfo(oid);
+        logger.debug("Got picinfo from trex: " + picInfo);
+
+        if (picInfo != null) {
+            byte[] picBytes = new byte[0];
+            try {
+                picBytes = getPicBinJson(oid, String.valueOf(picInfo.getId()));
+            } catch (TRexRestException e) {
+                logger.error("Failed getting pic bytes from trex: " + e.getMessage());
+                return null;
+            }
+            logger.debug("Got picbytes from trex: " + picBytes.length);
+
+            BridgeImageModel bridgeImageModel = new BridgeImageModel();
+            bridgeImageModel.setBridgeId(bridgeId);
+            bridgeImageModel.setFilename(oid + ".jpeg");
+            bridgeImageModel.setObjectKey(oid);
+            bridgeImageModel.setTaken(picInfo.getTaken());
+
+
+            String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(picBytes);
+            bridgeImageModel.setBase64("data:" + "jpeg/image" + ";base64," + encodedString);
+            logger.debug("createdBridgeImage with 64: " + bridgeImageModel);
+
+            return bridgeImageModel;
+
+        } else {
+            return null;
+        }
+    }
 
     //•	Sitten voitte kysyä mitä kuvia milläkin rakenteella on: https://testiapi.vayla.fi/trex/rajapinta/rakennekuva-api/v1/kuvatiedot?oid=<rakenneoid>
     //	Tämä palauttaa listan kuvien tiedoista.
@@ -148,8 +143,8 @@ public class TRexPicService {
 
             try {
                 byte[] picBin = webClient.mutate().codecs(configurer -> configurer
-                                .defaultCodecs()
-                                .maxInMemorySize(16 * 1024 * 1024)).build().get()
+                        .defaultCodecs()
+                        .maxInMemorySize(16 * 1024 * 1024)).build().get()
                         .uri(uriBuilder -> uriBuilder
                                 .path(binPath)
                                 .queryParam("oid", bridgeOid)
@@ -174,17 +169,6 @@ public class TRexPicService {
     private WebClient buildClient() {
         return WebClient.create(trexUrl);
     }
-
-    public BridgeImageModel getBridgeImage(Integer bridgeId) {
-        return bridgeImageRepository.getBridgeImageWithBridgeId(bridgeId);
-    }
-
-    public void getImageFile(HttpServletResponse response, BridgeImageModel bridgeImageModel) throws IOException {
-        // Determine the content type from the file extension, which could be jpg, jpeg, png or gif
-        String filename = bridgeImageModel.getFilename();
-        String extension = filename.substring(filename.lastIndexOf(".") + 1);
-        String contentType = extension.equals("jpg") ? "image/jpeg" : "image/" + extension;
-
-        s3FileService.getFile(response, awss3Client.getTrexPhotoBucketName(), bridgeImageModel.getObjectKey(), filename, contentType);
-    }
 }
+
+

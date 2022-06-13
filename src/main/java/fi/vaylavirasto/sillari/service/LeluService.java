@@ -179,40 +179,7 @@ public class LeluService {
         }
     }
 
-    public void handleTrexPics(String oid, Integer bridgeId) {
 
-        PicInfoModel picInfo = tRexPicService.getPicInfo(oid);
-        logger.debug("Got picinfo from trex: " + picInfo);
-
-        if(picInfo != null) {
-            byte[] picBytes = new byte[0];
-            try {
-                picBytes = tRexPicService.getPicBinJson(oid, String.valueOf(picInfo.getId()));
-            } catch (TRexRestException e) {
-                logger.error("Failed getting pic bytes from trex: " + e.getMessage());
-                return;
-            }
-            logger.debug("Got picbytes from trex: " + picBytes.length);
-
-            BridgeImageModel bridgeImageModel = new BridgeImageModel();
-            bridgeImageModel.setBridgeId(bridgeId);
-            bridgeImageModel.setFilename(oid + ".jpeg");
-            bridgeImageModel.setObjectKey(oid);
-            bridgeImageModel.setTaken(picInfo.getTaken());
-
-            tRexPicService.deleteImage(bridgeImageModel.getObjectKey());
-            bridgeImageModel = tRexPicService.createBridgeImage(bridgeImageModel);
-
-            String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(picBytes);
-            bridgeImageModel.setBase64("data:" + "jpeg/image" + ";base64," + encodedString);
-            logger.debug("createdBridgeImage with 64: " + bridgeImageModel);
-
-
-            // Delete old image from AWS bucket or local file system
-            tRexPicService.deleteImageFile(bridgeImageModel.getObjectKey(), bridgeImageModel.getFilename());
-            tRexPicService.saveImageFile(bridgeImageModel);
-        }
-    }
 
     private Integer addTrexBridgeToDB(RouteBridgeModel routeBridge, String oid) {
         logger.debug("Bridge missing with oid {}, get from trex", routeBridge.getBridge().getOid());

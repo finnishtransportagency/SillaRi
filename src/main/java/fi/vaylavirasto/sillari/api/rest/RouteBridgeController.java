@@ -4,10 +4,7 @@ import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariRole;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.*;
-import fi.vaylavirasto.sillari.service.CompanyService;
-import fi.vaylavirasto.sillari.service.RouteBridgeService;
-import fi.vaylavirasto.sillari.service.SupervisionService;
-import fi.vaylavirasto.sillari.service.UIService;
+import fi.vaylavirasto.sillari.service.*;
 import fi.vaylavirasto.sillari.service.trex.TRexPicService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +38,7 @@ public class RouteBridgeController {
     @Autowired
     SupervisionService supervisionService;
     @Autowired
-    TRexPicService tRexPicService;
+    BridgeImageService bridgeImageService;
 
     @Operation(summary = "Get route bridge")
     @GetMapping(value = "/getroutebridge", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -69,13 +66,11 @@ public class RouteBridgeController {
                 throw new AccessDeniedException("Viewing routebridge not allowed to the user");
             }
 
-            logger.debug("HEllo: " +routeBridgeId);
             RouteBridgeModel routeBridge = routeBridgeService.getRouteBridge(routeBridgeId);
-            logger.debug("HEllo: " +routeBridge.getBridge());
-            logger.debug("HEllo: " +routeBridge.getBridgeId());
-            BridgeImageModel bridgeImageModel = tRexPicService.getBridgeImage(routeBridge.getBridgeId());
+
+            BridgeImageModel bridgeImageModel = bridgeImageService.getBridgeImage(routeBridge.getBridgeId());
             // Get the file from S3 bucket or local file system and write to response
-            tRexPicService.getImageFile(response, bridgeImageModel);
+            bridgeImageService.getImageFile(response, bridgeImageModel);
         } finally {
             serviceMetric.end();
         }

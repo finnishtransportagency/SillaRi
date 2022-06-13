@@ -6,10 +6,13 @@ import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
+import fi.vaylavirasto.sillari.model.BridgeImageModel;
 import fi.vaylavirasto.sillari.model.BridgeModel;
+import fi.vaylavirasto.sillari.service.BridgeImageService;
 import fi.vaylavirasto.sillari.service.BridgeService;
 import fi.vaylavirasto.sillari.service.LeluService;
 import fi.vaylavirasto.sillari.service.trex.TRexBridgeInfoService;
+import fi.vaylavirasto.sillari.service.trex.TRexPicService;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,16 +44,20 @@ public class LeluController {
     private String currentApiVersion;
 
 
-    private final LeluService leluService;
-    private final TRexBridgeInfoService trexBridgeInfoService;
-    private final BridgeService bridgeService;
-    private final MessageSource messageSource;
+    private LeluService leluService;
+    private BridgeService bridgeService;
+    private BridgeImageService bridgeImageService;
+    private TRexBridgeInfoService trexBridgeInfoService;
+    private TRexPicService tRexPicService;
+    private MessageSource messageSource;
 
     @Autowired
-    public LeluController(LeluService leluService, TRexBridgeInfoService trexBridgeInfoService, BridgeService bridgeService, MessageSource messageSource) {
+    public LeluController(LeluService leluService, TRexBridgeInfoService trexBridgeInfoService, BridgeService bridgeService, BridgeImageService bridgeImageService, TRexPicService tRexPicService, MessageSource messageSource) {
         this.leluService = leluService;
         this.trexBridgeInfoService = trexBridgeInfoService;
         this.bridgeService = bridgeService;
+        this.tRexPicService = tRexPicService;
+        this.bridgeImageService = bridgeImageService;
         this.messageSource = messageSource;
 
     }
@@ -157,8 +164,10 @@ public class LeluController {
             BridgeModel bridge = trexBridgeInfoService.getBridge(oid);
             Integer bridgeId = bridgeService.createOrUpdateBridge(bridge);
             logger.debug("bridge inserted or updated: {}", bridge);
-            leluService.handleTrexPics(oid, bridgeId);
+            BridgeImageModel bridgeImageModel = tRexPicService.getPicFromTrex(oid, bridgeId);
+            if(bridgeImageModel != null){
 
+            }
         } catch (TRexRestException e) {
             logger.warn("Trex fail getting bridge: {}", oid, e);
         } catch (Exception e) {
