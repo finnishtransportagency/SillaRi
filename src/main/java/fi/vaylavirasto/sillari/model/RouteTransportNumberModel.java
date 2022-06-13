@@ -7,10 +7,10 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
-public class RouteTransportCountModel extends BaseModel {
+public class RouteTransportNumberModel extends BaseModel {
     private Integer id;
     private Integer routeId;
     private Integer routeTransportId;
-    private Integer count;
+    private Integer transportNumber;
     private boolean used = false;
 }

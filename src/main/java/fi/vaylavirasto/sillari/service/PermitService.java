@@ -37,7 +37,7 @@ public class PermitService {
     @Autowired
     RouteTransportRepository routeTransportRepository;
     @Autowired
-    RouteTransportCountRepository routeTransportCountRepository;
+    RouteTransportNumberRepository routeTransportNumberRepository;
     @Autowired
     AWSS3Client awss3Client;
 
@@ -82,11 +82,11 @@ public class PermitService {
 
         if (permit.getRoutes() != null) {
             List<Integer> routeIds = routes.stream().map(RouteModel::getId).collect(Collectors.toList());
-            Map<Integer, List<RouteTransportCountModel>> routeTransportCounts = routeTransportCountRepository.getRouteTransportCountsByRouteId(routeIds);
+            Map<Integer, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberRepository.getRouteTransportNumbersByRouteId(routeIds);
 
             for (RouteModel route : routes) {
                 Integer routeId = route.getId();
-                route.setRouteTransportCounts(routeTransportCounts.get(routeId));
+                route.setRouteTransportNumbers(routeTransportNumbers.get(routeId));
 
                 Integer transportNumber;
                 // Get routeBridges with selected transportNumber per route.
@@ -95,8 +95,8 @@ public class PermitService {
                 if (routeTransport != null && routeId.equals(routeTransport.getRouteId())) {
                     transportNumber = routeTransport.getTransportNumber();
                 } else {
-                    RouteTransportCountModel nextAvailableTransportCount = routeTransportCountRepository.getNextAvailableRouteTransportCount(routeId);
-                    transportNumber = nextAvailableTransportCount.getCount();
+                    RouteTransportNumberModel nextAvailableTransportNumber = routeTransportNumberRepository.getNextAvailableRouteTransportNumber(routeId);
+                    transportNumber = nextAvailableTransportNumber.getTransportNumber();
                 }
 
                 logger.debug("getting permit {} route {} bridges with transport number: {}", permit.getPermitNumber(), route.getName(), transportNumber);

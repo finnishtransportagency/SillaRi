@@ -16,7 +16,7 @@ public class RouteTransportService {
     @Autowired
     RouteTransportRepository routeTransportRepository;
     @Autowired
-    RouteTransportCountRepository routeTransportCountRepository;
+    RouteTransportNumberRepository routeTransportNumberRepository;
     @Autowired
     RouteTransportStatusRepository routeTransportStatusRepository;
     @Autowired
@@ -95,9 +95,9 @@ public class RouteTransportService {
             List<Integer> routeTransportIds = routeTransportModels.stream().map(RouteTransportModel::getId).collect(Collectors.toList());
 
             List<RouteModel> routeModels = routeRepository.getRoutesById(routeIds);
-            Map<Integer, List<RouteTransportCountModel>> routeTransportCountList = routeTransportCountRepository.getRouteTransportCountsByRouteId(routeIds);
+            Map<Integer, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberRepository.getRouteTransportNumbersByRouteId(routeIds);
 
-            routeModels.forEach(route -> route.setRouteTransportCounts(routeTransportCountList.get(route.getId())));
+            routeModels.forEach(route -> route.setRouteTransportNumbers(routeTransportNumbers.get(route.getId())));
 
             List<RouteTransportStatusModel> rtStatusModels = routeTransportStatusRepository.getTransportStatusHistory(routeTransportIds);
             List<SupervisionModel> supervisionModels = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportIds);
@@ -218,8 +218,8 @@ public class RouteTransportService {
         }
     }
 
-    public Integer getNextAvailableRouteTransportCount(Integer routeId) {
-        RouteTransportCountModel countModel = routeTransportCountRepository.getNextAvailableRouteTransportCount(routeId);
-        return countModel.getCount();
+    public Integer getNextAvailableRouteTransportNumber(Integer routeId) {
+        RouteTransportNumberModel routeTransportNumber = routeTransportNumberRepository.getNextAvailableRouteTransportNumber(routeId);
+        return routeTransportNumber.getTransportNumber();
     }
 }
