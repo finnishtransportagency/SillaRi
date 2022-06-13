@@ -13,7 +13,7 @@
 
         <!-- Use the custom SQLDebugLogging to get the SQL statements only -->
         <Logger name="fi.vaylavirasto.sillari.config.SQLDebugLogging" additivity="false">
-            <AppenderRef ref="ConsoleAppender" level="error"/>
+            <AppenderRef ref="ConsoleAppender" level="debug"/>
         </Logger>
 
         <Logger name="fi.vaylavirasto.sillari.service.UIService" additivity="false">
