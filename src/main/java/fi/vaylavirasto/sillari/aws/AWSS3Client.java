@@ -35,8 +35,7 @@ public class AWSS3Client {
 
     private static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
 
-    //TODO make s3 bucket and use it
-    private static final String SILLARI_TREX_PHOTOS_BUCKET_DEV = "sillari-photos";
+    private static final String SILLARI_TREX_PHOTOS_BUCKET_DEV = "sillari-trex-photos";
 
     private static final String SILLARI_PERMIT_PDF_BUCKET_DEV = "sillari-permits";
 
@@ -83,12 +82,11 @@ public class AWSS3Client {
         }
     }
 
-    //TODO make s3 bucket and use it
     public String getTrexPhotoBucketName() {
         if ("dev".equals(environment) || "localhost".equals(environment)) {
-            return SILLARI_PHOTOS_BUCKET_DEV;
+            return SILLARI_TREX_PHOTOS_BUCKET_DEV;
         } else {
-            return SILLARI_PHOTOS_BUCKET_DEV + "-" + environment;
+            return SILLARI_TREX_PHOTOS_BUCKET_DEV + "-" + environment;
         }
     }
 
