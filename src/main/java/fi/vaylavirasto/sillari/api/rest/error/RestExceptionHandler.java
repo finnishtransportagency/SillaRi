@@ -96,6 +96,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
     }
 
+    @ExceptionHandler(TransportNumberConflictException.class)
+    public ResponseEntity<Object> transportNumberConflictException(TransportNumberConflictException ex) {
+        logger.error("transportNumberConflictException 'reason':'{}'", ex.getMessage());
+        return createErrorResponse(HttpStatus.CONFLICT, ex.getMessage(), null);
+    }
+
     @ExceptionHandler(TRexRestException.class)
     public ResponseEntity<Object> tRexRestException(TRexRestException ex) {
         String message;

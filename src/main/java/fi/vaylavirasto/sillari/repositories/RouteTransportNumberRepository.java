@@ -22,12 +22,6 @@ public class RouteTransportNumberRepository {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public List<RouteTransportNumberModel> getRouteTransportNumberList(Integer routeId) {
-        return dsl.select().from(TableAlias.routeTransportNumber)
-                .where(TableAlias.routeTransportNumber.ROUTE_ID.eq(routeId))
-                .fetch(new RouteTransportNumberMapper());
-    }
-
     public Map<Integer, List<RouteTransportNumberModel>> getRouteTransportNumbersByRouteId(List<Integer> routeIds) {
         return dsl.selectFrom(TableAlias.routeTransportNumber)
                 .where(TableAlias.routeTransportNumber.ROUTE_ID.in(routeIds))
@@ -45,14 +39,15 @@ public class RouteTransportNumberRepository {
         return count.size() > 0 ? count.get(0) : null;
     }
 
-    public void updateRouteTransportNumber(RouteTransportNumberModel transportNumber) throws DataAccessException {
+    public void updateRouteTransportNumber(Integer routeId, Integer routeTransportId, Integer transportNumber, Boolean used) throws DataAccessException {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
             ctx.update(TableAlias.routeTransportNumber)
-                    .set(TableAlias.routeTransportNumber.USED, transportNumber.isUsed())
-                    .set(TableAlias.routeTransportNumber.ROUTE_TRANSPORT_ID, transportNumber.getRouteTransportId())
-                    .where(TableAlias.routeTransportNumber.ID.eq(transportNumber.getId()))
+                    .set(TableAlias.routeTransportNumber.USED, used)
+                    .set(TableAlias.routeTransportNumber.ROUTE_TRANSPORT_ID, routeTransportId)
+                    .where(TableAlias.routeTransportNumber.ROUTE_ID.eq(routeId))
+                    .and(TableAlias.routeTransportNumber.TRANSPORT_NUMBER.eq(transportNumber))
                     .execute();
         });
     }

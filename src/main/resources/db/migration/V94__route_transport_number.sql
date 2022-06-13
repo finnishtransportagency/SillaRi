@@ -18,6 +18,9 @@ CREATE TRIGGER route_transport_number_row_updated
     FOR EACH ROW
 EXECUTE PROCEDURE update_row_updated_time();
 
+create index if not exists route_transport_number_route_id on sillari.route_transport_number (route_id);
+create index if not exists route_transport_number_route_id_transport_number on sillari.route_transport_number (route_id, transport_number);
+
 
 -- Add route_transport_number rows for each routes and max transport_number
 do $$
