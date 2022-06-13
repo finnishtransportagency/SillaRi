@@ -24,7 +24,8 @@
       "checkTimeShort": "Tarkista aika",
       "invalidTime": "Virheellinen kellonaika",
       "fixTimes": "Tarkista ja korjaa ristiriitaiset kellonajat siltojen arvioiduista ylitysajoista ennen jatkamista."
-    }
+    },
+    "error": "Virhe tapahtui"
   },
   "main": {
     "header": {
@@ -307,6 +308,9 @@
       "alert": {
         "generatePassword": "Oletko varma, että haluat generoida uuden salasanan?",
         "deleteTransport": "Oletko varma, että haluat poistaa kuljetuksen?"
+      },
+      "error": {
+        "transportNumberConflict": "Kuljetuskerta on jo käytetty toiselle kuljetukselle. Ole hyvä ja päivitä sivu."
       },
       "saved": "Tallennettu",
       "deleted": "Poistettu",

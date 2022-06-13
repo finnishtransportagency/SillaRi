@@ -28,6 +28,7 @@ import NoNetworkNoData from "../NoNetworkNoData";
 import Loading from "../Loading";
 import RouteTransportFooter from "./RouteTransportFooter";
 import SupervisionReport from "./SupervisionReport";
+import IToastMessage from "../../interfaces/IToastMessage";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -38,8 +39,8 @@ interface RouteTransportInfoProps {
   setSelectedRouteOption: Dispatch<SetStateAction<IRoute | undefined>>;
   selectedVehicle: IVehicle | undefined;
   setSelectedVehicle: Dispatch<SetStateAction<IVehicle | undefined>>;
-  toastMessage: string;
-  setToastMessage: Dispatch<SetStateAction<string>>;
+  toastMessage: IToastMessage;
+  setToastMessage: Dispatch<SetStateAction<IToastMessage>>;
   noNetworkNoData: boolean;
   notReady: boolean;
 }
@@ -73,40 +74,51 @@ const RouteTransportInfo = ({
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
   // Set-up mutations for modifying data later
-  // TODO - handle errors
   const routeTransportPlannedMutation = useMutation((transport: IRouteTransport) => createRouteTransport(transport, dispatch), {
-    retry: onRetry,
+    retry: false,
     onSuccess: () => {
       // TODO - move toast to avoid error?
-      setToastMessage(t("management.transportDetail.saved"));
+      setToastMessage({ message: t("management.transportDetail.saved"), color: "" });
 
       // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
       queryClient.invalidateQueries("getRouteTransportsOfPermit");
       history.replace("/management");
     },
+    onError: (error) => {
+      let errorMessage;
+      if (error instanceof Error && error.message === "409") {
+        errorMessage = t("management.transportDetail.error.transportNumberConflict");
+      } else {
+        errorMessage = t("common.error");
+      }
+      setToastMessage({ message: errorMessage, color: "danger" });
+    },
   });
+
   const routeTransportUpdateMutation = useMutation((transport: IRouteTransport) => updateRouteTransport(transport, dispatch), {
     retry: onRetry,
     onSuccess: () => {
       // TODO - move toast to avoid error?
-      setToastMessage(t("management.transportDetail.saved"));
+      setToastMessage({ message: t("management.transportDetail.saved"), color: "" });
 
       // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
       queryClient.invalidateQueries("getRouteTransportsOfPermit");
       history.replace("/management");
     },
   });
+
   const routeTransportDeleteMutation = useMutation((routeTransportIdToDelete: number) => deleteRouteTransport(routeTransportIdToDelete, dispatch), {
     retry: onRetry,
     onSuccess: () => {
       // TODO - move toast to avoid error?
-      setToastMessage(t("management.transportDetail.deleted"));
+      setToastMessage({ message: t("management.transportDetail.deleted"), color: "" });
 
       // Invalidate the route transport data in RouteGrid.tsx to force the grid to update when going back to that page with history.replace
       queryClient.invalidateQueries("getRouteTransportsOfPermit");
       history.replace("/management");
     },
   });
+
   const routeTransportPasswordMutation = useMutation(
     (routeTransportIdToGenerate: number) => generateNewRouteTransportPassword(routeTransportIdToGenerate, dispatch),
     {
@@ -328,12 +340,12 @@ const RouteTransportInfo = ({
           </IonGrid>
         )}
         <IonToast
-          isOpen={toastMessage.length > 0}
-          message={toastMessage}
-          onDidDismiss={() => setToastMessage("")}
+          isOpen={toastMessage.message.length > 0}
+          message={toastMessage.message}
+          onDidDismiss={() => setToastMessage({ message: "", color: "" })}
           duration={5000}
           position="top"
-          color="success"
+          color={toastMessage.color ? toastMessage.color : "success"}
         />
         <SupervisionReport
           isOpen={reportModalOpen}

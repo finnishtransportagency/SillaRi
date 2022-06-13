@@ -24,7 +24,8 @@
       "checkTimeShort": "Check the time",
       "invalidTime": "Invalid time",
       "fixTimes": "Check and correct conflicting times for estimated bridge crossings before proceeding."
-    }
+    },
+    "error": "An error occurred"
   },
   "main": {
     "header": {
@@ -307,6 +308,9 @@
       "alert": {
         "generatePassword": "Are you sure you want to generate a new password?",
         "deleteTransport": "Are you sure you want to delete the transport?"
+      },
+      "error": {
+        "transportNumberConflict": "Transport number is already used for another transport instance. Please refresh the page."
       },
       "saved": "Saved",
       "deleted": "Deleted",

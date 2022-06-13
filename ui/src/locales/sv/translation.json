@@ -24,7 +24,8 @@
       "checkTimeShort": "(SV) Check the time",
       "invalidTime": "(SV) Invalid time",
       "fixTimes": "(SV) Check and correct conflicting times for estimated bridge crossings before proceeding."
-    }
+    },
+    "error": "(SV) Virhe tapahtui"
   },
   "main": {
     "header": {
@@ -307,6 +308,9 @@
       "alert": {
         "generatePassword": "Är du säker på att du vill generera ett nyt lösenord för transporten?",
         "deleteTransport": "Är du säker på att du vill ta bort transporten?"
+      },
+      "error": {
+        "transportNumberConflict": "(SV) Kuljetuskerta on jo käytetty toiselle kuljetukselle. Ole hyvä ja päivitä sivu."
       },
       "saved": "Sparad",
       "deleted": "Borttagen",
