@@ -33,7 +33,7 @@ public class SupervisionImageService {
         return supervisionImageRepository.getSupervisionImage(id);
     }
 
-    public void deleteSupervisionImage(Integer id) throws IOException {
+    public void deleteSupervisionImage(Integer id){
         SupervisionImageModel image = getSupervisionImage(id);
 
         // Delete image from AWS bucket or local file system
@@ -43,7 +43,7 @@ public class SupervisionImageService {
         supervisionImageRepository.deleteSupervisionImage(id);
     }
 
-    public void deleteSupervisionImages(Integer supervisionId) throws IOException {
+    public void deleteSupervisionImages(Integer supervisionId){
         List<SupervisionImageModel> images = supervisionImageRepository.getSupervisionImages(supervisionId);
 
         // Delete images from AWS bucket or local file system

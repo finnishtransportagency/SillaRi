@@ -281,6 +281,9 @@ public class DevToolsController {
         return null;
     }
 
+
+
+
     //this can be set as "trex pic url" in local dev env so we get some bridge pic bin for deving and testing when we don't connection to trex,
     @RequestMapping(value = "/localHardCodedPicJson/yleiskuva", method = RequestMethod.GET)
     public void trexHardPicBin(HttpServletResponse response) throws Exception {
@@ -396,6 +399,14 @@ public class DevToolsController {
                 "            \"luotu\": \"2022-05-31T05:53:46.109Z\",\n" +
                 "            \"muokattu\": \"2022-05-31T05:53:54.541Z\"\n" +
                 "        }\n" +
+                "    ]\n" +
+                "}\n";
+
+    }
+
+    private String trexHardPicInfoStringEmpty() {
+        return "{\n" +
+                "    \"kuvatiedot\": [ "+
                 "    ]\n" +
                 "}\n";
 

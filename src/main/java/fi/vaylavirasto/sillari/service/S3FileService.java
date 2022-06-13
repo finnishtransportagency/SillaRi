@@ -87,11 +87,15 @@ public class S3FileService {
         }
     }
 
-    public boolean saveFile(byte[] decodedString, String contentType, String bucketName, String objectKey, String filename, OffsetDateTime fileCreated) throws IOException {
+    public boolean saveFile(byte[] decodedString, String contentType, String bucketName, String objectKey, String filename, OffsetDateTime fileCreated){
         if (activeProfile.equals("local")) {
             // Save to local file system
             File outputFile = new File("/", filename);
-            Files.write(outputFile.toPath(), decodedString);
+            try {
+                Files.write(outputFile.toPath(), decodedString);
+            } catch (IOException e) {
+                logger.debug("write local file failed");
+            }
 
             logger.debug("wrote local file: " + outputFile.getAbsolutePath() + ", filename: " + outputFile.getName());
             return true;
@@ -150,12 +154,16 @@ public class S3FileService {
         return dto;
     }
 
-    public void deleteFile(String bucketName, String objectKey, String filename) throws IOException {
+    public void deleteFile(String bucketName, String objectKey, String filename){
         if (activeProfile.equals("local")) {
             // Delete from local file system
             File deleteFile = new File(filename);
             if (deleteFile.exists()) {
-                Files.delete(deleteFile.toPath());
+                try {
+                    Files.delete(deleteFile.toPath());
+                } catch (IOException e) {
+                    logger.debug("Local file deletion failed");
+                }
             }
         } else {
             // Delete from AWS

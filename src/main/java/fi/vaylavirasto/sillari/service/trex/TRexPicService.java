@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
+import java.util.NoSuchElementException;
 
 @Service
 public class TRexPicService {
@@ -59,7 +60,7 @@ public class TRexPicService {
         return bridgeImageModel;
     }
 
-    public void saveImageFile(BridgeImageModel image) throws IOException {
+    public void saveImageFile(BridgeImageModel image){
         Tika tika = new Tika();
         int dataStart = image.getBase64().indexOf(",") + 1;
         logger.debug("datastart_ " + dataStart);
@@ -74,7 +75,7 @@ public class TRexPicService {
         s3FileService.saveFile(decodedString, contentType, awss3Client.getPhotoBucketName(), image.getObjectKey(), image.getFilename(), createdTime);
     }
 
-    public void deleteImageFile(String objectkey, String filename) throws IOException {
+    public void deleteImageFile(String objectkey, String filename){
         // Delete image from AWS bucket or local file system
         s3FileService.deleteFile(awss3Client.getTrexPhotoBucketName(), objectkey, filename);
     }
@@ -84,14 +85,24 @@ public class TRexPicService {
         bridgeImageRepository.deleteBridgeImage(objectkey);
     }
 
-    public PicInfoModel getPicInfo(String oid) throws TRexRestException {
+    public PicInfoModel getPicInfo(String oid) {
         logger.debug("getPicInfo oid: " + oid);
-        TrexPicInfoResponseJson picInfoResponseJson = getPicInfoJson(oid);
-        KuvatiedotItem kuvatiedotItem = picInfoResponseJson.getKuvatiedot().stream().filter(i -> i.getPaakuva().isTotuusarvo()).findFirst().orElseThrow();
-
-        PicInfoModel picInfoModel = dtoMapper.fromDTOToModel(kuvatiedotItem);
-
-        return picInfoModel;
+        TrexPicInfoResponseJson picInfoResponseJson = null;
+        try {
+            picInfoResponseJson = getPicInfoJson(oid);
+        } catch (TRexRestException e) {
+            logger.error("Trex pics getting failed. " + e.getMessage());
+            return null;
+        }
+        try {
+            KuvatiedotItem kuvatiedotItem = picInfoResponseJson.getKuvatiedot().stream().filter(i -> i.getPaakuva().isTotuusarvo()).findFirst().orElseThrow();
+            PicInfoModel picInfoModel = dtoMapper.fromDTOToModel(kuvatiedotItem);
+            return picInfoModel;
+        }
+        catch (NoSuchElementException e){
+            logger.warn("Couldn't get bridge pics from trex. Probably no pics in trex fot the bridge. " + e.getMessage());
+        }
+        return null;
     }
 
 
