@@ -1,7 +1,7 @@
 package fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface;
 
+import fi.vaylavirasto.sillari.model.BridgeImageModel;
 import fi.vaylavirasto.sillari.model.BridgeModel;
-import fi.vaylavirasto.sillari.model.PicInfoModel;
 import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.KuvatiedotItem;
 import fi.vaylavirasto.sillari.util.DateMapper;
 import org.mapstruct.Mapper;
@@ -30,7 +30,7 @@ public interface TrexBridgeInfoResponseJsonMapper {
             @Mapping(target = "mainPic", source = "dto.paakuva.totuusarvo"),
             @Mapping(target = "taken", source = "dto.luotu"),
     })
-    PicInfoModel fromDTOToModel(KuvatiedotItem dto);
+    BridgeImageModel fromDTOToModel(KuvatiedotItem dto);
 
 
     default String createRoadAddress(List<TieosoitteetItem> tieosoitteetItems) {

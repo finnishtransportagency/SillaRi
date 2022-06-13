@@ -2,7 +2,6 @@ package fi.vaylavirasto.sillari.service.trex;
 
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
 import fi.vaylavirasto.sillari.model.BridgeImageModel;
-import fi.vaylavirasto.sillari.model.PicInfoModel;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJsonMapper;
 import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.KuvatiedotItem;
 import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.TrexPicInfoResponseJson;
@@ -38,29 +37,9 @@ public class TRexPicService {
     private final TrexBridgeInfoResponseJsonMapper dtoMapper = Mappers.getMapper(TrexBridgeInfoResponseJsonMapper.class);
 
 
-    public PicInfoModel getPicInfo(String oid) {
-        logger.debug("getPicInfo oid: " + oid);
-        TrexPicInfoResponseJson picInfoResponseJson = null;
-        try {
-            picInfoResponseJson = getPicInfoJson(oid);
-        } catch (TRexRestException e) {
-            logger.error("Trex pics getting failed. " + e.getMessage());
-            return null;
-        }
-        try {
-            KuvatiedotItem kuvatiedotItem = picInfoResponseJson.getKuvatiedot().stream().filter(i -> i.getPaakuva().isTotuusarvo()).findFirst().orElseThrow();
-            PicInfoModel picInfoModel = dtoMapper.fromDTOToModel(kuvatiedotItem);
-            return picInfoModel;
-        } catch (NoSuchElementException e) {
-            logger.warn("Couldn't get bridge pics from trex. Probably no pics in trex fot the bridge. " + e.getMessage());
-        }
-        return null;
-    }
-
-
     public BridgeImageModel getPicFromTrex(String oid, Integer bridgeId) {
 
-        PicInfoModel picInfo = getPicInfo(oid);
+        BridgeImageModel picInfo = getPicInfo(oid);
         logger.debug("Got picinfo from trex: " + picInfo);
 
         if (picInfo != null) {
@@ -89,6 +68,25 @@ public class TRexPicService {
         } else {
             return null;
         }
+    }
+
+    private BridgeImageModel getPicInfo(String oid) {
+        logger.debug("getPicInfo oid: " + oid);
+        TrexPicInfoResponseJson picInfoResponseJson = null;
+        try {
+            picInfoResponseJson = getPicInfoJson(oid);
+        } catch (TRexRestException e) {
+            logger.error("Trex pics getting failed. " + e.getMessage());
+            return null;
+        }
+        try {
+            KuvatiedotItem kuvatiedotItem = picInfoResponseJson.getKuvatiedot().stream().filter(i -> i.getPaakuva().isTotuusarvo()).findFirst().orElseThrow();
+            BridgeImageModel picInfoModel = dtoMapper.fromDTOToModel(kuvatiedotItem);
+            return picInfoModel;
+        } catch (NoSuchElementException e) {
+            logger.warn("Couldn't get bridge pics from trex. Probably no pics in trex fot the bridge. " + e.getMessage());
+        }
+        return null;
     }
 
     //•	Sitten voitte kysyä mitä kuvia milläkin rakenteella on: https://testiapi.vayla.fi/trex/rajapinta/rakennekuva-api/v1/kuvatiedot?oid=<rakenneoid>
