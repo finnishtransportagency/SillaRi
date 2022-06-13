@@ -233,4 +233,8 @@ public class RouteTransportService {
         routeTransportNumberRepository.updateRouteTransportNumber(routeTransport.getRouteId(), routeTransport.getId(), routeTransport.getTransportNumber(), true);
     }
 
+    public void setTransportNumberAvailable(RouteTransportModel routeTransport) {
+        routeTransportNumberRepository.updateRouteTransportNumber(routeTransport.getRouteId(), null, routeTransport.getTransportNumber(), false);
+    }
+
 }

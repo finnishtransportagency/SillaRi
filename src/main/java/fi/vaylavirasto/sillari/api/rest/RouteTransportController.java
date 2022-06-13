@@ -137,6 +137,8 @@ public class RouteTransportController {
             }
             RouteTransportModel updatedTransportModel = routeTransportService.updateRouteTransport(routeTransport);
 
+            // TODO if changing route is permitted, handle transport number changes.
+            // Currently changing the route after transport is saved is not possible in UI.
             if (routeTransport.getSupervisions() != null) {
                 routeTransport.getSupervisions().forEach(supervisionModel -> {
                     if (supervisionModel.getId() != null && supervisionModel.getId() > 0) {
@@ -183,6 +185,9 @@ public class RouteTransportController {
                         }
                     });
                 }
+
+                // Set the reserved transport number back to available
+                routeTransportService.setTransportNumberAvailable(routeTransport);
 
                 // Delete the route transport related data
                 routeTransportService.deleteRouteTransport(routeTransport);
