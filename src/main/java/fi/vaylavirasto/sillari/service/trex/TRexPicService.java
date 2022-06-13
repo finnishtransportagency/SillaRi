@@ -1,29 +1,19 @@
 package fi.vaylavirasto.sillari.service.trex;
 
 import fi.vaylavirasto.sillari.api.rest.error.TRexRestException;
-import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.BridgeImageModel;
 import fi.vaylavirasto.sillari.model.PicInfoModel;
-import fi.vaylavirasto.sillari.repositories.BridgeImageRepository;
-import fi.vaylavirasto.sillari.service.S3FileService;
 import fi.vaylavirasto.sillari.service.trex.bridgeInfoInterface.TrexBridgeInfoResponseJsonMapper;
 import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.KuvatiedotItem;
 import fi.vaylavirasto.sillari.service.trex.bridgePicInterface.TrexPicInfoResponseJson;
-import fi.vaylavirasto.sillari.util.DateMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tika.Tika;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.OffsetDateTime;
 import java.util.NoSuchElementException;
 
 @Service
