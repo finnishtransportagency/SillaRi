@@ -151,7 +151,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                     List<GrantedAuthority> authorityList = new ArrayList<>();
 
-                    if (ArrayUtils.contains(roles, "sillari_sillanvalvoja")) {
+                    if (ArrayUtils.contains(roles, "sillari_valvoja")
+                      || ArrayUtils.contains(roles, "sillari_sillanvalvoja")) {
                         authorityList.add(SillariRole.fromString("SILLARI_SILLANVALVOJA"));
                     }
                     if (ArrayUtils.contains(roles, "sillari_ajojarjestelija")) {
