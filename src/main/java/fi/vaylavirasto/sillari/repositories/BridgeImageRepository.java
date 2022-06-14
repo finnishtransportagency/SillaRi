@@ -30,10 +30,12 @@ public class BridgeImageRepository {
                     TableAlias.bridgeImage.ID,
                     TableAlias.bridgeImage.BRIDGE_ID,
                                 TableAlias.bridgeImage.FILENAME,
+                                TableAlias.bridgeImage.FILETYPE,
                                 TableAlias.bridgeImage.OBJECT_KEY)
                         .values(imageId,
                                 bridgeImage.getBridgeId(),
                                 bridgeImage.getFilename(),
+                                bridgeImage.getFiletype(),
                                 bridgeImage.getObjectKey())
                         .returningResult(TableAlias.bridgeImage.ID)
                         .fetchOne(); // Execute and return zero or one record

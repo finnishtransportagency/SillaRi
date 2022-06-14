@@ -47,8 +47,7 @@ public class BridgeImageService {
     public void getImageFile(HttpServletResponse response, BridgeImageModel bridgeImageModel) throws IOException {
         // Determine the content type from the file extension, which could be jpg, jpeg, png or gif
         String filename = bridgeImageModel.getFilename();
-        String extension = filename.substring(filename.lastIndexOf(".") + 1);
-        String contentType = extension.equals("jpg") ? "image/jpeg" : "image/" + extension;
+        String contentType = bridgeImageModel.getFiletype() == null ? "image/jpeg" : bridgeImageModel.getFiletype();
 
         s3FileService.getFile(response, awss3Client.getTrexPhotoBucketName(), bridgeImageModel.getObjectKey(), filename, contentType);
     }

@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -43,17 +44,24 @@ public class TRexPicService {
         logger.debug("Got picinfo from trex: " + bridgeImageModel);
 
         if (bridgeImageModel != null) {
-            byte[] picBytes = new byte[0];
+            ResponseEntity<byte[]> responseEntity;
+
             try {
-                picBytes = getPicBinJson(oid, String.valueOf(bridgeImageModel.getId()));
+                responseEntity = getPicBinJson(oid, String.valueOf(bridgeImageModel.getId()));
             } catch (TRexRestException e) {
                 logger.error("Failed getting pic bytes from trex: " + e.getMessage());
                 return null;
             }
-            logger.debug("Got picbytes from trex: " + picBytes.length);
 
+            String contentType = responseEntity.getHeaders().getFirst("Content-Type");
+            byte[] picBytes = responseEntity.getBody();
+
+            logger.debug("picBytes: " + picBytes.length);
+            logger.debug("contentType: " + contentType);
+
+            bridgeImageModel.setFiletype(contentType);
             bridgeImageModel.setBridgeId(bridgeId);
-            bridgeImageModel.setFilename(oid + ".jpeg");
+            bridgeImageModel.setFilename(oid +"."+ extractExtension(contentType));
             bridgeImageModel.setObjectKey(oid);
 
 
@@ -66,6 +74,17 @@ public class TRexPicService {
         } else {
             return null;
         }
+    }
+
+    private String extractExtension(String contentType) {
+        String extension = "jpg";
+        try{
+            extension = contentType.split("/")[1];
+        }
+        catch (Exception e){
+            logger.warn("Missing/wrong contentype for pic, using .jpg");
+        }
+        return extension;
     }
 
     private BridgeImageModel getPicInfo(String oid) {
@@ -120,7 +139,7 @@ public class TRexPicService {
 
 
     //•	Kuvien binäärejä voitte sitten kysyä: https://testiapi.vayla.fi/trex/rajapinta/rakennekuva-api/v1/yleiskuva?oid=<rakenneoid>&id=<kuvaid>
-    public byte[] getPicBinJson(String bridgeOid, String picId) throws TRexRestException {
+    public ResponseEntity<byte[]> getPicBinJson(String bridgeOid, String picId) throws TRexRestException {
 
         logger.debug("bridgeOid: " + bridgeOid);
 
@@ -128,7 +147,7 @@ public class TRexPicService {
             WebClient webClient = buildClient();
 
             try {
-                byte[] picBin = webClient.mutate().codecs(configurer -> configurer
+                WebClient.ResponseSpec responseSpec = webClient.mutate().codecs(configurer -> configurer
                         .defaultCodecs()
                         .maxInMemorySize(16 * 1024 * 1024)).build().get()
                         .uri(uriBuilder -> uriBuilder
@@ -137,11 +156,11 @@ public class TRexPicService {
                                 .queryParam("kuvaId", picId)
                                 .build())
                         .headers(h -> h.setBasicAuth(username, password))
-                        .retrieve()
-                        .bodyToMono(byte[].class)
-                        .block();
-                logger.debug("picBin: " + picBin);
-                return picBin;
+                        .retrieve();
+
+                ResponseEntity<byte[]> responseEntity =responseSpec.toEntity(byte[].class).block();
+                return responseEntity;
+
             } catch (WebClientResponseException e) {
                 logger.error(e.getMessage() + e.getStatusCode());
                 throw new TRexRestException(e.getMessage(), e.getStatusCode());

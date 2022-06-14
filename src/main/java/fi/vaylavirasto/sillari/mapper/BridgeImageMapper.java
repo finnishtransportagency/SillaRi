@@ -20,6 +20,7 @@ public class BridgeImageMapper implements RecordMapper<Record, BridgeImageModel>
         model.setObjectKey(objectKey);
 
         model.setFilename(record.get(TableAlias.bridgeImage.FILENAME));
+        model.setFiletype(record.get(TableAlias.bridgeImage.FILETYPE));
         model.setRowCreatedTime(record.get(TableAlias.bridgeImage.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.bridgeImage.ROW_UPDATED_TIME));
         return model;
