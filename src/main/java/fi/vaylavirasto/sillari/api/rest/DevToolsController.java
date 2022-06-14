@@ -1091,12 +1091,12 @@ public class DevToolsController {
                 "            \"sijainti\": \"oletus\"" +
                 "        }" +
                 "    ]," +
-                "    \"nimi\": \"Raippaluodon silta\"," +
+                "    \"nimi\": \"Maijanojan silta\"," +
                 "    \"kaareva\": true," +
                 "    \"nykyinenKunnossapitaja\": {" +
                 "        \"nimi\": \"Etelä-Pohjanmaan ELY-keskus\"" +
                 "    }," +
-                "    \"oid\": \"1.2.246.578.1.15.1001997\"," +
+                "    \"oid\": \"1.2.246.578.1.15.105512\"," +
                 "    \"vesivaylaosoitteet\": [{" +
                 "            \"nimi\": \"POHJAN* Closing connection 0" +
                 "            * TLSv1.2 (OUT), TLS alert, close notify (256):" +
