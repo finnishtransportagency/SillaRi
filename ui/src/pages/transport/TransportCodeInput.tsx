@@ -14,7 +14,10 @@ const TransportCodeForm = (): JSX.Element => {
   const [codeInputValue, setCodeInputValue] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  const setCodeValue = (value: string) => {
+  const setCodeValue = (value: string | null | undefined) => {
+    if (!value) {
+      value = "";
+    }
     setCodeInputValue(value.toUpperCase());
     setErrorMsg("");
   };
@@ -58,7 +61,7 @@ const TransportCodeForm = (): JSX.Element => {
                       value={codeInputValue}
                       placeholder={t("transports.transportCodeInput.inputPlaceholder")}
                       onIonChange={(event) => {
-                        setCodeValue((event.target as HTMLInputElement).value);
+                        setCodeValue(event.detail.value);
                       }}
                       clearInput
                     />
