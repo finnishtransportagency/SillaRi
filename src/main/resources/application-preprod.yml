@@ -8,7 +8,7 @@ sillari:
     routeuploadpath: /tmp
   trex:
     url: https://api.vayla.fi/trex/rajapinta/taitorakenne/v2/yleistiedot/silta
-    pic-url: https://testiapi.vayla.fi/trex/rajapinta/rakennekuva-api/v1/
+    pic-url: https://api.vayla.fi/trex/rajapinta/rakennekuva-api/v1/
     pic-bin-path: yleiskuva
     pic-info-path: kuvatiedot
     username: ${FIM_USERNAME}

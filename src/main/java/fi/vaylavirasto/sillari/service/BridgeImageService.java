@@ -53,7 +53,6 @@ public class BridgeImageService {
 
 
     private BridgeImageModel createBridgeImageIntoDB(BridgeImageModel bridgeImage) {
-        bridgeImageRepository.deleteBridgeImage(bridgeImage.getObjectKey());
         Integer id = bridgeImageRepository.insertBridgeImage(bridgeImage);
         BridgeImageModel bridgeImageModel = bridgeImageRepository.getBridgeImage(id);
         return bridgeImageModel;
