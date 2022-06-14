@@ -82,8 +82,7 @@ public class BridgeImageService {
             contentType = "application/octet-stream";
         }
 
-        OffsetDateTime createdTime = image.getTaken();
-        s3FileService.saveFile(decodedString, contentType, awss3Client.getPhotoBucketName(), image.getObjectKey(), image.getFilename(), createdTime);
+        s3FileService.saveFile(decodedString, contentType, awss3Client.getPhotoBucketName(), image.getObjectKey(), image.getFilename());
     }
 
 

@@ -12,7 +12,6 @@ import java.time.OffsetDateTime;
 public class BridgeImageModel extends BaseModel {
     private Integer id;
     private Integer bridgeId;
-    private OffsetDateTime taken;
     private String filename;
     private String objectKey;
 

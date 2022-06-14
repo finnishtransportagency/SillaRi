@@ -87,7 +87,7 @@ public class S3FileService {
         }
     }
 
-    public boolean saveFile(byte[] decodedString, String contentType, String bucketName, String objectKey, String filename, OffsetDateTime fileCreated){
+    public boolean saveFile(byte[] decodedString, String contentType, String bucketName, String objectKey, String filename){
         if (activeProfile.equals("local")) {
             // Save to local file system
             File outputFile = new File("/", filename);

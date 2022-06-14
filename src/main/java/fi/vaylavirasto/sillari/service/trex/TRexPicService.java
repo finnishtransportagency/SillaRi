@@ -39,24 +39,22 @@ public class TRexPicService {
 
     public BridgeImageModel getPicFromTrex(String oid, Integer bridgeId) {
 
-        BridgeImageModel picInfo = getPicInfo(oid);
-        logger.debug("Got picinfo from trex: " + picInfo);
+        BridgeImageModel bridgeImageModel = getPicInfo(oid);
+        logger.debug("Got picinfo from trex: " + bridgeImageModel);
 
-        if (picInfo != null) {
+        if (bridgeImageModel != null) {
             byte[] picBytes = new byte[0];
             try {
-                picBytes = getPicBinJson(oid, String.valueOf(picInfo.getId()));
+                picBytes = getPicBinJson(oid, String.valueOf(bridgeImageModel.getId()));
             } catch (TRexRestException e) {
                 logger.error("Failed getting pic bytes from trex: " + e.getMessage());
                 return null;
             }
             logger.debug("Got picbytes from trex: " + picBytes.length);
 
-            BridgeImageModel bridgeImageModel = new BridgeImageModel();
             bridgeImageModel.setBridgeId(bridgeId);
             bridgeImageModel.setFilename(oid + ".jpeg");
             bridgeImageModel.setObjectKey(oid);
-            bridgeImageModel.setTaken(picInfo.getTaken());
 
 
             String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(picBytes);

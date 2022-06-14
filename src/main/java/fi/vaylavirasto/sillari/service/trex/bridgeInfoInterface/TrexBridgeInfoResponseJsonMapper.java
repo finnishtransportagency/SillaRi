@@ -25,10 +25,6 @@ public interface TrexBridgeInfoResponseJsonMapper {
     BridgeModel fromDTOToModel(TrexBridgeInfoResponseJson dto);
 
 
-    @Mappings({
-            @Mapping(target = "id", source = "dto.id"),
-            @Mapping(target = "taken", source = "dto.luotu"),
-    })
     BridgeImageModel fromDTOToModel(KuvatiedotItem dto);
 
 

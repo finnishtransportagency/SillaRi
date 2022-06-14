@@ -1,0 +1,1 @@
+ALTER TABLE sillari.bridge_image DROP COLUMN IF EXISTS taken;
