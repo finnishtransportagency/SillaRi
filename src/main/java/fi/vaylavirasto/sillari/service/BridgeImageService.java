@@ -40,6 +40,20 @@ public class BridgeImageService {
         saveImageFileIntoS3(bridgeImageModel);
     }
 
+    public BridgeImageModel getBridgeImage(Integer bridgeId) {
+        return bridgeImageRepository.getBridgeImageWithBridgeId(bridgeId);
+    }
+
+    public void getImageFile(HttpServletResponse response, BridgeImageModel bridgeImageModel) throws IOException {
+        // Determine the content type from the file extension, which could be jpg, jpeg, png or gif
+        String filename = bridgeImageModel.getFilename();
+        String extension = filename.substring(filename.lastIndexOf(".") + 1);
+        String contentType = extension.equals("jpg") ? "image/jpeg" : "image/" + extension;
+
+        s3FileService.getFile(response, awss3Client.getTrexPhotoBucketName(), bridgeImageModel.getObjectKey(), filename, contentType);
+    }
+
+
     private BridgeImageModel createBridgeImageIntoDB(BridgeImageModel bridgeImage) {
         bridgeImageRepository.deleteBridgeImage(bridgeImage.getObjectKey());
         Integer id = bridgeImageRepository.insertBridgeImage(bridgeImage);
@@ -47,17 +61,17 @@ public class BridgeImageService {
         return bridgeImageModel;
     }
 
-    public void deleteImageFileFromS3(String objectkey, String filename){
+    private void deleteImageFileFromS3(String objectkey, String filename){
         // Delete image from AWS bucket or local file system
         s3FileService.deleteFile(awss3Client.getTrexPhotoBucketName(), objectkey, filename);
     }
 
-    public void deleteImageFromDB(String objectkey){
+    private void deleteImageFromDB(String objectkey){
         // Delete the image row from the database
         bridgeImageRepository.deleteBridgeImage(objectkey);
     }
 
-    public void saveImageFileIntoS3(BridgeImageModel image){
+    private void saveImageFileIntoS3(BridgeImageModel image){
         Tika tika = new Tika();
         int dataStart = image.getBase64().indexOf(",") + 1;
         logger.debug("datastart_ " + dataStart);
@@ -72,17 +86,6 @@ public class BridgeImageService {
         s3FileService.saveFile(decodedString, contentType, awss3Client.getPhotoBucketName(), image.getObjectKey(), image.getFilename(), createdTime);
     }
 
-    public BridgeImageModel getBridgeImage(Integer bridgeId) {
-        return bridgeImageRepository.getBridgeImageWithBridgeId(bridgeId);
-    }
 
-    public void getImageFile(HttpServletResponse response, BridgeImageModel bridgeImageModel) throws IOException {
-        // Determine the content type from the file extension, which could be jpg, jpeg, png or gif
-        String filename = bridgeImageModel.getFilename();
-        String extension = filename.substring(filename.lastIndexOf(".") + 1);
-        String contentType = extension.equals("jpg") ? "image/jpeg" : "image/" + extension;
-
-        s3FileService.getFile(response, awss3Client.getTrexPhotoBucketName(), bridgeImageModel.getObjectKey(), filename, contentType);
-    }
 }
 

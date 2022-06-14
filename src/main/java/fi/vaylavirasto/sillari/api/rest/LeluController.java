@@ -166,7 +166,7 @@ public class LeluController {
             logger.debug("bridge inserted or updated: {}", bridge);
             BridgeImageModel bridgeImageModel = tRexPicService.getPicFromTrex(oid, bridgeId);
             if(bridgeImageModel != null){
-
+                bridgeImageService.saveBridgeIntoDBAndS3(bridgeImageModel);
             }
         } catch (TRexRestException e) {
             logger.warn("Trex fail getting bridge: {}", oid, e);

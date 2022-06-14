@@ -84,7 +84,7 @@ public class TRexPicService {
             BridgeImageModel picInfoModel = dtoMapper.fromDTOToModel(kuvatiedotItem);
             return picInfoModel;
         } catch (NoSuchElementException e) {
-            logger.warn("Couldn't get bridge pics from trex. Probably no pics in trex fot the bridge. " + e.getMessage());
+            logger.warn("Couldn't get bridge pics from trex. Probably no pics in trex for the bridge. " + e.getMessage());
         }
         return null;
     }
