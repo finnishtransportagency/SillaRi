@@ -77,6 +77,7 @@ public class BridgeImageService {
         byte[] decodedString = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(image.getBase64().substring(dataStart).getBytes(StandardCharsets.UTF_8));
         logger.debug("decodedString " + decodedString);
         String contentType = tika.detect(decodedString);
+        logger.debug("contentType " + contentType);
         if (contentType == null) {
             contentType = "application/octet-stream";
         }
