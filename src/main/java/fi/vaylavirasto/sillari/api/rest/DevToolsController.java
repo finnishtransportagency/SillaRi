@@ -1061,7 +1061,7 @@ public class DevToolsController {
                 "        \"nimi\": \"Meri\"," +
                 "        \"kuvaus\": \"Meri-ilmasto\"" +
                 "    }," +
-                "    \"tunnus\": \"V-1997\"," +
+                "    \"tunnus\": \"U-5512\"," +
                 "    \"vaylanpito\": {" +
                 "        \"tunnus\": \"TIE\"," +
                 "        \"nimi\": \"Tieverkko\"" +
