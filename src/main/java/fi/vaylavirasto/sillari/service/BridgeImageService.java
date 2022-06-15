@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.OffsetDateTime;
 
 @Service
 public class BridgeImageService {
@@ -30,9 +29,9 @@ public class BridgeImageService {
 
     public void saveBridgeIntoDBAndS3(BridgeImageModel bridgeImageModel) {
         //delete older same bridge pic from db if exists
-        deleteImageFromDB(bridgeImageModel.getObjectKey());
+        deleteImageFromDB(bridgeImageModel.getBridgeId());
 
-        createBridgeImageIntoDB(bridgeImageModel);
+        insertBridgeImageIntoDB(bridgeImageModel);
 
         // Delete old image from AWS bucket or local file system
         deleteImageFileFromS3(bridgeImageModel.getObjectKey(), bridgeImageModel.getFilename());
@@ -52,7 +51,7 @@ public class BridgeImageService {
     }
 
 
-    private BridgeImageModel createBridgeImageIntoDB(BridgeImageModel bridgeImage) {
+    private BridgeImageModel insertBridgeImageIntoDB(BridgeImageModel bridgeImage) {
         Integer id = bridgeImageRepository.insertBridgeImage(bridgeImage);
         BridgeImageModel bridgeImageModel = bridgeImageRepository.getBridgeImage(id);
         return bridgeImageModel;
@@ -63,9 +62,9 @@ public class BridgeImageService {
         s3FileService.deleteFile(awss3Client.getTrexPhotoBucketName(), objectkey, filename);
     }
 
-    private void deleteImageFromDB(String objectkey){
+    private void deleteImageFromDB(Integer bridgeId){
         // Delete the image row from the database
-        bridgeImageRepository.deleteBridgeImage(objectkey);
+        bridgeImageRepository.deleteBridgeImage(bridgeId);
     }
 
     private void saveImageFileIntoS3(BridgeImageModel image){

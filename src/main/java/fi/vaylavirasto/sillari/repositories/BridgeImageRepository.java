@@ -60,9 +60,9 @@ public class BridgeImageRepository {
     }
 
 
-    public int deleteBridgeImage(String objectKey) {
+    public int deleteBridgeImage(Integer bridgeId) {
         return dsl.delete(TableAlias.bridgeImage)
-                .where(TableAlias.bridgeImage.OBJECT_KEY.eq(objectKey))
+                .where(TableAlias.bridgeImage.BRIDGE_ID.eq(bridgeId))
                 .execute();
     }
 
