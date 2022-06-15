@@ -29,13 +29,11 @@ public class BridgeImageService {
 
     public void saveBridgeIntoDBAndS3(BridgeImageModel bridgeImageModel) {
         //delete older same bridge pic from db if exists
-        deleteImageFromDB(bridgeImageModel.getBridgeId());
-
-        insertBridgeImageIntoDB(bridgeImageModel);
+        bridgeImageRepository.deleteBridgeImage(bridgeImageModel.getBridgeId());
+        bridgeImageRepository.insertBridgeImage(bridgeImageModel);
 
         // Delete old image from AWS bucket or local file system
-        deleteImageFileFromS3(bridgeImageModel.getObjectKey(), bridgeImageModel.getFilename());
-
+        s3FileService.deleteFile(awss3Client.getTrexPhotoBucketName(), bridgeImageModel.getObjectKey(), bridgeImageModel.getFilename());
         saveImageFileIntoS3(bridgeImageModel);
     }
 
@@ -50,22 +48,6 @@ public class BridgeImageService {
         s3FileService.getFile(response, awss3Client.getTrexPhotoBucketName(), bridgeImageModel.getObjectKey(), filename, contentType);
     }
 
-
-    private BridgeImageModel insertBridgeImageIntoDB(BridgeImageModel bridgeImage) {
-        Integer id = bridgeImageRepository.insertBridgeImage(bridgeImage);
-        BridgeImageModel bridgeImageModel = bridgeImageRepository.getBridgeImage(id);
-        return bridgeImageModel;
-    }
-
-    private void deleteImageFileFromS3(String objectkey, String filename){
-        // Delete image from AWS bucket or local file system
-        s3FileService.deleteFile(awss3Client.getTrexPhotoBucketName(), objectkey, filename);
-    }
-
-    private void deleteImageFromDB(Integer bridgeId){
-        // Delete the image row from the database
-        bridgeImageRepository.deleteBridgeImage(bridgeId);
-    }
 
     private void saveImageFileIntoS3(BridgeImageModel image){
         Tika tika = new Tika();
