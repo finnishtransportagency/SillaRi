@@ -5,10 +5,11 @@ import fi.vaylavirasto.sillari.api.rest.error.LeluPermitSaveException;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
+import fi.vaylavirasto.sillari.service.trex.TRexPicService;
 import fi.vaylavirasto.sillari.util.LeluRouteUploadUtil;
 import fi.vaylavirasto.sillari.service.LeluService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
-import fi.vaylavirasto.sillari.service.trex.TRexService;
+import fi.vaylavirasto.sillari.service.trex.TRexBridgeInfoService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -52,7 +53,9 @@ public class LeluServiceTest {
     @Mock
     private AWSS3Client awss3Client;
     @Mock
-    private TRexService trexService;
+    private TRexBridgeInfoService trexBridgeInfoService;
+    @Mock
+    private TRexPicService tRexPicService;
     @Mock
     private MessageSource messageSource;
     @Mock
@@ -64,7 +67,7 @@ public class LeluServiceTest {
 
 
     @InjectMocks
-    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository,  bridgeRepository, supervisionRepository, messageSource, leluRouteUploadUtil, awss3Client, trexService, supervisionService);
+    private final LeluService leluService = new LeluService(permitRepository, companyRepository, routeRepository, routeBridgeRepository, bridgeRepository, supervisionRepository, messageSource, leluRouteUploadUtil, awss3Client, trexBridgeInfoService, tRexPicService, supervisionService);
 
     @Test
     public void testCreatePermitWithExistingCompany() {

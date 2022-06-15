@@ -35,6 +35,8 @@ public class AWSS3Client {
 
     private static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
 
+    private static final String SILLARI_TREX_PHOTOS_BUCKET_DEV = "sillari-trex-photos";
+
     private static final String SILLARI_PERMIT_PDF_BUCKET_DEV = "sillari-permits";
 
     private static final String SILLARI_REPORT_PDF_BUCKET_DEV = "sillari-reports";
@@ -77,6 +79,14 @@ public class AWSS3Client {
             return SILLARI_PHOTOS_BUCKET_DEV;
         } else {
             return SILLARI_PHOTOS_BUCKET_DEV + "-" + environment;
+        }
+    }
+
+    public String getTrexPhotoBucketName() {
+        if ("dev".equals(environment) || "localhost".equals(environment)) {
+            return SILLARI_TREX_PHOTOS_BUCKET_DEV;
+        } else {
+            return SILLARI_TREX_PHOTOS_BUCKET_DEV + "-" + environment;
         }
     }
 
@@ -232,7 +242,7 @@ public class AWSS3Client {
             DeleteObjectRequest request = new DeleteObjectRequest(bucketName, objectKey);
             s3Client.deleteObject(request);
         } catch (Exception e) {
-            logger.error(e);
+            logger.error("Failed deleting from S3. " + bucketName + " " + objectKey + " " + e.getMessage());
         }
     }
 

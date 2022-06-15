@@ -87,6 +87,31 @@ public class S3FileService {
         }
     }
 
+    public boolean saveFile(byte[] decodedString, String contentType, String bucketName, String objectKey, String filename){
+        if (activeProfile.equals("local")) {
+            // Save to local file system
+            File outputFile = new File("/", filename);
+            try {
+                Files.write(outputFile.toPath(), decodedString);
+            } catch (IOException e) {
+                logger.debug("write local file failed");
+            }
+
+            logger.debug("wrote local file: " + outputFile.getAbsolutePath() + ", filename: " + outputFile.getName());
+            return true;
+        } else {
+            // Upload to AWS
+
+            boolean success = awss3Client.upload(objectKey, decodedString, contentType, bucketName, AWSS3Client.SILLARI_BACKEND_ROLE_SESSION_NAME);
+            if (success) {
+                logger.debug("Uploaded to AWS: " + objectKey);
+            } else {
+                logger.warn("Upload to AWS failed: " + objectKey);
+            }
+            return success;
+        }
+    }
+
     private SupervisionMetadataDTO getSupervisionMetadata(Integer supervisionId, String objectKey, String objectIdentifier, String filename, OffsetDateTime fileCreated) {
         SupervisionMetadataDTO dto = new SupervisionMetadataDTO();
 
@@ -129,12 +154,16 @@ public class S3FileService {
         return dto;
     }
 
-    public void deleteFile(String bucketName, String objectKey, String filename) throws IOException {
+    public void deleteFile(String bucketName, String objectKey, String filename){
         if (activeProfile.equals("local")) {
             // Delete from local file system
             File deleteFile = new File(filename);
             if (deleteFile.exists()) {
-                Files.delete(deleteFile.toPath());
+                try {
+                    Files.delete(deleteFile.toPath());
+                } catch (IOException e) {
+                    logger.debug("Local file deletion failed");
+                }
             }
         } else {
             // Delete from AWS
