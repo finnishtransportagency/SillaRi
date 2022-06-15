@@ -61,7 +61,7 @@ public class BridgeImageService {
             contentType = "application/octet-stream";
         }
 
-        s3FileService.saveFile(decodedString, contentType, awss3Client.getPhotoBucketName(), image.getObjectKey(), image.getFilename());
+        s3FileService.saveFile(decodedString, contentType, awss3Client.getTrexPhotoBucketName(), image.getObjectKey(), image.getFilename());
     }
 
 
