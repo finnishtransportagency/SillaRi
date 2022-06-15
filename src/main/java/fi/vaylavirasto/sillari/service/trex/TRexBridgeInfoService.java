@@ -13,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Service
-public class TRexService {
+public class TRexBridgeInfoService {
     private static final Logger logger = LogManager.getLogger();
 
     @Value("${sillari.trex.url}")
@@ -21,7 +21,7 @@ public class TRexService {
     private final TrexBridgeInfoResponseJsonMapper dtoMapper = Mappers.getMapper(TrexBridgeInfoResponseJsonMapper.class);
 
     public BridgeModel getBridge(String oid) throws TRexRestException {
-        logger.debug("getBridge oid: " +oid );
+        logger.debug("getBridge oid: " + oid);
         TrexBridgeInfoResponseJson bridgeInfo = getBridgeInfo(oid);
         BridgeModel bridgeModel = dtoMapper.fromDTOToModel(bridgeInfo);
         logger.debug("bridgeModel: " + bridgeModel);

@@ -5,6 +5,7 @@ import { IonImg, IonItem, IonLabel } from "@ionic/react";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import mapPoint from "../theme/icons/map-point.svg";
 import "./BridgeDetailHeader.css";
+import { getOrigin } from "../utils/request";
 
 interface BridgeDetailHeaderProps {
   routeBridge: IRouteBridge;
@@ -22,9 +23,11 @@ const BridgeDetailHeader = ({ routeBridge }: BridgeDetailHeaderProps): JSX.Eleme
     onlineManager.subscribe(() => setOnline(onlineManager.isOnline()));
   }, []);
 
+  const backendImageUrl = `${getOrigin()}/api/routebridge/getBridgeImage?routeBridgeId=${routeBridgeId}`;
+
   return (
     <>
-      {isOnline && <IonImg className="bridgeImage" src="assets/bridge.jpg" />}
+      {isOnline && <IonImg className="bridgeImage" src={backendImageUrl} />}
       <IonItem className="header" lines="none">
         <IonLabel>{t("bridge.title").toUpperCase()}</IonLabel>
       </IonItem>

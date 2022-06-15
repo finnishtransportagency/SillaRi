@@ -15,16 +15,19 @@ public class BridgeService {
     @Autowired
     BridgeRepository bridgeRepository;
 
-    public void createOrUpdateBridge(BridgeModel bridge) {
+    public Integer createOrUpdateBridge(BridgeModel bridge) {
+        Integer bridgeId;
         BridgeModel oldBridge = bridgeRepository.getBridge(bridge.getOid());
         if (oldBridge != null) {
             bridge.setId(oldBridge.getId());
             bridgeRepository.updateBridge(bridge);
+            bridgeId = bridge.getId();
             logger.debug("updatedBridge");
         } else {
-            bridgeRepository.createBridge(bridge);
+            bridgeId = bridgeRepository.createBridge(bridge);
             logger.debug("createdBridge");
         }
+        return bridgeId;
     }
 
     public CoordinatesDTO getBridgeCoordinates(Integer bridgeId) {

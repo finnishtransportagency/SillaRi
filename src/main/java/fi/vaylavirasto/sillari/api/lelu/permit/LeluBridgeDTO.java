@@ -14,15 +14,15 @@ import javax.validation.constraints.NotNull;
 public class LeluBridgeDTO {
 
     @NotBlank(message = "{bridge.oid.not.blank}")
-    @Schema(description = "Bridge OID in Taitorakennerekisteri", required = true, example = "1.2.246.578.1.15.400025")
+    @Schema(description = "Bridge OID in Taitorakennerekisteri", required = true, example = "1.2.246.578.1.15.105512")
     private String oid;
 
     @NotBlank(message = "{bridge.identifier.not.blank}")
-    @Schema(description = "Bridge identifier in Taitorakennerekisteri", required = true, example = "H-25")
+    @Schema(description = "Bridge identifier in Taitorakennerekisteri", required = true, example = "U-5512")
     private String identifier;
 
     @NotBlank(message = "{bridge.name.not.blank}")
-    @Schema(description = "Bridge name", required = true, example = "Kaivannon silta")
+    @Schema(description = "Bridge name", required = true, example = "Maijanojan silta")
     private String name;
 
     @Schema(description = "Bridge road address (road number, section, lane and distance)", example = "00012 204 0 03788")
