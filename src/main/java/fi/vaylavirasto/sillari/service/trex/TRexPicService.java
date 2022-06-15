@@ -153,7 +153,7 @@ public class TRexPicService {
                         .uri(uriBuilder -> uriBuilder
                                 .path(binPath)
                                 .queryParam("oid", bridgeOid)
-                                .queryParam("kuvaId", picId)
+                                .queryParam("id", picId)
                                 .build())
                         .headers(h -> h.setBasicAuth(username, password))
                         .retrieve();
