@@ -67,10 +67,12 @@ public class RouteBridgeController {
             }
 
             RouteBridgeModel routeBridge = routeBridgeService.getRouteBridge(routeBridgeId);
-            if(routeBridge!=null) {
+            if (routeBridge != null) {
                 BridgeImageModel bridgeImageModel = bridgeImageService.getBridgeImage(routeBridge.getBridgeId());
-                // Get the file from S3 bucket or local file system and write to response
-                bridgeImageService.getImageFile(response, bridgeImageModel);
+                if (bridgeImageModel != null) {
+                    // Get the file from S3 bucket or local file system and write to response
+                    bridgeImageService.getImageFile(response, bridgeImageModel);
+                }
             }
         } finally {
             serviceMetric.end();
