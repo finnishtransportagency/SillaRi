@@ -93,7 +93,7 @@ public class RouteTransportService {
         return routeTransportModel;
     }
 
-    public List<RouteTransportModel> getRouteTransportsOfPermit(Integer permitId, boolean includePassword) {
+    public List<RouteTransportModel> getRouteTransportsOfPermit(Integer permitId, String permitNumber) {
         List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByPermitId(permitId);
 
         if (routeTransportModels != null) {
@@ -102,9 +102,8 @@ public class RouteTransportService {
 
             List<RouteModel> routeModels = routeRepository.getRoutesById(routeIds);
 
-            // TODO needs permit number if we want to get transport numbers for routes
-           /* Map<Integer, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberRepository.getRouteTransportNumbersByRouteId(routeIds);
-            routeModels.forEach(route -> route.setRouteTransportNumbers(routeTransportNumbers.get(route.getId())));*/
+            Map<Long, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberService.getRouteTransportNumbersForRoutes(routeModels, permitNumber);
+            routeModels.forEach(route -> route.setRouteTransportNumbers(routeTransportNumbers.get(route.getLeluId())));
 
             List<RouteTransportStatusModel> rtStatusModels = routeTransportStatusRepository.getTransportStatusHistory(routeTransportIds);
             List<SupervisionModel> supervisionModels = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportIds);
@@ -134,10 +133,8 @@ public class RouteTransportService {
                 }
                 rtm.setSupervisions(supervisions);
 
-                if (includePassword) {
-                    // Only for use with the transport company admin UI
-                    rtm.setCurrentTransportPassword(routeTransportPasswordRepository.getTransportPassword(rtm.getId()));
-                }
+                // Only for use with the transport company admin UI
+                rtm.setCurrentTransportPassword(routeTransportPasswordRepository.getTransportPassword(rtm.getId()));
             });
         }
 

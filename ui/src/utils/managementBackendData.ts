@@ -108,11 +108,13 @@ export const generateNewRouteTransportPassword = async (routeTransportId: number
   }
 };
 
-export const getRouteTransportsOfPermit = async (permitId: number, dispatch: Dispatch): Promise<IRouteTransport[]> => {
+export const getRouteTransportsOfPermit = async (permitId: number, permitNumber: string, dispatch: Dispatch): Promise<IRouteTransport[]> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: false } });
 
-    const routeTransportListResponse = await fetch(`${getOrigin()}/api/routetransport/getroutetransportsofpermit?permitId=${permitId}`);
+    const routeTransportListResponse = await fetch(
+      `${getOrigin()}/api/routetransport/getroutetransportsofpermit?permitId=${permitId}&permitNumber=${permitNumber}`
+    );
 
     if (routeTransportListResponse.ok) {
       const routeTransportList = (await routeTransportListResponse.json()) as Promise<IRouteTransport[]>;

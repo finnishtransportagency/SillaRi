@@ -52,13 +52,13 @@ public class RouteTransportController {
     @Operation(summary = "Get route transports of permit")
     @GetMapping(value = "/getroutetransportsofpermit", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
-    public ResponseEntity<?> getRouteTransportsOfPermit(@RequestParam Integer permitId) {
+    public ResponseEntity<?> getRouteTransportsOfPermit(@RequestParam Integer permitId, @RequestParam String permitNumber) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportsOfPermit");
         try {
             if (!isOwnCompanyPermit(permitId)) {
                 throw new AccessDeniedException("Not own company route permit");
             }
-            List<RouteTransportModel> routeTransports = routeTransportService.getRouteTransportsOfPermit(permitId, true);
+            List<RouteTransportModel> routeTransports = routeTransportService.getRouteTransportsOfPermit(permitId, permitNumber);
             return ResponseEntity.ok().body(routeTransports != null ? routeTransports : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
