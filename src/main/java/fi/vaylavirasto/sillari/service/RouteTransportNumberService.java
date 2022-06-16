@@ -41,16 +41,15 @@ public class RouteTransportNumberService {
                 // Get the total transport count for this permit version of the route
                 Integer totalTransportCount = allTransportNumbersPerRoute.get(currentRouteId).get(0).getRouteTotalTransportCount();
 
-                // Count how many transport numbers are used in total
-                List<RouteTransportNumberModel> allTransportNumbers = new ArrayList<>();
-                allTransportNumbersPerRoute.forEach((routeId, routeTransportNumbers) -> allTransportNumbers.addAll(routeTransportNumbers));
-                logger.debug("All transport numbers for route {} with leluId {} and permit number {}: {}", route.getId(), route.getLeluId(), permitNumber, allTransportNumbers);
+                // List all used transport numbers for all different versions of the route
+                // Add all transport numbers to list and filter used transport numbers
+                List<Integer> allUsedTransportNumbers = allTransportNumbersPerRoute.values().stream().flatMap(Collection::stream)
+                        .filter((RouteTransportNumberModel::isUsed)).map(RouteTransportNumberModel::getTransportNumber).collect(Collectors.toList());
 
-                List<Integer> allUsedTransportNumbers = allTransportNumbers.stream().filter((RouteTransportNumberModel::isUsed)).map(RouteTransportNumberModel::getTransportNumber).collect(Collectors.toList());
                 logger.debug("Used transport numbers for route {} with leluId {} and permit number {}: {}", route.getId(), route.getLeluId(), permitNumber, allUsedTransportNumbers);
-                int totalUsedTransportNumbers = allUsedTransportNumbers.size();
+                int totalUsedTransportNumberCount = allUsedTransportNumbers.size();
 
-                if (totalTransportCount > totalUsedTransportNumbers) {
+                if (totalTransportCount > totalUsedTransportNumberCount) {
                     // We still have some transport numbers available
                     // Select unused transport numbers for current route, ignore transport numbers which have been used in some other permit version
                     List<Integer> availableTransportNumbers = allTransportNumbersPerRoute.get(currentRouteId).stream()

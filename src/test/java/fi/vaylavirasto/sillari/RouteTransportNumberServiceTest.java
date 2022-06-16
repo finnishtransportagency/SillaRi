@@ -58,7 +58,7 @@ public class RouteTransportNumberServiceTest {
         route.setLeluId(123L);
         Integer result = routeTransportNumberService.getNextAvailableTransportNumber(route, "1234/2022");
 
-        // Transport numbers 1 and 2 are used in permit version 1, 3 and 4 available for permit version 2
+        // Transport numbers 1 and 2 are used in permit version 1 -> 3 and 4 available for permit version 2
         assertEquals(3, result.intValue());
     }
 
@@ -98,7 +98,7 @@ public class RouteTransportNumberServiceTest {
         route.setLeluId(123L);
         Integer result = routeTransportNumberService.getNextAvailableTransportNumber(route, "1234/2022");
 
-        // Transport numbers 1 and 3 are used, 2 and 4 available for permit version 2
+        // Transport numbers 1 and 3 are used -> 2 and 4 available for permit version 2
         assertEquals(2, result.intValue());
     }
 
