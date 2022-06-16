@@ -128,11 +128,11 @@ export const getRouteTransportsOfPermit = async (permitId: number, dispatch: Dis
   }
 };
 
-export const createRouteTransport = async (routeTransport: IRouteTransport, dispatch: Dispatch): Promise<IRouteTransport> => {
+export const createRouteTransport = async (routeTransport: IRouteTransport, permitNumber: string, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: false } });
 
-    const createRouteTransportResponse = await fetch(`${getOrigin()}/api/routetransport/createroutetransport`, {
+    const createRouteTransportResponse = await fetch(`${getOrigin()}/api/routetransport/createroutetransport?permitNumber=${permitNumber}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

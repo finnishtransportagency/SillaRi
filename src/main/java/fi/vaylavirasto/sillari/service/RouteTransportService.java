@@ -21,8 +21,6 @@ public class RouteTransportService {
     @Autowired
     RouteTransportRepository routeTransportRepository;
     @Autowired
-    RouteTransportNumberRepository routeTransportNumberRepository;
-    @Autowired
     RouteTransportStatusRepository routeTransportStatusRepository;
     @Autowired
     RouteRepository routeRepository;
@@ -38,6 +36,9 @@ public class RouteTransportService {
     SupervisionStatusRepository supervisionStatusRepository;
     @Autowired
     RouteTransportPasswordRepository routeTransportPasswordRepository;
+
+    @Autowired
+    RouteTransportNumberService routeTransportNumberService;
 
 
     public RouteTransportModel getRouteTransport(Integer routeTransportId, boolean includePassword) {
@@ -102,8 +103,8 @@ public class RouteTransportService {
             List<RouteModel> routeModels = routeRepository.getRoutesById(routeIds);
 
             // TODO needs permit number if we want to get transport numbers for routes
-            Map<Integer, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberRepository.getRouteTransportNumbersByRouteId(routeIds);
-            routeModels.forEach(route -> route.setRouteTransportNumbers(routeTransportNumbers.get(route.getId())));
+           /* Map<Integer, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberRepository.getRouteTransportNumbersByRouteId(routeIds);
+            routeModels.forEach(route -> route.setRouteTransportNumbers(routeTransportNumbers.get(route.getId())));*/
 
             List<RouteTransportStatusModel> rtStatusModels = routeTransportStatusRepository.getTransportStatusHistory(routeTransportIds);
             List<SupervisionModel> supervisionModels = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportIds);
@@ -212,9 +213,8 @@ public class RouteTransportService {
         }
     }
 
-    public Integer getNextAvailableTransportNumber(RouteTransportModel routeTransport) throws TransportNumberConflictException {
-        RouteTransportNumberModel routeTransportNumber = routeTransportNumberRepository.getNextAvailableRouteTransportNumber(routeTransport.getRouteId());
-        Integer nextAvailableTransportNumber = routeTransportNumber.getTransportNumber();
+    public Integer getNextAvailableTransportNumber(RouteTransportModel routeTransport, RouteModel route, String permitNumber) throws TransportNumberConflictException {
+        Integer nextAvailableTransportNumber = routeTransportNumberService.getNextAvailableTransportNumber(route, permitNumber);
 
         // Check that next available route transport number matches the bridges
         List<SupervisionModel> supervisions = routeTransport.getSupervisions();
@@ -231,11 +231,11 @@ public class RouteTransportService {
     }
 
     public void setTransportNumberUsed(RouteTransportModel routeTransport) {
-        routeTransportNumberRepository.updateRouteTransportNumber(routeTransport.getRouteId(), routeTransport.getId(), routeTransport.getTransportNumber(), true);
+        routeTransportNumberService.setTransportNumberUsed(routeTransport);
     }
 
     public void setTransportNumberAvailable(RouteTransportModel routeTransport) {
-        routeTransportNumberRepository.updateRouteTransportNumber(routeTransport.getRouteId(), null, routeTransport.getTransportNumber(), false);
+        routeTransportNumberService.setTransportNumberAvailable(routeTransport);
     }
 
 }

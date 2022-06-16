@@ -68,13 +68,13 @@ const RouteTransportInfo = ({
   const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
   const [selectedSupervisionId, setSelectedSupervisionId] = useState<number | undefined>(undefined);
 
-  const { validStartDate, validEndDate } = permit || {};
+  const { permitNumber, validStartDate, validEndDate } = permit || {};
   const { plannedDepartureTime, supervisions = [] } = modifiedRouteTransportDetail || {};
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
   // Set-up mutations for modifying data later
-  const routeTransportPlannedMutation = useMutation((transport: IRouteTransport) => createRouteTransport(transport, dispatch), {
+  const routeTransportPlannedMutation = useMutation((transport: IRouteTransport) => createRouteTransport(transport, permitNumber, dispatch), {
     retry: false,
     onSuccess: () => {
       // TODO - move toast to avoid error?
@@ -361,7 +361,9 @@ const RouteTransportInfo = ({
         saveTransport={validateSupervisionsAndSave}
         deleteDisabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption}
         cancelDisabled={isSendingTransportUpdate || isDeletingTransport}
-        saveDisabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption || !selectedVehicle || !plannedDepartureTime}
+        saveDisabled={
+          isSendingTransportUpdate || isDeletingTransport || !permitNumber || !selectedRouteOption || !selectedVehicle || !plannedDepartureTime
+        }
       />
     </>
   );

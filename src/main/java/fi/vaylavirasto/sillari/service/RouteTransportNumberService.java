@@ -1,6 +1,7 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.RouteModel;
+import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.model.RouteTransportNumberModel;
 import fi.vaylavirasto.sillari.repositories.RouteTransportNumberRepository;
 import org.apache.logging.log4j.LogManager;
@@ -74,6 +75,13 @@ public class RouteTransportNumberService {
         } else {
             return null;
         }
+    }
+    public void setTransportNumberUsed(RouteTransportModel routeTransport) {
+        routeTransportNumberRepository.updateRouteTransportNumber(routeTransport.getRouteId(), routeTransport.getId(), routeTransport.getTransportNumber(), true);
+    }
+
+    public void setTransportNumberAvailable(RouteTransportModel routeTransport) {
+        routeTransportNumberRepository.updateRouteTransportNumber(routeTransport.getRouteId(), null, routeTransport.getTransportNumber(), false);
     }
 
 }

@@ -24,13 +24,6 @@ public class RouteTransportNumberRepository {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public Map<Integer, List<RouteTransportNumberModel>> getRouteTransportNumbersByRouteId(List<Integer> routeIds) {
-        return dsl.selectFrom(TableAlias.routeTransportNumber)
-                .where(TableAlias.routeTransportNumber.ROUTE_ID.in(routeIds))
-                .orderBy(TableAlias.routeTransportNumber.TRANSPORT_NUMBER)
-                .fetchGroups(RouteTransportNumberRecord::getRouteId, new RouteTransportNumberMapper());
-    }
-
     public Map<Long, List<RouteTransportNumberModel>> getRouteTransportNumbersByRouteLeluIds(List<Long> leluIds, String permitNumber) {
         return dsl.selectFrom(TableAlias.routeTransportNumberView)
                 .where(TableAlias.routeTransportNumberView.ROUTE_LELU_ID.in(leluIds))
@@ -45,16 +38,6 @@ public class RouteTransportNumberRepository {
                 .and(TableAlias.routeTransportNumberView.PERMIT_NUMBER.eq(permitNumber))
                 .orderBy(TableAlias.routeTransportNumberView.PERMIT_LELU_VERSION, TableAlias.routeTransportNumberView.TRANSPORT_NUMBER)
                 .fetchGroups(RouteTransportNumberViewRecord::getRouteId, new RouteTransportNumberViewMapper());
-    }
-
-    public RouteTransportNumberModel getNextAvailableRouteTransportNumber(Integer routeId) {
-        List<RouteTransportNumberModel> transportNumber = dsl.select().from(TableAlias.routeTransportNumber)
-                .where(TableAlias.routeTransportNumber.ROUTE_ID.eq(routeId))
-                .and(TableAlias.routeTransportNumber.USED.isFalse())
-                .orderBy(TableAlias.routeTransportNumber.TRANSPORT_NUMBER)
-                .limit(1)
-                .fetch(new RouteTransportNumberMapper());
-        return transportNumber.size() > 0 ? transportNumber.get(0) : null;
     }
 
     public void updateRouteTransportNumber(Integer routeId, Integer routeTransportId, Integer transportNumber, Boolean used) throws DataAccessException {

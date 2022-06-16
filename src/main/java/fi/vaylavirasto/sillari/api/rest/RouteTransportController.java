@@ -85,7 +85,7 @@ public class RouteTransportController {
     @Operation(summary = "Create route transport")
     @PostMapping(value = "/createroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
-    public ResponseEntity<?> createRouteTransport(@RequestBody RouteTransportModel routeTransport) throws TransportNumberConflictException {
+    public ResponseEntity<?> createRouteTransport(@RequestParam String permitNumber, @RequestBody RouteTransportModel routeTransport) throws TransportNumberConflictException {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "createRouteTransport");
         try {
             SillariUser user = uiService.getSillariUser();
@@ -94,7 +94,7 @@ public class RouteTransportController {
                 throw new AccessDeniedException("Not own company permit for route transport");
             }
 
-            Integer nextAvailableTransportNumber = routeTransportService.getNextAvailableTransportNumber(routeTransport);
+            Integer nextAvailableTransportNumber = routeTransportService.getNextAvailableTransportNumber(routeTransport, routeTransport.getRoute(), permitNumber);
             routeTransport.setTransportNumber(nextAvailableTransportNumber);
 
             Integer routeTransportId = routeTransportService.createRouteTransport(routeTransport);
