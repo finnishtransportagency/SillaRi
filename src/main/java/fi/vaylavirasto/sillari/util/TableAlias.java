@@ -19,6 +19,7 @@ public class TableAlias {
     public static final BridgeImage bridgeImage = Tables.BRIDGE_IMAGE.as("bi");
     public static final RouteTransport routeTransport = Tables.ROUTE_TRANSPORT.as("rtr");
     public static final RouteTransportNumber routeTransportNumber = Tables.ROUTE_TRANSPORT_NUMBER.as("rtn");
+    public static final RouteTransportNumberView routeTransportNumberView = Tables.ROUTE_TRANSPORT_NUMBER_VIEW.as("rtv");
     public static final RouteTransportStatus transportStatus = Tables.ROUTE_TRANSPORT_STATUS.as("rts");
     public static final RouteTransportPassword routeTransportPassword = Tables.ROUTE_TRANSPORT_PASSWORD.as("rtp");
     public static final Supervision supervision = Tables.SUPERVISION.as("sn");

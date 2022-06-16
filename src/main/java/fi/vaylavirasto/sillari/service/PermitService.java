@@ -36,10 +36,11 @@ public class PermitService {
     RouteBridgeRepository routeBridgeRepository;
     @Autowired
     RouteTransportRepository routeTransportRepository;
-    @Autowired
-    RouteTransportNumberRepository routeTransportNumberRepository;
+
     @Autowired
     AWSS3Client awss3Client;
+    @Autowired
+    RouteTransportNumberService routeTransportNumberService;
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
@@ -81,12 +82,12 @@ public class PermitService {
         List<RouteModel> routes = routeRepository.getRoutesByPermitId(permit.getId());
 
         if (permit.getRoutes() != null) {
-            List<Integer> routeIds = routes.stream().map(RouteModel::getId).collect(Collectors.toList());
-            Map<Integer, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberRepository.getRouteTransportNumbersByRouteId(routeIds);
+            // Get all transport numbers for route, including possible other permit versions with the same route lelu id
+            Map<Long, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberService.getRouteTransportNumbersForRoutes(routes, permit.getPermitNumber());
 
             for (RouteModel route : routes) {
                 Integer routeId = route.getId();
-                route.setRouteTransportNumbers(routeTransportNumbers.get(routeId));
+                route.setRouteTransportNumbers(routeTransportNumbers.get(route.getLeluId()));
 
                 Integer transportNumber;
                 // Get routeBridges with selected transportNumber per route.
@@ -95,8 +96,7 @@ public class PermitService {
                 if (routeTransport != null && routeId.equals(routeTransport.getRouteId())) {
                     transportNumber = routeTransport.getTransportNumber();
                 } else {
-                    RouteTransportNumberModel nextAvailableTransportNumber = routeTransportNumberRepository.getNextAvailableRouteTransportNumber(routeId);
-                    transportNumber = nextAvailableTransportNumber.getTransportNumber();
+                    transportNumber = routeTransportNumberService.getNextAvailableTransportNumber(route, permit.getPermitNumber());
                 }
 
                 logger.debug("getting permit {} route {} bridges with transport number: {}", permit.getPermitNumber(), route.getName(), transportNumber);

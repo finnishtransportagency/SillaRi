@@ -100,8 +100,9 @@ public class RouteTransportService {
             List<Integer> routeTransportIds = routeTransportModels.stream().map(RouteTransportModel::getId).collect(Collectors.toList());
 
             List<RouteModel> routeModels = routeRepository.getRoutesById(routeIds);
-            Map<Integer, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberRepository.getRouteTransportNumbersByRouteId(routeIds);
 
+            // TODO needs permit number if we want to get transport numbers for routes
+            Map<Integer, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberRepository.getRouteTransportNumbersByRouteId(routeIds);
             routeModels.forEach(route -> route.setRouteTransportNumbers(routeTransportNumbers.get(route.getId())));
 
             List<RouteTransportStatusModel> rtStatusModels = routeTransportStatusRepository.getTransportStatusHistory(routeTransportIds);

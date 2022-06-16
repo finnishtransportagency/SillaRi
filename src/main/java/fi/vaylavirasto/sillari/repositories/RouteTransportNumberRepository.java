@@ -1,8 +1,10 @@
 package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.RouteTransportNumberMapper;
+import fi.vaylavirasto.sillari.mapper.RouteTransportNumberViewMapper;
 import fi.vaylavirasto.sillari.model.RouteTransportNumberModel;
 import fi.vaylavirasto.sillari.model.tables.records.RouteTransportNumberRecord;
+import fi.vaylavirasto.sillari.model.tables.records.RouteTransportNumberViewRecord;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,14 +31,30 @@ public class RouteTransportNumberRepository {
                 .fetchGroups(RouteTransportNumberRecord::getRouteId, new RouteTransportNumberMapper());
     }
 
+    public Map<Long, List<RouteTransportNumberModel>> getRouteTransportNumbersByRouteLeluIds(List<Long> leluIds, String permitNumber) {
+        return dsl.selectFrom(TableAlias.routeTransportNumberView)
+                .where(TableAlias.routeTransportNumberView.ROUTE_LELU_ID.in(leluIds))
+                .and(TableAlias.routeTransportNumberView.PERMIT_NUMBER.eq(permitNumber))
+                .orderBy(TableAlias.routeTransportNumberView.PERMIT_LELU_VERSION, TableAlias.routeTransportNumberView.TRANSPORT_NUMBER)
+                .fetchGroups(RouteTransportNumberViewRecord::getRouteLeluId, new RouteTransportNumberViewMapper());
+    }
+
+    public Map<Integer, List<RouteTransportNumberModel>> getRouteTransportNumbersByRouteLeluId(Long leluId, String permitNumber) {
+        return dsl.selectFrom(TableAlias.routeTransportNumberView)
+                .where(TableAlias.routeTransportNumberView.ROUTE_LELU_ID.eq(leluId))
+                .and(TableAlias.routeTransportNumberView.PERMIT_NUMBER.eq(permitNumber))
+                .orderBy(TableAlias.routeTransportNumberView.PERMIT_LELU_VERSION, TableAlias.routeTransportNumberView.TRANSPORT_NUMBER)
+                .fetchGroups(RouteTransportNumberViewRecord::getRouteId, new RouteTransportNumberViewMapper());
+    }
+
     public RouteTransportNumberModel getNextAvailableRouteTransportNumber(Integer routeId) {
-        List<RouteTransportNumberModel> count = dsl.select().from(TableAlias.routeTransportNumber)
+        List<RouteTransportNumberModel> transportNumber = dsl.select().from(TableAlias.routeTransportNumber)
                 .where(TableAlias.routeTransportNumber.ROUTE_ID.eq(routeId))
                 .and(TableAlias.routeTransportNumber.USED.isFalse())
                 .orderBy(TableAlias.routeTransportNumber.TRANSPORT_NUMBER)
                 .limit(1)
                 .fetch(new RouteTransportNumberMapper());
-        return count.size() > 0 ? count.get(0) : null;
+        return transportNumber.size() > 0 ? transportNumber.get(0) : null;
     }
 
     public void updateRouteTransportNumber(Integer routeId, Integer routeTransportId, Integer transportNumber, Boolean used) throws DataAccessException {
