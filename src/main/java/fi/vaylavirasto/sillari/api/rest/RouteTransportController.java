@@ -101,7 +101,11 @@ public class RouteTransportController {
             routeTransport.setId(routeTransportId);
 
             if (routeTransportId != null) {
-                routeTransportService.setTransportNumberUsed(routeTransport);
+                if (routeTransport.getTransportNumber() != null) {
+                    routeTransportService.setTransportNumberUsed(routeTransport);
+                } else {
+                    logger.warn("No available transport numbers for routeTransport permitNumber {}, route {}. RouteTransport created without transportNumber.", permitNumber, routeTransport.getRoute().getName());
+                }
 
                 if (routeTransport.getSupervisions() != null) {
                     routeTransport.getSupervisions().forEach(supervisionModel -> {
