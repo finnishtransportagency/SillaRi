@@ -43,3 +43,6 @@ set route_transport_id = (
 );
 
 update sillari.route_transport_number rtn set used = true where rtn.route_transport_id is not null;
+
+-- If route_transports are created after all transport times are used, transport_number will be null
+alter table sillari.route_transport alter column transport_number drop not null;
