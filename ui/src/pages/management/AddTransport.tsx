@@ -15,6 +15,7 @@ import { TransportStatus } from "../../utils/constants";
 import { onRetry } from "../../utils/backendData";
 import { getPermit } from "../../utils/managementBackendData";
 import IVehicle from "../../interfaces/IVehicle";
+import IToastMessage from "../../interfaces/IToastMessage";
 
 interface AddTransportProps {
   permitId: string;
@@ -23,7 +24,7 @@ interface AddTransportProps {
 const AddTransport = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [toastMessage, setToastMessage] = useState("");
+  const [toastMessage, setToastMessage] = useState<IToastMessage>({ message: "", color: "" });
 
   const [modifiedRouteTransportDetail, setModifiedRouteTransportDetail] = useState<IRouteTransport | undefined>(undefined);
   const [selectedRouteOption, setSelectedRouteOption] = useState<IRoute | undefined>(undefined);

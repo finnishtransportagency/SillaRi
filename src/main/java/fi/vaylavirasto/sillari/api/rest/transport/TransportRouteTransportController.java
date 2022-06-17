@@ -94,7 +94,7 @@ public class TransportRouteTransportController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new EmptyJsonResponse());
             }
 
-            PermitModel permit = permitService.getPermitOfRouteTransport(rtp.getRouteTransportId(), false);
+            PermitModel permit = permitService.getPermitOfRouteTransport(rtp.getRouteTransportId());
             return ResponseEntity.ok().body(permit != null ? permit : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

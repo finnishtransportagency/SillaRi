@@ -108,11 +108,13 @@ export const generateNewRouteTransportPassword = async (routeTransportId: number
   }
 };
 
-export const getRouteTransportsOfPermit = async (permitId: number, dispatch: Dispatch): Promise<IRouteTransport[]> => {
+export const getRouteTransportsOfPermit = async (permitId: number, permitNumber: string, dispatch: Dispatch): Promise<IRouteTransport[]> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: false } });
 
-    const routeTransportListResponse = await fetch(`${getOrigin()}/api/routetransport/getroutetransportsofpermit?permitId=${permitId}`);
+    const routeTransportListResponse = await fetch(
+      `${getOrigin()}/api/routetransport/getroutetransportsofpermit?permitId=${permitId}&permitNumber=${permitNumber}`
+    );
 
     if (routeTransportListResponse.ok) {
       const routeTransportList = (await routeTransportListResponse.json()) as Promise<IRouteTransport[]>;
@@ -128,11 +130,11 @@ export const getRouteTransportsOfPermit = async (permitId: number, dispatch: Dis
   }
 };
 
-export const createRouteTransport = async (routeTransport: IRouteTransport, dispatch: Dispatch): Promise<IRouteTransport> => {
+export const createRouteTransport = async (routeTransport: IRouteTransport, permitNumber: string, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: false } });
 
-    const createRouteTransportResponse = await fetch(`${getOrigin()}/api/routetransport/createroutetransport`, {
+    const createRouteTransportResponse = await fetch(`${getOrigin()}/api/routetransport/createroutetransport?permitNumber=${permitNumber}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -146,11 +148,19 @@ export const createRouteTransport = async (routeTransport: IRouteTransport, disp
       return await plannedRouteTransport;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
-      throw new Error(NETWORK_RESPONSE_NOT_OK);
+
+      // Create routeTransport might return 409 when there's a conflict with transportNumber
+      const errorStatus = createRouteTransportResponse.status;
+      if (errorStatus === 409) {
+        throw new Error(errorStatus.toString());
+      } else {
+        throw new Error(NETWORK_RESPONSE_NOT_OK);
+      }
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
-    throw new Error(err as string);
+    const errMessage = err instanceof Error ? err.message : (err as string);
+    throw new Error(errMessage);
   }
 };
 

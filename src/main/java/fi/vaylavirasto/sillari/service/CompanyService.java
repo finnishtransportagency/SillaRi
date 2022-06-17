@@ -55,7 +55,8 @@ public class CompanyService {
             }
 
             if (routes.size() > 0) {
-                // Get routeBridges without bridge details, needed only for checking routeBridge count
+                // Get routeBridges without bridge details, needed only for checking if route includes bridge supervisions
+                // No need to worry about transport numbers at this point
                 List<Integer> routeIds = routes.stream().map(RouteModel::getId).collect(Collectors.toList());
                 Map<Integer, List<RouteBridgeModel>> routeBridgeMap = routeBridgeRepository.getRouteBridges(routeIds);
                 routes.forEach(route -> route.setRouteBridges(routeBridgeMap.get(route.getId())));

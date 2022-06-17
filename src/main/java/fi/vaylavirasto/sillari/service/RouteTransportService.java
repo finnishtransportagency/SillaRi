@@ -1,18 +1,23 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.api.rest.error.TransportNumberConflictException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class RouteTransportService {
+
+    private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     RouteTransportRepository routeTransportRepository;
     @Autowired
@@ -31,6 +36,9 @@ public class RouteTransportService {
     SupervisionStatusRepository supervisionStatusRepository;
     @Autowired
     RouteTransportPasswordRepository routeTransportPasswordRepository;
+
+    @Autowired
+    RouteTransportNumberService routeTransportNumberService;
 
 
     public RouteTransportModel getRouteTransport(Integer routeTransportId, boolean includePassword) {
@@ -85,22 +93,20 @@ public class RouteTransportService {
         return routeTransportModel;
     }
 
-    public List<RouteTransportModel> getRouteTransportsOfPermit(Integer permitId, boolean includePassword) {
+    public List<RouteTransportModel> getRouteTransportsOfPermit(Integer permitId, String permitNumber) {
         List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByPermitId(permitId);
 
         if (routeTransportModels != null) {
+            List<Integer> routeIds = routeTransportModels.stream().map(RouteTransportModel::getRouteId).distinct().collect(Collectors.toList());
+            List<Integer> routeTransportIds = routeTransportModels.stream().map(RouteTransportModel::getId).collect(Collectors.toList());
 
-            List<RouteModel> routeModels = routeRepository.getRoutesById(
-                routeTransportModels.stream().map(RouteTransportModel::getRouteId).distinct().collect(Collectors.toList())
-            );
+            List<RouteModel> routeModels = routeRepository.getRoutesById(routeIds);
 
-            List<RouteTransportStatusModel> rtStatusModels = routeTransportStatusRepository.getTransportStatusHistory(
-                routeTransportModels.stream().map(RouteTransportModel::getId).collect(Collectors.toList())
-            );
+            Map<Long, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberService.getRouteTransportNumbersForRoutes(routeModels, permitNumber);
+            routeModels.forEach(route -> route.setRouteTransportNumbers(routeTransportNumbers.get(route.getLeluId())));
 
-            List<SupervisionModel> supervisionModels = supervisionRepository.getSupervisionsByRouteTransportId(
-                routeTransportModels.stream().map(RouteTransportModel::getId).collect(Collectors.toList())
-            );
+            List<RouteTransportStatusModel> rtStatusModels = routeTransportStatusRepository.getTransportStatusHistory(routeTransportIds);
+            List<SupervisionModel> supervisionModels = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportIds);
 
             routeTransportModels.forEach(rtm -> {
 
@@ -127,10 +133,8 @@ public class RouteTransportService {
                 }
                 rtm.setSupervisions(supervisions);
 
-                if (includePassword) {
-                    // Only for use with the transport company admin UI
-                    rtm.setCurrentTransportPassword(routeTransportPasswordRepository.getTransportPassword(rtm.getId()));
-                }
+                // Only for use with the transport company admin UI
+                rtm.setCurrentTransportPassword(routeTransportPasswordRepository.getTransportPassword(rtm.getId()));
             });
         }
 
@@ -174,12 +178,10 @@ public class RouteTransportService {
         return routeTransport;
     }
 
-    public RouteTransportModel createRouteTransport(RouteTransportModel routeTransportModel) {
+    public Integer createRouteTransport(RouteTransportModel routeTransportModel) {
         // Generate a password and get a new expiry date when creating a new transport
-        Integer routeTransportId = routeTransportRepository.createRouteTransport(routeTransportModel,
+        return routeTransportRepository.createRouteTransport(routeTransportModel,
                 routeTransportPasswordRepository.generateUniqueTransportPassword());
-
-        return getRouteTransport(routeTransportId, false);
     }
 
     public RouteTransportModel updateRouteTransport(RouteTransportModel routeTransportModel) {
@@ -208,13 +210,29 @@ public class RouteTransportService {
         }
     }
 
-    public Integer getMaxUsedTransportNumberOfRoute(Integer routeId) {
-        List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByRouteId(routeId);
-        RouteTransportModel routeTransportModel = routeTransportModels.stream().max(Comparator.comparing(RouteTransportModel::getTransportNumber)).orElse(null);
-        if (routeTransportModel != null) {
-            return routeTransportModel.getTransportNumber();
-        } else {
-            return 0;
+    public Integer getNextAvailableTransportNumber(RouteTransportModel routeTransport, RouteModel route, String permitNumber) throws TransportNumberConflictException {
+        Integer nextAvailableTransportNumber = routeTransportNumberService.getNextAvailableTransportNumber(route, permitNumber);
+
+        // Check that next available route transport number matches the bridges
+        List<SupervisionModel> supervisions = routeTransport.getSupervisions();
+        if (supervisions != null && !supervisions.isEmpty()) {
+            RouteBridgeModel routeBridge = supervisions.get(0).getRouteBridge();
+            int selectedNumber = routeBridge != null ? routeBridge.getTransportNumber() : 0;
+
+            if (!nextAvailableTransportNumber.equals(selectedNumber)) {
+                logger.error("CONFLICT for nextAvailableTransportNumber {} vs bridge transportNumber {} with routeId {}", nextAvailableTransportNumber, selectedNumber, routeTransport.getRouteId());
+                throw new TransportNumberConflictException("Next available transportNumber " + nextAvailableTransportNumber + " does not match the transport number " + selectedNumber + " of the bridges");
+            }
         }
+        return nextAvailableTransportNumber;
     }
+
+    public void setTransportNumberUsed(RouteTransportModel routeTransport) {
+        routeTransportNumberService.setTransportNumberUsed(routeTransport);
+    }
+
+    public void setTransportNumberAvailable(RouteTransportModel routeTransport) {
+        routeTransportNumberService.setTransportNumberAvailable(routeTransport);
+    }
+
 }

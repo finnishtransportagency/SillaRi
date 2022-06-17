@@ -24,6 +24,7 @@ public class RouteMapper implements RecordMapper<Record, RouteModel> {
         model.setRowCreatedTime(record.get(TableAlias.route.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.route.ROW_UPDATED_TIME));
         model.setRouteBridges(new ArrayList<>());
+        model.setRouteTransportNumbers(new ArrayList<>());
         return model;
     }
 }

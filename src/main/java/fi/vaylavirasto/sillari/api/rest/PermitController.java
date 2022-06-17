@@ -67,7 +67,7 @@ public class PermitController {
             if (!isOwnCompanyRouteTransport(routeTransportId)) {
                 throw new AccessDeniedException("Not user company route transport.");
             }
-            PermitModel permit = permitService.getPermitOfRouteTransport(routeTransportId);
+            PermitModel permit = permitService.getPermitOfRouteTransportForTransportInstance(routeTransportId);
             return ResponseEntity.ok().body(permit != null ? permit : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
