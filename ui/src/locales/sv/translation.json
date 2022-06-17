@@ -249,6 +249,7 @@
       "transportCountModal": {
         "title": "(SV) Luvan {{permit}} reittikohtaiset kuljetuskerrat",
         "used": "(SV) Käytetty",
+        "usedFromPrevious": "(SV) Muut lupaversiot",
         "amount": "(SV) Määrä luvalla",
         "unlimited": "(SV) Rajoittamaton"
       },

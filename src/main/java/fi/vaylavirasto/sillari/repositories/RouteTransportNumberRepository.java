@@ -1,9 +1,7 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.mapper.RouteTransportNumberMapper;
 import fi.vaylavirasto.sillari.mapper.RouteTransportNumberViewMapper;
 import fi.vaylavirasto.sillari.model.RouteTransportNumberModel;
-import fi.vaylavirasto.sillari.model.tables.records.RouteTransportNumberRecord;
 import fi.vaylavirasto.sillari.model.tables.records.RouteTransportNumberViewRecord;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;

@@ -249,6 +249,7 @@
       "transportCountModal": {
         "title": "Transport times of permit {{permit}} by route ",
         "used": "Used",
+        "usedFromPrevious": "Other permit versions",
         "amount": "Amount in permit",
         "unlimited": "Unlimited"
       },
