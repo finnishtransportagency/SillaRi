@@ -58,7 +58,7 @@ const Transport = (): JSX.Element => {
     }
   };
 
-  const { plannedDepartureTime, route, currentStatus, statusHistory = [] } = selectedRouteTransportDetail || {};
+  const { plannedDepartureTime, route, transportNumber, currentStatus, statusHistory = [] } = selectedRouteTransportDetail || {};
   const { name: routeName } = route || {};
   const { status, time } = currentStatus || {};
 
@@ -108,7 +108,7 @@ const Transport = (): JSX.Element => {
 
               <IonRow className="ion-margin-top ion-margin-bottom">
                 <IonCol size="12">
-                  <RouteAccordion route={route as IRoute} openMap={openRouteMap} />
+                  <RouteAccordion route={route as IRoute} transportNumber={transportNumber} openMap={openRouteMap} />
                 </IonCol>
               </IonRow>
 

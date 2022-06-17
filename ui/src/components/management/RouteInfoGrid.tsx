@@ -41,8 +41,10 @@ const RouteInfoGrid = ({
 
   const { company, routes: permitRoutes = [], vehicles = [] } = permit || {};
   const { businessId = "" } = company || {};
-  const { id: selectedRouteId, name: selectedRouteName } = selectedRouteOption || {};
-  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
+  const { id: selectedRouteId, name: selectedRouteName, nextAvailableTransportNumber } = selectedRouteOption || {};
+  const { plannedDepartureTime, transportNumber } = modifiedRouteTransportDetail || {};
+
+  const currentTransportNumber = transportNumber ? transportNumber : nextAvailableTransportNumber;
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
@@ -131,7 +133,9 @@ const RouteInfoGrid = ({
 
       <IonRow>
         <IonCol size="12" className="ion-margin-top">
-          {selectedRouteOption && <RouteAccordion route={selectedRouteOption as IRoute} openMap={openRouteMap} />}
+          {selectedRouteOption && (
+            <RouteAccordion route={selectedRouteOption as IRoute} transportNumber={currentTransportNumber} openMap={openRouteMap} />
+          )}
           <MapModal routeId={String(selectedRouteId)} isOpen={isMapModalOpen} setIsOpen={() => setMapModalOpen(false)} />
         </IonCol>
       </IonRow>

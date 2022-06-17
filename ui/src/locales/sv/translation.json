@@ -111,7 +111,8 @@
       "route": "Rutt",
       "showRouteOnMap": "Visa rutten på kartan",
       "departurePoint": "Avgångsplats",
-      "arrivalPoint": "Destination"
+      "arrivalPoint": "Destination",
+      "transportNumber": "(SV) Kuljetuskerta"
     },
     "bridgesToSupervise": "Broar som övervakas"
   },

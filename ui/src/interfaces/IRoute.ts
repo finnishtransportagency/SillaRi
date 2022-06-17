@@ -14,4 +14,5 @@ export default interface IRoute {
   routeBridges: IRouteBridge[];
   transportCount?: number;
   routeTransportNumbers?: IRouteTransportNumber[];
+  nextAvailableTransportNumber?: number;
 }

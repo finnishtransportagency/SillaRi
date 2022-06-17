@@ -8,12 +8,13 @@ import mapRoute from "../theme/icons/map-route.svg";
 
 interface RouteAccordionProps {
   route: IRoute;
+  transportNumber?: number;
   openMap: (routeId?: number) => void;
   mapDisabled?: boolean;
   isPanelOpen?: boolean;
 }
 
-const RouteAccordion = ({ route, openMap, mapDisabled, isPanelOpen }: RouteAccordionProps): JSX.Element => {
+const RouteAccordion = ({ route, transportNumber, openMap, mapDisabled, isPanelOpen }: RouteAccordionProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { id: routeId, departureAddress, arrivalAddress } = route || {};
@@ -50,6 +51,13 @@ const RouteAccordion = ({ route, openMap, mapDisabled, isPanelOpen }: RouteAccor
                     <small>{arrivalStreetAddress}</small>
                   </IonLabel>
                 </IonLabel>
+              </IonItem>
+              <IonItem lines="none">
+                {transportNumber ? (
+                  <IonText>{`t("route.routeInfo.transportNumber"): ${transportNumber}`}</IonText>
+                ) : (
+                  <IonText>TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO</IonText>
+                )}
               </IonItem>
             </div>
           ),

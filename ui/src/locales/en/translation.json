@@ -111,7 +111,8 @@
       "route": "Route",
       "showRouteOnMap": "Show route on map",
       "departurePoint": "Departure point",
-      "arrivalPoint": "Arrival point"
+      "arrivalPoint": "Arrival point",
+      "transportNumber": "Transport time"
     },
     "bridgesToSupervise": "Bridges to supervise"
   },

@@ -52,7 +52,7 @@ const RouteTransportDetail = (): JSX.Element => {
     onlineManager.subscribe(() => setOnline(onlineManager.isOnline()));
   }, []);
 
-  const { route, supervisions = [] } = routeTransport || {};
+  const { route, transportNumber, supervisions = [] } = routeTransport || {};
   const { name = "", permit } = route || {};
 
   // Sort the supervisions into permit bridge order so the list is the same regardless of whether each supervision has started or not
@@ -69,7 +69,7 @@ const RouteTransportDetail = (): JSX.Element => {
         ) : (
           <>
             <RouteTransportDetailHeader permit={permit as IPermit} routeTransport={routeTransport as IRouteTransport} />
-            <RouteAccordion route={route as IRoute} mapDisabled={!isOnline} openMap={openRouteMap} />
+            <RouteAccordion route={route as IRoute} transportNumber={transportNumber} mapDisabled={!isOnline} openMap={openRouteMap} />
             <TransportInfoAccordion permit={permit as IPermit} />
 
             <BridgeCardList supervisions={supervisions} />

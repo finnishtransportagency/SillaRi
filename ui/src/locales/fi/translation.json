@@ -111,7 +111,8 @@
       "route": "Reitti",
       "showRouteOnMap": "Reitti kartalla",
       "departurePoint": "Lähtöpaikka",
-      "arrivalPoint": "Määräpaikka"
+      "arrivalPoint": "Määräpaikka",
+      "transportNumber": "Kuljetuskerta"
     },
     "bridgesToSupervise": "Valvottavat sillat"
   },
