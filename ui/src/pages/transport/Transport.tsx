@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
 import moment from "moment";
 import Header from "../../components/Header";
@@ -25,6 +25,7 @@ interface TransportProps {
 const Transport = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const management = useTypedSelector((state: RootState) => state.rootReducer);
 
@@ -51,11 +52,17 @@ const Transport = (): JSX.Element => {
     }
   );
 
+  const openRouteMap = (routeId?: number) => {
+    if (routeId) {
+      history.push(`/routemap/${routeId}`);
+    }
+  };
+
   const { plannedDepartureTime, route, currentStatus, statusHistory = [] } = selectedRouteTransportDetail || {};
   const { name: routeName } = route || {};
   const { status, time } = currentStatus || {};
 
-  const departureTime = useMemo(() => statusHistory.find((history) => history.status === TransportStatus.DEPARTED), [statusHistory]);
+  const departureTime = useMemo(() => statusHistory.find((st) => st.status === TransportStatus.DEPARTED), [statusHistory]);
 
   const noNetworkNoData =
     (isFailed.getRouteTransport && selectedRouteTransportDetail === undefined) ||
@@ -101,7 +108,7 @@ const Transport = (): JSX.Element => {
 
               <IonRow className="ion-margin-top ion-margin-bottom">
                 <IonCol size="12">
-                  <RouteAccordion route={route as IRoute} />
+                  <RouteAccordion route={route as IRoute} openMap={openRouteMap} />
                 </IonCol>
               </IonRow>
 

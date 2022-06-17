@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { onlineManager } from "react-query";
 import { IonIcon, IonItem, IonLabel, IonText } from "@ionic/react";
 import CustomAccordion from "./common/CustomAccordion";
 import IRoute from "../interfaces/IRoute";
@@ -9,21 +8,17 @@ import mapRoute from "../theme/icons/map-route.svg";
 
 interface RouteAccordionProps {
   route: IRoute;
+  openMap: (routeId?: number) => void;
+  mapDisabled?: boolean;
   isPanelOpen?: boolean;
 }
 
-const RouteAccordion = ({ route, isPanelOpen }: RouteAccordionProps): JSX.Element => {
+const RouteAccordion = ({ route, openMap, mapDisabled, isPanelOpen }: RouteAccordionProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { id: routeId, departureAddress, arrivalAddress } = route || {};
   const { streetAddress: departureStreetAddress } = departureAddress || {};
   const { streetAddress: arrivalStreetAddress } = arrivalAddress || {};
-
-  const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
-
-  useEffect(() => {
-    onlineManager.subscribe(() => setOnline(onlineManager.isOnline()));
-  }, []);
 
   return (
     <CustomAccordion
@@ -34,7 +29,7 @@ const RouteAccordion = ({ route, isPanelOpen }: RouteAccordionProps): JSX.Elemen
           isPanelOpen,
           panel: (
             <div>
-              <IonItem className="itemIcon iconLink" detail detailIcon={mapRoute} routerLink={`/routemap/${routeId}`} disabled={!isOnline}>
+              <IonItem className="itemIcon iconLink" detail detailIcon={mapRoute} onClick={() => openMap(routeId)} disabled={mapDisabled}>
                 <IonLabel className="headingText">{t("route.routeInfo.route")}</IonLabel>
                 <IonText className="linkText">{t("route.routeInfo.showRouteOnMap")}</IonText>
               </IonItem>
