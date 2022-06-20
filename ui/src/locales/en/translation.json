@@ -93,6 +93,7 @@
   },
   "companyTransports": {
     "transportPermit": "Transport permit",
+    "transportNumber": "Transport time",
     "nextSupervision": "Next supervision",
     "estimate": "estimate"
   },

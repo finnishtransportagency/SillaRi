@@ -93,6 +93,7 @@
   },
   "companyTransports": {
     "transportPermit": "Kuljetuslupa",
+    "transportNumber": "Kuljetuskerta",
     "nextSupervision": "Seuraava sillanvalvonta",
     "estimate": "arvio"
   },

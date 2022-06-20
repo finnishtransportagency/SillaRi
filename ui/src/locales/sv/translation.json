@@ -93,6 +93,7 @@
   },
   "companyTransports": {
     "transportPermit": "Transporttillstånd",
+    "transportNumber": "(SV) Kuljetuskerta",
     "nextSupervision": "(SV) Seuraava sillanvalvonta",
     "estimate": "(SV) arvio"
   },
