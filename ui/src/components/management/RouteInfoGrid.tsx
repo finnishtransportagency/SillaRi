@@ -111,10 +111,14 @@ const RouteInfoGrid = ({
               <IonCol>
                 {isEditable ? (
                   <CustomSelect
-                    options={permitRoutes.map((route) => {
-                      const { id: routeId, name } = route;
-                      return { value: routeId, label: name };
-                    })}
+                    options={permitRoutes
+                      .sort((a, b) => {
+                        return a.ordinal - b.ordinal;
+                      })
+                      .map((route) => {
+                        const { id: routeId, name } = route;
+                        return { value: routeId, label: name };
+                      })}
                     selectedValue={selectedRouteId}
                     onChange={(routeId) => selectRoute(routeId as number)}
                   />

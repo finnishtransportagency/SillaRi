@@ -15,6 +15,7 @@ public class RouteModel extends BaseModel {
     private Integer departureAddressId;
     private Integer arrivalAddressId;
     private Long leluId;
+    private Integer ordinal;
     private String name;
     private Integer transportCount;
     private Boolean alternativeRoute;

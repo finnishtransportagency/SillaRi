@@ -24,6 +24,10 @@ public class LeluRouteDTO {
     @Schema(description = "Route name describing the route", required = true, example = "Kotka - Tampere")
     private String name;
 
+    //@NotNull(message = "{route.order.not.null}") TODO add not null when LeLu is ready
+    @Schema(description = "Order number of the route in the permit", required = true, example = "1")
+    private Integer orderingNumber;
+
     @NotNull(message = "{route.transport.count.not.null}")
     @Schema(description = "Number of crossings permitted for the route", example = "3")
     private Integer transportCount;

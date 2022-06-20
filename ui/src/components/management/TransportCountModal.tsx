@@ -56,25 +56,29 @@ const TransportCountModal = ({ isOpen, setOpen, permit, routeTransports = [] }: 
             <IonCol size="3">{t("management.companySummary.transportCountModal.used").toUpperCase()}</IonCol>
             <IonCol>{t("management.companySummary.transportCountModal.amount").toUpperCase()}</IonCol>
           </IonRow>
-          {routes.map((route) => {
-            const { id, name = "", transportCount = 0 } = route || {};
-            const key = `route_${id}`;
-            const transports = routeTransports
-              ? routeTransports.filter((transport) => {
-                  const { route: transportRoute } = transport || {};
-                  const { id: routeId = -1 } = transportRoute || {};
-                  return id === routeId;
-                })
-              : [];
+          {routes
+            .sort((a, b) => {
+              return a.ordinal - b.ordinal;
+            })
+            .map((route) => {
+              const { id, name = "", transportCount = 0 } = route || {};
+              const key = `route_${id}`;
+              const transports = routeTransports
+                ? routeTransports.filter((transport) => {
+                    const { route: transportRoute } = transport || {};
+                    const { id: routeId = -1 } = transportRoute || {};
+                    return id === routeId;
+                  })
+                : [];
 
-            return (
-              <IonRow key={key} className="ion-padding">
-                <IonCol size="6">{name}</IonCol>
-                <IonCol size="3">{transports.length}</IonCol>
-                <IonCol>{transportCount !== 0 ? transportCount : t("management.companySummary.transportCountModal.unlimited")}</IonCol>
-              </IonRow>
-            );
-          })}
+              return (
+                <IonRow key={key} className="ion-padding">
+                  <IonCol size="6">{name}</IonCol>
+                  <IonCol size="3">{transports.length}</IonCol>
+                  <IonCol>{transportCount !== 0 ? transportCount : t("management.companySummary.transportCountModal.unlimited")}</IonCol>
+                </IonRow>
+              );
+            })}
         </IonGrid>
       </IonContent>
     </IonModal>
