@@ -34,6 +34,8 @@ import { getUserData, getVersionInfo } from "./utils/backendData";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/supervisionUtil";
 import IonicAsyncStorage from "./IonicAsyncStorage";
+import { Storage } from "@capacitor/storage";
+import CryptoJS from "crypto-js";
 
 /* Sillari.css */
 import "./theme/sillari.css";
@@ -93,6 +95,12 @@ const App: React.FC = () => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   useEffect(() => {
+    //TODO dev code remove. store encrypted  supervision paassword in teeh storagee
+    Storage.set({
+      key: "myyyy_pass",
+      value: CryptoJS.AES.encrypt("1234", "Secret Passphrase").toString(),
+    });
+
     // Add or remove the "dark" class based on if the media query matches
     const toggleDarkTheme = (shouldAdd: boolean) => {
       document.body.classList.toggle("dark", shouldAdd);
