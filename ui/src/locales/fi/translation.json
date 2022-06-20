@@ -254,7 +254,9 @@
         "used": "Käytetty",
         "usedFromPrevious": "Muut lupaversiot",
         "amount": "Määrä luvalla",
-        "unlimited": "Rajoittamaton"
+        "unlimited": "Rajoittamaton",
+        "infoTitle": "Ohje",
+        "infoText": "Käytettyjen kuljetuskertojen kokonaismäärä koostuu nykyiselle kuljetusluvalle tehdyistä kuljetuksista sekä mahdollisille muille lupaversioille tehdyistä kuljetuksista (suluissa jälkimmäisenä)."
       },
       "filter": {
         "show": "Näytä",

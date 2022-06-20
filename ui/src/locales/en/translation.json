@@ -254,7 +254,9 @@
         "used": "Used",
         "usedFromPrevious": "Other permit versions",
         "amount": "Amount in permit",
-        "unlimited": "Unlimited"
+        "unlimited": "Unlimited",
+        "infoTitle": "Instructions",
+        "infoText": "The total number of used transport times consists of the transport times carried out for the current transport permit and possible other versions of the transport permit (the latter in brackets)."
       },
       "filter": {
         "show": "Show",
