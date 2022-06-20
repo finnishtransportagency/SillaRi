@@ -113,7 +113,8 @@
       "showRouteOnMap": "Visa rutten på kartan",
       "departurePoint": "Avgångsplats",
       "arrivalPoint": "Destination",
-      "transportNumber": "(SV) Kuljetuskerta"
+      "transportNumber": "(SV) Kuljetuskerta",
+      "transportNumbersUsed": "(SV) Kaikki reitin kuljetuskerrat käytetty"
     },
     "bridgesToSupervise": "Broar som övervakas"
   },

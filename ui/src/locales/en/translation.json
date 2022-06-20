@@ -113,7 +113,8 @@
       "showRouteOnMap": "Show route on map",
       "departurePoint": "Departure point",
       "arrivalPoint": "Arrival point",
-      "transportNumber": "Transport time"
+      "transportNumber": "Transport time",
+      "transportNumbersUsed": "All transport times used for route"
     },
     "bridgesToSupervise": "Bridges to supervise"
   },
