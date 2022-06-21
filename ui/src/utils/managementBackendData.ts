@@ -113,7 +113,7 @@ export const getRouteTransportsOfPermit = async (permitId: number, permitNumber:
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: false } });
 
     const routeTransportListResponse = await fetch(
-        `${getOrigin()}/api/routetransport/getroutetransportsofpermit?permitId=${permitId}&permitNumber=${encodeURIComponent(permitNumber)}`
+      `${getOrigin()}/api/routetransport/getroutetransportsofpermit?permitId=${permitId}&permitNumber=${encodeURIComponent(permitNumber)}`
     );
 
     if (routeTransportListResponse.ok) {
