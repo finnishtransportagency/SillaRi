@@ -10,12 +10,12 @@ import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import IRouteTransportStatus from "../../interfaces/IRouteTransportStatus";
-import ISupervisor from "../../interfaces/ISupervisor";
 import { useTypedSelector, RootState } from "../../store/store";
 import { TransportStatus } from "../../utils/constants";
 import { onRetry } from "../../utils/backendData";
-import { getPermit, getSupervisors } from "../../utils/managementBackendData";
+import { getPermit } from "../../utils/managementBackendData";
 import IVehicle from "../../interfaces/IVehicle";
+import IToastMessage from "../../interfaces/IToastMessage";
 
 interface AddTransportProps {
   permitId: string;
@@ -24,7 +24,7 @@ interface AddTransportProps {
 const AddTransport = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [toastMessage, setToastMessage] = useState("");
+  const [toastMessage, setToastMessage] = useState<IToastMessage>({ message: "", color: "" });
 
   const [modifiedRouteTransportDetail, setModifiedRouteTransportDetail] = useState<IRouteTransport | undefined>(undefined);
   const [selectedRouteOption, setSelectedRouteOption] = useState<IRoute | undefined>(undefined);
@@ -38,10 +38,6 @@ const AddTransport = (): JSX.Element => {
   const { permitId = "0" } = useParams<AddTransportProps>();
 
   const { isLoading: isLoadingPermit, data: selectedPermitDetail } = useQuery(["getPermit", permitId], () => getPermit(Number(permitId), dispatch), {
-    retry: onRetry,
-    refetchOnWindowFocus: false,
-  });
-  const { isLoading: isLoadingSupervisorList, data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), {
     retry: onRetry,
     refetchOnWindowFocus: false,
   });
@@ -62,10 +58,8 @@ const AddTransport = (): JSX.Element => {
     }
   }, [isLoadingPermit, dispatch]);
 
-  const noNetworkNoData =
-    (isFailed.getPermit && selectedPermitDetail === undefined) || (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
-
-  const notReady = noNetworkNoData || isLoadingSupervisorList;
+  const noNetworkNoData = isFailed.getPermit && selectedPermitDetail === undefined;
+  const notReady = noNetworkNoData || isLoadingPermit;
 
   return (
     <IonPage>
@@ -73,7 +67,6 @@ const AddTransport = (): JSX.Element => {
       <RouteTransportInfo
         routeTransportId={0}
         permit={selectedPermitDetail as IPermit}
-        supervisors={supervisorList as ISupervisor[]}
         modifiedRouteTransportDetail={modifiedRouteTransportDetail as IRouteTransport}
         setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
         selectedRouteOption={selectedRouteOption as IRoute}

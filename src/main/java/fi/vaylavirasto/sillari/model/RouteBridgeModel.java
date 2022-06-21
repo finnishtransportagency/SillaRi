@@ -16,7 +16,7 @@ public class RouteBridgeModel extends BaseModel {
     private Integer ordinal;
     private String crossingInstruction;
     private Long contractNumber;
-    private String contractBusinessIdentifier;
+    private String contractBusinessId;
     private Integer transportNumber;
     private List<SupervisionModel> supervisions;
 

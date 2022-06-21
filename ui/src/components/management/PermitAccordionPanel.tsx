@@ -24,11 +24,11 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
   const [transportFilter, setTransportFilter] = useState<string>("");
   const [transportCountModalOpen, setTransportCountModalOpen] = useState<boolean>(false);
 
-  const { id: permitId } = permit;
+  const { id: permitId, permitNumber, isCurrentVersion } = permit;
 
   const { data: routeTransportList } = useQuery(
     ["getRouteTransportsOfPermit", Number(permitId)],
-    () => getRouteTransportsOfPermit(Number(permitId), dispatch),
+    () => getRouteTransportsOfPermit(Number(permitId), permitNumber, dispatch),
     {
       retry: onRetry,
     }
@@ -38,7 +38,7 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
     <IonGrid className="ion-no-padding">
       <IonRow className="ion-margin ion-hide-md-up">
         <IonCol size="12" className="ion-padding-bottom ion-text-center">
-          {isPermitValid(permit) && (
+          {isPermitValid(permit) && isCurrentVersion && (
             <IonButton
               color="secondary"
               expand="block"

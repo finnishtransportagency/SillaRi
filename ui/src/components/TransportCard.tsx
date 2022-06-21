@@ -15,7 +15,16 @@ interface TransportCardProps {
 const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { id: routeTransportId, currentStatus, departureTime, plannedDepartureTime, tractorUnit = "", route, supervisions = [] } = transport || {};
+  const {
+    id: routeTransportId,
+    currentStatus,
+    departureTime,
+    plannedDepartureTime,
+    tractorUnit = "",
+    transportNumber,
+    route,
+    supervisions = [],
+  } = transport || {};
 
   const { permit, name: routeName } = route || {};
   const { permitNumber } = permit || {};
@@ -44,6 +53,7 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
         </IonLabel>
         <IonLabel>
           <small>{`${t("companyTransports.transportPermit")} ${permitNumber}`}</small>
+          {transportNumber && <small>{` | ${t("companyTransports.transportNumber")}: ${transportNumber}`}</small>}
         </IonLabel>
         {nextSupervisionTime && (
           <IonLabel>

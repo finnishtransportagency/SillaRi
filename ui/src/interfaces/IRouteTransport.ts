@@ -8,6 +8,7 @@ export default interface IRouteTransport {
   routeId: number;
   plannedDepartureTime?: Date;
   tractorUnit: string;
+  transportNumber?: number;
   departureTime?: Date; // actual departure time from statusHistory
   arrivalTime?: Date; // actual arrival time from statusHistory
   currentStatus?: IRouteTransportStatus;

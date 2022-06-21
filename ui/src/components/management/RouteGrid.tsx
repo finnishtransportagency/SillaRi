@@ -27,7 +27,7 @@ const RouteGrid = ({ permit, routeTransports = [], transportFilter }: RouteGridP
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { id: permitId } = permit;
+  const { id: permitId, isCurrentVersion } = permit;
 
   const [isStatusLogOpen, setStatusLogOpen] = useState<boolean>(false);
   const [statusLog, setStatusLog] = useState<IRouteTransportStatus[]>([]);
@@ -260,7 +260,13 @@ const RouteGrid = ({ permit, routeTransports = [], transportFilter }: RouteGridP
                           <IonText className="routeGridStatusSupervisionStarted">{t("management.transportStatus.supervisionStarted")}</IonText>
                         </>
                       )}
-                      {status === TransportStatus.PLANNED && !supervisionStarted && !supervisionsOk && (
+                      {status === TransportStatus.PLANNED && !supervisionStarted && !isCurrentVersion && (
+                        <>
+                          <IonIcon className="routeGridStatusUnknown" icon={warningOutline} />
+                          <IonText className="routeGridStatusUnknown">{t("management.transportStatus.outdatedPermit")}</IonText>
+                        </>
+                      )}
+                      {status === TransportStatus.PLANNED && !supervisionStarted && isCurrentVersion && !supervisionsOk && (
                         <>
                           <IonIcon className="routeGridStatusUnknown" icon={warningOutline} />
                           <IonText className="routeGridStatusUnknown">{t("management.transportStatus.unknown")}</IonText>

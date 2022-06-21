@@ -21,7 +21,7 @@ export const isPermitValid = (permit: IPermit | undefined): boolean => {
 export const areSupervisionsValid = (supervisions: ISupervision[]): boolean => {
   if (supervisions.length > 0) {
     return supervisions.every((supervision) => {
-      return !!supervision.plannedTime && !!supervision.supervisors && supervision.supervisors.length > 0;
+      return !!supervision.plannedTime;
     });
   }
   // Ignore transports with no supervisions
@@ -44,8 +44,9 @@ export const isTransportEditable = (transport: IRouteTransport | undefined, perm
   if (transport) {
     const { currentStatus, supervisions = [] } = transport;
     const { status } = currentStatus || {};
+    const { isCurrentVersion = false } = permit || {};
 
-    return isPermitValid(permit) && status === TransportStatus.PLANNED && !hasSupervisionStarted(supervisions);
+    return isPermitValid(permit) && isCurrentVersion && status === TransportStatus.PLANNED && !hasSupervisionStarted(supervisions);
   } else {
     return false;
   }

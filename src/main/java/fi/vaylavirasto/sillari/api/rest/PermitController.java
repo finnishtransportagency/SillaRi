@@ -67,7 +67,7 @@ public class PermitController {
             if (!isOwnCompanyRouteTransport(routeTransportId)) {
                 throw new AccessDeniedException("Not user company route transport.");
             }
-            PermitModel permit = permitService.getPermitOfRouteTransport(routeTransportId);
+            PermitModel permit = permitService.getPermitOfRouteTransportForTransportInstance(routeTransportId);
             return ResponseEntity.ok().body(permit != null ? permit : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -109,8 +109,8 @@ public class PermitController {
 
     /* Check that sillanvalvoja-user has right to view permit*/
     private boolean isPermitOfSupervisor(SillariUser user, Integer permitId) {
-        List<SupervisorModel> supervisors = supervisionService.getSupervisorsByPermitId(permitId);
-        return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
+        List<String> supervisors = supervisionService.getSupervisorsByPermitId(permitId);
+        return supervisors.contains(user.getBusinessId());
     }
 
     /* Check role-specifically if user has right to permit*/

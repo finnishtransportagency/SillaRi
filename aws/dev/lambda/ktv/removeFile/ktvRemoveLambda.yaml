@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: >-
+  An Amazon S3 trigger that retrieves metadata for the object that has been
+  updated.
+Resources:
+  ktvRemoveLambda:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs14.x
+      CodeUri: .
+      Description: >-
+        An Amazon S3 trigger that retrieves metadata for the object that has
+        been updated.
+      MemorySize: 128
+      Timeout: 3
+      Role: 'arn:aws:iam::384409174079:role/sillari-kvt-lambda-role'
+      Tags:
+        'lambda-console:blueprint': s3-get-object

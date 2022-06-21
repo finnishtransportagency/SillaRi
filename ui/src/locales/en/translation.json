@@ -24,7 +24,8 @@
       "checkTimeShort": "Check the time",
       "invalidTime": "Invalid time",
       "fixTimes": "Check and correct conflicting times for estimated bridge crossings before proceeding."
-    }
+    },
+    "error": "An error occurred"
   },
   "main": {
     "header": {
@@ -92,6 +93,7 @@
   },
   "companyTransports": {
     "transportPermit": "Transport permit",
+    "transportNumber": "Transport time",
     "nextSupervision": "Next supervision",
     "estimate": "estimate"
   },
@@ -110,7 +112,9 @@
       "route": "Route",
       "showRouteOnMap": "Show route on map",
       "departurePoint": "Departure point",
-      "arrivalPoint": "Arrival point"
+      "arrivalPoint": "Arrival point",
+      "transportNumber": "Transport time",
+      "transportNumbersUsed": "All transport times used for route"
     },
     "bridgesToSupervise": "Bridges to supervise"
   },
@@ -241,14 +245,18 @@
       "supervision": "Supervision",
       "includesSupervisions": "Includes bridge supervisions",
       "noSupervisions": "Does not include bridge supervisions",
+      "permitVersion": "Permit version",
       "addTransportButtonLabel": "Add transport",
       "transportCount": "Transport times",
       "showByRoute": "Show by route",
       "transportCountModal": {
         "title": "Transport times of permit {{permit}} by route ",
         "used": "Used",
+        "usedFromPrevious": "Other permit versions",
         "amount": "Amount in permit",
-        "unlimited": "Unlimited"
+        "unlimited": "Unlimited",
+        "infoTitle": "Instructions",
+        "infoText": "The total number of used transport times consists of the transport times carried out for the current transport permit and possible other versions of the transport permit (the latter in brackets)."
       },
       "filter": {
         "show": "Show",
@@ -307,6 +315,9 @@
         "generatePassword": "Are you sure you want to generate a new password?",
         "deleteTransport": "Are you sure you want to delete the transport?"
       },
+      "error": {
+        "transportNumberConflict": "Transport number is already used for another transport instance. Please refresh the page."
+      },
       "saved": "Saved",
       "deleted": "Deleted",
       "password": "Transport password",
@@ -329,7 +340,6 @@
         "bridgeSupervisors": "Bridge supervisors",
         "ownSupervisor": "Own supervisors",
         "contractor": "Maintenance contractor",
-        "contractNumber": "Contract number",
         "bridgeSupervisor": "Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "Bridge supervisor (1.)",
         "supervisor2": "Backup supervisor (2.)",
@@ -365,7 +375,8 @@
       "stopped": "On a break",
       "in_progress": "On the move",
       "arrived": "Arrived",
-      "supervisionStarted": "Supervision started"
+      "supervisionStarted": "Supervision started",
+      "outdatedPermit": "Add to new permit version"
     }
   },
   "transports": {

@@ -24,7 +24,8 @@
       "checkTimeShort": "Tarkista aika",
       "invalidTime": "Virheellinen kellonaika",
       "fixTimes": "Tarkista ja korjaa ristiriitaiset kellonajat siltojen arvioiduista ylitysajoista ennen jatkamista."
-    }
+    },
+    "error": "Virhe tapahtui"
   },
   "main": {
     "header": {
@@ -92,6 +93,7 @@
   },
   "companyTransports": {
     "transportPermit": "Kuljetuslupa",
+    "transportNumber": "Kuljetuskerta",
     "nextSupervision": "Seuraava sillanvalvonta",
     "estimate": "arvio"
   },
@@ -110,7 +112,9 @@
       "route": "Reitti",
       "showRouteOnMap": "Reitti kartalla",
       "departurePoint": "Lähtöpaikka",
-      "arrivalPoint": "Määräpaikka"
+      "arrivalPoint": "Määräpaikka",
+      "transportNumber": "Kuljetuskerta",
+      "transportNumbersUsed": "Kaikki reitin kuljetuskerrat käytetty"
     },
     "bridgesToSupervise": "Valvottavat sillat"
   },
@@ -241,14 +245,18 @@
       "supervision": "Sillanvalvonta",
       "includesSupervisions": "Sisältää sillanvalvontoja",
       "noSupervisions": "Ei sisällä sillanvalvontoja",
+      "permitVersion": "Lupaversio",
       "addTransportButtonLabel": "Lisää kuljetus",
       "transportCount": "Kuljetuskerrat",
       "showByRoute": "Näytä reittikohtaisesti",
       "transportCountModal": {
         "title": "Luvan {{permit}} reittikohtaiset kuljetuskerrat",
         "used": "Käytetty",
+        "usedFromPrevious": "Muut lupaversiot",
         "amount": "Määrä luvalla",
-        "unlimited": "Rajoittamaton"
+        "unlimited": "Rajoittamaton",
+        "infoTitle": "Ohje",
+        "infoText": "Käytettyjen kuljetuskertojen kokonaismäärä koostuu nykyiselle kuljetusluvalle tehdyistä kuljetuksista sekä mahdollisille muille lupaversioille tehdyistä kuljetuksista (suluissa jälkimmäisenä)."
       },
       "filter": {
         "show": "Näytä",
@@ -307,6 +315,9 @@
         "generatePassword": "Oletko varma, että haluat generoida uuden salasanan?",
         "deleteTransport": "Oletko varma, että haluat poistaa kuljetuksen?"
       },
+      "error": {
+        "transportNumberConflict": "Kuljetuskerta on jo käytetty toiselle kuljetukselle. Ole hyvä ja päivitä sivu."
+      },
       "saved": "Tallennettu",
       "deleted": "Poistettu",
       "password": "Kuljetuksen salasana",
@@ -329,7 +340,6 @@
         "bridgeSupervisors": "Sillanvalvojat",
         "ownSupervisor": "Omat valvojat",
         "contractor": "Hoitourakoitsija",
-        "contractNumber": "Urakkasopimus",
         "bridgeSupervisor": "Sillanvalvoja (1.) ja varavalvoja (2.)",
         "supervisor1": "Sillanvalvoja (1.)",
         "supervisor2": "Varavalvoja (2.)",
@@ -365,7 +375,8 @@
       "stopped": "Tauolla",
       "in_progress": "Liikkeellä",
       "arrived": "Päättynyt",
-      "supervisionStarted": "Valvonta aloitettu"
+      "supervisionStarted": "Valvonta aloitettu",
+      "outdatedPermit": "Tee uudelle lupaversiolle"
     }
   },
   "transports": {

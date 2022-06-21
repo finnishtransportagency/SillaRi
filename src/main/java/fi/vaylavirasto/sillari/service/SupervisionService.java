@@ -1,13 +1,12 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.api.rest.error.PDFDownloadException;
-import fi.vaylavirasto.sillari.api.rest.error.PDFUploadException;
 import fi.vaylavirasto.sillari.api.rest.error.PDFGenerationException;
+import fi.vaylavirasto.sillari.api.rest.error.PDFUploadException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
-import fi.vaylavirasto.sillari.service.fim.FIMService;
 import fi.vaylavirasto.sillari.util.PDFGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,8 +36,6 @@ public class SupervisionService {
     @Autowired
     S3FileService s3FileService;
     @Autowired
-    FIMService fimService;
-    @Autowired
     BridgeService bridgeService;
     @Autowired
     SupervisionPdfService pdfService;
@@ -51,8 +48,6 @@ public class SupervisionService {
     @Autowired
     SupervisionReportRepository supervisionReportRepository;
     @Autowired
-    SupervisorRepository supervisorRepository;
-    @Autowired
     SupervisionImageRepository supervisionImageRepository;
     @Autowired
     RouteTransportRepository routeTransportRepository;
@@ -62,6 +57,8 @@ public class SupervisionService {
     RouteRepository routeRepository;
     @Autowired
     PermitRepository permitRepository;
+    @Autowired
+    CompanyRepository companyRepository;
 
 
     @Value("${spring.profiles.active:Unknown}")
@@ -90,18 +87,9 @@ public class SupervisionService {
     private void fillSupervisionDetails(SupervisionModel supervision) {
         Integer supervisionId = supervision.getId();
         supervision.setReport(supervisionReportRepository.getSupervisionReport(supervisionId));
-        supervision.setSupervisors(supervisorRepository.getSupervisorsBySupervisionId(supervisionId));
-        fimService.populateSupervisorNamesFromFIM(supervision.getSupervisors());
         supervision.setImages(supervisionImageRepository.getSupervisionImages(supervisionId));
         // Sets also current status and status timestamps
         supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervisionId));
-    }
-
-    private void setIdsFromDb(List<SupervisorModel> supervisorsFromDbInBoth, List<SupervisorModel> supervisorsFromFIM) {
-        for (SupervisorModel supervisorFromDb : supervisorsFromDbInBoth) {
-            SupervisorModel supervisorFromFIM = supervisorsFromFIM.stream().filter(s -> s.getUsername().equals(supervisorFromDb.getUsername())).findFirst().orElseThrow();
-            supervisorFromFIM.setId(supervisorFromDb.getId());
-        }
     }
 
     private void fillPermitDetails(SupervisionModel supervision) {
@@ -124,8 +112,8 @@ public class SupervisionService {
         supervision.setRouteTransport(routeTransport);
     }
 
-    public List<SupervisionModel> getSupervisionsOfSupervisor(String username) {
-        List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsBySupervisorUsername(username);
+    public List<SupervisionModel> getSupervisionsOfSupervisor(SillariUser user) {
+        List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsBySupervisor(user.getBusinessId());
         for (SupervisionModel supervision : supervisions) {
             // Sets also current status and status timestamps
             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
@@ -139,21 +127,21 @@ public class SupervisionService {
     }
 
 
-    public List<SupervisionModel> getFinishedButUnsignedSupervisionsNoDetails(String username) {
-        return supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisorUsername(username);
+    public List<SupervisionModel> getFinishedButUnsignedSupervisionsNoDetails(SillariUser user) {
+        return supervisionRepository.getFinishedButUnsignedSupervisionsBySupervisor(user.getBusinessId());
     }
 
-    public List<SupervisionModel> getUnsignedSupervisionsOfSupervisorNoDetails(String username) {
-        return supervisionRepository.getUnsignedSupervisionsBySupervisorUsername(username);
+    public List<SupervisionModel> getUnsignedSupervisionsOfSupervisorNoDetails(SillariUser user) {
+        return supervisionRepository.getUnsignedSupervisionsBySupervisor(user.getBusinessId());
     }
 
-    public List<SupervisionModel> getAllSupervisionsOfSupervisorNoDetails(String username) {
-        return supervisionRepository.getAllSupervisionsOfSupervisor(username);
+    public List<SupervisionModel> getAllSupervisionsOfSupervisorNoDetails(SillariUser user) {
+        return supervisionRepository.getAllSupervisionsOfSupervisor(user.getBusinessId());
     }
 
 
-    public List<SupervisionModel> getFinishedSupervisions(String username) {
-        List<SupervisionModel> supervisions = supervisionRepository.getFinishedSupervisionsBySupervisorUsername(username);
+    public List<SupervisionModel> getFinishedSupervisions(SillariUser user) {
+        List<SupervisionModel> supervisions = supervisionRepository.getFinishedSupervisionsBySupervisor(user.getBusinessId());
         for (SupervisionModel supervision : supervisions) {
             // The sending list needs supervision started time, bridge, routeTransport and permit details
             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
@@ -259,14 +247,12 @@ public class SupervisionService {
         // Delete supervision images from DB and AWS S3 bucket (or local file system in local environment)
         // Deleting pdf files is not necessary, since cancelSupervision is not allowed when supervision report is ready.
         List<SupervisionImageModel> images = supervisionImageRepository.getSupervisionImages(supervisionId);
-        try {
-            for (SupervisionImageModel image : images) {
-                String decodedKey = new String(Base64.getDecoder().decode(image.getObjectKey()));
-                s3FileService.deleteFile(awss3Client.getPhotoBucketName(), decodedKey, image.getFilename());
-            }
-        } catch (IOException e) {
-            logger.error("Deleting images from local file system failed, supervisionId={}", supervisionId);
+
+        for (SupervisionImageModel image : images) {
+            String decodedKey = new String(Base64.getDecoder().decode(image.getObjectKey()));
+            s3FileService.deleteFile(awss3Client.getPhotoBucketName(), decodedKey, image.getFilename());
         }
+
         supervisionImageRepository.deleteSupervisionImages(supervisionId);
 
         return getSupervision(supervisionId, true, true);
@@ -289,7 +275,7 @@ public class SupervisionService {
             } else if (pdfStatus.equals(SupervisionPdfStatusType.FAILED)) {
                 throw new PDFDownloadException("PDF generation failed, no file available", HttpStatus.NOT_FOUND);
             } else if (pdfStatus.equals(SupervisionPdfStatusType.SUCCESS)) {
-                s3FileService.getFile(response, awss3Client.getSupervisionBucketName(), pdfModel.getObjectKey(), pdfModel.getFilename(), "application/pdf");
+                s3FileService.getFile(response, awss3Client.getReportBucketName(), pdfModel.getObjectKey(), pdfModel.getFilename(), "application/pdf");
             }
         }
     }
@@ -299,7 +285,7 @@ public class SupervisionService {
         logger.debug("save pdf for supervision: " + pdfModel.getSupervisionId());
 
         try {
-            boolean success = s3FileService.saveFile(reportPDF, awss3Client.getSupervisionBucketName(), pdfModel.getSupervisionId(), pdfModel.getObjectKey(), pdfModel.getKtvObjectId(), pdfModel.getFilename(), "application/pdf");
+            boolean success = s3FileService.saveFile(reportPDF, "application/pdf", awss3Client.getReportBucketName(), pdfModel.getObjectKey(), pdfModel.getKtvObjectId(), pdfModel.getFilename(), pdfModel.getRowCreatedTime(), pdfModel.getSupervisionId());
             if (!success) {
                 throw new PDFUploadException("Error uploading file to AWS.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -380,21 +366,24 @@ public class SupervisionService {
         }
     }
 
-    public List<SupervisorModel> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
-        return supervisorRepository.getSupervisorsByRouteBridgeId(routeBridgeId);
+    public List<String> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
+        return supervisionRepository.getSupervisorsByRouteBridgeId(routeBridgeId);
     }
 
-    public List<SupervisorModel> getSupervisorsByRouteId(Integer routeId) {
-        return supervisorRepository.getSupervisorsByRouteId(routeId);
+    public List<String> getSupervisorsByRouteId(Integer routeId) {
+        return supervisionRepository.getSupervisorsByRouteId(routeId);
     }
 
-    public List<SupervisorModel> getSupervisorsByRouteTransportId(Integer routeBridgeId) {
-        return supervisorRepository.getSupervisorsByRouteTransportId(routeBridgeId);
+    public List<String> getSupervisorsByRouteTransportId(Integer routeTransportId) {
+        return supervisionRepository.getSupervisorsByRouteTransportId(routeTransportId);
     }
 
-    public List<SupervisorModel> getSupervisorsByPermitId(Integer routeId) {
-        return supervisorRepository.getSupervisorsByPermitId(routeId);
+    public List<String> getSupervisorsByPermitId(Integer permitId) {
+        return supervisionRepository.getSupervisorsByPermitId(permitId);
     }
 
+    public CompanyModel getCompanyOfSupervision(SupervisionModel supervision) {
+        return companyRepository.getCompanyByRouteBridgeId(supervision.getRouteBridgeId());
+    }
 
 }

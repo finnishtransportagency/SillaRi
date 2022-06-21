@@ -1,6 +1,6 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { onlineManager, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonContent, IonPage } from "@ionic/react";
 import Header from "../components/Header";
@@ -23,6 +23,7 @@ interface RouteTransportDetailProps {
 
 const RouteTransportDetail = (): JSX.Element => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const {
     networkStatus: { isFailed = {} },
@@ -39,7 +40,19 @@ const RouteTransportDetail = (): JSX.Element => {
     }
   );
 
-  const { route, supervisions = [] } = routeTransport || {};
+  const openRouteMap = (routeId?: number) => {
+    if (routeId) {
+      history.push(`/routemap/${routeId}`);
+    }
+  };
+
+  const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
+
+  useEffect(() => {
+    onlineManager.subscribe(() => setOnline(onlineManager.isOnline()));
+  }, []);
+
+  const { route, transportNumber, supervisions = [] } = routeTransport || {};
   const { name = "", permit } = route || {};
 
   // Sort the supervisions into permit bridge order so the list is the same regardless of whether each supervision has started or not
@@ -56,7 +69,7 @@ const RouteTransportDetail = (): JSX.Element => {
         ) : (
           <>
             <RouteTransportDetailHeader permit={permit as IPermit} routeTransport={routeTransport as IRouteTransport} />
-            <RouteAccordion route={route as IRoute} />
+            <RouteAccordion route={route as IRoute} transportNumber={transportNumber} mapDisabled={!isOnline} openMap={openRouteMap} />
             <TransportInfoAccordion permit={permit as IPermit} />
 
             <BridgeCardList supervisions={supervisions} />

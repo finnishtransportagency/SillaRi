@@ -24,7 +24,8 @@
       "checkTimeShort": "(SV) Check the time",
       "invalidTime": "(SV) Invalid time",
       "fixTimes": "(SV) Check and correct conflicting times for estimated bridge crossings before proceeding."
-    }
+    },
+    "error": "(SV) Virhe tapahtui"
   },
   "main": {
     "header": {
@@ -92,6 +93,7 @@
   },
   "companyTransports": {
     "transportPermit": "Transporttillstånd",
+    "transportNumber": "(SV) Kuljetuskerta",
     "nextSupervision": "(SV) Seuraava sillanvalvonta",
     "estimate": "(SV) arvio"
   },
@@ -110,7 +112,9 @@
       "route": "Rutt",
       "showRouteOnMap": "Visa rutten på kartan",
       "departurePoint": "Avgångsplats",
-      "arrivalPoint": "Destination"
+      "arrivalPoint": "Destination",
+      "transportNumber": "(SV) Kuljetuskerta",
+      "transportNumbersUsed": "(SV) Kaikki reitin kuljetuskerrat käytetty"
     },
     "bridgesToSupervise": "Broar som övervakas"
   },
@@ -241,14 +245,18 @@
       "supervision": "Övervakning",
       "includesSupervisions": "(SV) Sisältää sillanvalvontoja",
       "noSupervisions": "(SV) Ei sisällä sillanvalvontoja",
+      "permitVersion": "(SV) Lupaversio",
       "addTransportButtonLabel": "Lägg till transport",
       "transportCount": "(SV) Kuljetuskerrat",
       "showByRoute": "(SV) Näytä reittikohtaisesti",
       "transportCountModal": {
         "title": "(SV) Luvan {{permit}} reittikohtaiset kuljetuskerrat",
         "used": "(SV) Käytetty",
+        "usedFromPrevious": "(SV) Muut lupaversiot",
         "amount": "(SV) Määrä luvalla",
-        "unlimited": "(SV) Rajoittamaton"
+        "unlimited": "(SV) Rajoittamaton",
+        "infoTitle": "(SV) Ohje",
+        "infoText": "(SV) Käytettyjen kuljetuskertojen kokonaismäärä koostuu nykyiselle kuljetusluvalle tehdyistä kuljetuksista sekä mahdollisille muille lupaversioille tehdyistä kuljetuksista (suluissa jälkimmäisenä)."
       },
       "filter": {
         "show": "Visa",
@@ -307,6 +315,9 @@
         "generatePassword": "Är du säker på att du vill generera ett nyt lösenord för transporten?",
         "deleteTransport": "Är du säker på att du vill ta bort transporten?"
       },
+      "error": {
+        "transportNumberConflict": "(SV) Kuljetuskerta on jo käytetty toiselle kuljetukselle. Ole hyvä ja päivitä sivu."
+      },
       "saved": "Sparad",
       "deleted": "Borttagen",
       "password": "Lösenord för transporten",
@@ -329,7 +340,6 @@
         "bridgeSupervisors": "Broövervakare",
         "ownSupervisor": "Egen övervakare",
         "contractor": "Underhållsentreprenör",
-        "contractNumber": "Kontrakt",
         "bridgeSupervisor": "Broövervakare (1.) och stf. broövervakare (2.)",
         "supervisor1": "Broövervakare (1.)",
         "supervisor2": "stf. broövervakare(2.)",
@@ -365,7 +375,8 @@
       "stopped": "Paus",
       "in_progress": "På väg",
       "arrived": "Transporten avslutad",
-      "supervisionStarted": "(SV) Valvonta aloitettu"
+      "supervisionStarted": "(SV) Valvonta aloitettu",
+      "outdatedPermit": "(SV) Tee uudelle lupaversiolle"
     }
   },
   "transports": {

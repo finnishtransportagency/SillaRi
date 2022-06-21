@@ -29,7 +29,7 @@ import OfflineBanner from "./OfflineBanner";
 import SentSupervisionReportsAccordion from "./SentSupervisionReportsAccordion";
 import SendingListItem from "./SendingListItem";
 import SendingListOfflineNotice from "./SendingListOfflineNotice";
-import SentSupervisionReportModal from "./SentSupervisionReportModal";
+import SentSupervisionReport from "./SentSupervisionReport";
 import "./SendingList.css";
 
 interface SendingListProps {
@@ -190,7 +190,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
         color="secondary"
       />
 
-      <SentSupervisionReportModal
+      <SentSupervisionReport
         isOpen={reportModalOpen}
         setOpen={setReportModalOpen}
         selectedSupervisionId={selectedSupervisionId}

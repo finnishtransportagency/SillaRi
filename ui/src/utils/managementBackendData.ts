@@ -6,7 +6,7 @@ import ICompany from "../interfaces/ICompany";
 import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
-import ISupervisor from "../interfaces/ISupervisor";
+import ISupervision from "../interfaces/ISupervision";
 
 export const getCompany = async (dispatch: Dispatch): Promise<ICompany> => {
   try {
@@ -108,11 +108,13 @@ export const generateNewRouteTransportPassword = async (routeTransportId: number
   }
 };
 
-export const getRouteTransportsOfPermit = async (permitId: number, dispatch: Dispatch): Promise<IRouteTransport[]> => {
+export const getRouteTransportsOfPermit = async (permitId: number, permitNumber: string, dispatch: Dispatch): Promise<IRouteTransport[]> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransportsOfPermit: false } });
 
-    const routeTransportListResponse = await fetch(`${getOrigin()}/api/routetransport/getroutetransportsofpermit?permitId=${permitId}`);
+    const routeTransportListResponse = await fetch(
+      `${getOrigin()}/api/routetransport/getroutetransportsofpermit?permitId=${permitId}&permitNumber=${permitNumber}`
+    );
 
     if (routeTransportListResponse.ok) {
       const routeTransportList = (await routeTransportListResponse.json()) as Promise<IRouteTransport[]>;
@@ -128,11 +130,11 @@ export const getRouteTransportsOfPermit = async (permitId: number, dispatch: Dis
   }
 };
 
-export const createRouteTransport = async (routeTransport: IRouteTransport, dispatch: Dispatch): Promise<IRouteTransport> => {
+export const createRouteTransport = async (routeTransport: IRouteTransport, permitNumber: string, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: false } });
 
-    const createRouteTransportResponse = await fetch(`${getOrigin()}/api/routetransport/createroutetransport`, {
+    const createRouteTransportResponse = await fetch(`${getOrigin()}/api/routetransport/createroutetransport?permitNumber=${permitNumber}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -146,11 +148,19 @@ export const createRouteTransport = async (routeTransport: IRouteTransport, disp
       return await plannedRouteTransport;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
-      throw new Error(NETWORK_RESPONSE_NOT_OK);
+
+      // Create routeTransport might return 409 when there's a conflict with transportNumber
+      const errorStatus = createRouteTransportResponse.status;
+      if (errorStatus === 409) {
+        throw new Error(errorStatus.toString());
+      } else {
+        throw new Error(NETWORK_RESPONSE_NOT_OK);
+      }
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
-    throw new Error(err as string);
+    const errMessage = err instanceof Error ? err.message : (err as string);
+    throw new Error(errMessage);
   }
 };
 
@@ -205,22 +215,22 @@ export const deleteRouteTransport = async (routeTransportId: number, dispatch: D
   }
 };
 
-export const getSupervisors = async (dispatch: Dispatch): Promise<ISupervisor[]> => {
+export const getSupervisionOfTransportCompany = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: false } });
+    console.log("GetSupervisionOfTransportCompany", supervisionId);
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: false } });
 
-    const supervisorsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisors`);
+    const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionoftransportcompany?supervisionId=${supervisionId}`);
 
-    if (supervisorsResponse.ok) {
-      const supervisors = (await supervisorsResponse.json()) as Promise<ISupervisor[]>;
-      console.log("getSupervisors", supervisors);
-      return await supervisors;
+    if (supervisionResponse.ok) {
+      const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;
+      return await supervision;
     } else {
-      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: true } });
       throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: true } });
     throw new Error(err as string);
   }
 };

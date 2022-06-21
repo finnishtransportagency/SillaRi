@@ -1,5 +1,6 @@
 package fi.vaylavirasto.sillari.service;
 
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.dto.CompanyTransportsDTO;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
@@ -34,14 +35,8 @@ public class CompanyService {
     @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
 
-    public CompanyModel getCompany(Integer id) {
-        CompanyModel company = companyRepository.getCompanyById(id);
-        company.setPermits(permitRepository.getPermitsByCompanyId(id));
-        for (PermitModel permitModel : company.getPermits()) {
-            permitModel.setRoutes(routeRepository.getRoutesByPermitId(permitModel.getId()));
-        }
-        return company;
-    }
+    @Autowired
+    RouteTransportNumberService routeTransportNumberService;
 
     public CompanyModel getCompanyByBusinessId(String businessId) {
         CompanyModel company = companyRepository.getCompanyByBusinessId(businessId);
@@ -57,13 +52,18 @@ public class CompanyService {
             );
 
             for (PermitModel permitModel : company.getPermits()) {
-                permitModel.setRoutes(
-                    routes.stream().filter(r -> permitModel.getId().equals(r.getPermitId())).collect(Collectors.toList())
-                );
+                List<RouteModel> permitRoutes = routes.stream().filter(r -> permitModel.getId().equals(r.getPermitId())).collect(Collectors.toList());
+                permitModel.setRoutes(permitRoutes);
+
+                if (!permitRoutes.isEmpty()) {
+                    Map<Long, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberService.getRouteTransportNumbersForRoutes(permitRoutes, permitModel.getPermitNumber());
+                    permitRoutes.forEach((route) -> route.setRouteTransportNumbers(routeTransportNumbers.get(route.getLeluId())));
+                }
             }
 
             if (routes.size() > 0) {
-                // Get routeBridges without bridge details, needed only for checking routeBridge count
+                // Get routeBridges without bridge details, needed only for checking if route includes bridge supervisions
+                // No need to worry about transport numbers at this point
                 List<Integer> routeIds = routes.stream().map(RouteModel::getId).collect(Collectors.toList());
                 Map<Integer, List<RouteBridgeModel>> routeBridgeMap = routeBridgeRepository.getRouteBridges(routeIds);
                 routes.forEach(route -> route.setRouteBridges(routeBridgeMap.get(route.getId())));
@@ -89,11 +89,11 @@ public class CompanyService {
         return companyRepository.getCompanyByRouteId(routeId);
     }
 
-    public List<CompanyTransportsDTO> getCompanyTransportListOfSupervisor(String username) {
+    public List<CompanyTransportsDTO> getCompanyTransportListOfSupervisor(SillariUser user) {
         List<CompanyTransportsDTO> companyTransports = new ArrayList<>();
 
         // Get route transports where the supervisor has supervisions
-        List<RouteTransportModel> routeTransports = transportRepository.getRouteTransportsOfSupervisor(username);
+        List<RouteTransportModel> routeTransports = transportRepository.getRouteTransportsOfSupervisor(user.getBusinessId());
 
         if (routeTransports != null && !routeTransports.isEmpty()) {
             for (RouteTransportModel transport : routeTransports) {
@@ -114,7 +114,7 @@ public class CompanyService {
                     }
                 }
 
-                List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportAndSupervisorUsername(transport.getId(), username);
+                List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteTransportAndSupervisor(transport.getId(), user.getBusinessId());
 
                 // Get all supervision status histories at once instead of looping the DB calls
                 List<Integer> supervisionIds = supervisions.stream().map(SupervisionModel::getId).collect(Collectors.toList());

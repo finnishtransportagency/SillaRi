@@ -1,12 +1,10 @@
 package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
+import fi.vaylavirasto.sillari.api.rest.error.TransportNumberConflictException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.*;
-import fi.vaylavirasto.sillari.service.CompanyService;
-import fi.vaylavirasto.sillari.service.RouteTransportService;
-import fi.vaylavirasto.sillari.service.SupervisionService;
-import fi.vaylavirasto.sillari.service.UIService;
+import fi.vaylavirasto.sillari.service.*;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
@@ -54,13 +52,13 @@ public class RouteTransportController {
     @Operation(summary = "Get route transports of permit")
     @GetMapping(value = "/getroutetransportsofpermit", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
-    public ResponseEntity<?> getRouteTransportsOfPermit(@RequestParam Integer permitId) {
+    public ResponseEntity<?> getRouteTransportsOfPermit(@RequestParam Integer permitId, @RequestParam String permitNumber) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportsOfPermit");
         try {
             if (!isOwnCompanyPermit(permitId)) {
                 throw new AccessDeniedException("Not own company route permit");
             }
-            List<RouteTransportModel> routeTransports = routeTransportService.getRouteTransportsOfPermit(permitId, true);
+            List<RouteTransportModel> routeTransports = routeTransportService.getRouteTransportsOfPermit(permitId, permitNumber);
             return ResponseEntity.ok().body(routeTransports != null ? routeTransports : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -77,19 +75,17 @@ public class RouteTransportController {
                 throw new AccessDeniedException("Not own company route permit");
             }
             SillariUser user = uiService.getSillariUser();
-            RouteTransportModel routeTransport = routeTransportService.getRouteTransportOfSupervisor(routeTransportId, user.getUsername());
+            RouteTransportModel routeTransport = routeTransportService.getRouteTransportOfSupervisor(routeTransportId, user);
             return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
     }
 
-
-
     @Operation(summary = "Create route transport")
     @PostMapping(value = "/createroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
-    public ResponseEntity<?> createRouteTransport(@RequestBody RouteTransportModel routeTransport) {
+    public ResponseEntity<?> createRouteTransport(@RequestParam String permitNumber, @RequestBody RouteTransportModel routeTransport) throws TransportNumberConflictException {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "createRouteTransport");
         try {
             SillariUser user = uiService.getSillariUser();
@@ -97,25 +93,33 @@ public class RouteTransportController {
             if (!isOwnCompanyPermit(routeTransport.getRoute().getPermitId())) {
                 throw new AccessDeniedException("Not own company permit for route transport");
             }
-            //we can give just next use transport number available and not worry about, cause bridges have been filtered into ui with the next
-            // availabe transport number in /getPermit
-            routeTransport.setTransportNumber(routeTransportService.getMaxUsedTransportNumberOfRoute(routeTransport.getRouteId()) + 1);
-            RouteTransportModel insertedRouteTransport = routeTransportService.createRouteTransport(routeTransport);
 
-            if (routeTransport.getSupervisions() != null && insertedRouteTransport != null) {
-                routeTransport.getSupervisions().forEach(supervisionModel -> {
-                    supervisionModel.setRouteTransportId(insertedRouteTransport.getId());
+            Integer nextAvailableTransportNumber = routeTransportService.getNextAvailableTransportNumber(routeTransport, routeTransport.getRoute(), permitNumber);
+            routeTransport.setTransportNumber(nextAvailableTransportNumber);
 
-                    if (supervisionModel.getId() != null && supervisionModel.getId() > 0) {
-                        supervisionService.updateSupervision(supervisionModel);
-                    } else {
-                        supervisionService.createSupervision(supervisionModel, user);
-                    }
-                });
-            }
+            Integer routeTransportId = routeTransportService.createRouteTransport(routeTransport);
+            routeTransport.setId(routeTransportId);
 
-            if (insertedRouteTransport != null) {
-                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(insertedRouteTransport.getId(), true);
+            if (routeTransportId != null) {
+
+                if (routeTransport.getTransportNumber() != null) {
+                    routeTransportService.setTransportNumberUsed(routeTransport);
+                } else {
+                    logger.warn("No available transport numbers for routeTransport permitNumber {}, route {}. RouteTransport created without transportNumber.", permitNumber, routeTransport.getRoute().getName());
+                }
+
+                if (routeTransport.getSupervisions() != null) {
+                    routeTransport.getSupervisions().forEach(supervisionModel -> {
+                        supervisionModel.setRouteTransportId(routeTransportId);
+
+                        if (supervisionModel.getId() != null && supervisionModel.getId() > 0) {
+                            supervisionService.updateSupervision(supervisionModel);
+                        } else {
+                            supervisionService.createSupervision(supervisionModel, user);
+                        }
+                    });
+                }
+                RouteTransportModel routeTransportModel = routeTransportService.getRouteTransport(routeTransportId, true);
                 return ResponseEntity.ok().body(routeTransportModel != null ? routeTransportModel : new EmptyJsonResponse());
             } else {
                 return ResponseEntity.ok().body(new EmptyJsonResponse());
@@ -124,8 +128,6 @@ public class RouteTransportController {
             serviceMetric.end();
         }
     }
-
-
 
     @Operation(summary = "Update route transport")
     @PutMapping(value = "/updateroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -140,6 +142,8 @@ public class RouteTransportController {
             }
             RouteTransportModel updatedTransportModel = routeTransportService.updateRouteTransport(routeTransport);
 
+            // TODO if changing route is permitted, handle transport number changes.
+            // Currently changing the route after transport is saved is not possible in UI.
             if (routeTransport.getSupervisions() != null) {
                 routeTransport.getSupervisions().forEach(supervisionModel -> {
                     if (supervisionModel.getId() != null && supervisionModel.getId() > 0) {
@@ -187,6 +191,9 @@ public class RouteTransportController {
                     });
                 }
 
+                // Set the reserved transport number back to available
+                routeTransportService.setTransportNumberAvailable(routeTransport);
+
                 // Delete the route transport related data
                 routeTransportService.deleteRouteTransport(routeTransport);
 
@@ -213,11 +220,11 @@ public class RouteTransportController {
         return user.getBusinessId().equals(cm.getBusinessId());
     }
 
-    /* Check that route transport contains supervision by the supervisos */
+    /* Check that route transport contains supervision by the supervisor */
     private boolean isRouteTransportOfSupervisor(Integer routeTransportId) {
         SillariUser user = uiService.getSillariUser();
-        List<SupervisorModel> supervisors = supervisionService.getSupervisorsByRouteTransportId(routeTransportId);
-        return  supervisors.stream().map(s->s.getUsername()).anyMatch(u-> u.equals(user.getUsername()));
+        List<String> supervisors = supervisionService.getSupervisorsByRouteTransportId(routeTransportId);
+        return supervisors.contains(user.getBusinessId());
     }
 
 }

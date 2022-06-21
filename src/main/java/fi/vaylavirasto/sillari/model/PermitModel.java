@@ -16,6 +16,7 @@ public class PermitModel extends BaseModel {
     private Integer companyId;
     private String permitNumber;
     private Integer leluVersion;
+    private Boolean isCurrentVersion;
     private OffsetDateTime leluLastModifiedDate;
     private OffsetDateTime validStartDate;
     private OffsetDateTime validEndDate;
