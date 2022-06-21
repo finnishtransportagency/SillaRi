@@ -1,6 +1,7 @@
 import IAddress from "./IAddress";
 import IRouteBridge from "./IRouteBridge";
 import IPermit from "./IPermit";
+import IRouteTransportNumber from "./IRouteTransportNumber";
 
 export default interface IRoute {
   id: number;
@@ -12,4 +13,6 @@ export default interface IRoute {
   geojson: string;
   routeBridges: IRouteBridge[];
   transportCount?: number;
+  routeTransportNumbers?: IRouteTransportNumber[];
+  nextAvailableTransportNumber?: number;
 }

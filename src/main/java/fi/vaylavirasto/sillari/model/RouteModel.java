@@ -26,4 +26,7 @@ public class RouteModel extends BaseModel {
     private AddressModel departureAddress;
     private AddressModel arrivalAddress;
     private PermitModel permit;
+
+    // Only for use in UI
+    private Integer nextAvailableTransportNumber;
 }
