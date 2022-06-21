@@ -2,10 +2,8 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
-import fi.vaylavirasto.sillari.model.SupervisionModel;
-import fi.vaylavirasto.sillari.model.SupervisionReportModel;
+import fi.vaylavirasto.sillari.model.*;
+import fi.vaylavirasto.sillari.service.RouteTransportPasswordService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
@@ -35,17 +33,25 @@ public class SupervisionController {
     UIService uiService;
     @Autowired
     SupervisionService supervisionService;
+    @Autowired
+    RouteTransportPasswordService rtpService;
 
     @Operation(summary = "Get supervision")
     @GetMapping(value = "/getsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId) {
+    public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId, @RequestParam String password) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervision");
         try {
             if (!isSupervisionOfSupervisor(supervisionId)) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId, true, true);
+            RouteTransportPasswordModel rtp = rtpService.findRouteTransportPassword(password);
+            if(rtp == null){
+                supervisionModel.setLocked(true);
+            }else{
+                supervisionModel.setLocked(false);
+            }
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
