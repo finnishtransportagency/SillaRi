@@ -395,7 +395,7 @@ public class PermitRepository {
                         .where(TableAlias.supervisionImage.SUPERVISION_ID.in(supervisionIds))
                         .execute();
                 ctx.delete(TableAlias.supervisionPdf)
-                        .where(TableAlias.supervisionImage.SUPERVISION_ID.in(supervisionIds))
+                        .where(TableAlias.supervisionPdf.SUPERVISION_ID.in(supervisionIds))
                         .execute();
                 ctx.delete(TableAlias.supervisionSupervisor)
                         .where(TableAlias.supervisionSupervisor.SUPERVISION_ID.in(supervisionIds))
