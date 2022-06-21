@@ -12,7 +12,7 @@ export const findRouteTransportPassword = async (transportPassword: string, disp
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: false } });
 
-    const rtpResponse = await fetch(`${getOrigin()}/api/transport/login?transportPassword=${encodeURIComponent(transportPassword)}`);
+    const rtpResponse = await fetch(`${getOrigin()}/api/transport/login?transportPassword=${encodeURIComponent(MD5(transportPassword)}`);
 
     if (rtpResponse.ok) {
       const rtp = rtpResponse.json() as Promise<IRouteTransportPassword>;
