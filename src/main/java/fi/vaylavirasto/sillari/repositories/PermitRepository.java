@@ -159,8 +159,15 @@ public class PermitRepository {
                 insertAxleChart(ctx, permitModel);
             }
 
-            for (RouteModel routeModel : permitModel.getRoutes()) {
+            for (int i = 0; i < permitModel.getRoutes().size(); i ++) {
+                RouteModel routeModel = permitModel.getRoutes().get(i);
                 routeModel.setPermitId(permitModel.getId());
+
+                // TODO remove setting ordinal when LeLu is ready to send orderingNumber
+                if (routeModel.getOrdinal() == null) {
+                    routeModel.setOrdinal(i + 1);
+                }
+
                 insertRouteAndRouteBridges(ctx, routeModel);
             }
 
@@ -275,6 +282,7 @@ public class PermitRepository {
         Record1<Integer> routeIdResult = ctx.insertInto(TableAlias.route,
                         TableAlias.route.PERMIT_ID,
                         TableAlias.route.LELU_ID,
+                        TableAlias.route.ORDINAL,
                         TableAlias.route.NAME,
                         TableAlias.route.TRANSPORT_COUNT,
                         TableAlias.route.ALTERNATIVE_ROUTE,
@@ -284,6 +292,7 @@ public class PermitRepository {
                 ).values(
                         routeModel.getPermitId(),
                         routeModel.getLeluId(),
+                        routeModel.getOrdinal(),
                         routeModel.getName(),
                         routeModel.getTransportCount(),
                         routeModel.getAlternativeRoute(),
@@ -353,7 +362,11 @@ public class PermitRepository {
 
             if (routeBridge.getBridgeId() != null) {
                 routeBridge.setRouteId(route.getId());
-                routeBridge.setOrdinal(i + 1);
+
+                // TODO remove setting ordinal when LeLu is ready to send orderingNumber
+                if (routeBridge.getOrdinal() == null) {
+                    routeBridge.setOrdinal(i + 1);
+                }
 
                 ctx.insertInto(TableAlias.routeBridge,
                                 TableAlias.routeBridge.ROUTE_ID,

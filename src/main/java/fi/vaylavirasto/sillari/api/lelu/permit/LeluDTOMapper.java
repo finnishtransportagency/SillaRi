@@ -37,6 +37,7 @@ public interface LeluDTOMapper {
     @Mappings({
             @Mapping(target = "id", ignore = true),
             @Mapping(target = "leluId", source = "dto.id"),
+            @Mapping(target = "ordinal", source = "dto.orderingNumber"),
             @Mapping(target = "routeBridges", source = "dto.bridges"),
     })
     RouteModel fromDTOToModel(LeluRouteDTO dto);
@@ -46,6 +47,7 @@ public interface LeluDTOMapper {
             @Mapping(target = "bridge.identifier", source = "dto.identifier"),
             @Mapping(target = "bridge.name", source = "dto.name"),
             @Mapping(target = "bridge.roadAddress", source = "dto.roadAddress"),
+            @Mapping(target = "ordinal", source = "dto.orderingNumber"),
             @Mapping(target = "crossingInstruction", source = "dto.additionalInfo"),
             @Mapping(target = "contractBusinessId", source = "dto.contractBusinessIdentifier"),
             @Mapping(target = "transportNumber", source = "dto.transportNumber")

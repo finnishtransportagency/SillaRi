@@ -28,6 +28,10 @@ public class LeluBridgeDTO {
     @Schema(description = "Bridge road address (road number, section, lane and distance)", example = "00012 204 0 03788")
     private String roadAddress;
 
+    //@NotNull(message = "{bridge.order.not.null}") TODO add not null when LeLu is ready
+    @Schema(description = "Order number of the bridge on the route", required = true, example = "1")
+    private Integer orderingNumber;
+
     @Schema(description = "Name of the 1st supervisor", example = "Vilja Valvoja")
     private String supervisorName;
 
