@@ -129,42 +129,42 @@ const TransportCountModal = ({ isOpen, setOpen, permit, routeTransports = [] }: 
               return a.ordinal - b.ordinal;
             })
             .map((route) => {
-            const { id, name = "", transportCount = 0 } = route || {};
+              const { id, name = "", transportCount = 0 } = route || {};
 
-            const key = `route_${id}`;
-            const transports = routeTransports
-              ? routeTransports.filter((transport) => {
-                  const { route: transportRoute } = transport || {};
-                  const { id: routeId = -1 } = transportRoute || {};
-                  return id === routeId;
-                })
-              : [];
+              const key = `route_${id}`;
+              const transports = routeTransports
+                ? routeTransports.filter((transport) => {
+                    const { route: transportRoute } = transport || {};
+                    const { id: routeId = -1 } = transportRoute || {};
+                    return id === routeId;
+                  })
+                : [];
 
-            const otherVersionsForThisRoute = transportNumbersForOtherPermitVersions(route);
-            const usedRouteTransportNumbersFromOtherVersions = otherVersionsForThisRoute.filter((rtn) => rtn.used);
+              const otherVersionsForThisRoute = transportNumbersForOtherPermitVersions(route);
+              const usedRouteTransportNumbersFromOtherVersions = otherVersionsForThisRoute.filter((rtn) => rtn.used);
 
-            const totalTransportCount =
-              transports.length > 0 && usedRouteTransportNumbersFromOtherVersions.length > 0
-                ? transports.length + usedRouteTransportNumbersFromOtherVersions.length
-                : transports.length || usedRouteTransportNumbersFromOtherVersions.length;
+              const totalTransportCount =
+                transports.length > 0 && usedRouteTransportNumbersFromOtherVersions.length > 0
+                  ? transports.length + usedRouteTransportNumbersFromOtherVersions.length
+                  : transports.length || usedRouteTransportNumbersFromOtherVersions.length;
 
-            return (
-              <IonRow key={key}>
-                <IonCol size="5" className="ion-padding-start ion-padding-top ion-padding-bottom">
-                  {name}
-                </IonCol>
-                <IonCol size="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
-                  <IonText>{totalTransportCount}</IonText>
-                  {usedRouteTransportNumbersFromOtherVersions.length > 0 && (
-                    <IonText>{` (${transports.length} + ${usedRouteTransportNumbersFromOtherVersions.length})`}</IonText>
-                  )}
-                </IonCol>
-                <IonCol size="4" className="ion-padding-start ion-padding-top ion-padding-bottom">
-                  {transportCount !== 0 ? transportCount : t("management.companySummary.transportCountModal.unlimited")}
-                </IonCol>
-              </IonRow>
-            );
-          })}
+              return (
+                <IonRow key={key}>
+                  <IonCol size="5" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                    {name}
+                  </IonCol>
+                  <IonCol size="3" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                    <IonText>{totalTransportCount}</IonText>
+                    {usedRouteTransportNumbersFromOtherVersions.length > 0 && (
+                      <IonText>{` (${transports.length} + ${usedRouteTransportNumbersFromOtherVersions.length})`}</IonText>
+                    )}
+                  </IonCol>
+                  <IonCol size="4" className="ion-padding-start ion-padding-top ion-padding-bottom">
+                    {transportCount !== 0 ? transportCount : t("management.companySummary.transportCountModal.unlimited")}
+                  </IonCol>
+                </IonRow>
+              );
+            })}
         </IonGrid>
       </IonContent>
     </IonModal>
