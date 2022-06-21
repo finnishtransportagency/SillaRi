@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react";
+import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import moment from "moment";
 import CustomSelect from "../common/CustomSelect";
 import IPermit from "../../interfaces/IPermit";
@@ -8,11 +8,11 @@ import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISupervision from "../../interfaces/ISupervision";
 import IVehicle from "../../interfaces/IVehicle";
-import mapPoint from "../../theme/icons/map-point.svg";
 import { SupervisorType, VehicleRole } from "../../utils/constants";
 import { isTransportEditable } from "../../utils/validation";
 import MapModal from "../MapModal";
 import TransportDepartureTime from "./TransportDepartureTime";
+import RouteAccordion from "../RouteAccordion";
 
 interface RouteInfoGridProps {
   routeTransportId: number;
@@ -41,10 +41,10 @@ const RouteInfoGrid = ({
 
   const { company, routes: permitRoutes = [], vehicles = [] } = permit || {};
   const { businessId = "" } = company || {};
-  const { id: selectedRouteId, name: selectedRouteName, departureAddress, arrivalAddress } = selectedRouteOption || {};
-  const { streetAddress: departureStreetAddress } = departureAddress || {};
-  const { streetAddress: arrivalStreetAddress } = arrivalAddress || {};
-  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
+  const { id: selectedRouteId, name: selectedRouteName, nextAvailableTransportNumber } = selectedRouteOption || {};
+  const { plannedDepartureTime, transportNumber } = modifiedRouteTransportDetail || {};
+
+  const currentTransportNumber = transportNumber ? transportNumber : nextAvailableTransportNumber;
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
@@ -90,6 +90,10 @@ const RouteInfoGrid = ({
     }
   };
 
+  const openRouteMap = () => {
+    setMapModalOpen(true);
+  };
+
   return (
     <IonGrid className="ion-no-padding">
       <IonRow className="ion-margin-top">
@@ -132,45 +136,11 @@ const RouteInfoGrid = ({
       </IonRow>
 
       <IonRow>
-        <IonCol size="12" size-lg="8">
-          <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin-top">
-              <IonCol size="12" size-sm="4">
-                <IonText className="headingText">{t("management.transportDetail.routeInfo.origin")}</IonText>
-              </IonCol>
-              <IonCol size="12" size-sm="8">
-                <IonText>{departureStreetAddress}</IonText>
-              </IonCol>
-            </IonRow>
-            <IonRow className="ion-margin-top">
-              <IonCol size="12" size-sm="4">
-                <IonText className="headingText">{t("management.transportDetail.routeInfo.destination")}</IonText>
-              </IonCol>
-              <IonCol size="12" size-sm="8">
-                <IonText>{arrivalStreetAddress}</IonText>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-        </IonCol>
-
-        <IonCol size="12" size-lg="4">
-          <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin-top">
-              <IonCol size="12" size-lg="4" />
-              <IonCol size="12" size-lg="8">
-                {selectedRouteId > 0 && (
-                  <>
-                    <IonText className="linkText" onClick={() => setMapModalOpen(true)}>
-                      {t("management.transportDetail.routeInfo.showRouteOnMap")}
-                    </IonText>
-                    <IonIcon className="otherIcon" icon={mapPoint} />
-
-                    <MapModal routeId={String(selectedRouteId)} isOpen={isMapModalOpen} setIsOpen={() => setMapModalOpen(false)} />
-                  </>
-                )}
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+        <IonCol size="12" className="ion-margin-top">
+          {selectedRouteOption && (
+            <RouteAccordion route={selectedRouteOption as IRoute} transportNumber={currentTransportNumber} openMap={openRouteMap} />
+          )}
+          <MapModal routeId={String(selectedRouteId)} isOpen={isMapModalOpen} setIsOpen={() => setMapModalOpen(false)} />
         </IonCol>
       </IonRow>
 

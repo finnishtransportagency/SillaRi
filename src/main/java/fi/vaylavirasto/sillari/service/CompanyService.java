@@ -35,6 +35,9 @@ public class CompanyService {
     @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
 
+    @Autowired
+    RouteTransportNumberService routeTransportNumberService;
+
     public CompanyModel getCompanyByBusinessId(String businessId) {
         CompanyModel company = companyRepository.getCompanyByBusinessId(businessId);
         if (company == null) {
@@ -49,9 +52,13 @@ public class CompanyService {
             );
 
             for (PermitModel permitModel : company.getPermits()) {
-                permitModel.setRoutes(
-                    routes.stream().filter(r -> permitModel.getId().equals(r.getPermitId())).collect(Collectors.toList())
-                );
+                List<RouteModel> permitRoutes = routes.stream().filter(r -> permitModel.getId().equals(r.getPermitId())).collect(Collectors.toList());
+                permitModel.setRoutes(permitRoutes);
+
+                if (!permitRoutes.isEmpty()) {
+                    Map<Long, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberService.getRouteTransportNumbersForRoutes(permitRoutes, permitModel.getPermitNumber());
+                    permitRoutes.forEach((route) -> route.setRouteTransportNumbers(routeTransportNumbers.get(route.getLeluId())));
+                }
             }
 
             if (routes.size() > 0) {

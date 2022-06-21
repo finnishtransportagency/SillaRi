@@ -97,6 +97,8 @@ public class PermitService {
                     transportNumber = routeTransport.getTransportNumber();
                 } else {
                     transportNumber = routeTransportNumberService.getNextAvailableTransportNumber(route, permit.getPermitNumber());
+                    // Set next available transport number to route, so we can check it in UI without route transport
+                    route.setNextAvailableTransportNumber(transportNumber);
                 }
 
                 logger.debug("getting permit {} route {} bridges with transport number: {}", permit.getPermitNumber(), route.getName(), transportNumber);

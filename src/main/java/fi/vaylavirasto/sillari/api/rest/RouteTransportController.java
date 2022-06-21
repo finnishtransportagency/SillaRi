@@ -101,6 +101,7 @@ public class RouteTransportController {
             routeTransport.setId(routeTransportId);
 
             if (routeTransportId != null) {
+
                 if (routeTransport.getTransportNumber() != null) {
                     routeTransportService.setTransportNumberUsed(routeTransport);
                 } else {
