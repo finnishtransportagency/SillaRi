@@ -6,17 +6,17 @@ import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
 import IRouteTransportStatus from "../interfaces/IRouteTransportStatus";
-import { getUserData } from "./utils/backendData";
-import MD5 from "crypto-js";
+import { getUserData } from "./backendData";
+import { MD5 } from "crypto-js";
 import { useQuery } from "react-query";
-import {onRetry} from "./backendData";
+import { onRetry } from "./backendData";
 import IUserData from "../interfaces/IUserData";
 
 export const findRouteTransportPassword = async (transportPassword: string, dispatch: Dispatch): Promise<IRouteTransportPassword> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: false } });
 
-    const rtpResponse = await fetch(`${getOrigin()}/api/transport/login?transportPassword=${encodeURIComponent(MD5(transportPassword)}`);
+    const rtpResponse = await fetch(`${getOrigin()}/api/transport/login?transportPassword=${encodeURIComponent(MD5(transportPassword).toString())}`);
 
     if (rtpResponse.ok) {
       const rtp = rtpResponse.json() as Promise<IRouteTransportPassword>;
@@ -45,9 +45,10 @@ export const getPermitOfRouteTransport = async (transportPassword: string, dispa
     });
     const userData = data ?? ({} as IUserData);
 
-
     const permitOfRouteTransportResponse = await fetch(
-      `${getOrigin()}/api/transport/getpermitofroutetransport?transportPassword=${encodeURIComponent(MD5(userData.username + transportPassword)}`
+      `${getOrigin()}/api/transport/getpermitofroutetransport?transportPassword=${encodeURIComponent(
+        MD5(userData.username + transportPassword).toString()
+      )}`
     );
 
     if (permitOfRouteTransportResponse.ok) {
