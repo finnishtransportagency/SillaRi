@@ -8,15 +8,12 @@ import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
 import IRouteTransportStatus from "../interfaces/IRouteTransportStatus";
 import { getUserData } from "./backendData";
 import { MD5 } from "crypto-js";
-import { useQuery } from "react-query";
-import { onRetry } from "./backendData";
-import IUserData from "../interfaces/IUserData";
 
 export const findRouteTransportPassword = async (transportPassword: string, dispatch: Dispatch): Promise<IRouteTransportPassword> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: false } });
 
-    const rtpResponse = await fetch(`${getOrigin()}/api/transport/login?transportPassword=${encodeURIComponent(MD5(transportPassword).toString())}`);
+    const rtpResponse = await fetch(`${getOrigin()}/api/transport/login?transportPassword=${encodeURIComponent(transportPassword)}`);
 
     if (rtpResponse.ok) {
       const rtp = rtpResponse.json() as Promise<IRouteTransportPassword>;
@@ -39,16 +36,10 @@ export const getPermitOfRouteTransport = async (transportPassword: string, dispa
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermitOfRouteTransport: false } });
 
     // Get the user data from the cache when offline or the backend when online
-    const { data } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
-      retry: onRetry,
-      staleTime: Infinity,
-    });
-    const userData = data ?? ({} as IUserData);
+    const { username } = await getUserData(dispatch);
 
     const permitOfRouteTransportResponse = await fetch(
-      `${getOrigin()}/api/transport/getpermitofroutetransport?transportPassword=${encodeURIComponent(
-        MD5(userData.username + transportPassword).toString()
-      )}`
+      `${getOrigin()}/api/transport/getpermitofroutetransport?transportPassword=${encodeURIComponent(MD5(username + transportPassword).toString())}`
     );
 
     if (permitOfRouteTransportResponse.ok) {
