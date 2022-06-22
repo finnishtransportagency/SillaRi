@@ -76,6 +76,11 @@
   cursor: pointer;
 }
 
+.passwordButton {
+  --padding-top: 23px;
+  --padding-bottom: 23px;
+}
+
 .iconLink {
   cursor: pointer;
 }
