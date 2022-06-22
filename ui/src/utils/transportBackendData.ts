@@ -7,7 +7,7 @@ import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
 import IRouteTransportStatus from "../interfaces/IRouteTransportStatus";
 import { getUserData } from "./backendData";
-import { MD5 } from "crypto-js";
+import { SHA1 } from "crypto-js";
 
 export const findRouteTransportPassword = async (transportPassword: string, dispatch: Dispatch): Promise<IRouteTransportPassword> => {
   try {
@@ -39,7 +39,7 @@ export const getPermitOfRouteTransport = async (transportPassword: string, dispa
     const { username } = await getUserData(dispatch);
 
     const permitOfRouteTransportResponse = await fetch(
-      `${getOrigin()}/api/transport/getpermitofroutetransport?transportPassword=${encodeURIComponent(MD5(username + transportPassword).toString())}`
+      `${getOrigin()}/api/transport/getpermitofroutetransport?transportPassword=${encodeURIComponent(SHA1(username + transportPassword).toString())}`
     );
 
     if (permitOfRouteTransportResponse.ok) {
