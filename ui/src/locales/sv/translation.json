@@ -93,6 +93,7 @@
   },
   "companyTransports": {
     "transportPermit": "Transporttillstånd",
+    "transportNumber": "(SV) Kuljetuskerta",
     "nextSupervision": "(SV) Seuraava sillanvalvonta",
     "estimate": "(SV) arvio"
   },
@@ -111,7 +112,9 @@
       "route": "Rutt",
       "showRouteOnMap": "Visa rutten på kartan",
       "departurePoint": "Avgångsplats",
-      "arrivalPoint": "Destination"
+      "arrivalPoint": "Destination",
+      "transportNumber": "(SV) Kuljetuskerta",
+      "transportNumbersUsed": "(SV) Kaikki reitin kuljetuskerrat käytetty"
     },
     "bridgesToSupervise": "Broar som övervakas"
   },
@@ -249,8 +252,11 @@
       "transportCountModal": {
         "title": "(SV) Luvan {{permit}} reittikohtaiset kuljetuskerrat",
         "used": "(SV) Käytetty",
+        "usedFromPrevious": "(SV) Muut lupaversiot",
         "amount": "(SV) Määrä luvalla",
-        "unlimited": "(SV) Rajoittamaton"
+        "unlimited": "(SV) Rajoittamaton",
+        "infoTitle": "(SV) Ohje",
+        "infoText": "(SV) Käytettyjen kuljetuskertojen kokonaismäärä koostuu nykyiselle kuljetusluvalle tehdyistä kuljetuksista sekä mahdollisille muille lupaversioille tehdyistä kuljetuksista (suluissa jälkimmäisenä)."
       },
       "filter": {
         "show": "Visa",
