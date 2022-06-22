@@ -93,7 +93,7 @@ public class RouteTransportService {
         return routeTransportModel;
     }
 
-    public List<RouteTransportModel> getRouteTransportsOfPermit(Integer permitId, String permitNumber) {
+    public List<RouteTransportModel> getRouteTransportsOfPermit(Integer permitId) {
         List<RouteTransportModel> routeTransportModels = routeTransportRepository.getRouteTransportsByPermitId(permitId);
 
         if (routeTransportModels != null) {
@@ -101,10 +101,6 @@ public class RouteTransportService {
             List<Integer> routeTransportIds = routeTransportModels.stream().map(RouteTransportModel::getId).collect(Collectors.toList());
 
             List<RouteModel> routeModels = routeRepository.getRoutesById(routeIds);
-
-            Map<Long, List<RouteTransportNumberModel>> routeTransportNumbers = routeTransportNumberService.getRouteTransportNumbersForRoutes(routeModels, permitNumber);
-            routeModels.forEach(route -> route.setRouteTransportNumbers(routeTransportNumbers.get(route.getLeluId())));
-
             List<RouteTransportStatusModel> rtStatusModels = routeTransportStatusRepository.getTransportStatusHistory(routeTransportIds);
             List<SupervisionModel> supervisionModels = supervisionRepository.getSupervisionsByRouteTransportId(routeTransportIds);
 
