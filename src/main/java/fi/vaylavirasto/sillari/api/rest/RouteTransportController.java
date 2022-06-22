@@ -30,6 +30,8 @@ public class RouteTransportController {
     @Autowired
     SupervisionService supervisionService;
     @Autowired
+    PermitService permitService;
+    @Autowired
     CompanyService companyService;
 
 
@@ -52,13 +54,15 @@ public class RouteTransportController {
     @Operation(summary = "Get route transports of permit")
     @GetMapping(value = "/getroutetransportsofpermit", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
-    public ResponseEntity<?> getRouteTransportsOfPermit(@RequestParam Integer permitId, @RequestParam String permitNumber) {
+    public ResponseEntity<?> getRouteTransportsOfPermit(@RequestParam Integer permitId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportsOfPermit");
         try {
             if (!isOwnCompanyPermit(permitId)) {
                 throw new AccessDeniedException("Not own company route permit");
             }
-            List<RouteTransportModel> routeTransports = routeTransportService.getRouteTransportsOfPermit(permitId, permitNumber);
+
+            PermitModel permit = permitService.getPermit(permitId);
+            List<RouteTransportModel> routeTransports = routeTransportService.getRouteTransportsOfPermit(permitId, permit.getPermitNumber());
             return ResponseEntity.ok().body(routeTransports != null ? routeTransports : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -85,7 +89,7 @@ public class RouteTransportController {
     @Operation(summary = "Create route transport")
     @PostMapping(value = "/createroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
-    public ResponseEntity<?> createRouteTransport(@RequestParam String permitNumber, @RequestBody RouteTransportModel routeTransport) throws TransportNumberConflictException {
+    public ResponseEntity<?> createRouteTransport(@RequestBody RouteTransportModel routeTransport) throws TransportNumberConflictException {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "createRouteTransport");
         try {
             SillariUser user = uiService.getSillariUser();
@@ -94,7 +98,9 @@ public class RouteTransportController {
                 throw new AccessDeniedException("Not own company permit for route transport");
             }
 
-            Integer nextAvailableTransportNumber = routeTransportService.getNextAvailableTransportNumber(routeTransport, routeTransport.getRoute(), permitNumber);
+            PermitModel permit = permitService.getPermit(routeTransport.getRoute().getPermitId());
+
+            Integer nextAvailableTransportNumber = routeTransportService.getNextAvailableTransportNumber(routeTransport, routeTransport.getRoute(), permit.getPermitNumber());
             routeTransport.setTransportNumber(nextAvailableTransportNumber);
 
             Integer routeTransportId = routeTransportService.createRouteTransport(routeTransport);
@@ -105,7 +111,7 @@ public class RouteTransportController {
                 if (routeTransport.getTransportNumber() != null) {
                     routeTransportService.setTransportNumberUsed(routeTransport);
                 } else {
-                    logger.warn("No available transport numbers for routeTransport permitNumber {}, route {}. RouteTransport created without transportNumber.", permitNumber, routeTransport.getRoute().getName());
+                    logger.warn("No available transport numbers for routeTransport permitNumber {}, route {}. RouteTransport created without transportNumber.", permit.getPermitNumber(), routeTransport.getRoute().getName());
                 }
 
                 if (routeTransport.getSupervisions() != null) {

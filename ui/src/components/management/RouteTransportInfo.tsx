@@ -75,7 +75,7 @@ const RouteTransportInfo = ({
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
   // Set-up mutations for modifying data later
-  const routeTransportPlannedMutation = useMutation((transport: IRouteTransport) => createRouteTransport(transport, permitNumber, dispatch), {
+  const routeTransportPlannedMutation = useMutation((transport: IRouteTransport) => createRouteTransport(transport, dispatch), {
     retry: false,
     onSuccess: () => {
       // TODO - move toast to avoid error?
