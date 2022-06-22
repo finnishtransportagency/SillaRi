@@ -6,48 +6,48 @@ const secretClient = new AWS.SecretsManager({
 });
 
 
-const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
+const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
-exports.handler = async (event, context) => {
-  console.log("Received event:", JSON.stringify(event, null, 2));
-  // Get the object from the event and show its content type
-  const bucket = event.Records[0].s3.bucket.name;
-  const imageKey = decodeURIComponent(
-    event.Records[0].s3.object.key.replace(/\+/g, " ")
-  );
-  console.log("bucket", bucket);
-  const params = {
-    Bucket: bucket,
-    Key: imageKey,
-  };
 
-  try {
-    const secret = await getSecret();
-    console.log("got secret");
+exports.handler = async (event, context) => {;
+    console.log('Received event:', JSON.stringify(event, null, 2));
+    // Get the object from the event and show its content type
+    const bucket = event.Records[0].s3.bucket.name;
+    const imageKey = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
+    console.log('bucket', bucket);
+    const params = {
+        Bucket: bucket,
+        Key: imageKey,
+    };
 
-    const secretJSON = secret.SecretString;
-    const parsed = JSON.parse(secretJSON);
-    const apiKey = parsed["kvt-api-key"];
+    try {
+        const secret = await getSecret();
+        console.log('got secret');
 
-    const object = await s3.getObject(params).promise();
-    const { Body, Metadata } = object;
-    console.log("got object");
+        const secretJSON = secret.SecretString;
+        const parsed = JSON.parse(secretJSON);
+        const apiKey = parsed['kvt-api-key'];
 
-    // Convert Body from a Buffer to a String
-    const objectData = Body.toString("base64"); // Use the encoding necessary
+        const object = await s3.getObject(params).promise();
+        const { Body, Metadata } = object;
+        console.log('got object');
 
-    await ktvClient.postFileToKVT(objectData, Metadata, apiKey, imageKey);
-  } catch (error) {
-    console.error(error);
-    return 0;
-  }
-  return 1;
+
+        // Convert Body from a Buffer to a String
+        const objectData = Body.toString('base64'); // Use the encoding necessary
+
+        await ktvClient.postFileToKVT(objectData, Metadata, apiKey, imageKey);
+
+    } catch (error) {
+        console.error(error);
+        return 0;
+    }
+    return 1;
+
 };
 
 async function getSecret() {
-  const sec = await secretClient
-    .getSecretValue({ SecretId: process.env.KTV_API_KEY_SECRET_ID })
-    .promise();
-  console.log("*** SECRET WAS FETCHED FROM SECRETS MANAGER");
-  return sec;
+    const sec = await secretClient.getSecretValue({ SecretId: process.env.KTV_API_KEY_SECRET_ID }).promise();
+    console.log('*** SECRET WAS FETCHED FROM SECRETS MANAGER');
+    return sec;
 }
