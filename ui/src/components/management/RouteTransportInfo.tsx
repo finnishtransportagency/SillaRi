@@ -29,7 +29,6 @@ import Loading from "../Loading";
 import RouteTransportFooter from "./RouteTransportFooter";
 import SupervisionReport from "./SupervisionReport";
 import IToastMessage from "../../interfaces/IToastMessage";
-import RouteAccordion from "../RouteAccordion";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
