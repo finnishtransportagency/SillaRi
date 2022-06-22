@@ -24,11 +24,11 @@ const PermitAccordionPanel = ({ permit }: PermitAccordionPanelProps): JSX.Elemen
   const [transportFilter, setTransportFilter] = useState<string>("");
   const [transportCountModalOpen, setTransportCountModalOpen] = useState<boolean>(false);
 
-  const { id: permitId, permitNumber, isCurrentVersion } = permit;
+  const { id: permitId, isCurrentVersion } = permit;
 
   const { data: routeTransportList } = useQuery(
     ["getRouteTransportsOfPermit", Number(permitId)],
-    () => getRouteTransportsOfPermit(Number(permitId), permitNumber, dispatch),
+    () => getRouteTransportsOfPermit(Number(permitId), dispatch),
     {
       retry: onRetry,
     }
