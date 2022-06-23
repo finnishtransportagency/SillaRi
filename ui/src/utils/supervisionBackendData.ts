@@ -13,6 +13,8 @@ import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import IStartCrossingInput from "../interfaces/IStartCrossingInput";
+import {getUserData} from "./backendData";
+import { Storage } from "@capacitor/storage";
 
 export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICompanyTransports[]> => {
   try {
@@ -100,6 +102,12 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
   try {
     console.log("GetSupervision", supervisionId);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
+
+    // Get the user data from the cache when offline or the backend when online
+    const { username } = await getUserData(dispatch);
+
+    //Get username + password hash from local storage with key transportationId _ username
+    Storage.get
 
     const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}`);
 
