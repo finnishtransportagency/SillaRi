@@ -107,9 +107,15 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
     const { username } = await getUserData(dispatch);
 
     //Get username + password hash from local storage with key transportationId _ username
-    Storage.get
+    //TODO routeTransportId as a param into this function. Hardcoded for deving.
+    const routeTransportId = 1;
 
-    const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}`);
+    console.log("username: " + username);
+    const usernamePasswordHash =  Storage.get(""+routeTransportId+"_"+username);
+    console.log("usernamePasswordHash: " + usernamePasswordHash);
+
+
+    const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}&password=${usernamePasswordHash}`);
 
     if (supervisionResponse.ok) {
       const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;

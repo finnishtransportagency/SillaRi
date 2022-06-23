@@ -97,8 +97,8 @@ const App: React.FC = () => {
   useEffect(() => {
     //TODO dev code remove. Store hashed supervision password in the storagee
     Storage.set({
-      // transportation id _ username
-      key: "128474_LXVALVOJA",
+      // route-transport-id_username
+      key: "1_LXVALVOJA",
       //username + password
       value: SHA1("LXVALVOJA" + "myAwesomSafePassu123").toString(),
     });
