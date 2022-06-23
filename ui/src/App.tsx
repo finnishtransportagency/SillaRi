@@ -95,12 +95,12 @@ const App: React.FC = () => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   useEffect(() => {
-    //TODO dev code remove. Store hashed supervision password in the storagee
+    //TODO dev code remove. Store hashed supervision password in the storage
     Storage.set({
       // route-transport-id_username
-      key: "1_LXVALVOJA",
+      key: "1_T012345",
       //username + password
-      value: SHA1("LXVALVOJA" + "myAwesomSafePassu123").toString(),
+      value: SHA1("T012345" + "myAwesomSafePassu123").toString(),
     });
 
     // Add or remove the "dark" class based on if the media query matches

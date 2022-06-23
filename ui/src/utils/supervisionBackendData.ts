@@ -13,7 +13,7 @@ import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import IStartCrossingInput from "../interfaces/IStartCrossingInput";
-import {getUserData} from "./backendData";
+import { getUserData } from "./backendData";
 import { Storage } from "@capacitor/storage";
 
 export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICompanyTransports[]> => {
@@ -111,11 +111,12 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
     const routeTransportId = 1;
 
     console.log("username: " + username);
-    const usernamePasswordHash =  Storage.get(""+routeTransportId+"_"+username);
-    console.log("usernamePasswordHash: " + usernamePasswordHash);
+    const usernamePasswordHash = await Storage.get({ key: "" + routeTransportId + "_" + username });
+    console.log(usernamePasswordHash);
 
-
-    const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}&password=${usernamePasswordHash}`);
+    const supervisionResponse = await fetch(
+      `${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}&password=${usernamePasswordHash.value}`
+    );
 
     if (supervisionResponse.ok) {
       const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;
