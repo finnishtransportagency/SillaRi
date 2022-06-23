@@ -115,7 +115,7 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
     console.log(usernamePasswordHash);
 
     const supervisionResponse = await fetch(
-      `${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}&password=${usernamePasswordHash.value}`
+      `${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}&usernameAndPasswordHashed=${usernamePasswordHash.value}`
     );
 
     if (supervisionResponse.ok) {

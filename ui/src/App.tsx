@@ -99,8 +99,8 @@ const App: React.FC = () => {
     Storage.set({
       // route-transport-id_username
       key: "1_T012345",
-      //username + password
-      value: SHA1("T012345" + "myAwesomSafePassu123").toString(),
+      //username + route trans password
+      value: SHA1("T012345" + "KULJETUS1").toString(),
     });
 
     // Add or remove the "dark" class based on if the media query matches

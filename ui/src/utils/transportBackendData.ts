@@ -6,8 +6,6 @@ import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
 import IRouteTransportStatus from "../interfaces/IRouteTransportStatus";
-import { getUserData } from "./backendData";
-import { SHA1 } from "crypto-js";
 
 export const findRouteTransportPassword = async (transportPassword: string, dispatch: Dispatch): Promise<IRouteTransportPassword> => {
   try {
@@ -35,11 +33,8 @@ export const getPermitOfRouteTransport = async (transportPassword: string, dispa
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermitOfRouteTransport: false } });
 
-    // Get the user data from the cache when offline or the backend when online
-    const { username } = await getUserData(dispatch);
-
     const permitOfRouteTransportResponse = await fetch(
-      `${getOrigin()}/api/transport/getpermitofroutetransport?transportPassword=${encodeURIComponent(SHA1(username + transportPassword).toString())}`
+      `${getOrigin()}/api/transport/getpermitofroutetransport?transportPassword=${encodeURIComponent(transportPassword)}`
     );
 
     if (permitOfRouteTransportResponse.ok) {

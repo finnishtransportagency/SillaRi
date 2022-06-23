@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
@@ -30,12 +31,12 @@ public class RouteTransportPasswordService {
     }
 
     private boolean doPasswordsMatch(String inputUsernameAndPasswordHashed, String username, String plainPasswordFromDb) {
-        logger.debug("Trying to match:");
-        logger.debug("inputUsernameAndPasswordHashed " + inputUsernameAndPasswordHashed);
-        logger.debug("username " + username);
-        logger.debug("plainPasswordFromDb " + plainPasswordFromDb);
+        logger.info("Trying to match:");
+        logger.info("inputUsernameAndPasswordHashed " + inputUsernameAndPasswordHashed);
+        logger.info("username " + username);
+        logger.info("plainPasswordFromDb " + plainPasswordFromDb);
         String hashOfUsernameAndPasswordFromDb = sha1(username + plainPasswordFromDb);
-        logger.debug("hashOfUsernameAndPasswordFromDb: " + hashOfUsernameAndPasswordFromDb);
+        logger.info("hashOfUsernameAndPasswordFromDb: " + hashOfUsernameAndPasswordFromDb);
 
         return inputUsernameAndPasswordHashed.equals(hashOfUsernameAndPasswordFromDb);
     }
@@ -47,14 +48,10 @@ public class RouteTransportPasswordService {
         {
             MessageDigest crypt = MessageDigest.getInstance("SHA-1");
             crypt.reset();
-            crypt.update(string.getBytes("UTF-8"));
+            crypt.update(string.getBytes(StandardCharsets.UTF_8));
             sha1 = byteToHex(crypt.digest());
         }
         catch(NoSuchAlgorithmException e)
-        {
-            e.printStackTrace();
-        }
-        catch(UnsupportedEncodingException e)
         {
             e.printStackTrace();
         }
