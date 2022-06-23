@@ -36,25 +36,39 @@ public class SupervisionController {
     @Autowired
     RouteTransportPasswordService rtpService;
 
+    /**
+     * @param supervisionId
+     * @param usernameAndPasswordHashed SHA1 hashed from "USER_ID" + "TRANSPORTATION_PASSWORD", for example SHA1("LXVALVOJA1234")
+     * @return
+     */
     @Operation(summary = "Get supervision")
     @GetMapping(value = "/getsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId, @RequestParam String password) {
+    public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId, @RequestParam String usernameAndPasswordHashed) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervision");
         try {
             if (!isSupervisionOfSupervisor(supervisionId)) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId, true, true);
-            RouteTransportPasswordModel rtp = rtpService.findRouteTransportPassword(password);
-            if(rtp == null){
-                supervisionModel.setLocked(true);
-            }else{
-                supervisionModel.setLocked(false);
-            }
+
+            // On supervision page prior to entering supervisions are loaded,
+            // supervisions are locked by default if ui local storage doesn't
+            // contain a valid password for the supervision
+            supervisionModel.setLocked(true);
+            unLockSupervision(usernameAndPasswordHashed, supervisionModel);
+
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
+        }
+    }
+
+
+    private void unLockSupervision(String usernameAndPasswordHashed, SupervisionModel supervisionModel) {
+        SillariUser user = uiService.getSillariUser();
+        if(rtpService.doesTransportPasswordMatch (usernameAndPasswordHashed, user.getUsername(), supervisionModel.getRouteTransport().getId())){
+            supervisionModel.setLocked(false);
         }
     }
 
