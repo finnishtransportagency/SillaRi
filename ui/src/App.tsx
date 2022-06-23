@@ -35,7 +35,7 @@ import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/supervisionUtil";
 import IonicAsyncStorage from "./IonicAsyncStorage";
 import { Storage } from "@capacitor/storage";
-import CryptoJS from "crypto-js";
+import { SHA1 } from "crypto-js";
 
 /* Sillari.css */
 import "./theme/sillari.css";
@@ -97,8 +97,10 @@ const App: React.FC = () => {
   useEffect(() => {
     //TODO dev code remove. store encrypted  supervision paassword in teeh storagee
     Storage.set({
-      key: "myyyy_pass",
-      value: CryptoJS.AES.encrypt("1234", "Secret Passphrase").toString(),
+      // transportation id _ username
+      key: "128474_LXVALVOJA",
+      //username + password
+      value: SHA1("LXVALVOJA", "myAwesomSafePassu123").toString(),
     });
 
     // Add or remove the "dark" class based on if the media query matches
