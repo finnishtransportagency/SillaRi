@@ -1,6 +1,5 @@
 package fi.vaylavirasto.sillari.service;
 
-import com.amazonaws.services.elasticmapreduce.model.ScalingTrigger;
 import fi.vaylavirasto.sillari.model.RouteTransportPasswordModel;
 import fi.vaylavirasto.sillari.repositories.RouteTransportPasswordRepository;
 import org.apache.logging.log4j.LogManager;
@@ -25,14 +24,12 @@ public class RouteTransportPasswordService {
         return rtpModel;
     }
 
-
-
     public boolean doesTransportPasswordMatch (String usernameAndPasswordHashed, String username, Integer routeTransportId) {
         RouteTransportPasswordModel rtpModel = rtpRepository.getTransportPassword(routeTransportId);
-        return doesTransportPasswordMatch(usernameAndPasswordHashed, username, rtpModel.getTransportPassword());
+        return doPasswordsMatch(usernameAndPasswordHashed, username, rtpModel.getTransportPassword());
     }
 
-    private boolean doesTransportPasswordMatch (String inputUsernameAndPasswordHashed, String username, String plainPasswordFromDb) {
+    private boolean doPasswordsMatch(String inputUsernameAndPasswordHashed, String username, String plainPasswordFromDb) {
         logger.debug("Trying to match:");
         logger.debug("inputUsernameAndPasswordHashed " + inputUsernameAndPasswordHashed);
         logger.debug("username " + username);
