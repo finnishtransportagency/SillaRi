@@ -44,7 +44,7 @@ public class SupervisionController {
     @Operation(summary = "Get supervision")
     @GetMapping(value = "/getsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId, @RequestParam String usernameAndPasswordHashed) {
+    public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId, @RequestParam(required = false) String usernameAndPasswordHashed) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervision");
         try {
             if (!isSupervisionOfSupervisor(supervisionId)) {
@@ -56,8 +56,9 @@ public class SupervisionController {
             // supervisions are locked by default if ui local storage doesn't
             // contain a valid password for the supervision
             supervisionModel.setLocked(true);
-            unLockSupervision(usernameAndPasswordHashed, supervisionModel);
-
+            if(usernameAndPasswordHashed!=null) {
+                unLockSupervision(usernameAndPasswordHashed, supervisionModel);
+            }
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

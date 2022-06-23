@@ -100,7 +100,7 @@ const App: React.FC = () => {
       // transportation id _ username
       key: "128474_LXVALVOJA",
       //username + password
-      value: SHA1("LXVALVOJA", "myAwesomSafePassu123").toString(),
+      value: SHA1("LXVALVOJA" + "myAwesomSafePassu123").toString(),
     });
 
     // Add or remove the "dark" class based on if the media query matches
