@@ -120,7 +120,7 @@ public class LeluService {
                         permitRepository.updatePermitCurrentVersion(oldPermit.getId(), false);
                     }
                 }
-                response.setStatus(LeluPermitStatus.NEW_VERSION_CREATED);
+                response.setStatus(LeluPermitStatus.UPDATED);
             }
         } else {
             response.setStatus(LeluPermitStatus.CREATED);
