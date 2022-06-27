@@ -54,7 +54,7 @@ const TransportCard = ({ company, transport }: TransportCardProps): JSX.Element 
   return (
     <IonItem
       id={passwordPopoverTriggerId}
-      className={`ion-margin-horizontal quarter-margin-bottom ${transportDeparted ? "departedTransport" : ""}`}
+      className={`ion-margin-horizontal small-margin-bottom ${transportDeparted ? "departedTransport" : ""}`}
       lines="full"
       color={transportDeparted ? undefined : "light"}
     >

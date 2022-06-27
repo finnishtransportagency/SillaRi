@@ -185,7 +185,11 @@ ion-popover.large-popover {
   margin-right: var(--ion-margin, 16px);
 }
 
-.quarter-margin-bottom {
+.small-margin-top {
+  margin-top: 4px;
+}
+
+.small-margin-bottom {
   margin-bottom: 4px;
 }
 

@@ -32,20 +32,20 @@ const TransportCodeForm = (): JSX.Element => {
     <IonPage>
       <Header title={t("main.header.title")} titleStyle="headingBoldText ion-text-center" />
       <IonContent color="light">
-        <IonGrid className="ion-no-padding" fixed>
-          <IonRow>
-            <IonCol size="12" className="ion-padding">
-              <IonText className="headingBoldText">{t("transports.transportCodeInput.inputTitle")}</IonText>
-            </IonCol>
-          </IonRow>
-          <TransportCodeInput
-            codeInputValue={codeInputValue}
-            setCodeInputValue={setCodeInputValue}
-            errorMessage={errorMsg}
-            setErrorMessage={setErrorMsg}
-            submitPassword={handleSubmit}
-          />
-        </IonGrid>
+        <div className="ion-margin">
+          <IonText className="headingBoldText">{t("transports.transportCodeInput.inputTitle")}</IonText>
+        </div>
+        <div className="listContainer whiteBackground ion-padding-vertical">
+          <IonGrid className="ion-no-padding">
+            <TransportCodeInput
+              codeInputValue={codeInputValue}
+              setCodeInputValue={setCodeInputValue}
+              errorMessage={errorMsg}
+              setErrorMessage={setErrorMsg}
+              submitPassword={handleSubmit}
+            />
+          </IonGrid>
+        </div>
       </IonContent>
     </IonPage>
   );

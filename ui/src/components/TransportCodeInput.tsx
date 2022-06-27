@@ -29,35 +29,26 @@ const TransportCodeInput = ({
 
   return (
     <>
-      <IonRow>
-        <IonCol size="12" className="whiteBackground">
-          <IonGrid className="ion-no-padding">
-            <IonRow className="ion-margin">
-              <IonCol size="12">
-                <IonLabel className="headingText">{t("transports.transportCodeInput.inputLabel")}</IonLabel>
-              </IonCol>
-            </IonRow>
-            <IonRow className="ion-margin">
-              <IonCol size="12" size-sm="4">
-                <IonInput
-                  type="password"
-                  value={codeInputValue}
-                  placeholder={t("transports.transportCodeInput.inputPlaceholder")}
-                  onIonChange={(event) => {
-                    setCodeValue(event.detail.value);
-                  }}
-                  clearInput
-                />
-              </IonCol>
-            </IonRow>
-            <IonRow className="ion-margin">
-              <IonCol size="12" size-sm="4">
-                <IonButton color="primary" expand="block" size="large" disabled={!codeInputValue} onClick={submitPassword}>
-                  {t("common.buttons.search")}
-                </IonButton>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+      <IonRow className="ion-margin-horizontal ion-margin-bottom ion-align-items-end">
+        <IonCol size="6" size-md="4" size-lg="3" className="ion-margin-end">
+          <IonLabel className="headingText">
+            <small>{t("transports.transportCodeInput.inputLabel")}</small>
+          </IonLabel>
+          <IonInput
+            className="small-margin-top"
+            type="password"
+            value={codeInputValue}
+            placeholder={t("transports.transportCodeInput.inputPlaceholder")}
+            onIonChange={(event) => {
+              setCodeValue(event.detail.value);
+            }}
+            clearInput
+          />
+        </IonCol>
+        <IonCol size="5" size-md="3" size-lg="2">
+          <IonButton color="primary" expand="block" size="default" disabled={!codeInputValue} onClick={submitPassword}>
+            {t("common.buttons.search")}
+          </IonButton>
         </IonCol>
       </IonRow>
 

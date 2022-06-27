@@ -43,7 +43,7 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
   };
 
   return (
-    <IonItem className="quarter-margin-bottom" lines="full">
+    <IonItem className="small-margin-bottom" lines="full">
       <IonGrid className="ion-no-margin ion-no-padding">
         <IonRow id={passwordPopoverTriggerId} className="ion-margin-vertical ion-align-items-center ion-justify-content-between">
           <IonCol size="9">

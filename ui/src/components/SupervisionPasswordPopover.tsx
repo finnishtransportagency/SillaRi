@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { IonButton, IonButtons, IonGrid, IonIcon, IonPopover, IonToolbar } from "@ionic/react";
+import { IonButton, IonButtons, IonCol, IonGrid, IonIcon, IonPopover, IonRow, IonText, IonToolbar } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import close from "../theme/icons/close.svg";
 import TransportCodeInput from "./TransportCodeInput";
@@ -52,7 +52,7 @@ const SupervisionPasswordPopover = ({ triggerId, title, isOpen, setOpen, openSup
   };
 
   return (
-    <IonPopover trigger={triggerId} isOpen={isOpen} size="cover" side="top" alignment="center" onDidDismiss={() => dismissPopover()}>
+    <IonPopover trigger={triggerId} isOpen={isOpen} size="cover" side="top" alignment="start" onDidDismiss={() => dismissPopover()}>
       <>
         <IonToolbar>
           <p className="headingText ion-padding-start">{title}</p>
@@ -62,7 +62,7 @@ const SupervisionPasswordPopover = ({ triggerId, title, isOpen, setOpen, openSup
             </IonButton>
           </IonButtons>
         </IonToolbar>
-        <IonGrid className="ion-no-padding" fixed>
+        <IonGrid className="ion-no-padding ion-no-margin ion-margin-bottom" fixed>
           <TransportCodeInput
             codeInputValue={codeInputValue}
             setCodeInputValue={setCodeInputValue}
@@ -70,6 +70,13 @@ const SupervisionPasswordPopover = ({ triggerId, title, isOpen, setOpen, openSup
             setErrorMessage={setErrorMessage}
             submitPassword={() => handleSubmitPassword()}
           />
+          <IonRow>
+            <IonCol className="ion-text-center ion-margin">
+              <IonText className="linkText" onClick={() => setOpen(false)}>
+                {t("common.buttons.close")}
+              </IonText>
+            </IonCol>
+          </IonRow>
         </IonGrid>
       </>
     </IonPopover>
