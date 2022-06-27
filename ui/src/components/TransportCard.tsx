@@ -42,7 +42,7 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
       routerLink={`/routetransportdetail/${routeTransportId}`}
     >
       <IonGrid className="ion-no-margin ion-no-padding">
-        <IonRow className="ion-margin-vertical ion-align-items-center">
+        <IonRow className="ion-margin-vertical ion-align-items-center ion-justify-content-between">
           <IonCol size="10">
             <IonLabel color={transportDeparted ? undefined : "dark"}>
               <IonLabel className={transportDeparted ? "headingText" : "headingText upcomingTransport"}>
@@ -67,8 +67,9 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
               )}
             </IonLabel>
           </IonCol>
-          <IonCol size="1">
+          <IonCol size="auto">
             <IonButton
+              size="default"
               color="secondary"
               className="passwordButton"
               onClick={() => {

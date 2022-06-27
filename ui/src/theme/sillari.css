@@ -77,8 +77,11 @@
 }
 
 .passwordButton {
-  --padding-top: 23px;
-  --padding-bottom: 23px;
+  margin: 4px 4px 18px 4px;
+  --padding-top: 25px;
+  --padding-bottom: 25px;
+  --padding-start: 13px;
+  --padding-end: 13px;
 }
 
 .iconLink {
