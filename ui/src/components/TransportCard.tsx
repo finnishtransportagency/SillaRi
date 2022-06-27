@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import Moment from "react-moment";
@@ -7,13 +7,20 @@ import { useTranslation } from "react-i18next";
 import { getNextPlannedSupervisionTime } from "../utils/supervisionUtil";
 import "./TransportCard.css";
 import lock from "../theme/icons/lock_closed_white.svg";
+import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
+import { useHistory } from "react-router-dom";
+import moment from "moment/moment";
+import ICompany from "../interfaces/ICompany";
 
 interface TransportCardProps {
+  company: ICompany;
   transport: IRouteTransport;
 }
 
-const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
+const TransportCard = ({ company, transport }: TransportCardProps): JSX.Element => {
   const { t } = useTranslation();
+  const history = useHistory();
+  const [passwordPopoverOpen, setPasswordPopoverOpen] = useState<boolean>(false);
 
   const {
     id: routeTransportId,
@@ -28,25 +35,33 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
 
   const { permit, name: routeName } = route || {};
   const { permitNumber } = permit || {};
+  const { name: companyName = "" } = company || {};
 
   const { status } = currentStatus || {};
   const transportDeparted = status && status !== TransportStatus.PLANNED;
 
   const nextSupervisionTime = getNextPlannedSupervisionTime(supervisions);
 
+  const passwordButtonId = `passwordButton_transport_${routeTransportId}`;
+  const transportTime = transportDeparted ? departureTime : plannedDepartureTime;
+  const passwordTitle = `${moment(transportTime).format(DATE_FORMAT)} ${companyName}`;
+
+  const navigateToRouteTransportDetail = () => {
+    history.push(`/routetransportdetail/${routeTransportId}`);
+  };
+
   return (
     <IonItem
       className={`ion-margin-horizontal quarter-margin-bottom ${transportDeparted ? "departedTransport" : ""}`}
       lines="full"
       color={transportDeparted ? undefined : "light"}
-      routerLink={`/routetransportdetail/${routeTransportId}`}
     >
       <IonGrid className="ion-no-margin ion-no-padding">
         <IonRow className="ion-margin-vertical ion-align-items-center ion-justify-content-between">
           <IonCol size="10">
             <IonLabel color={transportDeparted ? undefined : "dark"}>
               <IonLabel className={transportDeparted ? "headingText" : "headingText upcomingTransport"}>
-                <Moment format={DATE_FORMAT}>{transportDeparted ? departureTime : plannedDepartureTime}</Moment>
+                <Moment format={DATE_FORMAT}>{transportTime}</Moment>
                 <IonText>{tractorUnit ? ` | ${tractorUnit.toUpperCase()}` : ""}</IonText>
               </IonLabel>
               <IonLabel>
@@ -69,11 +84,12 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
           </IonCol>
           <IonCol size="auto">
             <IonButton
+              id={passwordButtonId}
               size="default"
               color="secondary"
               className="passwordButton"
               onClick={() => {
-                console.log("Password button clicked");
+                setPasswordPopoverOpen(true);
               }}
             >
               <IonIcon className="otherIcon" icon={lock} />
@@ -81,6 +97,13 @@ const TransportCard = ({ transport }: TransportCardProps): JSX.Element => {
           </IonCol>
         </IonRow>
       </IonGrid>
+      <SupervisionPasswordPopover
+        triggerId={passwordButtonId}
+        title={passwordTitle}
+        isOpen={passwordPopoverOpen}
+        setOpen={setPasswordPopoverOpen}
+        openSupervision={navigateToRouteTransportDetail}
+      />
     </IonItem>
   );
 };

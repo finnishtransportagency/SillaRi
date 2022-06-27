@@ -19,7 +19,7 @@ import BridgeDetail from "./pages/BridgeDetail";
 import SupervisionSummary from "./pages/SupervisionSummary";
 import CompanySummary from "./pages/management/CompanySummary";
 import AddTransport from "./pages/management/AddTransport";
-import TransportCodeInput from "./pages/transport/TransportCodeInput";
+import TransportCodeForm from "./pages/transport/TransportCodeForm";
 import Transport from "./pages/transport/Transport";
 import TransportDetail from "./pages/management/TransportDetail";
 import AppCheck from "./components/AppCheck";
@@ -274,7 +274,7 @@ const App: React.FC = () => {
                   {userHasRole("SILLARI_AJOJARJESTELIJA") ? <TransportDetail /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/transport">
-                  {userHasRole("SILLARI_KULJETTAJA") ? <TransportCodeInput /> : <AccessDenied />}
+                  {userHasRole("SILLARI_KULJETTAJA") ? <TransportCodeForm /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/transport/:transportPassword">
                   {userHasRole("SILLARI_KULJETTAJA") ? <Transport /> : <AccessDenied />}

@@ -29,13 +29,13 @@ const CompanyTransportsAccordion = ({ companyTransportsList, noNetworkNoData }: 
             })
             .map((companyTransports, index) => {
               const key = `company_${index}`;
-              const { transports = [] } = companyTransports || {};
+              const { company, transports = [] } = companyTransports || {};
 
               return {
                 uuid: key,
                 heading: <TransportCardListHeader companyTransports={companyTransports} />,
                 // isPanelOpen: index === 0,
-                panel: <TransportCardList transports={transports} />,
+                panel: <TransportCardList company={company} transports={transports} />,
               };
             })}
         />

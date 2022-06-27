@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import Moment from "react-moment";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
-import { SupervisionStatus, TIME_FORMAT_MIN } from "../utils/constants";
+import { DATE_TIME_FORMAT_MIN, SupervisionStatus, TIME_FORMAT_MIN } from "../utils/constants";
 import ISupervision from "../interfaces/ISupervision";
 import { useTranslation } from "react-i18next";
 import IRouteTransport from "../interfaces/IRouteTransport";
@@ -9,6 +9,8 @@ import { useHistory } from "react-router-dom";
 import { actions } from "../store/rootSlice";
 import { useDispatch } from "react-redux";
 import lock from "../theme/icons/lock_closed_white.svg";
+import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
+import moment from "moment";
 
 interface BridgeCardProps {
   supervision: ISupervision;
@@ -20,6 +22,7 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
+  const [passwordPopoverOpen, setPasswordPopoverOpen] = useState<boolean>(false);
 
   const { id: supervisionId, currentStatus, startedTime, plannedTime, routeBridge } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
@@ -29,19 +32,23 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
   const { tractorUnit = "" } = routeTransport || {};
   const tractorUnitMissing = `(${t("bridgeCard.tractorUnitMissing")})`;
 
+  const passwordButtonId = `passwordButton_supervision_${supervisionId}`;
+  const supervisionTime = statusPlanned ? plannedTime : startedTime;
+  const passwordTitle = `${moment(supervisionTime).format(DATE_TIME_FORMAT_MIN)} ${name}`;
+
   const navigateToBridgeDetail = () => {
     dispatch({ type: actions.SET_SUPERVISION_LIST_TYPE, payload: supervisionListType });
     history.push(`/bridgedetail/${supervisionId}`);
   };
 
   return (
-    <IonItem className="quarter-margin-bottom" lines="full" onClick={() => navigateToBridgeDetail()}>
+    <IonItem className="quarter-margin-bottom" lines="full">
       <IonGrid className="ion-no-margin ion-no-padding">
         <IonRow className="ion-margin-vertical ion-align-items-center ion-justify-content-between">
-          <IonCol size="10">
+          <IonCol size="9">
             <IonLabel>
               <IonLabel className="headingText">
-                <Moment format={TIME_FORMAT_MIN}>{statusPlanned ? plannedTime : startedTime}</Moment>
+                <Moment format={TIME_FORMAT_MIN}>{supervisionTime}</Moment>
                 {statusPlanned && <IonText>{` (${t("bridgeCard.estimate")})`}</IonText>}
               </IonLabel>
               <IonLabel className="headingText">{name}</IonLabel>
@@ -55,13 +62,18 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
               </IonLabel>
             </IonLabel>
           </IonCol>
+          {/*TODO show password button only when supervision is still locked
+          If unlocked, show right arrow as before
+          Otherwise we have to submit password 2 times when navigating from RouteTransportDetail
+          */}
           <IonCol size="auto">
             <IonButton
+              id={passwordButtonId}
               size="default"
               color="secondary"
               className="passwordButton"
               onClick={() => {
-                console.log("Password button clicked");
+                setPasswordPopoverOpen(true);
               }}
             >
               <IonIcon className="otherIcon" icon={lock} />
@@ -69,6 +81,13 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
           </IonCol>
         </IonRow>
       </IonGrid>
+      <SupervisionPasswordPopover
+        triggerId={passwordButtonId}
+        title={passwordTitle}
+        isOpen={passwordPopoverOpen}
+        setOpen={setPasswordPopoverOpen}
+        openSupervision={navigateToBridgeDetail}
+      />
     </IonItem>
   );
 };
