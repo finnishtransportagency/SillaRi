@@ -181,7 +181,7 @@ public class LeluServiceTest {
         assertNotNull(response);
         assertEquals(3, response.getPermitId().intValue());
         assertEquals("1234/2021", response.getPermitNumber());
-        assertEquals(LeluPermitStatus.NEW_VERSION_CREATED, response.getStatus());
+        assertEquals(LeluPermitStatus.UPDATED, response.getStatus());
         assertNotNull(response.getTimestamp());
     }
 
