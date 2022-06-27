@@ -32,7 +32,8 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
   const { tractorUnit = "" } = routeTransport || {};
   const tractorUnitMissing = `(${t("bridgeCard.tractorUnitMissing")})`;
 
-  const passwordButtonId = `passwordButton_supervision_${supervisionId}`;
+  // Trigger id determines the placement and size of the password popover
+  const passwordPopoverTriggerId = `passwordTrigger_supervision_${supervisionId}`;
   const supervisionTime = statusPlanned ? plannedTime : startedTime;
   const passwordTitle = `${moment(supervisionTime).format(DATE_TIME_FORMAT_MIN)} ${name}`;
 
@@ -44,7 +45,7 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
   return (
     <IonItem className="quarter-margin-bottom" lines="full">
       <IonGrid className="ion-no-margin ion-no-padding">
-        <IonRow className="ion-margin-vertical ion-align-items-center ion-justify-content-between">
+        <IonRow id={passwordPopoverTriggerId} className="ion-margin-vertical ion-align-items-center ion-justify-content-between">
           <IonCol size="9">
             <IonLabel>
               <IonLabel className="headingText">
@@ -68,7 +69,6 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
           */}
           <IonCol size="auto">
             <IonButton
-              id={passwordButtonId}
               size="default"
               color="secondary"
               className="passwordButton"
@@ -82,7 +82,7 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
         </IonRow>
       </IonGrid>
       <SupervisionPasswordPopover
-        triggerId={passwordButtonId}
+        triggerId={passwordPopoverTriggerId}
         title={passwordTitle}
         isOpen={passwordPopoverOpen}
         setOpen={setPasswordPopoverOpen}

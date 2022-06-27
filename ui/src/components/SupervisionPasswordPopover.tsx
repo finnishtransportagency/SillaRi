@@ -52,7 +52,7 @@ const SupervisionPasswordPopover = ({ triggerId, title, isOpen, setOpen, openSup
   };
 
   return (
-    <IonPopover trigger={triggerId} isOpen={isOpen} side="left" size="auto" onDidDismiss={() => dismissPopover()}>
+    <IonPopover trigger={triggerId} isOpen={isOpen} size="cover" side="top" alignment="center" onDidDismiss={() => dismissPopover()}>
       <>
         <IonToolbar>
           <p className="headingText ion-padding-start">{title}</p>

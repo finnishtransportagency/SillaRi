@@ -42,7 +42,8 @@ const TransportCard = ({ company, transport }: TransportCardProps): JSX.Element 
 
   const nextSupervisionTime = getNextPlannedSupervisionTime(supervisions);
 
-  const passwordButtonId = `passwordButton_transport_${routeTransportId}`;
+  // Trigger id determines the placement and size of the password popover
+  const passwordPopoverTriggerId = `passwordTrigger_transport_${routeTransportId}`;
   const transportTime = transportDeparted ? departureTime : plannedDepartureTime;
   const passwordTitle = `${moment(transportTime).format(DATE_FORMAT)} ${companyName}`;
 
@@ -52,13 +53,14 @@ const TransportCard = ({ company, transport }: TransportCardProps): JSX.Element 
 
   return (
     <IonItem
+      id={passwordPopoverTriggerId}
       className={`ion-margin-horizontal quarter-margin-bottom ${transportDeparted ? "departedTransport" : ""}`}
       lines="full"
       color={transportDeparted ? undefined : "light"}
     >
       <IonGrid className="ion-no-margin ion-no-padding">
         <IonRow className="ion-margin-vertical ion-align-items-center ion-justify-content-between">
-          <IonCol size="10">
+          <IonCol size="9">
             <IonLabel color={transportDeparted ? undefined : "dark"}>
               <IonLabel className={transportDeparted ? "headingText" : "headingText upcomingTransport"}>
                 <Moment format={DATE_FORMAT}>{transportTime}</Moment>
@@ -84,7 +86,6 @@ const TransportCard = ({ company, transport }: TransportCardProps): JSX.Element 
           </IonCol>
           <IonCol size="auto">
             <IonButton
-              id={passwordButtonId}
               size="default"
               color="secondary"
               className="passwordButton"
@@ -98,7 +99,7 @@ const TransportCard = ({ company, transport }: TransportCardProps): JSX.Element 
         </IonRow>
       </IonGrid>
       <SupervisionPasswordPopover
-        triggerId={passwordButtonId}
+        triggerId={passwordPopoverTriggerId}
         title={passwordTitle}
         isOpen={passwordPopoverOpen}
         setOpen={setPasswordPopoverOpen}
