@@ -17,7 +17,7 @@ import {
 } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
 import { isPermitValid, isTransportEditable, hasSupervisionTimeErrors } from "../../utils/validation";
-import BridgeGrid from "./BridgeGrid";
+import BridgeSupervisionGrid from "./BridgeSupervisionGrid";
 import PermitLinkText from "../PermitLinkText";
 import RouteInfoGrid from "./RouteInfoGrid";
 import TransportInfoAccordion from "../TransportInfoAccordion";
@@ -29,6 +29,7 @@ import RouteTransportFooter from "./RouteTransportFooter";
 import SupervisionReport from "./SupervisionReport";
 import IToastMessage from "../../interfaces/IToastMessage";
 import AlertPopover from "../common/AlertPopover";
+import RouteBridgeGrid from "./RouteBridgeGrid";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -318,14 +319,14 @@ const RouteTransportInfo = ({
                       <IonRow className="ion-margin">
                         <IonCol>
                           <IonText className="headingBoldText">{`${t("management.transportDetail.bridgesToSupervise")} (${
-                            supervisions.length
+                            currentTransportNumber ? supervisions.length : selectedRouteOption.routeBridges.length
                           })`}</IonText>
                         </IonCol>
                       </IonRow>
                       <IonRow className="ion-margin">
                         <IonCol>
-                          {supervisions.length > 0 ? (
-                            <BridgeGrid
+                          {currentTransportNumber ? (
+                            <BridgeSupervisionGrid
                               modifiedRouteTransportDetail={modifiedRouteTransportDetail}
                               setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
                               setReportModalOpen={setReportModalOpen}
@@ -333,7 +334,7 @@ const RouteTransportInfo = ({
                               isEditable={isEditable}
                             />
                           ) : (
-                            <IonText>{t("management.transportDetail.bridgeInfo.noBridges")}</IonText>
+                            <RouteBridgeGrid routeBridges={selectedRouteOption.routeBridges} />
                           )}
                         </IonCol>
                       </IonRow>

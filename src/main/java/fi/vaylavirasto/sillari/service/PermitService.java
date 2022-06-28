@@ -103,8 +103,15 @@ public class PermitService {
 
                 logger.debug("getting permit {} route {} bridges with transport number: {}", permit.getPermitNumber(), route.getName(), transportNumber);
                 if (transportNumber != null && transportNumber > 0) {
-                    List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(routeId, transportNumber);
-                    route.setRouteBridges(routeBridges);
+                    route.setRouteBridges(routeBridgeRepository.getRouteBridges(routeId, transportNumber));
+                } else {
+                    // Use first transport number to get the bridge list to UI
+                    // Clear the transport number from the bridges
+                    List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(routeId, 1);
+                    if (routeBridges != null && !routeBridges.isEmpty()) {
+                        routeBridges.forEach(routeBridge -> routeBridge.setTransportNumber(null));
+                        route.setRouteBridges(routeBridges);
+                    }
                 }
             }
 
