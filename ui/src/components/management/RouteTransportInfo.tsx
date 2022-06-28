@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { IonCol, IonContent, IonGrid, IonItemDivider, IonPopover, IonRow, IonText, IonToast, useIonAlert, useIonPopover } from "@ionic/react";
+import { IonCol, IonContent, IonGrid, IonItemDivider, IonRow, IonText, IonToast, useIonAlert, useIonPopover } from "@ionic/react";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
@@ -23,12 +23,12 @@ import RouteInfoGrid from "./RouteInfoGrid";
 import TransportInfoAccordion from "../TransportInfoAccordion";
 import TransportPassword from "./TransportPassword";
 import IVehicle from "../../interfaces/IVehicle";
-import SupervisionTimesAlert from "./SupervisionTimesAlert";
 import NoNetworkNoData from "../NoNetworkNoData";
 import Loading from "../Loading";
 import RouteTransportFooter from "./RouteTransportFooter";
 import SupervisionReport from "./SupervisionReport";
 import IToastMessage from "../../interfaces/IToastMessage";
+import AlertPopover from "../common/AlertPopover";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -65,11 +65,14 @@ const RouteTransportInfo = ({
   const queryClient = useQueryClient();
   const [present] = useIonAlert();
   const [supervisionTimesAlertOpen, setSupervisionTimesAlertOpen] = useState<boolean>(false);
+  const [transportNumberAlertOpen, setTransportNumberAlertOpen] = useState<boolean>(false);
   const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
   const [selectedSupervisionId, setSelectedSupervisionId] = useState<number | undefined>(undefined);
 
   const { permitNumber, validStartDate, validEndDate } = permit || {};
-  const { plannedDepartureTime, supervisions = [] } = modifiedRouteTransportDetail || {};
+  const { nextAvailableTransportNumber = 0 } = selectedRouteOption || {};
+  const { plannedDepartureTime, transportNumber, supervisions = [] } = modifiedRouteTransportDetail || {};
+  const currentTransportNumber = transportNumber ? transportNumber : nextAvailableTransportNumber;
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
@@ -190,9 +193,14 @@ const RouteTransportInfo = ({
     });
   };
 
-  const validateSupervisionsAndSave = () => {
-    const hasValidationErrors = hasSupervisionTimeErrors({ ...modifiedRouteTransportDetail });
-    if (hasValidationErrors) {
+  const validateAndSave = () => {
+    const hasSupervisionErrors = hasSupervisionTimeErrors({ ...modifiedRouteTransportDetail });
+
+    if (!currentTransportNumber) {
+      // If currentTransportNumber is missing, it means that all transport numbers are used.
+      // In that case there are no supervisions, so there can't be any supervision errors either.
+      setTransportNumberAlertOpen(true);
+    } else if (hasSupervisionErrors) {
       setSupervisionTimesAlertOpen(true);
     } else {
       saveRouteTransportDetail();
@@ -294,6 +302,7 @@ const RouteTransportInfo = ({
                         setSelectedRouteOption={setSelectedRouteOption}
                         selectedVehicle={selectedVehicle}
                         setSelectedVehicle={setSelectedVehicle}
+                        currentTransportNumber={currentTransportNumber}
                       />
                     </IonCol>
                   </IonRow>
@@ -328,15 +337,27 @@ const RouteTransportInfo = ({
                           )}
                         </IonCol>
                       </IonRow>
+                      <AlertPopover
+                        title={t("common.validation.transportNumbersUsed")}
+                        text={t("common.validation.transportNumbersUsedInfo")}
+                        isOpen={transportNumberAlertOpen}
+                        setOpen={setTransportNumberAlertOpen}
+                        allowedToContinue={true}
+                        doContinue={saveRouteTransportDetail}
+                      />
                     </>
                   )}
                 </IonGrid>
               </IonCol>
             </IonRow>
 
-            <IonPopover className="large-popover" isOpen={supervisionTimesAlertOpen} onDidDismiss={() => setSupervisionTimesAlertOpen(false)}>
-              <SupervisionTimesAlert setOpen={setSupervisionTimesAlertOpen} />
-            </IonPopover>
+            <AlertPopover
+              title={t("common.validation.invalidTime")}
+              text={t("common.validation.fixTimes")}
+              isOpen={supervisionTimesAlertOpen}
+              setOpen={setSupervisionTimesAlertOpen}
+              allowedToContinue={false}
+            />
           </IonGrid>
         )}
         <IonToast
@@ -358,7 +379,7 @@ const RouteTransportInfo = ({
         isEditable={isEditable}
         routeTransportId={routeTransportId}
         deleteTransport={deleteRouteTransportDetail}
-        saveTransport={validateSupervisionsAndSave}
+        saveTransport={validateAndSave}
         deleteDisabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption}
         cancelDisabled={isSendingTransportUpdate || isDeletingTransport}
         saveDisabled={

@@ -23,6 +23,7 @@ interface RouteInfoGridProps {
   setSelectedRouteOption: Dispatch<SetStateAction<IRoute | undefined>>;
   selectedVehicle: IVehicle | undefined;
   setSelectedVehicle: Dispatch<SetStateAction<IVehicle | undefined>>;
+  currentTransportNumber: number;
 }
 
 const RouteInfoGrid = ({
@@ -34,6 +35,7 @@ const RouteInfoGrid = ({
   setSelectedRouteOption,
   selectedVehicle,
   setSelectedVehicle,
+  currentTransportNumber,
 }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
 
@@ -41,10 +43,8 @@ const RouteInfoGrid = ({
 
   const { company, routes: permitRoutes = [], vehicles = [] } = permit || {};
   const { businessId = "" } = company || {};
-  const { id: selectedRouteId, name: selectedRouteName, nextAvailableTransportNumber } = selectedRouteOption || {};
-  const { plannedDepartureTime, transportNumber } = modifiedRouteTransportDetail || {};
-
-  const currentTransportNumber = transportNumber ? transportNumber : nextAvailableTransportNumber;
+  const { id: selectedRouteId, name: selectedRouteName } = selectedRouteOption || {};
+  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
