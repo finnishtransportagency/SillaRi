@@ -193,9 +193,9 @@ const RouteTransportInfo = ({
     });
   };
 
-  const validateAndSave = () => {
-    const hasSupervisionErrors = hasSupervisionTimeErrors({ ...modifiedRouteTransportDetail });
-    if (hasSupervisionErrors) {
+  const validateSupervisionsAndSave = () => {
+    const hasValidationErrors = hasSupervisionTimeErrors({ ...modifiedRouteTransportDetail });
+    if (hasValidationErrors) {
       setSupervisionTimesAlertOpen(true);
     } else {
       saveRouteTransportDetail();
@@ -365,7 +365,7 @@ const RouteTransportInfo = ({
         isEditable={isEditable}
         routeTransportId={routeTransportId}
         deleteTransport={deleteRouteTransportDetail}
-        saveTransport={validateAndSave}
+        saveTransport={validateSupervisionsAndSave}
         deleteDisabled={isSendingTransportUpdate || isDeletingTransport || !selectedRouteOption}
         cancelDisabled={isSendingTransportUpdate || isDeletingTransport}
         saveDisabled={
