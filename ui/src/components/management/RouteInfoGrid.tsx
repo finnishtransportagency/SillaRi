@@ -13,6 +13,7 @@ import { isTransportEditable } from "../../utils/validation";
 import MapModal from "../MapModal";
 import TransportDepartureTime from "./TransportDepartureTime";
 import RouteAccordion from "../RouteAccordion";
+import AlertPopover from "../common/AlertPopover";
 
 interface RouteInfoGridProps {
   routeTransportId: number;
@@ -40,6 +41,7 @@ const RouteInfoGrid = ({
   const { t } = useTranslation();
 
   const [isMapModalOpen, setMapModalOpen] = useState<boolean>(false);
+  const [transportNumberAlertOpen, setTransportNumberAlertOpen] = useState<boolean>(false);
 
   const { company, routes: permitRoutes = [], vehicles = [] } = permit || {};
   const { businessId = "" } = company || {};
@@ -84,6 +86,7 @@ const RouteInfoGrid = ({
             };
           });
         }
+
         const newDetail: IRouteTransport = {
           ...modifiedRouteTransportDetail,
           routeId,
@@ -92,6 +95,11 @@ const RouteInfoGrid = ({
           supervisions: newSupervisions,
         };
         setModifiedRouteTransportDetail(newDetail);
+
+        // If all transport numbers are used for this route, show warning
+        if (!nextAvailableTransportNumber) {
+          setTransportNumberAlertOpen(true);
+        }
       }
     }
   };
@@ -184,6 +192,12 @@ const RouteInfoGrid = ({
           </IonRow>
         </IonGrid>
       </IonRow>
+      <AlertPopover
+        title={t("common.validation.transportNumbersUsed")}
+        text={t("common.validation.transportNumbersUsedInfo")}
+        isOpen={transportNumberAlertOpen}
+        setOpen={setTransportNumberAlertOpen}
+      />
     </IonGrid>
   );
 };

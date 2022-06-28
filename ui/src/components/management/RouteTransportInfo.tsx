@@ -66,7 +66,6 @@ const RouteTransportInfo = ({
   const queryClient = useQueryClient();
   const [present] = useIonAlert();
   const [supervisionTimesAlertOpen, setSupervisionTimesAlertOpen] = useState<boolean>(false);
-  const [transportNumberAlertOpen, setTransportNumberAlertOpen] = useState<boolean>(false);
   const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
   const [selectedSupervisionId, setSelectedSupervisionId] = useState<number | undefined>(undefined);
 
@@ -196,12 +195,7 @@ const RouteTransportInfo = ({
 
   const validateAndSave = () => {
     const hasSupervisionErrors = hasSupervisionTimeErrors({ ...modifiedRouteTransportDetail });
-
-    if (!currentTransportNumber) {
-      // If currentTransportNumber is missing, it means that all transport numbers are used.
-      // In that case there are no supervisions, so there can't be any supervision errors either.
-      setTransportNumberAlertOpen(true);
-    } else if (hasSupervisionErrors) {
+    if (hasSupervisionErrors) {
       setSupervisionTimesAlertOpen(true);
     } else {
       saveRouteTransportDetail();
@@ -338,14 +332,6 @@ const RouteTransportInfo = ({
                           )}
                         </IonCol>
                       </IonRow>
-                      <AlertPopover
-                        title={t("common.validation.transportNumbersUsed")}
-                        text={t("common.validation.transportNumbersUsedInfo")}
-                        isOpen={transportNumberAlertOpen}
-                        setOpen={setTransportNumberAlertOpen}
-                        allowedToContinue={true}
-                        doContinue={saveRouteTransportDetail}
-                      />
                     </>
                   )}
                 </IonGrid>
@@ -357,7 +343,6 @@ const RouteTransportInfo = ({
               text={t("common.validation.fixTimes")}
               isOpen={supervisionTimesAlertOpen}
               setOpen={setSupervisionTimesAlertOpen}
-              allowedToContinue={false}
             />
           </IonGrid>
         )}

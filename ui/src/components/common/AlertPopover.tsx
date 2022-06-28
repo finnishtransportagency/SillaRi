@@ -23,11 +23,9 @@ interface AlertPopoverProps {
   text: string;
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  allowedToContinue: boolean;
-  doContinue?: () => void;
 }
 
-const AlertPopover = ({ title, text, isOpen, setOpen, allowedToContinue, doContinue }: AlertPopoverProps): JSX.Element => {
+const AlertPopover = ({ title, text, isOpen, setOpen }: AlertPopoverProps): JSX.Element => {
   const { t } = useTranslation();
 
   const cancelChanges = (evt: MouseEvent) => {
@@ -60,18 +58,10 @@ const AlertPopover = ({ title, text, isOpen, setOpen, allowedToContinue, doConti
           </IonRow>
           <IonRow className="ion-margin-top ion-justify-content-end">
             <IonCol size-lg="4">
-              <IonButton color="secondary" expand="block" onClick={(evt) => cancelChanges(evt)}>
-                {allowedToContinue ? t("common.buttons.cancel") : t("common.buttons.closeAlert")}
+              <IonButton color="primary" expand="block" onClick={(evt) => cancelChanges(evt)}>
+                {t("common.buttons.closeAlert")}
               </IonButton>
             </IonCol>
-            {/* TODO doContinue does not close the popover */}
-            {allowedToContinue && doContinue && (
-              <IonCol size-lg="4" className="ion-margin-start">
-                <IonButton color="primary" expand="block" onClick={() => doContinue()}>
-                  {t("common.buttons.continue")}
-                </IonButton>
-              </IonCol>
-            )}
           </IonRow>
         </IonGrid>
       </IonContent>
