@@ -98,9 +98,7 @@ public class RouteTransportController {
             }
 
             PermitModel permit = permitService.getPermit(routeTransport.getRoute().getPermitId());
-
-            Integer nextAvailableTransportNumber = routeTransportService.getNextAvailableTransportNumber(routeTransport, routeTransport.getRoute(), permit.getPermitNumber());
-            routeTransport.setTransportNumber(nextAvailableTransportNumber);
+            routeTransportService.checkTransportNumberValid(routeTransport, routeTransport.getRoute(), permit.getPermitNumber());
 
             Integer routeTransportId = routeTransportService.createRouteTransport(routeTransport);
             routeTransport.setId(routeTransportId);

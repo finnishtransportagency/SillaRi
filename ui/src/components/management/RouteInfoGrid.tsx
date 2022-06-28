@@ -88,6 +88,7 @@ const RouteInfoGrid = ({
           ...modifiedRouteTransportDetail,
           routeId,
           route: selectedRoute,
+          transportNumber: nextAvailableTransportNumber,
           supervisions: newSupervisions,
         };
         setModifiedRouteTransportDetail(newDetail);
