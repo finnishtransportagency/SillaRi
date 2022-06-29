@@ -15,6 +15,7 @@ import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import IStartCrossingInput from "../interfaces/IStartCrossingInput";
 import { getUserData } from "./backendData";
 import { Storage } from "@capacitor/storage";
+import { SHA1 } from "crypto-js";
 
 export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICompanyTransports[]> => {
   try {
@@ -409,6 +410,35 @@ export const deleteSupervisionImages = async (supervisionId: number, dispatch: D
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { deleteSupervisionImages: true } });
+    throw new Error(err as string);
+  }
+};
+
+export const checkTransportCode = async (routeTransportId: number, transportCode: string, dispatch: Dispatch): Promise<boolean> => {
+  try {
+    console.log("checkTransportCode", routeTransportId);
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { checkTransportCode: false } });
+
+    // Get the user data from the cache when offline or the backend when online
+    const { username } = await getUserData(dispatch);
+
+    console.log("username: " + username);
+    const usernamePasswordHash = SHA1(`${username}${transportCode}`).toString();
+    console.log(usernamePasswordHash);
+
+    const transportCodeResponse = await fetch(
+      `${getOrigin()}/api/routetransport/checkTransportCode?routeTransportId=${routeTransportId}&usernameAndPasswordHashed=${usernamePasswordHash}`
+    );
+
+    if (transportCodeResponse.ok) {
+      const transportCodeOk = (await transportCodeResponse.json()) as Promise<boolean>;
+      return await transportCodeOk;
+    } else {
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { checkTransportCode: true } });
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
+    }
+  } catch (err) {
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { checkTransportCode: true } });
     throw new Error(err as string);
   }
 };

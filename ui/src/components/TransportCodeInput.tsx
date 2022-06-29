@@ -8,6 +8,7 @@ interface TransportCodeInputProps {
   errorMessage: string;
   setErrorMessage: Dispatch<SetStateAction<string>>;
   submitPassword: () => void;
+  disabled: boolean;
 }
 
 const TransportCodeInput = ({
@@ -16,6 +17,7 @@ const TransportCodeInput = ({
   errorMessage,
   setErrorMessage,
   submitPassword,
+  disabled,
 }: TransportCodeInputProps): JSX.Element => {
   const { t } = useTranslation();
 
@@ -46,7 +48,7 @@ const TransportCodeInput = ({
           />
         </IonCol>
         <IonCol size="5" size-md="3" size-lg="2">
-          <IonButton color="primary" expand="block" size="default" disabled={!codeInputValue} onClick={submitPassword}>
+          <IonButton color="primary" expand="block" size="default" disabled={disabled} onClick={submitPassword}>
             {t("common.buttons.search")}
           </IonButton>
         </IonCol>

@@ -3,21 +3,36 @@ import { IonButton, IonButtons, IonCol, IonGrid, IonIcon, IonPopover, IonRow, Io
 import { useTranslation } from "react-i18next";
 import close from "../theme/icons/close.svg";
 import TransportCodeInput from "./TransportCodeInput";
+import { useDispatch } from "react-redux";
+import IRouteTransport from "../interfaces/IRouteTransport";
+import ISupervision from "../interfaces/ISupervision";
+import { checkTransportCode } from "../utils/supervisionBackendData";
 
 interface SupervisionPasswordPopoverProps {
   triggerId: string;
   title: string;
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  routeTransportId: number;
+  supervisions: ISupervision[];
   openSupervision: () => void;
 }
 
-const SupervisionPasswordPopover = ({ triggerId, title, isOpen, setOpen, openSupervision }: SupervisionPasswordPopoverProps): JSX.Element => {
+const SupervisionPasswordPopover = ({
+  triggerId,
+  title,
+  isOpen,
+  setOpen,
+  routeTransportId,
+  supervisions = [],
+  openSupervision,
+}: SupervisionPasswordPopoverProps): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const [codeInputValue, setCodeInputValue] = useState("");
+  const [codeInputSent, setCodeInputSent] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [supervisionUnlocked, setSupervisionUnlocked] = useState<boolean>(false);
 
   /* UGLY BUG FIX
   Ionic popover does not close when navigating to another page, despite that setOpen(false) is called
@@ -27,27 +42,31 @@ const SupervisionPasswordPopover = ({ triggerId, title, isOpen, setOpen, openSup
   - Catch the dismiss event in popover native event
   - If supervision has been unlocked, navigate from the page with openSupervision
   */
-  const handleSubmitPassword = () => {
+  const handleSubmitPassword = async () => {
     if (codeInputValue) {
-      // TODO send password to backend and check it there
-      // need to pass method from parent component, since TransportCard and BridgeCard should call different methods
-      //const routeTransportPassword = await findRouteTransportPassword(codeInputValue, dispatch);
+      const codeInputOk = await checkTransportCode(routeTransportId, codeInputValue, dispatch);
 
-      // TODO what value are we checking from previous method? Can those send the same simple value as response?
-      // if (routeTransportPassword.routeTransportId) {
-      setErrorMessage("");
-      // TODO set password to storage (?) and mark supervision/supervisions as unlocked in storage
-      setSupervisionUnlocked(true);
-      setOpen(false);
-      // } else {
-      //   setErrorMessage(t("transports.transportCodeInput.invalidCodeErrorMessage"));
-      // }
+      if (codeInputOk) {
+        const supervisionIds = supervisions.map((s) => s.id);
+        // TODO supervisions should be unlocked, how?
+        console.log("Unlocked supervisions: ", supervisionIds);
+
+        setErrorMessage("");
+        setCodeInputSent(true);
+        // FIXME sometimes popup doesn't close and sometimes it does
+        setOpen(false);
+      } else {
+        setErrorMessage(t("transports.transportCodeInput.invalidCodeErrorMessage"));
+      }
     }
   };
 
   const dismissPopover = () => {
-    if (supervisionUnlocked) {
+    if (codeInputSent) {
       openSupervision();
+    } else {
+      setCodeInputValue("");
+      setErrorMessage("");
     }
   };
 
@@ -69,6 +88,7 @@ const SupervisionPasswordPopover = ({ triggerId, title, isOpen, setOpen, openSup
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}
             submitPassword={() => handleSubmitPassword()}
+            disabled={!codeInputValue || !routeTransportId}
           />
           <IonRow>
             <IonCol className="ion-text-center ion-margin">

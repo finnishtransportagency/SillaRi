@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
+import { IonContent, IonGrid, IonPage, IonText } from "@ionic/react";
 import Header from "../../components/Header";
 import { useHistory } from "react-router";
 import { findRouteTransportPassword } from "../../utils/transportBackendData";
@@ -43,6 +43,7 @@ const TransportCodeForm = (): JSX.Element => {
               errorMessage={errorMsg}
               setErrorMessage={setErrorMsg}
               submitPassword={handleSubmit}
+              disabled={!codeInputValue}
             />
           </IonGrid>
         </div>

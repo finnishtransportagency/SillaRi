@@ -72,7 +72,7 @@ const RouteTransportDetail = (): JSX.Element => {
             <RouteAccordion route={route as IRoute} transportNumber={transportNumber} mapDisabled={!isOnline} openMap={openRouteMap} />
             <TransportInfoAccordion permit={permit as IPermit} />
 
-            <BridgeCardList supervisions={supervisions} />
+            <BridgeCardList routeTransport={routeTransport as IRouteTransport} supervisions={supervisions} />
           </>
         )}
       </IonContent>

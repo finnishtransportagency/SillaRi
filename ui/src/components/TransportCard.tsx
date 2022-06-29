@@ -103,6 +103,8 @@ const TransportCard = ({ company, transport }: TransportCardProps): JSX.Element 
         title={passwordTitle}
         isOpen={passwordPopoverOpen}
         setOpen={setPasswordPopoverOpen}
+        routeTransportId={routeTransportId}
+        supervisions={supervisions}
         openSupervision={navigateToRouteTransportDetail}
       />
     </IonItem>

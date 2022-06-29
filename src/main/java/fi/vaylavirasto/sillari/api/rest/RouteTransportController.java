@@ -28,6 +28,8 @@ public class RouteTransportController {
     @Autowired
     RouteTransportService routeTransportService;
     @Autowired
+    RouteTransportPasswordService rtpService;
+    @Autowired
     SupervisionService supervisionService;
     @Autowired
     PermitService permitService;
@@ -46,6 +48,28 @@ public class RouteTransportController {
             }
             RouteTransportModel routeTransport = routeTransportService.getRouteTransport(routeTransportId, true);
             return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Check transport code of route transport")
+    @GetMapping(value = "/checkTransportCode", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> checkTransportCode(@RequestParam Integer routeTransportId, @RequestParam String usernameAndPasswordHashed) {
+        logger.info("usernameAndPasswordHashed: " + usernameAndPasswordHashed);
+        ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "unlockRouteTransport");
+        try {
+            if (!isRouteTransportOfSupervisor(routeTransportId)) {
+                throw new AccessDeniedException("Route transport not of the user");
+            }
+
+            if (usernameAndPasswordHashed != null) {
+                SillariUser user = uiService.getSillariUser();
+                boolean passwordOk = rtpService.doesTransportPasswordMatch(usernameAndPasswordHashed, user.getUsername(), routeTransportId);
+                return ResponseEntity.ok().body(passwordOk);
+            }
+            return ResponseEntity.ok().body(false);
         } finally {
             serviceMetric.end();
         }

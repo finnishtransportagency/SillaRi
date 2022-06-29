@@ -6,6 +6,7 @@ import { DATE_FORMAT, SupervisionListType } from "../utils/constants";
 import Moment from "react-moment";
 import BridgeCard from "./BridgeCard";
 import ISupervision from "../interfaces/ISupervision";
+import IRouteTransport from "../interfaces/IRouteTransport";
 
 interface SupervisionListProps {
   supervisionDays: ISupervisionDay[];
@@ -36,7 +37,12 @@ const SupervisionList = ({ supervisionDays, noNetworkNoData }: SupervisionListPr
                   const { routeTransport } = supervision || {};
 
                   return (
-                    <BridgeCard key={bridgeKey} supervision={supervision} routeTransport={routeTransport} supervisionListType={supervisionListType} />
+                    <BridgeCard
+                      key={bridgeKey}
+                      routeTransport={routeTransport as IRouteTransport}
+                      supervision={supervision}
+                      supervisionListType={supervisionListType}
+                    />
                   );
                 })}
               </div>

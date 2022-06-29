@@ -96,6 +96,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     //TODO dev code remove. Store hashed supervision password in the storage
+    // We should get the password for each supervision separately unless we want to add routeTransportId to each supervision url
     Storage.set({
       // route-transport-id_username
       key: "1_T012345",

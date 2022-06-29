@@ -13,12 +13,12 @@ import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import moment from "moment";
 
 interface BridgeCardProps {
+  routeTransport: IRouteTransport;
   supervision: ISupervision;
-  routeTransport?: IRouteTransport;
   supervisionListType: string;
 }
 
-const BridgeCard = ({ supervision, routeTransport, supervisionListType }: BridgeCardProps): JSX.Element => {
+const BridgeCard = ({ routeTransport, supervision, supervisionListType }: BridgeCardProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -29,7 +29,7 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
   const statusPlanned = supervisionStatus === SupervisionStatus.PLANNED;
   const { bridge } = routeBridge || {};
   const { identifier, name, municipality } = bridge || {};
-  const { tractorUnit = "" } = routeTransport || {};
+  const { id: routeTransportId = 0, tractorUnit = "" } = routeTransport || {};
   const tractorUnitMissing = `(${t("bridgeCard.tractorUnitMissing")})`;
 
   // Trigger id determines the placement and size of the password popover
@@ -86,6 +86,8 @@ const BridgeCard = ({ supervision, routeTransport, supervisionListType }: Bridge
         title={passwordTitle}
         isOpen={passwordPopoverOpen}
         setOpen={setPasswordPopoverOpen}
+        routeTransportId={routeTransportId}
+        supervisions={[supervision]}
         openSupervision={navigateToBridgeDetail}
       />
     </IonItem>
