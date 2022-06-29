@@ -1,4 +1,4 @@
-import React, { Dispatch, MouseEvent, SetStateAction } from "react";
+import React, { Dispatch, MouseEvent, SetStateAction, useState } from "react";
 import {
   IonButton,
   IonButtons,
@@ -34,6 +34,8 @@ interface TransportCountModalProps {
 
 const TransportCountModal = ({ isOpen, setOpen, permit, routeTransports = [] }: TransportCountModalProps): JSX.Element => {
   const { t } = useTranslation();
+  const [infoPopoverTitle, setInfoPopoverTitle] = useState<string>("");
+  const [infoPopoverText, setInfoPopoverText] = useState<string>("");
 
   const { permitNumber, routes = [] } = permit;
 
@@ -51,27 +53,39 @@ const TransportCountModal = ({ isOpen, setOpen, permit, routeTransports = [] }: 
 
   const permitIncludesMultipleVersionsForSomeRoute = routes.some((route) => transportNumbersForOtherPermitVersions(route).length > 0);
 
-  const [presentTransportCountInfo, dismissTransportCountInfo] = useIonPopover(
+  const [presentAdditionalInfo, dismissAdditionalInfo] = useIonPopover(
     <>
       <IonToolbar>
-        <IonText className="headingText ion-padding-start">{t("management.companySummary.transportCountModal.infoTitle")}</IonText>
+        <IonText className="headingText ion-padding-start">{infoPopoverTitle}</IonText>
         <IonButtons slot="end">
-          <IonButton onClick={() => dismissTransportCountInfo()}>
+          <IonButton onClick={() => dismissAdditionalInfo()}>
             <IonIcon className="otherIconLarge" icon={close} />
           </IonButton>
         </IonButtons>
       </IonToolbar>
-      <p className="ion-no-margin ion-margin-bottom ion-margin-horizontal">{t("management.companySummary.transportCountModal.infoText")}</p>
+      <p className="ion-no-margin ion-margin-bottom ion-margin-horizontal">{infoPopoverText}</p>
     </>,
     {
       onHide: () => {
-        dismissTransportCountInfo();
+        dismissAdditionalInfo();
       },
     }
   );
 
-  const showTotalTransportCountInfo = (evt: MouseEvent) => {
-    presentTransportCountInfo({
+  const showUsedTransportCountInfo = (evt: MouseEvent) => {
+    setInfoPopoverTitle(t("management.companySummary.transportCountModal.used"));
+    setInfoPopoverText(t("management.companySummary.transportCountModal.usedInfo"));
+
+    presentAdditionalInfo({
+      event: evt.nativeEvent,
+    });
+  };
+
+  const showTotalAmountInfo = (evt: MouseEvent) => {
+    setInfoPopoverTitle(t("management.companySummary.transportCountModal.amount"));
+    setInfoPopoverText(t("management.companySummary.transportCountModal.amountInfo"));
+
+    presentAdditionalInfo({
       event: evt.nativeEvent,
     });
   };
@@ -106,7 +120,7 @@ const TransportCountModal = ({ isOpen, setOpen, permit, routeTransports = [] }: 
                   className="itemIcon iconLink"
                   detail
                   detailIcon={help}
-                  onClick={(evt) => showTotalTransportCountInfo(evt)}
+                  onClick={(evt) => showUsedTransportCountInfo(evt)}
                 >
                   <IonLabel>
                     <IonText>{t("management.companySummary.transportCountModal.used").toUpperCase()}</IonText>
@@ -119,8 +133,10 @@ const TransportCountModal = ({ isOpen, setOpen, permit, routeTransports = [] }: 
               )}
             </IonCol>
             <IonCol size="4">
-              <IonItem lines="none" color="light">
-                {t("management.companySummary.transportCountModal.amount").toUpperCase()}
+              <IonItem lines="none" color="light" className="itemIcon iconLink" detail detailIcon={help} onClick={(evt) => showTotalAmountInfo(evt)}>
+                <IonLabel>
+                  <IonText>{t("management.companySummary.transportCountModal.amount").toUpperCase()}</IonText>
+                </IonLabel>
               </IonItem>
             </IonCol>
           </IonRow>
