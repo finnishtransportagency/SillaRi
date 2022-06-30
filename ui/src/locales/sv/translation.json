@@ -284,7 +284,8 @@
       "action": {
         "details": "Detaljer",
         "modify": "Redigera",
-        "show": "Visa"
+        "show": "Visa",
+        "delete": "(SV) Poista"
       },
       "transportStatusLog": "Transportspårning",
       "logStatus": {

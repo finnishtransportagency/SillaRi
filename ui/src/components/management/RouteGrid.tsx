@@ -2,7 +2,7 @@ import React, { MouseEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonRow, IonText, useIonPopover } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonRow, IonText, IonToast, useIonAlert, useIonPopover } from "@ionic/react";
 import { warningOutline } from "ionicons/icons";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
@@ -16,6 +16,9 @@ import "./RouteGrid.css";
 import IRouteTransport from "../../interfaces/IRouteTransport";
 import ISortOrder from "../../interfaces/ISortOrder";
 import { filterTransports, getTransportDepartureTime, sortTransports } from "../../utils/managementUtil";
+import { useMutation, useQueryClient } from "react-query";
+import { deleteRouteTransport } from "../../utils/managementBackendData";
+import IToastMessage from "../../interfaces/IToastMessage";
 
 interface RouteGridProps {
   permit: IPermit;
@@ -26,6 +29,9 @@ interface RouteGridProps {
 const RouteGrid = ({ permit, routeTransports = [], transportFilter }: RouteGridProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+  const [present] = useIonAlert();
+  const [toastMessage, setToastMessage] = useState<IToastMessage>({ message: "", color: "" });
 
   const { id: permitId, isCurrentVersion } = permit;
 
@@ -62,6 +68,19 @@ const RouteGrid = ({ permit, routeTransports = [], transportFilter }: RouteGridP
       },
     }
   );
+
+  const routeTransportDeleteMutation = useMutation((routeTransportId: number) => deleteRouteTransport(routeTransportId, dispatch), {
+    retry: false,
+    onSuccess: () => {
+      queryClient.invalidateQueries("getCompany");
+      queryClient.invalidateQueries(["getRouteTransportsOfPermit", Number(permitId)]);
+
+      setToastMessage({ message: t("management.transportDetail.deleted"), color: "" });
+    },
+    onError: () => {
+      setToastMessage({ message: t("common.error"), color: "danger" });
+    },
+  });
 
   const timePeriodText = (plannedDepartureTime?: Date, currentStatus?: IRouteTransportStatus, statusHistory?: IRouteTransportStatus[]) => {
     if (currentStatus && statusHistory && statusHistory.length > 0) {
@@ -116,6 +135,17 @@ const RouteGrid = ({ permit, routeTransports = [], transportFilter }: RouteGridP
       return ascending ? "ascendingColumn" : "descendingColumn";
     }
     return undefined;
+  };
+
+  const deletePlannedRouteTransport = (routeTransportId: number) => {
+    if (!!routeTransportId && routeTransportId > 0) {
+      // Ask the user to confirm the delete
+      present({
+        header: t("management.transportDetail.buttons.deleteTransport"),
+        message: t("management.transportDetail.alert.deleteTransport"),
+        buttons: [{ text: t("common.answer.yes"), handler: () => routeTransportDeleteMutation.mutate(routeTransportId) }, t("common.answer.no")],
+      });
+    }
   };
 
   useEffect(() => {
@@ -294,6 +324,22 @@ const RouteGrid = ({ permit, routeTransports = [], transportFilter }: RouteGridP
                       </Link>
                     </IonCol>
                   </IonRow>
+                  {/*Allow removing planned transport for outdated permit versions*/}
+                  {status === TransportStatus.PLANNED && !supervisionStarted && !isCurrentVersion && (
+                    <IonRow>
+                      <IonCol size="5" size-sm="3" className="ion-hide-lg-up"></IonCol>
+                      <IonCol size="7" size-sm="9" size-lg="12">
+                        <IonText
+                          className="linkText"
+                          onClick={() => {
+                            deletePlannedRouteTransport(routeTransportId);
+                          }}
+                        >
+                          <IonText className="linkText">{t("management.companySummary.action.delete")}</IonText>
+                        </IonText>
+                      </IonCol>
+                    </IonRow>
+                  )}
                 </IonGrid>
               </IonCol>
             </IonRow>
@@ -301,6 +347,14 @@ const RouteGrid = ({ permit, routeTransports = [], transportFilter }: RouteGridP
         })}
 
       <RouteStatusLog isOpen={isStatusLogOpen} setOpen={setStatusLogOpen} statusHistory={statusLog} />
+      <IonToast
+        isOpen={toastMessage.message.length > 0}
+        message={toastMessage.message}
+        onDidDismiss={() => setToastMessage({ message: "", color: "" })}
+        duration={5000}
+        position="top"
+        color={toastMessage.color ? toastMessage.color : "success"}
+      />
     </IonGrid>
   );
 };
