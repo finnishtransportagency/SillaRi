@@ -327,7 +327,7 @@ const RouteGrid = ({ permit, routeTransports = [], transportFilter }: RouteGridP
                   {/*Allow removing planned transport for outdated permit versions*/}
                   {status === TransportStatus.PLANNED && !supervisionStarted && !isCurrentVersion && (
                     <IonRow>
-                      <IonCol size="5" size-sm="3" className="ion-hide-lg-up"></IonCol>
+                      <IonCol size="5" size-sm="3" className="ion-hide-lg-up" />
                       <IonCol size="7" size-sm="9" size-lg="12">
                         <IonText
                           className="linkText"
@@ -335,7 +335,7 @@ const RouteGrid = ({ permit, routeTransports = [], transportFilter }: RouteGridP
                             deletePlannedRouteTransport(routeTransportId);
                           }}
                         >
-                          <IonText className="linkText">{t("management.companySummary.action.delete")}</IonText>
+                          {t("management.companySummary.action.delete")}
                         </IonText>
                       </IonCol>
                     </IonRow>
