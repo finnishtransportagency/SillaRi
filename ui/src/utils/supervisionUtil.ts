@@ -1,7 +1,6 @@
 import { QueryClient } from "react-query";
 import type { Dispatch } from "redux";
 import moment from "moment";
-import ICompanyTransports from "../interfaces/ICompanyTransports";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
@@ -17,6 +16,17 @@ import { getUserData, onRetry } from "./backendData";
 import { SupervisionStatus, TransportStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 import { Moment } from "moment/moment";
+import { Storage } from "@capacitor/storage";
+import { SHA1 } from "crypto-js";
+
+export const savePasswordToStorage = async (username: string, supervisionId: number, password: string) => {
+  return Storage.set({
+    // supervision_id_username
+    key: `${username}_${supervisionId}`,
+    //username + route trans password
+    value: SHA1(`${username}${password}`).toString(),
+  });
+};
 
 export const getReportSignedTime = (supervision: ISupervision): Date | undefined => {
   const { statusHistory = [] } = supervision;
@@ -285,41 +295,9 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   );
 };
 
-export const invalidateOfflineData = (queryClient: QueryClient, dispatch: Dispatch) => {
-  // Invalidate the queries to force UI updates when using cached data
-  // Do this for the data that was fetched by prefetchOfflineData, rather than invalidating everything
-  const companyTransportsList = queryClient.getQueryData<ICompanyTransports[]>(["getCompanyTransportsList"]) || [];
-
-  companyTransportsList.forEach((companyTransports) => {
-    const { transports } = companyTransports || {};
-
-    transports.forEach((transport) => {
-      const { id: routeTransportId } = transport || {};
-
-      const routeTransport = queryClient.getQueryData<IRouteTransport>(["getRouteTransportOfSupervisor", Number(routeTransportId)]);
-
-      const { supervisions = [] } = routeTransport || {};
-      supervisions.forEach((supervision) => {
-        const { id: supervisionId } = supervision || {};
-        queryClient.invalidateQueries(["getSupervision", Number(supervisionId)]);
-      });
-
-      queryClient.invalidateQueries(["getRouteTransportOfSupervisor", Number(routeTransportId)]);
-    });
-  });
-
-  queryClient.invalidateQueries(["getCompanyTransportsList"]);
-  queryClient.invalidateQueries(["getSupervisionList"]);
-  queryClient.invalidateQueries(["getSupervisionSendingList"]);
-  queryClient.invalidateQueries(["getSupervisor"]);
-
-  // Repopulate the cache after invalidating
-  prefetchOfflineData(queryClient, dispatch);
-};
-
 export const removeSupervisionFromRouteTransportList = (queryClient: QueryClient, routeTransportId: string, supervisionId: string) => {
   // Remove the finished/denied supervision from the UI when using cached data
-  // This is a more efficient way than calling invalidateOfflineData to refetch everything
+  // This is a more efficient way than invalidating all queries to refetch everything
   const routeTransport = queryClient.getQueryData<IRouteTransport>(["getRouteTransportOfSupervisor", Number(routeTransportId)]);
   if (routeTransport && routeTransport.supervisions) {
     routeTransport.supervisions = routeTransport.supervisions.reduce((acc: ISupervision[], s) => {

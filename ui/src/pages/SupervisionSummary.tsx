@@ -100,7 +100,6 @@ const SupervisionSummary = (): JSX.Element => {
 
       // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
       // Also remove the finished supervision from the route transport list in the UI
-      // invalidateOfflineData(queryClient, dispatch);
       removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
       setToastMessage(t("supervision.summary.saved"));
       returnToSupervisionList();

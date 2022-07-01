@@ -4,9 +4,11 @@ import { useTranslation } from "react-i18next";
 import close from "../theme/icons/close.svg";
 import TransportCodeInput from "./TransportCodeInput";
 import { useDispatch } from "react-redux";
-import IRouteTransport from "../interfaces/IRouteTransport";
 import ISupervision from "../interfaces/ISupervision";
 import { checkTransportCode } from "../utils/supervisionBackendData";
+import { savePasswordToStorage } from "../utils/supervisionUtil";
+import { useQuery } from "react-query";
+import { getUserData, onRetry } from "../utils/backendData";
 
 interface SupervisionPasswordPopoverProps {
   triggerId: string;
@@ -34,6 +36,13 @@ const SupervisionPasswordPopover = ({
   const [codeInputSent, setCodeInputSent] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const { data: user, isLoading: isLoadingUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+
+  const { username = "" } = user || {};
+
   /* UGLY BUG FIX
   Ionic popover does not close when navigating to another page, despite that setOpen(false) is called
   either before openSupervision or after that (or even inside openSupervision before or after history.push).
@@ -44,12 +53,11 @@ const SupervisionPasswordPopover = ({
   */
   const handleSubmitPassword = async () => {
     if (codeInputValue) {
-      const codeInputOk = await checkTransportCode(routeTransportId, codeInputValue, dispatch);
+      const codeInputOk = await checkTransportCode(username, routeTransportId, codeInputValue, dispatch);
 
       if (codeInputOk) {
-        const supervisionIds = supervisions.map((s) => s.id);
-        // TODO supervisions should be unlocked, how?
-        console.log("Unlocked supervisions: ", supervisionIds);
+        supervisions.forEach((supervision) => savePasswordToStorage(username, supervision.id, codeInputValue));
+        console.log("Transport codes saved for " + supervisions.length + " supervisions");
 
         setErrorMessage("");
         setCodeInputSent(true);
@@ -71,7 +79,17 @@ const SupervisionPasswordPopover = ({
   };
 
   return (
-    <IonPopover trigger={triggerId} isOpen={isOpen} size="cover" side="top" alignment="start" onDidDismiss={() => dismissPopover()}>
+    /* Bug: Ion Popover renders outside screen when the trigger is too low
+    https://github.com/ionic-team/ionic-framework/issues/24870 */
+    <IonPopover
+      trigger={triggerId}
+      isOpen={isOpen}
+      className="large-popover"
+      size="auto"
+      side="top"
+      alignment="center"
+      onDidDismiss={() => dismissPopover()}
+    >
       <>
         <IonToolbar>
           <p className="headingText ion-padding-start">{title}</p>
@@ -88,7 +106,7 @@ const SupervisionPasswordPopover = ({
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}
             submitPassword={() => handleSubmitPassword()}
-            disabled={!codeInputValue || !routeTransportId}
+            disabled={!codeInputValue || !routeTransportId || isLoadingUser}
           />
           <IonRow>
             <IonCol className="ion-text-center ion-margin">

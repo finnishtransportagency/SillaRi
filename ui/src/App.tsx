@@ -34,8 +34,6 @@ import { getUserData, getVersionInfo } from "./utils/backendData";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/supervisionUtil";
 import IonicAsyncStorage from "./IonicAsyncStorage";
-import { Storage } from "@capacitor/storage";
-import { SHA1 } from "crypto-js";
 
 /* Sillari.css */
 import "./theme/sillari.css";
@@ -95,15 +93,6 @@ const App: React.FC = () => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   useEffect(() => {
-    //TODO dev code remove. Store hashed supervision password in the storage
-    // We should get the password for each supervision separately unless we want to add routeTransportId to each supervision url
-    Storage.set({
-      // route-transport-id_username
-      key: "1_T012345",
-      //username + route trans password
-      value: SHA1("T012345" + "KULJETUS1").toString(),
-    });
-
     // Add or remove the "dark" class based on if the media query matches
     const toggleDarkTheme = (shouldAdd: boolean) => {
       document.body.classList.toggle("dark", shouldAdd);

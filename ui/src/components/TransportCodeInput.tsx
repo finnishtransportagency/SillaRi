@@ -32,7 +32,7 @@ const TransportCodeInput = ({
   return (
     <>
       <IonRow className="ion-margin-horizontal ion-margin-bottom ion-align-items-end">
-        <IonCol size="6" size-md="4" size-lg="3" className="ion-margin-end">
+        <IonCol size="6" className="ion-margin-end">
           <IonLabel className="headingText">
             <small>{t("transports.transportCodeInput.inputLabel")}</small>
           </IonLabel>
@@ -47,7 +47,7 @@ const TransportCodeInput = ({
             clearInput
           />
         </IonCol>
-        <IonCol size="5" size-md="3" size-lg="2">
+        <IonCol size="5">
           <IonButton color="primary" expand="block" size="default" disabled={disabled} onClick={submitPassword}>
             {t("common.buttons.search")}
           </IonButton>

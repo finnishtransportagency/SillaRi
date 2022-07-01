@@ -106,13 +106,8 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
 
     // Get the user data from the cache when offline or the backend when online
     const { username } = await getUserData(dispatch);
-
-    //Get username + password hash from local storage with key transportationId _ username
-    //TODO routeTransportId as a param into this function. Hardcoded for deving.
-    const routeTransportId = 1;
-
     console.log("username: " + username);
-    const usernamePasswordHash = await Storage.get({ key: "" + routeTransportId + "_" + username });
+    const usernamePasswordHash = await Storage.get({ key: `${username}_${supervisionId}` });
     console.log(usernamePasswordHash);
 
     const supervisionResponse = await fetch(
@@ -414,13 +409,10 @@ export const deleteSupervisionImages = async (supervisionId: number, dispatch: D
   }
 };
 
-export const checkTransportCode = async (routeTransportId: number, transportCode: string, dispatch: Dispatch): Promise<boolean> => {
+export const checkTransportCode = async (username: string, routeTransportId: number, transportCode: string, dispatch: Dispatch): Promise<boolean> => {
   try {
     console.log("checkTransportCode", routeTransportId);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { checkTransportCode: false } });
-
-    // Get the user data from the cache when offline or the backend when online
-    const { username } = await getUserData(dispatch);
 
     console.log("username: " + username);
     const usernamePasswordHash = SHA1(`${username}${transportCode}`).toString();

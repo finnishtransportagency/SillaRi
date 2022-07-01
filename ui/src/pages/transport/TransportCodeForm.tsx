@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IonContent, IonGrid, IonPage, IonText } from "@ionic/react";
+import { IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
 import Header from "../../components/Header";
 import { useHistory } from "react-router";
 import { findRouteTransportPassword } from "../../utils/transportBackendData";
@@ -37,14 +37,18 @@ const TransportCodeForm = (): JSX.Element => {
         </div>
         <div className="listContainer whiteBackground ion-padding-vertical">
           <IonGrid className="ion-no-padding">
-            <TransportCodeInput
-              codeInputValue={codeInputValue}
-              setCodeInputValue={setCodeInputValue}
-              errorMessage={errorMsg}
-              setErrorMessage={setErrorMsg}
-              submitPassword={handleSubmit}
-              disabled={!codeInputValue}
-            />
+            <IonRow>
+              <IonCol size="6">
+                <TransportCodeInput
+                  codeInputValue={codeInputValue}
+                  setCodeInputValue={setCodeInputValue}
+                  errorMessage={errorMsg}
+                  setErrorMessage={setErrorMsg}
+                  submitPassword={handleSubmit}
+                  disabled={!codeInputValue}
+                />
+              </IonCol>
+            </IonRow>
           </IonGrid>
         </div>
       </IonContent>
