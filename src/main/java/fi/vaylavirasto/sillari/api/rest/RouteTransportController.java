@@ -56,17 +56,17 @@ public class RouteTransportController {
     @Operation(summary = "Check transport code of route transport")
     @GetMapping(value = "/checkTransportCode", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> checkTransportCode(@RequestParam Integer routeTransportId, @RequestParam String usernameAndPasswordHashed) {
-        logger.info("usernameAndPasswordHashed: " + usernameAndPasswordHashed);
+    public ResponseEntity<?> checkTransportCode(@RequestParam Integer routeTransportId, @RequestParam String transportCode) {
+        logger.info("usernameAndPasswordHashed: " + transportCode);
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "unlockRouteTransport");
         try {
             if (!isRouteTransportOfSupervisor(routeTransportId)) {
                 throw new AccessDeniedException("Route transport not of the user");
             }
 
-            if (usernameAndPasswordHashed != null) {
+            if (transportCode != null) {
                 SillariUser user = uiService.getSillariUser();
-                boolean passwordOk = rtpService.doesTransportPasswordMatch(usernameAndPasswordHashed, user.getUsername(), routeTransportId);
+                boolean passwordOk = rtpService.doesTransportPasswordMatch(transportCode, user.getUsername(), routeTransportId);
                 return ResponseEntity.ok().body(passwordOk);
             }
             return ResponseEntity.ok().body(false);
@@ -95,17 +95,29 @@ public class RouteTransportController {
     @Operation(summary = "Get route transport of supervisor, with supervisions and route data")
     @GetMapping(value = "/getroutetransportofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> getRouteTransportOfSupervisor(@RequestParam Integer routeTransportId) {
+    public ResponseEntity<?> getRouteTransportOfSupervisor(@RequestParam Integer routeTransportId, @RequestParam String transportCode) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransportOfSupervisor");
         try {
             if (!isRouteTransportOfSupervisor(routeTransportId)) {
                 throw new AccessDeniedException("Not own company route permit");
             }
             SillariUser user = uiService.getSillariUser();
+            checkTransportCodeMatches(user, routeTransportId, transportCode);
             RouteTransportModel routeTransport = routeTransportService.getRouteTransportOfSupervisor(routeTransportId, user);
             return ResponseEntity.ok().body(routeTransport != null ? routeTransport : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
+        }
+    }
+
+    private void checkTransportCodeMatches(SillariUser user, Integer routeTransportId, String transportCode) {
+        if (transportCode != null) {
+            boolean passwordOk = rtpService.doesTransportPasswordMatch(transportCode, user.getUsername(), routeTransportId);
+            if (!passwordOk) {
+                throw new AccessDeniedException("Transport code does not match");
+            }
+        } else {
+            throw new AccessDeniedException("Transport code missing");
         }
     }
 

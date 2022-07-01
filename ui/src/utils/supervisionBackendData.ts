@@ -1,7 +1,7 @@
 import type { Dispatch } from "redux";
 import moment from "moment";
 import { getOrigin } from "./request";
-import { NETWORK_RESPONSE_NOT_OK, SupervisionListType } from "./constants";
+import { FORBIDDEN_ERROR, NETWORK_RESPONSE_NOT_OK, SupervisionListType } from "./constants";
 import { actions } from "../store/rootSlice";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import ISupervision from "../interfaces/ISupervision";
@@ -13,7 +13,7 @@ import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import IStartCrossingInput from "../interfaces/IStartCrossingInput";
-import { getUserData } from "./backendData";
+import { createErrorFromUnknown, createErrorFromStatusCode, getUserData } from "./backendData";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
 
@@ -40,22 +40,34 @@ export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICom
 export const getRouteTransportOfSupervisor = async (routeTransportId: number, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
     console.log("GetRouteTransportOfSupervisor", routeTransportId);
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
 
-    const routeTransportResponse = await fetch(
-      `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}`
-    );
+    const { username } = await getUserData(dispatch);
+    const transportCode = await Storage.get({ key: `${username}_${SupervisionListType.TRANSPORT}_${routeTransportId}` });
 
-    if (routeTransportResponse.ok) {
-      const routeTransport = (await routeTransportResponse.json()) as Promise<IRouteTransport>;
-      return await routeTransport;
+    // Fetch from backend only if password is found from storage - otherwise prefetchOfflineData is retrying failed queries forever
+    if (transportCode.value) {
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
+
+      const routeTransportResponse = await fetch(
+        `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}&transportCode=${transportCode.value}`
+      );
+
+      if (routeTransportResponse.ok) {
+        const routeTransport = (await routeTransportResponse.json()) as Promise<IRouteTransport>;
+        return await routeTransport;
+      } else {
+        console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} backend fail, status ${routeTransportResponse.status}`);
+        dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
+        throw createErrorFromStatusCode(routeTransportResponse.status);
+      }
     } else {
+      console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} missing transportCode`);
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
-      throw new Error(NETWORK_RESPONSE_NOT_OK);
+      throw new Error(FORBIDDEN_ERROR);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
-    throw new Error(err as string);
+    throw createErrorFromUnknown(err);
   }
 };
 
@@ -415,11 +427,11 @@ export const checkTransportCode = async (username: string, routeTransportId: num
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { checkTransportCode: false } });
 
     console.log("username: " + username);
-    const usernamePasswordHash = SHA1(`${username}${transportCode}`).toString();
-    console.log(usernamePasswordHash);
+    const transportCodeHash = SHA1(`${username}${transportCode}`).toString();
+    console.log(transportCodeHash);
 
     const transportCodeResponse = await fetch(
-      `${getOrigin()}/api/routetransport/checkTransportCode?routeTransportId=${routeTransportId}&usernameAndPasswordHashed=${usernamePasswordHash}`
+      `${getOrigin()}/api/routetransport/checkTransportCode?routeTransportId=${routeTransportId}&transportCode=${transportCodeHash}`
     );
 
     if (transportCodeResponse.ok) {

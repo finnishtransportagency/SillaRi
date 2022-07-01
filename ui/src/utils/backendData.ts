@@ -1,16 +1,37 @@
 import type { Dispatch } from "redux";
 import { getOrigin } from "./request";
-import { NETWORK_RESPONSE_NOT_OK, SillariErrorCode } from "./constants";
+import { CONFLICT_ERROR, FORBIDDEN_ERROR, NETWORK_RESPONSE_NOT_OK, SillariErrorCode } from "./constants";
 import { actions } from "../store/rootSlice";
 import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import IUserData from "../interfaces/IUserData";
 import IVersionInfo from "../interfaces/IVersionInfo";
 
-export const onRetry = (failureCount: number, error: string): boolean => {
-  // Retry forever by returning true
-  console.error("ERROR", failureCount, error);
-  return true;
+// Must use err type any, because it might be either string or Error. If we use type 'unknown', mutation result is the wrong type.
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+export const onRetry = (failureCount: number, err: any): boolean => {
+  // By default, retry forever by returning true - unless error is FORBIDDEN.
+  console.log("err is Error type", err instanceof Error);
+  console.log("err is string type", typeof err === "string" || err instanceof String);
+  // FIXME find out when err is string and when Error (preferably fix so that it's never a string, although might not be possible)
+  const isForbiddenError = (err instanceof Error && err.message === FORBIDDEN_ERROR) || err === FORBIDDEN_ERROR;
+  console.log("isForbiddenError", isForbiddenError);
+  return !isForbiddenError;
+};
+
+export const createErrorFromStatusCode = (statusCode: number): Error => {
+  if (statusCode === 403) {
+    return new Error(FORBIDDEN_ERROR);
+  } else if (statusCode === 409) {
+    return new Error(CONFLICT_ERROR);
+  } else {
+    return new Error(NETWORK_RESPONSE_NOT_OK);
+  }
+};
+
+export const createErrorFromUnknown = (err: unknown): Error => {
+  const errMessage = err instanceof Error ? err.message : (err as string);
+  throw new Error(errMessage);
 };
 
 export const getUserData = async (dispatch: Dispatch): Promise<IUserData> => {

@@ -15,7 +15,7 @@ import {
   generateNewRouteTransportPassword,
   updateRouteTransport,
 } from "../../utils/managementBackendData";
-import { DATE_FORMAT } from "../../utils/constants";
+import { CONFLICT_ERROR, DATE_FORMAT } from "../../utils/constants";
 import { isPermitValid, isTransportEditable, hasSupervisionTimeErrors } from "../../utils/validation";
 import BridgeGrid from "./BridgeGrid";
 import PermitLinkText from "../PermitLinkText";
@@ -86,7 +86,7 @@ const RouteTransportInfo = ({
     },
     onError: (error) => {
       let errorMessage;
-      if (error instanceof Error && error.message === "409") {
+      if (error instanceof Error && error.message === CONFLICT_ERROR) {
         errorMessage = t("management.transportDetail.error.transportNumberConflict");
       } else {
         errorMessage = t("common.error");
