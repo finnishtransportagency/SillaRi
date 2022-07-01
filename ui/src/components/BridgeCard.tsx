@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import { DATE_TIME_FORMAT_MIN, SupervisionStatus, TIME_FORMAT_MIN } from "../utils/constants";
@@ -9,20 +9,24 @@ import { useHistory } from "react-router-dom";
 import { actions } from "../store/rootSlice";
 import { useDispatch } from "react-redux";
 import lock from "../theme/icons/lock_closed_white.svg";
+import arrowRight from "../theme/icons/arrow-right.svg";
 import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import moment from "moment";
+import { Storage } from "@capacitor/storage";
 
 interface BridgeCardProps {
+  username: string;
   routeTransport: IRouteTransport;
   supervision: ISupervision;
   supervisionListType: string;
 }
 
-const BridgeCard = ({ routeTransport, supervision, supervisionListType }: BridgeCardProps): JSX.Element => {
+const BridgeCard = ({ username, routeTransport, supervision, supervisionListType }: BridgeCardProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
   const [passwordPopoverOpen, setPasswordPopoverOpen] = useState<boolean>(false);
+  const [supervisionUnlocked, setSupervisionUnlocked] = useState<boolean>(false);
 
   const { id: supervisionId, currentStatus, startedTime, plannedTime, routeBridge } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
@@ -31,6 +35,22 @@ const BridgeCard = ({ routeTransport, supervision, supervisionListType }: Bridge
   const { identifier, name, municipality } = bridge || {};
   const { id: routeTransportId = 0, tractorUnit = "" } = routeTransport || {};
   const tractorUnitMissing = `(${t("bridgeCard.tractorUnitMissing")})`;
+
+  // TODO how else can we check if supervision is locked or not at this point?
+  /*Supervisions are listed from getSupervisionList (/getsupervisionsofsupervisor) which fetches all supervisions for user's company,
+  so there's no way of sending supervisionIds and passwords in this call
+  If this is not enough at this point, we would need to use /getSupervision for each supervision on the list (which could be A LOT)
+  or create a separate call to backend with all supervisionIds and their passwords from storage*/
+  useEffect(() => {
+    // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
+    if (username) {
+      Storage.get({ key: `${username}_${supervisionId}` }).then((result) => {
+        if (result.value) {
+          setSupervisionUnlocked(true);
+        }
+      });
+    }
+  }, [username, supervisionId]);
 
   // Trigger id determines the placement and size of the password popover
   const passwordPopoverTriggerId = `passwordTrigger_supervision_${supervisionId}`;
@@ -63,33 +83,43 @@ const BridgeCard = ({ routeTransport, supervision, supervisionListType }: Bridge
               </IonLabel>
             </IonLabel>
           </IonCol>
-          {/*TODO show password button only when supervision is still locked
-          If unlocked, show right arrow as before
-          Otherwise we have to submit password 2 times when navigating from RouteTransportDetail
-          */}
           <IonCol size="auto">
-            <IonButton
-              size="default"
-              color="secondary"
-              className="passwordButton"
-              onClick={() => {
-                setPasswordPopoverOpen(true);
-              }}
-            >
-              <IonIcon className="otherIcon" icon={lock} />
-            </IonButton>
+            {supervisionUnlocked ? (
+              <IonButton
+                size="default"
+                fill="clear"
+                onClick={() => {
+                  navigateToBridgeDetail();
+                }}
+              >
+                <IonIcon className="otherIcon" icon={arrowRight} />
+              </IonButton>
+            ) : (
+              <IonButton
+                size="default"
+                color="secondary"
+                className="passwordButton"
+                onClick={() => {
+                  setPasswordPopoverOpen(true);
+                }}
+              >
+                <IonIcon className="otherIcon" icon={lock} />
+              </IonButton>
+            )}
           </IonCol>
         </IonRow>
       </IonGrid>
-      <SupervisionPasswordPopover
-        triggerId={passwordPopoverTriggerId}
-        title={passwordTitle}
-        isOpen={passwordPopoverOpen}
-        setOpen={setPasswordPopoverOpen}
-        routeTransportId={routeTransportId}
-        supervisions={[supervision]}
-        openSupervision={navigateToBridgeDetail}
-      />
+      {!supervisionUnlocked && (
+        <SupervisionPasswordPopover
+          triggerId={passwordPopoverTriggerId}
+          title={passwordTitle}
+          isOpen={passwordPopoverOpen}
+          setOpen={setPasswordPopoverOpen}
+          routeTransportId={routeTransportId}
+          supervisions={[supervision]}
+          openSupervision={navigateToBridgeDetail}
+        />
+      )}
     </IonItem>
   );
 };

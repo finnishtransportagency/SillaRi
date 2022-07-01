@@ -23,7 +23,7 @@ export const savePasswordToStorage = async (username: string, supervisionId: num
   return Storage.set({
     // supervision_id_username
     key: `${username}_${supervisionId}`,
-    //username + route trans password
+    // username + route transport password
     value: SHA1(`${username}${password}`).toString(),
   });
 };

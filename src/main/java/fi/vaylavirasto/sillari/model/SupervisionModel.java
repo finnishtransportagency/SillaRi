@@ -23,7 +23,7 @@ public class SupervisionModel extends BaseModel {
     private List<SupervisionStatusModel> statusHistory;
     private SupervisionReportModel report;
     private List<SupervisionImageModel> images;
-    private boolean locked;
+    private boolean locked = true;
 
     private OffsetDateTime startedTime; // Latest IN_PROGRESS in statusHistory (because might have been started and cancelled and started again)
     private OffsetDateTime crossingDeniedTime; // First (and only) CROSSING_DENIED in statusHistory

@@ -38,14 +38,14 @@ public class SupervisionController {
 
     /**
      * @param supervisionId
-     * @param usernameAndPasswordHashed SHA1 hashed from "USER_ID" + "TRANSPORTATION_PASSWORD", for example SHA1("LXVALVOJA1234")
+     * @param transportCode SHA1 hashed from "USER_ID" + "TRANSPORTATION_PASSWORD", for example SHA1("LXVALVOJA1234")
      * @return
      */
     @Operation(summary = "Get supervision")
     @GetMapping(value = "/getsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId, @RequestParam(required = false) String usernameAndPasswordHashed) {
-        logger.info("usernameAndPasswordHashed: " +usernameAndPasswordHashed);
+    public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId, @RequestParam(required = false) String transportCode) {
+        logger.info("usernameAndPasswordHashed: " + transportCode);
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervision");
         try {
             if (!isSupervisionOfSupervisor(supervisionId)) {
@@ -53,11 +53,9 @@ public class SupervisionController {
             }
             SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId, true, true);
 
-            // supervisions are locked by default if ui local storage doesn't
-            // contain a valid password for the supervision
-            supervisionModel.setLocked(true);
-            if(usernameAndPasswordHashed!=null) {
-                unLockSupervision(usernameAndPasswordHashed, supervisionModel);
+            // Supervisions are locked by default if ui local storage doesn't contain a valid password for the supervision
+            if (transportCode != null) {
+                unLockSupervision(transportCode, supervisionModel);
             }
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
@@ -65,10 +63,9 @@ public class SupervisionController {
         }
     }
 
-
     private void unLockSupervision(String usernameAndPasswordHashed, SupervisionModel supervisionModel) {
         SillariUser user = uiService.getSillariUser();
-        if(rtpService.doesTransportPasswordMatch (usernameAndPasswordHashed, user.getUsername(), supervisionModel.getRouteTransport().getId())){
+        if (rtpService.doesTransportPasswordMatch(usernameAndPasswordHashed, user.getUsername(), supervisionModel.getRouteTransport().getId())) {
             supervisionModel.setLocked(false);
         }
     }

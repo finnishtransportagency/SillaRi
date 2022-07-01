@@ -7,11 +7,12 @@ import { SupervisionListType } from "../utils/constants";
 import IRouteTransport from "../interfaces/IRouteTransport";
 
 interface BridgeCardListProps {
+  username: string;
   routeTransport: IRouteTransport;
   supervisions: ISupervision[];
 }
 
-const BridgeCardList = ({ routeTransport, supervisions }: BridgeCardListProps): JSX.Element => {
+const BridgeCardList = ({ username, routeTransport, supervisions }: BridgeCardListProps): JSX.Element => {
   const { t } = useTranslation();
   const supervisionListType = SupervisionListType.TRANSPORT;
   const count = supervisions.length;
@@ -27,7 +28,15 @@ const BridgeCardList = ({ routeTransport, supervisions }: BridgeCardListProps): 
       <div className="listContainer">
         {supervisions.map((supervision, index) => {
           const key = `bridge_${index}`;
-          return <BridgeCard key={key} routeTransport={routeTransport} supervision={supervision} supervisionListType={supervisionListType} />;
+          return (
+            <BridgeCard
+              key={key}
+              username={username}
+              routeTransport={routeTransport}
+              supervision={supervision}
+              supervisionListType={supervisionListType}
+            />
+          );
         })}
       </div>
     </>

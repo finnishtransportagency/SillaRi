@@ -6,7 +6,7 @@ import type { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton } from "@ionic/react";
 import Header from "../components/Header";
 import { useTypedSelector, RootState } from "../store/store";
-import { onRetry } from "../utils/backendData";
+import { getUserData, onRetry } from "../utils/backendData";
 import { getCompanyTransportsList, getSupervisionList } from "../utils/supervisionBackendData";
 import SupervisionList from "../components/SupervisionList";
 import "./Supervisions.css";
@@ -32,6 +32,12 @@ const Supervisions = (): JSX.Element => {
   const {
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state: RootState) => state.rootReducer);
+
+  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const { username = "" } = supervisorUser || {};
 
   const { data: companyTransportsList = [] } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
     retry: onRetry,
@@ -86,7 +92,7 @@ const Supervisions = (): JSX.Element => {
       </IonSegment>
       <IonContent color="light">
         {currentSegment === "0" && <CompanyTransportsAccordion companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />}
-        {currentSegment === "1" && <SupervisionList supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} />}
+        {currentSegment === "1" && <SupervisionList username={username} supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} />}
       </IonContent>
     </IonPage>
   );

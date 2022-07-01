@@ -106,12 +106,12 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
 
     // Get the user data from the cache when offline or the backend when online
     const { username } = await getUserData(dispatch);
-    console.log("username: " + username);
+    //console.log("username: " + username);
     const usernamePasswordHash = await Storage.get({ key: `${username}_${supervisionId}` });
-    console.log(usernamePasswordHash);
+    //console.log(usernamePasswordHash);
 
     const supervisionResponse = await fetch(
-      `${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}&usernameAndPasswordHashed=${usernamePasswordHash.value}`
+      `${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}&transportCode=${usernamePasswordHash.value}`
     );
 
     if (supervisionResponse.ok) {

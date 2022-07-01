@@ -9,11 +9,12 @@ import ISupervision from "../interfaces/ISupervision";
 import IRouteTransport from "../interfaces/IRouteTransport";
 
 interface SupervisionListProps {
+  username: string;
   supervisionDays: ISupervisionDay[];
   noNetworkNoData: boolean;
 }
 
-const SupervisionList = ({ supervisionDays, noNetworkNoData }: SupervisionListProps): JSX.Element => {
+const SupervisionList = ({ username, supervisionDays, noNetworkNoData }: SupervisionListProps): JSX.Element => {
   const supervisionListType = SupervisionListType.BRIDGE;
 
   return (
@@ -39,6 +40,7 @@ const SupervisionList = ({ supervisionDays, noNetworkNoData }: SupervisionListPr
                   return (
                     <BridgeCard
                       key={bridgeKey}
+                      username={username}
                       routeTransport={routeTransport as IRouteTransport}
                       supervision={supervision}
                       supervisionListType={supervisionListType}
