@@ -1,7 +1,7 @@
 import type { Dispatch } from "redux";
 import moment from "moment";
 import { getOrigin } from "./request";
-import { NETWORK_RESPONSE_NOT_OK } from "./constants";
+import { NETWORK_RESPONSE_NOT_OK, SupervisionListType } from "./constants";
 import { actions } from "../store/rootSlice";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import ISupervision from "../interfaces/ISupervision";
@@ -107,7 +107,7 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
     // Get the user data from the cache when offline or the backend when online
     const { username } = await getUserData(dispatch);
     //console.log("username: " + username);
-    const usernamePasswordHash = await Storage.get({ key: `${username}_${supervisionId}` });
+    const usernamePasswordHash = await Storage.get({ key: `${username}_${SupervisionListType.BRIDGE}_${supervisionId}` });
     //console.log(usernamePasswordHash);
 
     const supervisionResponse = await fetch(

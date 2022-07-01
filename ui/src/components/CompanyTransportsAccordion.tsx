@@ -7,11 +7,12 @@ import NoNetworkNoData from "./NoNetworkNoData";
 import "./CompanyTransportsAccordion.css";
 
 interface CompanyTransportsAccordionProps {
+  username: string;
   companyTransportsList: ICompanyTransports[];
   noNetworkNoData: boolean;
 }
 
-const CompanyTransportsAccordion = ({ companyTransportsList, noNetworkNoData }: CompanyTransportsAccordionProps): JSX.Element => {
+const CompanyTransportsAccordion = ({ username, companyTransportsList, noNetworkNoData }: CompanyTransportsAccordionProps): JSX.Element => {
   return (
     <div className="listContainer">
       {noNetworkNoData ? (
@@ -35,7 +36,7 @@ const CompanyTransportsAccordion = ({ companyTransportsList, noNetworkNoData }: 
                 uuid: key,
                 heading: <TransportCardListHeader companyTransports={companyTransports} />,
                 // isPanelOpen: index === 0,
-                panel: <TransportCardList company={company} transports={transports} />,
+                panel: <TransportCardList username={username} company={company} transports={transports} />,
               };
             })}
         />

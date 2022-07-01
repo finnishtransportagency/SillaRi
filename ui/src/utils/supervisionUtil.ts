@@ -13,16 +13,16 @@ import {
   getSupervisionSendingList,
 } from "./supervisionBackendData";
 import { getUserData, onRetry } from "./backendData";
-import { SupervisionStatus, TransportStatus } from "./constants";
+import { SupervisionListType, SupervisionStatus, TransportStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 import { Moment } from "moment/moment";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
 
-export const savePasswordToStorage = async (username: string, supervisionId: number, password: string) => {
+export const savePasswordToStorage = async (username: string, id: number, password: string, type: SupervisionListType) => {
   return Storage.set({
-    // supervision_id_username
-    key: `${username}_${supervisionId}`,
+    // username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
+    key: `${username}_${type}_${id}`,
     // username + route transport password
     value: SHA1(`${username}${password}`).toString(),
   });

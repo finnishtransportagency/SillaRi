@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
-import { DATE_TIME_FORMAT_MIN, SupervisionStatus, TIME_FORMAT_MIN } from "../utils/constants";
+import { DATE_TIME_FORMAT_MIN, SupervisionListType, SupervisionStatus, TIME_FORMAT_MIN } from "../utils/constants";
 import ISupervision from "../interfaces/ISupervision";
 import { useTranslation } from "react-i18next";
 import IRouteTransport from "../interfaces/IRouteTransport";
@@ -44,7 +44,7 @@ const BridgeCard = ({ username, routeTransport, supervision, supervisionListType
   useEffect(() => {
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
     if (username) {
-      Storage.get({ key: `${username}_${supervisionId}` }).then((result) => {
+      Storage.get({ key: `${username}_${SupervisionListType.BRIDGE}_${supervisionId}` }).then((result) => {
         if (result.value) {
           setSupervisionUnlocked(true);
         }
@@ -117,6 +117,7 @@ const BridgeCard = ({ username, routeTransport, supervision, supervisionListType
           setOpen={setPasswordPopoverOpen}
           routeTransportId={routeTransportId}
           supervisions={[supervision]}
+          supervisionListType={SupervisionListType.BRIDGE}
           openSupervision={navigateToBridgeDetail}
         />
       )}

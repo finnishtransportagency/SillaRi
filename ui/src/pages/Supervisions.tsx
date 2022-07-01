@@ -91,7 +91,9 @@ const Supervisions = (): JSX.Element => {
         </IonSegmentButton>
       </IonSegment>
       <IonContent color="light">
-        {currentSegment === "0" && <CompanyTransportsAccordion companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />}
+        {currentSegment === "0" && (
+          <CompanyTransportsAccordion username={username} companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />
+        )}
         {currentSegment === "1" && <SupervisionList username={username} supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} />}
       </IonContent>
     </IonPage>

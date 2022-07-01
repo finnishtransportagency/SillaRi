@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import Moment from "react-moment";
-import { DATE_FORMAT, TIME_FORMAT_MIN, TransportStatus } from "../utils/constants";
+import { DATE_FORMAT, SupervisionListType, TIME_FORMAT_MIN, TransportStatus } from "../utils/constants";
 import { useTranslation } from "react-i18next";
 import { getNextPlannedSupervisionTime } from "../utils/supervisionUtil";
 import "./TransportCard.css";
@@ -11,16 +11,20 @@ import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import { useHistory } from "react-router-dom";
 import moment from "moment/moment";
 import ICompany from "../interfaces/ICompany";
+import { Storage } from "@capacitor/storage";
+import arrowRight from "../theme/icons/arrow-right.svg";
 
 interface TransportCardProps {
+  username: string;
   company: ICompany;
   transport: IRouteTransport;
 }
 
-const TransportCard = ({ company, transport }: TransportCardProps): JSX.Element => {
+const TransportCard = ({ username, company, transport }: TransportCardProps): JSX.Element => {
   const { t } = useTranslation();
   const history = useHistory();
   const [passwordPopoverOpen, setPasswordPopoverOpen] = useState<boolean>(false);
+  const [transportUnlocked, setTransportUnlocked] = useState<boolean>(false);
 
   const {
     id: routeTransportId,
@@ -50,6 +54,22 @@ const TransportCard = ({ company, transport }: TransportCardProps): JSX.Element 
   const navigateToRouteTransportDetail = () => {
     history.push(`/routetransportdetail/${routeTransportId}`);
   };
+
+  // TODO how else can we check if routeTransport is locked or not at this point?
+  /*Transports are listed from getCompanyTransportsList (/getcompanytransportlistofsupervisor) which fetches all transports for user's company,
+  so there's no way of sending routeTransportIds and passwords in this call
+  If this is not enough at this point, we would need to use getRouteTransportOfSupervisor for each transport on the list
+  or create a separate call to backend with all routeTransportIds and their passwords from storage*/
+  useEffect(() => {
+    // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
+    if (username) {
+      Storage.get({ key: `${username}_${SupervisionListType.TRANSPORT}_${routeTransportId}` }).then((result) => {
+        if (result.value) {
+          setTransportUnlocked(true);
+        }
+      });
+    }
+  }, [username, routeTransportId]);
 
   return (
     <IonItem
@@ -85,28 +105,43 @@ const TransportCard = ({ company, transport }: TransportCardProps): JSX.Element 
             </IonLabel>
           </IonCol>
           <IonCol size="auto">
-            <IonButton
-              size="default"
-              color="secondary"
-              className="passwordButton"
-              onClick={() => {
-                setPasswordPopoverOpen(true);
-              }}
-            >
-              <IonIcon className="otherIcon" icon={lock} />
-            </IonButton>
+            {transportUnlocked ? (
+              <IonButton
+                size="default"
+                fill="clear"
+                onClick={() => {
+                  navigateToRouteTransportDetail();
+                }}
+              >
+                <IonIcon className="otherIcon" icon={arrowRight} />
+              </IonButton>
+            ) : (
+              <IonButton
+                size="default"
+                color="secondary"
+                className="passwordButton"
+                onClick={() => {
+                  setPasswordPopoverOpen(true);
+                }}
+              >
+                <IonIcon className="otherIcon" icon={lock} />
+              </IonButton>
+            )}
           </IonCol>
         </IonRow>
       </IonGrid>
-      <SupervisionPasswordPopover
-        triggerId={passwordPopoverTriggerId}
-        title={passwordTitle}
-        isOpen={passwordPopoverOpen}
-        setOpen={setPasswordPopoverOpen}
-        routeTransportId={routeTransportId}
-        supervisions={supervisions}
-        openSupervision={navigateToRouteTransportDetail}
-      />
+      {!transportUnlocked && (
+        <SupervisionPasswordPopover
+          triggerId={passwordPopoverTriggerId}
+          title={passwordTitle}
+          isOpen={passwordPopoverOpen}
+          setOpen={setPasswordPopoverOpen}
+          routeTransportId={routeTransportId}
+          supervisions={supervisions}
+          supervisionListType={SupervisionListType.TRANSPORT}
+          openSupervision={navigateToRouteTransportDetail}
+        />
+      )}
     </IonItem>
   );
 };

@@ -6,11 +6,12 @@ import moment from "moment";
 import ICompany from "../interfaces/ICompany";
 
 interface TransportCardListProps {
+  username: string;
   company: ICompany;
   transports: IRouteTransport[];
 }
 
-const TransportCardList = ({ company, transports }: TransportCardListProps): JSX.Element => {
+const TransportCardList = ({ username, company, transports }: TransportCardListProps): JSX.Element => {
   return (
     <div className="listContainer selectedBackground ion-padding-bottom">
       {transports
@@ -23,7 +24,7 @@ const TransportCardList = ({ company, transports }: TransportCardListProps): JSX
         .map((transport) => {
           const { id: transportId } = transport;
           const key = `transport_${transportId}`;
-          return <TransportCard key={key} company={company} transport={transport} />;
+          return <TransportCard key={key} username={username} company={company} transport={transport} />;
         })}
     </div>
   );

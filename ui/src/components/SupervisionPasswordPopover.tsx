@@ -9,6 +9,7 @@ import { checkTransportCode } from "../utils/supervisionBackendData";
 import { savePasswordToStorage } from "../utils/supervisionUtil";
 import { useQuery } from "react-query";
 import { getUserData, onRetry } from "../utils/backendData";
+import { SupervisionListType } from "../utils/constants";
 
 interface SupervisionPasswordPopoverProps {
   triggerId: string;
@@ -17,6 +18,7 @@ interface SupervisionPasswordPopoverProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
   routeTransportId: number;
   supervisions: ISupervision[];
+  supervisionListType: string;
   openSupervision: () => void;
 }
 
@@ -26,7 +28,8 @@ const SupervisionPasswordPopover = ({
   isOpen,
   setOpen,
   routeTransportId,
-  supervisions = [],
+  supervisions,
+  supervisionListType,
   openSupervision,
 }: SupervisionPasswordPopoverProps): JSX.Element => {
   const { t } = useTranslation();
@@ -56,12 +59,20 @@ const SupervisionPasswordPopover = ({
       const codeInputOk = await checkTransportCode(username, routeTransportId, codeInputValue, dispatch);
 
       if (codeInputOk) {
-        supervisions.forEach((supervision) => savePasswordToStorage(username, supervision.id, codeInputValue));
+        if (supervisionListType === SupervisionListType.TRANSPORT) {
+          // Save routeTransportId with password to storage
+          await savePasswordToStorage(username, routeTransportId, codeInputValue, SupervisionListType.TRANSPORT);
+          console.log("Transport code saved for routeTransportId", routeTransportId);
+        }
+        // Save each supervisionId with password to storage (process in parallel)
+        await Promise.all(
+          supervisions.map(async (supervision) => savePasswordToStorage(username, supervision.id, codeInputValue, SupervisionListType.BRIDGE))
+        );
         console.log("Transport codes saved for " + supervisions.length + " supervisions");
 
         setErrorMessage("");
         setCodeInputSent(true);
-        // FIXME sometimes popup doesn't close and sometimes it does
+        // FIXME sometimes popup doesn't always close
         setOpen(false);
       } else {
         setErrorMessage(t("transports.transportCodeInput.invalidCodeErrorMessage"));
