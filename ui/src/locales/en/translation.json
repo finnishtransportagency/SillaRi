@@ -23,7 +23,9 @@
       "checkDateShort": "Check the date",
       "checkTimeShort": "Check the time",
       "invalidTime": "Invalid time",
-      "fixTimes": "Check and correct conflicting times for estimated bridge crossings before proceeding."
+      "fixTimes": "Check and correct conflicting times for estimated bridge crossings before proceeding.",
+      "transportNumbersUsed": "Transport times used for route",
+      "transportNumbersUsedInfo": "All transport times permitted for the route in the transport permit have been used. The transport cannot cross any supervised bridges."
     },
     "error": "An error occurred"
   },

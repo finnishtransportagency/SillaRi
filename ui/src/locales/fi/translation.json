@@ -23,7 +23,9 @@
       "checkDateShort": "Tarkista päivä",
       "checkTimeShort": "Tarkista aika",
       "invalidTime": "Virheellinen kellonaika",
-      "fixTimes": "Tarkista ja korjaa ristiriitaiset kellonajat siltojen arvioiduista ylitysajoista ennen jatkamista."
+      "fixTimes": "Tarkista ja korjaa ristiriitaiset kellonajat siltojen arvioiduista ylitysajoista ennen jatkamista.",
+      "transportNumbersUsed": "Reitin kuljetuskerrat käytetty",
+      "transportNumbersUsedInfo": "Kaikki reitin kuljetuskerrat on käytetty myönnetystä kuljetusluvasta. Kuljetus ei saa ylittää valvottavia siltoja."
     },
     "error": "Virhe tapahtui"
   },

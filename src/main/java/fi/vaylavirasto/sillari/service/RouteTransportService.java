@@ -206,21 +206,33 @@ public class RouteTransportService {
         }
     }
 
-    public Integer getNextAvailableTransportNumber(RouteTransportModel routeTransport, RouteModel route, String permitNumber) throws TransportNumberConflictException {
+    public void checkTransportNumberValid(RouteTransportModel routeTransport, RouteModel route, String permitNumber) throws TransportNumberConflictException {
+        Integer currentTransportNumber = routeTransport.getTransportNumber();
         Integer nextAvailableTransportNumber = routeTransportNumberService.getNextAvailableTransportNumber(route, permitNumber);
-
-        // Check that next available route transport number matches the bridges
         List<SupervisionModel> supervisions = routeTransport.getSupervisions();
-        if (supervisions != null && !supervisions.isEmpty()) {
-            RouteBridgeModel routeBridge = supervisions.get(0).getRouteBridge();
-            int selectedNumber = routeBridge != null ? routeBridge.getTransportNumber() : 0;
 
-            if (!nextAvailableTransportNumber.equals(selectedNumber)) {
-                logger.error("CONFLICT for nextAvailableTransportNumber {} vs bridge transportNumber {} with routeId {}", nextAvailableTransportNumber, selectedNumber, routeTransport.getRouteId());
-                throw new TransportNumberConflictException("Next available transportNumber " + nextAvailableTransportNumber + " does not match the transport number " + selectedNumber + " of the bridges");
+        // Check that next available route transport number matches the transport number of the route transport
+        if ((nextAvailableTransportNumber == null && currentTransportNumber != null) || (nextAvailableTransportNumber != null && !nextAvailableTransportNumber.equals(currentTransportNumber))) {
+            logger.error("CONFLICT for nextAvailableTransportNumber {} vs routeTransport.transportNumber {} for route {}", nextAvailableTransportNumber, currentTransportNumber, route.getName());
+            throw new TransportNumberConflictException("Next available transportNumber " + nextAvailableTransportNumber + " does not match the transport number " + currentTransportNumber + " of the route transport");
+        }
+
+        // Check that there are no supervisions if all transport numbers are used
+        if (currentTransportNumber == null && supervisions != null && supervisions.size() > 0) {
+            logger.error("CONFLICT transport number for route {} is null but there are {} supervisions", route.getName(), supervisions.size());
+            throw new TransportNumberConflictException("No supervisions allowed when transport number is null");
+        }
+
+        // Check that route transport number matches the bridges
+        if (currentTransportNumber != null && supervisions != null && supervisions.size() > 0) {
+            RouteBridgeModel routeBridge = supervisions.get(0).getRouteBridge();
+            Integer selectedNumber = routeBridge.getTransportNumber();
+
+            if (!currentTransportNumber.equals(selectedNumber)) {
+                logger.error("CONFLICT for route transport transportNumber {} vs bridge transportNumber {} for route {}", currentTransportNumber, selectedNumber, route.getName());
+                throw new TransportNumberConflictException("Route transport transportNumber " + currentTransportNumber + " does not match the transport number " + selectedNumber + " of the bridges");
             }
         }
-        return nextAvailableTransportNumber;
     }
 
     public void setTransportNumberUsed(RouteTransportModel routeTransport) {
