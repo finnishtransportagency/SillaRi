@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { IonCol, IonContent, IonGrid, IonItemDivider, IonPopover, IonRow, IonText, IonToast, useIonAlert, useIonPopover } from "@ionic/react";
+import { IonCol, IonContent, IonGrid, IonItemDivider, IonRow, IonText, IonToast, useIonAlert, useIonPopover } from "@ionic/react";
 import moment from "moment";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
@@ -17,18 +17,19 @@ import {
 } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
 import { isPermitValid, isTransportEditable, hasSupervisionTimeErrors, isPlannedTransportOutdated } from "../../utils/validation";
-import BridgeGrid from "./BridgeGrid";
+import BridgeSupervisionGrid from "./BridgeSupervisionGrid";
 import PermitLinkText from "../PermitLinkText";
 import RouteInfoGrid from "./RouteInfoGrid";
 import TransportInfoAccordion from "../TransportInfoAccordion";
 import TransportPassword from "./TransportPassword";
 import IVehicle from "../../interfaces/IVehicle";
-import SupervisionTimesAlert from "./SupervisionTimesAlert";
 import NoNetworkNoData from "../NoNetworkNoData";
 import Loading from "../Loading";
 import RouteTransportFooter from "./RouteTransportFooter";
 import SupervisionReport from "./SupervisionReport";
 import IToastMessage from "../../interfaces/IToastMessage";
+import AlertPopover from "../common/AlertPopover";
+import RouteBridgeGrid from "./RouteBridgeGrid";
 
 interface RouteTransportInfoProps {
   routeTransportId: number;
@@ -69,7 +70,9 @@ const RouteTransportInfo = ({
   const [selectedSupervisionId, setSelectedSupervisionId] = useState<number | undefined>(undefined);
 
   const { permitNumber, validStartDate, validEndDate } = permit || {};
-  const { plannedDepartureTime, supervisions = [] } = modifiedRouteTransportDetail || {};
+  const { nextAvailableTransportNumber = 0 } = selectedRouteOption || {};
+  const { plannedDepartureTime, transportNumber, supervisions = [] } = modifiedRouteTransportDetail || {};
+  const currentTransportNumber = transportNumber ? transportNumber : nextAvailableTransportNumber;
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
   const isTransportOutdated = isPlannedTransportOutdated(modifiedRouteTransportDetail, permit);
@@ -295,6 +298,7 @@ const RouteTransportInfo = ({
                         setSelectedRouteOption={setSelectedRouteOption}
                         selectedVehicle={selectedVehicle}
                         setSelectedVehicle={setSelectedVehicle}
+                        currentTransportNumber={currentTransportNumber}
                       />
                     </IonCol>
                   </IonRow>
@@ -310,14 +314,14 @@ const RouteTransportInfo = ({
                       <IonRow className="ion-margin">
                         <IonCol>
                           <IonText className="headingBoldText">{`${t("management.transportDetail.bridgesToSupervise")} (${
-                            supervisions.length
+                            currentTransportNumber ? supervisions.length : selectedRouteOption.routeBridges.length
                           })`}</IonText>
                         </IonCol>
                       </IonRow>
                       <IonRow className="ion-margin">
                         <IonCol>
-                          {supervisions.length > 0 ? (
-                            <BridgeGrid
+                          {currentTransportNumber ? (
+                            <BridgeSupervisionGrid
                               modifiedRouteTransportDetail={modifiedRouteTransportDetail}
                               setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
                               setReportModalOpen={setReportModalOpen}
@@ -325,7 +329,7 @@ const RouteTransportInfo = ({
                               isEditable={isEditable}
                             />
                           ) : (
-                            <IonText>{t("management.transportDetail.bridgeInfo.noBridges")}</IonText>
+                            <RouteBridgeGrid routeBridges={selectedRouteOption.routeBridges} />
                           )}
                         </IonCol>
                       </IonRow>
@@ -335,9 +339,12 @@ const RouteTransportInfo = ({
               </IonCol>
             </IonRow>
 
-            <IonPopover className="large-popover" isOpen={supervisionTimesAlertOpen} onDidDismiss={() => setSupervisionTimesAlertOpen(false)}>
-              <SupervisionTimesAlert setOpen={setSupervisionTimesAlertOpen} />
-            </IonPopover>
+            <AlertPopover
+              title={t("common.validation.invalidTime")}
+              text={t("common.validation.fixTimes")}
+              isOpen={supervisionTimesAlertOpen}
+              setOpen={setSupervisionTimesAlertOpen}
+            />
           </IonGrid>
         )}
         <IonToast
