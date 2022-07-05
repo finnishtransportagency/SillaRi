@@ -285,7 +285,8 @@
       "action": {
         "details": "Details",
         "modify": "Modify",
-        "show": "Show"
+        "show": "Show",
+        "delete": "Delete"
       },
       "transportStatusLog": "Transport tracking",
       "logStatus": {

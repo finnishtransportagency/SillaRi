@@ -16,7 +16,7 @@ import {
   updateRouteTransport,
 } from "../../utils/managementBackendData";
 import { DATE_FORMAT } from "../../utils/constants";
-import { isPermitValid, isTransportEditable, hasSupervisionTimeErrors } from "../../utils/validation";
+import { isPermitValid, isTransportEditable, hasSupervisionTimeErrors, isPlannedTransportOutdated } from "../../utils/validation";
 import BridgeSupervisionGrid from "./BridgeSupervisionGrid";
 import PermitLinkText from "../PermitLinkText";
 import RouteInfoGrid from "./RouteInfoGrid";
@@ -75,6 +75,7 @@ const RouteTransportInfo = ({
   const currentTransportNumber = transportNumber ? transportNumber : nextAvailableTransportNumber;
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
+  const isTransportOutdated = isPlannedTransportOutdated(modifiedRouteTransportDetail, permit);
 
   // Set-up mutations for modifying data later
   const routeTransportPlannedMutation = useMutation((transport: IRouteTransport) => createRouteTransport(transport, dispatch), {
@@ -363,6 +364,7 @@ const RouteTransportInfo = ({
       </IonContent>
       <RouteTransportFooter
         isEditable={isEditable}
+        allowedToDelete={isTransportOutdated}
         routeTransportId={routeTransportId}
         deleteTransport={deleteRouteTransportDetail}
         saveTransport={validateSupervisionsAndSave}

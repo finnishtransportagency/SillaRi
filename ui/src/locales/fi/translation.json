@@ -285,7 +285,8 @@
       "action": {
         "details": "Lisätiedot",
         "modify": "Muokkaa",
-        "show": "Näytä"
+        "show": "Näytä",
+        "delete": "Poista"
       },
       "transportStatusLog": "Kuljetuksen seuranta",
       "logStatus": {
