@@ -254,11 +254,10 @@
       "transportCountModal": {
         "title": "Luvan {{permit}} reittikohtaiset kuljetuskerrat",
         "used": "Käytetty",
-        "usedFromPrevious": "Muut lupaversiot",
         "amount": "Määrä luvalla",
         "unlimited": "Rajoittamaton",
-        "infoTitle": "Ohje",
-        "infoText": "Käytettyjen kuljetuskertojen kokonaismäärä koostuu nykyiselle kuljetusluvalle tehdyistä kuljetuksista sekä mahdollisille muille lupaversioille tehdyistä kuljetuksista (suluissa jälkimmäisenä)."
+        "usedInfo": "Käytettyjen kuljetuskertojen kokonaismäärä koostuu nykyiselle kuljetusluvalle tehdyistä kuljetuksista sekä mahdollisille muille lupaversioille tehdyistä kuljetuksista (suluissa jälkimmäisenä).",
+        "amountInfo": "Määrä luvalla näyttää luvalle myönnettyjen kuljetuskertojen kokonaismäärän reittikohtaisesti."
       },
       "filter": {
         "show": "Näytä",

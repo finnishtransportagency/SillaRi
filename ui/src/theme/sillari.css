@@ -151,7 +151,17 @@ ion-icon {
   pointer-events: none;
 }
 
-/* Wider popover: Ionic only supports the size of the triggering element (e.g. button) or default size */
+/* Wider popovers: Ionic only supports the size of the triggering element (e.g. button) or default size */
+ion-popover.medium-popover {
+  --width: 95%;
+  --max-width: 95%;
+}
+@media only screen and (min-width: 600px) {
+  ion-popover.medium-popover {
+    --width: 380px;
+  }
+}
+
 ion-popover.large-popover {
   --width: 95%;
   --max-width: 95%;

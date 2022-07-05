@@ -254,11 +254,10 @@
       "transportCountModal": {
         "title": "(SV) Luvan {{permit}} reittikohtaiset kuljetuskerrat",
         "used": "(SV) Käytetty",
-        "usedFromPrevious": "(SV) Muut lupaversiot",
         "amount": "(SV) Määrä luvalla",
         "unlimited": "(SV) Rajoittamaton",
-        "infoTitle": "(SV) Ohje",
-        "infoText": "(SV) Käytettyjen kuljetuskertojen kokonaismäärä koostuu nykyiselle kuljetusluvalle tehdyistä kuljetuksista sekä mahdollisille muille lupaversioille tehdyistä kuljetuksista (suluissa jälkimmäisenä)."
+        "usedInfo": "(SV) Käytettyjen kuljetuskertojen kokonaismäärä koostuu nykyiselle kuljetusluvalle tehdyistä kuljetuksista sekä mahdollisille muille lupaversioille tehdyistä kuljetuksista (suluissa jälkimmäisenä).",
+        "amountInfo": "(SV) Määrä luvalla näyttää luvalle myönnettyjen kuljetuskertojen kokonaismäärän reittikohtaisesti."
       },
       "filter": {
         "show": "Visa",
