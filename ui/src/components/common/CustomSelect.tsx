@@ -12,6 +12,7 @@ interface CustomSelectProps {
   validateInput?: (inputValue: string, prevInputValue: string) => string;
   hasError?: boolean;
   usePortal?: boolean;
+  disabled?: boolean;
 }
 
 const DropdownIndicator = (props: DropdownIndicatorProps<{ value: string | number; label: string }, false>) => {
@@ -30,11 +31,12 @@ const Input = (props: InputProps<{ value: string | number; label: string }, fals
   return <components.Input {...props} inputMode="numeric" />;
 };
 
-const CustomSelect = ({ options, selectedValue, onChange, validateInput, hasError, usePortal }: CustomSelectProps): JSX.Element => {
+const CustomSelect = ({ options, selectedValue, onChange, validateInput, hasError, usePortal, disabled }: CustomSelectProps): JSX.Element => {
   return (
     <Select
       className="reactSelect"
       classNamePrefix="reactSelect"
+      isDisabled={disabled}
       theme={(theme) => ({
         ...theme,
         colors: {
@@ -48,7 +50,7 @@ const CustomSelect = ({ options, selectedValue, onChange, validateInput, hasErro
         control: (provided) => ({
           ...provided,
           color: hasError ? "var(--ion-color-danger)" : "var(--ion-text-color)",
-          backgroundColor: "var(--ion-color-tertiary)",
+          backgroundColor: disabled ? "var(--ion-color-light)" : "var(--ion-color-tertiary)",
           borderColor: hasError ? "var(--ion-color-danger)" : "var(--ion-color-step-150)",
           borderWidth: "1px",
           zIndex: 998,
@@ -89,6 +91,7 @@ CustomSelect.defaultProps = {
   validateInput: undefined,
   hasError: false,
   usePortal: false,
+  disabled: false,
 };
 
 export default CustomSelect;

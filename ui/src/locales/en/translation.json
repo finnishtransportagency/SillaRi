@@ -23,7 +23,9 @@
       "checkDateShort": "Check the date",
       "checkTimeShort": "Check the time",
       "invalidTime": "Invalid time",
-      "fixTimes": "Check and correct conflicting times for estimated bridge crossings before proceeding."
+      "fixTimes": "Check and correct conflicting times for estimated bridge crossings before proceeding.",
+      "transportNumbersUsed": "Transport times used for route",
+      "transportNumbersUsedInfo": "All transport times permitted for the route in the transport permit have been used. The transport cannot cross any supervised bridges."
     },
     "error": "An error occurred"
   },
@@ -252,11 +254,10 @@
       "transportCountModal": {
         "title": "Transport times of permit {{permit}} by route ",
         "used": "Used",
-        "usedFromPrevious": "Other permit versions",
         "amount": "Amount in permit",
         "unlimited": "Unlimited",
-        "infoTitle": "Instructions",
-        "infoText": "The total number of used transport times consists of the transport times carried out for the current transport permit and possible other versions of the transport permit (the latter in brackets)."
+        "usedInfo": "The total number of used transport times consists of the transport times carried out for the current transport permit and possible other versions of the transport permit (the latter in brackets).",
+        "amountInfo": "The total amount of transport times permitted for the route in the transport permit."
       },
       "filter": {
         "show": "Show",
@@ -284,7 +285,8 @@
       "action": {
         "details": "Details",
         "modify": "Modify",
-        "show": "Show"
+        "show": "Show",
+        "delete": "Delete"
       },
       "transportStatusLog": "Transport tracking",
       "logStatus": {
