@@ -3,7 +3,7 @@ package fi.vaylavirasto.sillari.repositories;
 import fi.vaylavirasto.sillari.mapper.RouteTransportPasswordMapper;
 import fi.vaylavirasto.sillari.model.RouteTransportPasswordModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
-import fi.vaylavirasto.sillari.util.TransportPasswordUtil;
+import fi.vaylavirasto.sillari.util.TransportPasswordGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
@@ -81,7 +81,7 @@ public class RouteTransportPasswordRepository {
         RouteTransportPasswordModel existingPassword = null;
 
         for (int i = 0; i < 100; i++) {
-            password = TransportPasswordUtil.generate();
+            password = TransportPasswordGenerator.generate();
             existingPassword = findRouteTransportPassword(password);
 
             if (existingPassword == null) {
