@@ -53,11 +53,16 @@ public class RouteTransportController {
         }
     }
 
+    /**
+     * @param routeTransportId
+     * @param transportCode aka usernameAndPasswordHashed
+     * @return
+     */
     @Operation(summary = "Check transport code of route transport")
     @GetMapping(value = "/checkTransportCode", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public ResponseEntity<?> checkTransportCode(@RequestParam Integer routeTransportId, @RequestParam String transportCode) {
-        logger.info("usernameAndPasswordHashed: " + transportCode);
+        logger.info("usernameAndPasswordHashed aka transportCode: " + transportCode);
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "unlockRouteTransport");
         try {
             if (!isRouteTransportOfSupervisor(routeTransportId)) {
