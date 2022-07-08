@@ -121,7 +121,6 @@ public class CompanyService {
                 Map<Integer, List<SupervisionStatusModel>> supervisionStatusHistories = supervisionStatusRepository.getSupervisionStatusHistories(supervisionIds);
                 for (SupervisionModel supervision : supervisions) {
                     supervision.setStatusHistory(supervisionStatusHistories.get(supervision.getId()));
-                    logger.debug("HELLOHELLO: " + supervision.getRouteTransport().getId());
                 }
 
                 transport.setSupervisions(supervisions);
@@ -132,7 +131,7 @@ public class CompanyService {
                     .collect(Collectors.groupingBy(transport -> transport.getRoute().getPermit().getCompany()));
 
             companyTransportMap.forEach((companyModel, transports) -> {
-                CompanyTransportsDTO companyTransportsDTO = new CompanyTransportsDTO(companyModel, transports);;
+                CompanyTransportsDTO companyTransportsDTO = new CompanyTransportsDTO(companyModel, transports);
                 companyTransports.add(companyTransportsDTO);
             });
         }
