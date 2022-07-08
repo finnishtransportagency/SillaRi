@@ -1,13 +1,13 @@
 package fi.vaylavirasto.sillari;
 
-import fi.vaylavirasto.sillari.util.TransportPasswordGenerator;
+import fi.vaylavirasto.sillari.util.TransportPasswordUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class TransportPasswordTest {
     @Test
     void transportPasswordGenerateTest() {
-        String password = TransportPasswordGenerator.generate();
+        String password = TransportPasswordUtil.generate();
         System.out.println(password);
 
         int il1Count = 0;

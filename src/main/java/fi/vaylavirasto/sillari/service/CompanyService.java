@@ -9,11 +9,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.time.OffsetDateTime;
 
 @Service
 public class CompanyService {
@@ -121,6 +121,7 @@ public class CompanyService {
                 Map<Integer, List<SupervisionStatusModel>> supervisionStatusHistories = supervisionStatusRepository.getSupervisionStatusHistories(supervisionIds);
                 for (SupervisionModel supervision : supervisions) {
                     supervision.setStatusHistory(supervisionStatusHistories.get(supervision.getId()));
+                    logger.debug("HELLOHELLO: " + supervision.getRouteTransport().getId());
                 }
 
                 transport.setSupervisions(supervisions);

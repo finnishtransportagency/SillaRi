@@ -97,6 +97,11 @@ public class RouteTransportController {
         }
     }
 
+    /**
+     * @param routeTransportId
+     * @param transportCode aka usernameAndPasswordHashed
+     * @return
+     */
     @Operation(summary = "Get route transport of supervisor, with supervisions and route data")
     @GetMapping(value = "/getroutetransportofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")

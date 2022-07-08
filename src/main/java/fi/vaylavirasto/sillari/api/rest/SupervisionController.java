@@ -2,7 +2,10 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
-import fi.vaylavirasto.sillari.model.*;
+import fi.vaylavirasto.sillari.model.CompanyModel;
+import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
+import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.service.RouteTransportPasswordService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
@@ -38,7 +41,7 @@ public class SupervisionController {
 
     /**
      * @param supervisionId
-     * @param transportCode SHA1 hashed from "USER_ID" + "TRANSPORTATION_PASSWORD", for example SHA1("LXVALVOJA1234")
+     * @param transportCode aka usernameAndPasswordHashed; SHA1 hashed from "USER_ID" + "TRANSPORTATION_PASSWORD", for example SHA1("LXVALVOJA1234")
      * @return
      */
     @Operation(summary = "Get supervision")
@@ -52,23 +55,26 @@ public class SupervisionController {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId, true, true);
-
-            // Supervisions are locked by default if ui local storage doesn't contain a valid password for the supervision
-            if (transportCode != null) {
-                unLockSupervision(transportCode, supervisionModel);
-            }
+            SillariUser user = uiService.getSillariUser();
+            checkTransportCodeMatches(user, supervisionModel.getRouteTransportId(), transportCode);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
     }
 
-    private void unLockSupervision(String usernameAndPasswordHashed, SupervisionModel supervisionModel) {
-        SillariUser user = uiService.getSillariUser();
-        if (rtpService.doesTransportPasswordMatch(usernameAndPasswordHashed, user.getUsername(), supervisionModel.getRouteTransport().getId())) {
-            supervisionModel.setLocked(false);
+    private void checkTransportCodeMatches(SillariUser user, Integer routeTransportId, String transportCode) {
+        if (transportCode != null) {
+            boolean passwordOk = rtpService.doesTransportPasswordMatch(transportCode, user.getUsername(), routeTransportId);
+            if (!passwordOk) {
+                throw new AccessDeniedException("Transport code does not match");
+            }
+        } else {
+            throw new AccessDeniedException("Transport code missing");
         }
     }
+
+
 
     @Operation(summary = "Get supervision of transport company")
     @GetMapping(value = "/getsupervisionoftransportcompany", produces = MediaType.APPLICATION_JSON_VALUE)
