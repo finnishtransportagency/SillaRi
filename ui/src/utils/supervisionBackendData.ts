@@ -13,7 +13,7 @@ import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import IStartCrossingInput from "../interfaces/IStartCrossingInput";
-import { createErrorFromUnknown, createErrorFromStatusCode, getUserData } from "./backendData";
+import { createErrorFromStatusCode, createErrorFromUnknown, getUserData } from "./backendData";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
 
@@ -58,6 +58,10 @@ export const getRouteTransportOfSupervisor = async (routeTransportId: number, di
       } else {
         console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} backend fail, status ${routeTransportResponse.status}`);
         dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
+        if (routeTransportResponse.status === 403){
+          console.log('HEllo got 403');
+          await Storage.remove({ key: `${username}_${SupervisionListType.TRANSPORT}_${routeTransportId}` });
+        }
         throw createErrorFromStatusCode(routeTransportResponse.status);
       }
     } else {
