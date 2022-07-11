@@ -59,7 +59,7 @@ export const getRouteTransportOfSupervisor = async (routeTransportId: number, di
         console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} backend fail, status ${routeTransportResponse.status}`);
         dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
         if (routeTransportResponse.status === 403){
-          console.log('HEllo got 403');
+          console.log("HEllo got 403");
           await Storage.remove({ key: `${username}_${SupervisionListType.TRANSPORT}_${routeTransportId}` });
         }
         throw createErrorFromStatusCode(routeTransportResponse.status);
