@@ -53,6 +53,8 @@ const TransportCard = ({ username, company, transport }: TransportCardProps): JS
 
   const navigateToRouteTransportDetail = () => {
     history.push(`/routetransportdetail/${routeTransportId}`);
+
+
   };
 
   // TODO how else can we check if routeTransport is locked or not at this point?
@@ -61,6 +63,7 @@ const TransportCard = ({ username, company, transport }: TransportCardProps): JS
   If this is not enough at this point, we would need to use getRouteTransportOfSupervisor for each transport on the list
   or create a separate call to backend with all routeTransportIds and their passwords from storage*/
   useEffect(() => {
+    Storage.configure({ group: "sillari_transcode" });
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
     if (username) {
       Storage.get({ key: `${username}_${SupervisionListType.TRANSPORT}_${routeTransportId}` }).then((result) => {
