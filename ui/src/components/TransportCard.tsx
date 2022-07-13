@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import Moment from "react-moment";
-import { DATE_FORMAT, SupervisionListType, TIME_FORMAT_MIN, TransportStatus } from "../utils/constants";
+import { DATE_FORMAT, SupervisionListType, TIME_FORMAT_MIN, TRANSPORT_CODE_STORAGE_GROUP, TransportStatus } from "../utils/constants";
 import { useTranslation } from "react-i18next";
 import { getNextPlannedSupervisionTime } from "../utils/supervisionUtil";
 import "./TransportCard.css";
@@ -61,7 +61,7 @@ const TransportCard = ({ username, company, transport }: TransportCardProps): JS
   If this is not enough at this point, we would need to use getRouteTransportOfSupervisor for each transport on the list
   or create a separate call to backend with all routeTransportIds and their passwords from storage*/
   useEffect(() => {
-    Storage.configure({ group: "sillari_transcode" });
+    Storage.configure({ group: TRANSPORT_CODE_STORAGE_GROUP });
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
     if (username) {
       Storage.get({ key: `${username}_${SupervisionListType.TRANSPORT}_${routeTransportId}` }).then((result) => {
@@ -70,7 +70,7 @@ const TransportCard = ({ username, company, transport }: TransportCardProps): JS
         }
       });
     }
-  }, [username, routeTransportId]);
+  };, [username, routeTransportId]);
 
   return (
     <IonItem

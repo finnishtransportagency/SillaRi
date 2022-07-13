@@ -10,6 +10,8 @@ export const NETWORK_RESPONSE_NOT_OK = "Network response was not ok";
 export const FORBIDDEN_ERROR = "Forbidden";
 export const CONFLICT_ERROR = "Conflict";
 
+export const TRANSPORT_CODE_STORAGE_GROUP = "sillari_transcode";
+
 export enum SillariErrorCode {
   NO_USER_ROLES = 1001,
   NO_USER_DATA = 1002,

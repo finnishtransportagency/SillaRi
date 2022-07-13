@@ -13,14 +13,14 @@ import {
   getSupervisionSendingList,
 } from "./supervisionBackendData";
 import { getUserData, onRetry } from "./backendData";
-import { SupervisionListType, SupervisionStatus, TransportStatus } from "./constants";
+import { SupervisionListType, SupervisionStatus, TRANSPORT_CODE_STORAGE_GROUP, TransportStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 import { Moment } from "moment/moment";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
 
 export const savePasswordToStorage = async (username: string, id: number, password: string, type: SupervisionListType) => {
-  await Storage.configure({ group: "sillari_transcode" });
+  await Storage.configure({ group: TRANSPORT_CODE_STORAGE_GROUP });
   return Storage.set({
     // username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
     key: `${username}_${type}_${id}`,
