@@ -115,7 +115,7 @@ const SupervisionPasswordPopover = ({
 
   return (
     /* Bug: Ion Popover renders outside screen when the trigger is too low
-    https://github.com/ionic-team/ionic-framework/issues/24870 */
+      https://github.com/ionic-team/ionic-framework/issues/24870 */
     <IonPopover
       trigger={triggerId}
       isOpen={isOpen}
