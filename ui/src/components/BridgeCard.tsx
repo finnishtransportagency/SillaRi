@@ -51,7 +51,7 @@ const BridgeCard = ({ username, routeTransport, supervision, supervisionListType
         }
       });
     }
-  };, [username, supervisionId]);
+  }, [username, supervisionId]);
 
   // Trigger id determines the placement and size of the password popover
   const passwordPopoverTriggerId = `passwordTrigger_supervision_${supervisionId}`;
