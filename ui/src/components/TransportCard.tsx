@@ -53,8 +53,6 @@ const TransportCard = ({ username, company, transport }: TransportCardProps): JS
 
   const navigateToRouteTransportDetail = () => {
     history.push(`/routetransportdetail/${routeTransportId}`);
-
-
   };
 
   // TODO how else can we check if routeTransport is locked or not at this point?
