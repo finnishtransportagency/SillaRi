@@ -70,7 +70,7 @@ const TransportCard = ({ username, company, transport }: TransportCardProps): JS
         }
       });
     }
-  };, [username, routeTransportId]);
+  }, [username, routeTransportId]);
 
   return (
     <IonItem
