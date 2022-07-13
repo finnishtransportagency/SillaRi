@@ -20,6 +20,7 @@ import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
 
 export const savePasswordToStorage = async (username: string, id: number, password: string, type: SupervisionListType) => {
+  Storage.configure({group: 'sillari_transcode'});
   return Storage.set({
     // username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
     key: `${username}_${type}_${id}`,
