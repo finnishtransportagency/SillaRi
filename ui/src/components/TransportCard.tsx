@@ -5,6 +5,7 @@ import Moment from "react-moment";
 import { DATE_FORMAT, SupervisionListType, TIME_FORMAT_MIN, TRANSPORT_CODE_STORAGE_GROUP, TransportStatus } from "../utils/constants";
 import { useTranslation } from "react-i18next";
 import { getNextPlannedSupervisionTime } from "../utils/supervisionUtil";
+import { getPasswordFromStorage } from "../utils/trasportCodeStorageUtil";
 import "./TransportCard.css";
 import lock from "../theme/icons/lock_closed_white.svg";
 import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
@@ -61,6 +62,7 @@ const TransportCard = ({ username, company, transport }: TransportCardProps): JS
   If this is not enough at this point, we would need to use getRouteTransportOfSupervisor for each transport on the list
   or create a separate call to backend with all routeTransportIds and their passwords from storage*/
   useEffect(() => {
+    getPasswordFromStorage(username, SupervisionListType.TRANSPORT, routeTransportId);
     Storage.configure({ group: TRANSPORT_CODE_STORAGE_GROUP });
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
     if (username) {

@@ -24,14 +24,14 @@ export const savePasswordToStorage = async (username: string, id: number, passwo
 };
 
 export const getPastDate = (daysAgo: number): string => {
-  let d = new Date();
-  d.setDate(d.getDate() - daysAgo);
-  return formatDate(d);
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  return formatDate(date);
 };
 
-export const getPasswordFromStorage = async (username: string, id: number, password: string, type: SupervisionListType) => {
+export const getPasswordFromStorage = async (username: string, type: SupervisionListType, id: number) => {
   const today = formatDate(new Date());
-  console.log("hello1");
+  console.log("hello1" + type);
   console.log(Storage.keys());
   await Storage.configure({ group: TRANSPORT_CODE_STORAGE_GROUP + today });
   console.log("hello2");
