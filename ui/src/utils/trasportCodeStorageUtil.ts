@@ -1,5 +1,5 @@
 import { SupervisionListType, TRANSPORT_CODE_STORAGE_GROUP, TRANSPORT_CODE_PREFIX, TRANSPORT_CODE_STORAGE_LIFE_DAYS } from "./constants";
-import { KeysResult, Storage } from "@capacitor/storage";
+import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
 
 export const constructStorageKey = (username: string, type: SupervisionListType, id: number): string => {
@@ -43,7 +43,7 @@ export const getPasswordFromStorage = async (username: string, type: Supervision
 
 //get from storage password from 3 past days
 export const getNonObsoletePasswords = async () => {
-  let nonObsoleteTransportCodes: KeysResult[] = [];
+  const nonObsoleteTransportCodes = [];
   for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
     const date = getPastDate(n);
     console.log("HEllo:" + date);
