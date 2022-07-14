@@ -6,10 +6,10 @@ import TransportCodeInput from "./TransportCodeInput";
 import { useDispatch } from "react-redux";
 import ISupervision from "../interfaces/ISupervision";
 import { checkTransportCode } from "../utils/supervisionBackendData";
-import { savePasswordToStorage } from "../utils/supervisionUtil";
 import { useQuery } from "react-query";
 import { getUserData, onRetry } from "../utils/backendData";
 import { SupervisionListType } from "../utils/constants";
+import { savePasswordToStorage } from "../utils/trasportCodeStorageUtil";
 
 interface SupervisionPasswordPopoverProps {
   triggerId: string;
