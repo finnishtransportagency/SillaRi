@@ -71,7 +71,7 @@ export const removeObsoletePasswords = async () => {
 
   //dont remove keys that are in the new keys
   keysToRemove.keys.filter((key: string) => {
-    return nonObsoleteTransportCodes.find((x) => x == key) == undefined;
+    return nonObsoleteTransportCodes.find((x) => x === key) === undefined;
   });
   console.log("keysToRemove filtered:" + keysToRemove);
 
