@@ -1,6 +1,7 @@
 import { SupervisionListType, TRANSPORT_CODE_STORAGE_GROUP } from "./constants";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
+import { contractSharp } from "ionicons/icons";
 
 export const constructStorageKey = (username: string, type: SupervisionListType, id: number): string => {
   // username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
@@ -32,10 +33,11 @@ export const getPastDate = (daysAgo: number): string => {
 export const getPasswordFromStorage = async (username: string, type: SupervisionListType, id: number) => {
   const today = formatDate(new Date());
   console.log("hello1" + type);
-  console.log(Storage.keys());
+  const keys = await Storage.keys();
+  console.log(keys);
   await Storage.configure({ group: TRANSPORT_CODE_STORAGE_GROUP + today });
-  console.log("hello2");
-  console.log(Storage.keys());
+  const keys2 = await Storage.keys();
+  console.log(keys2);
   const transportCodeStorageKey = `${username}_${SupervisionListType.TRANSPORT}_${id}`;
   const transportCode = await Storage.get({ key: transportCodeStorageKey });
 };
