@@ -31,6 +31,7 @@ import UserInfo from "./pages/UserInfo";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import { useTypedSelector, RootState } from "./store/store";
 import { getUserData, getVersionInfo } from "./utils/backendData";
+import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/supervisionUtil";
 import IonicAsyncStorage from "./IonicAsyncStorage";
@@ -93,6 +94,7 @@ const App: React.FC = () => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   useEffect(() => {
+    removeObsoletePasswords();
     // Add or remove the "dark" class based on if the media query matches
     const toggleDarkTheme = (shouldAdd: boolean) => {
       document.body.classList.toggle("dark", shouldAdd);

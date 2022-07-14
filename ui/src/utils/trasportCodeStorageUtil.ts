@@ -1,7 +1,6 @@
-import { SupervisionListType, TRANSPORT_CODE_STORAGE_GROUP } from "./constants";
+import { SupervisionListType, TRANSPORT_CODE_STORAGE_GROUP, TRANSPORT_CODE_STORAGE_LIFE_DAYS } from "./constants";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
-import { contractSharp } from "ionicons/icons";
 
 export const constructStorageKey = (username: string, type: SupervisionListType, id: number): string => {
   // username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
@@ -40,4 +39,12 @@ export const getPasswordFromStorage = async (username: string, type: Supervision
   console.log(keys2);
   const transportCodeStorageKey = `${username}_${SupervisionListType.TRANSPORT}_${id}`;
   const transportCode = await Storage.get({ key: transportCodeStorageKey });
+};
+
+export const removeObsoletePasswords = () => {
+  for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
+    const date = getPastDate(n);
+    console.log("HEllo:" + date)
+  }
+
 };
