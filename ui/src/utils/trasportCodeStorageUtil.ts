@@ -44,7 +44,6 @@ export const getPasswordFromStorage = async (username: string, type: Supervision
 export const removeObsoletePasswords = () => {
   for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
     const date = getPastDate(n);
-    console.log("HEllo:" + date)
+    console.log("HEllo:" + date);
   }
-
 };
