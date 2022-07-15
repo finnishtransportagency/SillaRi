@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import Moment from "react-moment";
-import { DATE_FORMAT, SupervisionListType, TIME_FORMAT_MIN, TRANSPORT_CODE_STORAGE_GROUP, TransportStatus } from "../utils/constants";
+import { DATE_FORMAT, SupervisionListType, TIME_FORMAT_MIN, TransportStatus } from "../utils/constants";
 import { useTranslation } from "react-i18next";
 import { getNextPlannedSupervisionTime } from "../utils/supervisionUtil";
 import { getPasswordFromStorage } from "../utils/trasportCodeStorageUtil";
@@ -12,7 +12,6 @@ import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import { useHistory } from "react-router-dom";
 import moment from "moment/moment";
 import ICompany from "../interfaces/ICompany";
-import { Storage } from "@capacitor/storage";
 import arrowRight from "../theme/icons/arrow-right.svg";
 
 interface TransportCardProps {
