@@ -1,12 +1,10 @@
 import { SupervisionListType, TRANSPORT_CODE_STORAGE_GROUP, TRANSPORT_CODE_STORAGE_LIFE_DAYS } from "./constants";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
-import { key } from "ionicons/icons";
-import { isTimestampCurrentOrAfter } from "./validation";
 
 export const constructStorageKey = (username: string, type: SupervisionListType, id: number): string => {
-  // SILLARI_TRANSCODE + username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
-  return `_${username}_${type}_${id}`;
+  //username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
+  return `${username}_${type}_${id}`;
 };
 
 export const formatDate = (date: Date): string => {
@@ -18,7 +16,7 @@ export const configureStorageForAll = async () => {
 };
 
 export const configureStorageForDay = async (day: Date) => {
-  const dayString = formatDate(new Date());
+  const dayString = formatDate(day);
   const storageGroup = TRANSPORT_CODE_STORAGE_GROUP + "." + dayString;
   console.log("Config storage grouop: " + storageGroup);
   await Storage.configure({ group: storageGroup });
@@ -66,7 +64,7 @@ export const getPasswordFromStorage = async (username: string, type: Supervision
 
 function isCurrent(dateTimePart: string) {
   for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
-    if (formatDate(getPastDate(n)) == dateTimePart) {
+    if (formatDate(getPastDate(n)) === dateTimePart) {
       console.log("current date is: " + dateTimePart);
       return true;
     }
@@ -75,7 +73,7 @@ function isCurrent(dateTimePart: string) {
   return false;
 }
 
-function removeIfObsolete(param: { key: string }) {
+function removeIfObsolete(key: string) {
   const splitted = key.split(".");
   const dateTimePart = splitted[0];
   const keyPart = splitted[1];
@@ -87,5 +85,5 @@ function removeIfObsolete(param: { key: string }) {
 export const removeObsoletePasswords = async () => {
   await configureStorageForAll();
   const allKeys = await Storage.keys();
-  allKeys.keys.forEach((key) => removeIfObsolete({ key: key }));
+  allKeys.keys.forEach((k) => removeIfObsolete(k));
 };
