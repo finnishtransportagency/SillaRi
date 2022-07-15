@@ -41,39 +41,45 @@ export const getPasswordFromStorage = async (username: string, type: Supervision
   const transportCode = await Storage.get({ key: transportCodeStorageKey });
 };
 
-//get from storage password from 3 past days
+//get from storage password from TRANSPORT_CODE_STORAGE_LIFE_DAYS (3) past days
 export const getNonObsoletePasswords = async () => {
   const nonObsoleteTransportCodes = [];
   for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
     const date = getPastDate(n);
-    console.log("HEllo:" + date);
+    console.log("Date:" + date);
     await Storage.configure({ group: TRANSPORT_CODE_STORAGE_GROUP + date });
     const keysFromDate = await Storage.keys();
-    console.log("keysFromDate:" + keysFromDate);
+    console.log("keysFromDate:");
+    console.log(keysFromDate);
     nonObsoleteTransportCodes.push(keysFromDate);
   }
-  console.log("nonObsoleteTransportCodes:" + nonObsoleteTransportCodes);
+  console.log("nonObsoleteTransportCodesResults:");
+  console.log(nonObsoleteTransportCodes);
   return nonObsoleteTransportCodes.flatMap((keyResult) => keyResult.keys);
 };
 
 export const removeObsoletePasswords = async () => {
   const nonObsoleteTransportCodes: string[] = await getNonObsoletePasswords();
-  console.log("nonObsoleteTransportCodes:" + nonObsoleteTransportCodes);
+  console.log("nonObsoleteTransportCodes:");
+  console.log(nonObsoleteTransportCodes);
   await Storage.configure({});
   const keysToRemove = await Storage.keys();
-  console.log("keysToRemove:" + keysToRemove);
+  console.log("all keys:");
+  console.log(keysToRemove);
 
   //dont remove non related stuff from storage
   keysToRemove.keys.filter((key: string) => {
     return key.includes(TRANSPORT_CODE_PREFIX);
   });
-  console.log("keysToRemove:" + keysToRemove);
+  console.log("all keys, unrelated removed:");
+  console.log(keysToRemove);
 
   //dont remove keys that are in the new keys
   keysToRemove.keys.filter((key: string) => {
     return nonObsoleteTransportCodes.find((x) => x === key) === undefined;
   });
-  console.log("keysToRemove filtered:" + keysToRemove);
+  console.log("keysToRemove:");
+  console.log(keysToRemove);
 
   keysToRemove.keys.forEach((key) => Storage.remove({ key: key }));
 };
