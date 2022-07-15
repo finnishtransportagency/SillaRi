@@ -43,7 +43,7 @@ export const savePasswordToStorage = async (username: string, id: number, passwo
 
   await configureStorageForToday();
   return Storage.set({
-    // SILLARI_TRANSCODE + username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
+    // username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
     key: constructStorageKey(username, type, id),
     // username + route transport password
     value: SHA1(`${username}${password}`).toString(),
