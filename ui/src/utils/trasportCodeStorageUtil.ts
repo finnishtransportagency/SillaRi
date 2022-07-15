@@ -73,17 +73,20 @@ const isCurrent = (dateTimePart: string) => {
   return false;
 };
 
-const removeIfObsolete = (key: string) => {
+const removeIfObsolete = async (key: string) => {
   const splitted = key.split(".");
   const dateTimePart = splitted[0];
   const keyPart = splitted[1];
   if (!isCurrent(dateTimePart)) {
     console.log("not cuuretn: " + dateTimePart);
-    Storage.remove({ key: keyPart });
+    console.log("not cuuretn; remove: " + keyPart);
+    await Storage.remove({ key: keyPart });
   }
 };
 
 export const removeObsoletePasswords = async () => {
+  await Storage.remove({ key: "test" });
+  await Storage.remove({ key: "teset" });
   console.log("removeObsoletePasswords");
   await configureStorageForAll();
   const allKeys = await Storage.keys();
