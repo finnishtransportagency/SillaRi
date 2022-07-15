@@ -7,32 +7,32 @@ export const constructStorageKey = (username: string, type: SupervisionListType,
   return `${username}_${type}_${id}`;
 };
 
-export const formatDate = (date: Date): string => {
+const formatDate = (date: Date): string => {
   return date.toISOString().slice(0, 10);
 };
 
-export const configureStorageForAll = async () => {
+const configureStorageForAll = async () => {
   await Storage.configure({ group: TRANSPORT_CODE_STORAGE_GROUP });
 };
 
-export const configureStorageForDay = async (day: Date) => {
+const configureStorageForDay = async (day: Date) => {
   const dayString = formatDate(day);
   const storageGroup = TRANSPORT_CODE_STORAGE_GROUP + "." + dayString;
   console.log("Config storage grouop: " + storageGroup);
   await Storage.configure({ group: storageGroup });
 };
 
-export const configureStorageForToday = async () => {
+const configureStorageForToday = async () => {
   await configureStorageForDay(new Date());
 };
 
-export const getPastDate = (daysAgo: number): Date => {
+const getPastDate = (daysAgo: number): Date => {
   const date = new Date();
   date.setDate(date.getDate() - daysAgo);
   return date;
 };
 
-export const configureStorageForDaysAgo = async (days: number) => {
+const configureStorageForDaysAgo = async (days: number) => {
   await configureStorageForDay(getPastDate(days));
 };
 
@@ -78,8 +78,6 @@ const removeIfObsolete = async (key: string) => {
   const dateTimePart = splitted[0];
   const keyPart = splitted[1];
   if (!isCurrent(dateTimePart)) {
-    console.log("not cuuretn: " + dateTimePart);
-    console.log("not cuuretn; remove: " + keyPart);
     await Storage.remove({ key: key });
   }
 };
