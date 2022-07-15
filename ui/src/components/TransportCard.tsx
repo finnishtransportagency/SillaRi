@@ -62,12 +62,10 @@ const TransportCard = ({ username, company, transport }: TransportCardProps): JS
   If this is not enough at this point, we would need to use getRouteTransportOfSupervisor for each transport on the list
   or create a separate call to backend with all routeTransportIds and their passwords from storage*/
   useEffect(() => {
-    getPasswordFromStorage(username, SupervisionListType.TRANSPORT, routeTransportId);
-    Storage.configure({ group: TRANSPORT_CODE_STORAGE_GROUP });
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
     if (username) {
-      Storage.get({ key: `${username}_${SupervisionListType.TRANSPORT}_${routeTransportId}` }).then((result) => {
-        if (result.value) {
+      getPasswordFromStorage(username, SupervisionListType.TRANSPORT, routeTransportId).then((result) => {
+        if (result) {
           setTransportUnlocked(true);
         }
       });

@@ -13,6 +13,7 @@ import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import IStartCrossingInput from "../interfaces/IStartCrossingInput";
+import { getPasswordFromStorage, constructStorageKey } from "../utils/trasportCodeStorageUtil";
 import { createErrorFromStatusCode, createErrorFromUnknown, getUserData } from "./backendData";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
@@ -43,15 +44,13 @@ export const getRouteTransportOfSupervisor = async (routeTransportId: number, di
 
     const { username } = await getUserData(dispatch);
 
-    const transportCodeStorageKey = `${username}_${SupervisionListType.TRANSPORT}_${routeTransportId}`;
-    const transportCode = await Storage.get({ key: transportCodeStorageKey });
-
+    const transportCode = await getPasswordFromStorage(username, SupervisionListType.TRANSPORT, routeTransportId);
     // Fetch from backend only if password is found from storage - otherwise prefetchOfflineData is retrying failed queries forever
-    if (transportCode.value) {
+    if (transportCode) {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
 
       const routeTransportResponse = await fetch(
-        `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}&transportCode=${transportCode.value}`
+        `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}&transportCode=${transportCode}`
       );
 
       if (routeTransportResponse.ok) {
@@ -63,7 +62,7 @@ export const getRouteTransportOfSupervisor = async (routeTransportId: number, di
         //if storage has old or tampered transport code -> remove it
         if (routeTransportResponse.status === 403) {
           console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} incorrect transportCode`);
-          await Storage.remove({ key: transportCodeStorageKey });
+          await Storage.remove({ key: constructStorageKey(username, SupervisionListType.TRANSPORT, routeTransportId) });
         }
         throw createErrorFromStatusCode(routeTransportResponse.status);
       }
@@ -126,13 +125,13 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
     // Get the user data from the cache when offline or the backend when online
     const { username } = await getUserData(dispatch);
     //console.log("username: " + username);
-    const transportCodeStorageKey = `${username}_${SupervisionListType.BRIDGE}_${supervisionId}`;
-    const transportCode = await Storage.get({ key: transportCodeStorageKey });
+
+    const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId);
     //console.log(transportCode);
 
-    if (transportCode.value) {
+    if (transportCode) {
       const supervisionResponse = await fetch(
-        `${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}&transportCode=${transportCode.value}`
+        `${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}&transportCode=${transportCode}`
       );
 
       if (supervisionResponse.ok) {
@@ -142,7 +141,7 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
         //if storage has old or tampered transport code -> remove it
         if (supervisionResponse.status === 403) {
           console.log(`getSupervision with supervisionId ${supervisionId} incorrect transportCode`);
-          await Storage.remove({ key: transportCodeStorageKey });
+          await Storage.remove({ key: constructStorageKey(username, SupervisionListType.BRIDGE, supervisionId) });
         }
         dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
         throw new Error(NETWORK_RESPONSE_NOT_OK);

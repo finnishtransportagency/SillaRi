@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
-import { DATE_TIME_FORMAT_MIN, SupervisionListType, SupervisionStatus, TIME_FORMAT_MIN, TRANSPORT_CODE_STORAGE_GROUP } from "../utils/constants";
+import { DATE_TIME_FORMAT_MIN, SupervisionListType, SupervisionStatus, TIME_FORMAT_MIN } from "../utils/constants";
+import { getPasswordFromStorage } from "../utils/trasportCodeStorageUtil";
 import ISupervision from "../interfaces/ISupervision";
 import { useTranslation } from "react-i18next";
 import IRouteTransport from "../interfaces/IRouteTransport";
@@ -12,7 +13,6 @@ import lock from "../theme/icons/lock_closed_white.svg";
 import arrowRight from "../theme/icons/arrow-right.svg";
 import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import moment from "moment";
-import { Storage } from "@capacitor/storage";
 
 interface BridgeCardProps {
   username: string;
@@ -42,11 +42,10 @@ const BridgeCard = ({ username, routeTransport, supervision, supervisionListType
   If this is not enough at this point, we would need to use /getSupervision for each supervision on the list (which could be A LOT)
   or create a separate call to backend with all supervisionIds and their passwords from storage*/
   useEffect(() => {
-    Storage.configure({ group: TRANSPORT_CODE_STORAGE_GROUP });
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
     if (username) {
-      Storage.get({ key: `${username}_${SupervisionListType.BRIDGE}_${supervisionId}` }).then((result) => {
-        if (result.value) {
+      getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId).then((result) => {
+        if (result) {
           setSupervisionUnlocked(true);
         }
       });

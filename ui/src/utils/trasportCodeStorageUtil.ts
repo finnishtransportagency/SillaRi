@@ -1,10 +1,12 @@
-import { SupervisionListType, TRANSPORT_CODE_STORAGE_GROUP, TRANSPORT_CODE_PREFIX, TRANSPORT_CODE_STORAGE_LIFE_DAYS } from "./constants";
+import { SupervisionListType, TRANSPORT_CODE_STORAGE_GROUP, TRANSPORT_CODE_STORAGE_LIFE_DAYS } from "./constants";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
+import { key } from "ionicons/icons";
+import { isTimestampCurrentOrAfter } from "./validation";
 
 export const constructStorageKey = (username: string, type: SupervisionListType, id: number): string => {
   // SILLARI_TRANSCODE + username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
-  return TRANSPORT_CODE_PREFIX + `_${username}_${type}_${id}`;
+  return `_${username}_${type}_${id}`;
 };
 
 export const formatDate = (date: Date): string => {
@@ -37,6 +39,10 @@ export const configureStorageForDaysAgo = async (days: number) => {
 };
 
 export const savePasswordToStorage = async (username: string, id: number, password: string, type: SupervisionListType) => {
+  //remove if password is already under different date
+  await configureStorageForAll();
+  await Storage.remove({ key: constructStorageKey(username, type, id) });
+
   await configureStorageForToday();
   return Storage.set({
     // SILLARI_TRANSCODE + username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
@@ -47,47 +53,39 @@ export const savePasswordToStorage = async (username: string, id: number, passwo
 };
 
 export const getPasswordFromStorage = async (username: string, type: SupervisionListType, id: number): Promise<string | null> => {
-  //we can get all transcodes cause obsolete have been removed
-  await configureStorageForAll();
-  const keys = await Storage.keys();
-  console.log(keys);
-  const transportCodeStorageKey = `${username}_${SupervisionListType.TRANSPORT}_${id}`;
-  const transportCode = await Storage.get({ key: transportCodeStorageKey });
-  return transportCode.value;
-};
-
-//get from storage password from TRANSPORT_CODE_STORAGE_LIFE_DAYS (3) past days
-export const getNonObsoletePasswords = async () => {
-  const nonObsoleteTransportCodes = [];
+  //we get only current cause maybe obsolete not removed yet
   for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
     await configureStorageForDaysAgo(n);
-    const keysFromDate = await Storage.keys();
-    console.log("keysFrom days ago: " + n);
-    console.log(keysFromDate);
-    nonObsoleteTransportCodes.push(keysFromDate);
+    const transportCode = await Storage.get({ key: constructStorageKey(username, type, id) });
+    if (transportCode.value) {
+      return transportCode.value;
+    }
   }
-  console.log("nonObsoleteTransportCodesResults:");
-  console.log(nonObsoleteTransportCodes);
-  return nonObsoleteTransportCodes.flatMap((keyResult) => keyResult.keys);
+  return null;
 };
 
+function isCurrent(dateTimePart: string) {
+  for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
+    if (formatDate(getPastDate(n)) == dateTimePart) {
+      console.log("current date is: " + dateTimePart);
+      return true;
+    }
+  }
+  console.log("current date aint: " + dateTimePart);
+  return false;
+}
+
+function removeIfObsolete(param: { key: string }) {
+  const splitted = key.split(".");
+  const dateTimePart = splitted[0];
+  const keyPart = splitted[1];
+  if (!isCurrent(dateTimePart)) {
+    Storage.remove({ key: keyPart });
+  }
+}
+
 export const removeObsoletePasswords = async () => {
-  const nonObsoleteTransportCodes: string[] = await getNonObsoletePasswords();
-  console.log("nonObsoleteTransportCodes:");
-  console.log(nonObsoleteTransportCodes);
-  console.log(Storage);
   await configureStorageForAll();
-  console.log(Storage);
-  const keysToRemove = await Storage.keys();
-  console.log("all keys:");
-  console.log(keysToRemove);
-
-  //dont remove keys that are in the new keys
-  keysToRemove.keys.filter((key: string) => {
-    return nonObsoleteTransportCodes.find((x) => x === key) === undefined;
-  });
-  console.log("keysToRemove:");
-  console.log(keysToRemove);
-
-  keysToRemove.keys.forEach((key) => Storage.remove({ key: key }));
+  const allKeys = await Storage.keys();
+  allKeys.keys.forEach((key) => removeIfObsolete({ key: key }));
 };

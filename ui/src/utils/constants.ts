@@ -11,7 +11,6 @@ export const FORBIDDEN_ERROR = "Forbidden";
 export const CONFLICT_ERROR = "Conflict";
 
 export const TRANSPORT_CODE_STORAGE_GROUP = "TRANSCODES";
-export const TRANSPORT_CODE_PREFIX = "SILLARI_TRANSCODE";
 export const TRANSPORT_CODE_STORAGE_LIFE_DAYS = 3;
 
 export enum SillariErrorCode {
