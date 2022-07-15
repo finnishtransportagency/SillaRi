@@ -62,7 +62,7 @@ export const getPasswordFromStorage = async (username: string, type: Supervision
   return null;
 };
 
-function isCurrent(dateTimePart: string) {
+const isCurrent = (dateTimePart: string) => {
   for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
     if (formatDate(getPastDate(n)) === dateTimePart) {
       console.log("current date is: " + dateTimePart);
@@ -71,18 +71,20 @@ function isCurrent(dateTimePart: string) {
   }
   console.log("current date aint: " + dateTimePart);
   return false;
-}
+};
 
-function removeIfObsolete(key: string) {
+const removeIfObsolete = (key: string) => {
   const splitted = key.split(".");
   const dateTimePart = splitted[0];
   const keyPart = splitted[1];
   if (!isCurrent(dateTimePart)) {
+    console.log("not cuuretn: " + dateTimePart);
     Storage.remove({ key: keyPart });
   }
-}
+};
 
 export const removeObsoletePasswords = async () => {
+  console.log("removeObsoletePasswords");
   await configureStorageForAll();
   const allKeys = await Storage.keys();
   allKeys.keys.forEach((k) => removeIfObsolete(k));
