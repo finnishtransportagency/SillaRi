@@ -59,6 +59,7 @@ export const getNonObsoletePasswords = async () => {
 };
 
 export const removeObsoletePasswords = async () => {
+  await Storage.configure({ group: "hello" });
   const keysToRemove1 = await Storage.keys();
   console.log(keysToRemove1);
   const nonObsoleteTransportCodes: string[] = await getNonObsoletePasswords();
