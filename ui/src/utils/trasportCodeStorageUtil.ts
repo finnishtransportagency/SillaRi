@@ -17,7 +17,9 @@ export const configureStorageForAll = async () => {
 
 export const configureStorageForDay = async (day: Date) => {
   const dayString = formatDate(new Date());
-  await Storage.configure({ group: TRANSPORT_CODE_STORAGE_GROUP + "." + dayString });
+  const storageGroup = TRANSPORT_CODE_STORAGE_GROUP + "." + dayString;
+  console.log("Config storage grouop: " + storageGroup);
+  await Storage.configure({ group: storageGroup });
 };
 
 export const configureStorageForToday = async () => {
@@ -60,7 +62,7 @@ export const getNonObsoletePasswords = async () => {
   for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
     await configureStorageForDaysAgo(n);
     const keysFromDate = await Storage.keys();
-    console.log("keysFromDate:");
+    console.log("keysFrom days ago: " + n);
     console.log(keysFromDate);
     nonObsoleteTransportCodes.push(keysFromDate);
   }
