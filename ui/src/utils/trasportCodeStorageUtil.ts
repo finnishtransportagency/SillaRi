@@ -59,6 +59,8 @@ export const getNonObsoletePasswords = async () => {
 };
 
 export const removeObsoletePasswords = async () => {
+  const keysToRemove1 = await Storage.keys();
+  console.log(keysToRemove1);
   const nonObsoleteTransportCodes: string[] = await getNonObsoletePasswords();
   console.log("nonObsoleteTransportCodes:");
   console.log(nonObsoleteTransportCodes);
