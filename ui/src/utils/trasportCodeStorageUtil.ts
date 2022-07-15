@@ -24,6 +24,12 @@ export const configureStorageForToday = async () => {
   await configureStorageForDay(new Date());
 };
 
+export const getPastDate = (daysAgo: number): Date => {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  return date;
+};
+
 export const configureStorageForDaysAgo = async (days: number) => {
   await configureStorageForDay(getPastDate(days));
 };
@@ -38,11 +44,7 @@ export const savePasswordToStorage = async (username: string, id: number, passwo
   });
 };
 
-export const getPastDate = (daysAgo: number): Date => {
-  const date = new Date();
-  date.setDate(date.getDate() - daysAgo);
-  return date;
-};
+
 
 export const getPasswordFromStorage = async (username: string, type: SupervisionListType, id: number): Promise<string | null> => {
   //we can get all transcodes cause obsolete have been removed
