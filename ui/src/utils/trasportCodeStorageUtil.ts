@@ -44,8 +44,6 @@ export const savePasswordToStorage = async (username: string, id: number, passwo
   });
 };
 
-
-
 export const getPasswordFromStorage = async (username: string, type: SupervisionListType, id: number): Promise<string | null> => {
   //we can get all transcodes cause obsolete have been removed
   await configureStorageForAll();
