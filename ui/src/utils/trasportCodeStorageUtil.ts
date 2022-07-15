@@ -80,13 +80,11 @@ const removeIfObsolete = async (key: string) => {
   if (!isCurrent(dateTimePart)) {
     console.log("not cuuretn: " + dateTimePart);
     console.log("not cuuretn; remove: " + keyPart);
-    await Storage.remove({ key: keyPart });
+    await Storage.remove({ key: key });
   }
 };
 
 export const removeObsoletePasswords = async () => {
-  await Storage.remove({ key: "test" });
-  await Storage.remove({ key: "teset" });
   console.log("removeObsoletePasswords");
   await configureStorageForAll();
   const allKeys = await Storage.keys();
