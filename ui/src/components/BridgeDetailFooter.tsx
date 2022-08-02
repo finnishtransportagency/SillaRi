@@ -17,11 +17,12 @@ import PermitLinkItem from "./PermitLinkItem";
 interface BridgeDetailFooterProps {
   permit: IPermit;
   supervision: ISupervision;
+  username: string;
   isLoadingSupervision: boolean;
   setConformsToPermit: (conforms: boolean) => void;
 }
 
-const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConformsToPermit }: BridgeDetailFooterProps): JSX.Element => {
+const BridgeDetailFooter = ({ permit, supervision, username, isLoadingSupervision, setConformsToPermit }: BridgeDetailFooterProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -54,35 +55,38 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
 
   // Set-up mutations for modifying data later
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
-  const supervisionStartMutation = useMutation((startCrossingInput: IStartCrossingInput) => startSupervision(startCrossingInput, dispatch), {
-    retry: onRetry,
-    onMutate: async (newData: IStartCrossingInput) => {
-      // onMutate fires before the mutation function
+  const supervisionStartMutation = useMutation(
+    (startCrossingInput: IStartCrossingInput) => startSupervision(startCrossingInput, username, dispatch),
+    {
+      retry: onRetry,
+      onMutate: async (newData: IStartCrossingInput) => {
+        // onMutate fires before the mutation function
 
-      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
-      await queryClient.cancelQueries(supervisionQueryKey);
+        // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+        await queryClient.cancelQueries(supervisionQueryKey);
 
-      // Optimistically update to the new report
-      // Set the current status to IN_PROGRESS here otherwise the Supervision page won't work when offline since the backend won't be called yet
-      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
-        return {
-          ...oldData,
-          report: { ...oldData?.report, ...newData.initialReport },
-          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.IN_PROGRESS, time: newData.startTime },
-          startedTime: newData.startTime,
-        } as ISupervision;
-      });
+        // Optimistically update to the new report
+        // Set the current status to IN_PROGRESS here otherwise the Supervision page won't work when offline since the backend won't be called yet
+        queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+          return {
+            ...oldData,
+            report: { ...oldData?.report, ...newData.initialReport },
+            currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.IN_PROGRESS, time: newData.startTime },
+            startedTime: newData.startTime,
+          } as ISupervision;
+        });
 
-      // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
-      history.push(`/supervision/${supervisionId}`);
-    },
-    onSuccess: (data) => {
-      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+        // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
+        history.push(`/supervision/${supervisionId}`);
+      },
+      onSuccess: (data) => {
+        // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
 
-      // Update "getSupervision" query to return the updated data
-      queryClient.setQueryData<ISupervision>(supervisionQueryKey, data);
-    },
-  });
+        // Update "getSupervision" query to return the updated data
+        queryClient.setQueryData<ISupervision>(supervisionQueryKey, data);
+      },
+    }
+  );
 
   const supervisionStartClicked = (): void => {
     const defaultReport: ISupervisionReport = {
@@ -148,7 +152,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
           slot="start"
           value="conforms"
           checked={conformsToPermit}
-          disabled={!supervisionId || !supervisionPending}
+          disabled={!username || !supervisionId || !supervisionPending}
           onClick={() => setConformsToPermit(!conformsToPermit)}
         />
         <IonLabel>{t("bridge.conformsToPermit")}</IonLabel>
@@ -159,7 +163,7 @@ const BridgeDetailFooter = ({ permit, supervision, isLoadingSupervision, setConf
           <IonCol className="ion-text-center">
             {(supervisionPending || crossingDenied) && (
               <IonButton
-                disabled={!supervisionId || !conformsToPermit || crossingDenied}
+                disabled={!username || !supervisionId || !conformsToPermit || crossingDenied}
                 color="primary"
                 expand="block"
                 size="large"

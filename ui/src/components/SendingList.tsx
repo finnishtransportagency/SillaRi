@@ -57,7 +57,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const { username = "" } = supervisorUser || {};
 
   const sendSupervisionMutation = useMutation(
-    (completeCrossingInput: ICompleteCrossingInput) => completeSupervisions(completeCrossingInput, dispatch),
+    (completeCrossingInput: ICompleteCrossingInput) => completeSupervisions(completeCrossingInput, username, dispatch),
     {
       retry: onRetry,
       onSuccess: () => {
@@ -155,7 +155,9 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
               color="primary"
               expand="block"
               size="large"
-              disabled={unsentSupervisions.length === 0 || selectedIds.length === 0 || isSendingSupervisions || !onlineManager.isOnline()}
+              disabled={
+                !username || unsentSupervisions.length === 0 || selectedIds.length === 0 || isSendingSupervisions || !onlineManager.isOnline()
+              }
               onClick={sendSelected}
             >
               {t("sendingList.sendSelected")}

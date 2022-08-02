@@ -14,7 +14,7 @@ import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import IStartCrossingInput from "../interfaces/IStartCrossingInput";
 import { getPasswordFromStorage, constructStorageKey } from "./trasportCodeStorageUtil";
-import { createErrorFromStatusCode, createCustomError, getUserData } from "./backendData";
+import { createErrorFromStatusCode, createCustomError } from "./backendData";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
 
@@ -151,12 +151,11 @@ export const getSupervision = async (supervisionId: number, username: string, di
   }
 };
 
-export const updateConformsToPermit = async (updateRequest: ISupervision, dispatch: Dispatch): Promise<ISupervision> => {
+export const updateConformsToPermit = async (updateRequest: ISupervision, username: string, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("UpdateConformsToPermit", updateRequest);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateConformsToPermit: false } });
 
-    const { username } = await getUserData(dispatch);
     const transportCode = await getPasswordFromStorage(username, SupervisionListType.TRANSPORT, updateRequest.routeTransportId);
 
     const updateSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/updateconformstopermit&transportCode=${transportCode}`, {
@@ -180,7 +179,7 @@ export const updateConformsToPermit = async (updateRequest: ISupervision, dispat
   }
 };
 
-export const startSupervision = async (startCrossingInput: IStartCrossingInput, dispatch: Dispatch): Promise<ISupervision> => {
+export const startSupervision = async (startCrossingInput: IStartCrossingInput, username: string, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("StartSupervision", startCrossingInput);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { startSupervision: false } });
@@ -189,7 +188,6 @@ export const startSupervision = async (startCrossingInput: IStartCrossingInput, 
     const { initialReport, startTime } = startCrossingInput;
     const report = { ...initialReport, startTime };
 
-    const { username } = await getUserData(dispatch);
     const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, startCrossingInput.initialReport.supervisionId);
 
     const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision&transportCode=${transportCode}`, {
@@ -303,10 +301,9 @@ export const finishSupervision = async (finishCrossingInput: IFinishCrossingInpu
   }
 };
 
-export const completeSupervisions = async (completeCrossingInput: ICompleteCrossingInput, dispatch: Dispatch): Promise<void> => {
+export const completeSupervisions = async (completeCrossingInput: ICompleteCrossingInput, username: string, dispatch: Dispatch): Promise<void> => {
   try {
     console.log("CompleteSupervisions", completeCrossingInput);
-    const { username } = await getUserData(dispatch);
     const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, Number(completeCrossingInput.supervisionIds[0]));
 
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { completeSupervisions: false } });
@@ -338,11 +335,9 @@ export const completeSupervisions = async (completeCrossingInput: ICompleteCross
   }
 };
 
-export const updateSupervisionReport = async (updateRequest: ISupervisionReport, dispatch: Dispatch): Promise<ISupervision> => {
+export const updateSupervisionReport = async (updateRequest: ISupervisionReport, username: string, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("UpdateSupervisionReport", updateRequest);
-
-    const { username } = await getUserData(dispatch);
     const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, updateRequest.supervisionId);
 
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateSupervisionReport: false } });

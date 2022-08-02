@@ -61,7 +61,7 @@ const Supervision = (): JSX.Element => {
 
   // Set-up mutations for modifying data later
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
-  const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
+  const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, username, dispatch), {
     retry: onRetry,
     onMutate: async (newData: ISupervisionReport) => {
       // onMutate fires before the mutation function
@@ -257,7 +257,7 @@ const Supervision = (): JSX.Element => {
             />
             <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} disabled={notAllowedToEdit} />
             <SupervisionFooter
-              saveDisabled={isLoading || notAllowedToEdit || !reportValid}
+              saveDisabled={!username || isLoading || notAllowedToEdit || !reportValid}
               cancelDisabled={isLoading || notAllowedToEdit}
               saveChanges={saveReportClicked}
               cancelChanges={cancelSupervisionClicked}
