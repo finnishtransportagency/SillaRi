@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
+import fi.vaylavirasto.sillari.dto.SupervisionInputDTO;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
@@ -214,28 +215,25 @@ public class SupervisionController {
     @Operation(summary = "Complete supervisions")
     @PostMapping(value = "/completesupervisions", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> completeSupervisions(@RequestParam List<Integer> supervisionIds,
-                                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime completeTime,
-                                                  @RequestParam(required = false) String transportCode) {
+    public ResponseEntity<?> completeSupervisions(@RequestBody List<SupervisionInputDTO> supervisionInputs,
+                                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime completeTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "completeSupervisions");
         try {
-            if (supervisionIds.stream().anyMatch(id->!isSendingListSupervisionOfSupervisor(id))){
-                throw new AccessDeniedException("Supervision not of the user");
-            }
-            SillariUser user = uiService.getSillariUser();
+            if (supervisionInputs != null && !supervisionInputs.isEmpty()) {
+                if (supervisionInputs.stream().anyMatch(input -> !isSendingListSupervisionOfSupervisor(input.getSupervision().getId()))) {
+                    throw new AccessDeniedException("Supervision not of the user");
+                }
+                SillariUser user = uiService.getSillariUser();
 
-
-
-
-            if (supervisionIds != null && !supervisionIds.isEmpty()) {
-                supervisionIds.forEach(supervisionId -> {
-                    checkTransportCodeMatches(user, supervisionId, transportCode);
-                    supervisionService.completeSupervision(supervisionId, completeTime, user);
+                supervisionInputs.forEach(input -> {
+                    SupervisionModel supervision = input.getSupervision();
+                    checkTransportCodeMatches(user, supervision.getRouteTransportId(), input.getTransportCode());
+                    supervisionService.completeSupervision(supervision.getId(), completeTime, user);
                 });
 
                 // Don't wait for pdf generation before returning the response
                 ExecutorService executor = Executors.newWorkStealingPool();
-                executor.submit(() -> supervisionIds.forEach(supervisionId -> supervisionService.createSupervisionPdf(supervisionId)));
+                executor.submit(() -> supervisionInputs.forEach(input -> supervisionService.createSupervisionPdf(input.getSupervision().getId())));
             }
 
             // TODO - check if any data should be returned

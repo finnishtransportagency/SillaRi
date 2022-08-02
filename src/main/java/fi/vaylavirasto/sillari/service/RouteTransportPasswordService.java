@@ -27,7 +27,10 @@ public class RouteTransportPasswordService {
 
     public boolean doesTransportPasswordMatch (String usernameAndPasswordHashed, String username, Integer routeTransportId) {
         RouteTransportPasswordModel rtpModel = rtpRepository.getTransportPassword(routeTransportId);
-        return doPasswordsMatch(usernameAndPasswordHashed, username, rtpModel.getTransportPassword());
+        if (rtpModel != null) {
+            return doPasswordsMatch(usernameAndPasswordHashed, username, rtpModel.getTransportPassword());
+        }
+        return false;
     }
 
     private boolean doPasswordsMatch(String inputUsernameAndPasswordHashed, String username, String plainPasswordFromDb) {

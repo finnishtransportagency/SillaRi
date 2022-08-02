@@ -1,6 +1,7 @@
 import { SupervisionListType, TRANSPORT_CODE_STORAGE_GROUP, TRANSPORT_CODE_STORAGE_LIFE_DAYS } from "./constants";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
+import IKeyValue from "../interfaces/IKeyValue";
 
 export const constructStorageKey = (username: string, type: SupervisionListType, id: number): string => {
   //username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
@@ -60,6 +61,11 @@ export const getPasswordFromStorage = async (username: string, type: Supervision
     }
   }
   return null;
+};
+
+export const getPasswordAndIdFromStorage = async (username: string, type: SupervisionListType, id: number): Promise<IKeyValue> => {
+  const code = await getPasswordFromStorage(username, type, id);
+  return { key: id, value: code };
 };
 
 const isCurrent = (dateTimePart: string) => {
