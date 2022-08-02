@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { onlineManager, useMutation, useQueryClient } from "react-query";
+import { onlineManager, useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import {
   IonButton,
@@ -21,7 +21,7 @@ import moment from "moment";
 import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
 import close from "../theme/icons/close_large_white.svg";
-import { onRetry } from "../utils/backendData";
+import { getUserData, onRetry } from "../utils/backendData";
 import { completeSupervisions } from "../utils/supervisionBackendData";
 import { useHistory } from "react-router";
 import CustomAccordion from "./common/CustomAccordion";
@@ -49,6 +49,12 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const [toastMessage, setToastMessage] = useState<string>("");
   const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
   const [selectedSupervisionId, setSelectedSupervisionId] = useState<number | undefined>(undefined);
+
+  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const { username = "" } = supervisorUser || {};
 
   const sendSupervisionMutation = useMutation(
     (completeCrossingInput: ICompleteCrossingInput) => completeSupervisions(completeCrossingInput, dispatch),
@@ -195,6 +201,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
         setOpen={setReportModalOpen}
         selectedSupervisionId={selectedSupervisionId}
         setSelectedSupervisionId={setSelectedSupervisionId}
+        username={username}
       />
     </IonModal>
   );

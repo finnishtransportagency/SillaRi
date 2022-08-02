@@ -76,7 +76,6 @@ const isCurrent = (dateTimePart: string) => {
 const removeIfObsolete = async (key: string) => {
   const splitted = key.split(".");
   const dateTimePart = splitted[0];
-  const keyPart = splitted[1];
   if (!isCurrent(dateTimePart)) {
     await Storage.remove({ key: key });
   }

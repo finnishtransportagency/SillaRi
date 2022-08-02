@@ -210,16 +210,16 @@ export const getTransportTime = (transport: IRouteTransport): Date | undefined =
 
 export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Dispatch) => {
   // Prefetch all data needed for supervisions so that the application can subsequently be used offline
-  // Use queryClient.prefetchQuery where possible but only for query data that is not needed by other queries
+  // Use queryClient.prefetchQuery where possible but only for query data that is not needed by other queries, only fetchQuery returns a result
   // Make sure the parameter types match the later useQuery calls, otherwise the caching doesn't work!
 
   // Prefetch the main data, but only return the company transports data needed by the next step
   const mainData = await Promise.all([
-    queryClient.fetchQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
+    queryClient.fetchQuery(["getSupervisor"], () => getUserData(dispatch), {
       retry: onRetry,
       staleTime: Infinity,
     }),
-    queryClient.prefetchQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
+    queryClient.fetchQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
       retry: onRetry,
       staleTime: Infinity,
     }),
@@ -227,14 +227,18 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
       retry: onRetry,
       staleTime: Infinity,
     }),
-    queryClient.prefetchQuery(["getSupervisor"], () => getUserData(dispatch), {
+    queryClient.prefetchQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
       retry: onRetry,
       staleTime: Infinity,
     }),
   ]);
 
   // Prefetch the route transports of each company transport
-  const companyTransportsList = mainData[0];
+  console.log("PREFETCH MAINDATA", mainData);
+  const { username } = mainData[0] || {};
+  const companyTransportsList = mainData[1];
+  const supervisionSendingList = mainData[2];
+
   const routeTransports = await Promise.all(
     companyTransportsList.flatMap((companyTransports) => {
       const { transports } = companyTransports || {};
@@ -244,7 +248,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
 
         return queryClient.fetchQuery(
           ["getRouteTransportOfSupervisor", Number(routeTransportId)],
-          () => getRouteTransportOfSupervisor(routeTransportId, dispatch),
+          () => getRouteTransportOfSupervisor(routeTransportId, username, dispatch),
           {
             retry: onRetry,
             staleTime: Infinity,
@@ -262,7 +266,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
       return supervisions.map((supervision) => {
         const { id: supervisionId } = supervision || {};
 
-        return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, dispatch), {
+        return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, username, dispatch), {
           retry: onRetry,
           staleTime: Infinity,
         });
@@ -271,12 +275,11 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   );
 
   // Prefetch the supervisions in the sending list so that the modify button works offline
-  const supervisionSendingList = mainData[2];
   await Promise.all(
     supervisionSendingList.map((supervision) => {
       const { id: supervisionId } = supervision || {};
 
-      return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, dispatch), {
+      return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, username, dispatch), {
         retry: onRetry,
         staleTime: Infinity,
       });

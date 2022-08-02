@@ -7,7 +7,7 @@ import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
 import ISupervision from "../interfaces/ISupervision";
-import { createErrorFromUnknown, createErrorFromStatusCode } from "./backendData";
+import { createCustomError, createErrorFromStatusCode } from "./backendData";
 
 export const getCompany = async (dispatch: Dispatch): Promise<ICompany> => {
   try {
@@ -153,7 +153,7 @@ export const createRouteTransport = async (routeTransport: IRouteTransport, disp
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
-    throw createErrorFromUnknown(err);
+    throw createCustomError(err);
   }
 };
 

@@ -13,8 +13,8 @@ import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import IStartCrossingInput from "../interfaces/IStartCrossingInput";
-import { getPasswordFromStorage, constructStorageKey } from "../utils/trasportCodeStorageUtil";
-import { createErrorFromStatusCode, createErrorFromUnknown, getUserData } from "./backendData";
+import { getPasswordFromStorage, constructStorageKey } from "./trasportCodeStorageUtil";
+import { createErrorFromStatusCode, createCustomError, getUserData } from "./backendData";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
 
@@ -38,11 +38,9 @@ export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICom
   }
 };
 
-export const getRouteTransportOfSupervisor = async (routeTransportId: number, dispatch: Dispatch): Promise<IRouteTransport> => {
+export const getRouteTransportOfSupervisor = async (routeTransportId: number, username: string, dispatch: Dispatch): Promise<IRouteTransport> => {
   try {
     console.log("GetRouteTransportOfSupervisor", routeTransportId);
-
-    const { username } = await getUserData(dispatch);
 
     const transportCode = await getPasswordFromStorage(username, SupervisionListType.TRANSPORT, routeTransportId);
     // Fetch from backend only if password is found from storage - otherwise prefetchOfflineData is retrying failed queries forever
@@ -73,7 +71,7 @@ export const getRouteTransportOfSupervisor = async (routeTransportId: number, di
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
-    throw createErrorFromUnknown(err);
+    throw createCustomError(err);
   }
 };
 
@@ -117,14 +115,10 @@ export const getSupervisionSendingList = async (dispatch: Dispatch): Promise<ISu
   }
 };
 
-export const getSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
+export const getSupervision = async (supervisionId: number, username: string, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("GetSupervision", supervisionId);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
-
-    // Get the user data from the cache when offline or the backend when online
-    const { username } = await getUserData(dispatch);
-    //console.log("username: " + username);
 
     const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId);
     //console.log(transportCode);
@@ -144,7 +138,7 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
           await Storage.remove({ key: constructStorageKey(username, SupervisionListType.BRIDGE, supervisionId) });
         }
         dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
-        throw new Error(NETWORK_RESPONSE_NOT_OK);
+        throw createErrorFromStatusCode(supervisionResponse.status);
       }
     } else {
       console.log(`getSupervision with supervisionId ${supervisionId} missing transportCode`);
@@ -153,7 +147,7 @@ export const getSupervision = async (supervisionId: number, dispatch: Dispatch):
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
-    throw new Error(err as string);
+    throw createCustomError(err);
   }
 };
 

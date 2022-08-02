@@ -15,7 +15,8 @@ export const onRetry = (failureCount: number, err: any): boolean => {
   console.log("err is string type", typeof err === "string" || err instanceof String);
   // FIXME find out when err is string and when Error (preferably fix so that it's never a string, although might not be possible)
   const isForbiddenError = (err instanceof Error && err.message === FORBIDDEN_ERROR) || err === FORBIDDEN_ERROR;
-  console.log("isForbiddenError", isForbiddenError);
+  console.log("error message", err instanceof Error ? err.message : "No message");
+  console.log("onRetry result", !isForbiddenError);
   return !isForbiddenError;
 };
 
@@ -29,7 +30,7 @@ export const createErrorFromStatusCode = (statusCode: number): Error => {
   }
 };
 
-export const createErrorFromUnknown = (err: unknown): Error => {
+export const createCustomError = (err: unknown): Error => {
   const errMessage = err instanceof Error ? err.message : (err as string);
   throw new Error(errMessage);
 };

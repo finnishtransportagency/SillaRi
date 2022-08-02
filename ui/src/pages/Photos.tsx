@@ -8,7 +8,7 @@ import { useHistory, useParams } from "react-router-dom";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import camera from "../theme/icons/camera_white.svg";
-import { onRetry } from "../utils/backendData";
+import { getUserData, onRetry } from "../utils/backendData";
 import { deleteImage, getSupervision, sendImageUpload } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import ImagePreview from "../components/ImagePreview";
@@ -34,12 +34,19 @@ const Photos = (): JSX.Element => {
   const [isImagePreviewOpen, setImagePreviewOpen] = useState<boolean>(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
 
+  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const { username = "" } = supervisorUser || {};
+
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
-    () => getSupervision(Number(supervisionId), dispatch),
+    () => getSupervision(Number(supervisionId), username, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,
+      enabled: !!username,
     }
   );
   const { images: savedImages = [] } = supervision || {};

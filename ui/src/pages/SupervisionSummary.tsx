@@ -12,7 +12,7 @@ import SupervisionPhotos from "../components/SupervisionPhotos";
 import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector, RootState } from "../store/store";
-import { onRetry } from "../utils/backendData";
+import { getUserData, onRetry } from "../utils/backendData";
 import { finishSupervision, getSupervision } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
 import { SupervisionListType, SupervisionStatus } from "../utils/constants";
@@ -40,12 +40,19 @@ const SupervisionSummary = (): JSX.Element => {
     selectedSupervisionListType,
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
+  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const { username = "" } = supervisorUser || {};
+
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
-    () => getSupervision(Number(supervisionId), dispatch),
+    () => getSupervision(Number(supervisionId), username, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,
+      enabled: !!username,
     }
   );
   const { routeTransportId = "0" } = supervision || {};

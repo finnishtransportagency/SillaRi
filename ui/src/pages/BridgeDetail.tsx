@@ -12,7 +12,7 @@ import NoNetworkNoData from "../components/NoNetworkNoData";
 import IPermit from "../interfaces/IPermit";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
-import { onRetry } from "../utils/backendData";
+import { getUserData, onRetry } from "../utils/backendData";
 import { getSupervision, updateConformsToPermit } from "../utils/supervisionBackendData";
 
 interface BridgeDetailProps {
@@ -30,12 +30,19 @@ const BridgeDetail = (): JSX.Element => {
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
+  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const { username = "" } = supervisorUser || {};
+
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
-    () => getSupervision(Number(supervisionId), dispatch),
+    () => getSupervision(Number(supervisionId), username, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,
+      enabled: !!username,
     }
   );
 

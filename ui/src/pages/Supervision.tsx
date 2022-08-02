@@ -14,7 +14,7 @@ import ICancelCrossingInput from "../interfaces/ICancelCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { useTypedSelector, RootState } from "../store/store";
-import { onRetry } from "../utils/backendData";
+import { getUserData, onRetry } from "../utils/backendData";
 import { cancelSupervision, deleteSupervisionImages, getSupervision, updateSupervisionReport } from "../utils/supervisionBackendData";
 import { SupervisionStatus } from "../utils/constants";
 import { reportHasUnsavedChanges } from "../utils/supervisionUtil";
@@ -40,12 +40,19 @@ const Supervision = (): JSX.Element => {
 
   const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
 
+  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const { username = "" } = supervisorUser || {};
+
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
-    () => getSupervision(Number(supervisionId), dispatch),
+    () => getSupervision(Number(supervisionId), username, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,
+      enabled: !!username,
       onSuccess: (data) => {
         console.log("GetSupervision done", data.id, data.currentStatus, "draft: ", data.report ? data.report.draft : "");
       },

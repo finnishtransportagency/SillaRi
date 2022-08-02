@@ -31,20 +31,21 @@ const RouteTransportDetail = (): JSX.Element => {
 
   const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
 
-  const { data: routeTransport } = useQuery(
-    ["getRouteTransportOfSupervisor", Number(routeTransportId)],
-    () => getRouteTransportOfSupervisor(Number(routeTransportId), dispatch),
-    {
-      retry: onRetry,
-      staleTime: Infinity,
-    }
-  );
-
   const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
     retry: onRetry,
     staleTime: Infinity,
   });
   const { username = "" } = supervisorUser || {};
+
+  const { data: routeTransport } = useQuery(
+    ["getRouteTransportOfSupervisor", Number(routeTransportId)],
+    () => getRouteTransportOfSupervisor(Number(routeTransportId), username, dispatch),
+    {
+      retry: onRetry,
+      staleTime: Infinity,
+      enabled: !!username,
+    }
+  );
 
   const openRouteMap = (routeId?: number) => {
     if (routeId) {
