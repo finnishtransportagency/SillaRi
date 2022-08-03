@@ -9,7 +9,7 @@ import ISupervisionReport from "../interfaces/ISupervisionReport";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import ICancelCrossingInput from "../interfaces/ICancelCrossingInput";
-import ICompleteSupervisionsInput from "../interfaces/ICompleteSupervisionsInput";
+import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import IStartCrossingInput from "../interfaces/IStartCrossingInput";
@@ -187,18 +187,21 @@ export const startSupervision = async (startCrossingInput: IStartCrossingInput, 
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { startSupervision: false } });
 
     // The time can't be used as a parameter in this case since there is a post body, so include it in the body instead
-    const { initialReport, startTime } = startCrossingInput;
+    const { initialReport, routeTransportId, startTime } = startCrossingInput;
     const report = { ...initialReport, startTime };
 
     const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, startCrossingInput.initialReport.supervisionId);
 
-    const startSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/startsupervision?transportCode=${transportCode}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(report),
-    });
+    const startSupervisionResponse = await fetch(
+      `${getOrigin()}/api/supervision/startsupervision?routeTransportId=${routeTransportId}&transportCode=${transportCode}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(report),
+      }
+    );
 
     if (startSupervisionResponse.ok) {
       const startedSupervision = (await startSupervisionResponse.json()) as Promise<ISupervision>;
@@ -213,23 +216,29 @@ export const startSupervision = async (startCrossingInput: IStartCrossingInput, 
   }
 };
 
-export const cancelSupervision = async (cancelCrossingInput: ICancelCrossingInput, dispatch: Dispatch): Promise<ISupervision> => {
+export const cancelSupervision = async (cancelCrossingInput: ICancelCrossingInput, username: string, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("CancelSupervision", cancelCrossingInput);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { cancelSupervision: false } });
 
-    const { supervisionId, cancelTime } = cancelCrossingInput;
+    const { supervisionId, routeTransportId, cancelTime } = cancelCrossingInput;
     const time = encodeURIComponent(moment(cancelTime).format());
 
-    const cancelSupervisionResponse = await fetch(
-      `${getOrigin()}/api/supervision/cancelsupervision?supervisionId=${supervisionId}&cancelTime=${time}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId);
+
+    const supervisionInput: ISupervisionInput = {
+      supervisionId: supervisionId,
+      routeTransportId: routeTransportId,
+      transportCode: transportCode,
+    };
+
+    const cancelSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/cancelsupervision?cancelTime=${time}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(supervisionInput),
+    });
 
     if (cancelSupervisionResponse.ok) {
       const cancelledSupervision = (await cancelSupervisionResponse.json()) as Promise<ISupervision>;
@@ -281,23 +290,29 @@ export const denyCrossing = async (denyCrossingInput: IDenyCrossingInput, userna
   }
 };
 
-export const finishSupervision = async (finishCrossingInput: IFinishCrossingInput, dispatch: Dispatch): Promise<ISupervision> => {
+export const finishSupervision = async (finishCrossingInput: IFinishCrossingInput, username: string, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("FinishSupervision", finishCrossingInput);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { finishSupervision: false } });
 
-    const { supervisionId, finishTime } = finishCrossingInput;
+    const { supervisionId, routeTransportId, finishTime } = finishCrossingInput;
     const time = encodeURIComponent(moment(finishTime).format());
 
-    const finishSupervisionResponse = await fetch(
-      `${getOrigin()}/api/supervision/finishsupervision?supervisionId=${supervisionId}&finishTime=${time}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId);
+
+    const supervisionInput: ISupervisionInput = {
+      supervisionId: supervisionId,
+      routeTransportId: routeTransportId,
+      transportCode: transportCode,
+    };
+
+    const finishSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/finishsupervision?finishTime=${time}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(supervisionInput),
+    });
 
     if (finishSupervisionResponse.ok) {
       const finishedSupervision = (await finishSupervisionResponse.json()) as Promise<ISupervision>;
@@ -312,17 +327,13 @@ export const finishSupervision = async (finishCrossingInput: IFinishCrossingInpu
   }
 };
 
-export const completeSupervisions = async (
-  completeSupervisionsInput: ICompleteSupervisionsInput,
-  username: string,
-  dispatch: Dispatch
-): Promise<void> => {
+export const completeSupervisions = async (completeCrossingInput: ICompleteCrossingInput, username: string, dispatch: Dispatch): Promise<void> => {
   try {
-    console.log("CompleteSupervisions", completeSupervisionsInput);
+    console.log("CompleteSupervisions", completeCrossingInput);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { completeSupervisions: false } });
 
     // SupervisionInputs have only supervisions at this point
-    const { supervisionInputs, completeTime } = completeSupervisionsInput;
+    const { supervisionInputs, completeTime } = completeCrossingInput;
 
     // Fetch transportCode from storage for each supervision
     const idsAndTransportCodes: IKeyValue[] = await Promise.all(

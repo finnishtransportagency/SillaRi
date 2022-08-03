@@ -55,7 +55,9 @@ const SupervisionSummary = (): JSX.Element => {
       enabled: !!username,
     }
   );
-  const { routeTransportId = "0" } = supervision || {};
+
+  const { routeTransportId = 0, report, currentStatus, images = [] } = supervision || {};
+  const { status: supervisionStatus } = currentStatus || {};
 
   const returnToSupervisionList = () => {
     // Go back to bridge supervision listing on either SupervisionList or RouteTransportDetail page
@@ -72,62 +74,66 @@ const SupervisionSummary = (): JSX.Element => {
 
   // Set-up mutations for modifying data later
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
-  const finishSupervisionMutation = useMutation((finishCrossingInput: IFinishCrossingInput) => finishSupervision(finishCrossingInput, dispatch), {
-    retry: onRetry,
-    onMutate: async (newData: IFinishCrossingInput) => {
-      // onMutate fires before the mutation function
+  const finishSupervisionMutation = useMutation(
+    (finishCrossingInput: IFinishCrossingInput) => finishSupervision(finishCrossingInput, username, dispatch),
+    {
+      retry: onRetry,
+      onMutate: async (newData: IFinishCrossingInput) => {
+        // onMutate fires before the mutation function
 
-      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
-      await queryClient.cancelQueries(supervisionQueryKey);
-      await queryClient.cancelQueries("getSupervisionSendingList");
+        // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+        await queryClient.cancelQueries(supervisionQueryKey);
+        await queryClient.cancelQueries("getSupervisionSendingList");
 
-      // Set the current status to FINISHED here since the backend won't be called yet when offline
-      let updatedSupervision: ISupervision;
-      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
-        updatedSupervision = {
-          ...oldData,
-          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.FINISHED, time: newData.finishTime },
-          savedOffline: !onlineManager.isOnline(),
-          finishedTime: newData.finishTime,
-        } as ISupervision;
-        return updatedSupervision;
-      });
+        // Set the current status to FINISHED here since the backend won't be called yet when offline
+        let updatedSupervision: ISupervision;
+        queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+          updatedSupervision = {
+            ...oldData,
+            currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.FINISHED, time: newData.finishTime },
+            savedOffline: !onlineManager.isOnline(),
+            finishedTime: newData.finishTime,
+          } as ISupervision;
+          return updatedSupervision;
+        });
 
-      // Add the finished supervision to the data used by the sending list so it is updated when offline
-      queryClient.setQueryData<ISupervision[]>("getSupervisionSendingList", (oldData) => {
-        return oldData
-          ? oldData.reduce(
-              (acc: ISupervision[], old) => {
-                return old.id === Number(supervisionId) ? acc : [...acc, old];
-              },
-              [updatedSupervision]
-            )
-          : [];
-      });
+        // Add the finished supervision to the data used by the sending list so it is updated when offline
+        queryClient.setQueryData<ISupervision[]>("getSupervisionSendingList", (oldData) => {
+          return oldData
+            ? oldData.reduce(
+                (acc: ISupervision[], old) => {
+                  return old.id === Number(supervisionId) ? acc : [...acc, old];
+                },
+                [updatedSupervision]
+              )
+            : [];
+        });
 
-      // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
-      // Also remove the finished supervision from the route transport list in the UI
-      removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
-      setToastMessage(t("supervision.summary.saved"));
-      returnToSupervisionList();
-    },
-    onSuccess: (data) => {
-      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+        // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
+        // Also remove the finished supervision from the route transport list in the UI
+        removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
+        setToastMessage(t("supervision.summary.saved"));
+        returnToSupervisionList();
+      },
+      onSuccess: (data) => {
+        // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
 
-      queryClient.setQueryData(supervisionQueryKey, data);
-    },
-  });
+        queryClient.setQueryData(supervisionQueryKey, data);
+      },
+    }
+  );
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
-
-  const { report, currentStatus, images = [] } = supervision || {};
-  const { status: supervisionStatus } = currentStatus || {};
 
   const isLoading = isLoadingSupervision || isSendingFinishSupervision;
   const notAllowedToEdit = !report || supervisionStatus === SupervisionStatus.REPORT_SIGNED;
   const reportValid = isSupervisionReportValid(report);
 
   const saveReport = (): void => {
-    const finishCrossingInput: IFinishCrossingInput = { supervisionId: Number(supervisionId), finishTime: new Date() };
+    const finishCrossingInput: IFinishCrossingInput = {
+      supervisionId: Number(supervisionId),
+      routeTransportId: routeTransportId,
+      finishTime: new Date(),
+    };
     finishSupervisionMutation.mutate(finishCrossingInput);
   };
 
@@ -178,7 +184,7 @@ const SupervisionSummary = (): JSX.Element => {
             <SupervisionPhotos images={images} headingKey="supervision.photos" disabled={isLoading || notAllowedToEdit} />
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
-              saveDisabled={isLoading || notAllowedToEdit || !reportValid}
+              saveDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit || !reportValid}
               cancelDisabled={isLoading || notAllowedToEdit}
               saveChanges={saveReport}
               cancelChanges={editReport}

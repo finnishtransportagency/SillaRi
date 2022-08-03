@@ -18,7 +18,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import moment from "moment";
-import ICompleteSupervisionsInput from "../interfaces/ICompleteSupervisionsInput";
+import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
 import close from "../theme/icons/close_large_white.svg";
 import { getUserData, onRetry } from "../utils/backendData";
@@ -58,7 +58,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const { username = "" } = supervisorUser || {};
 
   const sendSupervisionMutation = useMutation(
-    (completeSupervisionsInput: ICompleteSupervisionsInput) => completeSupervisions(completeSupervisionsInput, username, dispatch),
+    (completeCrossingInput: ICompleteCrossingInput) => completeSupervisions(completeCrossingInput, username, dispatch),
     {
       retry: onRetry,
       onSuccess: () => {
@@ -86,8 +86,8 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
       const supervisionInputs: ISupervisionInput[] = selectedSupervisions.map((s) => {
         return { supervisionId: s.id, routeTransportId: s.routeTransportId };
       });
-      const completeSupervisionsInput: ICompleteSupervisionsInput = { supervisionInputs: supervisionInputs, completeTime: new Date() };
-      sendSupervisionMutation.mutate(completeSupervisionsInput);
+      const completeCrossingInput: ICompleteCrossingInput = { supervisionInputs: supervisionInputs, completeTime: new Date() };
+      sendSupervisionMutation.mutate(completeCrossingInput);
       setSelectedSupervisions([]);
     }
   };

@@ -35,7 +35,7 @@ const BridgeDetailFooter = ({ permit, supervision, username, isLoadingSupervisio
   });
 
   const { username: currentSupervisor = "" } = supervisorUser || {};
-  const { id: supervisionId, conformsToPermit = false, currentStatus, finishedTime, routeTransport } = supervision || {};
+  const { id: supervisionId, routeTransportId, conformsToPermit = false, currentStatus, finishedTime, routeTransport } = supervision || {};
   const { status: supervisionStatus, time: statusTime, username: statusUser } = currentStatus || {};
   const { currentStatus: currentTransportStatus } = routeTransport || {};
   const { status: transportStatus } = currentTransportStatus || {};
@@ -106,7 +106,7 @@ const BridgeDetailFooter = ({ permit, supervision, username, isLoadingSupervisio
       additionalInfo: "",
       draft: true,
     };
-    const startCrossingInput: IStartCrossingInput = { initialReport: defaultReport, startTime: new Date() };
+    const startCrossingInput: IStartCrossingInput = { initialReport: defaultReport, routeTransportId, startTime: new Date() };
     supervisionStartMutation.mutate(startCrossingInput);
   };
 
@@ -163,7 +163,7 @@ const BridgeDetailFooter = ({ permit, supervision, username, isLoadingSupervisio
           <IonCol className="ion-text-center">
             {(supervisionPending || crossingDenied) && (
               <IonButton
-                disabled={!username || !supervisionId || !conformsToPermit || crossingDenied}
+                disabled={!username || !supervisionId || !routeTransportId || !conformsToPermit || crossingDenied}
                 color="primary"
                 expand="block"
                 size="large"
