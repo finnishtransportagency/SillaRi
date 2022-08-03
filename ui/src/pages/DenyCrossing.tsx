@@ -71,11 +71,18 @@ const DenyCrossing = (): JSX.Element => {
     }
   );
 
-  const { routeTransportId = "0" } = supervision || {};
+  const { routeTransportId = 0, routeBridge, currentStatus } = supervision || {};
+  const { status: supervisionStatus } = currentStatus || {};
+  const { route, bridge } = routeBridge || {};
+  const { name = "", identifier = "" } = bridge || {};
+  const { permit } = route || {};
+
+  const supervisionPending =
+    !isLoadingSupervision && (supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED);
 
   // Set-up mutations for modifying data later
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
-  const denyCrossingMutation = useMutation((denyCrossingInput: IDenyCrossingInput) => denyCrossing(denyCrossingInput, dispatch), {
+  const denyCrossingMutation = useMutation((denyCrossingInput: IDenyCrossingInput) => denyCrossing(denyCrossingInput, username, dispatch), {
     retry: onRetry,
     onMutate: async (newData: IDenyCrossingInput) => {
       // onMutate fires before the mutation function
@@ -106,15 +113,6 @@ const DenyCrossing = (): JSX.Element => {
   });
   const { isLoading: isSendingDenyCrossing } = denyCrossingMutation;
 
-  const { routeBridge, currentStatus } = supervision || {};
-  const { status: supervisionStatus } = currentStatus || {};
-  const { route, bridge } = routeBridge || {};
-  const { name = "", identifier = "" } = bridge || {};
-  const { permit } = route || {};
-
-  const supervisionPending =
-    !isLoadingSupervision && (supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED);
-
   const radioClicked = (radioValue: string) => {
     if (radioValue === otherReason) {
       setOtherReasonSelected(true);
@@ -133,7 +131,12 @@ const DenyCrossing = (): JSX.Element => {
 
   const denyCrossingClicked = () => {
     if (denyReason) {
-      const denyCrossingInput: IDenyCrossingInput = { supervisionId: Number(supervisionId), denyReason: denyReason, denyTime: new Date() };
+      const denyCrossingInput: IDenyCrossingInput = {
+        supervisionId: Number(supervisionId),
+        routeTransportId: routeTransportId,
+        denyReason: denyReason,
+        denyTime: new Date(),
+      };
       denyCrossingMutation.mutate(denyCrossingInput);
     }
   };
@@ -199,7 +202,7 @@ const DenyCrossing = (): JSX.Element => {
                     color="primary"
                     expand="block"
                     size="large"
-                    disabled={isLoadingSupervision || isSendingDenyCrossing || !supervisionPending || !denyReason}
+                    disabled={!username || !routeTransportId || isLoadingSupervision || isSendingDenyCrossing || !supervisionPending || !denyReason}
                     onClick={() => denyCrossingClicked()}
                   >
                     {t("common.buttons.send")}

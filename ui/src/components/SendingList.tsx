@@ -31,7 +31,7 @@ import SendingListItem from "./SendingListItem";
 import SendingListOfflineNotice from "./SendingListOfflineNotice";
 import SentSupervisionReport from "./SentSupervisionReport";
 import "./SendingList.css";
-import ICompleteSupervisionInput from "../interfaces/ICompleteSupervisionInput";
+import ISupervisionInput from "../interfaces/ISupervisionInput";
 
 interface SendingListProps {
   isOpen: boolean;
@@ -83,17 +83,8 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const sendSelected = () => {
     // Only allow supervisions to be sent when online
     if (selectedSupervisions.length > 0 && onlineManager.isOnline()) {
-      const supervisionInputs: ICompleteSupervisionInput[] = selectedSupervisions.map((s) => {
-        // Skip all non-mandatory fields from supervision, otherwise conversion fails between front and backend (400 Bad Request)
-        const simpleSupervision = {
-          id: s.id,
-          routeBridgeId: s.routeBridgeId,
-          routeTransportId: s.routeTransportId,
-          plannedTime: s.plannedTime,
-          conformsToPermit: s.conformsToPermit,
-          supervisorType: s.supervisorType,
-        };
-        return { supervision: simpleSupervision };
+      const supervisionInputs: ISupervisionInput[] = selectedSupervisions.map((s) => {
+        return { supervisionId: s.id, routeTransportId: s.routeTransportId };
       });
       const completeSupervisionsInput: ICompleteSupervisionsInput = { supervisionInputs: supervisionInputs, completeTime: new Date() };
       sendSupervisionMutation.mutate(completeSupervisionsInput);

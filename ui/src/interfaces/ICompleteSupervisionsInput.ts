@@ -1,6 +1,6 @@
-import ICompleteSupervisionInput from "./ICompleteSupervisionInput";
+import ISupervisionInput from "./ISupervisionInput";
 
 export default interface ICompleteSupervisionsInput {
-  supervisionInputs: ICompleteSupervisionInput[];
+  supervisionInputs: ISupervisionInput[];
   completeTime: Date;
 }

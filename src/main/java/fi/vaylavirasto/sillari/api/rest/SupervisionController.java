@@ -56,6 +56,7 @@ public class SupervisionController {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId, true, true);
+
             SillariUser user = uiService.getSillariUser();
             checkTransportCodeMatches(user, supervisionModel.getRouteTransportId(), transportCode);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
@@ -132,6 +133,7 @@ public class SupervisionController {
             }
             SillariUser user = uiService.getSillariUser();
             checkTransportCodeMatches(user, supervision.getRouteTransportId(), transportCode);
+
             SupervisionModel supervisionModel = supervisionService.updateConformsToPermit(supervision);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
@@ -150,6 +152,7 @@ public class SupervisionController {
             }
             SillariUser user = uiService.getSillariUser();
             SupervisionModel supervisionModel = supervisionService.getSupervision(report.getSupervisionId(), false, false);
+
             checkTransportCodeMatches(user, supervisionModel.getRouteTransportId(), transportCode);
             supervisionModel = supervisionService.startSupervision(report, report.getStartTime(), user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
@@ -179,15 +182,17 @@ public class SupervisionController {
     @Operation(summary = "Deny crossing")
     @PostMapping(value = "/denycrossing", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> denyCrossing(@RequestParam Integer supervisionId, @RequestParam String denyReason,
+    public ResponseEntity<?> denyCrossing(@RequestBody SupervisionInputDTO supervisionInput, @RequestParam String denyReason,
                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime denyTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "denyCrossing");
         try {
-            if (!canSupervisorUpdateSupervision(supervisionId)) {
+            if (!canSupervisorUpdateSupervision(supervisionInput.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            SupervisionModel supervisionModel = supervisionService.denyCrossing(supervisionId, denyReason, denyTime, user);
+            checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
+
+            SupervisionModel supervisionModel = supervisionService.denyCrossing(supervisionInput.getSupervisionId(), denyReason, denyTime, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -220,20 +225,19 @@ public class SupervisionController {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "completeSupervisions");
         try {
             if (supervisionInputs != null && !supervisionInputs.isEmpty()) {
-                if (supervisionInputs.stream().anyMatch(input -> !isSendingListSupervisionOfSupervisor(input.getSupervision().getId()))) {
+                if (supervisionInputs.stream().anyMatch(input -> !isSendingListSupervisionOfSupervisor(input.getSupervisionId()))) {
                     throw new AccessDeniedException("Supervision not of the user");
                 }
                 SillariUser user = uiService.getSillariUser();
 
                 supervisionInputs.forEach(input -> {
-                    SupervisionModel supervision = input.getSupervision();
-                    checkTransportCodeMatches(user, supervision.getRouteTransportId(), input.getTransportCode());
-                    supervisionService.completeSupervision(supervision.getId(), completeTime, user);
+                    checkTransportCodeMatches(user, input.getRouteTransportId(), input.getTransportCode());
+                    supervisionService.completeSupervision(input.getSupervisionId(), completeTime, user);
                 });
 
                 // Don't wait for pdf generation before returning the response
                 ExecutorService executor = Executors.newWorkStealingPool();
-                executor.submit(() -> supervisionInputs.forEach(input -> supervisionService.createSupervisionPdf(input.getSupervision().getId())));
+                executor.submit(() -> supervisionInputs.forEach(input -> supervisionService.createSupervisionPdf(input.getSupervisionId())));
             }
 
             // TODO - check if any data should be returned

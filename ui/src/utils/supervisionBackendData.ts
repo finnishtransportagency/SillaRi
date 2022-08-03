@@ -18,6 +18,7 @@ import { createCustomError, createErrorFromStatusCode } from "./backendData";
 import { Storage } from "@capacitor/storage";
 import { SHA1 } from "crypto-js";
 import IKeyValue from "../interfaces/IKeyValue";
+import ISupervisionInput from "../interfaces/ISupervisionInput";
 
 export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICompanyTransports[]> => {
   try {
@@ -243,20 +244,29 @@ export const cancelSupervision = async (cancelCrossingInput: ICancelCrossingInpu
   }
 };
 
-export const denyCrossing = async (denyCrossingInput: IDenyCrossingInput, dispatch: Dispatch): Promise<ISupervision> => {
+export const denyCrossing = async (denyCrossingInput: IDenyCrossingInput, username: string, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("DenyCrossing", denyCrossingInput);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { denyCrossing: false } });
 
-    const { supervisionId, denyReason, denyTime } = denyCrossingInput;
+    const { supervisionId, routeTransportId, denyReason, denyTime } = denyCrossingInput;
     const time = encodeURIComponent(moment(denyTime).format());
 
-    const denyCrossingResponse = await fetch(
-      `${getOrigin()}/api/supervision/denycrossing?supervisionId=${supervisionId}&denyReason=${denyReason}&denyTime=${time}`,
-      {
-        method: "POST",
-      }
-    );
+    const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId);
+
+    const supervisionInput: ISupervisionInput = {
+      supervisionId: supervisionId,
+      routeTransportId: routeTransportId,
+      transportCode: transportCode,
+    };
+
+    const denyCrossingResponse = await fetch(`${getOrigin()}/api/supervision/denycrossing?denyReason=${denyReason}&denyTime=${time}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(supervisionInput),
+    });
 
     if (denyCrossingResponse.ok) {
       const supervision = (await denyCrossingResponse.json()) as Promise<ISupervision>;
@@ -316,12 +326,12 @@ export const completeSupervisions = async (
 
     // Fetch transportCode from storage for each supervision
     const idsAndTransportCodes: IKeyValue[] = await Promise.all(
-      supervisionInputs.map((input) => getPasswordAndIdFromStorage(username, SupervisionListType.BRIDGE, input.supervision.id))
+      supervisionInputs.map((input) => getPasswordAndIdFromStorage(username, SupervisionListType.BRIDGE, input.supervisionId))
     );
 
-    // Map transportCodes from supervisionIds to supervisions
+    // Map transportCodes from supervisionIds to supervisionInputs
     const completeSupervisionInputs = supervisionInputs.map((input) => {
-      const codeResult = idsAndTransportCodes.find((kv) => input.supervision.id === kv.key);
+      const codeResult = idsAndTransportCodes.find((kv) => input.supervisionId === kv.key);
       return codeResult ? { ...input, transportCode: codeResult.value } : input;
     });
 
