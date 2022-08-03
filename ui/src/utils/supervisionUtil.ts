@@ -13,9 +13,12 @@ import {
   getSupervisionSendingList,
 } from "./supervisionBackendData";
 import { getUserData, onRetry } from "./backendData";
-import { SupervisionStatus, TransportStatus } from "./constants";
+import { SupervisionListType, SupervisionStatus, TransportStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 import { Moment } from "moment/moment";
+import { getPasswordAndIdFromStorage } from "./trasportCodeStorageUtil";
+import IKeyValue from "../interfaces/IKeyValue";
+import ICompanyTransports from "../interfaces/ICompanyTransports";
 
 export const getReportSignedTime = (supervision: ISupervision): Date | undefined => {
   const { statusHistory = [] } = supervision;
@@ -208,56 +211,52 @@ export const getTransportTime = (transport: IRouteTransport): Date | undefined =
   return departedStatus.length > 0 ? departedStatus[0].time : plannedDepartureTime;
 };
 
-export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Dispatch) => {
-  // Prefetch all data needed for supervisions so that the application can subsequently be used offline
-  // Use queryClient.prefetchQuery where possible but only for query data that is not needed by other queries, only fetchQuery returns a result
-  // Make sure the parameter types match the later useQuery calls, otherwise the caching doesn't work!
+const prefetchRouteTransports = async (
+  companyTransportsList: ICompanyTransports[],
+  username: string,
+  queryClient: QueryClient,
+  dispatch: Dispatch
+) => {
+  const transportList = companyTransportsList.flatMap((companyTransports) => {
+    const { transports = [] } = companyTransports || {};
+    return transports;
+  });
 
-  // Prefetch the main data, but only return the company transports data needed by the next step
-  const mainData = await Promise.all([
-    queryClient.fetchQuery(["getSupervisor"], () => getUserData(dispatch), {
-      retry: onRetry,
-      staleTime: Infinity,
-    }),
-    queryClient.fetchQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
-      retry: onRetry,
-      staleTime: Infinity,
-    }),
-    queryClient.fetchQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
-      retry: onRetry,
-      staleTime: Infinity,
-    }),
-    queryClient.prefetchQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
-      retry: onRetry,
-      staleTime: Infinity,
-    }),
-  ]);
-
-  // Prefetch the route transports of each company transport
-  console.log("PREFETCH MAINDATA", mainData);
-  const { username } = mainData[0] || {};
-  const companyTransportsList = mainData[1];
-  const supervisionSendingList = mainData[2];
-
-  const routeTransports = await Promise.all(
-    companyTransportsList.flatMap((companyTransports) => {
-      const { transports } = companyTransports || {};
-
-      return transports.map((transport) => {
-        const { id: routeTransportId } = transport || {};
-
-        return queryClient.fetchQuery(
-          ["getRouteTransportOfSupervisor", Number(routeTransportId)],
-          () => getRouteTransportOfSupervisor(routeTransportId, username, dispatch),
-          {
-            retry: onRetry,
-            staleTime: Infinity,
-          }
-        );
-      });
+  // Get transportCodes for each routeTransportId from storage
+  const transportIdsAndCodes: IKeyValue[] = await Promise.all(
+    transportList.map((transport) => {
+      const { id: routeTransportId } = transport || {};
+      return getPasswordAndIdFromStorage(username, SupervisionListType.TRANSPORT, routeTransportId);
     })
   );
 
+  // Filter missing transportCodes - we don't want to try to fetch them from backend
+  const filteredIdsAndCodes = transportIdsAndCodes.filter((kv) => !!kv.value);
+
+  const routeTransports = await Promise.all(
+    filteredIdsAndCodes.map((kv) => {
+      return queryClient.fetchQuery(
+        ["getRouteTransportOfSupervisor", Number(kv.key)],
+        () => getRouteTransportOfSupervisor(kv.key, username, kv.value, dispatch),
+        {
+          retry: onRetry,
+          staleTime: Infinity,
+        }
+      );
+    })
+  );
+
+  console.log("PREFETCH routeTransports", routeTransports);
+  return routeTransports;
+};
+
+const prefetchSupervisions = async (
+  routeTransports: IRouteTransport[],
+  supervisionSendingList: ISupervision[],
+  username: string,
+  queryClient: QueryClient,
+  dispatch: Dispatch
+) => {
   // Prefetch the supervisions of each route transport
   await Promise.all(
     routeTransports.flatMap((routeTransport) => {
@@ -285,6 +284,45 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
       });
     })
   );
+};
+
+export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Dispatch) => {
+  // Prefetch all data needed for supervisions so that the application can subsequently be used offline
+  // Use queryClient.prefetchQuery where possible but only for query data that is not needed by other queries, only fetchQuery returns a result
+  // Make sure the parameter types match the later useQuery calls, otherwise the caching doesn't work!
+
+  // Prefetch the main data, but only return data needed by the next steps
+  const mainData = await Promise.all([
+    queryClient.fetchQuery(["getSupervisor"], () => getUserData(dispatch), {
+      retry: onRetry,
+      staleTime: Infinity,
+    }),
+    queryClient.fetchQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
+      retry: onRetry,
+      staleTime: Infinity,
+    }),
+    queryClient.fetchQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
+      retry: onRetry,
+      staleTime: Infinity,
+    }),
+    queryClient.prefetchQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
+      retry: onRetry,
+      staleTime: Infinity,
+    }),
+  ]);
+
+  console.log("PREFETCH MAINDATA", mainData);
+  const { username } = mainData[0] || {};
+  const companyTransportsList = mainData[1];
+  const supervisionSendingList = mainData[2];
+
+  // Fetch only routeTransports that have the password in storage
+  // Otherwise query fails, and we don't get any routeTransports or supervisions in the cache for offline use
+  // TODO could also fetch everything but then we cannot throw the error from backend, because it does not resolve the promise
+  // but throws the error, and we cannot proceed to get the supervisions for the resolved routeTransports if another routeTransport fails
+  const routeTransports = await prefetchRouteTransports(companyTransportsList, username, queryClient, dispatch);
+
+  await prefetchSupervisions(routeTransports, supervisionSendingList, username, queryClient, dispatch);
 };
 
 export const removeSupervisionFromRouteTransportList = (queryClient: QueryClient, routeTransportId: string, supervisionId: string) => {

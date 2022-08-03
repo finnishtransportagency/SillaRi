@@ -39,7 +39,7 @@ const RouteTransportDetail = (): JSX.Element => {
 
   const { data: routeTransport } = useQuery(
     ["getRouteTransportOfSupervisor", Number(routeTransportId)],
-    () => getRouteTransportOfSupervisor(Number(routeTransportId), username, dispatch),
+    () => getRouteTransportOfSupervisor(Number(routeTransportId), username, null, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,

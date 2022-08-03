@@ -40,36 +40,36 @@ export const getCompanyTransportsList = async (dispatch: Dispatch): Promise<ICom
   }
 };
 
-export const getRouteTransportOfSupervisor = async (routeTransportId: number, username: string, dispatch: Dispatch): Promise<IRouteTransport> => {
+export const getRouteTransportOfSupervisor = async (
+  routeTransportId: number,
+  username: string,
+  transportCode: string | null,
+  dispatch: Dispatch
+): Promise<IRouteTransport> => {
   try {
     console.log("GetRouteTransportOfSupervisor", routeTransportId);
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
 
-    const transportCode = await getPasswordFromStorage(username, SupervisionListType.TRANSPORT, routeTransportId);
-    // Fetch from backend only if password is found from storage - otherwise prefetchOfflineData is retrying failed queries forever
-    if (transportCode) {
-      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: false } });
+    // Use transportCode if already fetched, otherwise get from storage
+    const code = transportCode ? transportCode : await getPasswordFromStorage(username, SupervisionListType.TRANSPORT, routeTransportId);
 
-      const routeTransportResponse = await fetch(
-        `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}&transportCode=${transportCode}`
-      );
+    const routeTransportResponse = await fetch(
+      `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}&transportCode=${code}`
+    );
 
-      if (routeTransportResponse.ok) {
-        const routeTransport = (await routeTransportResponse.json()) as Promise<IRouteTransport>;
-        return await routeTransport;
-      } else {
-        console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} backend fail, status ${routeTransportResponse.status}`);
-        dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
-        //if storage has old or tampered transport code -> remove it
-        if (routeTransportResponse.status === 403) {
-          console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} incorrect transportCode`);
-          await Storage.remove({ key: constructStorageKey(username, SupervisionListType.TRANSPORT, routeTransportId) });
-        }
-        throw createErrorFromStatusCode(routeTransportResponse.status);
-      }
+    if (routeTransportResponse.ok) {
+      const routeTransport = (await routeTransportResponse.json()) as Promise<IRouteTransport>;
+      return await routeTransport;
     } else {
-      console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} missing transportCode`);
+      console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} backend fail, status ${routeTransportResponse.status}`);
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
-      throw new Error(FORBIDDEN_ERROR);
+
+      //if storage has old or tampered transport code -> remove it
+      if (routeTransportResponse.status === 403) {
+        console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} incorrect transportCode`);
+        await Storage.remove({ key: constructStorageKey(username, SupervisionListType.TRANSPORT, routeTransportId) });
+      }
+      throw createErrorFromStatusCode(routeTransportResponse.status);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
@@ -345,8 +345,6 @@ export const completeSupervisions = async (completeCrossingInput: ICompleteCross
       const codeResult = idsAndTransportCodes.find((kv) => input.supervisionId === kv.key);
       return codeResult ? { ...input, transportCode: codeResult.value } : input;
     });
-
-    console.log("HELLOOOO completeSupervisionInputs", completeSupervisionInputs);
 
     const time = encodeURIComponent(moment(completeTime).format());
 
