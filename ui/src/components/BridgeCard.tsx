@@ -30,7 +30,7 @@ const BridgeCard = ({ username, routeTransport, supervision, supervisionListType
 
   const { id: supervisionId, currentStatus, startedTime, plannedTime, routeBridge } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
-  const statusPlanned = supervisionStatus === SupervisionStatus.PLANNED;
+  const statusPlanned = supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED;
   const { bridge } = routeBridge || {};
   const { identifier, name, municipality } = bridge || {};
   const { id: routeTransportId = 0, tractorUnit = "" } = routeTransport || {};
