@@ -12,7 +12,6 @@ import IVersionInfo from "../interfaces/IVersionInfo";
 export const onRetry = (failureCount: number, err: any): boolean => {
   // By default, retry forever by returning true - unless error is FORBIDDEN.
   console.log("err is Error type", err instanceof Error);
-  console.log("err is string type", typeof err === "string" || err instanceof String);
   // FIXME find out when err is string and when Error (preferably fix so that it's never a string, although might not be possible)
   const isForbiddenError = (err instanceof Error && err.message === FORBIDDEN_ERROR) || err === FORBIDDEN_ERROR;
   console.log("error message", err instanceof Error ? err.message : "No message");

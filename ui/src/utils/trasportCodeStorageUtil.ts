@@ -63,6 +63,7 @@ export const getPasswordFromStorage = async (username: string, type: Supervision
   return null;
 };
 
+// TODO get list of keyValues from storage so that we configure storage only once?
 export const getPasswordAndIdFromStorage = async (username: string, type: SupervisionListType, id: number): Promise<IKeyValue> => {
   const code = await getPasswordFromStorage(username, type, id);
   return { key: id, value: code };

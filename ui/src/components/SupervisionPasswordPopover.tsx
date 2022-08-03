@@ -5,8 +5,8 @@ import close from "../theme/icons/close.svg";
 import TransportCodeInput from "./TransportCodeInput";
 import { useDispatch } from "react-redux";
 import ISupervision from "../interfaces/ISupervision";
-import { checkTransportCode } from "../utils/supervisionBackendData";
-import { useQuery } from "react-query";
+import { checkTransportCode, getRouteTransportOfSupervisor, getSupervision } from "../utils/supervisionBackendData";
+import { useQuery, useQueryClient } from "react-query";
 import { getUserData, onRetry } from "../utils/backendData";
 import { SupervisionListType } from "../utils/constants";
 import { savePasswordToStorage } from "../utils/trasportCodeStorageUtil";
@@ -34,6 +34,7 @@ const SupervisionPasswordPopover = ({
 }: SupervisionPasswordPopoverProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const [codeInputValue, setCodeInputValue] = useState("");
   const [codeInputSent, setCodeInputSent] = useState<boolean>(false);
@@ -87,12 +88,35 @@ const SupervisionPasswordPopover = ({
           // Save routeTransportId with password to storage
           await savePasswordToStorage(username, routeTransportId, codeInputValue, SupervisionListType.TRANSPORT);
           console.log("Transport code saved for routeTransportId", routeTransportId);
+
+          // Then prefetch the route transport for offline use
+          await queryClient.prefetchQuery(
+            ["getRouteTransportOfSupervisor", Number(routeTransportId)],
+            () => getRouteTransportOfSupervisor(routeTransportId, username, null, dispatch),
+            {
+              retry: onRetry,
+              staleTime: Infinity,
+            }
+          );
         }
+
         // Save each supervisionId with password to storage (process in parallel)
         await Promise.all(
           supervisions.map(async (supervision) => savePasswordToStorage(username, supervision.id, codeInputValue, SupervisionListType.BRIDGE))
         );
         console.log("Transport codes saved for " + supervisions.length + " supervisions");
+
+        // Then prefetch all supervisions for offline use
+        await Promise.all(
+          supervisions.map((supervision) => {
+            const { id: supervisionId } = supervision || {};
+
+            return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, username, dispatch), {
+              retry: onRetry,
+              staleTime: Infinity,
+            });
+          })
+        );
 
         setErrorMessage("");
         setCodeInputSent(true);
