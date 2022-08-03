@@ -372,20 +372,28 @@ export const completeSupervisions = async (completeCrossingInput: ICompleteCross
   }
 };
 
-export const updateSupervisionReport = async (updateRequest: ISupervisionReport, username: string, dispatch: Dispatch): Promise<ISupervision> => {
+export const updateSupervisionReport = async (
+  updateRequest: ISupervisionReport,
+  routeTransportId: number,
+  username: string,
+  dispatch: Dispatch
+): Promise<ISupervision> => {
   try {
     console.log("UpdateSupervisionReport", updateRequest);
     const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, updateRequest.supervisionId);
 
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateSupervisionReport: false } });
 
-    const updateReportResponse = await fetch(`${getOrigin()}/api/supervision/updatesupervisionreport?transportCode=${transportCode}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updateRequest),
-    });
+    const updateReportResponse = await fetch(
+      `${getOrigin()}/api/supervision/updatesupervisionreport?routeTransportId=${routeTransportId}&transportCode=${transportCode}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateRequest),
+      }
+    );
 
     if (updateReportResponse.ok) {
       const updatedSupervision = (await updateReportResponse.json()) as Promise<ISupervision>;

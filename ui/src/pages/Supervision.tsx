@@ -64,28 +64,31 @@ const Supervision = (): JSX.Element => {
 
   // Set-up mutations for modifying data later
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
-  const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, username, dispatch), {
-    retry: onRetry,
-    onMutate: async (newData: ISupervisionReport) => {
-      // onMutate fires before the mutation function
+  const reportUpdateMutation = useMutation(
+    (updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, routeTransportId, username, dispatch),
+    {
+      retry: onRetry,
+      onMutate: async (newData: ISupervisionReport) => {
+        // onMutate fires before the mutation function
 
-      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
-      await queryClient.cancelQueries(supervisionQueryKey);
+        // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+        await queryClient.cancelQueries(supervisionQueryKey);
 
-      // Optimistically update to the new report
-      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
-        return {
-          ...oldData,
-          report: { ...oldData?.report, ...newData },
-        } as ISupervision;
-      });
-    },
-    onSuccess: (data) => {
-      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+        // Optimistically update to the new report
+        queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+          return {
+            ...oldData,
+            report: { ...oldData?.report, ...newData },
+          } as ISupervision;
+        });
+      },
+      onSuccess: (data) => {
+        // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
 
-      queryClient.setQueryData(supervisionQueryKey, data);
-    },
-  });
+        queryClient.setQueryData(supervisionQueryKey, data);
+      },
+    }
+  );
   const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
 
   const deleteImagesMutation = useMutation((superId: string) => deleteSupervisionImages(Number(superId), dispatch), {

@@ -101,7 +101,6 @@ public class SupervisionController {
     public ResponseEntity<?> getSupervisionSendingListOfSupervisor() {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionSendingListOfSupervisor");
         try {
-            // TODO work out how to handle transportCode if missing - maybe in UI instead?
             SillariUser user = uiService.getSillariUser();
             List<SupervisionModel> supervisions = supervisionService.getFinishedSupervisions(user);
             return ResponseEntity.ok().body(supervisions != null ? supervisions : new EmptyJsonResponse());
@@ -241,17 +240,16 @@ public class SupervisionController {
     @Operation(summary = "Update supervision report")
     @PutMapping(value = "/updatesupervisionreport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> updateSupervisionReport(@RequestBody SupervisionReportModel report, @RequestParam String transportCode) {
+    public ResponseEntity<?> updateSupervisionReport(@RequestBody SupervisionReportModel report, @RequestParam Integer routeTransportId, @RequestParam String transportCode) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateSupervisionReport");
         try {
             if (!canSupervisorUpdateSupervision(report.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
-            SupervisionModel supervisionModel = supervisionService.getSupervision(report.getSupervisionId(), false, false);
             SillariUser user = uiService.getSillariUser();
-            checkTransportCodeMatches(user, supervisionModel.getRouteTransportId(), transportCode);
+            checkTransportCodeMatches(user, routeTransportId, transportCode);
 
-            supervisionModel = supervisionService.updateSupervisionReport(report);
+            SupervisionModel supervisionModel = supervisionService.updateSupervisionReport(report);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
