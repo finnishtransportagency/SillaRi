@@ -442,8 +442,9 @@
   "offlineInfo": {
     "title": "Offline mode",
     "info1": "SillaRi's transports and bridges to be supervised were last updated",
-    "info2": "You can use SillaRi in offline mode, in which case it is possible to save the bridge supervision report temporarily to this device.",
-    "info3": "You can sent the supervision report later when the network connection is in use again and you login to SillaRi."
+    "info2": "Only transports and bridges opened with a password in online mode are available in offline mode.",
+    "info3": "You can use SillaRi in offline mode, in which case it is possible to save the bridge supervision report temporarily to this device.",
+    "info4": "You can sent the supervision report later when the network connection is in use again and you login to SillaRi."
   },
   "sendingListOfflineNotice": {
     "title": "Sending is not possible in offline mode",

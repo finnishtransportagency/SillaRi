@@ -69,6 +69,11 @@ const OfflineInfoModal = ({ isOpen, setOpen }: OfflineInfoModalProps): JSX.Eleme
             </IonCol>
           </IonRow>
           <IonRow>
+            <IonCol>
+              <IonText>{t("offlineInfo.info4")}</IonText>
+            </IonCol>
+          </IonRow>
+          <IonRow>
             <IonCol className="ion-text-center">
               <IonText className="linkText" onClick={() => setOpen(false)}>
                 {t("common.buttons.close")}
