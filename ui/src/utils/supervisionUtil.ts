@@ -18,7 +18,6 @@ import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 import { Moment } from "moment/moment";
 import { getPasswordAndIdFromStorage } from "./trasportCodeStorageUtil";
 import IKeyValue from "../interfaces/IKeyValue";
-import ICompanyTransports from "../interfaces/ICompanyTransports";
 
 export const getReportSignedTime = (supervision: ISupervision): Date | undefined => {
   const { statusHistory = [] } = supervision;
@@ -249,23 +248,59 @@ const prefetchSupervisions = async (
   dispatch: Dispatch
 ) => {
   // Prefetch the supervisions of each route transport
+  // If routeTransport is locked (no data fetched), fetch those supervisions separately that have transportCode in storage
+  const lockedTransports = transportList.filter((transport) => {
+    const routeTransportMatch = unlockedRouteTransports.find((rt) => rt.id === transport.id);
+    return routeTransportMatch === undefined;
+  });
 
-  // TODO if routeTransports is empty (no password provided), should we get those supervisions which have the password provided?
-  // Then we would have to use the supervisionList return data and not the supervisions from route transports?
-  await Promise.all(
-    unlockedRouteTransports.flatMap((routeTransport) => {
-      const { supervisions = [] } = routeTransport || {};
+  console.log("unlockedRouteTransports", unlockedRouteTransports.length);
+  console.log("lockedRouteTransports", lockedTransports.length);
+  if (unlockedRouteTransports.length > 0) {
+    // If route transport is unlocked, all of its supervisions are unlocked as well. No need to check from storage.
+    await Promise.all(
+      unlockedRouteTransports.flatMap((routeTransport) => {
+        const { supervisions = [] } = routeTransport || {};
 
-      return supervisions.map((supervision) => {
+        return supervisions.map((supervision) => {
+          const { id: supervisionId } = supervision || {};
+
+          // TODO we have already fetched the transportCode, could we use it here?
+          return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, username, null, dispatch), {
+            retry: onRetry,
+            staleTime: Infinity,
+          });
+        });
+      })
+    );
+  }
+
+  if (lockedTransports.length > 0) {
+    const supervisionList = lockedTransports.flatMap((transport) => {
+      const { supervisions = [] } = transport || {};
+      return supervisions;
+    });
+
+    const supervisionIdsAndCodes: IKeyValue[] = await Promise.all(
+      supervisionList.map((supervision) => {
         const { id: supervisionId } = supervision || {};
+        return getPasswordAndIdFromStorage(username, SupervisionListType.BRIDGE, supervisionId);
+      })
+    );
 
-        return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, username, null, dispatch), {
+    // Filter missing transportCodes - we don't want to try to fetch them from backend and get forbidden error
+    const filteredIdsAndCodes = supervisionIdsAndCodes.filter((kv) => !!kv.value);
+
+    // Prefetch supervisions that have the transportCode in storage
+    await Promise.all(
+      filteredIdsAndCodes.map((kv) => {
+        return queryClient.prefetchQuery(["getSupervision", Number(kv.key)], () => getSupervision(kv.key, username, kv.value, dispatch), {
           retry: onRetry,
           staleTime: Infinity,
         });
-      });
-    })
-  );
+      })
+    );
+  }
 };
 
 const prefetchSendingListSupervisions = async (
@@ -337,7 +372,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   // but throws the error, and we cannot proceed to get the supervisions for the resolved routeTransports if another routeTransport fails
   const unlockedRouteTransports = await prefetchRouteTransports(transportList, username, queryClient, dispatch);
 
-  // getSupervision for each supervision on route transport list or SupervisionList
+  // getSupervision for each supervision on route transport list
   await prefetchSupervisions(transportList, unlockedRouteTransports, supervisionSendingList, username, queryClient, dispatch);
 
   // getSupervision for each supervision on the sending list
