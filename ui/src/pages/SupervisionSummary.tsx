@@ -16,7 +16,7 @@ import { getUserData, onRetry } from "../utils/backendData";
 import { finishSupervision, getSupervision } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
 import { SupervisionListType, SupervisionStatus } from "../utils/constants";
-import { removeSupervisionFromRouteTransportList } from "../utils/supervisionUtil";
+import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 import { isSupervisionReportValid } from "../utils/validation";
 
 interface SummaryProps {

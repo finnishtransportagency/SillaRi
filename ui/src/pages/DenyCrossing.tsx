@@ -28,7 +28,7 @@ import ISupervision from "../interfaces/ISupervision";
 import { getUserData, onRetry } from "../utils/backendData";
 import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
 import { SupervisionStatus } from "../utils/constants";
-import { removeSupervisionFromRouteTransportList } from "../utils/supervisionUtil";
+import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 
 interface DenyCrossingProps {
   supervisionId: string;

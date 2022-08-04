@@ -33,7 +33,7 @@ import { useTypedSelector, RootState } from "./store/store";
 import { getUserData, getVersionInfo } from "./utils/backendData";
 import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
-import { prefetchOfflineData } from "./utils/supervisionUtil";
+import { prefetchOfflineData } from "./utils/offlineUtil";
 import IonicAsyncStorage from "./IonicAsyncStorage";
 
 /* Sillari.css */
