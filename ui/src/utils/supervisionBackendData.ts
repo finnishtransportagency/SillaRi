@@ -123,7 +123,6 @@ export const getSupervision = async (supervisionId: number, username: string, di
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
 
     const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId);
-    //console.log(transportCode);
 
     if (transportCode) {
       const supervisionResponse = await fetch(
@@ -134,11 +133,12 @@ export const getSupervision = async (supervisionId: number, username: string, di
         const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;
         return await supervision;
       } else {
-        //if storage has old or tampered transport code -> remove it
+        // If storage has old or tampered transport code -> remove it
         if (supervisionResponse.status === 403) {
           console.log(`getSupervision with supervisionId ${supervisionId} incorrect transportCode`);
           await Storage.remove({ key: constructStorageKey(username, SupervisionListType.BRIDGE, supervisionId) });
         }
+
         dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
         throw createErrorFromStatusCode(supervisionResponse.status);
       }

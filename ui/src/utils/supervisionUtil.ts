@@ -258,6 +258,9 @@ const prefetchSupervisions = async (
   dispatch: Dispatch
 ) => {
   // Prefetch the supervisions of each route transport
+
+  // TODO if routeTransports is empty (no password provided), should we get those supervisions which have the password provided?
+  // Then we would have to use the supervisionList return data and not the supervisions from route transports?
   await Promise.all(
     routeTransports.flatMap((routeTransport) => {
       const { supervisions = [] } = routeTransport || {};

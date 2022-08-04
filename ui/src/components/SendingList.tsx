@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { onlineManager, useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
@@ -50,6 +50,13 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const [toastMessage, setToastMessage] = useState<string>("");
   const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
   const [selectedSupervisionId, setSelectedSupervisionId] = useState<number | undefined>(undefined);
+  const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
+
+  useEffect(() => {
+    onlineManager.subscribe(() => {
+      setOnline(onlineManager.isOnline());
+    });
+  }, []);
 
   const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
     retry: onRetry,
@@ -148,11 +155,13 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
                     selectSupervision={selectSupervision}
                     setTargetUrl={setTargetUrl}
                     setOpen={setOpen}
+                    isOnline={isOnline}
+                    username={username}
                   />
                 );
               })}
 
-            <SendingListOfflineNotice />
+            <SendingListOfflineNotice isOnline={isOnline} />
 
             <IonButton
               className="ion-margin"
