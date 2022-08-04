@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
+import { onlineManager, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import type { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton } from "@ionic/react";
@@ -28,6 +28,7 @@ const Supervisions = (): JSX.Element => {
 
   const [currentSegment, setCurrentSegment] = useState<string>(tabId);
   const [supervisionDays, setSupervisionDays] = useState<ISupervisionDay[]>([]);
+  const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
 
   const {
     networkStatus: { isFailed = {} },
@@ -48,6 +49,12 @@ const Supervisions = (): JSX.Element => {
     retry: onRetry,
     staleTime: Infinity,
   });
+
+  useEffect(() => {
+    onlineManager.subscribe(() => {
+      setOnline(onlineManager.isOnline());
+    });
+  }, []);
 
   useEffect(() => {
     // Group the supervisions with useEffect instead of useQuery, since onSuccess is not called when using cached data
@@ -92,9 +99,16 @@ const Supervisions = (): JSX.Element => {
       </IonSegment>
       <IonContent color="light">
         {currentSegment === "0" && (
-          <CompanyTransportsAccordion username={username} companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />
+          <CompanyTransportsAccordion
+            username={username}
+            companyTransportsList={companyTransportsList}
+            noNetworkNoData={noNetworkNoData}
+            isOnline={isOnline}
+          />
         )}
-        {currentSegment === "1" && <SupervisionList username={username} supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} />}
+        {currentSegment === "1" && (
+          <SupervisionList username={username} supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} isOnline={isOnline} />
+        )}
       </IonContent>
     </IonPage>
   );

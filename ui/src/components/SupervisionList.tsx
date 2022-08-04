@@ -12,9 +12,10 @@ interface SupervisionListProps {
   username: string;
   supervisionDays: ISupervisionDay[];
   noNetworkNoData: boolean;
+  isOnline: boolean;
 }
 
-const SupervisionList = ({ username, supervisionDays, noNetworkNoData }: SupervisionListProps): JSX.Element => {
+const SupervisionList = ({ username, supervisionDays, noNetworkNoData, isOnline }: SupervisionListProps): JSX.Element => {
   const supervisionListType = SupervisionListType.BRIDGE;
 
   return (
@@ -44,6 +45,7 @@ const SupervisionList = ({ username, supervisionDays, noNetworkNoData }: Supervi
                       routeTransport={routeTransport as IRouteTransport}
                       supervision={supervision}
                       supervisionListType={supervisionListType}
+                      isOnline={isOnline}
                     />
                   );
                 })}

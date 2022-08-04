@@ -9,9 +9,10 @@ interface TransportCardListProps {
   username: string;
   company: ICompany;
   transports: IRouteTransport[];
+  isOnline: boolean;
 }
 
-const TransportCardList = ({ username, company, transports }: TransportCardListProps): JSX.Element => {
+const TransportCardList = ({ username, company, transports, isOnline }: TransportCardListProps): JSX.Element => {
   return (
     <div className="listContainer selectedBackground ion-padding-bottom">
       {transports
@@ -24,7 +25,7 @@ const TransportCardList = ({ username, company, transports }: TransportCardListP
         .map((transport) => {
           const { id: transportId } = transport;
           const key = `transport_${transportId}`;
-          return <TransportCard key={key} username={username} company={company} transport={transport} />;
+          return <TransportCard key={key} username={username} company={company} transport={transport} isOnline={isOnline} />;
         })}
     </div>
   );

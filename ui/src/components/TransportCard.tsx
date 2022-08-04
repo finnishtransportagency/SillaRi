@@ -18,9 +18,10 @@ interface TransportCardProps {
   username: string;
   company: ICompany;
   transport: IRouteTransport;
+  isOnline: boolean;
 }
 
-const TransportCard = ({ username, company, transport }: TransportCardProps): JSX.Element => {
+const TransportCard = ({ username, company, transport, isOnline }: TransportCardProps): JSX.Element => {
   const { t } = useTranslation();
   const history = useHistory();
   const [passwordPopoverOpen, setPasswordPopoverOpen] = useState<boolean>(false);
@@ -120,6 +121,7 @@ const TransportCard = ({ username, company, transport }: TransportCardProps): JS
                 size="default"
                 color="secondary"
                 className="passwordButton"
+                disabled={!isOnline}
                 onClick={() => {
                   setPasswordPopoverOpen(true);
                 }}

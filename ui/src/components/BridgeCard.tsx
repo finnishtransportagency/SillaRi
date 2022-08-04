@@ -19,9 +19,10 @@ interface BridgeCardProps {
   routeTransport: IRouteTransport;
   supervision: ISupervision;
   supervisionListType: string;
+  isOnline: boolean;
 }
 
-const BridgeCard = ({ username, routeTransport, supervision, supervisionListType }: BridgeCardProps): JSX.Element => {
+const BridgeCard = ({ username, routeTransport, supervision, supervisionListType, isOnline }: BridgeCardProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -99,6 +100,7 @@ const BridgeCard = ({ username, routeTransport, supervision, supervisionListType
                 size="default"
                 color="secondary"
                 className="passwordButton"
+                disabled={!isOnline}
                 onClick={() => {
                   setPasswordPopoverOpen(true);
                 }}

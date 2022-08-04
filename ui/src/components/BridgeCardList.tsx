@@ -10,9 +10,10 @@ interface BridgeCardListProps {
   username: string;
   routeTransport: IRouteTransport;
   supervisions: ISupervision[];
+  isOnline: boolean;
 }
 
-const BridgeCardList = ({ username, routeTransport, supervisions }: BridgeCardListProps): JSX.Element => {
+const BridgeCardList = ({ username, routeTransport, supervisions, isOnline }: BridgeCardListProps): JSX.Element => {
   const { t } = useTranslation();
   const supervisionListType = SupervisionListType.TRANSPORT;
   const count = supervisions.length;
@@ -35,6 +36,7 @@ const BridgeCardList = ({ username, routeTransport, supervisions }: BridgeCardLi
               routeTransport={routeTransport}
               supervision={supervision}
               supervisionListType={supervisionListType}
+              isOnline={isOnline}
             />
           );
         })}
