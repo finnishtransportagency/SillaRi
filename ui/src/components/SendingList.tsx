@@ -29,7 +29,7 @@ import OfflineBanner from "./OfflineBanner";
 import SentSupervisionReportsAccordion from "./SentSupervisionReportsAccordion";
 import SendingListItem from "./SendingListItem";
 import SendingListOfflineNotice from "./SendingListOfflineNotice";
-import SentSupervisionReport from "./SentSupervisionReport";
+import SentSupervisionReportModalContainer from "./SentSupervisionReportModalContainer";
 import "./SendingList.css";
 import ISupervisionInput from "../interfaces/ISupervisionInput";
 
@@ -196,6 +196,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
               ),
               panel: (
                 <SentSupervisionReportsAccordion
+                  username={username}
                   sentSupervisions={sentSupervisions}
                   setReportModalOpen={setReportModalOpen}
                   setSelectedSupervisionId={setSelectedSupervisionId}
@@ -215,7 +216,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
         color="secondary"
       />
 
-      <SentSupervisionReport
+      <SentSupervisionReportModalContainer
         isOpen={reportModalOpen}
         setOpen={setReportModalOpen}
         selectedSupervisionId={selectedSupervisionId}

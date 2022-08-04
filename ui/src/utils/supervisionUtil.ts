@@ -211,17 +211,7 @@ export const getTransportTime = (transport: IRouteTransport): Date | undefined =
   return departedStatus.length > 0 ? departedStatus[0].time : plannedDepartureTime;
 };
 
-const prefetchRouteTransports = async (
-  companyTransportsList: ICompanyTransports[],
-  username: string,
-  queryClient: QueryClient,
-  dispatch: Dispatch
-) => {
-  const transportList = companyTransportsList.flatMap((companyTransports) => {
-    const { transports = [] } = companyTransports || {};
-    return transports;
-  });
-
+const prefetchRouteTransports = async (transportList: IRouteTransport[], username: string, queryClient: QueryClient, dispatch: Dispatch) => {
   // Get transportCodes for each routeTransportId from storage
   const transportIdsAndCodes: IKeyValue[] = await Promise.all(
     transportList.map((transport) => {
@@ -251,7 +241,8 @@ const prefetchRouteTransports = async (
 };
 
 const prefetchSupervisions = async (
-  routeTransports: IRouteTransport[],
+  transportList: IRouteTransport[],
+  unlockedRouteTransports: IRouteTransport[],
   supervisionSendingList: ISupervision[],
   username: string,
   queryClient: QueryClient,
@@ -262,26 +253,41 @@ const prefetchSupervisions = async (
   // TODO if routeTransports is empty (no password provided), should we get those supervisions which have the password provided?
   // Then we would have to use the supervisionList return data and not the supervisions from route transports?
   await Promise.all(
-    routeTransports.flatMap((routeTransport) => {
+    unlockedRouteTransports.flatMap((routeTransport) => {
       const { supervisions = [] } = routeTransport || {};
 
       return supervisions.map((supervision) => {
         const { id: supervisionId } = supervision || {};
 
-        return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, username, dispatch), {
+        return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, username, null, dispatch), {
           retry: onRetry,
           staleTime: Infinity,
         });
       });
     })
   );
+};
+
+const prefetchSendingListSupervisions = async (
+  supervisionSendingList: ISupervision[],
+  username: string,
+  queryClient: QueryClient,
+  dispatch: Dispatch
+) => {
+  // Get transportCodes for each supervisionId from storage
+  const idsAndTransportCodes: IKeyValue[] = await Promise.all(
+    supervisionSendingList.map((supervision) => {
+      return getPasswordAndIdFromStorage(username, SupervisionListType.BRIDGE, supervision.id);
+    })
+  );
+
+  // Filter missing transportCodes - we don't want to try to fetch them from backend and get forbidden error
+  const filteredIdsAndCodes = idsAndTransportCodes.filter((kv) => !!kv.value);
 
   // Prefetch the supervisions in the sending list so that the modify button works offline
   await Promise.all(
-    supervisionSendingList.map((supervision) => {
-      const { id: supervisionId } = supervision || {};
-
-      return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, username, dispatch), {
+    filteredIdsAndCodes.map((kv) => {
+      return queryClient.prefetchQuery(["getSupervision", Number(kv.key)], () => getSupervision(kv.key, username, kv.value, dispatch), {
         retry: onRetry,
         staleTime: Infinity,
       });
@@ -319,13 +325,23 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   const companyTransportsList = mainData[1];
   const supervisionSendingList = mainData[2];
 
+  const transportList = companyTransportsList.flatMap((companyTransports) => {
+    const { transports = [] } = companyTransports || {};
+    return transports;
+  });
+
+  // getRouteTransportOfSupervisor for each route transport on CompanyTransportsList
   // Fetch only routeTransports that have the password in storage
   // Otherwise query fails, and we don't get any routeTransports or supervisions in the cache for offline use
   // TODO could also fetch everything but then we cannot throw the error from backend, because it does not resolve the promise
   // but throws the error, and we cannot proceed to get the supervisions for the resolved routeTransports if another routeTransport fails
-  const routeTransports = await prefetchRouteTransports(companyTransportsList, username, queryClient, dispatch);
+  const unlockedRouteTransports = await prefetchRouteTransports(transportList, username, queryClient, dispatch);
 
-  await prefetchSupervisions(routeTransports, supervisionSendingList, username, queryClient, dispatch);
+  // getSupervision for each supervision on route transport list or SupervisionList
+  await prefetchSupervisions(transportList, unlockedRouteTransports, supervisionSendingList, username, queryClient, dispatch);
+
+  // getSupervision for each supervision on the sending list
+  await prefetchSendingListSupervisions(supervisionSendingList, username, queryClient, dispatch);
 };
 
 export const removeSupervisionFromRouteTransportList = (queryClient: QueryClient, routeTransportId: string, supervisionId: string) => {

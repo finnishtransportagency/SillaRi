@@ -111,10 +111,14 @@ const SupervisionPasswordPopover = ({
           supervisions.map((supervision) => {
             const { id: supervisionId } = supervision || {};
 
-            return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, username, dispatch), {
-              retry: onRetry,
-              staleTime: Infinity,
-            });
+            return queryClient.prefetchQuery(
+              ["getSupervision", Number(supervisionId)],
+              () => getSupervision(supervisionId, username, null, dispatch),
+              {
+                retry: onRetry,
+                staleTime: Infinity,
+              }
+            );
           })
         );
 

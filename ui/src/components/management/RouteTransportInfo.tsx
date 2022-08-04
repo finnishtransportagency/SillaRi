@@ -26,7 +26,7 @@ import IVehicle from "../../interfaces/IVehicle";
 import NoNetworkNoData from "../NoNetworkNoData";
 import Loading from "../Loading";
 import RouteTransportFooter from "./RouteTransportFooter";
-import SupervisionReport from "./SupervisionReport";
+import SupervisionReportModalContainer from "./SupervisionReportModalContainer";
 import IToastMessage from "../../interfaces/IToastMessage";
 import AlertPopover from "../common/AlertPopover";
 import RouteBridgeGrid from "./RouteBridgeGrid";
@@ -355,7 +355,7 @@ const RouteTransportInfo = ({
           position="top"
           color={toastMessage.color ? toastMessage.color : "success"}
         />
-        <SupervisionReport
+        <SupervisionReportModalContainer
           isOpen={reportModalOpen}
           setOpen={setReportModalOpen}
           selectedSupervisionId={selectedSupervisionId}

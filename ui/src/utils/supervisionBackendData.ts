@@ -53,23 +53,29 @@ export const getRouteTransportOfSupervisor = async (
     // Use transportCode if already fetched, otherwise get from storage
     const code = transportCode ? transportCode : await getPasswordFromStorage(username, SupervisionListType.TRANSPORT, routeTransportId);
 
-    const routeTransportResponse = await fetch(
-      `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}&transportCode=${code}`
-    );
+    if (code) {
+      const routeTransportResponse = await fetch(
+        `${getOrigin()}/api/routetransport/getroutetransportofsupervisor?routeTransportId=${routeTransportId}&transportCode=${code}`
+      );
 
-    if (routeTransportResponse.ok) {
-      const routeTransport = (await routeTransportResponse.json()) as Promise<IRouteTransport>;
-      return await routeTransport;
-    } else {
-      console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} backend fail, status ${routeTransportResponse.status}`);
-      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
+      if (routeTransportResponse.ok) {
+        const routeTransport = (await routeTransportResponse.json()) as Promise<IRouteTransport>;
+        return await routeTransport;
+      } else {
+        console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} backend fail, status ${routeTransportResponse.status}`);
+        dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
 
-      //if storage has old or tampered transport code -> remove it
-      if (routeTransportResponse.status === 403) {
-        console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} incorrect transportCode`);
-        await Storage.remove({ key: constructStorageKey(username, SupervisionListType.TRANSPORT, routeTransportId) });
+        //if storage has old or tampered transport code -> remove it
+        if (routeTransportResponse.status === 403) {
+          console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} incorrect transportCode`);
+          await Storage.remove({ key: constructStorageKey(username, SupervisionListType.TRANSPORT, routeTransportId) });
+        }
+        throw createErrorFromStatusCode(routeTransportResponse.status);
       }
-      throw createErrorFromStatusCode(routeTransportResponse.status);
+    } else {
+      console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} missing transportCode`);
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
+      throw new Error(FORBIDDEN_ERROR);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getRouteTransport: true } });
@@ -117,17 +123,21 @@ export const getSupervisionSendingList = async (dispatch: Dispatch): Promise<ISu
   }
 };
 
-export const getSupervision = async (supervisionId: number, username: string, dispatch: Dispatch): Promise<ISupervision> => {
+export const getSupervision = async (
+  supervisionId: number,
+  username: string,
+  transportCode: string | null,
+  dispatch: Dispatch
+): Promise<ISupervision> => {
   try {
     console.log("GetSupervision", supervisionId);
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
 
-    const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId);
+    // Use transportCode if already fetched, otherwise get from storage
+    const code = transportCode ? transportCode : await getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId);
 
-    if (transportCode) {
-      const supervisionResponse = await fetch(
-        `${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}&transportCode=${transportCode}`
-      );
+    if (code) {
+      const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}&transportCode=${code}`);
 
       if (supervisionResponse.ok) {
         const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;

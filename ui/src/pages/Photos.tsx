@@ -42,7 +42,7 @@ const Photos = (): JSX.Element => {
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
-    () => getSupervision(Number(supervisionId), username, dispatch),
+    () => getSupervision(Number(supervisionId), username, null, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,

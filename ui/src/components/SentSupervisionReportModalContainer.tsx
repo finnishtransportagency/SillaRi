@@ -15,7 +15,7 @@ interface SentSupervisionReportProps {
   username: string;
 }
 
-const SentSupervisionReport = ({
+const SentSupervisionReportModalContainer = ({
   isOpen,
   setOpen,
   selectedSupervisionId,
@@ -26,7 +26,7 @@ const SentSupervisionReport = ({
 
   const { data: supervision } = useQuery(
     ["getSupervision", Number(selectedSupervisionId)],
-    () => getSupervision(Number(selectedSupervisionId), username, dispatch),
+    () => getSupervision(Number(selectedSupervisionId), username, null, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,
@@ -45,4 +45,4 @@ const SentSupervisionReport = ({
   return <SupervisionReportModal isOpen={isOpen} supervision={supervision as ISupervision} closeModal={closeModal} />;
 };
 
-export default SentSupervisionReport;
+export default SentSupervisionReportModalContainer;
