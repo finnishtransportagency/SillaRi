@@ -66,7 +66,7 @@ const BridgeCard = ({ username, routeTransport, supervision, supervisionListType
   return (
     <IonItem className="small-margin-bottom" lines="full">
       <IonGrid className="ion-no-margin ion-no-padding">
-        <IonRow id={passwordPopoverTriggerId} className="ion-margin-vertical ion-align-items-center ion-justify-content-between">
+        <IonRow className="ion-margin-vertical ion-align-items-center ion-justify-content-between">
           <IonCol size="9">
             <IonLabel>
               <IonLabel className="headingText">
@@ -97,6 +97,7 @@ const BridgeCard = ({ username, routeTransport, supervision, supervisionListType
               </IonButton>
             ) : (
               <IonButton
+                id={passwordPopoverTriggerId}
                 size="default"
                 color="secondary"
                 className="passwordButton"

@@ -71,7 +71,7 @@ const SupervisionPasswordPopover = ({
                        b
                         ug
 
-
+  https://github.com/ionic-team/ionic-framework/issues/16946
   Ionic popover does not close when navigating to another page, despite that setOpen(false) is called
   either before openSupervision or after that (or even inside openSupervision before or after history.push).
   The work around is currently:
@@ -134,10 +134,12 @@ const SupervisionPasswordPopover = ({
 
   const dismissPopover = () => {
     if (codeInputSent) {
+      setOpen(false);
       openSupervision();
     } else {
       setCodeInputValue("");
       setErrorMessage("");
+      setOpen(false);
     }
   };
 
@@ -149,8 +151,8 @@ const SupervisionPasswordPopover = ({
       isOpen={isOpen}
       className="large-popover"
       size="auto"
-      side="top"
-      alignment="center"
+      side="left"
+      alignment="start"
       onDidDismiss={() => dismissPopover()}
     >
       <>

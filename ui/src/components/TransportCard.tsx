@@ -74,7 +74,6 @@ const TransportCard = ({ username, company, transport, isOnline }: TransportCard
 
   return (
     <IonItem
-      id={passwordPopoverTriggerId}
       className={`ion-margin-horizontal small-margin-bottom ${transportDeparted ? "departedTransport" : ""}`}
       lines="full"
       color={transportDeparted ? undefined : "light"}
@@ -118,6 +117,7 @@ const TransportCard = ({ username, company, transport, isOnline }: TransportCard
               </IonButton>
             ) : (
               <IonButton
+                id={passwordPopoverTriggerId}
                 size="default"
                 color="secondary"
                 className="passwordButton"
