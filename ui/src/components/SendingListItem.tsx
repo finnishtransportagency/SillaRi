@@ -35,7 +35,6 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
   const passwordTitle = `${moment(startedTime).format(DATE_TIME_FORMAT_MIN)} ${name}`;
   const popoverPlacementProps: IPopoverPlacement = { trigger: passwordPopoverTriggerId, side: "bottom", alignment: "start" };
 
-  // FIXME how to get the supervisionUnlocked to refresh without getting error?
   const openSupervision = () => console.log("Password provided");
 
   useEffect(() => {
@@ -48,7 +47,8 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
         }
       });
     }
-  }, [username, supervisionId]);
+    // Deps must include passwordPopoverOpen to trigger page refresh after password has been provided in popover
+  }, [username, supervisionId, passwordPopoverOpen]);
 
   return (
     <IonItem className="ion-margin-top" lines="none">
@@ -118,18 +118,18 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                       <IonIcon className="otherIcon" icon={lock} />
                       <IonText className="headingText medium-margin-start medium-margin-end">{t("sendingList.passwordButton")}</IonText>
                     </IonButton>
-                    <SupervisionPasswordPopover
-                      title={passwordTitle}
-                      isOpen={passwordPopoverOpen}
-                      setOpen={setPasswordPopoverOpen}
-                      routeTransportId={routeTransportId}
-                      supervisions={[supervision]}
-                      supervisionListType={SupervisionListType.BRIDGE}
-                      openSupervision={openSupervision}
-                      popoverPlacement={popoverPlacementProps}
-                    />
                   </IonCol>
                 )}
+                <SupervisionPasswordPopover
+                  title={passwordTitle}
+                  isOpen={passwordPopoverOpen}
+                  setOpen={setPasswordPopoverOpen}
+                  routeTransportId={routeTransportId}
+                  supervisions={[supervision]}
+                  supervisionListType={SupervisionListType.BRIDGE}
+                  openSupervision={openSupervision}
+                  popoverPlacement={popoverPlacementProps}
+                />
               </IonRow>
             </IonGrid>
           </IonCol>
