@@ -203,6 +203,14 @@ ion-popover.large-popover {
   margin-bottom: 4px;
 }
 
+.medium-margin-start {
+  margin-left: 8px;
+}
+
+.medium-margin-end {
+  margin-right: 8px;
+}
+
 /** Additional Vayla colors **/
 .ion-color-teal {
   --ion-color-base: var(--ion-color-teal);

@@ -13,6 +13,7 @@ import { useHistory } from "react-router-dom";
 import moment from "moment/moment";
 import ICompany from "../interfaces/ICompany";
 import arrowRight from "../theme/icons/arrow-right.svg";
+import IPopoverPlacement from "../interfaces/IPopoverPlacement";
 
 interface TransportCardProps {
   username: string;
@@ -51,6 +52,7 @@ const TransportCard = ({ username, company, transport, isOnline }: TransportCard
   const passwordPopoverTriggerId = `passwordTrigger_transport_${routeTransportId}`;
   const transportTime = transportDeparted ? departureTime : plannedDepartureTime;
   const passwordTitle = `${moment(transportTime).format(DATE_FORMAT)} ${companyName}`;
+  const popoverPlacementProps: IPopoverPlacement = { trigger: passwordPopoverTriggerId, side: "left", alignment: "start" };
 
   const navigateToRouteTransportDetail = () => {
     history.push(`/routetransportdetail/${routeTransportId}`);
@@ -134,7 +136,6 @@ const TransportCard = ({ username, company, transport, isOnline }: TransportCard
       </IonGrid>
       {!transportUnlocked && (
         <SupervisionPasswordPopover
-          triggerId={passwordPopoverTriggerId}
           title={passwordTitle}
           isOpen={passwordPopoverOpen}
           setOpen={setPasswordPopoverOpen}
@@ -142,6 +143,7 @@ const TransportCard = ({ username, company, transport, isOnline }: TransportCard
           supervisions={supervisions}
           supervisionListType={SupervisionListType.TRANSPORT}
           openSupervision={navigateToRouteTransportDetail}
+          popoverPlacement={popoverPlacementProps}
         />
       )}
     </IonItem>

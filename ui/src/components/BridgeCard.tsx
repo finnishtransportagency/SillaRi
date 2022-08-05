@@ -13,6 +13,7 @@ import lock from "../theme/icons/lock_closed_white.svg";
 import arrowRight from "../theme/icons/arrow-right.svg";
 import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import moment from "moment";
+import IPopoverPlacement from "../interfaces/IPopoverPlacement";
 
 interface BridgeCardProps {
   username: string;
@@ -57,6 +58,7 @@ const BridgeCard = ({ username, routeTransport, supervision, supervisionListType
   const passwordPopoverTriggerId = `passwordTrigger_supervision_${supervisionId}`;
   const supervisionTime = statusPlanned ? plannedTime : startedTime;
   const passwordTitle = `${moment(supervisionTime).format(DATE_TIME_FORMAT_MIN)} ${name}`;
+  const popoverPlacementProps: IPopoverPlacement = { trigger: passwordPopoverTriggerId, side: "left", alignment: "start" };
 
   const navigateToBridgeDetail = () => {
     dispatch({ type: actions.SET_SUPERVISION_LIST_TYPE, payload: supervisionListType });
@@ -114,7 +116,6 @@ const BridgeCard = ({ username, routeTransport, supervision, supervisionListType
       </IonGrid>
       {!supervisionUnlocked && (
         <SupervisionPasswordPopover
-          triggerId={passwordPopoverTriggerId}
           title={passwordTitle}
           isOpen={passwordPopoverOpen}
           setOpen={setPasswordPopoverOpen}
@@ -122,6 +123,7 @@ const BridgeCard = ({ username, routeTransport, supervision, supervisionListType
           supervisions={[supervision]}
           supervisionListType={SupervisionListType.BRIDGE}
           openSupervision={navigateToBridgeDetail}
+          popoverPlacement={popoverPlacementProps}
         />
       )}
     </IonItem>

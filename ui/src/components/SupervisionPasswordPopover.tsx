@@ -10,9 +10,9 @@ import { useQuery, useQueryClient } from "react-query";
 import { getUserData, onRetry } from "../utils/backendData";
 import { SupervisionListType } from "../utils/constants";
 import { savePasswordToStorage } from "../utils/trasportCodeStorageUtil";
+import IPopoverPlacement from "../interfaces/IPopoverPlacement";
 
 interface SupervisionPasswordPopoverProps {
-  triggerId: string;
   title: string;
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -20,10 +20,10 @@ interface SupervisionPasswordPopoverProps {
   supervisions: ISupervision[];
   supervisionListType: string;
   openSupervision: () => void;
+  popoverPlacement: IPopoverPlacement;
 }
 
 const SupervisionPasswordPopover = ({
-  triggerId,
   title,
   isOpen,
   setOpen,
@@ -31,6 +31,7 @@ const SupervisionPasswordPopover = ({
   supervisions,
   supervisionListType,
   openSupervision,
+  popoverPlacement,
 }: SupervisionPasswordPopoverProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -147,12 +148,12 @@ const SupervisionPasswordPopover = ({
     /* Bug: Ion Popover renders outside screen when the trigger is too low
       https://github.com/ionic-team/ionic-framework/issues/24870 */
     <IonPopover
-      trigger={triggerId}
+      trigger={popoverPlacement.trigger}
       isOpen={isOpen}
       className="large-popover"
       size="auto"
-      side="left"
-      alignment="start"
+      side={popoverPlacement.side}
+      alignment={popoverPlacement.alignment}
       onDidDismiss={() => dismissPopover()}
     >
       <>

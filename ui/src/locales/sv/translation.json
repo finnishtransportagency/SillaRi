@@ -229,7 +229,8 @@
     "sentOk": "De valda övervakningsrapporterna har sänts",
     "nothingToSend": "Inga övervakningsrapporter att sända",
     "sentReports": "(SV) Sent supervision reports",
-    "offlineSuffix": "Offline"
+    "offlineSuffix": "Offline",
+    "passwordButton": "(SV) Avaa salasanalla"
   },
   "permitPdf": {
     "title": "Transporttillstånd",

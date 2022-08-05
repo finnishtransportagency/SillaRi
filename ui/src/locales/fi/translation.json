@@ -229,7 +229,8 @@
     "sentOk": "Valitut valvonnat on lähetetty",
     "nothingToSend": "Ei lähetettäviä valvontaraportteja.",
     "sentReports": "Lähetetyt valvontaraportit",
-    "offlineSuffix": "Offline"
+    "offlineSuffix": "Offline",
+    "passwordButton": "Avaa salasanalla"
   },
   "permitPdf": {
     "title": "Kuljetuslupa",
