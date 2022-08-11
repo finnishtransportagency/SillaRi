@@ -52,6 +52,18 @@ export const isTransportEditable = (transport: IRouteTransport | undefined, perm
   }
 };
 
+export const isPlannedTransportOutdated = (transport: IRouteTransport | undefined, permit: IPermit | undefined): boolean => {
+  if (transport) {
+    const { currentStatus, supervisions = [] } = transport || {};
+    const { status } = currentStatus || {};
+    const { isCurrentVersion = false } = permit || {};
+
+    return !isCurrentVersion && status === TransportStatus.PLANNED && !hasSupervisionStarted(supervisions);
+  } else {
+    return false;
+  }
+};
+
 export const isTimestampCurrentOrAfter = (dateTime: Date): boolean => {
   const now = moment(new Date());
   return moment(dateTime).isAfter(now, "minutes") || moment(dateTime).isSame(now, "minutes");

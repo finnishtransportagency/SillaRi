@@ -13,6 +13,7 @@ import { isTransportEditable } from "../../utils/validation";
 import MapModal from "../MapModal";
 import TransportDepartureTime from "./TransportDepartureTime";
 import RouteAccordion from "../RouteAccordion";
+import AlertPopover from "../common/AlertPopover";
 
 interface RouteInfoGridProps {
   routeTransportId: number;
@@ -23,6 +24,7 @@ interface RouteInfoGridProps {
   setSelectedRouteOption: Dispatch<SetStateAction<IRoute | undefined>>;
   selectedVehicle: IVehicle | undefined;
   setSelectedVehicle: Dispatch<SetStateAction<IVehicle | undefined>>;
+  currentTransportNumber: number;
 }
 
 const RouteInfoGrid = ({
@@ -34,17 +36,17 @@ const RouteInfoGrid = ({
   setSelectedRouteOption,
   selectedVehicle,
   setSelectedVehicle,
+  currentTransportNumber,
 }: RouteInfoGridProps): JSX.Element => {
   const { t } = useTranslation();
 
   const [isMapModalOpen, setMapModalOpen] = useState<boolean>(false);
+  const [transportNumberAlertOpen, setTransportNumberAlertOpen] = useState<boolean>(false);
 
   const { company, routes: permitRoutes = [], vehicles = [] } = permit || {};
   const { businessId = "" } = company || {};
-  const { id: selectedRouteId, name: selectedRouteName, nextAvailableTransportNumber } = selectedRouteOption || {};
-  const { plannedDepartureTime, transportNumber } = modifiedRouteTransportDetail || {};
-
-  const currentTransportNumber = transportNumber ? transportNumber : nextAvailableTransportNumber;
+  const { id: selectedRouteId, name: selectedRouteName } = selectedRouteOption || {};
+  const { plannedDepartureTime } = modifiedRouteTransportDetail || {};
 
   const isEditable = isTransportEditable(modifiedRouteTransportDetail, permit);
 
@@ -61,31 +63,43 @@ const RouteInfoGrid = ({
     const selectedRoute = permitRoutes.find((route) => route.id === routeId);
     if (selectedRoute) {
       setSelectedRouteOption(selectedRoute);
+      const { nextAvailableTransportNumber, routeBridges = [] } = selectedRoute;
 
       if (modifiedRouteTransportDetail && (!routeTransportId || routeTransportId === 0)) {
-        // This is a new route transport, so make sure supervision details are available for BridgeGrid
-        const { routeBridges = [] } = selectedRoute || {};
-        const newSupervisions: ISupervision[] = routeBridges.map((routeBridge) => {
-          const { id: routeBridgeId, contractBusinessId = "" } = routeBridge;
-          return {
-            id: 0,
-            routeBridgeId,
-            routeTransportId,
-            plannedTime: plannedDepartureTime ? moment(plannedDepartureTime).toDate() : moment().toDate(),
-            conformsToPermit: false,
-            // If contractBusinessId is provided from LeLu, supervisor is the area contractor. Otherwise, it's the current company.
-            supervisorCompany: contractBusinessId ? contractBusinessId : businessId,
-            supervisorType: contractBusinessId ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR,
-            routeBridge: routeBridge,
-          };
-        });
+        // This is a new route transport, so make sure supervision details are available for BridgeSupervisionGrid
+        let newSupervisions: ISupervision[] = [];
+
+        // Set supervisions only if there are valid transport numbers available for transport
+        if (nextAvailableTransportNumber) {
+          newSupervisions = routeBridges.map((routeBridge) => {
+            const { id: routeBridgeId, contractBusinessId = "" } = routeBridge;
+            return {
+              id: 0,
+              routeBridgeId,
+              routeTransportId,
+              plannedTime: plannedDepartureTime ? moment(plannedDepartureTime).toDate() : moment().toDate(),
+              conformsToPermit: false,
+              // If contractBusinessId is provided from LeLu, supervisor is the area contractor. Otherwise, it's the current company.
+              supervisorCompany: contractBusinessId ? contractBusinessId : businessId,
+              supervisorType: contractBusinessId ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR,
+              routeBridge: routeBridge,
+            };
+          });
+        }
+
         const newDetail: IRouteTransport = {
           ...modifiedRouteTransportDetail,
           routeId,
           route: selectedRoute,
+          transportNumber: nextAvailableTransportNumber,
           supervisions: newSupervisions,
         };
         setModifiedRouteTransportDetail(newDetail);
+
+        // If all transport numbers are used for this route, show warning
+        if (!nextAvailableTransportNumber) {
+          setTransportNumberAlertOpen(true);
+        }
       }
     }
   };
@@ -125,6 +139,7 @@ const RouteInfoGrid = ({
                       })}
                     selectedValue={selectedRouteId}
                     onChange={(routeId) => selectRoute(routeId as number)}
+                    disabled={!!routeTransportId} // Prevent changing route when transport has been saved
                   />
                 ) : (
                   <IonText>{selectedRouteName}</IonText>
@@ -177,6 +192,12 @@ const RouteInfoGrid = ({
           </IonRow>
         </IonGrid>
       </IonRow>
+      <AlertPopover
+        title={t("common.validation.transportNumbersUsed")}
+        text={t("common.validation.transportNumbersUsedInfo")}
+        isOpen={transportNumberAlertOpen}
+        setOpen={setTransportNumberAlertOpen}
+      />
     </IonGrid>
   );
 };

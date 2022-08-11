@@ -29,7 +29,7 @@ public class LeluRouteDTO {
     private Integer orderingNumber;
 
     @NotNull(message = "{route.transport.count.not.null}")
-    @Schema(description = "Number of crossings permitted for the route", example = "3")
+    @Schema(description = "Number of crossings permitted for the route", example = "1")
     private Integer transportCount;
 
     @NotNull(message = "{route.alternative.route.not.null}")

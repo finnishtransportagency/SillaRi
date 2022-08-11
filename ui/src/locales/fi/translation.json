@@ -23,7 +23,9 @@
       "checkDateShort": "Tarkista päivä",
       "checkTimeShort": "Tarkista aika",
       "invalidTime": "Virheellinen kellonaika",
-      "fixTimes": "Tarkista ja korjaa ristiriitaiset kellonajat siltojen arvioiduista ylitysajoista ennen jatkamista."
+      "fixTimes": "Tarkista ja korjaa ristiriitaiset kellonajat siltojen arvioiduista ylitysajoista ennen jatkamista.",
+      "transportNumbersUsed": "Reitin kuljetuskerrat käytetty",
+      "transportNumbersUsedInfo": "Kaikki reitin kuljetuskerrat on käytetty myönnetystä kuljetusluvasta. Kuljetus ei saa ylittää valvottavia siltoja."
     },
     "error": "Virhe tapahtui"
   },
@@ -252,11 +254,10 @@
       "transportCountModal": {
         "title": "Luvan {{permit}} reittikohtaiset kuljetuskerrat",
         "used": "Käytetty",
-        "usedFromPrevious": "Muut lupaversiot",
         "amount": "Määrä luvalla",
         "unlimited": "Rajoittamaton",
-        "infoTitle": "Ohje",
-        "infoText": "Käytettyjen kuljetuskertojen kokonaismäärä koostuu nykyiselle kuljetusluvalle tehdyistä kuljetuksista sekä mahdollisille muille lupaversioille tehdyistä kuljetuksista (suluissa jälkimmäisenä)."
+        "usedInfo": "Käytettyjen kuljetuskertojen kokonaismäärä koostuu nykyiselle kuljetusluvalle tehdyistä kuljetuksista sekä mahdollisille muille lupaversioille tehdyistä kuljetuksista (suluissa jälkimmäisenä).",
+        "amountInfo": "Määrä luvalla näyttää luvalle myönnettyjen kuljetuskertojen kokonaismäärän reittikohtaisesti."
       },
       "filter": {
         "show": "Näytä",
@@ -284,7 +285,8 @@
       "action": {
         "details": "Lisätiedot",
         "modify": "Muokkaa",
-        "show": "Näytä"
+        "show": "Näytä",
+        "delete": "Poista"
       },
       "transportStatusLog": "Kuljetuksen seuranta",
       "logStatus": {
