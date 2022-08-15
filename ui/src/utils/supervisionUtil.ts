@@ -17,7 +17,7 @@ import { getUserData, onRetry } from "./backendData";
 import { SupervisionStatus, TransportStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 import { Moment } from "moment/moment";
-import pLimit, { LimitFunction } from "p-limit";
+import pLimit from "p-limit";
 
 export const getReportSignedTime = (supervision: ISupervision): Date | undefined => {
   const { statusHistory = [] } = supervision;
@@ -257,7 +257,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   );
 
   // Prefetch the supervisions of each route transport
-  const limit: LimitFunction = pLimit(5);
+  const limit = pLimit(5);
   const supervisionIds = routeTransports.flatMap((routeTransport) => {
     const { supervisions = [] } = routeTransport || {};
 
