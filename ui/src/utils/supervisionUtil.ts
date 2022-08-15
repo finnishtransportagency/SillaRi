@@ -17,7 +17,7 @@ import { getUserData, onRetry } from "./backendData";
 import { SupervisionStatus, TransportStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 import { Moment } from "moment/moment";
-import pLimit from "p-limit";
+import pLimit, { LimitFunction } from "p-limit";
 
 export const getReportSignedTime = (supervision: ISupervision): Date | undefined => {
   const { statusHistory = [] } = supervision;
@@ -257,7 +257,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   );
 
   // Prefetch the supervisions of each route transport
-  const limit = pLimit(10);
+  const limit: LimitFunction = pLimit(5);
   const supervisionIds = routeTransports.flatMap((routeTransport) => {
     const { supervisions = [] } = routeTransport || {};
 
@@ -275,7 +275,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
     });
   };
 
-  await Promise.all(supervisionIds.map((supervisionId) => fetchSupervision(supervisionId)));
+  await Promise.all(supervisionIds.map((supervisionId) => limit(() => fetchSupervision(supervisionId))));
 
   // Prefetch the supervisions in the sending list so that the modify button works offline
   const supervisionSendingList = mainData[2];
