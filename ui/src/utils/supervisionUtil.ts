@@ -257,7 +257,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   );
 
   // Prefetch the supervisions of each route transport
-  const limit = pLimit(5);
+  const limit = pLimit(75);
   const supervisionIds = routeTransports.flatMap((routeTransport) => {
     const { supervisions = [] } = routeTransport || {};
 
