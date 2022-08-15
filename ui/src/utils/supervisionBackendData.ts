@@ -99,6 +99,7 @@ export const getSupervisionSendingList = async (dispatch: Dispatch): Promise<ISu
 export const getSupervision = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("GetSupervision", supervisionId);
+    console.log("Klockan är: ", Date.now());
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
 
     const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}`);
