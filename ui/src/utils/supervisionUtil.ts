@@ -17,7 +17,6 @@ import { getUserData, onRetry } from "./backendData";
 import { SupervisionStatus, TransportStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 import { Moment } from "moment/moment";
-import { isPortraitOrientation } from "pdfjs-dist/types/web/ui_utils";
 import pLimit from "p-limit";
 
 export const getReportSignedTime = (supervision: ISupervision): Date | undefined => {
@@ -276,10 +275,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
     });
   };
 
-  await Promise.all(
-      supervisionIds.map((supervisionId) => fetchSupervision(supervisionId))
-  );
-  
+  await Promise.all(supervisionIds.map((supervisionId) => fetchSupervision(supervisionId)));
 
   // Prefetch the supervisions in the sending list so that the modify button works offline
   const supervisionSendingList = mainData[2];
