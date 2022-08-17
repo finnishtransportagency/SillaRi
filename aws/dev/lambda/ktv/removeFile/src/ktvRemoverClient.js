@@ -1,4 +1,4 @@
-const https = require('https');
+const https = require("https");
 
 //Kuvien poistoon tarvitaan nämä parametrit
 // {"data": [{"tunnisteavaruus": <tunnisteavaruus>,"tunniste": "<poistettavan kuvan tunniste>","poista": "true"}]}
@@ -6,56 +6,55 @@ const https = require('https');
 // "poista": "true" -> kuva poistetaan kokonaan, "poista": "false" -> kuva historioidaan Kuvatiedossa.
 
 module.exports = {
-    removeFileFromKVT: function(apiKey, ktvIdentifier) {
+  removeFileFromKVT: function (apiKey, ktvIdentifier) {
+    return new Promise((resolve, reject) => {
+      // Sillarin tunnisteavaruus on 22 ja kuvatyyppi 2101.
+      const idSpace = 22;
 
-        return new Promise((resolve, reject) => {
+      console.log("Remove from ktv: " + ktvIdentifier);
 
-            // Sillarin tunnisteavaruus on 22 ja kuvatyyppi 2101.
-            const idSpace = 22;
+      const postData = JSON.stringify({
+        data: [
+          {
+            tunnisteavaruus: idSpace,
+            tunniste: ktvIdentifier,
+            poista: true,
+          },
+        ],
+      });
 
-            console.log('Remove from ktv: ' + ktvIdentifier);
+      console.log(postData);
 
-            const postData = JSON.stringify({
-                data: [{
-                    tunnisteavaruus: idSpace,
-                    tunniste: ktvIdentifier,
-                    poista: true
-                }]
-            });
+      const options = {
+        hostname: process.env.KTV_HOSTNAME,
+        path: "/ktv/api/public/KTJPoistaKuvia",
+        // path: '/ktv/api/ktv/KTJPoistaKuvia',
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+        },
+      };
 
-            console.log(postData);
+      const req = https.request(options, (res) => {
+        let body = "";
+        console.log("statusCode", res.statusCode);
 
-            const options = {
-                hostname: 'devapi.testivaylapilvi.fi',
-                path: '/ktv/api/public/KTJPoistaKuvia',
-                // path: '/ktv/api/ktv/KTJPoistaKuvia',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': apiKey
-                }
-            };
+        res.setEncoding("utf8");
+        res.on("data", (chunk) => (body += chunk));
 
-            const req = https.request(options, res => {
-                let body = '';
-                console.log('statusCode', res.statusCode);
-
-                res.setEncoding('utf8');
-                res.on('data', (chunk) => body += chunk);
-
-                res.on('end', () => {
-                    console.log('Successfully processed HTTPS response');
-                    console.log('RES body', body);
-                });
-            });
-
-            req.on('error', error => {
-                console.error(error)
-            });
-
-            req.write(postData);
-            req.end();
-
+        res.on("end", () => {
+          console.log("Successfully processed HTTPS response");
+          console.log("RES body", body);
         });
-    }
+      });
+
+      req.on("error", (error) => {
+        console.error(error);
+      });
+
+      req.write(postData);
+      req.end();
+    });
+  },
 };

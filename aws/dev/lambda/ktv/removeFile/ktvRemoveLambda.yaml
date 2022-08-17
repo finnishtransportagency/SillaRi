@@ -16,5 +16,10 @@ Resources:
       MemorySize: 128
       Timeout: 3
       Role: 'arn:aws:iam::384409174079:role/sillari-kvt-lambda-role'
+      Environment:
+        Variables:
+          KTV_API_KEY_SECRET_ID: >-
+            arn:aws:secretsmanager:eu-west-1:384409174079:secret:api-key-for-kvt-TeLyiL
+          KTV_HOSTNAME: devapi.testivaylapilvi.fi
       Tags:
         'lambda-console:blueprint': s3-get-object
