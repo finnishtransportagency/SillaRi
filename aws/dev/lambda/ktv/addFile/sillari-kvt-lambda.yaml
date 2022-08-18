@@ -1,19 +1,127 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Transform: 'AWS::Serverless-2016-10-31'
 Description: An AWS Serverless Specification template describing your function.
 Resources:
-  sillarikvtlambda:
-    Type: 'AWS::Serverless::Function'
+  testInline3:
+    Type: AWS::Lambda::Function
+    DeletionPolicy: Retain
     Properties:
+      Code:
+        ZipFile: |
+          const https = require('https');
+          function postFileToKVT(objectData, metadata, apiKey, imageKey) {
+          return new Promise((resolve, reject) => {
+          // Sillarin tunnisteavaruus on 22 ja kuvatyyppi 2101.
+          const ID_SPACE = 22;
+          const PIC_TYPE = 2101;
+          const { bridgeidentifier, bridgename, bridgeoid, createdtime, filename, objectidentifier, permitnumber, roadaddress, supervisionexceptional, supervisionfinishedtime, supervisionid, supervisionstartedtime, x_coord, y_coord } = metadata;
+          let bridgeProcessedName = '';
+          if (bridgename) {
+          const decodedName = decodeURIComponent(bridgename);
+          // decodeURIComponent does not handle '+' encoded in Java
+          bridgeProcessedName = decodedName.replace(/\+/g, ' ');
+          }
+          const roadAddressParts = roadaddress ? roadaddress.split('-') : [];
+
+          // supervisionexceptional has been converted from Boolean to string - it can be null/undefined, "true" or "false"
+          let isExceptional = null;
+          if (supervisionexceptional === "true") {
+          isExceptional = true;
+          } else if (supervisionexceptional === "false") {
+          isExceptional = false;
+          }
+          // TODO post supervision metadata how?
+          const postData = JSON.stringify({
+          data: [{
+          tunnisteavaruus: ID_SPACE,
+          tunniste: objectidentifier,
+          kuvatyyppi: PIC_TYPE,
+          nimi: filename,
+          image: objectData,
+          tie: roadAddressParts[0] || null,
+          tieosa: roadAddressParts[1] || null,
+          etaisyys: roadAddressParts[2] || null,
+          ajorata: roadAddressParts[3] || null,
+          xkoordinaatti: x_coord,
+          ykoordinaatti: y_coord,
+          kuljetuslupanumero: permitnumber,
+          ylitys_aloitusaika: supervisionstartedtime,
+          ylitys_paattymisaika: supervisionfinishedtime || null, // Is usually undefined for images
+          // sillantunnus: bridgeidentifier,
+          sillantunnus: 3, // TODO change after KTV has updated their end, now it has to be number 1-10. This goes to location on ktv map near Loviisa
+          valvontatunnus: supervisionid,
+          poikkeusjarjestely: isExceptional,
+          }]
+          });
+          const options = {
+          hostname: process.env.KTV_HOSTNAME,
+          path: '/ktv/api/public/KTJLisaaKuvia',
+          // path: '/ktv/api/ktv/KTJLisaaKuvia',
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey
+          }
+          };
+          const req = https.request(options, res => {
+          let body = '';
+          console.log('statusCode', res.statusCode);
+          res.setEncoding('utf8');
+          res.on('data', (chunk) => body += chunk);
+          res.on('end', () => {
+          console.log('Successfully processed HTTPS response');
+          console.log('RES body', body);
+          });
+          });
+          req.on('error', error => {
+          console.error(error)
+          });
+          req.write(postData);
+          req.end();
+          });
+          }
+          const AWS = require('aws-sdk');
+          const region = 'eu-west-1';
+          const secretClient = new AWS.SecretsManager({
+          region: region
+          });
+          const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+          exports.handler = async (event, context) => {;
+          console.log('Received event:', JSON.stringify(event, null, 2));
+          // Get the object from the event and show its content type
+          const bucket = event.Records[0].s3.bucket.name;
+          const imageKey = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
+          console.log('bucket', bucket);
+          const params = {
+          Bucket: bucket,
+          Key: imageKey,
+          };
+          try {
+          const secret = await getSecret();
+          console.log('got secret');
+          const secretJSON = secret.SecretString;
+          const parsed = JSON.parse(secretJSON);
+          const apiKey = parsed['kvt-api-key'];
+          const object = await s3.getObject(params).promise();
+          const { Body, Metadata } = object;
+          console.log('got object');
+          // Convert Body from a Buffer to a String
+          const objectData = Body.toString('base64'); // Use the encoding necessary
+          postFileToKVT(objectData, Metadata, apiKey, imageKey);
+          } catch (error) {
+          console.error(error);
+          return 0;
+          }
+          return 1;
+          };
+          async function getSecret() {
+          const sec = await secretClient.getSecretValue({ SecretId: process.env.KTV_API_KEY_SECRET_ID }).promise();
+          console.log('*** SECRET WAS FETCHED FROM SECRETS MANAGER');
+          return sec;
+          }
+
       Handler: index.handler
-      Runtime: nodejs14.x
-      CodeUri: .
+      Runtime: nodejs16.x
       Description: ''
       MemorySize: 128
       Timeout: 15
-      Role: 'arn:aws:iam::384409174079:role/sillari-kvt-lambda-role'
-      Environment:
-        Variables:
-          KTV_API_KEY_SECRET_ID: >-
-            arn:aws:secretsmanager:eu-west-1:384409174079:secret:api-key-for-kvt-TeLyiL
-          KTV_HOSTNAME: devapi.testivaylapilvi.fi
+      Role: 'arn:aws:iam::384409174079:role/service-role/testInline-role-l5swmoai'
