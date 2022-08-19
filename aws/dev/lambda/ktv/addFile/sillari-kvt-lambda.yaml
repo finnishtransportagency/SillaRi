@@ -1,7 +1,37 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: An AWS Serverless Specification template describing your function.
 Resources:
-  testInline3:
+  test-ktv-lambda-role:
+    Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Statement:
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+          - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+        Policies:
+          - PolicyName: test-ktv-lambda-secret-policy
+              PolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                  - Effect: Allow
+                  Action: 'secretsmanager:GetSecretValue'
+                  Resource: 'arn:aws:secretsmanager:eu-west-1:384409174079:secret:api-key-for-kvt-TeLyiL'
+          - PolicyName: test-sillari-photos-supervisions-s3-policy
+              PolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                  - Effect: Allow
+                  Action: 's3:GetObject'
+                  Resource:
+                    -'arn:aws:s3:::sillari-photos/*',
+                    -'arn:aws:s3:::sillari-supervisions/*',
+                    -'arn:aws:s3:::sillari-reports/*'
+  testKTV-Lambda:
     Type: AWS::Lambda::Function
     DeletionPolicy: Retain
     Properties:
@@ -22,11 +52,11 @@ Resources:
           }
           const roadAddressParts = roadaddress ? roadaddress.split('-') : [];
 
-          // supervisionexceptional has been converted from Boolean to string - it can be null/undefined, "true" or "false"
+          // supervisionexceptional has been converted from Boolean to string - it can be null/undefined, true or false
           let isExceptional = null;
-          if (supervisionexceptional === "true") {
+          if (supervisionexceptional === true) {
           isExceptional = true;
-          } else if (supervisionexceptional === "false") {
+          } else if (supervisionexceptional === false) {
           isExceptional = false;
           }
           // TODO post supervision metadata how?
@@ -124,4 +154,4 @@ Resources:
       Description: ''
       MemorySize: 128
       Timeout: 15
-      Role: 'arn:aws:iam::384409174079:role/service-role/testInline-role-l5swmoai'
+      Role: !GetAtt 'test-ktv-lambda-role.Arn'
