@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: An AWS Serverless Specification template describing your function.
 Resources:
-  test-ktv-lambda-role:
+  testKtvLambdaRole:
     Type: AWS::IAM::Role
-      Properties:
+    Properties:
         AssumeRolePolicyDocument:
           Statement:
             Effect: Allow
@@ -15,23 +15,23 @@ Resources:
           - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
         Policies:
           - PolicyName: test-ktv-lambda-secret-policy
-              PolicyDocument:
+            PolicyDocument:
                 Version: '2012-10-17'
                 Statement:
                   - Effect: Allow
-                  Action: 'secretsmanager:GetSecretValue'
-                  Resource: 'arn:aws:secretsmanager:eu-west-1:384409174079:secret:api-key-for-kvt-TeLyiL'
+                    Action: 'secretsmanager:GetSecretValue'
+                    Resource: 'arn:aws:secretsmanager:eu-west-1:384409174079:secret:api-key-for-kvt-TeLyiL'
           - PolicyName: test-sillari-photos-supervisions-s3-policy
-              PolicyDocument:
+            PolicyDocument:
                 Version: '2012-10-17'
                 Statement:
                   - Effect: Allow
-                  Action: 's3:GetObject'
-                  Resource:
-                    -'arn:aws:s3:::sillari-photos/*',
-                    -'arn:aws:s3:::sillari-supervisions/*',
-                    -'arn:aws:s3:::sillari-reports/*'
-  testKTV-Lambda:
+                    Action: 's3:GetObject'
+                    Resource:
+                      - 'arn:aws:s3:::sillari-photos/*'
+                      - 'arn:aws:s3:::sillari-supervisions/*'
+                      - 'arn:aws:s3:::sillari-reports/*'
+  testKTVLambda:
     Type: AWS::Lambda::Function
     DeletionPolicy: Retain
     Properties:
@@ -154,4 +154,4 @@ Resources:
       Description: ''
       MemorySize: 128
       Timeout: 15
-      Role: !GetAtt 'test-ktv-lambda-role.Arn'
+      Role: !GetAtt 'testKtvLambdaRole.Arn'
