@@ -4,7 +4,38 @@ Description: >-
   An Amazon S3 trigger that retrieves metadata for the object that has been
   updated.
 Resources:
-  testktvRemoveLambda:
+  testKtvRemoveLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+      Policies:
+        - PolicyName: test-ktv-remove-lambda-secret-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 'secretsmanager:GetSecretValue'
+                Resource: 'arn:aws:secretsmanager:eu-west-1:384409174079:secret:api-key-for-kvt-TeLyiL'
+        - PolicyName: test-sillari-photos-supervisions-s3-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 's3:GetObject'
+                Resource:
+                  - 'arn:aws:s3:::sillari-photos/*'
+                  - 'arn:aws:s3:::sillari-supervisions/*'
+                  - 'arn:aws:s3:::sillari-reports/*'
+
+  testKtvRemoveLambda:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.handler
@@ -127,3 +158,21 @@ Resources:
             console.log("*** SECRET WAS FETCHED FROM SECRETS MANAGER");
             return sec;
           }
+          
+  testKtvRemoveLambdaInvokePhotoPermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt testKtvRemoveLambda.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !Sub 'arn:aws:s3:::sillari-photos'
+
+  testKtvRemoveLambdaInvokeReportsPermission:
+      Type: 'AWS::Lambda::Permission'
+      Properties:
+        FunctionName: !GetAtt testKtvRemoveLambda.Arn
+        Action: 'lambda:InvokeFunction'
+        Principal: s3.amazonaws.com
+        SourceAccount: !Ref 'AWS::AccountId'
+        SourceArn: !Sub 'arn:aws:s3:::sillari-reports'

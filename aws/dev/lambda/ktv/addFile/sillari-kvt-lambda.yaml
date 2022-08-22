@@ -161,7 +161,6 @@ Resources:
       Timeout: 15
       Role: !GetAtt 'testKtvLambdaRole.Arn'
 
-
   testKtvLambdaInvokePhotoPermission:
     Type: 'AWS::Lambda::Permission'
     Properties:
@@ -179,3 +178,12 @@ Resources:
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
       SourceArn: !Sub 'arn:aws:s3:::sillari-reports'
+
+  testPhotoBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: sillari-photos
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: 's3:ObjectCreated:*'
+            Function: !GetAtt testKTVLambda.Arn
