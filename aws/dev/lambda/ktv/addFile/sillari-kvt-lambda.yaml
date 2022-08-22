@@ -42,7 +42,7 @@ Resources:
       Code:
         ZipFile: |
           const https = require('https');
-          function postFileToKVT(objectData, metadata, apiKey, imageKey) {
+          async function postFileToKVT(objectData, metadata, apiKey, imageKey) {
           return new Promise((resolve, reject) => {
           // Sillarin tunnisteavaruus on 22 ja kuvatyyppi 2101.
           const ID_SPACE = 22;
@@ -140,7 +140,7 @@ Resources:
           console.log('got object');
           // Convert Body from a Buffer to a String
           const objectData = Body.toString('base64'); // Use the encoding necessary
-          postFileToKVT(objectData, Metadata, apiKey, imageKey);
+          await postFileToKVT(objectData, Metadata, apiKey, imageKey);
           } catch (error) {
           console.error(error);
           return 0;
