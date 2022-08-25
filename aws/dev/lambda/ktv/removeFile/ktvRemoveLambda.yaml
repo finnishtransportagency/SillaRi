@@ -44,8 +44,8 @@ Resources:
         An Amazon S3 trigger that retrieves metadata for the object that has
         been updated.
       MemorySize: 128
-      Timeout: 3
-      Role: 'arn:aws:iam::384409174079:role/sillari-kvt-lambda-role'
+      Timeout: 15
+      Role: !GetAtt 'testKtvRemoveLambdaRole.Arn'
       Environment:
         Variables:
           KTV_API_KEY_SECRET_ID: >-
