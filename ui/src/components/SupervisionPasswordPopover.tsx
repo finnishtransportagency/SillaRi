@@ -122,6 +122,8 @@ const SupervisionPasswordPopover = ({
 
         setErrorMessage("");
         setCodeInputSent(true);
+
+        console.log("popover close");
         // FIXME sometimes popup doesn't always close
         setOpen(false);
       } else {
