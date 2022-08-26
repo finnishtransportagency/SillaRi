@@ -21,8 +21,6 @@ const CompanyTransportsAccordion = ({ username, companyTransportsList, noNetwork
     <div className="listContainer">
       {noNetworkNoData ? (
         <NoNetworkNoData />
-      ) : loadingData ? (
-        <Loading />
       ) : (
         <CustomAccordion
           className="companyAccordion"
