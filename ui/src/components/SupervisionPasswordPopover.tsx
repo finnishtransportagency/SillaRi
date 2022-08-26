@@ -11,6 +11,7 @@ import { getUserData, onRetry } from "../utils/backendData";
 import { SupervisionListType } from "../utils/constants";
 import { savePasswordToStorage } from "../utils/trasportCodeStorageUtil";
 import IPopoverPlacement from "../interfaces/IPopoverPlacement";
+import pLimit from "p-limit";
 
 interface SupervisionPasswordPopoverProps {
   title: string;
@@ -101,6 +102,15 @@ const SupervisionPasswordPopover = ({
           );
         }
 
+        const limit = pLimit(5);
+
+        const fetchSupervision: (supervisionId: number) => Promise<void> = (supervisionId: number) => {
+          return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, username, null, dispatch), {
+            retry: onRetry,
+            staleTime: Infinity,
+          });
+        };
+
         // Save each supervisionId with password to storage (process in parallel)
         await Promise.all(
           supervisions.map(async (supervision) => savePasswordToStorage(username, supervision.id, codeInputValue, SupervisionListType.BRIDGE))
@@ -108,20 +118,7 @@ const SupervisionPasswordPopover = ({
         console.log("Transport codes saved for " + supervisions.length + " supervisions");
 
         // Then prefetch all supervisions for offline use
-        await Promise.all(
-          supervisions.map((supervision) => {
-            const { id: supervisionId } = supervision || {};
-
-            return queryClient.prefetchQuery(
-              ["getSupervision", Number(supervisionId)],
-              () => getSupervision(supervisionId, username, null, dispatch),
-              {
-                retry: onRetry,
-                staleTime: Infinity,
-              }
-            );
-          })
-        );
+        await Promise.all(supervisions.map((supervision) => limit(() => fetchSupervision(supervision.id))));
 
         setErrorMessage("");
         setCodeInputSent(true);
