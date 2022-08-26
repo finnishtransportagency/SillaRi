@@ -12,8 +12,6 @@ import { SupervisionListType } from "../utils/constants";
 import { savePasswordToStorage } from "../utils/trasportCodeStorageUtil";
 import IPopoverPlacement from "../interfaces/IPopoverPlacement";
 import pLimit from "p-limit";
-import Loading from "./Loading";
-import { useIsFetching } from "react-query";
 
 interface SupervisionPasswordPopoverProps {
   title: string;
@@ -177,7 +175,6 @@ const SupervisionPasswordPopover = ({
           />
           <IonRow>
             <IonCol className="ion-text-center ion-margin">
-              loadingData ? (<Loading />)
               <IonText className="linkText" onClick={() => setOpen(false)}>
                 {t("common.buttons.close")}
               </IonText>
