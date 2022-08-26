@@ -5,6 +5,8 @@ import TransportCardList from "./TransportCardList";
 import TransportCardListHeader from "./TransportCardListHeader";
 import NoNetworkNoData from "./NoNetworkNoData";
 import "./CompanyTransportsAccordion.css";
+import Loading from "./Loading";
+import { useIsFetching } from "react-query";
 
 interface CompanyTransportsAccordionProps {
   username: string;
@@ -14,10 +16,13 @@ interface CompanyTransportsAccordionProps {
 }
 
 const CompanyTransportsAccordion = ({ username, companyTransportsList, noNetworkNoData, isOnline }: CompanyTransportsAccordionProps): JSX.Element => {
+  const loadingData = useIsFetching() > 0;
   return (
     <div className="listContainer">
       {noNetworkNoData ? (
         <NoNetworkNoData />
+      ) : loadingData ? (
+        <Loading />
       ) : (
         <CustomAccordion
           className="companyAccordion"
