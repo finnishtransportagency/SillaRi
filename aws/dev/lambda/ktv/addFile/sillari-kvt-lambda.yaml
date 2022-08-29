@@ -28,9 +28,9 @@ Resources:
                   - Effect: Allow
                     Action: 's3:GetObject'
                     Resource:
-                      - 'arn:aws:s3:::sillari-photos/*'
+                      - 'arn:aws:s3:::sillari-photos12345/*'
                       - 'arn:aws:s3:::sillari-supervisions/*'
-                      - 'arn:aws:s3:::sillari-reports/*'
+                      - 'arn:aws:s3:::sillari-reports2/*'
 
   testKTVLambda:
     Type: AWS::Lambda::Function
@@ -168,7 +168,7 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
-      SourceArn: !Sub 'arn:aws:s3:::sillari-photos'
+      SourceArn: !Sub 'arn:aws:s3:::sillari-photos12345'
 
   testKtvLambdaInvokeReportsPermission:
     Type: 'AWS::Lambda::Permission'
@@ -177,12 +177,15 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
-      SourceArn: !Sub 'arn:aws:s3:::sillari-reports'
+      SourceArn: !Sub 'arn:aws:s3:::sillari-reports2'
 
   testPhotoBucket:
     Type: 'AWS::S3::Bucket'
+    DependsOn:
+      - testKtvLambdaInvokePhotoPermission
+      - testKtvLambdaInvokeReportsPermission
     Properties:
-      BucketName: sillari-photos
+      BucketName: sillari-photos12345
       NotificationConfiguration:
         LambdaConfigurations:
           - Event: 's3:ObjectCreated:*'
