@@ -15,7 +15,7 @@ import {
   generateNewRouteTransportPassword,
   updateRouteTransport,
 } from "../../utils/managementBackendData";
-import { DATE_FORMAT } from "../../utils/constants";
+import { CONFLICT_ERROR, DATE_FORMAT } from "../../utils/constants";
 import { isPermitValid, isTransportEditable, hasSupervisionTimeErrors, isPlannedTransportOutdated } from "../../utils/validation";
 import BridgeSupervisionGrid from "./BridgeSupervisionGrid";
 import PermitLinkText from "../PermitLinkText";
@@ -26,7 +26,7 @@ import IVehicle from "../../interfaces/IVehicle";
 import NoNetworkNoData from "../NoNetworkNoData";
 import Loading from "../Loading";
 import RouteTransportFooter from "./RouteTransportFooter";
-import SupervisionReport from "./SupervisionReport";
+import SupervisionReportModalContainer from "./SupervisionReportModalContainer";
 import IToastMessage from "../../interfaces/IToastMessage";
 import AlertPopover from "../common/AlertPopover";
 import RouteBridgeGrid from "./RouteBridgeGrid";
@@ -90,7 +90,7 @@ const RouteTransportInfo = ({
     },
     onError: (error) => {
       let errorMessage;
-      if (error instanceof Error && error.message === "409") {
+      if (error instanceof Error && error.message === CONFLICT_ERROR) {
         errorMessage = t("management.transportDetail.error.transportNumberConflict");
       } else {
         errorMessage = t("common.error");
@@ -355,7 +355,7 @@ const RouteTransportInfo = ({
           position="top"
           color={toastMessage.color ? toastMessage.color : "success"}
         />
-        <SupervisionReport
+        <SupervisionReportModalContainer
           isOpen={reportModalOpen}
           setOpen={setReportModalOpen}
           selectedSupervisionId={selectedSupervisionId}

@@ -7,6 +7,12 @@ export const REACT_QUERY_CACHE_TIME = 1000 * 60 * 60 * 24; // 24 hours
 // export const REACT_QUERY_CACHE_TIME = 1000 * 30; // 30 seconds, for testing
 
 export const NETWORK_RESPONSE_NOT_OK = "Network response was not ok";
+export const FORBIDDEN_ERROR = "Forbidden";
+export const CONFLICT_ERROR = "Conflict";
+
+export const TRANSPORT_CODE_STORAGE_GROUP = "TRANSCODES";
+export const TRANSPORT_CODE_STORAGE_LIFE_DAYS = 3;
+
 export enum SillariErrorCode {
   NO_USER_ROLES = 1001,
   NO_USER_DATA = 1002,

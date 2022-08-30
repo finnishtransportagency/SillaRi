@@ -18,6 +18,8 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^14.3.0",
+    "@types/crypto-js": "^4.1.1",
+    "crypto-js": "^4.1.1",
     "i18next": "^21.8.14",
     "immutable": "^4.1.0",
     "ionicons": "^6.0.2",

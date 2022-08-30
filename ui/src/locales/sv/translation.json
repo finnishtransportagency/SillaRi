@@ -229,7 +229,8 @@
     "sentOk": "De valda övervakningsrapporterna har sänts",
     "nothingToSend": "Inga övervakningsrapporter att sända",
     "sentReports": "(SV) Sent supervision reports",
-    "offlineSuffix": "Offline"
+    "offlineSuffix": "Offline",
+    "passwordButton": "(SV) Avaa salasanalla"
   },
   "permitPdf": {
     "title": "Transporttillstånd",
@@ -441,9 +442,10 @@
   },
   "offlineInfo": {
     "title": "Offline-tillstånd",
-    "info1": "(SV) SillaRi's transports and bridges to be supervised were last updated",
-    "info2": "(SV) You can use SillaRi in offline mode, in which case it is possible to save the bridge supervision report temporarily to this device.",
-    "info3": "(SV) You can sent the supervision report later when the network connection is in use again and you login to SillaRi."
+    "info1": "(SV) SillaRin kuljetukset ja valvottavat sillat on päivitetty viimeksi",
+    "info2": "(SV) Ainoastaan salasanalla online-tilassa avatut kuljetukset ja sillat ovat käytettävissä offline-tilassa.",
+    "info3": "(SV) Voit käyttää SillaRia offline-tilassa, jolloin sillanvalvonnan raportti on mahdollista tallentaa väliaikaisesti tälle laitteelle.",
+    "info4": "(SV) Valvontaraportin voit lähettää myöhemmin, kun verkkoyhteys on jälleen käytössä ja kirjaudut SillaRiin."
   },
   "sendingListOfflineNotice": {
     "title": "(SV) Sending is not possible in offline mode",

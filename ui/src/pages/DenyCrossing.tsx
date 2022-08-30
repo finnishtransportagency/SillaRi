@@ -25,10 +25,10 @@ import PermitLinkItem from "../components/PermitLinkItem";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
-import { onRetry } from "../utils/backendData";
+import { getUserData, onRetry } from "../utils/backendData";
 import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
 import { SupervisionStatus } from "../utils/constants";
-import { removeSupervisionFromRouteTransportList } from "../utils/supervisionUtil";
+import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 
 interface DenyCrossingProps {
   supervisionId: string;
@@ -55,20 +55,34 @@ const DenyCrossing = (): JSX.Element => {
   const obstacleOnBridge = tFI("denyCrossing.obstacleOnBridge");
   const otherReason = "other";
 
+  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const { username = "" } = supervisorUser || {};
+
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
-    () => getSupervision(Number(supervisionId), dispatch),
+    () => getSupervision(Number(supervisionId), username, null, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,
+      enabled: !!username,
     }
   );
 
-  const { routeTransportId = "0" } = supervision || {};
+  const { routeTransportId = 0, routeBridge, currentStatus } = supervision || {};
+  const { status: supervisionStatus } = currentStatus || {};
+  const { route, bridge } = routeBridge || {};
+  const { name = "", identifier = "" } = bridge || {};
+  const { permit } = route || {};
+
+  const supervisionPending =
+    !isLoadingSupervision && (supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED);
 
   // Set-up mutations for modifying data later
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
-  const denyCrossingMutation = useMutation((denyCrossingInput: IDenyCrossingInput) => denyCrossing(denyCrossingInput, dispatch), {
+  const denyCrossingMutation = useMutation((denyCrossingInput: IDenyCrossingInput) => denyCrossing(denyCrossingInput, username, dispatch), {
     retry: onRetry,
     onMutate: async (newData: IDenyCrossingInput) => {
       // onMutate fires before the mutation function
@@ -87,7 +101,6 @@ const DenyCrossing = (): JSX.Element => {
 
       // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
       // Also remove the finished supervision from the route transport list in the UI
-      // invalidateOfflineData(queryClient, dispatch);
       removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
       history.goBack();
     },
@@ -99,15 +112,6 @@ const DenyCrossing = (): JSX.Element => {
     },
   });
   const { isLoading: isSendingDenyCrossing } = denyCrossingMutation;
-
-  const { routeBridge, currentStatus } = supervision || {};
-  const { status: supervisionStatus } = currentStatus || {};
-  const { route, bridge } = routeBridge || {};
-  const { name = "", identifier = "" } = bridge || {};
-  const { permit } = route || {};
-
-  const supervisionPending =
-    !isLoadingSupervision && (supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED);
 
   const radioClicked = (radioValue: string) => {
     if (radioValue === otherReason) {
@@ -127,7 +131,12 @@ const DenyCrossing = (): JSX.Element => {
 
   const denyCrossingClicked = () => {
     if (denyReason) {
-      const denyCrossingInput: IDenyCrossingInput = { supervisionId: Number(supervisionId), denyReason: denyReason, denyTime: new Date() };
+      const denyCrossingInput: IDenyCrossingInput = {
+        supervisionId: Number(supervisionId),
+        routeTransportId: routeTransportId,
+        denyReason: denyReason,
+        denyTime: new Date(),
+      };
       denyCrossingMutation.mutate(denyCrossingInput);
     }
   };
@@ -193,7 +202,7 @@ const DenyCrossing = (): JSX.Element => {
                     color="primary"
                     expand="block"
                     size="large"
-                    disabled={isLoadingSupervision || isSendingDenyCrossing || !supervisionPending || !denyReason}
+                    disabled={!username || !routeTransportId || isLoadingSupervision || isSendingDenyCrossing || !supervisionPending || !denyReason}
                     onClick={() => denyCrossingClicked()}
                   >
                     {t("common.buttons.send")}
