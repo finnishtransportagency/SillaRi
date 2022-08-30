@@ -76,6 +76,14 @@
   cursor: pointer;
 }
 
+.passwordButton {
+  margin: 4px 4px 18px 4px;
+  --padding-top: 25px;
+  --padding-bottom: 25px;
+  --padding-start: 13px;
+  --padding-end: 13px;
+}
+
 .iconLink {
   cursor: pointer;
 }
@@ -187,8 +195,20 @@ ion-popover.large-popover {
   margin-right: var(--ion-margin, 16px);
 }
 
-.quarter-margin-bottom {
+.small-margin-top {
+  margin-top: 4px;
+}
+
+.small-margin-bottom {
   margin-bottom: 4px;
+}
+
+.medium-margin-start {
+  margin-left: 8px;
+}
+
+.medium-margin-end {
+  margin-right: 8px;
 }
 
 /** Additional Vayla colors **/

@@ -19,7 +19,7 @@ import BridgeDetail from "./pages/BridgeDetail";
 import SupervisionSummary from "./pages/SupervisionSummary";
 import CompanySummary from "./pages/management/CompanySummary";
 import AddTransport from "./pages/management/AddTransport";
-import TransportCodeInput from "./pages/transport/TransportCodeInput";
+import TransportCodeForm from "./pages/transport/TransportCodeForm";
 import Transport from "./pages/transport/Transport";
 import TransportDetail from "./pages/management/TransportDetail";
 import AppCheck from "./components/AppCheck";
@@ -31,8 +31,9 @@ import UserInfo from "./pages/UserInfo";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import { useTypedSelector, RootState } from "./store/store";
 import { getUserData, getVersionInfo } from "./utils/backendData";
+import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
-import { prefetchOfflineData } from "./utils/supervisionUtil";
+import { prefetchOfflineData } from "./utils/offlineUtil";
 import IonicAsyncStorage from "./IonicAsyncStorage";
 
 /* Sillari.css */
@@ -93,6 +94,7 @@ const App: React.FC = () => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   useEffect(() => {
+    removeObsoletePasswords();
     // Add or remove the "dark" class based on if the media query matches
     const toggleDarkTheme = (shouldAdd: boolean) => {
       document.body.classList.toggle("dark", shouldAdd);
@@ -264,7 +266,7 @@ const App: React.FC = () => {
                   {userHasRole("SILLARI_AJOJARJESTELIJA") ? <TransportDetail /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/transport">
-                  {userHasRole("SILLARI_KULJETTAJA") ? <TransportCodeInput /> : <AccessDenied />}
+                  {userHasRole("SILLARI_KULJETTAJA") ? <TransportCodeForm /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/transport/:transportPassword">
                   {userHasRole("SILLARI_KULJETTAJA") ? <Transport /> : <AccessDenied />}

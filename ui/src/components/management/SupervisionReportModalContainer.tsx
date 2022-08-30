@@ -13,7 +13,12 @@ interface SupervisionReportProps {
   setSelectedSupervisionId: Dispatch<SetStateAction<number | undefined>>;
 }
 
-const SupervisionReport = ({ isOpen, setOpen, selectedSupervisionId, setSelectedSupervisionId }: SupervisionReportProps): JSX.Element => {
+const SupervisionReportModalContainer = ({
+  isOpen,
+  setOpen,
+  selectedSupervisionId,
+  setSelectedSupervisionId,
+}: SupervisionReportProps): JSX.Element => {
   const dispatch = useDispatch();
 
   const { data: supervision } = useQuery(
@@ -37,4 +42,4 @@ const SupervisionReport = ({ isOpen, setOpen, selectedSupervisionId, setSelected
   return <SupervisionReportModal isOpen={isOpen} supervision={supervision as ISupervision} closeModal={closeModal} />;
 };
 
-export default SupervisionReport;
+export default SupervisionReportModalContainer;

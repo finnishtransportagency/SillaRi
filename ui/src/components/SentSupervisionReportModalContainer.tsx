@@ -12,18 +12,25 @@ interface SentSupervisionReportProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
   selectedSupervisionId: number | undefined;
   setSelectedSupervisionId: Dispatch<SetStateAction<number | undefined>>;
+  username: string;
 }
 
-const SentSupervisionReport = ({ isOpen, setOpen, selectedSupervisionId, setSelectedSupervisionId }: SentSupervisionReportProps): JSX.Element => {
+const SentSupervisionReportModalContainer = ({
+  isOpen,
+  setOpen,
+  selectedSupervisionId,
+  setSelectedSupervisionId,
+  username,
+}: SentSupervisionReportProps): JSX.Element => {
   const dispatch = useDispatch();
 
   const { data: supervision } = useQuery(
     ["getSupervision", Number(selectedSupervisionId)],
-    () => getSupervision(Number(selectedSupervisionId), dispatch),
+    () => getSupervision(Number(selectedSupervisionId), username, null, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,
-      enabled: selectedSupervisionId !== undefined,
+      enabled: !!username && selectedSupervisionId !== undefined,
       onSuccess: (data) => {
         console.log("GetSupervision done", data.id);
       },
@@ -38,4 +45,4 @@ const SentSupervisionReport = ({ isOpen, setOpen, selectedSupervisionId, setSele
   return <SupervisionReportModal isOpen={isOpen} supervision={supervision as ISupervision} closeModal={closeModal} />;
 };
 
-export default SentSupervisionReport;
+export default SentSupervisionReportModalContainer;

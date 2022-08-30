@@ -1,23 +1,11 @@
-import { QueryClient } from "react-query";
-import type { Dispatch } from "redux";
 import moment from "moment";
-import ICompanyTransports from "../interfaces/ICompanyTransports";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
-import {
-  getCompanyTransportsList,
-  getRouteTransportOfSupervisor,
-  getSupervision,
-  getSupervisionList,
-  getSupervisionSendingList,
-} from "./supervisionBackendData";
-import { getUserData, onRetry } from "./backendData";
 import { SupervisionStatus, TransportStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 import { Moment } from "moment/moment";
-import pLimit from "p-limit";
 
 export const getReportSignedTime = (supervision: ISupervision): Date | undefined => {
   const { statusHistory = [] } = supervision;
@@ -208,140 +196,4 @@ export const getTransportTime = (transport: IRouteTransport): Date | undefined =
     return history.status === TransportStatus.DEPARTED;
   });
   return departedStatus.length > 0 ? departedStatus[0].time : plannedDepartureTime;
-};
-
-export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Dispatch) => {
-  // Prefetch all data needed for supervisions so that the application can subsequently be used offline
-  // Use queryClient.prefetchQuery where possible but only for query data that is not needed by other queries
-  // Make sure the parameter types match the later useQuery calls, otherwise the caching doesn't work!
-
-  // Prefetch the main data, but only return the company transports data needed by the next step
-  const mainData = await Promise.all([
-    queryClient.fetchQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
-      retry: onRetry,
-      staleTime: Infinity,
-    }),
-    queryClient.prefetchQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
-      retry: onRetry,
-      staleTime: Infinity,
-    }),
-    queryClient.fetchQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
-      retry: onRetry,
-      staleTime: Infinity,
-    }),
-    queryClient.prefetchQuery(["getSupervisor"], () => getUserData(dispatch), {
-      retry: onRetry,
-      staleTime: Infinity,
-    }),
-  ]);
-
-  // Prefetch the route transports of each company transport
-  const companyTransportsList = mainData[0];
-  const routeTransports = await Promise.all(
-    companyTransportsList.flatMap((companyTransports) => {
-      const { transports } = companyTransports || {};
-
-      return transports.map((transport) => {
-        const { id: routeTransportId } = transport || {};
-
-        return queryClient.fetchQuery(
-          ["getRouteTransportOfSupervisor", Number(routeTransportId)],
-          () => getRouteTransportOfSupervisor(routeTransportId, dispatch),
-          {
-            retry: onRetry,
-            staleTime: Infinity,
-          }
-        );
-      });
-    })
-  );
-
-  // Prefetch the supervisions of each route transport
-  const limit = pLimit(75);
-  const supervisionIds = routeTransports.flatMap((routeTransport) => {
-    const { supervisions = [] } = routeTransport || {};
-
-    return supervisions.map((supervision) => {
-      const { id: supervisionId } = supervision || {};
-
-      return supervisionId;
-    });
-  });
-
-  const fetchSupervision: (supervisionId: number) => Promise<void> = (supervisionId: number) => {
-    return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, dispatch), {
-      retry: onRetry,
-      staleTime: Infinity,
-    });
-  };
-
-  await Promise.all(supervisionIds.map((supervisionId) => limit(() => fetchSupervision(supervisionId))));
-
-  // Prefetch the supervisions in the sending list so that the modify button works offline
-  const supervisionSendingList = mainData[2];
-  await Promise.all(
-    supervisionSendingList.map((supervision) => {
-      const { id: supervisionId } = supervision || {};
-
-      return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, dispatch), {
-        retry: onRetry,
-        staleTime: Infinity,
-      });
-    })
-  );
-};
-
-export const invalidateOfflineData = (queryClient: QueryClient, dispatch: Dispatch) => {
-  // Invalidate the queries to force UI updates when using cached data
-  // Do this for the data that was fetched by prefetchOfflineData, rather than invalidating everything
-  const companyTransportsList = queryClient.getQueryData<ICompanyTransports[]>(["getCompanyTransportsList"]) || [];
-
-  companyTransportsList.forEach((companyTransports) => {
-    const { transports } = companyTransports || {};
-
-    transports.forEach((transport) => {
-      const { id: routeTransportId } = transport || {};
-
-      const routeTransport = queryClient.getQueryData<IRouteTransport>(["getRouteTransportOfSupervisor", Number(routeTransportId)]);
-
-      const { supervisions = [] } = routeTransport || {};
-      supervisions.forEach((supervision) => {
-        const { id: supervisionId } = supervision || {};
-        queryClient.invalidateQueries(["getSupervision", Number(supervisionId)]);
-      });
-
-      queryClient.invalidateQueries(["getRouteTransportOfSupervisor", Number(routeTransportId)]);
-    });
-  });
-
-  queryClient.invalidateQueries(["getCompanyTransportsList"]);
-  queryClient.invalidateQueries(["getSupervisionList"]);
-  queryClient.invalidateQueries(["getSupervisionSendingList"]);
-  queryClient.invalidateQueries(["getSupervisor"]);
-
-  // Repopulate the cache after invalidating
-  prefetchOfflineData(queryClient, dispatch);
-};
-
-export const removeSupervisionFromRouteTransportList = (queryClient: QueryClient, routeTransportId: string, supervisionId: string) => {
-  // Remove the finished/denied supervision from the UI when using cached data
-  // This is a more efficient way than calling invalidateOfflineData to refetch everything
-  const routeTransport = queryClient.getQueryData<IRouteTransport>(["getRouteTransportOfSupervisor", Number(routeTransportId)]);
-  if (routeTransport && routeTransport.supervisions) {
-    routeTransport.supervisions = routeTransport.supervisions.reduce((acc: ISupervision[], s) => {
-      return s.id === Number(supervisionId) ? acc : [...acc, s];
-    }, []);
-    queryClient.setQueryData(["getRouteTransportOfSupervisor", Number(routeTransportId)], routeTransport);
-  }
-
-  // Make sure the supervision is also removed from the bridges list on the main page
-  const supervisionList = queryClient.getQueryData<ISupervision[]>(["getSupervisionList"]);
-  if (supervisionList) {
-    queryClient.setQueryData(
-      ["getSupervisionList"],
-      supervisionList.reduce((acc: ISupervision[], s) => {
-        return s.id === Number(supervisionId) ? acc : [...acc, s];
-      }, [])
-    );
-  }
 };

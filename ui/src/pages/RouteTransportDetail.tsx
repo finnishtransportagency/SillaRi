@@ -11,7 +11,7 @@ import TransportInfoAccordion from "../components/TransportInfoAccordion";
 import IPermit from "../interfaces/IPermit";
 import IRoute from "../interfaces/IRoute";
 import { useTypedSelector, RootState } from "../store/store";
-import { onRetry } from "../utils/backendData";
+import { getUserData, onRetry } from "../utils/backendData";
 import { getRouteTransportOfSupervisor } from "../utils/supervisionBackendData";
 import BridgeCardList from "../components/BridgeCardList";
 import IRouteTransport from "../interfaces/IRouteTransport";
@@ -31,12 +31,19 @@ const RouteTransportDetail = (): JSX.Element => {
 
   const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
 
+  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const { username = "" } = supervisorUser || {};
+
   const { data: routeTransport } = useQuery(
     ["getRouteTransportOfSupervisor", Number(routeTransportId)],
-    () => getRouteTransportOfSupervisor(Number(routeTransportId), dispatch),
+    () => getRouteTransportOfSupervisor(Number(routeTransportId), username, null, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,
+      enabled: !!username,
     }
   );
 
@@ -72,7 +79,7 @@ const RouteTransportDetail = (): JSX.Element => {
             <RouteAccordion route={route as IRoute} transportNumber={transportNumber} mapDisabled={!isOnline} openMap={openRouteMap} />
             <TransportInfoAccordion permit={permit as IPermit} />
 
-            <BridgeCardList supervisions={supervisions} />
+            <BridgeCardList username={username} routeTransport={routeTransport as IRouteTransport} supervisions={supervisions} isOnline={isOnline} />
           </>
         )}
       </IonContent>

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
+import { onlineManager, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import type { SegmentChangeEventDetail } from "@ionic/core";
 import { IonContent, IonLabel, IonPage, IonSegment, IonSegmentButton } from "@ionic/react";
 import Header from "../components/Header";
 import { useTypedSelector, RootState } from "../store/store";
-import { onRetry } from "../utils/backendData";
+import { getUserData, onRetry } from "../utils/backendData";
 import { getCompanyTransportsList, getSupervisionList } from "../utils/supervisionBackendData";
 import SupervisionList from "../components/SupervisionList";
 import "./Supervisions.css";
@@ -28,10 +28,17 @@ const Supervisions = (): JSX.Element => {
 
   const [currentSegment, setCurrentSegment] = useState<string>(tabId);
   const [supervisionDays, setSupervisionDays] = useState<ISupervisionDay[]>([]);
+  const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
 
   const {
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state: RootState) => state.rootReducer);
+
+  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const { username = "" } = supervisorUser || {};
 
   const { data: companyTransportsList = [] } = useQuery(["getCompanyTransportsList"], () => getCompanyTransportsList(dispatch), {
     retry: onRetry,
@@ -42,6 +49,12 @@ const Supervisions = (): JSX.Element => {
     retry: onRetry,
     staleTime: Infinity,
   });
+
+  useEffect(() => {
+    onlineManager.subscribe(() => {
+      setOnline(onlineManager.isOnline());
+    });
+  }, []);
 
   useEffect(() => {
     // Group the supervisions with useEffect instead of useQuery, since onSuccess is not called when using cached data
@@ -85,8 +98,17 @@ const Supervisions = (): JSX.Element => {
         </IonSegmentButton>
       </IonSegment>
       <IonContent color="light">
-        {currentSegment === "0" && <CompanyTransportsAccordion companyTransportsList={companyTransportsList} noNetworkNoData={noNetworkNoData} />}
-        {currentSegment === "1" && <SupervisionList supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} />}
+        {currentSegment === "0" && (
+          <CompanyTransportsAccordion
+            username={username}
+            companyTransportsList={companyTransportsList}
+            noNetworkNoData={noNetworkNoData}
+            isOnline={isOnline}
+          />
+        )}
+        {currentSegment === "1" && (
+          <SupervisionList username={username} supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} isOnline={isOnline} />
+        )}
       </IonContent>
     </IonPage>
   );

@@ -229,7 +229,8 @@
     "sentOk": "Valitut valvonnat on lähetetty",
     "nothingToSend": "Ei lähetettäviä valvontaraportteja.",
     "sentReports": "Lähetetyt valvontaraportit",
-    "offlineSuffix": "Offline"
+    "offlineSuffix": "Offline",
+    "passwordButton": "Avaa salasanalla"
   },
   "permitPdf": {
     "title": "Kuljetuslupa",
@@ -442,8 +443,9 @@
   "offlineInfo": {
     "title": "Offline-tila",
     "info1": "SillaRin kuljetukset ja valvottavat sillat on päivitetty viimeksi",
-    "info2": "Voit käyttää SillaRia offline-tilassa, jolloin sillanvalvonnan raportti on mahdollista tallentaa väliaikaisesti tälle laitteelle.",
-    "info3": "Valvontaraportin voit lähettää myöhemmin, kun verkkoyhteys on jälleen käytössä ja kirjaudut SillaRiin."
+    "info2": "Ainoastaan salasanalla online-tilassa avatut kuljetukset ja sillat ovat käytettävissä offline-tilassa.",
+    "info3": "Voit käyttää SillaRia offline-tilassa, jolloin sillanvalvonnan raportti on mahdollista tallentaa väliaikaisesti tälle laitteelle.",
+    "info4": "Valvontaraportin voit lähettää myöhemmin, kun verkkoyhteys on jälleen käytössä ja kirjaudut SillaRiin."
   },
   "sendingListOfflineNotice": {
     "title": "Offline-tilassa lähettäminen ei ole mahdollista",
