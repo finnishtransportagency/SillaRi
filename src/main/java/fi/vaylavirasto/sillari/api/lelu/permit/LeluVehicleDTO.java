@@ -20,8 +20,7 @@ public class LeluVehicleDTO {
     @Schema(description = "Vehicle role", example = "TRUCK")
     private VehicleRole role;
 
-    @NotBlank(message = "{vehicle.identifier.not.blank}")
-    @Schema(description = "Registration number", required = true, example = "ABC-123")
+    @Schema(description = "Registration number or product number", example = "ABC-123")
     private String identifier;
 
     public LeluVehicleDTO() {
