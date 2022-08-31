@@ -26,11 +26,6 @@ public interface LeluDTOMapper {
     })
     CompanyModel fromDTOToModel(LeluCustomerDTO dto);
 
-    @Mappings({
-            @Mapping(target = "type", source = "dto.type"),
-            @Mapping(target = "role", source = "dto.role"),
-            @Mapping(target = "identifier", expression = "java(dto.getIdentifier() != null ? dto.getIdentifier() : \"<\" + dto.getType() + \", TUNNISTE PUUTTUU>\")")
-    })
     VehicleModel fromDTOToModel(LeluVehicleDTO dto);
 
     AxleChartModel fromDTOToModel(LeluAxleChartDTO dto);

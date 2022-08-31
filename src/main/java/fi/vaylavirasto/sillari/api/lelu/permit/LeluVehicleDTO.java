@@ -12,6 +12,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @ToString
 public class LeluVehicleDTO {
+    private static final String NO_VEHICLE_IDENTIFIER = "<EI TUNNISTETTA>";
 
     @NotBlank(message = "{vehicle.type.not.blank}")
     @Schema(description = "Vehicle type", required = true, example = "kuorma-auto")
@@ -21,7 +22,7 @@ public class LeluVehicleDTO {
     private VehicleRole role;
 
     @Schema(description = "Registration number or product number", example = "ABC-123")
-    private String identifier;
+    private String identifier = NO_VEHICLE_IDENTIFIER;
 
     public LeluVehicleDTO() {
     }
