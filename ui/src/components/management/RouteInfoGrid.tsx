@@ -171,14 +171,13 @@ const RouteInfoGrid = ({
               {isEditable ? (
                 <CustomSelect
                   options={vehicles
-                    .filter((vehicle) => !vehicle.role || vehicle.role !== VehicleRole.TRAILER)
+                    .filter((vehicle) => !!vehicle.identifier && (!vehicle.role || vehicle.role !== VehicleRole.TRAILER))
                     .map((vehicle) => {
-                      const { id: vehicleId, identifier, role, type } = vehicle;
-                      const identifierUsed = identifier ? identifier.toUpperCase() : type.toUpperCase();
+                      const { id: vehicleId, identifier, role } = vehicle;
                       const isPushingVehicle = role && role === VehicleRole.PUSHING_VEHICLE;
                       const vehicleLabel = isPushingVehicle
-                        ? `${identifierUsed} (${t("management.transportDetail.routeInfo.pushingVehicle")})`
-                        : identifierUsed;
+                        ? `${identifier.toUpperCase()} (${t("management.transportDetail.routeInfo.pushingVehicle")})`
+                        : identifier.toUpperCase();
                       return { value: vehicleId, label: vehicleLabel };
                     })}
                   selectedValue={selectedVehicle?.id}
@@ -186,11 +185,7 @@ const RouteInfoGrid = ({
                 />
               ) : (
                 <IonText>
-                  {selectedVehicle
-                    ? selectedVehicle.identifier
-                      ? selectedVehicle.identifier.toUpperCase()
-                      : selectedVehicle.type.toUpperCase()
-                    : t("management.transportDetail.routeInfo.tractorUnitNotSelected")}
+                  {selectedVehicle ? selectedVehicle.identifier.toUpperCase() : t("management.transportDetail.routeInfo.tractorUnitNotSelected")}
                 </IonText>
               )}
             </IonCol>
