@@ -186,7 +186,11 @@ const RouteInfoGrid = ({
                 />
               ) : (
                 <IonText>
-                  {selectedVehicle ? (selectedVehicle.identifier ? selectedVehicle.identifier.toUpperCase() : selectedVehicle.type.toUpperCase()) : t("management.transportDetail.routeInfo.tractorUnitNotSelected")}
+                  {selectedVehicle
+                    ? selectedVehicle.identifier
+                      ? selectedVehicle.identifier.toUpperCase()
+                      : selectedVehicle.type.toUpperCase()
+                    : t("management.transportDetail.routeInfo.tractorUnitNotSelected")}
                 </IonText>
               )}
             </IonCol>
