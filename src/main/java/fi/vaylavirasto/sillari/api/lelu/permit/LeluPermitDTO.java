@@ -75,7 +75,7 @@ public class LeluPermitDTO {
     @Schema(description = "Authorizer for the company, 'valtuusvastaava'", required = false)
     private LeluCompanyAuthorizerDTO companyAuthorizer;
 
-    @Schema(description = "Does customer company use SillaRi to plan transports? If false, permit will be hanldled as a area contractor -permit in Sillari. Defaults to false if omitted ", example = "T")
+    @Schema(description = "Does customer company use SillaRi to plan transports? If false, permit will be hanldled as a area contractor -permit in Sillari. Defaults to false if omitted ", example = "true")
     private Boolean customerUsesSillari;
 
 }
