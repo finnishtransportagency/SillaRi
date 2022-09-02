@@ -65,10 +65,9 @@ public class PermitRepository {
     }
 
     public PermitModel getPermitCurrentVersionByPermitNumber(String permitNumber) {
-        Record1<PermitModel> record = dsl.select(TableAlias.permit).from(TableAlias.permit)
+        return dsl.select().from(TableAlias.permit)
                 .where(TableAlias.permit.PERMIT_NUMBER.eq(permitNumber).and(TableAlias.permit.IS_CURRENT_VERSION.isTrue()))
-                .fetchOne();
-        return record != null ? record.value1() : null;
+                .fetchOne(new PermitMapper());
     }
 
     public PermitModel getPermitByRouteTransportId(Integer routeTransportId) {
