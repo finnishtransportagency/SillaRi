@@ -94,8 +94,24 @@ public class LeluService {
         // Insert new permit and all child records
         Integer permitModelId = permitRepository.createPermit(permitModel);
 
+        // If no "uses sillari" info from Lelu post or it is false -> handle as area contractor supervised permit
+        if(permitModel.getCustomerUsesSillari() == null || permitModel.getCustomerUsesSillari().booleanValue()==false){
+            createAreaContractorAutoplannedTransportations(permitModel);
+        }
+
         response.setPermitId(permitModelId);
         return response;
+    }
+
+
+    /*Muutokset, jotka vaaditaan tietomalliin ja SillaRin taustan toimintoihin , jotta valvonta ilman reittien suunnittelua on mahdollista
+    ainakin:
+    Lelu-luvan purkaminen route_bridge-tauluun
+    routen kuljetuskertojen laskurikäsittely purettava - unohdetaan urakoitsijavalvonnassa
+    route_transport-"käsittely" tsekattava/purettava tukemaan urakoitsijakäsittelyä*/
+    private void createAreaContractorAutoplannedTransportations(PermitModel permitModel) {
+
+
     }
 
     private void handlePreviousPermitVersions(PermitModel permitModel, LeluPermitResponseDTO response) throws LeluPermitSaveException {
