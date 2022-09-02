@@ -40,11 +40,11 @@ public class AreaContractorController {
     @Operation(summary = "Get routes of permit")
     @GetMapping(value = "/getRoutes", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> getRoutes(@RequestParam String permitNumber) {
+    public ResponseEntity<List<RouteModel>> getRoutes(@RequestParam String permitNumber) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteController", "getRoute");
         try {
             List<RouteModel> routes = permitService.getRoutes(permitNumber);
-            return ResponseEntity.ok().body(routes != null ? routes : new EmptyJsonResponse());
+            return ResponseEntity.ok(routes);
         } finally {
             serviceMetric.end();
         }
