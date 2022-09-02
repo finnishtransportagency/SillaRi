@@ -2,10 +2,8 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
-import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.service.PermitService;
 import fi.vaylavirasto.sillari.service.RouteService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
@@ -17,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,11 +62,20 @@ public class AreaContractorController {
             RouteModel route = routeService.getRoute(routeId);
             List<RouteBridgeModel> bridges = route.getRouteBridges();
             SillariUser user = uiService.getSillariUser();
-            bridges =  bridges.stream().filter(b->b.getContractBusinessId().equals(user.getBusinessId())).collect(Collectors.toList());
+            bridges = bridges.stream().filter(b -> b.getContractBusinessId().equals(user.getBusinessId())).collect(Collectors.toList());
             return ResponseEntity.ok(bridges);
         } finally {
             serviceMetric.end();
         }
     }
+
+    @Operation(summary = "Start supervision")
+    @GetMapping(value = "/startSupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity startSupervision(@RequestParam Integer routeBridgeId) {
+        ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
+        return null;
+    }
+
 }
 
