@@ -64,6 +64,13 @@ public class PermitRepository {
                 .fetchOne(this::mapPermitRecordWithAxleChartAndDimensions);
     }
 
+    public PermitModel getPermitCurrentVersionByPermitNumber(String permitNumber) {
+        Record1<PermitModel> record = dsl.select(TableAlias.permit).from(TableAlias.permit)
+                .where(TableAlias.permit.PERMIT_NUMBER.eq(permitNumber).and(TableAlias.permit.IS_CURRENT_VERSION.isTrue()))
+                .fetchOne();
+        return record != null ? record.value1() : null;
+    }
+
     public PermitModel getPermitByRouteTransportId(Integer routeTransportId) {
         return dsl.select().from(TableAlias.permit)
                 .innerJoin(TableAlias.route)
@@ -109,6 +116,8 @@ public class PermitRepository {
                 .fetchOne();
         return record != null ? record.value1() : null;
     }
+
+
 
     public OffsetDateTime getPermitValidEndDateByRouteTransportId(DSLContext ctx, Integer routeTransportId) {
         Record1<OffsetDateTime> record = ctx.select(TableAlias.permit.VALID_END_DATE)

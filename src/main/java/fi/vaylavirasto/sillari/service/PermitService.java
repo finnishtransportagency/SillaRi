@@ -158,4 +158,13 @@ public class PermitService {
             }
         }
     }
+
+    public List<RouteModel> getRoutes(String permitNumber) {
+        PermitModel permit = getPermitCurrentVersionByPermitNumber(permitNumber);
+        return routeRepository.getRoutesByPermitId(permit.getId());
+    }
+
+    private PermitModel getPermitCurrentVersionByPermitNumber(String permitNumber) {
+        return permitRepository.getPermitCurrentVersionByPermitNumber(permitNumber);
+    }
 }
