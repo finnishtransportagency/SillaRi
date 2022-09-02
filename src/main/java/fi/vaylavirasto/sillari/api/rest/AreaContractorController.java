@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Timed
@@ -63,6 +64,8 @@ public class AreaContractorController {
         try {
             RouteModel route = routeService.getRoute(routeId);
             List<RouteBridgeModel> bridges = route.getRouteBridges();
+            SillariUser user = uiService.getSillariUser();
+            bridges =  bridges.stream().filter(b->b.getContractBusinessId().equals(user.getBusinessId())).collect(Collectors.toList());
             return ResponseEntity.ok(bridges);
         } finally {
             serviceMetric.end();
