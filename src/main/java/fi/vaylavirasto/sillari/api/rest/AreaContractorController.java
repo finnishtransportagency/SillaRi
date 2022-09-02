@@ -3,9 +3,11 @@ package fi.vaylavirasto.sillari.api.rest;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
+import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.service.PermitService;
+import fi.vaylavirasto.sillari.service.RouteService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
@@ -36,12 +38,15 @@ public class AreaContractorController {
     SupervisionService supervisionService;
     @Autowired
     PermitService permitService;
+    @Autowired
+    RouteService routeService;
 
     @Operation(summary = "Get routes of permit")
     @GetMapping(value = "/getRoutes", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    //TODO filter by contractBusinessID only those allowed to be seen
     public ResponseEntity<List<RouteModel>> getRoutes(@RequestParam String permitNumber) {
-        ServiceMetric serviceMetric = new ServiceMetric("RouteController", "getRoute");
+        ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getRoutes");
         try {
             List<RouteModel> routes = permitService.getRoutes(permitNumber);
             return ResponseEntity.ok(routes);
@@ -50,4 +55,18 @@ public class AreaContractorController {
         }
     }
 
+    @Operation(summary = "Get bridges of route")
+    @GetMapping(value = "/getBridges", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<List<RouteBridgeModel>> getBridges(@RequestParam Integer routeId) {
+        ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getBridges");
+        try {
+            RouteModel route = routeService.getRoute(routeId);
+            List<RouteBridgeModel> bridges = route.getRouteBridges();
+            return ResponseEntity.ok(bridges);
+        } finally {
+            serviceMetric.end();
+        }
+    }
 }
+
