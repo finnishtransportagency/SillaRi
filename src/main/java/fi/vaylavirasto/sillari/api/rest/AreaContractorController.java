@@ -69,10 +69,10 @@ public class AreaContractorController {
         }
     }
 
-    @Operation(summary = "Start supervision")
-    @GetMapping(value = "/startSupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Add to own list")
+    @GetMapping(value = "/addToOwnList", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity startSupervision(@RequestParam Integer routeBridgeId) {
+    public ResponseEntity addToOwnList(@RequestParam Integer routeBridgeId) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
         return null;
     }
