@@ -62,7 +62,7 @@ public class AreaContractorController {
             RouteModel route = routeService.getRoute(routeId);
             List<RouteBridgeModel> bridges = route.getRouteBridges();
             SillariUser user = uiService.getSillariUser();
-            bridges = bridges.stream().filter(b -> b.getContractBusinessId().equals(user.getBusinessId())).collect(Collectors.toList());
+            bridges = bridges.stream().filter(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId())).collect(Collectors.toList());
             return ResponseEntity.ok(bridges);
         } finally {
             serviceMetric.end();
