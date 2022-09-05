@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,12 +43,19 @@ public class AreaContractorController {
     @Operation(summary = "Get routes of permit")
     @GetMapping(value = "/getRoutes", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    //TODO filter by contractBusinessID only those allowed to be seen
     public ResponseEntity<List<RouteModel>> getRoutes(@RequestParam String permitNumber) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getRoutes");
         try {
             List<RouteModel> routes = permitService.getRoutes(permitNumber);
-            return ResponseEntity.ok(routes);
+            if (routes == null) {
+                return null;
+            } else {
+                List<RouteModel> routesWithBridges = new ArrayList<>();
+                routes.forEach(r -> routesWithBridges.add(routeService.getRoute(r.getId())));
+                SillariUser user = uiService.getSillariUser();
+                //filter out routes that don't have any bridge with user contract business id
+                return ResponseEntity.ok(routesWithBridges.stream().filter(r -> r.getRouteBridges().stream().anyMatch(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId()))).collect(Collectors.toList()));
+            }
         } finally {
             serviceMetric.end();
         }
