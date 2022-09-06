@@ -84,11 +84,11 @@ public class AreaContractorController {
     @Operation(summary = "Add to own list")
     @GetMapping(value = "/addToOwnList", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity addToOwnList(@RequestParam List<SupervisionModel> supervisionModels) {
+    public ResponseEntity addToOwnList(@RequestParam List<Integer> supervisionIds) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "addToOwnList");
         try {
             String userBusiness = uiService.getSillariUser().getBusinessId();
-            supervisionModels.forEach(s -> ownListService.addToList(userBusiness, s));
+            supervisionIds.forEach(id -> ownListService.addToList(userBusiness, id));
         } finally {
             serviceMetric.end();
         }

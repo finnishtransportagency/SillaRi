@@ -13,11 +13,11 @@ public class OwnListService {
     OwnListRepository ownListRepository;
 
     public List<SupervisionModel> getOwnList(String contractBusinessId) {
-        return ownListRepository.getSupervisions(contractBusinessId);
+        return ownListRepository.getOwnListSupervisions(contractBusinessId);
     }
 
-    public void addToList(String contractBusinessId, SupervisionModel supervisionModel){
-        ownListRepository.addToList(contractBusinessId, supervisionModel);
+    public void addToList(String contractBusinessId, Integer supervisionId){
+        ownListRepository.addToList(contractBusinessId, supervisionId);
     }
 
 }

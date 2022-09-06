@@ -18,7 +18,7 @@ public class OwnListRepository {
     private DSLContext dsl;
 
 
-    public List<SupervisionModel> getSupervisions(String contractBusinessId) {
+    public List<SupervisionModel> getOwnListSupervisions(String contractBusinessId) {
         return dsl.select().from(TableAlias.ownList)
                 .leftJoin(TableAlias.supervision).on(TableAlias.supervision.ID.eq(TableAlias.ownList.SUPERVISION_ID))
                 .where(TableAlias.ownList.CONTRACT_BUSINESS_ID.eq(contractBusinessId))
@@ -37,6 +37,14 @@ public class OwnListRepository {
     }
 
 
-    public void addToList(String contractBusinessId, SupervisionModel supervisionModel) {
+    public void addToList(String contractBusinessId, Integer supervisionId) {
+        dsl.insertInto(TableAlias.ownList,
+                        TableAlias.ownList.CONTRACT_BUSINESS_ID,
+                        TableAlias.ownList.SUPERVISION_ID
+                ).values(
+                        contractBusinessId,
+                        supervisionId)
+                .execute();
     }
+
 }
