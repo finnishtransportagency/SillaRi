@@ -1,9 +1,8 @@
 package fi.vaylavirasto.sillari.repositories;
 
-import fi.vaylavirasto.sillari.mapper.BridgeMapper;
 import fi.vaylavirasto.sillari.mapper.OwnListMapper;
-import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
-import fi.vaylavirasto.sillari.model.RouteBridgeModel;
+import fi.vaylavirasto.sillari.mapper.SupervisionMapper;
+import fi.vaylavirasto.sillari.model.OwnListModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.jooq.DSLContext;
@@ -29,12 +28,12 @@ public class OwnListRepository {
 
     private SupervisionModel mapOwnListRecordWithSupervision(Record record) {
         OwnListMapper ownListMapper = new OwnListMapper();
-        RouteBridgeModel routeBridge = ownListMapper.map(record);
-        if (routeBridge != null) {
-            BridgeMapper bridgeMapper = new BridgeMapper();
-            routeBridge.setBridge(bridgeMapper.map(record));
+        OwnListModel ownListModel = ownListMapper.map(record);
+        if (ownListModel != null) {
+            SupervisionMapper supervisionMapper = new SupervisionMapper();
+            ownListModel.setSupervision(supervisionMapper.map(record));
         }
-        return routeBridge;
+        return ownListModel.getSupervision();
     }
 
 
