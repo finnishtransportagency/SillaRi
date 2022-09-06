@@ -154,9 +154,9 @@ public class SupervisionService {
 
     // Creates new supervision and adds a new status with type PLANNED
     // The timestamp in PLANNED is the current time, not planned_time which can be updated later.
-    public void createSupervision(SupervisionModel supervisionModel, SillariUser user) {
+    public void createSupervision(SupervisionModel supervisionModel, String username, SupervisionStatusType supervisionStatusType) {
         Integer supervisionId = supervisionRepository.createSupervision(supervisionModel);
-        SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.PLANNED, OffsetDateTime.now(), user.getUsername());
+        SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, supervisionStatusType, OffsetDateTime.now(), username);
         supervisionStatusRepository.insertSupervisionStatus(status);
     }
 
@@ -386,4 +386,22 @@ public class SupervisionService {
         return companyRepository.getCompanyByRouteBridgeId(supervision.getRouteBridgeId());
     }
 
+    /*Muutokset, jotka vaaditaan tietomalliin ja SillaRin taustan toimintoihin , jotta valvonta ilman reittien suunnittelua on mahdollista
+        ainakin:
+        Lelu-luvan purkaminen route_bridge-tauluun
+        routen kuljetuskertojen laskurikäsittely purettava - unohdetaan urakoitsijavalvonnassa
+        route_transport-"käsittely" tsekattava/purettava tukemaan urakoitsijakäsittelyä*/
+    void createAreaContractorAutoplannedSupervisions(PermitModel permitModel) {
+        permitModel.getRoutes().forEach(r ->
+                r.getRouteBridges().forEach(rb -> {
+                    SupervisionModel supervision = new SupervisionModel();
+                    supervision.setRouteBridgeId(rb.getId());
+                    supervision.setConformsToPermit(false);
+                    supervision.setSupervisorCompany(rb.getContractBusinessId());
+                    supervision.setSupervisorType(SupervisorType.AREA_CONTRACTOR);
+                    createSupervision(supervision,"SILLARI_SYSTEM", SupervisionStatusType.AUTO_PLANNED);
+                }));
+        
+
+    }
 }

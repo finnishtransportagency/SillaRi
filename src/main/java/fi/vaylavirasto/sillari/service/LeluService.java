@@ -16,7 +16,6 @@ import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.trex.TRexBridgeInfoService;
 import fi.vaylavirasto.sillari.service.trex.TRexPicService;
 import fi.vaylavirasto.sillari.util.LeluRouteUploadUtil;
-import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mapstruct.factory.Mappers;
@@ -97,37 +96,13 @@ public class LeluService {
 
         // If no "uses sillari" info from Lelu post or it is false -> handle as area contractor supervised permit
         if (permitModel.getCustomerUsesSillari() == null || !permitModel.getCustomerUsesSillari().booleanValue()) {
-            createAreaContractorAutoplannedSupervisions(permitModel);
+            supervisionService.createAreaContractorAutoplannedSupervisions(permitModel);
         }
 
         response.setPermitId(permitModelId);
         return response;
     }
 
-
-    /*Muutokset, jotka vaaditaan tietomalliin ja SillaRin taustan toimintoihin , jotta valvonta ilman reittien suunnittelua on mahdollista
-    ainakin:
-    Lelu-luvan purkaminen route_bridge-tauluun
-    routen kuljetuskertojen laskurikäsittely purettava - unohdetaan urakoitsijavalvonnassa
-    route_transport-"käsittely" tsekattava/purettava tukemaan urakoitsijakäsittelyä*/
-    private void createAreaContractorAutoplannedSupervisions(PermitModel permitModel) {
-        permitModel.getRoutes().forEach(r ->
-                r.getRouteBridges().forEach(rb -> {
-                    SupervisionModel supervision = new SupervisionModel();
-                    supervision.setRouteBridgeId(rb.getId());
-                    supervision.setPlannedTime(record.get(TableAlias.supervision.PLANNED_TIME));
-                    supervision.setConformsToPermit(record.get(TableAlias.supervision.CONFORMS_TO_PERMIT));
-                    supervision.setSupervisorCompany(record.get(TableAlias.supervision.SUPERVISOR_COMPANY));
-                    supervision.setSupervisorType(record.get(TableAlias.supervision.SUPERVISOR_TYPE, new SupervisorTypeConverter(String.class, SupervisorType.class)));
-                    supervision.setRowCreatedTime(record.get(TableAlias.supervision.ROW_CREATED_TIME));
-                    supervision.setRowUpdatedTime(record.get(TableAlias.supervision.ROW_UPDATED_TIME));
-                    supervision.setStatusHistory(new ArrayList<>());
-                    supervision.setImages(new ArrayList<>());
-
-                }));
-        // supervisionService.createSupervision();
-
-    }
 
     private void handlePreviousPermitVersions(PermitModel permitModel, LeluPermitResponseDTO response) throws LeluPermitSaveException {
         // Check if we already have permits with the same permit number

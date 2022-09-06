@@ -164,7 +164,7 @@ public class RouteTransportController {
                         if (supervisionModel.getId() != null && supervisionModel.getId() > 0) {
                             supervisionService.updateSupervision(supervisionModel);
                         } else {
-                            supervisionService.createSupervision(supervisionModel, user);
+                            supervisionService.createSupervision(supervisionModel, user.getUsername(), SupervisionStatusType.PLANNED);
                         }
                     });
                 }
@@ -196,7 +196,7 @@ public class RouteTransportController {
                     if (supervisionModel.getId() != null && supervisionModel.getId() > 0) {
                         supervisionService.updateSupervision(supervisionModel);
                     } else {
-                        supervisionService.createSupervision(supervisionModel, user);
+                        supervisionService.createSupervision(supervisionModel, user.getUsername(), SupervisionStatusType.PLANNED);
                     }
                 });
             }
