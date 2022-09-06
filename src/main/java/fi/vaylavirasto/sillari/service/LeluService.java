@@ -96,7 +96,7 @@ public class LeluService {
 
         // If no "uses sillari" info from Lelu post or it is false -> handle as area contractor supervised permit
         if (permitModel.getCustomerUsesSillari() == null || !permitModel.getCustomerUsesSillari().booleanValue()) {
-            supervisionService.createAreaContractorAutoplannedSupervisions(permitModel);
+            supervisionService.createAreaContractorAutoplannedSupervisions(permitModelId);
         }
 
         response.setPermitId(permitModelId);

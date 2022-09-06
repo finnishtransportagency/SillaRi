@@ -56,6 +56,8 @@ public class SupervisionService {
     @Autowired
     RouteRepository routeRepository;
     @Autowired
+    RouteBridgeRepository routeBridgeRepository;
+    @Autowired
     PermitRepository permitRepository;
     @Autowired
     CompanyRepository companyRepository;
@@ -152,7 +154,7 @@ public class SupervisionService {
     }
 
 
-    // Creates new supervision and adds a new status with type PLANNED
+    // Creates new supervision and adds a new status
     // The timestamp in PLANNED is the current time, not planned_time which can be updated later.
     public void createSupervision(SupervisionModel supervisionModel, String username, SupervisionStatusType supervisionStatusType) {
         Integer supervisionId = supervisionRepository.createSupervision(supervisionModel);
@@ -391,17 +393,20 @@ public class SupervisionService {
         Lelu-luvan purkaminen route_bridge-tauluun
         routen kuljetuskertojen laskurikäsittely purettava - unohdetaan urakoitsijavalvonnassa
         route_transport-"käsittely" tsekattava/purettava tukemaan urakoitsijakäsittelyä*/
-    void createAreaContractorAutoplannedSupervisions(PermitModel permitModel) {
-        permitModel.getRoutes().forEach(r ->
-                r.getRouteBridges().forEach(rb -> {
-                    SupervisionModel supervision = new SupervisionModel();
-                    supervision.setRouteBridgeId(rb.getId());
-                    supervision.setConformsToPermit(false);
-                    supervision.setSupervisorCompany(rb.getContractBusinessId());
-                    supervision.setSupervisorType(SupervisorType.AREA_CONTRACTOR);
-                    createSupervision(supervision,"SILLARI_SYSTEM", SupervisionStatusType.AUTO_PLANNED);
-                }));
-        
+    void createAreaContractorAutoplannedSupervisions(Integer permitId) {
+        List<RouteModel> routes = routeRepository.getRoutesByPermitId(permitId);
+        routes.forEach(r -> {
+            List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(r.getId());
+            routeBridges.forEach(rb -> {
+                SupervisionModel supervision = new SupervisionModel();
+                supervision.setRouteBridgeId(rb.getId());
+                supervision.setConformsToPermit(false);
+                supervision.setSupervisorCompany(rb.getContractBusinessId());
+                supervision.setSupervisorType(SupervisorType.AREA_CONTRACTOR);
+                createSupervision(supervision, "SILLARI_SYSTEM", SupervisionStatusType.AUTO_PLANNED);
+            });
+        });
+
 
     }
 }
