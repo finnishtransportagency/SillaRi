@@ -86,6 +86,11 @@ public class AreaContractorController {
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public ResponseEntity addToOwnList(@RequestParam Integer routeBridgeId) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
+        try {
+            
+        } finally {
+            serviceMetric.end();
+        }
         return null;
     }
 
@@ -94,6 +99,12 @@ public class AreaContractorController {
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public ResponseEntity startSupervision(@RequestParam Integer routeBridgeId) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
+        try {
+
+            //      supervisionService.startSupervision();
+        } finally {
+            serviceMetric.end();
+        }
         return null;
     }
 
