@@ -37,4 +37,6 @@ public class OwnListRepository {
     }
 
 
+    public void addToList(String contractBusinessId, SupervisionModel supervisionModel) {
+    }
 }

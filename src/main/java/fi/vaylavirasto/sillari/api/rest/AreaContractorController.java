@@ -4,10 +4,8 @@ import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
-import fi.vaylavirasto.sillari.service.PermitService;
-import fi.vaylavirasto.sillari.service.RouteService;
-import fi.vaylavirasto.sillari.service.SupervisionService;
-import fi.vaylavirasto.sillari.service.UIService;
+import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.service.*;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +37,8 @@ public class AreaContractorController {
     PermitService permitService;
     @Autowired
     RouteService routeService;
+    @Autowired
+    OwnListService ownListService;
 
     @Operation(summary = "Get routes of permit")
     @GetMapping(value = "/getRoutes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -84,14 +84,29 @@ public class AreaContractorController {
     @Operation(summary = "Add to own list")
     @GetMapping(value = "/addToOwnList", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity addToOwnList(@RequestParam Integer routeBridgeId) {
-        ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
+    public ResponseEntity addToOwnList(@RequestParam List<SupervisionModel> supervisionModels) {
+        ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "addToOwnList");
         try {
-            
+            String userBusiness = uiService.getSillariUser().getBusinessId();
+            supervisionModels.forEach(s -> ownListService.addToList(userBusiness, s));
         } finally {
             serviceMetric.end();
         }
         return null;
+    }
+
+    @Operation(summary = "Get own list")
+    @GetMapping(value = "/getOwnList", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<List<SupervisionModel>> getOwnList() {
+        ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getOwnList");
+        try {
+            String userBusiness = uiService.getSillariUser().getBusinessId();
+            List<SupervisionModel> list = ownListService.getOwnList(userBusiness);
+            return ResponseEntity.ok(list);
+        } finally {
+            serviceMetric.end();
+        }
     }
 
     @Operation(summary = "Start supervision")
