@@ -64,6 +64,10 @@ public class AreaContractorController {
     @Operation(summary = "Get bridges of route")
     @GetMapping(value = "/getBridges", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    /**
+     * @deprecated, not needed because "/getRoutes" returns also the bridges. Maybe UI can get them from there?
+     */
+    @Deprecated
     public ResponseEntity<List<RouteBridgeModel>> getBridges(@RequestParam Integer routeId) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getBridges");
         try {
@@ -81,6 +85,14 @@ public class AreaContractorController {
     @GetMapping(value = "/addToOwnList", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public ResponseEntity addToOwnList(@RequestParam Integer routeBridgeId) {
+        ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
+        return null;
+    }
+
+    @Operation(summary = "Start supervision")
+    @GetMapping(value = "/startSupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity startSupervision(@RequestParam Integer routeBridgeId) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
         return null;
     }
