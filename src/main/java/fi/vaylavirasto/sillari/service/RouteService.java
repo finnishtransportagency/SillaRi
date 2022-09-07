@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
+import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,15 +41,19 @@ public class RouteService {
         return route;
     }
 
+
     public RouteModel getRouteWithSupervisions(Integer routeId) {
         RouteModel route = routeRepository.getRoute(routeId);
 
         if (route != null) {
+            String routeGeoJson = routeRepository.getRouteGeoJson(routeId);
+            route.setGeojson(routeGeoJson);
+
             List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(routeId);
             if (routeBridges != null) {
                 routeBridges.forEach(routeBridge -> {
-                    String bridgeGeoJson = bridgeRepository.getBridgeGeoJson(routeBridge.getBridge().getId());
-                    routeBridge.getBridge().setGeojson(bridgeGeoJson);
+                    List<SupervisionModel> supervisionModels = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
+                    routeBridge.getSupervisions().addAll(supervisionModels);
                 });
             }
             route.setRouteBridges(routeBridges);
