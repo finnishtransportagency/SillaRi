@@ -113,6 +113,7 @@ public class AreaContractorController {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
         try {
             SupervisionReportModel reportModel = new SupervisionReportModel();
+            reportModel.setSupervisionId(supervisionId);
             SupervisionModel supervisionModel = supervisionService.startSupervision(reportModel, startTime, uiService.getSillariUser());
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
