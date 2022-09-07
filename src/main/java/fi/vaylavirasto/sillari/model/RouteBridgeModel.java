@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,7 +19,7 @@ public class RouteBridgeModel extends BaseModel {
     private Long contractNumber;
     private String contractBusinessId;
     private Integer transportNumber;
-    private List<SupervisionModel> supervisions;
+    private List<SupervisionModel> supervisions = new ArrayList<>();
 
     // Parents
     private BridgeModel bridge;
