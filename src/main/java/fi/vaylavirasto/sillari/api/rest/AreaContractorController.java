@@ -47,11 +47,11 @@ public class AreaContractorController {
             if (routes == null) {
                 return null;
             } else {
-                List<RouteModel> routesWithBridges = new ArrayList<>();
-                routes.forEach(r -> routesWithBridges.add(routeService.getRoute(r.getId())));
+                List<RouteModel> routesWithBridgesAndSupervisions = new ArrayList<>();
+                routes.forEach(r -> routesWithBridgesAndSupervisions.add(routeService.getRoute(r.getId())));
                 SillariUser user = uiService.getSillariUser();
                 //filter out routes that don't have any bridge with user contract business id
-                return ResponseEntity.ok(routesWithBridges.stream().filter(r -> r.getRouteBridges().stream().anyMatch(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId()))).collect(Collectors.toList()));
+                return ResponseEntity.ok(routesWithBridgesAndSupervisions.stream().filter(r -> r.getRouteBridges().stream().anyMatch(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId()))).collect(Collectors.toList()));
             }
         } finally {
             serviceMetric.end();
