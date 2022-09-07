@@ -48,7 +48,7 @@ public class AreaContractorController {
                 return null;
             } else {
                 List<RouteModel> routesWithBridgesAndSupervisions = new ArrayList<>();
-                routes.forEach(r -> routesWithBridgesAndSupervisions.add(routeService.getRoute(r.getId())));
+                routes.forEach(r -> routesWithBridgesAndSupervisions.add(routeService.getRouteWithSupervisions(r.getId())));
                 SillariUser user = uiService.getSillariUser();
                 //filter out routes that don't have any bridge with user contract business id
                 return ResponseEntity.ok(routesWithBridgesAndSupervisions.stream().filter(r -> r.getRouteBridges().stream().anyMatch(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId()))).collect(Collectors.toList()));
