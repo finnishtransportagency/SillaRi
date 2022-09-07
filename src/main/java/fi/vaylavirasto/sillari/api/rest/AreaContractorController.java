@@ -107,9 +107,9 @@ public class AreaContractorController {
     }
 
     @Operation(summary = "Start supervision")
-    @GetMapping(value = "/startSupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/startSupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity startSupervision(@RequestParam Integer routeBridgeId) {
+    public ResponseEntity startSupervision(@RequestParam Integer supervisionId) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
         try {
 
