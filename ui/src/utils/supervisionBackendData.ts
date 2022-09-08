@@ -184,6 +184,25 @@ export const getSupervision = async (
   }
 };
 
+export const getSupervisionNoPasscode = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
+  try {
+    console.log("GetSupervisionNoPASS", supervisionId);
+    console.log("Klockan är: ", Date.now());
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
+    const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}`);
+    if (supervisionResponse.ok) {
+      const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;
+      return await supervision;
+    } else {
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
+      throw createErrorFromStatusCode(supervisionResponse.status);
+    }
+  } catch (err) {
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
+    throw createCustomError(err);
+  }
+};
+
 export const updateConformsToPermit = async (updateRequest: ISupervision, username: string, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("UpdateConformsToPermit", updateRequest);

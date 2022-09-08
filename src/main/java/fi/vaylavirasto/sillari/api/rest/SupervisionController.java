@@ -48,7 +48,7 @@ public class SupervisionController {
     @Operation(summary = "Get supervision")
     @GetMapping(value = "/getsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId, @RequestParam String transportCode) {
+    public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId, @RequestParam(required = false) String transportCode) {
         logger.info("usernameAndPasswordHashed aka transportCode: " + transportCode);
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervision");
         try {
@@ -58,7 +58,8 @@ public class SupervisionController {
             SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId, true, true);
 
             SillariUser user = uiService.getSillariUser();
-            checkTransportCodeMatches(user, supervisionModel.getRouteTransportId(), transportCode);
+            //todo do check if  supervisionModel-> permit -> companyusesSillari
+           // checkTransportCodeMatches(user, supervisionModel.getRouteTransportId(), transportCode);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

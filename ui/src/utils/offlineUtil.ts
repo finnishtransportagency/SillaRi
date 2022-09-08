@@ -8,6 +8,7 @@ import {
   getSupervision,
   getSupervisionList,
   getSupervisionListAreaContractor,
+  getSupervisionNoPasscode,
   getSupervisionSendingList,
 } from "./supervisionBackendData";
 import { getUserData, onRetry } from "./backendData";
@@ -37,6 +38,16 @@ const prefetchSupervisions = async (supervisionList: ISupervision[], username: s
   );
 };
 
+const prefetchSupervisionsNoPasscode = async (supervisionList: ISupervision[], queryClient: QueryClient, dispatch: Dispatch) => {
+  await Promise.all(
+    supervisionList.map((s) => {
+      return queryClient.prefetchQuery(["getSupervision", Number(s.id)], () => getSupervisionNoPasscode(s.id, dispatch), {
+        retry: onRetry,
+        staleTime: Infinity,
+      });
+    })
+  );
+};
 
 const prefetchRouteTransports = async (
   companyTransportsList: ICompanyTransports[],
@@ -164,7 +175,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
     // getSupervision for each supervision on the sending list, so that the modify button and report modal work offline
     prefetchSupervisions(supervisionSendingList, username, queryClient, dispatch),
     // getSupervisions that are companyUsesSillari == false, they are not under routeTransports and dont require passcode
-    prefetchSupervisions(supervisionsCompanyUsesSillari, username, queryClient, dispatch),
+    prefetchSupervisionsNoPasscode(supervisionsCompanyUsesSillari, queryClient, dispatch),
   ]);
 };
 
