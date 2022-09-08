@@ -9,7 +9,10 @@ import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jooq.*;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -247,4 +250,19 @@ public class SupervisionRepository {
                 ).fetch(TableAlias.supervision.SUPERVISOR_COMPANY);
     }
 
+    public List<SupervisionModel> getSupervisionsOfAreaContractor(String businessId) {
+        return dsl.select().from(TableAlias.supervision)
+                .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
+                .and(supervisionNotCompleted()
+                .and(TableAlias.supervision.ROUTE_BRIDGE_ID.in(
+                        dsl.select(TableAlias.routeBridge.ID).from(TableAlias.routeBridge).where(TableAlias.routeBridge.ROUTE_ID.in(
+                                dsl.select(TableAlias.route.ID).from(TableAlias.route).where(TableAlias.route.PERMIT_ID.in(
+                                        dsl.select(TableAlias.permit.ID).from(TableAlias.permit).where(TableAlias.permit.CUSTOMER_USES_SILLARI.eq(false)))
+                                )))
+                        )))
+                // Order by planned time takes also seconds and milliseconds into account, when we want to sort by route transport and ordinal
+                // when planned time is the same in MINUTES. Sort in UI instead.
+                //.orderBy(TableAlias.supervision.PLANNED_TIME, TableAlias.supervision.ROUTE_TRANSPORT_ID, TableAlias.routeBridge.ORDINAL)
+                .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
+    }
 }

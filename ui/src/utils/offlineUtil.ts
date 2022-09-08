@@ -144,17 +144,21 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   const { username } = mainData[0] || {};
   const companyTransportsList = mainData[1];
   const supervisionSendingList = mainData[2];
+  const supervisionsCompanyUsesSillari;
 
   // Fetch only routeTransports and supervisions that have the password in storage
   // Otherwise query fails, and we don't get any routeTransports or supervisions in the cache for offline use
   // TODO could also fetch everything but then we cannot throw the error from backend, because it does not resolve the promise
   // but throws the error, and we cannot proceed to get the supervisions for the resolved routeTransports if another routeTransport fails
+
   await Promise.all([
     // getRouteTransportOfSupervisor for each route transport on CompanyTransportsList
     // and getSupervision for each supervision on supervisor's list (transport list or bridge list)
     prefetchRouteTransports(companyTransportsList, username, queryClient, dispatch),
     // getSupervision for each supervision on the sending list, so that the modify button and report modal work offline
     prefetchSupervisions(supervisionSendingList, username, queryClient, dispatch),
+    // getSupervisions that are companyUsesSillari == false, they are not under routeTransports and dont require passcode
+    prefetchSupervisions(supervisionsCompanyUsesSillari, username, queryClient, dispatch),
   ]);
 };
 

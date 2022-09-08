@@ -124,6 +124,16 @@ public class SupervisionService {
         return supervisions;
     }
 
+    public List<SupervisionModel> getSupervisionsOfAreaContractorSupervisor(SillariUser user) {
+        List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsOfAreaContractor(user.getBusinessId());
+                for (SupervisionModel supervision : supervisions) {
+            // Sets also current status and status timestamps
+            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+            supervision.setRouteTransport(routeTransportRepository.getRouteTransportById(supervision.getRouteTransportId()));
+        }
+        return supervisions;
+    }
+
     public SupervisionModel getSupervisionBySupervisionImageId(Integer imageId) {
         return supervisionRepository.getSupervisionBySupervisionImageId(imageId);
     }
