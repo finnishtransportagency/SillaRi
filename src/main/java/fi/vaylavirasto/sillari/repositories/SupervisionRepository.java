@@ -260,9 +260,6 @@ public class SupervisionRepository {
                                         dsl.select(TableAlias.permit.ID).from(TableAlias.permit).where(TableAlias.permit.CUSTOMER_USES_SILLARI.eq(false)))
                                 )))
                         )))
-                // Order by planned time takes also seconds and milliseconds into account, when we want to sort by route transport and ordinal
-                // when planned time is the same in MINUTES. Sort in UI instead.
-                //.orderBy(TableAlias.supervision.PLANNED_TIME, TableAlias.supervision.ROUTE_TRANSPORT_ID, TableAlias.routeBridge.ORDINAL)
-                .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
+                .fetch(new SupervisionMapper());
     }
 }

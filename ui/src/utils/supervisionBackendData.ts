@@ -103,6 +103,26 @@ export const getSupervisionList = async (dispatch: Dispatch): Promise<ISupervisi
   }
 };
 
+export const getSupervisionListAreaContractor = async (dispatch: Dispatch): Promise<ISupervision[]> => {
+  try {
+    console.log("GetACSupervisionList");
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionList: false } });
+
+    const supervisionsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionsofareacontractorsupervisor`);
+
+    if (supervisionsResponse.ok) {
+      const supervisions = (await supervisionsResponse.json()) as Promise<ISupervision[]>;
+      return await supervisions;
+    } else {
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
+    }
+  } catch (err) {
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionList: true } });
+    throw new Error(err as string);
+  }
+};
+
 export const getSupervisionSendingList = async (dispatch: Dispatch): Promise<ISupervision[]> => {
   try {
     console.log("getSupervisionSendingList");

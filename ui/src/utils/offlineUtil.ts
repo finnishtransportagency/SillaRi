@@ -7,6 +7,7 @@ import {
   getRouteTransportOfSupervisor,
   getSupervision,
   getSupervisionList,
+  getSupervisionListAreaContractor,
   getSupervisionSendingList,
 } from "./supervisionBackendData";
 import { getUserData, onRetry } from "./backendData";
@@ -35,6 +36,7 @@ const prefetchSupervisions = async (supervisionList: ISupervision[], username: s
     })
   );
 };
+
 
 const prefetchRouteTransports = async (
   companyTransportsList: ICompanyTransports[],
@@ -134,7 +136,11 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
       retry: onRetry,
       staleTime: Infinity,
     }),
-    queryClient.prefetchQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
+    queryClient.fetchQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
+      retry: onRetry,
+      staleTime: Infinity,
+    }),
+    queryClient.fetchQuery(["getSupervisionListAreaContractor"], () => getSupervisionListAreaContractor(dispatch), {
       retry: onRetry,
       staleTime: Infinity,
     }),
@@ -144,7 +150,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   const { username } = mainData[0] || {};
   const companyTransportsList = mainData[1];
   const supervisionSendingList = mainData[2];
-  const supervisionsCompanyUsesSillari;
+  const supervisionsCompanyUsesSillari = mainData[4];
 
   // Fetch only routeTransports and supervisions that have the password in storage
   // Otherwise query fails, and we don't get any routeTransports or supervisions in the cache for offline use
