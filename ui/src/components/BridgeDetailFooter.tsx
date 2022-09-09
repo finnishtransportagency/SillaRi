@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { IonButton, IonCheckbox, IonCol, IonGrid, IonItem, IonLabel, IonRow, useIonAlert } from "@ionic/react";
 import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
-import { SupervisionStatus, TransportStatus } from "../utils/constants";
+import { SILLARI_SYSTEM_USER, SupervisionStatus, TransportStatus } from "../utils/constants";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import IStartCrossingInput from "../interfaces/IStartCrossingInput";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
@@ -56,7 +56,8 @@ const BridgeDetailFooter = ({ permit, supervision, username, isLoadingSupervisio
     !isLoadingSupervision && (supervisionStatus === SupervisionStatus.FINISHED || supervisionStatus === SupervisionStatus.REPORT_SIGNED);
 
   console.log("statusUser: " + statusUser);
-  const statusByCurrentSupervisor = !isLoadingSupervisorUser && currentSupervisor && statusUser === currentSupervisor;
+  const statusByCurrentSupervisor =
+    statusUser === SILLARI_SYSTEM_USER || (!isLoadingSupervisorUser && currentSupervisor && statusUser === currentSupervisor);
   console.log("statusByCurrentSupervisor: " + statusByCurrentSupervisor);
 
   // Set-up mutations for modifying data later
