@@ -132,7 +132,7 @@ public class SupervisionController {
             }
             SillariUser user = uiService.getSillariUser();
 
-            if(!supervision.getCurrentStatus().getStatus().equals(SupervisionStatusType.AUTO_PLANNED)) {
+            if(!supervision.getSupervisorType().equals(SupervisorType.AREA_CONTRACTOR)) {
                 checkTransportCodeMatches(user, supervision.getRouteTransportId(), transportCode);
             }
 
