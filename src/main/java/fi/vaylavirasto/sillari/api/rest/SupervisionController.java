@@ -127,7 +127,7 @@ public class SupervisionController {
     public ResponseEntity<?> updateConformsToPermit(@RequestBody SupervisionModel supervision, @RequestParam String transportCode) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateConformsToPermit");
         try {
-            if (!canSupervisorUpdateSupervision(supervision.getId())) {
+            if (!canSupervisorUpdateSupervision(supervisionService.getSupervision(supervision.getId()))) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
@@ -146,10 +146,10 @@ public class SupervisionController {
     @Operation(summary = "Start supervision, create supervision report")
     @PostMapping(value = "/startsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> startSupervision(@RequestBody SupervisionReportModel report, @RequestParam Integer routeTransportId, @RequestParam String transportCode) {
+    public ResponseEntity<?> startSupervision(@RequestBody SupervisionReportModel report, @RequestParam(required = false) Integer routeTransportId, @RequestParam(required = false) String transportCode) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "startSupervision");
         try {
-            if (!canSupervisorUpdateSupervision(report.getSupervisionId())) {
+            if (!canSupervisorUpdateSupervision(supervisionService.getSupervision(report.getSupervisionId()))) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
@@ -169,7 +169,7 @@ public class SupervisionController {
                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime cancelTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "cancelSupervision");
         try {
-            if (!canSupervisorUpdateSupervision(supervisionInput.getSupervisionId())) {
+            if (!canSupervisorUpdateSupervision(supervisionService.getSupervision(supervisionInput.getSupervisionId()))) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
@@ -189,7 +189,7 @@ public class SupervisionController {
                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime denyTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "denyCrossing");
         try {
-            if (!canSupervisorUpdateSupervision(supervisionInput.getSupervisionId())) {
+            if (!canSupervisorUpdateSupervision(supervisionService.getSupervision(supervisionInput.getSupervisionId()))) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
@@ -209,7 +209,7 @@ public class SupervisionController {
                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime finishTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "finishSupervision");
         try {
-            if (!canSupervisorUpdateSupervision(supervisionInput.getSupervisionId())) {
+            if (!canSupervisorUpdateSupervision(supervisionService.getSupervision(supervisionInput.getSupervisionId()))) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
@@ -258,7 +258,7 @@ public class SupervisionController {
     public ResponseEntity<?> updateSupervisionReport(@RequestBody SupervisionReportModel report, @RequestParam Integer routeTransportId, @RequestParam String transportCode) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateSupervisionReport");
         try {
-            if (!canSupervisorUpdateSupervision(report.getSupervisionId())) {
+            if (!canSupervisorUpdateSupervision(supervisionService.getSupervision(report.getSupervisionId()))){
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
@@ -306,8 +306,7 @@ public class SupervisionController {
     }
 
     /* Check that supervision belongs to the user and report is not signed */
-    private boolean canSupervisorUpdateSupervision(Integer supervisionId) {
-        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+    private boolean canSupervisorUpdateSupervision(SupervisionModel supervision) {
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsOfSupervisorNoDetails(user);
 
