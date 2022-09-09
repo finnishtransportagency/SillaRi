@@ -55,7 +55,6 @@ const BridgeDetailFooter = ({ permit, supervision, username, isLoadingSupervisio
   const supervisionFinished =
     !isLoadingSupervision && (supervisionStatus === SupervisionStatus.FINISHED || supervisionStatus === SupervisionStatus.REPORT_SIGNED);
 
-
   console.log("statusUser: " + statusUser);
   const statusByCurrentSupervisor = !isLoadingSupervisorUser && currentSupervisor && statusUser === currentSupervisor;
   console.log("statusByCurrentSupervisor: " + statusByCurrentSupervisor);
