@@ -3,10 +3,7 @@ package fi.vaylavirasto.sillari.api.rest;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.dto.SupervisionInputDTO;
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
-import fi.vaylavirasto.sillari.model.SupervisionModel;
-import fi.vaylavirasto.sillari.model.SupervisionReportModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.service.RouteTransportPasswordService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
@@ -134,7 +131,10 @@ public class SupervisionController {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            checkTransportCodeMatches(user, supervision.getRouteTransportId(), transportCode);
+
+            if(!supervision.getCurrentStatus().getStatus().equals(SupervisionStatusType.AUTO_PLANNED)) {
+                checkTransportCodeMatches(user, supervision.getRouteTransportId(), transportCode);
+            }
 
             SupervisionModel supervisionModel = supervisionService.updateConformsToPermit(supervision);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
