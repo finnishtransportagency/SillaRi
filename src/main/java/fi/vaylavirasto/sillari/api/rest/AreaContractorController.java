@@ -106,6 +106,7 @@ public class AreaContractorController {
         }
     }
 
+    //TODO is this needed or do we use SupervisionController/startSupervision?
     @Operation(summary = "Start supervision")
     @PostMapping(value = "/startSupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
