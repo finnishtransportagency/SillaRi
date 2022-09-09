@@ -35,6 +35,7 @@ const BridgeDetailFooter = ({ permit, supervision, username, isLoadingSupervisio
   });
 
   const { username: currentSupervisor = "" } = supervisorUser || {};
+  console.log("currentSupervisor: " + currentSupervisor);
   const { id: supervisionId, routeTransportId, conformsToPermit = false, currentStatus, finishedTime, routeTransport } = supervision || {};
   const { status: supervisionStatus, time: statusTime, username: statusUser } = currentStatus || {};
   const { currentStatus: currentTransportStatus } = routeTransport || {};
@@ -54,7 +55,10 @@ const BridgeDetailFooter = ({ permit, supervision, username, isLoadingSupervisio
   const supervisionFinished =
     !isLoadingSupervision && (supervisionStatus === SupervisionStatus.FINISHED || supervisionStatus === SupervisionStatus.REPORT_SIGNED);
 
+
+  console.log("statusUser: " + statusUser);
   const statusByCurrentSupervisor = !isLoadingSupervisorUser && currentSupervisor && statusUser === currentSupervisor;
+  console.log("statusByCurrentSupervisor: " + statusByCurrentSupervisor);
 
   // Set-up mutations for modifying data later
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
