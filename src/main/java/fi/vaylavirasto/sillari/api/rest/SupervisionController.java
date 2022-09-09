@@ -55,8 +55,9 @@ public class SupervisionController {
             SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId, true, true);
 
             SillariUser user = uiService.getSillariUser();
-            //todo do check if  supervisionModel-> permit -> companyusesSillari
-           // checkTransportCodeMatches(user, supervisionModel.getRouteTransportId(), transportCode);
+            if (!isAreaContractorSupervision(supervisionModel)) {
+                checkTransportCodeMatches(user, supervisionModel.getRouteTransportId(), transportCode);
+            }
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -127,12 +128,12 @@ public class SupervisionController {
     public ResponseEntity<?> updateConformsToPermit(@RequestBody SupervisionModel supervision, @RequestParam String transportCode) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateConformsToPermit");
         try {
-            if (!canSupervisorUpdateSupervision(supervisionService.getSupervision(supervision.getId()))) {
+            if (!canSupervisorUpdateSupervision(supervision.getId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
 
-            if(!supervision.getSupervisorType().equals(SupervisorType.AREA_CONTRACTOR)) {
+            if (!isAreaContractorSupervision(supervision)) {
                 checkTransportCodeMatches(user, supervision.getRouteTransportId(), transportCode);
             }
 
@@ -149,12 +150,13 @@ public class SupervisionController {
     public ResponseEntity<?> startSupervision(@RequestBody SupervisionReportModel report, @RequestParam(required = false) Integer routeTransportId, @RequestParam(required = false) String transportCode) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "startSupervision");
         try {
-            if (!canSupervisorUpdateSupervision(supervisionService.getSupervision(report.getSupervisionId()))) {
+            if (!canSupervisorUpdateSupervision(report.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            checkTransportCodeMatches(user, routeTransportId, transportCode);
-
+            if (!isAreaContractorSupervision(report.getSupervisionId())) {
+                checkTransportCodeMatches(user, routeTransportId, transportCode);
+            }
             SupervisionModel supervisionModel = supervisionService.startSupervision(report, report.getStartTime(), user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
@@ -169,12 +171,13 @@ public class SupervisionController {
                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime cancelTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "cancelSupervision");
         try {
-            if (!canSupervisorUpdateSupervision(supervisionService.getSupervision(supervisionInput.getSupervisionId()))) {
+            if (!canSupervisorUpdateSupervision(supervisionInput.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
-
+            if (!isAreaContractorSupervision(supervisionInput.getSupervisionId())) {
+                checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
+            }
             SupervisionModel supervisionModel = supervisionService.cancelSupervision(supervisionInput.getSupervisionId(), cancelTime, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
@@ -189,12 +192,13 @@ public class SupervisionController {
                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime denyTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "denyCrossing");
         try {
-            if (!canSupervisorUpdateSupervision(supervisionService.getSupervision(supervisionInput.getSupervisionId()))) {
+            if (!canSupervisorUpdateSupervision(supervisionInput.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
-
+            if (!isAreaContractorSupervision(supervisionInput.getSupervisionId())) {
+                checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
+            }
             SupervisionModel supervisionModel = supervisionService.denyCrossing(supervisionInput.getSupervisionId(), denyReason, denyTime, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
@@ -209,12 +213,13 @@ public class SupervisionController {
                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime finishTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "finishSupervision");
         try {
-            if (!canSupervisorUpdateSupervision(supervisionService.getSupervision(supervisionInput.getSupervisionId()))) {
+            if (!canSupervisorUpdateSupervision(supervisionInput.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
-
+            if (!isAreaContractorSupervision(supervisionInput.getSupervisionId())) {
+                checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
+            }
             SupervisionModel supervisionModel = supervisionService.finishSupervision(supervisionInput.getSupervisionId(), finishTime, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
@@ -236,7 +241,9 @@ public class SupervisionController {
                 SillariUser user = uiService.getSillariUser();
 
                 supervisionInputs.forEach(input -> {
-                    checkTransportCodeMatches(user, input.getRouteTransportId(), input.getTransportCode());
+                    if (!isAreaContractorSupervision(input.getSupervisionId())) {
+                        checkTransportCodeMatches(user, input.getRouteTransportId(), input.getTransportCode());
+                    }
                     supervisionService.completeSupervision(input.getSupervisionId(), completeTime, user);
                 });
 
@@ -255,15 +262,16 @@ public class SupervisionController {
     @Operation(summary = "Update supervision report")
     @PutMapping(value = "/updatesupervisionreport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> updateSupervisionReport(@RequestBody SupervisionReportModel report, @RequestParam Integer routeTransportId, @RequestParam String transportCode) {
+    public ResponseEntity<?> updateSupervisionReport(@RequestBody SupervisionReportModel report, @RequestParam(required = false) Integer routeTransportId, @RequestParam(required = false) String transportCode) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateSupervisionReport");
         try {
-            if (!canSupervisorUpdateSupervision(supervisionService.getSupervision(report.getSupervisionId()))){
+            if (!canSupervisorUpdateSupervision(report.getSupervisionId())) {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            checkTransportCodeMatches(user, routeTransportId, transportCode);
-
+            if (!isAreaContractorSupervision(report.getSupervisionId())) {
+                checkTransportCodeMatches(user, routeTransportId, transportCode);
+            }
             SupervisionModel supervisionModel = supervisionService.updateSupervisionReport(report);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
@@ -289,7 +297,7 @@ public class SupervisionController {
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getAllSupervisionsOfSupervisorNoDetails(user);
 
-        return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
+        return supervisionsOfSupervisor.stream().anyMatch(s -> s.getId().equals(supervision.getId()));
     }
 
     /* Check that supervision is of the transport company */
@@ -306,11 +314,11 @@ public class SupervisionController {
     }
 
     /* Check that supervision belongs to the user and report is not signed */
-    private boolean canSupervisorUpdateSupervision(SupervisionModel supervision) {
+    private boolean canSupervisorUpdateSupervision(Integer supervisionId) {
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsOfSupervisorNoDetails(user);
 
-        return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
+        return supervisionsOfSupervisor.stream().anyMatch(s -> s.getId().equals(supervisionId));
     }
 
     /* Check that supervision is on the user's sending list */
@@ -319,7 +327,19 @@ public class SupervisionController {
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getFinishedButUnsignedSupervisionsNoDetails(user);
 
-        return supervisionsOfSupervisor.stream().anyMatch(s-> s.getId().equals(supervision.getId()));
+        return supervisionsOfSupervisor.stream().anyMatch(s -> s.getId().equals(supervision.getId()));
     }
+
+    /* Check that is */
+    private boolean isAreaContractorSupervision(Integer supervisionId) {
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+        return isAreaContractorSupervision(supervision);
+    }
+
+    /* Check that is */
+    private boolean isAreaContractorSupervision(SupervisionModel supervisionModel) {
+        return supervisionModel.getSupervisorType().equals(SupervisorType.AREA_CONTRACTOR);
+    }
+
 
 }
