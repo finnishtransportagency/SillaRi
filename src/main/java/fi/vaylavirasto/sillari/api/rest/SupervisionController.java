@@ -333,6 +333,8 @@ public class SupervisionController {
     /* Check that is */
     private boolean isAreaContractorSupervision(Integer supervisionId) {
         SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+        logger.debug("hello : " + supervision);
+        logger.debug("hello : " + isAreaContractorSupervision(supervision));
         return isAreaContractorSupervision(supervision);
     }
 
