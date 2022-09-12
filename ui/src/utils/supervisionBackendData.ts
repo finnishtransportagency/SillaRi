@@ -150,8 +150,6 @@ export const getSupervision = async (
   dispatch: Dispatch
 ): Promise<ISupervision> => {
   try {
-    console.log("GetSupervision", supervisionId);
-    console.log("Klockan är: ", Date.now());
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
 
     // Use transportCode if already fetched, otherwise get from storage
@@ -186,8 +184,6 @@ export const getSupervision = async (
 
 export const getSupervisionNoPasscode = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
-    console.log("GetSupervisionNoPASS", supervisionId);
-    console.log("Klockan är: ", Date.now());
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
     const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}`);
     if (supervisionResponse.ok) {
@@ -432,10 +428,13 @@ export const updateSupervisionReport = async (
     console.log("UpdateSupervisionReport", updateRequest);
     const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, updateRequest.supervisionId);
 
+    const transportCodeParam = transportCode ? transportCode : "";
+    const routeTransportIdParam = routeTransportId ? routeTransportId : "";
+
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { updateSupervisionReport: false } });
 
     const updateReportResponse = await fetch(
-      `${getOrigin()}/api/supervision/updatesupervisionreport?routeTransportId=${routeTransportId}&transportCode=${transportCode}`,
+      `${getOrigin()}/api/supervision/updatesupervisionreport?routeTransportId=${routeTransportIdParam}&transportCode=${transportCodeParam}`,
       {
         method: "PUT",
         headers: {
