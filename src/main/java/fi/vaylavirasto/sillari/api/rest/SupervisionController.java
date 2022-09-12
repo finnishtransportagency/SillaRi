@@ -148,22 +148,15 @@ public class SupervisionController {
     @PostMapping(value = "/startsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public ResponseEntity<?> startSupervision(@RequestBody SupervisionReportModel report, @RequestParam(required = false) Integer routeTransportId, @RequestParam(required = false) String transportCode) {
-        logger.debug("hello 1");
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "startSupervision");
-        logger.debug("hello2");
         try {
             if (!canSupervisorUpdateSupervision(report.getSupervisionId())) {
-                logger.debug("hello3");
                 throw new AccessDeniedException("Supervision not of the user");
             }
-            logger.debug("hello3");
             SillariUser user = uiService.getSillariUser();
-            logger.debug("hello5");
             if (!isAreaContractorSupervision(report.getSupervisionId())) {
-                logger.debug("hello6");
                 checkTransportCodeMatches(user, routeTransportId, transportCode);
             }
-            logger.debug("hello7");
             SupervisionModel supervisionModel = supervisionService.startSupervision(report, report.getStartTime(), user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {

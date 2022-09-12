@@ -241,9 +241,11 @@ export const startSupervision = async (startCrossingInput: IStartCrossingInput, 
     const report = { ...initialReport, startTime };
 
     const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, startCrossingInput.initialReport.supervisionId);
+    const transportCodeParam = transportCode ? transportCode : "";
+    const routeTransportIdParam = routeTransportId ? routeTransportId : "";
 
     const startSupervisionResponse = await fetch(
-      `${getOrigin()}/api/supervision/startsupervision?routeTransportId=${routeTransportId}&transportCode=${transportCode}`,
+      `${getOrigin()}/api/supervision/startsupervision?routeTransportId=${routeTransportIdParam}&transportCode=${transportCodeParam}`,
       {
         method: "POST",
         headers: {
