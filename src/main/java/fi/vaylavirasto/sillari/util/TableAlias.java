@@ -1,7 +1,7 @@
 package fi.vaylavirasto.sillari.util;
 
 import fi.vaylavirasto.sillari.model.Tables;
-import fi.vaylavirasto.sillari.model.tables.*;
+import fi.vaylavirasto.sillari.model.tables.Address;
 
 public class TableAlias {
     public static final Company company = Tables.COMPANY.as("co");
@@ -27,5 +27,4 @@ public class TableAlias {
     public static final SupervisionReport supervisionReport = Tables.SUPERVISION_REPORT.as("snr");
     public static final SupervisionImage supervisionImage = Tables.SUPERVISION_IMAGE.as("sni");
     public static final SupervisionPdf supervisionPdf = Tables.SUPERVISION_PDF.as("snp");
-    public static final OwnList ownList = Tables.OWN_LIST.as("ol");
 }
