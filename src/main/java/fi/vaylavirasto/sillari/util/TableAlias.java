@@ -1,7 +1,7 @@
 package fi.vaylavirasto.sillari.util;
 
 import fi.vaylavirasto.sillari.model.Tables;
-import fi.vaylavirasto.sillari.model.tables.Address;
+import fi.vaylavirasto.sillari.model.tables.*;
 
 public class TableAlias {
     public static final Company company = Tables.COMPANY.as("co");
