@@ -12,13 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.io.*;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class PermitService {
@@ -169,7 +166,7 @@ public class PermitService {
         }
     }
 
-    private PermitModel getPermitCurrentVersionByPermitNumber(String permitNumber) {
+    public PermitModel getPermitCurrentVersionByPermitNumber(String permitNumber) {
         return permitRepository.getPermitCurrentVersionByPermitNumber(permitNumber);
     }
 }

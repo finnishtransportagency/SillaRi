@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,10 @@ public class AreaContractorController {
     public ResponseEntity<List<RouteModel>> getRoutes(@RequestParam String permitNumber) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getRoutes");
         try {
+            PermitModel permit = permitService.getPermitCurrentVersionByPermitNumber(permitNumber);
+            if(permit.getCustomerUsesSillari()) {
+                throw new AccessDeniedException("Not own list allowed permit.");
+            }
             List<RouteModel> routes = permitService.getRoutes(permitNumber);
             if (routes == null) {
                 return null;
