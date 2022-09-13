@@ -330,15 +330,13 @@ public class SupervisionController {
         return supervisionsOfSupervisor.stream().anyMatch(s -> s.getId().equals(supervision.getId()));
     }
 
-    /* Check that is */
+    /* Check that isAreaContractorSupervision */
     private boolean isAreaContractorSupervision(Integer supervisionId) {
         SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
-        logger.debug("hello : " + supervision);
-        logger.debug("hello : " + isAreaContractorSupervision(supervision));
         return isAreaContractorSupervision(supervision);
     }
 
-    /* Check that is */
+    /* Check that isAreaContractorSupervision */
     private boolean isAreaContractorSupervision(SupervisionModel supervisionModel) {
         return supervisionModel.getSupervisorType().equals(SupervisorType.AREA_CONTRACTOR);
     }

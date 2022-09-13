@@ -398,11 +398,11 @@ public class SupervisionService {
         return companyRepository.getCompanyByRouteBridgeId(supervision.getRouteBridgeId());
     }
 
-    /*Muutokset, jotka vaaditaan tietomalliin ja SillaRin taustan toimintoihin , jotta valvonta ilman reittien suunnittelua on mahdollista
-        ainakin:
-        Lelu-luvan purkaminen route_bridge-tauluun
-        routen kuljetuskertojen laskurikäsittely purettava - unohdetaan urakoitsijavalvonnassa
-        route_transport-"käsittely" tsekattava/purettava tukemaan urakoitsijakäsittelyä*/
+    /*Created AUTO_PLANNED -status supervisions for permits with customerUsesSillari = false
+    * These are visible on area contractor UI.
+    * AUTO_PLANNED -supervision are not connected to route transports.
+    * TODO what todo with transport number?*/
+
     void createAreaContractorAutoplannedSupervisions(Integer permitId) {
         List<RouteModel> routes = routeRepository.getRoutesByPermitId(permitId);
         routes.forEach(r -> {
