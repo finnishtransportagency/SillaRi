@@ -36,6 +36,7 @@
     "title": "SillaRi",
     "content": "Tervetuloa!",
     "tab": {
+      "ownList": "Oma lista",
       "transports": "Kuljetukset",
       "bridges": "Sillat"
     },
@@ -165,6 +166,12 @@
     "obstacleOnBridge": "Fyysinen este sillalla",
     "other": "Jotain muuta, mitä?",
     "placeholder": "Lisää tekstiä tähän"
+  },
+  "supervisionOwnList": {
+    "addButtonLabel": "Lisää valvottavia siltoja",
+    "addModal": {
+      "title": "Lisää valvottavia siltoja"
+    }
   },
   "supervision": {
     "title": "Sillanvalvonta",

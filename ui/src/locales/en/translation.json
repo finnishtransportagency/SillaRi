@@ -36,6 +36,7 @@
     "title": "SillaRi",
     "content": "Welcome!",
     "tab": {
+      "ownList": "Own list",
       "transports": "Transports",
       "bridges": "Bridges"
     },
@@ -165,6 +166,12 @@
     "obstacleOnBridge": "Physical obstacle on bridge",
     "other": "Something else, what?",
     "placeholder": "Add text here"
+  },
+  "supervisionOwnList": {
+    "addButtonLabel": "Add bridges",
+    "addModal": {
+      "title": "Add bridges"
+    }
   },
   "supervision": {
     "title": "Bridge supervision",
