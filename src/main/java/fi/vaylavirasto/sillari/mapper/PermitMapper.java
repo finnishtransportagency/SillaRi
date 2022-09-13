@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 
 public class PermitMapper implements RecordMapper<Record, PermitModel> {
-    private boolean base64on;
+    private final boolean base64on;
 
     public PermitMapper() {
         this.base64on = false;
@@ -43,6 +43,7 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         model.setRowCreatedTime(record.get(TableAlias.permit.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.permit.ROW_UPDATED_TIME));
         model.setRoutes(new ArrayList<>());
+        model.setCustomerUsesSillari(record.get(TableAlias.permit.CUSTOMER_USES_SILLARI));
         return model;
     }
 }

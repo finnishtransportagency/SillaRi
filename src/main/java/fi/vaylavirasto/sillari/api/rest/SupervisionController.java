@@ -58,7 +58,7 @@ public class SupervisionController {
             SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId, true, true);
 
             SillariUser user = uiService.getSillariUser();
-            if (!isAreaContractorSupervision(supervisionModel)) {
+            if (permitUsesSillari(supervisionModel)) {
                 checkTransportCodeMatches(user, supervisionModel.getRouteTransportId(), transportCode);
             }
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
@@ -136,7 +136,7 @@ public class SupervisionController {
             }
             SillariUser user = uiService.getSillariUser();
 
-            if (!isAreaContractorSupervision(supervision)) {
+            if (permitUsesSillari(supervision)) {
                 checkTransportCodeMatches(user, supervision.getRouteTransportId(), transportCode);
             }
 
@@ -157,7 +157,7 @@ public class SupervisionController {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            if (!isAreaContractorSupervision(report.getSupervisionId())) {
+            if (permitUsesSillari(report.getSupervisionId())) {
                 checkTransportCodeMatches(user, routeTransportId, transportCode);
             }
             SupervisionModel supervisionModel = supervisionService.startSupervision(report, report.getStartTime(), user);
@@ -178,7 +178,7 @@ public class SupervisionController {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            if (!isAreaContractorSupervision(supervisionInput.getSupervisionId())) {
+            if (permitUsesSillari(supervisionInput.getSupervisionId())) {
                 checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
             }
             SupervisionModel supervisionModel = supervisionService.cancelSupervision(supervisionInput.getSupervisionId(), cancelTime, user);
@@ -199,7 +199,7 @@ public class SupervisionController {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            if (!isAreaContractorSupervision(supervisionInput.getSupervisionId())) {
+            if (permitUsesSillari(supervisionInput.getSupervisionId())) {
                 checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
             }
             SupervisionModel supervisionModel = supervisionService.denyCrossing(supervisionInput.getSupervisionId(), denyReason, denyTime, user);
@@ -220,7 +220,7 @@ public class SupervisionController {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            if (!isAreaContractorSupervision(supervisionInput.getSupervisionId())) {
+            if (permitUsesSillari(supervisionInput.getSupervisionId())) {
                 checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
             }
             SupervisionModel supervisionModel = supervisionService.finishSupervision(supervisionInput.getSupervisionId(), finishTime, user);
@@ -244,7 +244,7 @@ public class SupervisionController {
                 SillariUser user = uiService.getSillariUser();
 
                 supervisionInputs.forEach(input -> {
-                    if (!isAreaContractorSupervision(input.getSupervisionId())) {
+                    if (permitUsesSillari(input.getSupervisionId())) {
                         checkTransportCodeMatches(user, input.getRouteTransportId(), input.getTransportCode());
                     }
                     supervisionService.completeSupervision(input.getSupervisionId(), completeTime, user);
@@ -272,7 +272,7 @@ public class SupervisionController {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            if (!isAreaContractorSupervision(report.getSupervisionId())) {
+            if (permitUsesSillari(report.getSupervisionId())) {
                 checkTransportCodeMatches(user, routeTransportId, transportCode);
             }
             SupervisionModel supervisionModel = supervisionService.updateSupervisionReport(report);
@@ -334,19 +334,20 @@ public class SupervisionController {
     }
 
     /* Check that isAreaContractorSupervision */
-    private boolean isAreaContractorSupervision(Integer supervisionId) {
+    private boolean permitUsesSillari(Integer supervisionId) {
         SupervisionModel supervision = supervisionService.getSupervision(supervisionId, true, false);
-        return isAreaContractorSupervision(supervision);
+        return permitUsesSillari(supervision);
     }
 
     /* Check that isAreaContractorSupervision */
-    private boolean isAreaContractorSupervision(SupervisionModel supervisionModel) {
-        Boolean isPermitCustomerUsesSillari = null;
+    private boolean permitUsesSillari(SupervisionModel supervisionModel) {
+        Boolean isPermitCustomerUsesSillari = false;
         try {
             isPermitCustomerUsesSillari = supervisionModel.getRouteBridge().getRoute().getPermit().getCustomerUsesSillari();
         }
         catch (NullPointerException nullPointerException){
-            isPermitCustomerUsesSillari = supervisionService.getSupervision(supervisionModel.getId(), true, false).getConformsToPermit();
+            var a = supervisionService.getSupervision(supervisionModel.getId(), true, false);
+            isPermitCustomerUsesSillari = supervisionService.getSupervision(supervisionModel.getId(), true, false).getRouteBridge().getRoute().getPermit().getCustomerUsesSillari();
         }
         return isPermitCustomerUsesSillari;
     }
