@@ -3,7 +3,10 @@ package fi.vaylavirasto.sillari.api.rest;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.dto.SupervisionInputDTO;
-import fi.vaylavirasto.sillari.model.*;
+import fi.vaylavirasto.sillari.model.CompanyModel;
+import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
+import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.model.SupervisionReportModel;
 import fi.vaylavirasto.sillari.service.RouteTransportPasswordService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
@@ -332,13 +335,20 @@ public class SupervisionController {
 
     /* Check that isAreaContractorSupervision */
     private boolean isAreaContractorSupervision(Integer supervisionId) {
-        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId, true, false);
         return isAreaContractorSupervision(supervision);
     }
 
     /* Check that isAreaContractorSupervision */
     private boolean isAreaContractorSupervision(SupervisionModel supervisionModel) {
-        return supervisionModel.getSupervisorType().equals(SupervisorType.AREA_CONTRACTOR);
+        Boolean isPermitCustomerUsesSillari = null;
+        try {
+            isPermitCustomerUsesSillari = supervisionModel.getRouteBridge().getRoute().getPermit().getCustomerUsesSillari();
+        }
+        catch (NullPointerException nullPointerException){
+            isPermitCustomerUsesSillari = supervisionService.getSupervision(supervisionModel.getId(), true, false).getConformsToPermit();
+        }
+        return isPermitCustomerUsesSillari;
     }
 
 
