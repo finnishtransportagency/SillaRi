@@ -12,7 +12,7 @@ import {
   IonCol,
   IonText,
 } from "@ionic/react";
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Header from "../components/Header";
@@ -22,7 +22,7 @@ const Settings: React.FC = () => {
   const { t, i18n } = useTranslation();
 
   const changeLanguage = async (lang: string) => {
-    await Storage.set({
+    await Preferences.set({
       key: "ui_lang",
       value: lang,
     });
