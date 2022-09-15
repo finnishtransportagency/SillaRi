@@ -43,7 +43,13 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         model.setRowCreatedTime(record.get(TableAlias.permit.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.permit.ROW_UPDATED_TIME));
         model.setRoutes(new ArrayList<>());
-        model.setCustomerUsesSillari(record.get(TableAlias.permit.CUSTOMER_USES_SILLARI));
+        Boolean customerUses = record.get(TableAlias.permit.CUSTOMER_USES_SILLARI);
+        if(customerUses == null || customerUses == false){
+            model.setCustomerUsesSillari(false);
+        }
+        else{
+            model.setCustomerUsesSillari(true);
+        }
         return model;
     }
 }
