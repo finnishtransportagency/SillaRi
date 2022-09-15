@@ -40,18 +40,18 @@ public class LeluService {
     private static final Logger logger = LogManager.getLogger();
     private final LeluDTOMapper dtoMapper = Mappers.getMapper(LeluDTOMapper.class);
 
-    private final PermitRepository permitRepository;
-    private final CompanyRepository companyRepository;
-    private final RouteRepository routeRepository;
-    private final RouteBridgeRepository routeBridgeRepository;
-    private final BridgeRepository bridgeRepository;
-    private final SupervisionRepository supervisionRepository;
-    private final SupervisionService supervisionService;
-    private final MessageSource messageSource;
-    private final LeluRouteUploadUtil leluRouteUploadUtil;
-    private final AWSS3Client awss3Client;
-    private final TRexBridgeInfoService trexBridgeInfoService;
-    private final TRexPicService tRexPicService;
+    private PermitRepository permitRepository;
+    private CompanyRepository companyRepository;
+    private RouteRepository routeRepository;
+    private RouteBridgeRepository routeBridgeRepository;
+    private BridgeRepository bridgeRepository;
+    private SupervisionRepository supervisionRepository;
+    private SupervisionService supervisionService;
+    private MessageSource messageSource;
+    private LeluRouteUploadUtil leluRouteUploadUtil;
+    private AWSS3Client awss3Client;
+    private TRexBridgeInfoService trexBridgeInfoService;
+    private TRexPicService tRexPicService;
 
 
     @Value("${spring.profiles.active:Unknown}")
