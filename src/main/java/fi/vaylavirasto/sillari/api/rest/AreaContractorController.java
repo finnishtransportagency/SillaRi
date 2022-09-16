@@ -45,8 +45,9 @@ public class AreaContractorController {
     public ResponseEntity<List<RouteModel>> getRoutes(@RequestParam String permitNumber) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getRoutes");
         try {
-            PermitModel permit = permitService.getPermitCurrentVersionByPermitNumber(permitNumber);
-            if(permit.getCustomerUsesSillari()) {
+            List<PermitModel> permitsAllVersions = permitService.getPermitAllVersionsByPermitNumber(permitNumber);
+            PermitModel permitCurrentVersion = permitService.getPermitCurrentVersionByPermitNumber(permitNumber);
+            if(permitCurrentVersion.getCustomerUsesSillari()) {
                 throw new AccessDeniedException("Not own list allowed permit.");
             }
             List<RouteModel> routes = permitService.getRoutes(permitNumber);
