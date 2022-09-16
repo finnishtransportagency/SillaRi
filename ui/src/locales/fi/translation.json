@@ -91,7 +91,7 @@
     "management": "Kuljetusten hallinta",
     "transports": "Kuljetukset",
     "logout": "Kirjaudu ulos",
-    "versionLabel": "SillaRi versio"
+    "versionLabel": "SillaRi URAKKAVALVOJA versio"
   },
   "companyTransports": {
     "transportPermit": "Kuljetuslupa",
