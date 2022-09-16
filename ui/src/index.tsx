@@ -9,14 +9,14 @@ import store from "./store/store";
 import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import { changeLanguage } from "i18next";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement as Element);
 
 (async () => {
-  const lang = await Storage.get({ key: "ui_lang" });
+  const lang = await Preferences.get({ key: "ui_lang" });
   if (lang.value) {
     changeLanguage(lang.value);
   }
