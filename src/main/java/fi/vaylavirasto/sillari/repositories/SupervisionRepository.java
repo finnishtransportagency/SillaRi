@@ -257,7 +257,7 @@ public class SupervisionRepository {
                 .and(TableAlias.supervision.ROUTE_BRIDGE_ID.in(
                         dsl.select(TableAlias.routeBridge.ID).from(TableAlias.routeBridge).where(TableAlias.routeBridge.ROUTE_ID.in(
                                 dsl.select(TableAlias.route.ID).from(TableAlias.route).where(TableAlias.route.PERMIT_ID.in(
-                                        dsl.select(TableAlias.permit.ID).from(TableAlias.permit).where(TableAlias.permit.CUSTOMER_USES_SILLARI.eq(false)))
+                                        dsl.select(TableAlias.permit.ID).from(TableAlias.permit).where(TableAlias.permit.CUSTOMER_USES_SILLARI.isNull().or(TableAlias.permit.CUSTOMER_USES_SILLARI.eq(false))))
                                 )))
                         )))
                 .fetch(new SupervisionMapper());
