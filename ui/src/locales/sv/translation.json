@@ -36,6 +36,7 @@
     "title": "SillaRi",
     "content": "Välkommen!",
     "tab": {
+      "ownList": "(SV) Oma lista",
       "transports": "Transporter",
       "bridges": "Broar"
     },
@@ -165,6 +166,12 @@
     "obstacleOnBridge": "Fysiskt hinder på bron",
     "other": "Annan orsak, vad?",
     "placeholder": "Skriv text här"
+  },
+  "supervisionOwnList": {
+    "addButtonLabel": "(SV) Lisää valvottavia siltoja",
+    "addModal": {
+      "title": "(SV) Lisää valvottavia siltoja"
+    }
   },
   "supervision": {
     "title": "Broövervakning",
