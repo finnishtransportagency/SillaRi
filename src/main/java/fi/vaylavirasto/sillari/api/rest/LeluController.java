@@ -111,9 +111,6 @@ public class LeluController {
     }
 
 
-    //todo replace dto folder  fi.vaylavirasto.sillari.api.lelu.permit
-    // with contents from fi.vaylavirasto.sillari.api.lelu.permit_new
-    // when lelu end ready https://extranet.vayla.fi/jira/browse/SILLARI-551
     @PostMapping(value = "/permit")
     @ResponseBody
     @Operation(summary = "Create or update permit", description = "Adds a new permit from LeLu to SillaRi. " +

@@ -1,5 +1,5 @@
 import { SupervisionListType, TRANSPORT_CODE_STORAGE_GROUP, TRANSPORT_CODE_STORAGE_LIFE_DAYS } from "./constants";
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import { SHA1 } from "crypto-js";
 import IKeyValue from "../interfaces/IKeyValue";
 
@@ -13,14 +13,14 @@ const formatDate = (date: Date): string => {
 };
 
 const configureStorageForAll = async () => {
-  await Storage.configure({ group: TRANSPORT_CODE_STORAGE_GROUP });
+  await Preferences.configure({ group: TRANSPORT_CODE_STORAGE_GROUP });
 };
 
 const configureStorageForDay = async (day: Date) => {
   const dayString = formatDate(day);
   const storageGroup = TRANSPORT_CODE_STORAGE_GROUP + "." + dayString;
   console.log("Config storage grouop: " + storageGroup);
-  await Storage.configure({ group: storageGroup });
+  await Preferences.configure({ group: storageGroup });
 };
 
 const configureStorageForToday = async () => {
@@ -40,10 +40,10 @@ const configureStorageForDaysAgo = async (days: number) => {
 export const savePasswordToStorage = async (username: string, id: number, password: string, type: SupervisionListType) => {
   //remove if password is already under different date
   await configureStorageForAll();
-  await Storage.remove({ key: constructStorageKey(username, type, id) });
+  await Preferences.remove({ key: constructStorageKey(username, type, id) });
 
   await configureStorageForToday();
-  return Storage.set({
+  return Preferences.set({
     // username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
     key: constructStorageKey(username, type, id),
     // username + route transport password
@@ -55,7 +55,7 @@ export const getPasswordFromStorage = async (username: string, type: Supervision
   //we get only current cause maybe obsolete not removed yet
   for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
     await configureStorageForDaysAgo(n);
-    const transportCode = await Storage.get({ key: constructStorageKey(username, type, id) });
+    const transportCode = await Preferences.get({ key: constructStorageKey(username, type, id) });
     if (transportCode.value) {
       return transportCode.value;
     }
@@ -84,13 +84,13 @@ const removeIfObsolete = async (key: string) => {
   const splitted = key.split(".");
   const dateTimePart = splitted[0];
   if (!isCurrent(dateTimePart)) {
-    await Storage.remove({ key: key });
+    await Preferences.remove({ key: key });
   }
 };
 
 export const removeObsoletePasswords = async () => {
   console.log("removeObsoletePasswords");
   await configureStorageForAll();
-  const allKeys = await Storage.keys();
+  const allKeys = await Preferences.keys();
   allKeys.keys.forEach((k) => removeIfObsolete(k));
 };

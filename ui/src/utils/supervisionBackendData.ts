@@ -15,7 +15,7 @@ import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import IStartCrossingInput from "../interfaces/IStartCrossingInput";
 import { constructStorageKey, getPasswordAndIdFromStorage, getPasswordFromStorage } from "./trasportCodeStorageUtil";
 import { createCustomError, createErrorFromStatusCode } from "./backendData";
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import { SHA1 } from "crypto-js";
 import IKeyValue from "../interfaces/IKeyValue";
 import ISupervisionInput from "../interfaces/ISupervisionInput";
@@ -68,7 +68,7 @@ export const getRouteTransportOfSupervisor = async (
         //if storage has old or tampered transport code -> remove it
         if (routeTransportResponse.status === 403) {
           console.log(`getRouteTransportOfSupervisor with routeTransportId ${routeTransportId} incorrect transportCode`);
-          await Storage.remove({ key: constructStorageKey(username, SupervisionListType.TRANSPORT, routeTransportId) });
+          await Preferences.remove({ key: constructStorageKey(username, SupervisionListType.TRANSPORT, routeTransportId) });
         }
         throw createErrorFromStatusCode(routeTransportResponse.status);
       }
@@ -147,7 +147,7 @@ export const getSupervision = async (
         // If storage has old or tampered transport code -> remove it
         if (supervisionResponse.status === 403) {
           console.log(`getSupervision with supervisionId ${supervisionId} incorrect transportCode`);
-          await Storage.remove({ key: constructStorageKey(username, SupervisionListType.BRIDGE, supervisionId) });
+          await Preferences.remove({ key: constructStorageKey(username, SupervisionListType.BRIDGE, supervisionId) });
         }
 
         dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
