@@ -58,7 +58,14 @@ public class AreaContractorController {
                 routes.forEach(r -> routesWithBridgesAndSupervisions.add(routeService.getRouteWithSupervisions(r.getId())));
                 SillariUser user = uiService.getSillariUser();
                 //filter out routes that don't have any bridge with user contract business id
-                return ResponseEntity.ok(routesWithBridgesAndSupervisions.stream().filter(r -> r.getRouteBridges().stream().anyMatch(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId()))).collect(Collectors.toList()));
+                List<RouteModel> contractBridgeHavingRoutess = routesWithBridgesAndSupervisions.stream().filter(r -> r.getRouteBridges().stream().anyMatch(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId()))).collect(Collectors.toList());
+
+                //remove "duplicate bridges"
+                // "duplicate" means same bridge on same route; this means different versions and different transerr numbers.
+
+
+
+                return ResponseEntity.ok(contractBridgeHavingRoutess);
             }
         } finally {
             serviceMetric.end();
