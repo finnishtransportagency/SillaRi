@@ -13,11 +13,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -45,20 +47,17 @@ public class AreaContractorController {
     public ResponseEntity<List<RouteModel>> getRoutes(@RequestParam String permitNumber) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getRoutes");
         try {
-            PermitModel permit = permitService.getPermitCurrentVersionByPermitNumber(permitNumber);
-            if(permit.getCustomerUsesSillari()) {
+            PermitModel permitCurrentVersion = permitService.getPermitCurrentVersionByPermitNumber(permitNumber);
+            if(permitCurrentVersion == null){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
+            }
+            if (permitCurrentVersion.getCustomerUsesSillari()) {
                 throw new AccessDeniedException("Not own list allowed permit.");
             }
-            List<RouteModel> routes = permitService.getRoutes(permitNumber);
-            if (routes == null) {
-                return null;
-            } else {
-                List<RouteModel> routesWithBridgesAndSupervisions = new ArrayList<>();
-                routes.forEach(r -> routesWithBridgesAndSupervisions.add(routeService.getRouteWithSupervisions(r.getId())));
-                SillariUser user = uiService.getSillariUser();
-                //filter out routes that don't have any bridge with user contract business id
-                return ResponseEntity.ok(routesWithBridgesAndSupervisions.stream().filter(r -> r.getRouteBridges().stream().anyMatch(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId()))).collect(Collectors.toList()));
-            }
+            SillariUser user = uiService.getSillariUser();
+            List<RouteModel> routes = permitService.getRoutesForOwnList(permitNumber, user);
+            return ResponseEntity.ok(routes != null ? routes : new ArrayList<>());
+
         } finally {
             serviceMetric.end();
         }

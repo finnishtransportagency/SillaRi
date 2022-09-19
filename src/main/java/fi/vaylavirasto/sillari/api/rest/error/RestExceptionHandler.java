@@ -14,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletResponse;
@@ -121,6 +122,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         logger.error("TRexRestException 'statusCode':{}, 'originalMessage':'{}', 'newMessage':'{}'", ex.getStatusCode().value(), ex.getMessage(), message);
         return handleCustomException(ex.getStatusCode(), message);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Object> responseStatusException(ResponseStatusException ex) {
+        logger.error("ResponseStatusException 'reason':'{}'", ex.getMessage());
+        return handleCustomException(ex.getStatus(), ex.getMessage());
     }
 
     private ResponseEntity<Object> handleCustomException(HttpStatus status, String message) {
