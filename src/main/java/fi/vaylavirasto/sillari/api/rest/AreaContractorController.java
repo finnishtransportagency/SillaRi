@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -45,7 +47,6 @@ public class AreaContractorController {
     public ResponseEntity<List<RouteModel>> getRoutes(@RequestParam String permitNumber) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getRoutes");
         try {
-            List<PermitModel> permitsAllVersions = permitService.getPermitAllVersionsByPermitNumber(permitNumber);
             PermitModel permitCurrentVersion = permitService.getPermitCurrentVersionByPermitNumber(permitNumber);
             if(permitCurrentVersion.getCustomerUsesSillari()) {
                 throw new AccessDeniedException("Not own list allowed permit.");
@@ -58,14 +59,18 @@ public class AreaContractorController {
                 routes.forEach(r -> routesWithBridgesAndSupervisions.add(routeService.getRouteWithSupervisions(r.getId())));
                 SillariUser user = uiService.getSillariUser();
                 //filter out routes that don't have any bridge with user contract business id
-                List<RouteModel> contractBridgeHavingRoutess = routesWithBridgesAndSupervisions.stream().filter(r -> r.getRouteBridges().stream().anyMatch(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId()))).collect(Collectors.toList());
+                List<RouteModel> contractBridgeHavingRoutes = routesWithBridgesAndSupervisions.stream().filter(r -> r.getRouteBridges().stream().anyMatch(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId()))).collect(Collectors.toList());
+
 
                 //remove "duplicate bridges"
-                // "duplicate" means same bridge on same route; this means different versions and different transerr numbers.
+                // "duplicate" means same bridge on the same route; this means different transfer numbers.
+               routesWithBridgesAndSupervisions.forEach(r->{
+                   Set<String> uniqueBridgeIdentifiers = new HashSet<>(r.getRouteBridges().size());
+                   r.setRouteBridges(r.getRouteBridges().stream().filter(b->uniqueBridgeIdentifiers.add(b.getBridge().getIdentifier())).collect(Collectors.toList()));
+               });
 
 
-
-                return ResponseEntity.ok(contractBridgeHavingRoutess);
+                return ResponseEntity.ok(contractBridgeHavingRoutes);
             }
         } finally {
             serviceMetric.end();

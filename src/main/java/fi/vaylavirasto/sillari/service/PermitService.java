@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -158,23 +157,18 @@ public class PermitService {
     }
 
     public List<RouteModel> getRoutes(String permitNumber) {
-        List<PermitModel> permits = getPermitAllVersionsByPermitNumber(permitNumber);
-        List<RouteModel> routeModels = new ArrayList<>();
-        if(permits!=null) {
-            permits.forEach(p->routeModels.addAll(routeRepository.getRoutesByPermitId(p.getId())));
+        PermitModel permit = getPermitCurrentVersionByPermitNumber(permitNumber);
+        if(permit!=null) {
+            return routeRepository.getRoutesByPermitId(permit.getId());
         }
         else{
             return null;
         }
-        return routeModels;
     }
 
     public PermitModel getPermitCurrentVersionByPermitNumber(String permitNumber) {
         return permitRepository.getPermitCurrentVersionByPermitNumber(permitNumber);
     }
 
-    public List<PermitModel> getPermitAllVersionsByPermitNumber(String permitNumber) {
-        return permitRepository.getPermitsByPermitNumber(permitNumber);
-    }
 }
 
