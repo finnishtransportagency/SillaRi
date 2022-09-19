@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -48,30 +46,13 @@ public class AreaContractorController {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getRoutes");
         try {
             PermitModel permitCurrentVersion = permitService.getPermitCurrentVersionByPermitNumber(permitNumber);
-            if(permitCurrentVersion.getCustomerUsesSillari()) {
+            if (permitCurrentVersion.getCustomerUsesSillari()) {
                 throw new AccessDeniedException("Not own list allowed permit.");
             }
-            List<RouteModel> routes = permitService.getRoutes(permitNumber);
-            if (routes == null) {
-                return null;
-            } else {
-                List<RouteModel> routesWithBridgesAndSupervisions = new ArrayList<>();
-                routes.forEach(r -> routesWithBridgesAndSupervisions.add(routeService.getRouteWithSupervisions(r.getId())));
-                SillariUser user = uiService.getSillariUser();
-                //filter out routes that don't have any bridge with user contract business id
-                List<RouteModel> contractBridgeHavingRoutes = routesWithBridgesAndSupervisions.stream().filter(r -> r.getRouteBridges().stream().anyMatch(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId()))).collect(Collectors.toList());
+            SillariUser user = uiService.getSillariUser();
+            List<RouteModel> routes = permitService.getRoutesForOwnList(permitNumber, user);
+            return ResponseEntity.ok(routes != null ? routes : new ArrayList<>());
 
-
-                //remove "duplicate bridges"
-                // "duplicate" means same bridge on the same route; this means different transfer numbers.
-               routesWithBridgesAndSupervisions.forEach(r->{
-                   Set<String> uniqueBridgeIdentifiers = new HashSet<>(r.getRouteBridges().size());
-                   r.setRouteBridges(r.getRouteBridges().stream().filter(b->uniqueBridgeIdentifiers.add(b.getBridge().getIdentifier())).collect(Collectors.toList()));
-               });
-
-
-                return ResponseEntity.ok(contractBridgeHavingRoutes);
-            }
         } finally {
             serviceMetric.end();
         }
