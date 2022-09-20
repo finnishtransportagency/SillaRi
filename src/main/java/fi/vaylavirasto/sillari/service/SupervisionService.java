@@ -419,4 +419,30 @@ public class SupervisionService {
 
 
     }
+
+    /*Created AUTO_PLANNED -status supervisions for permits with customerUsesSillari = false
+     * These are visible on area contractor UI.
+     * AUTO_PLANNED -supervision are not connected to route transports.
+     * TODO what todo with transport number?
+     *
+     * Lets try to make a "seed" supervision for all unique permit-route-bridgeIdentifier (that means transnum independent)
+     * Maybe point it to
+     * */
+
+    void createAreaContractorAutoplannedSupervisions2(Integer permitId) {
+        List<RouteModel> routes = routeRepository.getRoutesByPermitId(permitId);
+        routes.forEach(r -> {
+            List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(r.getId());
+            routeBridges.forEach(rb -> {
+                SupervisionModel supervision = new SupervisionModel();
+                supervision.setRouteBridgeId(rb.getId());
+                supervision.setConformsToPermit(false);
+                supervision.setSupervisorCompany(rb.getContractBusinessId());
+                supervision.setSupervisorType(SupervisorType.AREA_CONTRACTOR);
+                createSupervision(supervision, "SILLARI_SYSTEM", SupervisionStatusType.AUTO_PLANNED);
+            });
+        });
+
+
+    }
 }

@@ -171,7 +171,7 @@ const BridgeDetailFooter = ({ permit, supervision, username, isLoadingSupervisio
           disabled={!username || !supervisionId || !supervisionPending}
           onClick={() => setConformsToPermit(!conformsToPermit)}
         />
-        <IonLabel>{t("bridge.conformsToPermit") + username + supervisionId + supervisionPending}</IonLabel>
+        <IonLabel>{t("bridge.conformsToPermit")}</IonLabel>
       </IonItem>
 
       <IonGrid>
