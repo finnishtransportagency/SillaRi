@@ -62,6 +62,14 @@ public class SupervisionRepository {
                 .fetch(new SupervisionMapper());
     }
 
+    public List<SupervisionModel> getTemplateSupervisionsByRouteBridgeId(Integer routeBridgeId) {
+        return dsl.select().from(TableAlias.supervision)
+                .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
+                .and(TableAlias.supervision.)
+                .orderBy(TableAlias.supervision.ROW_CREATED_TIME)
+                .fetch(new SupervisionMapper());
+    }
+
 
     public List<SupervisionModel> getSupervisionsBySupervisor(String businessId) {
         return dsl.select().from(TableAlias.supervision)

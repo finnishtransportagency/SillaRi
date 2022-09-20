@@ -54,7 +54,6 @@ public class RouteService {
             route.setGeojson(routeGeoJson);
 
             List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(routeId);
-logger.debug("hello: " + routeBridges);
             if (routeBridges != null) {
                 routeBridges.forEach(routeBridge -> {
                     List<SupervisionModel> supervisionModels = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
