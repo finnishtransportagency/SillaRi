@@ -56,7 +56,7 @@ public class RouteService {
             List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(routeId);
             if (routeBridges != null) {
                 routeBridges.forEach(routeBridge -> {
-                    List<SupervisionModel> supervisionModels = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
+                    List<SupervisionModel> supervisionModels = supervisionRepository.getTemplateSupervisionsByRouteBridgeId(routeBridge.getId());
                     routeBridge.getSupervisions().addAll(supervisionModels);
                 });
             }

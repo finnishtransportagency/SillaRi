@@ -6,6 +6,7 @@ import fi.vaylavirasto.sillari.mapper.SupervisionMapper;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.model.SupervisorType;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,7 +66,7 @@ public class SupervisionRepository {
     public List<SupervisionModel> getTemplateSupervisionsByRouteBridgeId(Integer routeBridgeId) {
         return dsl.select().from(TableAlias.supervision)
                 .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
-                .and(TableAlias.supervision.)
+                .and(TableAlias.supervision.SUPERVISOR_TYPE.eq(String.valueOf(SupervisorType.AREA_CONTRACTOR_TEMPLATE)))
                 .orderBy(TableAlias.supervision.ROW_CREATED_TIME)
                 .fetch(new SupervisionMapper());
     }
