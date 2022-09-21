@@ -125,7 +125,7 @@ public class SupervisionService {
 
     public List<SupervisionModel> getSupervisionsOfAreaContractorSupervisor(SillariUser user) {
         List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsOfAreaContractor(user.getBusinessId());
-                for (SupervisionModel supervision : supervisions) {
+        for (SupervisionModel supervision : supervisions) {
             // Sets also current status and status timestamps
             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
             supervision.setRouteTransport(routeTransportRepository.getRouteTransportById(supervision.getRouteTransportId()));
@@ -165,10 +165,11 @@ public class SupervisionService {
 
     // Creates new supervision and adds a new status
     // The timestamp in PLANNED is the current time, not planned_time which can be updated later.
-    public void createSupervision(SupervisionModel supervisionModel, String username, SupervisionStatusType supervisionStatusType) {
+    public Integer createSupervision(SupervisionModel supervisionModel, String username, SupervisionStatusType supervisionStatusType) {
         Integer supervisionId = supervisionRepository.createSupervision(supervisionModel);
         SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, supervisionStatusType, OffsetDateTime.now(), username);
         supervisionStatusRepository.insertSupervisionStatus(status);
+        return supervisionId;
     }
 
     // Updates supervision fields (supervisors, planned time)
@@ -397,26 +398,19 @@ public class SupervisionService {
         return companyRepository.getCompanyByRouteBridgeId(supervision.getRouteBridgeId());
     }
 
-    /*Created AUTO_PLANNED -status supervisions for permits with customerUsesSillari = false
-    * These are visible on area contractor UI.
-    * AUTO_PLANNED -supervision are not connected to route transports.
-    * TODO what todo with transport number?*/
 
-    void createAreaContractorAutoplannedSupervisions(Integer permitId) {
-        List<RouteModel> routes = routeRepository.getRoutesByPermitId(permitId);
-        routes.forEach(r -> {
-            List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(r.getId());
-            routeBridges.forEach(rb -> {
-                SupervisionModel supervision = new SupervisionModel();
-                supervision.setRouteBridgeId(rb.getId());
-                supervision.setConformsToPermit(false);
-                supervision.setSupervisorCompany(rb.getContractBusinessId());
-                supervision.setSupervisorType(SupervisorType.AREA_CONTRACTOR);
-                createSupervision(supervision, "SILLARI_SYSTEM", SupervisionStatusType.AUTO_PLANNED);
-            });
-        });
-        createAreaContractorAutoplannedTemplateSupervisions(routes);
+    /*Created AUTO_PLANNED -status supervision for permits with customerUsesSillari = false
+     * These are visible on area contractor UI.
+     * AUTO_PLANNED -supervision are not connected to route transports.
+     * TODO what todo with transport number?*/
 
+   public Integer createAreaContractorAutoplannedSupervision(Integer routeBridgeTemplateId, String contractBusinessId) {
+        SupervisionModel supervision = new SupervisionModel();
+        supervision.setRouteBridgeId(routeBridgeTemplateId);
+        supervision.setConformsToPermit(false);
+        supervision.setSupervisorCompany(contractBusinessId);
+        supervision.setSupervisorType(SupervisorType.AREA_CONTRACTOR);
+        return createSupervision(supervision, "SILLARI_SYSTEM", SupervisionStatusType.AUTO_PLANNED);
     }
 
     /*Created AUTO_PLANNED -status supervisions for permits with customerUsesSillari = false
@@ -433,7 +427,7 @@ public class SupervisionService {
         routes.forEach(r -> {
             List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(r.getId());
             Set<String> uniqueBridgeIdentifiers = new HashSet<>(r.getRouteBridges().size());
-            List<RouteBridgeModel>  uniqueRouteBridges = routeBridges.stream().filter(b -> uniqueBridgeIdentifiers.add(b.getBridge().getIdentifier())).collect(Collectors.toList());
+            List<RouteBridgeModel> uniqueRouteBridges = routeBridges.stream().filter(b -> uniqueBridgeIdentifiers.add(b.getBridge().getIdentifier())).collect(Collectors.toList());
 
 
             uniqueRouteBridges.forEach(rb -> {

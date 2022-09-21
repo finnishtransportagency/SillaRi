@@ -83,6 +83,19 @@ public class AreaContractorController {
         }
     }
 
+    @Operation(summary = "Initiate own list supervision")
+    @PostMapping(value = "/initiateSupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> initiateSupervision(@RequestParam Integer routeBridgeTemplateId, @RequestParam String contractBusinessId,@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startTime) {
+        ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
+        try {
+            var supervisionId = supervisionService.createAreaContractorAutoplannedSupervision(routeBridgeTemplateId, contractBusinessId);
+                     return ResponseEntity.ok().body(supervisionId != null ? supervisionId : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
 
     /**
      * @deprecated, not needed because SupervisionController/startSupervision

@@ -96,7 +96,7 @@ public class LeluService {
 
         // If no "uses sillari" info from Lelu post or it is false -> handle as area contractor supervised permit
         if (permitModel.getCustomerUsesSillari() == null || !permitModel.getCustomerUsesSillari().booleanValue()) {
-            supervisionService.createAreaContractorAutoplannedSupervisions(permitModelId);
+            //RouteBridgei:stä tehdään (normi kuljetuskertaisten lisäksi) "templaatti"routeBridge joka on kuljetuskertariippumaton (transportNumber =-1)
         }
 
         response.setPermitId(permitModelId);
