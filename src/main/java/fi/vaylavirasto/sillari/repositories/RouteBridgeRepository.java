@@ -65,7 +65,7 @@ public class RouteBridgeRepository {
         return dsl.select().from(TableAlias.routeBridge)
                 .leftJoin(TableAlias.bridge).on(TableAlias.bridge.ID.eq(TableAlias.routeBridge.BRIDGE_ID))
                 .where(TableAlias.routeBridge.ROUTE_ID.eq(routeId))
-                .and(TableAlias.routeBridge.TRANSPORT_NUMBER.eq(transportNumber))
+                .and(not(TableAlias.routeBridge.TRANSPORT_NUMBER.eq(-1)))
                 .and(TableAlias.bridge.IDENTIFIER.eq(bridgeIdentifier))
                 .and(notExists(selectOne()
                         .from(TableAlias.supervision)
