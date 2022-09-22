@@ -88,16 +88,18 @@ public class LeluService {
         Integer companyId = getOrCreateCompany(permitModel.getCompany());
         permitModel.setCompanyId(companyId);
 
+        // If no "uses sillari" info from Lelu post or it is false -> handle as area contractor supervised permit
+        if (permitModel.getCustomerUsesSillari() == null || !permitModel.getCustomerUsesSillari().booleanValue()) {
+            //RouteBridgei:stä tehdään (normi kuljetuskertaisten lisäksi) "templaatti"routeBridge joka on kuljetuskertariippumaton (transportNumber =-1)
+            produceTemplateRouteBridges(permitModel.getRoutes());
+        }
+
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
         produceBridgeDataForRouteBridges(permitModel.getRoutes());
 
         // Insert new permit and all child records
         Integer permitModelId = permitRepository.createPermit(permitModel);
 
-        // If no "uses sillari" info from Lelu post or it is false -> handle as area contractor supervised permit
-        if (permitModel.getCustomerUsesSillari() == null || !permitModel.getCustomerUsesSillari().booleanValue()) {
-            //RouteBridgei:stä tehdään (normi kuljetuskertaisten lisäksi) "templaatti"routeBridge joka on kuljetuskertariippumaton (transportNumber =-1)
-        }
 
         response.setPermitId(permitModelId);
         return response;
@@ -162,6 +164,19 @@ public class LeluService {
             companyId = companyRepository.createCompany(companyModel);
         }
         return companyId;
+    }
+
+
+    //RouteBridgei:stä tehdään (normi kuljetuskertaisten lisäksi) "templaatti"routeBridge joka on kuljetuskertariippumaton (transportNumber =-1)
+    private void produceTemplateRouteBridges(List<RouteModel> routes) {
+        for (RouteModel route : routes) {
+
+            Set<String> uniqueBridgeIdentifiers = new HashSet<>(route.getRouteBridges().size());
+            List<RouteBridgeModel> templateRouteBridges = route.getRouteBridges().stream().filter(b -> uniqueBridgeIdentifiers.add(b.getBridge().getIdentifier())).map(routeBridgeModel -> new RouteBridgeModel(routeBridgeModel, -1)).collect(Collectors.toList());
+
+            route.getRouteBridges().addAll(templateRouteBridges);
+
+        }
     }
 
 

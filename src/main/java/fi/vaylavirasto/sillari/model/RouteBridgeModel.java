@@ -24,4 +24,21 @@ public class RouteBridgeModel extends BaseModel {
     // Parents
     private BridgeModel bridge;
     private RouteModel route;
+
+    public RouteBridgeModel() {
+    }
+
+    public RouteBridgeModel(RouteBridgeModel from, Integer transportNumber ) {
+        this.transportNumber = transportNumber;
+
+        this.routeId = from.getRouteId();
+        this.bridgeId = from.getBridgeId();
+        this.ordinal = from.getOrdinal();
+        this.crossingInstruction = from.getCrossingInstruction();
+        this.contractNumber = from.getContractNumber();
+        this.contractBusinessId = from.getContractBusinessId();
+        this.supervisions = from.getSupervisions();
+        this.bridge = from.getBridge();
+        this.route = from.getRoute();
+    }
 }
