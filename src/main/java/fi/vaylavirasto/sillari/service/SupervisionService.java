@@ -23,8 +23,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 @Service
 public class SupervisionService {
@@ -413,33 +414,4 @@ public class SupervisionService {
         return createSupervision(supervision, "SILLARI_SYSTEM", SupervisionStatusType.AUTO_PLANNED);
     }
 
-    /*Created AUTO_PLANNED -status supervisions for permits with customerUsesSillari = false
-     * These are visible on area contractor UI.
-     * AUTO_PLANNED -supervision are not connected to route transports.
-     * TODO what todo with transport number?
-     *
-     * Lets try to make a "template" supervision for all unique permit-route-bridgeIdentifier (that means transnum independent)
-     * Template supervisiosn is waht is shown and started from own list
-     * When supervision is started an actual supervision is pickeed/created by template
-     * */
-
-    void createAreaContractorAutoplannedTemplateSupervisions(List<RouteModel> routes) {
-        routes.forEach(r -> {
-            List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(r.getId());
-            Set<String> uniqueBridgeIdentifiers = new HashSet<>(r.getRouteBridges().size());
-            List<RouteBridgeModel> uniqueRouteBridges = routeBridges.stream().filter(b -> uniqueBridgeIdentifiers.add(b.getBridge().getIdentifier())).collect(Collectors.toList());
-
-
-            uniqueRouteBridges.forEach(rb -> {
-                SupervisionModel supervision = new SupervisionModel();
-                supervision.setRouteBridgeId(rb.getId());
-                supervision.setConformsToPermit(false);
-                supervision.setSupervisorCompany(rb.getContractBusinessId());
-                supervision.setSupervisorType(SupervisorType.AREA_CONTRACTOR_TEMPLATE);
-                createSupervision(supervision, "SILLARI_SYSTEM", SupervisionStatusType.AUTO_PLANNED);
-            });
-        });
-
-
-    }
 }
