@@ -46,17 +46,17 @@ public class RouteService {
     }
 
 
-    public RouteModel getRouteWithSupervisions(Integer routeId) {
+    public RouteModel getRouteWithSupervisionsForOwnList(Integer routeId) {
         RouteModel route = routeRepository.getRoute(routeId);
 
         if (route != null) {
             String routeGeoJson = routeRepository.getRouteGeoJson(routeId);
             route.setGeojson(routeGeoJson);
 
-            List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(routeId);
+            List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(routeId, -1);
             if (routeBridges != null) {
                 routeBridges.forEach(routeBridge -> {
-                    List<SupervisionModel> supervisionModels = supervisionRepository.getTemplateSupervisionsByRouteBridgeId(routeBridge.getId());
+                    List<SupervisionModel> supervisionModels = supervisionRepository.getAreaContractorSupervisionsByRouteBridgeId(routeBridge.getId());
                     routeBridge.getSupervisions().addAll(supervisionModels);
                 });
             }

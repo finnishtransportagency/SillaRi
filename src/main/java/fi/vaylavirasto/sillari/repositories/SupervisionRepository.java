@@ -63,7 +63,7 @@ public class SupervisionRepository {
                 .fetch(new SupervisionMapper());
     }
 
-    public List<SupervisionModel> getTemplateSupervisionsByRouteBridgeId(Integer routeBridgeId) {
+    public List<SupervisionModel> getAreaContractorSupervisionsByRouteBridgeId(Integer routeBridgeId) {
         return dsl.select().from(TableAlias.supervision)
                 .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
                 .and(TableAlias.supervision.SUPERVISOR_TYPE.eq(String.valueOf(SupervisorType.AREA_CONTRACTOR_TEMPLATE)))
