@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SupervisionService {
@@ -423,7 +421,21 @@ public class SupervisionService {
         RouteBridgeModel templateRouteBridge = supervision.getRouteBridge();
         templateRouteBridge.getBridge().getIdentifier();
         templateRouteBridge.getRouteId();
-        routeBridgeRepository.getRouteBridgesWithNoSupervisions(templateRouteBridge.getRouteId(),templateRouteBridge.getBridge().getIdentifier());
+
+        //supervisioita is only on the tempalte reoutebtrridege and thosse added earlier here
+        List<RouteBridgeModel> availableRouteBridges = routeBridgeRepository.getRouteBridgesWithNoSupervisions(templateRouteBridge.getRouteId(),templateRouteBridge.getBridge().getIdentifier());
+        Optional<RouteBridgeModel> selectedRouteBridge = availableRouteBridges.stream().min(Comparator.comparing(RouteBridgeModel::getTransportNumber));
+
+        if(selectedRouteBridge.isPresent()){
+            supervision.setRouteBridge(selectedRouteBridge.get());
+        }else{
+           /* b) jos on kaikki lelusta saadut routeBridget eri transportNumber:eilla käytetty luodaan uusi ja lisätään jolle transportNumber = max(transportNumber) + 1,
+            näille routeBridge:eille laitetaan kantaan uuteen boolean kenttään MAX_TRANSPORTS_EXCEEDED = true. */
+            RouteBridgeModel extraRouteBridge = new RouteBridgeModel(templateRouteBridge, null);
+            supervision.setRouteBridge(extraRouteBridge);
+        }
+
+        supervisionRepository.updateSupervision(supervision);
 
     }
 }
