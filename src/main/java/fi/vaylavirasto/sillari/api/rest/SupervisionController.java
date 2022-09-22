@@ -246,6 +246,10 @@ public class SupervisionController {
                 supervisionInputs.forEach(input -> {
                     if (permitUsesSillari(input.getSupervisionId())) {
                         checkTransportCodeMatches(user, input.getRouteTransportId(), input.getTransportCode());
+                    }else{
+
+                        supervisionService.attachSupervisionToTransportNumberedRouteBridge(input.getSupervisionId());
+
                     }
                     supervisionService.completeSupervision(input.getSupervisionId(), completeTime, user);
                 });

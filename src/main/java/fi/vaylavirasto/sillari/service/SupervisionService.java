@@ -405,7 +405,7 @@ public class SupervisionService {
      * AUTO_PLANNED -supervision are not connected to route transports.
      * TODO what todo with transport number?*/
 
-   public Integer createAreaContractorAutoplannedSupervision(Integer routeBridgeTemplateId, String contractBusinessId) {
+    public Integer createAreaContractorAutoplannedSupervision(Integer routeBridgeTemplateId, String contractBusinessId) {
         SupervisionModel supervision = new SupervisionModel();
         supervision.setRouteBridgeId(routeBridgeTemplateId);
         supervision.setConformsToPermit(false);
@@ -414,4 +414,16 @@ public class SupervisionService {
         return createSupervision(supervision, "SILLARI_SYSTEM", SupervisionStatusType.AUTO_PLANNED);
     }
 
+    /*
+    a) supervision linkataan oikeaan routeBridgeen eli valiten pienimmällä saatavalla olevalla transportNumber:illa oleva routeBridge
+    b) jos on kaikki lelusta saadut routeBridget eri transportNumber:eilla käytetty luodaan uusi ja lisätään jolle transportNumber = max(transportNumber) + 1,
+        näille routeBridge:eille laitetaan kantaan uuteen boolean kenttään MAX_TRANSPORTS_EXCEEDED = true. */
+    public void attachSupervisionToTransportNumberedRouteBridge(Integer supervisionId) {
+        SupervisionModel supervision = getSupervision(supervisionId, true, false);
+        RouteBridgeModel templateRouteBridge = supervision.getRouteBridge();
+        templateRouteBridge.getBridge().getIdentifier();
+        templateRouteBridge.getRouteId();
+        routeBridgeRepository.getRouteBridgesWithNoSupervisions(templateRouteBridge.getRouteId(),templateRouteBridge.getBridge().getIdentifier());
+
+    }
 }

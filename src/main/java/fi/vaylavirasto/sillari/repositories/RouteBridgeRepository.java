@@ -13,6 +13,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 
+import static org.jooq.impl.DSL.notExists;
+import static org.jooq.impl.DSL.selectOne;
+
 @Repository
 public class RouteBridgeRepository {
     @Autowired
@@ -56,6 +59,18 @@ public class RouteBridgeRepository {
                 .where(TableAlias.routeBridge.ROUTE_ID.in(routeIds))
                 .orderBy(TableAlias.routeBridge.TRANSPORT_NUMBER, TableAlias.routeBridge.ORDINAL)
                 .fetchGroups(RouteBridgeRecord::getRouteId, new RouteBridgeMapper());
+    }
+
+    public List<RouteBridgeModel> getRouteBridgesWithNoSupervisions(Integer routeId, String bridgeIdentifier) {
+        return dsl.select().from(TableAlias.routeBridge)
+                .leftJoin(TableAlias.bridge).on(TableAlias.bridge.ID.eq(TableAlias.routeBridge.BRIDGE_ID))
+                .where(TableAlias.routeBridge.ROUTE_ID.eq(routeId))
+                .and(TableAlias.routeBridge.TRANSPORT_NUMBER.eq(transportNumber))
+                .and(TableAlias.bridge.IDENTIFIER.eq(bridgeIdentifier))
+                .and(notExists(selectOne()
+                        .from(TableAlias.supervision)
+                        .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))))
+                .fetch(this::mapRouteBridgeRecordWithBridge);
     }
 
     private RouteBridgeModel mapRouteBridgeRecordWithBridge(Record record) {
