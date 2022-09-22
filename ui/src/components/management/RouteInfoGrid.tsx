@@ -139,7 +139,7 @@ const RouteInfoGrid = ({
                       })}
                     selectedValue={selectedRouteId}
                     onChange={(routeId) => selectRoute(routeId as number)}
-                    disabled={!!routeTransportId} // Prevent changing route when transport has been saved
+                    disabled={!!routeTransportId || plannedDepartureTime == null} // Prevent changing route when transport has been saved
                   />
                 ) : (
                   <IonText>{selectedRouteName}</IonText>
