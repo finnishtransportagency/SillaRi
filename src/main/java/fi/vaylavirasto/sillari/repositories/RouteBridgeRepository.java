@@ -101,14 +101,16 @@ public class RouteBridgeRepository {
                     TableAlias.routeBridge.CROSSING_INSTRUCTION,
                     TableAlias.routeBridge.CONTRACT_NUMBER,
                     TableAlias.routeBridge.CONTRACT_BUSINESS_ID,
-                    TableAlias.routeBridge.TRANSPORT_NUMBER)
+                    TableAlias.routeBridge.TRANSPORT_NUMBER,
+                    TableAlias.routeBridge.MAX_TRANSPORTS_EXCEEDED)
                     .values(extraRouteBridge.getRouteId(),
                             extraRouteBridge.getBridgeId(),
                             extraRouteBridge.getOrdinal(),
                             extraRouteBridge.getCrossingInstruction(),
                             extraRouteBridge.getContractNumber(),
                             extraRouteBridge.getContractBusinessId(),
-                            transportNumber)
+                            transportNumber,
+                            extraRouteBridge.getMaxTransportsExceeded())
                     .returningResult(TableAlias.routeBridge.ID)
                     .fetchOne(); // Execute and return zero or one record;
             Integer routeBridgeId = routeBridgeIdResult != null ? routeBridgeIdResult.value1() : null;
