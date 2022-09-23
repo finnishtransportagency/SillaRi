@@ -88,7 +88,7 @@ public class RouteBridgeRepository {
 
 
     public Integer insertExtraRouteBridge(RouteBridgeModel extraRouteBridge) {
-        dsl.transactionResult(configuration -> {
+        return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
             Integer transportNumber = extraRouteBridge.getTransportNumber();
             if (transportNumber == null) {
@@ -109,7 +109,7 @@ public class RouteBridgeRepository {
                             extraRouteBridge.getContractNumber(),
                             extraRouteBridge.getContractBusinessId(),
                             transportNumber)
-                    .execute().returningResult(TableAlias.routeBridge.ID)
+                    .returningResult(TableAlias.routeBridge.ID)
                     .fetchOne(); // Execute and return zero or one record;
             Integer routeBridgeId = routeBridgeIdResult != null ? routeBridgeIdResult.value1() : null;
             return routeBridgeId;
