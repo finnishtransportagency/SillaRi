@@ -220,6 +220,17 @@ public class SupervisionRepository {
         });
     }
 
+    public void updateSupervisionsRouteBridge(Integer supervisionId, Integer routeBridgeId) {
+
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+            ctx.update(TableAlias.supervision)
+                    .set(TableAlias.supervision.ROUTE_BRIDGE_ID, routeBridgeId)
+                    .where(TableAlias.supervision.ID.eq(supervisionId))
+                    .execute();
+        });
+    }
+
     public void deleteSupervision(SupervisionModel supervisionModel) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
@@ -271,4 +282,6 @@ public class SupervisionRepository {
                         )))
                 .fetch(new SupervisionMapper());
     }
+
+
 }

@@ -427,15 +427,19 @@ public class SupervisionService {
         Optional<RouteBridgeModel> selectedRouteBridge = availableRouteBridges.stream().min(Comparator.comparing(RouteBridgeModel::getTransportNumber));
 
         if(selectedRouteBridge.isPresent()){
-            supervision.setRouteBridge(selectedRouteBridge.get());
+            //supervision.setRouteBridge(selectedRouteBridge.get());
+            supervisionRepository.updateSupervisionsRouteBridge(supervision.getId(), selectedRouteBridge.get().getId());
         }else{
            /* b) jos on kaikki lelusta saadut routeBridget eri transportNumber:eilla käytetty luodaan uusi ja lisätään jolle transportNumber = max(transportNumber) + 1,
             näille routeBridge:eille laitetaan kantaan uuteen boolean kenttään MAX_TRANSPORTS_EXCEEDED = true. */
             RouteBridgeModel extraRouteBridge = new RouteBridgeModel(templateRouteBridge, null);
-            supervision.setRouteBridge(extraRouteBridge);
+            extraRouteBridge.setMaxTransportsExceeded(true);
+            //supervision.setRouteBridge(extraRouteBridge);
+            Integer extraRouteBridgeId = routeBridgeRepository.insertExtraRouteBridge(extraRouteBridge);
+            supervisionRepository.updateSupervisionsRouteBridge(supervision.getId(), extraRouteBridgeId);
         }
 
-        supervisionRepository.updateSupervision(supervision);
+
 
     }
 }

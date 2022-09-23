@@ -20,6 +20,7 @@ public class RouteBridgeModel extends BaseModel {
     private String contractBusinessId;
     private Integer transportNumber;
     private List<SupervisionModel> supervisions = new ArrayList<>();
+    private Boolean maxTransportsExceeded = false;
 
     // Parents
     private BridgeModel bridge;

@@ -3,10 +3,13 @@ package fi.vaylavirasto.sillari.repositories;
 import fi.vaylavirasto.sillari.mapper.BridgeMapper;
 import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
+import fi.vaylavirasto.sillari.model.Sequences;
 import fi.vaylavirasto.sillari.model.tables.records.RouteBridgeRecord;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -84,4 +87,32 @@ public class RouteBridgeRepository {
     }
 
 
+    public Integer insertExtraRouteBridge(RouteBridgeModel extraRouteBridge) {
+        dsl.transactionResult(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+            Integer transportNumber = extraRouteBridge.getTransportNumber();
+            if (transportNumber == null) {
+                transportNumber = ctx.nextval(Sequences.SUPERVISION_EXTRA_TRANSPORTNUMBER_SEQ).intValue();
+            }
+            Record1<Integer> routeBridgeIdResult = ctx.insertInto(TableAlias.routeBridge,
+                    TableAlias.routeBridge.ROUTE_ID,
+                    TableAlias.routeBridge.BRIDGE_ID,
+                    TableAlias.routeBridge.ORDINAL,
+                    TableAlias.routeBridge.CROSSING_INSTRUCTION,
+                    TableAlias.routeBridge.CONTRACT_NUMBER,
+                    TableAlias.routeBridge.CONTRACT_BUSINESS_ID,
+                    TableAlias.routeBridge.TRANSPORT_NUMBER)
+                    .values(extraRouteBridge.getRouteId(),
+                            extraRouteBridge.getBridgeId(),
+                            extraRouteBridge.getOrdinal(),
+                            extraRouteBridge.getCrossingInstruction(),
+                            extraRouteBridge.getContractNumber(),
+                            extraRouteBridge.getContractBusinessId(),
+                            transportNumber)
+                    .execute().returningResult(TableAlias.routeBridge.ID)
+                    .fetchOne(); // Execute and return zero or one record;
+            Integer routeBridgeId = routeBridgeIdResult != null ? routeBridgeIdResult.value1() : null;
+            return routeBridgeId;
+        });
+    }
 }
