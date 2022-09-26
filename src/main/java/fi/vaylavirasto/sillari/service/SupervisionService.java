@@ -413,16 +413,18 @@ public class SupervisionService {
     }
 
     /*
-    a) supervision linkataan oikeaan routeBridgeen eli valiten pienimmällä saatavalla olevalla transportNumber:illa oleva routeBridge
-    b) jos on kaikki lelusta saadut routeBridget eri transportNumber:eilla käytetty luodaan uusi ja lisätään jolle transportNumber = max(transportNumber) + 1,
-        näille routeBridge:eille laitetaan kantaan uuteen boolean kenttään MAX_TRANSPORTS_EXCEEDED = true. */
+     This is used for area contractor supervisions (permit.customerUsesSillari = false).
+     Those supervisions are without "real" route transport up to this point; becuse transport number handling happens here.
+     a) supervision is linked to the right routeBridge, choosing the routeBridge with the lowest available transportNumber
+     b) if all the routeBridges obtained from Lelu with different transportNumbers have been used, a new one is created and added to which transportNumber = max(transportNumber) + 1,
+         for these routeBridges, a new boolean field MAX_TRANSPORTS_EXCEEDED = true is set.*/
     public void attachSupervisionToTransportNumberedRouteBridge(Integer supervisionId) {
         SupervisionModel supervision = getSupervision(supervisionId, true, false);
         RouteBridgeModel templateRouteBridge = supervision.getRouteBridge();
         templateRouteBridge.getBridge().getIdentifier();
         templateRouteBridge.getRouteId();
 
-        //supervisioita is only on the tempalte reoutebtrridege and thosse added earlier here
+        //Only the template routebridge and those added earlier here have supervisions, so we can filter them out
         List<RouteBridgeModel> availableRouteBridges = routeBridgeRepository.getRouteBridgesWithNoSupervisions(templateRouteBridge.getRouteId(),templateRouteBridge.getBridge().getIdentifier());
         Optional<RouteBridgeModel> selectedRouteBridge = availableRouteBridges.stream().min(Comparator.comparing(RouteBridgeModel::getTransportNumber));
 
@@ -430,8 +432,8 @@ public class SupervisionService {
             //supervision.setRouteBridge(selectedRouteBridge.get());
             supervisionRepository.updateSupervisionsRouteBridge(supervision.getId(), selectedRouteBridge.get().getId());
         }else{
-           /* b) jos on kaikki lelusta saadut routeBridget eri transportNumber:eilla käytetty luodaan uusi ja lisätään jolle transportNumber = max(transportNumber) + 1,
-            näille routeBridge:eille laitetaan kantaan uuteen boolean kenttään MAX_TRANSPORTS_EXCEEDED = true. */
+           /* if all the routeBridges obtained from Lelu with different transportNumbers have been used, a new one is created and added to which transportNumber = max(transportNumber) + 1,
+         for these routeBridges, a new boolean field MAX_TRANSPORTS_EXCEEDED = true is set */
             RouteBridgeModel extraRouteBridge = new RouteBridgeModel(templateRouteBridge, null);
             extraRouteBridge.setMaxTransportsExceeded(true);
             //supervision.setRouteBridge(extraRouteBridge);
