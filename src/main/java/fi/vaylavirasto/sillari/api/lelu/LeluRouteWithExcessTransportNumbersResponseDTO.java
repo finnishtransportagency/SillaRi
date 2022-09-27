@@ -26,5 +26,5 @@ public class LeluRouteWithExcessTransportNumbersResponseDTO {
     private Integer transportCount;
 
     @Schema(description = "List of bridges on the route", required = true)
-    private List<LeluBridgeWithExcessTransportNumbersResponseDTO> bridges;
+    private List<LeluBridgeWithExcessTransportNumbersResponseDTO> routeBridges;
 }

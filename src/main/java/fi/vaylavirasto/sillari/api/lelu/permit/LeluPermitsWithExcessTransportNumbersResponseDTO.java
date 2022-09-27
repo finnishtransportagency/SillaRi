@@ -25,6 +25,4 @@ public class LeluPermitsWithExcessTransportNumbersResponseDTO {
             " - palauttaa listan instansseja [reitti-silta-maksimi ylityskertanumero ] jotta lelu osaa käydä hakemassa nämä ", required = true)
     private List<LeluRouteWithExcessTransportNumbersResponseDTO> routes;
 
-    public LeluPermitsWithExcessTransportNumbersResponseDTO(PermitModel permitModel) {
-    }
 }

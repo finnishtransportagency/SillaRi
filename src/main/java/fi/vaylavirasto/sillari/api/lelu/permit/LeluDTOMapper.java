@@ -94,10 +94,21 @@ public interface LeluDTOMapper {
     })
     LeluSupervisionReportDTO fromModelToDTO(SupervisionReportModel model);
 
+    @Mappings({
+            @Mapping(target = "number", source = "model.number"),
+            @Mapping(target = "version", source = "model.version"),
+            @Mapping(target = "routes", source = "model.routes")
+    })
     LeluPermitsWithExcessTransportNumbersResponseDTO fromModelTODTO(PermitModel model);
 
     LeluRouteWithExcessTransportNumbersResponseDTO fromModelTODTO(RouteModel model);
 
+    @Mappings({
+            @Mapping(target = "oid", source = "model.oid"),
+            @Mapping(target = "identifier", source = "model.identifier"),
+            @Mapping(target = "transportNumberActualMax", source = "model.transportNumber"),
+            @Mapping(target = "name", source = "model.name")
+    })
     LeluBridgeWithExcessTransportNumbersResponseDTO fromModelTODTO(RouteBridgeModel model);
 
 }
