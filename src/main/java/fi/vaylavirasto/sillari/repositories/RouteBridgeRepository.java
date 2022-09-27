@@ -41,9 +41,8 @@ public class RouteBridgeRepository {
 
     public List<RouteBridgeModel> getRouteBridgesWithExcessTransportNumbers() {
         return dsl.select().from(TableAlias.routeBridge)
-                .where(TableAlias.routeBridge.ROUTE_ID.eq(routeId))
-                .and(TableAlias.routeBridge.TableAlias.routeBridge.MAX_TRANSPORTS_EXCEEDED.eq(true))
-                .fetch(this::mapRouteBridgeRecordWithBridge);
+                .where(TableAlias.routeBridge.MAX_TRANSPORTS_EXCEEDED.eq(true))
+                .fetch(new RouteBridgeMapper());
     }
 
     public List<RouteBridgeModel> getRouteBridges(Integer routeId, Integer transportNumber) {
@@ -92,6 +91,8 @@ public class RouteBridgeRepository {
         }
         return routeBridge;
     }
+
+
 
 
     public Integer insertExtraRouteBridge(RouteBridgeModel extraRouteBridge) {
