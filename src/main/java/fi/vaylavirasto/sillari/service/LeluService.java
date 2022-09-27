@@ -1,10 +1,7 @@
 package fi.vaylavirasto.sillari.service;
 
 
-import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
-import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
-import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
+import fi.vaylavirasto.sillari.api.lelu.permit.*;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
@@ -301,4 +298,35 @@ public class LeluService {
 
     }
 
+    public List<LeluPermitsWithExcessTransportNumbersResponseDTO> getPermitsWithExcessTransportNumbers() {
+        List<RouteBridgeModel> routeBridgesWithExcessTransportNumbers = routeBridgeRepository.getRouteBridgesWithExcessTransportNumbers();
+        HashMap<Integer,RouteModel> routemap  = new HashMap<>();
+        HashMap<Integer,PermitModel> permitmap  = new HashMap<>();
+        routeBridgesWithExcessTransportNumbers.forEach(routeBridgeModel -> {
+            RouteModel route = routemap.get(routeBridgeModel.getRouteId());
+            if(route == null) {
+              route = routeRepository.getRoute(routeBridgeModel.getRouteId());
+              routemap.put(route.getId(), route);
+            }
+            route.getRouteBridges().add(routeBridgeModel);
+
+            PermitModel permit = permitmap.get(route.getPermitId());
+            if(permit == null) {
+                permit = permitRepository.getPermit(route.getPermitId());
+                permitmap.put(permit.getId(), permit);
+            }
+            permit.getRoutes().add(route);
+        });
+
+        List<LeluPermitsWithExcessTransportNumbersResponseDTO> permitDTOs = new ArrayList<>();
+
+        permitmap.values().forEach(permitModel -> {
+            LeluPermitsWithExcessTransportNumbersResponseDTO permitDTO = dtoMapper.fromModelTODTO(permitModel);
+            logger.debug("permitDTO: " + permitDTO);
+            permitDTOs.add(permitDTO);
+        });
+        
+        
+        return permitDTOs;
+    }
 }

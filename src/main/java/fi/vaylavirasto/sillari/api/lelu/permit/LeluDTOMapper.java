@@ -1,6 +1,10 @@
 package fi.vaylavirasto.sillari.api.lelu.permit;
 
-import fi.vaylavirasto.sillari.api.lelu.supervision.*;
+import fi.vaylavirasto.sillari.api.lelu.LeluBridgeWithExcessTransportNumbersResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.LeluRouteWithExcessTransportNumbersResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluSupervisionReportDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluSupervisionStatus;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.util.DateMapper;
 import org.mapstruct.Mapper;
@@ -89,5 +93,11 @@ public interface LeluDTOMapper {
             @Mapping(target = "additionalInfo", source = "model.additionalInfo")
     })
     LeluSupervisionReportDTO fromModelToDTO(SupervisionReportModel model);
+
+    LeluPermitsWithExcessTransportNumbersResponseDTO fromModelTODTO(PermitModel model);
+
+    LeluRouteWithExcessTransportNumbersResponseDTO fromModelTODTO(RouteModel model);
+
+    LeluBridgeWithExcessTransportNumbersResponseDTO fromModelTODTO(RouteBridgeModel model);
 
 }

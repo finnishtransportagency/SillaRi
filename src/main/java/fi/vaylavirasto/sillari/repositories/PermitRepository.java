@@ -20,7 +20,8 @@ import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static org.jooq.impl.DSL.*;
+import static org.jooq.impl.DSL.exists;
+import static org.jooq.impl.DSL.select;
 
 @Repository
 public class PermitRepository {
@@ -183,6 +184,17 @@ public class PermitRepository {
 
             return permitId;
         });
+    }
+
+    public List<PermitModel> getPermitsWithExcessTransportNumbers() {
+        return dsl.select().from(TableAlias.permit)
+                .innerJoin(TableAlias.route)
+                .on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
+                .innerJoin(TableAlias.routeBridge)
+                .on(TableAlias.route.ID.eq(TableAlias.routeBridge.ROUTE_ID))
+                .where(TableAlias.routeTransport.ID.eq(routeTransportId))
+                .and(TableAlias.routeBridge.TableAlias.routeBridge.MAX_TRANSPORTS_EXCEEDED.eq(true))
+                .fetch(this::mapPermitRecordWithAxleChartAndDimensions);
     }
 
     private void insertTransportDimensions(DSLContext ctx, PermitModel permitModel) {

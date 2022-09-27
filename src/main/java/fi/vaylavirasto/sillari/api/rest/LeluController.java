@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitsWithExcessTransportNumbersResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -252,6 +254,32 @@ public class LeluController {
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             return leluService.getSupervision(routeId, bridgeIdentifier, transportNumber);
+        } else {
+            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
+        }
+    }
+
+
+    /**
+     * @param apiVersion
+     * @return
+     * @throws APIVersionException
+     */
+    @RequestMapping(value = "/permitsWithExcessTransportNumbers", method = RequestMethod.GET)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Uusi rajapinta SillaRiin jota lelu pollaa 'harvoin' esim 1krt / päivä \n" +
+            " - palauttaa tiedon : luvalla x reitillä y sillalla z ylitetty ylitysmäärien käyttökerrat  \n" +
+            " - palauttaa listan instansseja [reitti-silta-maksimi ylityskertanumero ] jotta lelu osaa käydä hakemassa nämä ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200 OK", description = ""),
+            @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
+    })
+    public List<LeluPermitsWithExcessTransportNumbersResponseDTO> getPermitsWithExcessTransportNumbers(@RequestParam Long routeId, @RequestParam String bridgeIdentifier, @RequestParam Integer transportNumber, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluRouteNotFoundException {
+        logger.debug("Lelu getSupervision " + routeId);
+
+        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
+            return leluService.getPermitsWithExcessTransportNumbers();
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
         }
