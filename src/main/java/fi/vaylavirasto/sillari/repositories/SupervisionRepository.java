@@ -115,7 +115,7 @@ public class SupervisionRepository {
 
     public List<SupervisionModel> getFinishedSupervisionsBySupervisor(String businessId) {
         return dsl.select().from(TableAlias.supervision)
-                .innerJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))
+                .leftJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))
                 .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
                 .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
                 .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
