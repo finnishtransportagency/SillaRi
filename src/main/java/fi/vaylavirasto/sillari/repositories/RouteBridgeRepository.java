@@ -3,7 +3,6 @@ package fi.vaylavirasto.sillari.repositories;
 import fi.vaylavirasto.sillari.mapper.BridgeMapper;
 import fi.vaylavirasto.sillari.mapper.RouteBridgeMapper;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
-import fi.vaylavirasto.sillari.model.Sequences;
 import fi.vaylavirasto.sillari.model.tables.records.RouteBridgeRecord;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.jooq.DSLContext;
@@ -16,8 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 
-import static org.jooq.impl.DSL.notExists;
-import static org.jooq.impl.DSL.selectOne;
+import static org.jooq.impl.DSL.*;
 
 @Repository
 public class RouteBridgeRepository {
@@ -101,7 +99,12 @@ public class RouteBridgeRepository {
             DSLContext ctx = DSL.using(configuration);
             Integer transportNumber = extraRouteBridge.getTransportNumber();
             if (transportNumber == null) {
-                transportNumber = ctx.nextval(Sequences.SUPERVISION_EXTRA_TRANSPORTNUMBER_SEQ).intValue();
+                transportNumber = ctx.select(max(TableAlias.routeBridge.TRANSPORT_NUMBER))
+                        .from(TableAlias.routeBridge)
+                        .where(TableAlias.routeBridge.ROUTE_ID.eq(extraRouteBridge.getRouteId()))
+                        .and(TableAlias.routeBridge.BRIDGE_ID.eq(extraRouteBridge.getBridgeId()))
+                        .fetch();
+                transportNumber ++;
             }
             Record1<Integer> routeBridgeIdResult = ctx.insertInto(TableAlias.routeBridge,
                     TableAlias.routeBridge.ROUTE_ID,
