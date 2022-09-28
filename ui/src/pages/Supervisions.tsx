@@ -14,7 +14,7 @@ import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import { groupSupervisionsByPlannedDate, sortSupervisionsByTimeAndBridgeOrder } from "../utils/supervisionUtil";
 import { useHistory, useParams } from "react-router-dom";
-import OwnList from "../components/OwnList";
+import OwnList from "../components/supervisionOwnList/OwnList";
 
 interface SupervisionsProps {
   tabId: string;

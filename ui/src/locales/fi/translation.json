@@ -170,7 +170,13 @@
   "supervisionOwnList": {
     "addButtonLabel": "Lisää valvottavia siltoja",
     "addModal": {
-      "title": "Lisää valvottavia siltoja"
+      "title": "Lisää valvottavia siltoja",
+      "permitNumberInput": {
+        "inputLabel": "Lupanumero",
+        "addPermitNumberButtonLabel": "Lisää lupanumero",
+        "cancelButtonLabel": "Peruuta",
+        "continueButtonLabel": "Jatka"
+      }
     }
   },
   "supervision": {

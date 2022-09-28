@@ -170,7 +170,13 @@
   "supervisionOwnList": {
     "addButtonLabel": "Add bridges",
     "addModal": {
-      "title": "Add bridges"
+      "title": "Add bridges",
+      "permitNumberInput": {
+        "inputLabel": "Permit number",
+        "addPermitNumberButtonLabel": "Add permit number",
+        "cancelButtonLabel": "Cancel",
+        "continueButtonLabel": "Continue"
+      }
     }
   },
   "supervision": {

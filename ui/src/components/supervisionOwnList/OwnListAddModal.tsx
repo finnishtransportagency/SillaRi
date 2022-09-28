@@ -1,8 +1,9 @@
 import React from "react";
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonModal, IonTitle, IonToolbar } from "@ionic/react";
-import "./SentSupervisionReportsAccordion.css";
 import { useTranslation } from "react-i18next";
-import close from "../theme/icons/close_large_white.svg";
+import "./OwnListAddModal.css";
+import PermitNumberInputs from "./PermitNumberInputs";
+import close from "../../theme/icons/close_large_white.svg";
 
 interface OwnListAddModalProps {
   isOpen: boolean;
@@ -24,7 +25,9 @@ const OwnListAddModal = ({ isOpen, closeModal }: OwnListAddModalProps): JSX.Elem
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent>TODO: Lupien lisäys</IonContent>
+      <IonContent class="ion-padding">
+        <PermitNumberInputs cancel={() => closeModal()} />
+      </IonContent>
     </IonModal>
   );
 };
