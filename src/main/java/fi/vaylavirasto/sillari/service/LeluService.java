@@ -315,8 +315,10 @@ public class LeluService {
                 permit = permitRepository.getPermit(route.getPermitId());
                 permitmap.put(permit.getId(), permit);
             }
-            permit.getRoutes().add(route);
+
         });
+
+        permitmap.values().forEach(permitModel -> permitModel.getRoutes().addAll(routemap.values().stream().filter(routeModel -> routeModel.getPermitId().equals(permitModel.getId())).collect(Collectors.toList())));
 
         List<LeluPermitsWithExcessTransportNumbersResponseDTO> permitDTOs = new ArrayList<>();
 
