@@ -103,7 +103,7 @@ public class RouteBridgeRepository {
                         .from(TableAlias.routeBridge)
                         .where(TableAlias.routeBridge.ROUTE_ID.eq(extraRouteBridge.getRouteId()))
                         .and(TableAlias.routeBridge.BRIDGE_ID.eq(extraRouteBridge.getBridgeId()))
-                        .fetch();
+                        .fetch().getValue(0, 0);
                 transportNumber ++;
             }
             Record1<Integer> routeBridgeIdResult = ctx.insertInto(TableAlias.routeBridge,
