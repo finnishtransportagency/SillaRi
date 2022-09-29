@@ -1,6 +1,8 @@
 package fi.vaylavirasto.sillari.service;
 
 
+import fi.vaylavirasto.sillari.api.lelu.LeluBridgeWithExcessTransportNumbersResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.LeluRouteWithExcessTransportNumbersResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.*;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
@@ -320,15 +322,29 @@ public class LeluService {
 
         permitmap.values().forEach(permitModel -> permitModel.getRoutes().addAll(routemap.values().stream().filter(routeModel -> routeModel.getPermitId().equals(permitModel.getId())).collect(Collectors.toList())));
 
+
         List<LeluPermitsWithExcessTransportNumbersResponseDTO> permitDTOs = new ArrayList<>();
 
         permitmap.values().forEach(permitModel -> {
             LeluPermitsWithExcessTransportNumbersResponseDTO permitDTO = dtoMapper.fromModelTODTO(permitModel);
-            logger.debug("permitDTO: " + permitDTO);
+            permitDTO.getRoutes().forEach(route -> handleMaxTransNums(route));
             permitDTOs.add(permitDTO);
+
         });
         
         
         return permitDTOs;
+    }
+
+    //remove equal bridges so that only the ones with max transport number are left
+    private void handleMaxTransNums(LeluRouteWithExcessTransportNumbersResponseDTO route) {
+        List<LeluBridgeWithExcessTransportNumbersResponseDTO> bridges = route.getRouteBridges();
+        Iterator<LeluBridgeWithExcessTransportNumbersResponseDTO> bridgeIterator = bridges.iterator();
+        while(bridgeIterator.hasNext()){
+            LeluBridgeWithExcessTransportNumbersResponseDTO bridge = bridgeIterator.next();
+            if(bridges.stream().anyMatch(bridge2 -> (bridge.getIdentifier().equals(bridge2.getIdentifier()) && bridge.getTransportNumberActualMax().compareTo(bridge2.getTransportNumberActualMax())<0))){
+                bridgeIterator.remove();
+            }
+        }
     }
 }
