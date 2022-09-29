@@ -170,7 +170,13 @@
   "supervisionOwnList": {
     "addButtonLabel": "(SV) Lisää valvottavia siltoja",
     "addModal": {
-      "title": "(SV) Lisää valvottavia siltoja"
+      "title": "(SV) Lisää valvottavia siltoja",
+      "permitNumberInput": {
+        "inputLabel": "(SV) Lupanumero",
+        "addPermitNumberButtonLabel": "(SV) Lisää lupanumero",
+        "cancelButtonLabel": "(SV) Peruuta",
+        "continueButtonLabel": "(SV) Jatka"
+      }
     }
   },
   "supervision": {

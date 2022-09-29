@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
-import NoNetworkNoData from "./NoNetworkNoData";
+import NoNetworkNoData from "../NoNetworkNoData";
 import OwnListAddModal from "./OwnListAddModal";
 import { useTranslation } from "react-i18next";
 
