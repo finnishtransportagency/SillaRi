@@ -16,7 +16,7 @@ const PermitNumberInput = ({ index, initialValue, onChange }: PermitNumberInputP
     if (!value) {
       value = "";
     }
-    onChange(index, value);
+    onChange(index, value.trim());
   };
 
   return (

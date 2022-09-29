@@ -2,13 +2,18 @@ import React, { useState } from "react";
 import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import PermitNumberInput from "./PermitNumberInput";
+import { getPermitRoutes } from "../../utils/areaContractorBackendData";
+import { useDispatch } from "react-redux";
+import IRoute from "../../interfaces/IRoute";
 
 interface PermitNumberInputsProps {
   cancel: () => void;
+  setRoutes: (permitRoutes: Array<{ permitNumber: string; routes: Array<IRoute> }>) => void;
 }
 
-const PermitNumberInputs = ({ cancel }: PermitNumberInputsProps): JSX.Element => {
+const PermitNumberInputs = ({ cancel, setRoutes }: PermitNumberInputsProps): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const [permitNumbers, setPermitNumbers] = useState<Array<string>>(Array(""));
 
   const setPermitNumber = (index: number, value: string) => {
@@ -21,8 +26,16 @@ const PermitNumberInputs = ({ cancel }: PermitNumberInputsProps): JSX.Element =>
   };
 
   const getPermits = async () => {
-    console.log("VALIDATE PERMIT NUMBERS");
-    console.log(permitNumbers);
+    const permitRoutes = [];
+    for (let i = 0; i < permitNumbers.length; i++) {
+      if (permitNumbers[i].length > 0) {
+        const routes = await getPermitRoutes(permitNumbers[i], dispatch);
+        permitRoutes.push({ permitNumber: permitNumbers[i], routes: routes });
+      }
+    }
+    if (permitRoutes.length > 0) {
+      setRoutes(permitRoutes);
+    }
   };
 
   return (
