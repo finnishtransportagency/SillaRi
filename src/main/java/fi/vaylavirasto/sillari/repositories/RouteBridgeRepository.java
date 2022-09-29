@@ -99,11 +99,11 @@ public class RouteBridgeRepository {
             DSLContext ctx = DSL.using(configuration);
             Integer transportNumber = extraRouteBridge.getTransportNumber();
             if (transportNumber == null) {
-                transportNumber = ctx.select(max(TableAlias.routeBridge.TRANSPORT_NUMBER))
+                transportNumber = (Integer) ctx.select(max(TableAlias.routeBridge.TRANSPORT_NUMBER))
                         .from(TableAlias.routeBridge)
                         .where(TableAlias.routeBridge.ROUTE_ID.eq(extraRouteBridge.getRouteId()))
                         .and(TableAlias.routeBridge.BRIDGE_ID.eq(extraRouteBridge.getBridgeId()))
-                        .fetch();
+                        .fetch().getValue(0, 0);
                 transportNumber ++;
             }
             Record1<Integer> routeBridgeIdResult = ctx.insertInto(TableAlias.routeBridge,
