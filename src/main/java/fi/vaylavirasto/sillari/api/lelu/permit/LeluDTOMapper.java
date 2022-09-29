@@ -101,6 +101,12 @@ public interface LeluDTOMapper {
     })
     LeluPermitsWithExcessTransportNumbersResponseDTO fromModelTODTO(PermitModel model);
 
+    @Mappings({
+            @Mapping(target = "id", source = "model.leluId"),
+            @Mapping(target = "name", source = "model.name"),
+            @Mapping(target = "transportCount", source = "model.transportCount"),
+            @Mapping(target = "routeBridges", source = "model.routeBridges")
+    })
     LeluRouteWithExcessTransportNumbersResponseDTO fromModelTODTO(RouteModel model);
 
     @Mappings({
