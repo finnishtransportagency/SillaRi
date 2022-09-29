@@ -336,8 +336,17 @@ public class LeluService {
         return permitDTOs;
     }
 
-    //remove equal bridges so that only the ones with max transport number are left
     private void handleMaxTransNums(LeluRouteWithExcessTransportNumbersResponseDTO route) {
+        handleBridgeMaxTransNums(route);
+        handleRouteMaxTransCount(route);
+    }
+
+    private void handleRouteMaxTransCount(LeluRouteWithExcessTransportNumbersResponseDTO route) {
+        route.setTransportCountActual(route.getRouteBridges().stream().max(Comparator.comparing(LeluBridgeWithExcessTransportNumbersResponseDTO::getTransportNumberActualMax)).orElseThrow().getTransportNumberActualMax());
+    }
+
+    //remove equal bridges so that only the ones with max transport number are left
+    private void handleBridgeMaxTransNums(LeluRouteWithExcessTransportNumbersResponseDTO route) {
         List<LeluBridgeWithExcessTransportNumbersResponseDTO> bridges = route.getRouteBridges();
         Iterator<LeluBridgeWithExcessTransportNumbersResponseDTO> bridgeIterator = bridges.iterator();
         while(bridgeIterator.hasNext()){
