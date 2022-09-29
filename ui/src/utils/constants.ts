@@ -23,7 +23,7 @@ export enum SillariErrorCode {
 
 export enum SupervisionStatus {
   PLANNED = "PLANNED",
-  AUTO_PLANNED = "AUTO_PLANNED",
+  OWN_LIST_PLANNED = "OWN_LIST_PLANNED",
   IN_PROGRESS = "IN_PROGRESS",
   CANCELLED = "CANCELLED",
   FINISHED = "FINISHED",

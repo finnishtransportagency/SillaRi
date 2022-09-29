@@ -89,7 +89,7 @@ public class AreaContractorController {
     public ResponseEntity<?> initiateSupervision(@RequestParam Integer routeBridgeTemplateId, @RequestParam String contractBusinessId,@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startTime) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
         try {
-            var supervisionId = supervisionService.createAreaContractorAutoplannedSupervision(routeBridgeTemplateId, contractBusinessId);
+            var supervisionId = supervisionService.createAreaContractorOwnListPlannedSupervision(routeBridgeTemplateId, contractBusinessId);
                      return ResponseEntity.ok().body(supervisionId != null ? supervisionId : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

@@ -56,7 +56,7 @@ const BridgeDetailFooter = ({ permit, supervision, username, isLoadingSupervisio
   const supervisionPending =
     !isLoadingSupervision &&
     (supervisionStatus === SupervisionStatus.PLANNED ||
-      supervisionStatus === SupervisionStatus.AUTO_PLANNED ||
+      supervisionStatus === SupervisionStatus.OWN_LIST_PLANNED ||
       supervisionStatus === SupervisionStatus.CANCELLED);
   const supervisionInProgress = !isLoadingSupervision && supervisionStatus === SupervisionStatus.IN_PROGRESS;
   const crossingDenied = !isLoadingSupervision && supervisionStatus === SupervisionStatus.CROSSING_DENIED;

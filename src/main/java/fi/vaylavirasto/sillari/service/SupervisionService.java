@@ -398,18 +398,18 @@ public class SupervisionService {
     }
 
 
-    /*Created AUTO_PLANNED -status supervision for permits with customerUsesSillari = false
+    /*Created OWN_LIST_PLANNED -status supervision for permits with customerUsesSillari = false
      * These are visible on area contractor UI.
-     * AUTO_PLANNED -supervision are not connected to route transports.
-     * TODO what todo with transport number?*/
+     * OWN_LIST_PLANNED -supervision are not connected to route transports.
+     */
 
-    public Integer createAreaContractorAutoplannedSupervision(Integer routeBridgeTemplateId, String contractBusinessId) {
+    public Integer createAreaContractorOwnListPlannedSupervision(Integer routeBridgeTemplateId, String contractBusinessId) {
         SupervisionModel supervision = new SupervisionModel();
         supervision.setRouteBridgeId(routeBridgeTemplateId);
         supervision.setConformsToPermit(false);
         supervision.setSupervisorCompany(contractBusinessId);
         supervision.setSupervisorType(SupervisorType.AREA_CONTRACTOR);
-        return createSupervision(supervision, "SILLARI_SYSTEM", SupervisionStatusType.AUTO_PLANNED);
+        return createSupervision(supervision, "SILLARI_SYSTEM", SupervisionStatusType.OWN_LIST_PLANNED);
     }
 
     /*
