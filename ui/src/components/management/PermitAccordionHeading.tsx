@@ -22,7 +22,7 @@ const PermitAccordionHeading = (
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { id: permitId, validStartDate, validEndDate, leluVersion, isCurrentVersion, routes = [] } = permit;
+  const { id: permitId, validStartDate, validEndDate, leluVersion, isCurrentVersion, customerUsesSillari, routes = [] } = permit;
 
   const includesSupervisions = permitIncludesSupervisions(routes);
 
@@ -51,7 +51,11 @@ const PermitAccordionHeading = (
               </IonCol>
               <IonCol>
                 <small>
-                  {includesSupervisions ? t("management.companySummary.includesSupervisions") : t("management.companySummary.noSupervisions")}
+                  {customerUsesSillari
+                    ? includesSupervisions
+                      ? t("management.companySummary.includesSupervisions")
+                      : t("management.companySummary.noSupervisions")
+                    : t("management.companySummary.notUsesSillariPermit")}
                 </small>
               </IonCol>
             </IonRow>
@@ -59,7 +63,7 @@ const PermitAccordionHeading = (
         </IonCol>
 
         <IonCol size="12" size-md="auto" className="ion-hide-md-down">
-          {isPermitValid(permit) && isCurrentVersion && (
+          {isPermitValid(permit) && isCurrentVersion && customerUsesSillari && (
             <IonButton
               color="secondary"
               size="default"

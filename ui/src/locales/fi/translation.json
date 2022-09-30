@@ -260,6 +260,7 @@
       "transports": "Kuljetuksia",
       "supervision": "Sillanvalvonta",
       "includesSupervisions": "Sisältää sillanvalvontoja",
+      "notUsesSillariPermit": "Luvan kuljetuksia ei tehdä SillaRissa",
       "noSupervisions": "Ei sisällä sillanvalvontoja",
       "permitVersion": "Lupaversio",
       "addTransportButtonLabel": "Lisää kuljetus",

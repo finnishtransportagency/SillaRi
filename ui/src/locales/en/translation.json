@@ -260,6 +260,7 @@
       "transports": "Transports",
       "supervision": "Supervision",
       "includesSupervisions": "Includes bridge supervisions",
+      "notUsesSillariPermit": "Permit transports not allocated in SillaRi",
       "noSupervisions": "Does not include bridge supervisions",
       "permitVersion": "Permit version",
       "addTransportButtonLabel": "Add transport",
