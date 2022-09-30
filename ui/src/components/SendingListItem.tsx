@@ -112,31 +112,33 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                     </IonButton>
                   </IonCol>
                 ) : (
-                  <IonCol>
-                    <IonButton
-                      id={passwordPopoverTriggerId}
-                      size="default"
-                      color="secondary"
-                      disabled={!isOnline}
-                      onClick={() => {
-                        setPasswordPopoverOpen(true);
-                      }}
-                    >
-                      <IonIcon className="otherIcon" icon={lock} />
-                      <IonText className="headingText medium-margin-start medium-margin-end">{t("sendingList.passwordButton")}</IonText>
-                    </IonButton>
-                  </IonCol>
+                  <div>
+                    <IonCol>
+                      <IonButton
+                        id={passwordPopoverTriggerId}
+                        size="default"
+                        color="secondary"
+                        disabled={!isOnline}
+                        onClick={() => {
+                          setPasswordPopoverOpen(true);
+                        }}
+                      >
+                        <IonIcon className="otherIcon" icon={lock} />
+                        <IonText className="headingText medium-margin-start medium-margin-end">{t("sendingList.passwordButton")}</IonText>
+                      </IonButton>
+                    </IonCol>
+                    <SupervisionPasswordPopover
+                      title={passwordTitle}
+                      isOpen={passwordPopoverOpen}
+                      setOpen={setPasswordPopoverOpen}
+                      routeTransportId={routeTransportId}
+                      supervisions={[supervision]}
+                      supervisionListType={SupervisionListType.BRIDGE}
+                      openSupervision={openSupervision}
+                      popoverPlacement={popoverPlacementProps}
+                    />
+                  </div>
                 )}
-                <SupervisionPasswordPopover
-                  title={passwordTitle}
-                  isOpen={passwordPopoverOpen}
-                  setOpen={setPasswordPopoverOpen}
-                  routeTransportId={routeTransportId}
-                  supervisions={[supervision]}
-                  supervisionListType={SupervisionListType.BRIDGE}
-                  openSupervision={openSupervision}
-                  popoverPlacement={popoverPlacementProps}
-                />
               </IonRow>
             </IonGrid>
           </IonCol>
