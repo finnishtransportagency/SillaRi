@@ -9,6 +9,7 @@ import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.logging.log4j.LogManager;
@@ -51,7 +52,7 @@ public class AreaContractorController {
             @ApiResponse(responseCode = "404 NOT_FOUND", description = "Permit not found with given number"),
             @ApiResponse(responseCode = "403 FORBIDDEN", description = "Permit with given number is not customerUsesSillari = false")
     })
-    public ResponseEntity<List<RouteModel>> getRoutes(@RequestParam String permitNumber) {
+    public ResponseEntity<List<RouteModel>> getRoutes(@Parameter(name = "permitNumber", description  = "The Lelu number (string) identifier of permit", example = "1111/2022")@RequestParam String permitNumber) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getRoutes");
         try {
             PermitModel permitCurrentVersion = permitService.getPermitCurrentVersionByPermitNumber(permitNumber);
