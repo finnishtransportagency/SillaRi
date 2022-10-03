@@ -7,6 +7,7 @@ import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
 import ISupervision from "../interfaces/ISupervision";
+import { createCustomError, createErrorFromStatusCode } from "./backendData";
 
 export const getCompany = async (dispatch: Dispatch): Promise<ICompany> => {
   try {
@@ -148,17 +149,11 @@ export const createRouteTransport = async (routeTransport: IRouteTransport, disp
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
 
       // Create routeTransport might return 409 when there's a conflict with transportNumber
-      const errorStatus = createRouteTransportResponse.status;
-      if (errorStatus === 409) {
-        throw new Error(errorStatus.toString());
-      } else {
-        throw new Error(NETWORK_RESPONSE_NOT_OK);
-      }
+      throw createErrorFromStatusCode(createRouteTransportResponse.status);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
-    const errMessage = err instanceof Error ? err.message : (err as string);
-    throw new Error(errMessage);
+    throw createCustomError(err);
   }
 };
 

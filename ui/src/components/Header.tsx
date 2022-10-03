@@ -3,7 +3,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { useIsFetching, useIsMutating, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonBadge, IonButton, IonButtons, IonHeader, IonIcon, IonMenuButton, IonText, IonTitle, IonToolbar } from "@ionic/react";
-import { arrowBackOutline } from "ionicons/icons";
+import { arrowBackOutline, cloudDownloadOutline } from "ionicons/icons";
 import outgoing from "../theme/icons/outgoing_white_no_badge.svg";
 import { onRetry } from "../utils/backendData";
 import { getSupervisionSendingList } from "../utils/supervisionBackendData";
@@ -103,6 +103,7 @@ const Header = ({
           </IonText>
         )}
         <IonButtons slot="end">
+          <IonIcon slot="icon-only" icon={cloudDownloadOutline} className={`cloudIcon ${isFetching > 0 ? "" : "ion-hide"}`} />
           {includeSendingList && (
             <IonButton shape="round" className="otherIcon" onClick={() => setSendingListOpen(true)}>
               <IonBadge className="iconBadge" color="secondary">

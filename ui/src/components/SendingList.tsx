@@ -1,6 +1,6 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { onlineManager, useMutation, useQueryClient } from "react-query";
+import { onlineManager, useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import {
   IonButton,
@@ -21,7 +21,7 @@ import moment from "moment";
 import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
 import close from "../theme/icons/close_large_white.svg";
-import { onRetry } from "../utils/backendData";
+import { getUserData, onRetry } from "../utils/backendData";
 import { completeSupervisions } from "../utils/supervisionBackendData";
 import { useHistory } from "react-router";
 import CustomAccordion from "./common/CustomAccordion";
@@ -29,8 +29,9 @@ import OfflineBanner from "./OfflineBanner";
 import SentSupervisionReportsAccordion from "./SentSupervisionReportsAccordion";
 import SendingListItem from "./SendingListItem";
 import SendingListOfflineNotice from "./SendingListOfflineNotice";
-import SentSupervisionReport from "./SentSupervisionReport";
+import SentSupervisionReportModalContainer from "./SentSupervisionReportModalContainer";
 import "./SendingList.css";
+import ISupervisionInput from "../interfaces/ISupervisionInput";
 
 interface SendingListProps {
   isOpen: boolean;
@@ -45,13 +46,26 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedSupervisions, setSelectedSupervisions] = useState<ISupervision[]>([]);
   const [toastMessage, setToastMessage] = useState<string>("");
   const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
   const [selectedSupervisionId, setSelectedSupervisionId] = useState<number | undefined>(undefined);
+  const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
+
+  useEffect(() => {
+    onlineManager.subscribe(() => {
+      setOnline(onlineManager.isOnline());
+    });
+  }, []);
+
+  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const { username = "" } = supervisorUser || {};
 
   const sendSupervisionMutation = useMutation(
-    (completeCrossingInput: ICompleteCrossingInput) => completeSupervisions(completeCrossingInput, dispatch),
+    (completeCrossingInput: ICompleteCrossingInput) => completeSupervisions(completeCrossingInput, username, dispatch),
     {
       retry: onRetry,
       onSuccess: () => {
@@ -63,22 +77,25 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const { isLoading: isSendingSupervisions } = sendSupervisionMutation;
 
   const selectSupervision = (supervisionId: string, checked: boolean) => {
-    setSelectedIds(
-      selectedIds.reduce(
-        (acc, id) => {
-          return id === supervisionId ? acc : [...acc, id];
-        },
-        checked ? [supervisionId] : []
-      )
+    const clickedSupervision = unsentSupervisions.find((s) => String(s.id) === supervisionId);
+    const newSelected = selectedSupervisions.reduce(
+      (acc, s) => {
+        return String(s.id) === supervisionId ? acc : [...acc, s];
+      },
+      checked && clickedSupervision ? [clickedSupervision] : [] // initial value for new array
     );
+    setSelectedSupervisions(newSelected ? newSelected : []);
   };
 
   const sendSelected = () => {
     // Only allow supervisions to be sent when online
-    if (selectedIds.length > 0 && onlineManager.isOnline()) {
-      const completeCrossingInput: ICompleteCrossingInput = { supervisionIds: selectedIds, completeTime: new Date() };
+    if (selectedSupervisions.length > 0 && onlineManager.isOnline()) {
+      const supervisionInputs: ISupervisionInput[] = selectedSupervisions.map((s) => {
+        return { supervisionId: s.id, routeTransportId: s.routeTransportId };
+      });
+      const completeCrossingInput: ICompleteCrossingInput = { supervisionInputs: supervisionInputs, completeTime: new Date() };
       sendSupervisionMutation.mutate(completeCrossingInput);
-      setSelectedIds([]);
+      setSelectedSupervisions([]);
     }
   };
 
@@ -138,18 +155,26 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
                     selectSupervision={selectSupervision}
                     setTargetUrl={setTargetUrl}
                     setOpen={setOpen}
+                    isOnline={isOnline}
+                    username={username}
                   />
                 );
               })}
 
-            <SendingListOfflineNotice />
+            <SendingListOfflineNotice isOnline={isOnline} />
 
             <IonButton
               className="ion-margin"
               color="primary"
               expand="block"
               size="large"
-              disabled={unsentSupervisions.length === 0 || selectedIds.length === 0 || isSendingSupervisions || !onlineManager.isOnline()}
+              disabled={
+                !username ||
+                unsentSupervisions.length === 0 ||
+                selectedSupervisions.length === 0 ||
+                isSendingSupervisions ||
+                !onlineManager.isOnline()
+              }
               onClick={sendSelected}
             >
               {t("sendingList.sendSelected")}
@@ -171,6 +196,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
               ),
               panel: (
                 <SentSupervisionReportsAccordion
+                  username={username}
                   sentSupervisions={sentSupervisions}
                   setReportModalOpen={setReportModalOpen}
                   setSelectedSupervisionId={setSelectedSupervisionId}
@@ -190,11 +216,12 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
         color="secondary"
       />
 
-      <SentSupervisionReport
+      <SentSupervisionReportModalContainer
         isOpen={reportModalOpen}
         setOpen={setReportModalOpen}
         selectedSupervisionId={selectedSupervisionId}
         setSelectedSupervisionId={setSelectedSupervisionId}
+        username={username}
       />
     </IonModal>
   );

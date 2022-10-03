@@ -1,4 +1,6 @@
+import ISupervisionInput from "./ISupervisionInput";
+
 export default interface ICompleteCrossingInput {
-  supervisionIds: string[];
+  supervisionInputs: ISupervisionInput[];
   completeTime: Date;
 }

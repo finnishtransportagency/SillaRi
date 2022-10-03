@@ -28,6 +28,7 @@ public class PermitModel extends BaseModel {
     private AxleChartModel axleChart;
     private List<RouteModel> routes;
     private String pdfObjectKey;
+    private Boolean customerUsesSillari;
 
     // Parent
     private CompanyModel company;

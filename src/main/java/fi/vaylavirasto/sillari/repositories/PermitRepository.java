@@ -135,7 +135,8 @@ public class PermitRepository {
                             TableAlias.permit.VALID_START_DATE,
                             TableAlias.permit.VALID_END_DATE,
                             TableAlias.permit.TRANSPORT_TOTAL_MASS,
-                            TableAlias.permit.ADDITIONAL_DETAILS
+                            TableAlias.permit.ADDITIONAL_DETAILS,
+                            TableAlias.permit.CUSTOMER_USES_SILLARI
                     ).values(
                             permitModel.getCompanyId(),
                             permitModel.getPermitNumber(),
@@ -145,7 +146,8 @@ public class PermitRepository {
                             permitModel.getValidStartDate(),
                             permitModel.getValidEndDate(),
                             permitModel.getTransportTotalMass(),
-                            permitModel.getAdditionalDetails())
+                            permitModel.getAdditionalDetails(),
+                            permitModel.getCustomerUsesSillari())
                     .returningResult(TableAlias.permit.ID)
                     .fetchOne(); // Execute and return zero or one record
 

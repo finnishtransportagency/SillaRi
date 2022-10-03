@@ -22,7 +22,7 @@ class LeluApiTest {
 
         String responseString = client.get()
                 .uri("/testGetWithVersion")
-                .header("lelu-api-accept-version", "1.1.1")
+                .header("lelu-api-accept-version", "0.0.1")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
@@ -36,7 +36,7 @@ class LeluApiTest {
 
         String responseString = client.get()
                 .uri("/testGetWithVersion")
-                .header("lelu-api-accept-version", "1.0.0")
+                .header("lelu-api-accept-version", "0.0.0")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();

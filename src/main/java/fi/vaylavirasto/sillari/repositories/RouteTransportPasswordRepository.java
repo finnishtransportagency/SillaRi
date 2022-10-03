@@ -27,6 +27,7 @@ public class RouteTransportPasswordRepository {
                 .fetchOne(new RouteTransportPasswordMapper());
     }
 
+
     public RouteTransportPasswordModel getTransportPassword(Integer routeTransportId) {
         return dsl.selectFrom(TableAlias.routeTransportPassword)
                 .where(TableAlias.routeTransportPassword.ROUTE_TRANSPORT_ID.eq(routeTransportId))

@@ -40,6 +40,7 @@ public class CompanyController {
         try {
             SillariUser user = uiService.getSillariUser();
 
+            
             CompanyModel company = companyService.getCompanyByBusinessId(user.getBusinessId());
             return ResponseEntity.ok().body(company != null ? company : new EmptyJsonResponse());
         } finally {

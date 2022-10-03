@@ -1,20 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { onlineManager } from "react-query";
 import { IonCol, IonGrid, IonIcon, IonItem, IonRow, IonText } from "@ionic/react";
 import warning from "../theme/icons/warning_yellow.svg";
 import "./SendingListOfflineNotice.css";
 
-const SendingListOfflineNotice = (): JSX.Element => {
+interface SendingListOfflineNoticeProps {
+  isOnline: boolean;
+}
+
+const SendingListOfflineNotice = ({ isOnline }: SendingListOfflineNoticeProps): JSX.Element => {
   const { t } = useTranslation();
-
-  const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
-
-  useEffect(() => {
-    onlineManager.subscribe(() => {
-      setOnline(onlineManager.isOnline());
-    });
-  }, []);
 
   return (
     <IonItem className={`offlineNoticeItem ion-margin-top ${isOnline ? "ion-hide" : ""}`} lines="none">
