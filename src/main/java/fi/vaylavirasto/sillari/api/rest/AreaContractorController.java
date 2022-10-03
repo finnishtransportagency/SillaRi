@@ -9,6 +9,8 @@ import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +43,14 @@ public class AreaContractorController {
     @Autowired
     RouteService routeService;
 
-    @Operation(summary = "Get routes of permit")
+    @Operation(summary = "Get routes of permit, if the permit is customerUsesSillari = false")
     @GetMapping(value = "/getRoutes", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200 OK", description = "Routes returned"),
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Permit not found with given number"),
+            @ApiResponse(responseCode = "403 FORBIDDEN", description = "Permit with given number is not customerUsesSillari = false")
+    })
     public ResponseEntity<List<RouteModel>> getRoutes(@RequestParam String permitNumber) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getRoutes");
         try {
@@ -83,9 +90,13 @@ public class AreaContractorController {
         }
     }
 
-    @Operation(summary = "Initiate own list supervision")
+    @Operation(summary = "Initiate own list supervision. This is to be called from UI when bridge is added to the own list. A supervision object is created and its' id is returned.")
     @PostMapping(value = "/initiateSupervision", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200 OK", description = "Supervision initiated"),
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route bridge template not found with given id")
+    })
     public ResponseEntity<?> initiateSupervision(@RequestParam Integer routeBridgeTemplateId, @RequestParam String contractBusinessId,@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startTime) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
         try {
