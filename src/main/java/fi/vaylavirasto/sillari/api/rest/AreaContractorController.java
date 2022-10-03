@@ -98,7 +98,7 @@ public class AreaContractorController {
             @ApiResponse(responseCode = "200 OK", description = "Supervision initiated"),
             @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route bridge template not found with given id")
     })
-    public ResponseEntity<?> initiateSupervision(@RequestParam Integer routeBridgeTemplateId, @RequestParam String contractBusinessId,@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startTime) {
+    public ResponseEntity<?> initiateSupervision(@RequestParam Integer routeBridgeTemplateId, @RequestParam String contractBusinessId) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
         try {
             var supervisionId = supervisionService.createAreaContractorOwnListPlannedSupervision(routeBridgeTemplateId, contractBusinessId);
