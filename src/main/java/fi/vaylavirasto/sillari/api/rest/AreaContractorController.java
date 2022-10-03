@@ -98,8 +98,10 @@ public class AreaContractorController {
             @ApiResponse(responseCode = "200 OK", description = "Supervision initiated"),
             @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route bridge template not found with given id")
     })
-    public ResponseEntity<?> initiateSupervision(@RequestParam Integer routeBridgeTemplateId, @RequestParam String contractBusinessId) {
+    public ResponseEntity<?> initiateSupervision(@RequestParam Integer routeBridgeTemplateId) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
+        SillariUser user = uiService.getSillariUser();
+        String contractBusinessId = user.getBusinessId();
         try {
             var supervisionId = supervisionService.createAreaContractorOwnListPlannedSupervision(routeBridgeTemplateId, contractBusinessId);
                      return ResponseEntity.ok().body(supervisionId != null ? supervisionId : new EmptyJsonResponse());
