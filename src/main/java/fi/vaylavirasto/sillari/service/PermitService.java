@@ -184,7 +184,10 @@ public class PermitService {
             //filter out routes that don't have any bridge with user contract business id
             List<RouteModel> contractBridgeHavingRoutes = routesWithBridgesAndSupervisions.stream().filter(r -> r.getRouteBridges().stream().anyMatch(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId()))).collect(Collectors.toList());
 
-            return routesWithBridgesAndSupervisions;
+            //filter out bridges that don't match user contract business id
+            contractBridgeHavingRoutes.forEach(routeModel -> routeModel.setRouteBridges(routeModel.getRouteBridges().stream().filter(routeBridgeModel -> routeBridgeModel.getContractBusinessId().equals(user.getBusinessId())).collect(Collectors.toList())));
+
+            return contractBridgeHavingRoutes;
         }
     }
 }
