@@ -3,10 +3,7 @@ package fi.vaylavirasto.sillari.api.rest;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.*;
-import fi.vaylavirasto.sillari.service.PermitService;
-import fi.vaylavirasto.sillari.service.RouteService;
-import fi.vaylavirasto.sillari.service.SupervisionService;
-import fi.vaylavirasto.sillari.service.UIService;
+import fi.vaylavirasto.sillari.service.*;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,6 +40,8 @@ public class AreaContractorController {
     PermitService permitService;
     @Autowired
     RouteService routeService;
+    @Autowired
+    RouteBridgeService routeBridgeService;
 
     @Operation(summary = "Get routes of permit, if the permit is customerUsesSillari = false")
     @GetMapping(value = "/getRoutes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -101,6 +100,9 @@ public class AreaContractorController {
     public ResponseEntity<?> initiateSupervision(@RequestParam Integer routeBridgeTemplateId) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
         SillariUser user = uiService.getSillariUser();
+        if (!isOwnCompanyContractRouteBridge(user, routeBridgeTemplateId)) {
+            throw new AccessDeniedException("Supervision of routebridge not allowed to the user");
+        }
         String contractBusinessId = user.getBusinessId();
         try {
             var supervisionId = supervisionService.createAreaContractorOwnListPlannedSupervision(routeBridgeTemplateId, contractBusinessId);
@@ -128,6 +130,11 @@ public class AreaContractorController {
         } finally {
             serviceMetric.end();
         }
+    }
+
+    private boolean isOwnCompanyContractRouteBridge(SillariUser user, Integer routeBridgeId) {
+        RouteBridgeModel routeBridge = routeBridgeService.getRouteBridge(routeBridgeId);
+        return user.getBusinessId().equals(routeBridge.getContractBusinessId());
     }
 
 }
