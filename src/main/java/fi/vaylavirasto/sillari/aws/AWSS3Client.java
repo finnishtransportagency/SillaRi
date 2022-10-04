@@ -33,7 +33,7 @@ public class AWSS3Client {
     private static final String EXPIRED_TAG = "supervision_expired";
     private AmazonS3 s3Client = null;
 
-    private static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
+    private static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photosnew2";
 
     private static final String SILLARI_TREX_PHOTOS_BUCKET_DEV = "sillari-trex-photos";
 
@@ -167,13 +167,9 @@ public class AWSS3Client {
         }
 
         if (dto.getBridgeName() != null) {
-            try {
-                // Bridge names include scandic letters, so must encode them
-                String bridgeName = URLEncoder.encode(dto.getBridgeName(), StandardCharsets.UTF_8.toString());
-                metadata.put("bridgename", bridgeName);
-            } catch (UnsupportedEncodingException e) {
-                logger.warn("Couldn't encode bridge name '{}' for file '{}'. Skipping bridge name from S3 metadata. ERROR={}", dto.getBridgeName(), dto.getObjectKey(), e + " " + e.getMessage());
-            }
+            // Bridge names include scandic letters, so must encode them
+            String bridgeName = URLEncoder.encode(dto.getBridgeName(), StandardCharsets.UTF_8);
+            metadata.put("bridgename", bridgeName);
         }
 
         metadata.put("bridgeidentifier", dto.getBridgeIdentifier());
