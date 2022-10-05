@@ -27,7 +27,6 @@ const SelectRouteInputs = ({ permitRoutes, toNextPhase, toPreviousPhase }: Selec
   };
 
   const setPermitNumber = (index: number, routeIndex: number) => {
-    console.log("selected: " + index + " " + routeIndex);
     permitRoutes[index].selectedRouteIndex = routeIndex;
     setContinueButtonState();
   };
@@ -42,7 +41,9 @@ const SelectRouteInputs = ({ permitRoutes, toNextPhase, toPreviousPhase }: Selec
         <IonGrid key={"permit_" + i}>
           <IonRow>
             <IonCol>
-              <IonText>Kuljetuslupa {permitRoute.permitNumber}</IonText>
+              <IonText>
+                {t("supervisionOwnList.addModal.routeSelectInput.permitLabel")} {permitRoute.permitNumber}
+              </IonText>
             </IonCol>
           </IonRow>
           <IonRow>
@@ -56,11 +57,11 @@ const SelectRouteInputs = ({ permitRoutes, toNextPhase, toPreviousPhase }: Selec
       <IonGrid class="ion-no-padding">
         <IonRow>
           <IonCol class="ion-button ion-float-left">
-            <IonButton onClick={toPreviousPhase}>{t("supervisionOwnList.addModal.permitNumberInput.cancelButtonLabel")}</IonButton>
+            <IonButton onClick={toPreviousPhase}>{t("supervisionOwnList.addModal.routeSelectInput.cancelButtonLabel")}</IonButton>
           </IonCol>
           <IonCol>
             <IonButton class="ion-button ion-float-right" onClick={done} disabled={continueButtonDisabled}>
-              {t("supervisionOwnList.addModal.permitNumberInput.continueButtonLabel")}
+              {t("supervisionOwnList.addModal.routeSelectInput.continueButtonLabel")}
             </IonButton>
           </IonCol>
         </IonRow>

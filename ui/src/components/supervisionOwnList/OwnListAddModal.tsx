@@ -19,6 +19,7 @@ const OwnListAddModal = ({ isOpen, closeModal }: OwnListAddModalProps): JSX.Elem
 
   const cancel = () => {
     setPermitRoutes([]);
+    setPhase("PERMIT");
     closeModal();
   };
 
@@ -49,11 +50,9 @@ const OwnListAddModal = ({ isOpen, closeModal }: OwnListAddModalProps): JSX.Elem
         </IonToolbar>
       </IonHeader>
       <IonContent class="ion-padding">
-        {phase === "PERMIT" ? (
-          <PermitNumberInputs cancel={cancel} permitRoutes={permitRoutes} toNextPhase={phasePermitToRoute} />
-        ) : (
-          <SelectRouteInputs permitRoutes={permitRoutes} toPreviousPhase={phaseRouteToPermit} toNextPhase={phaseRouteToBridge} />
-        )}
+        {phase === "PERMIT" && <PermitNumberInputs cancel={cancel} permitRoutes={permitRoutes} toNextPhase={phasePermitToRoute} />}
+        {phase === "ROUTE" && <SelectRouteInputs permitRoutes={permitRoutes} toPreviousPhase={phaseRouteToPermit} toNextPhase={phaseRouteToBridge} />}
+        {phase === "BRIDGE" && <div>TODO: Siltojen valinta</div>}
       </IonContent>
     </IonModal>
   );

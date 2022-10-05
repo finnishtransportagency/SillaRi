@@ -176,6 +176,11 @@
         "addPermitNumberButtonLabel": "(SV) Lisää lupanumero",
         "cancelButtonLabel": "(SV) Peruuta",
         "continueButtonLabel": "(SV) Jatka"
+      },
+      "routeSelectInput": {
+        "permitLabel": "(SV) Kuljetuslupa",
+        "cancelButtonLabel": "(SV) Edellinen",
+        "continueButtonLabel": "(SV) Seuraava"
       }
     }
   },
