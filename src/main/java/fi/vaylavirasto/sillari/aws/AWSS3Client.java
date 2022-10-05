@@ -33,7 +33,7 @@ public class AWSS3Client {
     private static final String EXPIRED_TAG = "supervision_expired";
     private AmazonS3 s3Client = null;
 
-    private static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photosnew2";
+    private static final String SILLARI_PHOTOS_BUCKET_DEV = "sillari-photos";
 
     private static final String SILLARI_TREX_PHOTOS_BUCKET_DEV = "sillari-trex-photos";
 
