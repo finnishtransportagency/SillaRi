@@ -175,7 +175,12 @@
         "inputLabel": "Lupanumero",
         "addPermitNumberButtonLabel": "Lisää lupanumero",
         "cancelButtonLabel": "Peruuta",
-        "continueButtonLabel": "Jatka"
+        "continueButtonLabel": "Seuraava"
+      },
+      "routeSelectInput": {
+        "permitLabel": "Kuljetuslupa",
+        "cancelButtonLabel": "Edellinen",
+        "continueButtonLabel": "Seuraava"
       }
     }
   },

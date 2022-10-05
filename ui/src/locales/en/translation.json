@@ -175,7 +175,12 @@
         "inputLabel": "Permit number",
         "addPermitNumberButtonLabel": "Add permit number",
         "cancelButtonLabel": "Cancel",
-        "continueButtonLabel": "Continue"
+        "continueButtonLabel": "Next"
+      },
+      "routeSelectInput": {
+        "permitLabel": "Permit",
+        "cancelButtonLabel": "Previous",
+        "continueButtonLabel": "Next"
       }
     }
   },
