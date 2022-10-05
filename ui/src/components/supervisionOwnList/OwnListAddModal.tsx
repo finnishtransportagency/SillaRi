@@ -5,7 +5,7 @@ import "./OwnListAddModal.css";
 import PermitNumberInputs from "./PermitNumberInputs";
 import SelectRouteInputs from "./SelectRouteInputs";
 import close from "../../theme/icons/close_large_white.svg";
-import IRoute from "../../interfaces/IRoute";
+import OwnListPermitRouteType from "./OwnListPermitRouteType";
 
 interface OwnListAddModalProps {
   isOpen: boolean;
@@ -14,11 +14,26 @@ interface OwnListAddModalProps {
 
 const OwnListAddModal = ({ isOpen, closeModal }: OwnListAddModalProps): JSX.Element => {
   const { t } = useTranslation();
-  const [permitRoutes, setPermitRoutes] = useState<Array<{ permitNumber: string; routes: Array<IRoute> }>>([]);
+  const [permitRoutes, setPermitRoutes] = useState<Array<OwnListPermitRouteType>>([]);
+  const [phase, setPhase] = useState<"PERMIT" | "ROUTE" | "BRIDGE">("PERMIT");
 
   const cancel = () => {
     setPermitRoutes([]);
     closeModal();
+  };
+
+  const phasePermitToRoute = (prs: Array<OwnListPermitRouteType>) => {
+    setPermitRoutes(prs);
+    setPhase("ROUTE");
+  };
+
+  const phaseRouteToPermit = () => {
+    setPhase("PERMIT");
+  };
+
+  const phaseRouteToBridge = (prs: Array<OwnListPermitRouteType>) => {
+    setPermitRoutes(prs);
+    setPhase("BRIDGE");
   };
 
   return (
@@ -34,10 +49,10 @@ const OwnListAddModal = ({ isOpen, closeModal }: OwnListAddModalProps): JSX.Elem
         </IonToolbar>
       </IonHeader>
       <IonContent class="ion-padding">
-        {permitRoutes.length > 0 ? (
-          <SelectRouteInputs permitRoutes={permitRoutes} cancel={cancel} />
+        {phase === "PERMIT" ? (
+          <PermitNumberInputs cancel={cancel} permitRoutes={permitRoutes} toNextPhase={phasePermitToRoute} />
         ) : (
-          <PermitNumberInputs cancel={cancel} setRoutes={setPermitRoutes} />
+          <SelectRouteInputs permitRoutes={permitRoutes} toPreviousPhase={phaseRouteToPermit} toNextPhase={phaseRouteToBridge} />
         )}
       </IonContent>
     </IonModal>
