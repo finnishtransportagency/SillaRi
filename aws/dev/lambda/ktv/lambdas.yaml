@@ -21,7 +21,7 @@ Resources:
                 Statement:
                   - Effect: Allow
                     Action: 'secretsmanager:GetSecretValue'
-                    Resource: '{{resolve:secretsmanager:api-key-for-kvt:SecretString:kvt-api-key}}'
+                    Resource: 'arn:aws:secretsmanager:::api-key-for-kvt:kvt-api-key'
           - PolicyName: test-sillari-photosnew2-supervisions-s3-policy
             PolicyDocument:
                 Version: '2012-10-17'
@@ -39,7 +39,7 @@ Resources:
     Properties:
       Environment:
         Variables:
-          KTV_API_KEY_SECRET_ID: '{{resolve:secretsmanager:api-key-for-kvt:SecretString:kvt-api-key}}'
+          KTV_API_KEY_SECRET_ID: 'api-key-for-kvt'
           KTV_HOSTNAME: 'devapi.testivaylapilvi.fi'
       Code:
         ZipFile: |
@@ -199,7 +199,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: 'secretsmanager:GetSecretValue'
-                Resource: '{{resolve:secretsmanager:api-key-for-kvt:SecretString:kvt-api-key}}'
+                Resource: 'arn:aws:secretsmanager:::api-key-for-kvt:kvt-api-key'
         - PolicyName: test-sillari-photosnew2-supervisions-s3-policy
           PolicyDocument:
             Version: '2012-10-17'
@@ -224,7 +224,7 @@ Resources:
       Role: !GetAtt 'testKtvRemoveLambdaRole.Arn'
       Environment:
         Variables:
-          KTV_API_KEY_SECRET_ID: '{{resolve:secretsmanager:api-key-for-kvt:SecretString:kvt-api-key}}'
+          KTV_API_KEY_SECRET_ID: 'api-key-for-kvt'
           KTV_HOSTNAME: 'devapi.testivaylapilvi.fi'
       Code:
         ZipFile: |
