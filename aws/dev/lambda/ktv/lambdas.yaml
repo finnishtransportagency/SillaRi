@@ -35,7 +35,7 @@ Resources:
                     Action: 's3:GetObject'
                     Resource:
                       - !Sub "arn:aws:s3:::${NamePrefix}-photos-${Environment}/*"
-                      - 'arn:aws:s3:::sillari-reportsnew2/*'
+                      - !Sub "arn:aws:s3:::${NamePrefix}-reports-${Environment}/*"
 
   KTVADDINGLAMBDA:
     Type: AWS::Lambda::Function
@@ -181,7 +181,7 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
-      SourceArn: !Sub 'arn:aws:s3:::sillari-reportsnew2'
+      SourceArn: !Sub "arn:aws:s3:::${NamePrefix}-reports-${Environment}"
 
   #Removal-lambda
   KTVREMOVALLAMBDAROLE:
@@ -212,7 +212,7 @@ Resources:
                 Action: 's3:GetObject'
                 Resource:
                   - !Sub "arn:aws:s3:::${NamePrefix}-photos-${Environment}/*"
-                  - 'arn:aws:s3:::sillari-reportsnew2/*'
+                  - !Sub "arn:aws:s3:::${NamePrefix}-reports-${Environment}/*"
 
   KTVREMOVALLAMBDA:
     Type: AWS::Lambda::Function
@@ -353,7 +353,7 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
-      SourceArn: !Sub 'arn:aws:s3:::sillari-reportsnew2'
+      SourceArn: !Sub "arn:aws:s3:::${NamePrefix}-reports-${Environment}"
 
   S3BUCKET:
     Type: 'AWS::S3::Bucket'
@@ -380,7 +380,7 @@ Resources:
       - KTVADDINGLAMBDAREPORTSPERMISSSION
       - KTVREMOVALLAMBDAREPORTSPERMISSION
     Properties:
-      BucketName: sillari-reportsnew2
+      BucketName: !Sub "${NamePrefix}-reports-${Environment}"
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
