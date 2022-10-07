@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: An AWS Serverless Specification template describing your function.
 Resources:
   # Adding-lambda
-  testKtvLambdaRole:
+  KTVLAMBDAROLE:
     Type: AWS::IAM::Role
     Properties:
         AssumeRolePolicyDocument:
@@ -31,9 +31,9 @@ Resources:
                     Resource:
                       - 'arn:aws:s3:::sillari-photosnew2/*'
                       - 'arn:aws:s3:::sillari-supervisions/*'
-                      - 'arn:aws:s3:::sillari-reports2/*'
+                      - 'arn:aws:s3:::sillari-reportsnew2/*'
 
-  testKTVLambda:
+  KTVADDINGLAMBDA:
     Type: AWS::Lambda::Function
     DeletionPolicy: Retain
     Properties:
@@ -159,28 +159,28 @@ Resources:
       Description: ''
       MemorySize: 128
       Timeout: 15
-      Role: !GetAtt 'testKtvLambdaRole.Arn'
+      Role: !GetAtt 'KTVLAMBDAROLE.Arn'
 
-  testKtvLambdaInvokePhotoPermission:
+  KTVADDINGLAMBDAPHOTOSPERMISSSION:
     Type: 'AWS::Lambda::Permission'
     Properties:
-      FunctionName: !GetAtt testKTVLambda.Arn
+      FunctionName: !GetAtt KTVADDINGLAMBDA.Arn
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
       SourceArn: !Sub 'arn:aws:s3:::sillari-photosnew2'
 
-  testKtvLambdaInvokeReportsPermission:
+  KTVADDINGLAMBDAREPORTSPERMISSSION:
     Type: 'AWS::Lambda::Permission'
     Properties:
-      FunctionName: !GetAtt testKTVLambda.Arn
+      FunctionName: !GetAtt KTVADDINGLAMBDA.Arn
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
-      SourceArn: !Sub 'arn:aws:s3:::sillari-reports2'
+      SourceArn: !Sub 'arn:aws:s3:::sillari-reportsnew2'
 
   #Removal-lambda
-  testKtvRemoveLambdaRole:
+  KTVREMOVALLAMBDAROLE:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -209,9 +209,9 @@ Resources:
                 Resource:
                   - 'arn:aws:s3:::sillari-photosnew2/*'
                   - 'arn:aws:s3:::sillari-supervisions/*'
-                  - 'arn:aws:s3:::sillari-reports/*'
+                  - 'arn:aws:s3:::sillari-reportsnew2/*'
 
-  testKtvRemoveLambda:
+  KTVREMOVALLAMBDA:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.handler
@@ -221,7 +221,7 @@ Resources:
         been updated.
       MemorySize: 128
       Timeout: 15
-      Role: !GetAtt 'testKtvRemoveLambdaRole.Arn'
+      Role: !GetAtt 'KTVREMOVALLAMBDAROLE.Arn'
       Environment:
         Variables:
           KTV_API_KEY_SECRET_ID: 'api-key-for-kvt'
@@ -334,31 +334,29 @@ Resources:
             return sec;
           }
 
-  testKtvRemoveLambdaInvokePhotoPermission:
+  KTVREMOVALLAMBDAPHOTOSPERMISSION:
     Type: 'AWS::Lambda::Permission'
     Properties:
-      FunctionName: !GetAtt testKtvRemoveLambda.Arn
+      FunctionName: !GetAtt KTVREMOVALLAMBDA.Arn
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
       SourceArn: !Sub 'arn:aws:s3:::sillari-photosnew2'
 
-  testKtvRemoveLambdaInvokeReportsPermission:
+  KTVREMOVALLAMBDAREPORTSPERMISSION:
     Type: 'AWS::Lambda::Permission'
     Properties:
-      FunctionName: !GetAtt testKtvRemoveLambda.Arn
+      FunctionName: !GetAtt KTVREMOVALLAMBDA.Arn
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
-      SourceArn: !Sub 'arn:aws:s3:::sillari-reports'
+      SourceArn: !Sub 'arn:aws:s3:::sillari-reportsnew2'
 
-  testPhotoBucket:
+  S3BUCKET:
     Type: 'AWS::S3::Bucket'
     DependsOn:
-      - testKtvLambdaInvokePhotoPermission
-      - testKtvLambdaInvokeReportsPermission
-      - testKtvRemoveLambdaInvokePhotoPermission
-      - testKtvRemoveLambdaInvokeReportsPermission
+      - KTVADDINGLAMBDAPHOTOSPERMISSSION
+      - KTVREMOVALLAMBDAPHOTOSPERMISSION
     Properties:
       BucketName: sillari-photosnew2
       PublicAccessBlockConfiguration:
@@ -369,6 +367,25 @@ Resources:
       NotificationConfiguration:
         LambdaConfigurations:
           - Event: 's3:ObjectCreated:*'
-            Function: !GetAtt testKTVLambda.Arn
+            Function: !GetAtt KTVADDINGLAMBDA.Arn
           - Event: 's3:ObjectRemoved:Delete'
-            Function: !GetAtt testKtvRemoveLambda.Arn
+            Function: !GetAtt KTVREMOVALLAMBDA.Arn
+
+  S3BUCKET2:
+    Type: 'AWS::S3::Bucket'
+    DependsOn:
+      - KTVADDINGLAMBDAREPORTSPERMISSSION
+      - KTVREMOVALLAMBDAREPORTSPERMISSION
+    Properties:
+      BucketName: sillari-reportsnew2
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: 's3:ObjectCreated:*'
+            Function: !GetAtt KTVADDINGLAMBDA.Arn
+          - Event: 's3:ObjectRemoved:Delete'
+            Function: !GetAtt KTVREMOVALLAMBDA.Arn
