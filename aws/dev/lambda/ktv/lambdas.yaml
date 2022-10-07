@@ -1,5 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: An AWS Serverless Specification template describing your function.
+Parameters:
+  NamePrefix:
+    Type: String
+  Environment:
+    Type: String
 Resources:
   # Adding-lambda
   KTVLAMBDAROLE:
@@ -29,8 +34,7 @@ Resources:
                   - Effect: Allow
                     Action: 's3:GetObject'
                     Resource:
-                      - 'arn:aws:s3:::sillari-photosnew2/*'
-                      - 'arn:aws:s3:::sillari-supervisions/*'
+                      - !Sub "arn:aws:s3:::${NamePrefix}-photos-${Environment}/*"
                       - 'arn:aws:s3:::sillari-reportsnew2/*'
 
   KTVADDINGLAMBDA:
@@ -168,7 +172,7 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
-      SourceArn: !Sub 'arn:aws:s3:::sillari-photosnew2'
+      SourceArn: !Sub "arn:aws:s3:::${NamePrefix}-photos-${Environment}"
 
   KTVADDINGLAMBDAREPORTSPERMISSSION:
     Type: 'AWS::Lambda::Permission'
@@ -207,8 +211,7 @@ Resources:
               - Effect: Allow
                 Action: 's3:GetObject'
                 Resource:
-                  - 'arn:aws:s3:::sillari-photosnew2/*'
-                  - 'arn:aws:s3:::sillari-supervisions/*'
+                  - !Sub "arn:aws:s3:::${NamePrefix}-photos-${Environment}/*"
                   - 'arn:aws:s3:::sillari-reportsnew2/*'
 
   KTVREMOVALLAMBDA:
@@ -341,7 +344,7 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
-      SourceArn: !Sub 'arn:aws:s3:::sillari-photosnew2'
+      SourceArn: !Sub "arn:aws:s3:::${NamePrefix}-photos-${Environment}"
 
   KTVREMOVALLAMBDAREPORTSPERMISSION:
     Type: 'AWS::Lambda::Permission'
@@ -358,7 +361,7 @@ Resources:
       - KTVADDINGLAMBDAPHOTOSPERMISSSION
       - KTVREMOVALLAMBDAPHOTOSPERMISSION
     Properties:
-      BucketName: sillari-photosnew2
+      BucketName: !Sub "${NamePrefix}-photos-${Environment}"
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
