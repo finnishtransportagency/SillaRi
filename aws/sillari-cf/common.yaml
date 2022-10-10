@@ -12,6 +12,8 @@ Parameters:
     Type: String
   Subnet2:
     Type: String
+  KTVAddress:
+    Type: String
 
 Resources:
 
@@ -43,8 +45,8 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
-      - TargetGroupArn: !Ref TARGETGROUPUI
-        Type: forward
+        - TargetGroupArn: !Ref TARGETGROUPUI
+          Type: forward
       LoadBalancerArn: !Ref LOADBALANCER
       Port: 80
       Protocol: HTTP
@@ -71,15 +73,15 @@ Resources:
     Properties:
       Priority: 1
       Conditions:
-      - Field: path-pattern
-        PathPatternConfig:
-          Values:
-          - /api/*
+        - Field: path-pattern
+          PathPatternConfig:
+            Values:
+              - /api/*
       Actions:
-      - Type: forward
-        ForwardConfig:
-          TargetGroups:
-          - TargetGroupArn: !Ref TARGETGROUPBACKEND
+        - Type: forward
+          ForwardConfig:
+            TargetGroups:
+              - TargetGroupArn: !Ref TARGETGROUPBACKEND
       ListenerArn: !Ref LISTENER
 
   TARGETGROUPBACKEND:
@@ -104,15 +106,15 @@ Resources:
     Properties:
       Priority: 2
       Conditions:
-      - Field: path-pattern
-        PathPatternConfig:
-          Values:
-          - /geoserver/*
+        - Field: path-pattern
+          PathPatternConfig:
+            Values:
+              - /geoserver/*
       Actions:
-      - Type: forward
-        ForwardConfig:
-          TargetGroups:
-          - TargetGroupArn: !Ref TARGETGROUPGEOSERVER
+        - Type: forward
+          ForwardConfig:
+            TargetGroups:
+              - TargetGroupArn: !Ref TARGETGROUPGEOSERVER
       ListenerArn: !Ref LISTENER
 
   TARGETGROUPGEOSERVER:
@@ -137,15 +139,15 @@ Resources:
     Properties:
       Priority: 3
       Conditions:
-      - Field: path-pattern
-        PathPatternConfig:
-          Values:
-          - /prometheus/*
+        - Field: path-pattern
+          PathPatternConfig:
+            Values:
+              - /prometheus/*
       Actions:
-      - Type: forward
-        ForwardConfig:
-          TargetGroups:
-          - TargetGroupArn: !Ref TARGETGROUPPROMETHEUS
+        - Type: forward
+          ForwardConfig:
+            TargetGroups:
+              - TargetGroupArn: !Ref TARGETGROUPPROMETHEUS
       ListenerArn: !Ref LISTENER
 
   TARGETGROUPPROMETHEUS:
@@ -170,15 +172,15 @@ Resources:
     Properties:
       Priority: 4
       Conditions:
-      - Field: path-pattern
-        PathPatternConfig:
-          Values:
-          - /grafana/*
+        - Field: path-pattern
+          PathPatternConfig:
+            Values:
+              - /grafana/*
       Actions:
-      - Type: forward
-        ForwardConfig:
-          TargetGroups:
-          - TargetGroupArn: !Ref TARGETGROUPGRAFANA
+        - Type: forward
+          ForwardConfig:
+            TargetGroups:
+              - TargetGroupArn: !Ref TARGETGROUPGRAFANA
       ListenerArn: !Ref LISTENER
 
   TARGETGROUPGRAFANA:
@@ -368,11 +370,367 @@ Resources:
             }]
           }
 
+  # Adding-lambda
+  KTVLAMBDAROLE:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+      Policies:
+        - PolicyName: ktv-lambda-secret-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 'secretsmanager:GetSecretValue'
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:api-key-for-ktv*'
+        - PolicyName: sillari-photos-supervisions-s3-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 's3:GetObject'
+                Resource:
+                  - !Sub "arn:aws:s3:::${NamePrefix}-photos-${Environment}/*"
+                  - !Sub "arn:aws:s3:::${NamePrefix}-reports-${Environment}/*"
+
+
+  KTVADDINGLAMBDA:
+    Type: AWS::Lambda::Function
+    DeletionPolicy: Retain
+    Properties:
+      Environment:
+        Variables:
+          KTV_API_KEY_SECRET_ID: 'api-key-for-ktv'
+          KTV_HOSTNAME: !Sub '${KTVAddress}'
+      Code:
+        ZipFile: |
+          const https = require('https');
+          async function postFileToKTV(objectData, metadata, apiKey, imageKey) {
+          return new Promise((resolve, reject) => {
+          // Sillarin tunnisteavaruus on 22 ja kuvatyyppi 2101.
+          const ID_SPACE = 22;
+          const PIC_TYPE = 2101;
+          const { bridgeidentifier, bridgename, bridgeoid, createdtime, filename, objectidentifier, permitnumber, roadaddress, supervisionexceptional, supervisionfinishedtime, supervisionid, supervisionstartedtime, x_coord, y_coord } = metadata;
+          let bridgeProcessedName = '';
+          if (bridgename) {
+          const decodedName = decodeURIComponent(bridgename);
+          // decodeURIComponent does not handle '+' encoded in Java
+          bridgeProcessedName = decodedName.replace(/\+/g, ' ');
+          }
+          const roadAddressParts = roadaddress ? roadaddress.split('-') : [];
+
+          // supervisionexceptional has been converted from Boolean to string - it can be null/undefined, true or false
+          let isExceptional = null;
+          if (supervisionexceptional === true) {
+          isExceptional = true;
+          } else if (supervisionexceptional === false) {
+          isExceptional = false;
+          }
+          // TODO post supervision metadata how?
+          const postData = JSON.stringify({
+          data: [{
+          tunnisteavaruus: ID_SPACE,
+          tunniste: objectidentifier,
+          kuvatyyppi: PIC_TYPE,
+          nimi: filename,
+          image: objectData,
+          tie: roadAddressParts[0] || null,
+          tieosa: roadAddressParts[1] || null,
+          etaisyys: roadAddressParts[2] || null,
+          ajorata: roadAddressParts[3] || null,
+          xkoordinaatti: x_coord,
+          ykoordinaatti: y_coord,
+          kuljetuslupanumero: permitnumber,
+          ylitys_aloitusaika: supervisionstartedtime,
+          ylitys_paattymisaika: supervisionfinishedtime || null, // Is usually undefined for images
+          sillantunnus: bridgeidentifier,
+          valvontatunnus: supervisionid,
+          poikkeusjarjestely: isExceptional,
+          }]
+          });
+          const options = {
+          hostname: process.env.KTV_HOSTNAME,
+          path: '/ktv/api/public/KTJLisaaKuvia',
+          // path: '/ktv/api/ktv/KTJLisaaKuvia',
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey
+          }
+          };
+          const req = https.request(options, res => {
+          let body = '';
+          console.log('statusCode', res.statusCode);
+          res.setEncoding('utf8');
+          res.on('data', (chunk) => body += chunk);
+          res.on('end', () => {
+          console.log('Successfully processed HTTPS response');
+          console.log('RES body', body);
+          });
+          });
+          req.on('error', error => {
+          console.error(error)
+          });
+          req.write(postData);
+          req.end();
+          });
+          }
+          const AWS = require('aws-sdk');
+          const region = 'eu-west-1';
+          const secretClient = new AWS.SecretsManager({
+          region: region
+          });
+          const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+          exports.handler = async (event, context) => {;
+          console.log('Received event:', JSON.stringify(event, null, 2));
+          // Get the object from the event and show its content type
+          const bucket = event.Records[0].s3.bucket.name;
+          const imageKey = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
+          console.log('bucket', bucket);
+          const params = {
+          Bucket: bucket,
+          Key: imageKey,
+          };
+          try {
+          const secret = await getSecret();
+          console.log('got secret');
+          const secretJSON = secret.SecretString;
+          const parsed = JSON.parse(secretJSON);
+          const apiKey = parsed['ktv-api-key'];
+          const object = await s3.getObject(params).promise();
+          const { Body, Metadata } = object;
+          console.log('got object');
+          // Convert Body from a Buffer to a String
+          const objectData = Body.toString('base64'); // Use the encoding necessary
+          await postFileToKTV(objectData, Metadata, apiKey, imageKey);
+          } catch (error) {
+          console.error(error);
+          return 0;
+          }
+          return 1;
+          };
+          async function getSecret() {
+          const sec = await secretClient.getSecretValue({ SecretId: process.env.KTV_API_KEY_SECRET_ID }).promise();
+          console.log('*** SECRET WAS FETCHED FROM SECRETS MANAGER');
+          return sec;
+          }
+
+      Handler: index.handler
+      Runtime: nodejs16.x
+      Description: ''
+      MemorySize: 512
+      Timeout: 60
+      Role: !GetAtt 'KTVLAMBDAROLE.Arn'
+
+  KTVADDINGLAMBDAPHOTOSPERMISSSION:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt KTVADDINGLAMBDA.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !Sub "arn:aws:s3:::${NamePrefix}-photos-${Environment}"
+
+  KTVADDINGLAMBDAREPORTSPERMISSSION:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt KTVADDINGLAMBDA.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !Sub "arn:aws:s3:::${NamePrefix}-reports-${Environment}"
+
+  #Removal-lambda
+  KTVREMOVALLAMBDAROLE:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+      Policies:
+        - PolicyName: ktv-remove-lambda-secret-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 'secretsmanager:GetSecretValue'
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:api-key-for-ktv*'
+        - PolicyName: sillari-photos-supervisions-s3-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 's3:GetObject'
+                Resource:
+                  - !Sub "arn:aws:s3:::${NamePrefix}-photos-${Environment}/*"
+                  - !Sub "arn:aws:s3:::${NamePrefix}-reports-${Environment}/*"
+
+  KTVREMOVALLAMBDA:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs16.x
+      Description: >-
+        An Amazon S3 trigger that retrieves metadata for the object that has
+        been updated.
+      MemorySize: 128
+      Timeout: 60
+      Role: !GetAtt 'KTVREMOVALLAMBDAROLE.Arn'
+      Environment:
+        Variables:
+          KTV_API_KEY_SECRET_ID: 'api-key-for-ktv'
+          KTV_HOSTNAME: !Sub '${KTVAddress}'
+      Code:
+        ZipFile: |
+          console.log("Loading function");
+
+          const AWS = require("aws-sdk");
+          const region = "eu-west-1";
+          const secretClient = new AWS.SecretsManager({
+            region: region,
+          });
+          const https = require("https");
+
+          //Kuvien poistoon tarvitaan nämä parametrit
+          // {"data": [{"tunnisteavaruus": <tunnisteavaruus>,"tunniste": "<poistettavan kuvan tunniste>","poista": "true"}]}
+          //
+          // "poista": "true" -> kuva poistetaan kokonaan, "poista": "false" -> kuva historioidaan Kuvatiedossa.
+
+          async function removeFileFromKTV(apiKey, ktvIdentifier) {
+              return new Promise((resolve, reject) => {
+                // Sillarin tunnisteavaruus on 22 ja kuvatyyppi 2101.
+                const idSpace = 22;
+
+                console.log("Remove from ktv: " + ktvIdentifier);
+
+                const postData = JSON.stringify({
+                  data: [
+                    {
+                      tunnisteavaruus: idSpace,
+                      tunniste: ktvIdentifier,
+                      poista: true,
+                    },
+                  ],
+                });
+
+                console.log(postData);
+
+                const options = {
+                  hostname: process.env.KTV_HOSTNAME,
+                  path: "/ktv/api/public/KTJPoistaKuvia",
+                  // path: '/ktv/api/ktv/KTJPoistaKuvia',
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "x-api-key": apiKey,
+                  },
+                };
+
+                const req = https.request(options, (res) => {
+                  let body = "";
+                  console.log("statusCode", res.statusCode);
+
+                  res.setEncoding("utf8");
+                  res.on("data", (chunk) => (body += chunk));
+
+                  res.on("end", () => {
+                    console.log("Successfully processed HTTPS response");
+                    console.log("RES body", body);
+                  });
+                });
+
+                req.on("error", (error) => {
+                  console.error(error);
+                });
+
+                req.write(postData);
+                req.end();
+              });
+          };
+
+          exports.handler = async (event, context) => {
+            console.log("Received event:", JSON.stringify(event, null, 2));
+            const key = decodeURIComponent(
+              event.Records[0].s3.object.key.replace(/\+/g, " ")
+            );
+            try {
+              const secret = await getSecret();
+              console.log("got secret");
+
+              const secretJSON = secret.SecretString;
+              const parsed = JSON.parse(secretJSON);
+              const apiKey = parsed["ktv-api-key"];
+
+              //supervision_100_SIL-img-101 -> SIL-img-10
+              const keyParts = key ? key.split("_") : [];
+              console.log("keyParts: " + keyParts);
+
+              const ktvIdentifier = keyParts[2] || null;
+
+              if (!ktvIdentifier) {
+                console.error("Illegal key: " + key);
+                return 0;
+              }
+
+              await removeFileFromKTV(apiKey, ktvIdentifier);
+            } catch (error) {
+              console.error(error);
+              return 0;
+            }
+            return 1;
+          };
+
+          async function getSecret() {
+            const sec = await secretClient
+              .getSecretValue({ SecretId: process.env.KTV_API_KEY_SECRET_ID })
+              .promise();
+            console.log("*** SECRET WAS FETCHED FROM SECRETS MANAGER");
+            return sec;
+          }
+
+  KTVREMOVALLAMBDAPHOTOSPERMISSION:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt KTVREMOVALLAMBDA.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !Sub "arn:aws:s3:::${NamePrefix}-photos-${Environment}"
+
+  KTVREMOVALLAMBDAREPORTSPERMISSION:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt KTVREMOVALLAMBDA.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !Sub "arn:aws:s3:::${NamePrefix}-reports-${Environment}"
+
   S3BUCKET:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: Private
       BucketName: !Sub "${NamePrefix}-photos-${Environment}"
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: 's3:ObjectCreated:*'
+            Function: !GetAtt KTVADDINGLAMBDA.Arn
+          - Event: 's3:ObjectRemoved:Delete'
+            Function: !GetAtt KTVREMOVALLAMBDA.Arn
 
   # Allow access from dev
   S3BUCKETPOLICY:
@@ -395,6 +753,12 @@ Resources:
     Properties:
       AccessControl: Private
       BucketName: !Sub "${NamePrefix}-reports-${Environment}"
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: 's3:ObjectCreated:*'
+            Function: !GetAtt KTVADDINGLAMBDA.Arn
+          - Event: 's3:ObjectRemoved:Delete'
+            Function: !GetAtt KTVREMOVALLAMBDA.Arn
 
   # Allow access from dev
   S3BUCKET2POLICY:
@@ -443,9 +807,9 @@ Resources:
           - Effect: Allow
             Principal:
               Service:
-              - ecs-tasks.amazonaws.com
+                - ecs-tasks.amazonaws.com
             Action:
-            - sts:AssumeRole
+              - sts:AssumeRole
       Path: /
       Policies:
         - PolicyName: !Sub "${NamePrefix}-s3policy-${Environment}"
@@ -484,9 +848,9 @@ Resources:
           - Effect: Allow
             Principal:
               Service:
-              - ecs-tasks.amazonaws.com
+                - ecs-tasks.amazonaws.com
             Action:
-            - sts:AssumeRole
+              - sts:AssumeRole
       Path: /
       Policies:
         - PolicyName: !Sub "${NamePrefix}-SillariPhotosPolicy-${Environment}"
@@ -507,10 +871,10 @@ Resources:
   EFSFS:
     Type: AWS::EFS::FileSystem
     Properties:
-     Encrypted: true
-     FileSystemTags:
-      - Key: Name
-        Value: !Sub "${NamePrefix}-${Environment}"
+      Encrypted: true
+      FileSystemTags:
+        - Key: Name
+          Value: !Sub "${NamePrefix}-${Environment}"
 
   EFSMT1:
     Type: AWS::EFS::MountTarget
