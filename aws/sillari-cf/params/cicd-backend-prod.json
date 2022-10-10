@@ -1,0 +1,18 @@
+[
+  {
+    "ParameterKey": "ECSService",
+    "ParameterValue": "sillari-backend-prod"
+  },
+  {
+    "ParameterKey": "applicationName",
+    "ParameterValue": "sillari-backend"
+  },
+  {
+    "ParameterKey": "fromEcrRepository",
+    "ParameterValue": "sillari-backend-test"
+  },
+  {
+    "ParameterKey": "toEcrRepository",
+    "ParameterValue": "sillari-backend-prod"
+  }
+]

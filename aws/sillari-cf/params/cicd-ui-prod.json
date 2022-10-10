@@ -1,0 +1,18 @@
+[
+  {
+    "ParameterKey": "ECSService",
+    "ParameterValue": "sillari-ui-prod"
+  },
+  {
+    "ParameterKey": "applicationName",
+    "ParameterValue": "sillari-ui"
+  },
+  {
+    "ParameterKey": "fromEcrRepository",
+    "ParameterValue": "sillari-ui-test"
+  },
+  {
+    "ParameterKey": "toEcrRepository",
+    "ParameterValue": "sillari-ui-prod"
+  }
+]

@@ -1,0 +1,267 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  First copies a ECR repo (=container, in e.g. test) to another ECR repo (e.g. prod) and then deploys the Docker container to ECS.
+Parameters:
+  applicationName:
+    Description: Name of the application (No whitespace, no uppercase letter). Used for naming resources and tags. E.g. "kuvatieto"
+    Type: String
+    AllowedPattern: ^[a-z0-9-_]*$
+    Default: sillari
+  environment:
+    Description: Environment. Used for naming resources and tags. E.g. "test"
+    Type: String
+    AllowedValues:
+      - sbox
+      - dev
+      - inttest
+      - test
+      - prod
+    Default: prod
+  fromEcrRepository:
+    Description: Name of the ECR repository, where from the container will be copied from (E.g. "kuvatieto-kuvatieto")
+    Type: String
+    AllowedPattern: ^[a-z0-9-_\.\/:]*$
+    Default: sillari-ui-test
+  fromEcrImageTag:
+    Description: Tag for the ECR image, where from the container will be copied from (E.g. latest)
+    Type: String
+    Default: latest
+    AllowedPattern: ^[a-z0-9-_.]*$
+  toEcrRepository:
+    Description: Name of the ECR repository, where from the container will be copied from (E.g. "kuvatieto-kuvatieto-prod")
+    Type: String
+    AllowedPattern: ^[a-z0-9-_\.\/:]*$
+    Default: sillari-ui-prod
+  toEcrImageTag:
+    Description: Tag for the ECR image, where from the container will be copied from (E.g. latest)
+    Type: String
+    Default: latest
+    AllowedPattern: ^[a-z0-9-_.]*$
+  ECSCluster:
+    Description: ECS Cluster Name
+    Type: String
+    Default: sillari-prod
+  ECSService:
+    Description: ECS Service Name
+    Type: String
+    Default: sillari-ui-prod
+  Owner:
+    Description: Name of the owner of the application
+    Type: String
+    Default: jari.piitulainen@cgi.com
+  Project:
+    Description: Name of the project where this stack belongs to
+    Type: String
+    Default: Sillari
+Resources:
+  PipelineServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub "${applicationName}-${environment}-codepipeline-policy"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: !GetAtt BuildProject.Arn
+                Effect: Allow
+                Action:
+                  - codebuild:StartBuild
+                  - codebuild:BatchGetBuilds
+              - Resource:
+                - !Sub arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${fromEcrRepository}
+                - !Sub arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${toEcrRepository}
+                Effect: Allow
+                Action:
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:DescribeImages
+              - Resource:
+                - !Sub "arn:aws:s3:::${ArtifactBucket}/*"
+                - !Sub "arn:aws:s3:::${ArtifactBucket}"
+                Effect: Allow
+                Action:
+                  - s3:*
+      Tags:
+        - Key: Name
+          Value: !Sub "${applicationName}-${environment}-codepipeline-policy"
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Project
+          Value: !Ref Project
+  BuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub "${applicationName}-${environment}-codebuild-policy"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: "arn:aws:logs:*:*:*"
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+              - Resource: "*"
+                Effect: Allow
+                Action:
+                  - ecr:GetAuthorizationToken
+              - Resource:
+                - !Sub arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${fromEcrRepository}
+                - !Sub arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${toEcrRepository}
+                Effect: Allow
+                Action:
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:DescribeImages
+                  - ecr:PutImage
+                  - ecr:InitiateLayerUpload
+                  - ecr:UploadLayerPart
+                  - ecr:CompleteLayerUpload
+              - Resource: 
+                - !Sub "arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:service/${ECSCluster}/${ECSService}"
+                Effect: Allow
+                Action:
+                  - ecs:DescribeServices
+                  - ecs:DescribeTaskDefinition
+                  - ecs:DescribeTasks
+                  - ecs:ListTasks
+                  - ecs:RegisterTaskDefinition
+                  - ecs:UpdateService
+                  - iam:PassRole
+              - Resource:
+                  - !Sub "arn:aws:s3:::${ArtifactBucket}/*"
+                  - !Sub "arn:aws:s3:::${ArtifactBucket}"
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+      Tags:
+        - Key: Name
+          Value: !Sub "${applicationName}-${environment}-codebuild-policy"
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Project
+          Value: !Ref Project
+  BuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub "${applicationName}-${environment}-codebuild-project"
+      ServiceRole: !GetAtt BuildServiceRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        PrivilegedMode: true
+        ComputeType: BUILD_GENERAL1_SMALL
+        # Run `aws codebuild list-curated-environment-images` for a complete list of images provided.
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: !Sub |
+          version: 0.2
+          phases:
+            pre_build:
+              commands:
+                - echo Logging to ECR...
+                - $(aws ecr get-login --no-include-email --region ${AWS::Region})
+                - set
+            build:
+              commands:
+                - echo Build started on `date`
+                # Copy image from ecr repo to ecr repo
+                - docker pull ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${fromEcrRepository}:${fromEcrImageTag}
+                - docker tag ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${fromEcrRepository}:${fromEcrImageTag} ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${toEcrRepository}:${toEcrImageTag}
+                - docker push ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${toEcrRepository}:${toEcrImageTag}
+                # Deploy new container to ECS
+                - aws ecs update-service --cluster ${ECSCluster} --service ${ECSService} --force-new-deployment --no-paginate
+            post_build:
+              commands:
+                - echo Build completed on `date`
+
+      TimeoutInMinutes: 10
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${applicationName}-${environment}-cicd"
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: Name
+          Value: !Sub "${applicationName}-${environment}-S3"
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Project
+          Value: !Ref Project
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub "${applicationName}-${environment}-pipeline"
+      RoleArn: !GetAtt PipelineServiceRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref ArtifactBucket
+      Stages: 
+        - 
+          Name: ECRSourceStage
+          Actions:
+            - InputArtifacts: []
+              ActionTypeId:
+                Version: '1'
+                Owner: AWS
+                Category: Source
+                Provider: ECR
+              OutputArtifacts:
+                - Name: SourceArtifact
+              RunOrder: 1
+              Configuration:
+                ImageTag: !Sub "${fromEcrImageTag}"
+                RepositoryName: !Sub "${fromEcrRepository}"
+              Name: ImageSourceAction
+        - Name: CopyAndDeployImageStage
+          Actions:
+            - Name: CopyAndDeployImageAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Sub "${applicationName}-${environment}-codebuild-project"
+              InputArtifacts:
+                - Name: SourceArtifact
+              RunOrder: 1
+      RestartExecutionOnUpdate: false
+      Tags:
+        - Key: Name
+          Value: !Sub "${applicationName}-${environment}-codepipeline"
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Project
+          Value: !Ref Project

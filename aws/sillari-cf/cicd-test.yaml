@@ -1,0 +1,276 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  Deploys a Docker container to ECS, when an successful push event occurs in ECR
+Parameters:
+  applicationName:
+    Description: Name of the application (No whitespace, no uppercase letter). Used for naming resources and tags. E.g. "kuvatieto"
+    Type: String
+    AllowedPattern: ^[a-z0-9-_]*$
+  environment:
+    Description: Environment. Used for naming resources and tags. E.g. "test"
+    Type: String
+    AllowedValues:
+      - sbox
+      - dev
+      - inttest
+      - test
+      - prod
+  ecrRepository:
+    Description: Name of the ECR repository i.e. image name (E.g. "kuvatieto-kuvatieto")
+    Type: String
+    AllowedPattern: ^[a-z0-9-_]*$
+  ecrImageTag:
+    Description: Tag for the ECR image (E.g. latest)
+    Type: String
+    Default: latest
+    AllowedPattern: ^[a-z0-9-_.]*$
+  ECSCluster:
+    Description: ECS Cluster Name
+    Type: String
+  ECSService:
+    Description: ECS Service Name
+    Type: String
+  Owner:
+    Description: Name of the owner of the application
+    Type: String
+  Project:
+    Description: Name of the project where this stack belongs to
+    Type: String
+Resources:
+  AmazonCloudWatchEventRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      Policies:
+        -
+          PolicyName: cwe-pipeline-execution
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              -
+                Effect: Allow
+                Action: codepipeline:StartPipelineExecution
+                Resource: !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}
+      Tags:
+        - Key: Name
+          Value: !Sub "${applicationName}-${environment}-cloudwatch-event-role"
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Project
+          Value: !Ref Project
+  AmazonCloudWatchEventRule:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      Description: !Sub "${applicationName}-${environment}-event-rule"
+      EventPattern:
+        detail:
+          action-type: [PUSH]
+          image-tag: [!Ref ecrImageTag]
+          repository-name: [!Ref ecrRepository]
+          result: [SUCCESS]
+        detail-type: [ECR Image Action]
+        source: [aws.ecr]
+      Targets:
+        - Arn: !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}
+          RoleArn: !GetAtt AmazonCloudWatchEventRole.Arn
+          Id: !Sub ${Pipeline}-codepipeline
+  PipelineServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub "${applicationName}-${environment}-codepipeline-policy"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: !GetAtt BuildProject.Arn
+                Effect: Allow
+                Action:
+                  - codebuild:StartBuild
+                  - codebuild:BatchGetBuilds
+              - Resource: !Sub arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${ecrRepository}
+                Effect: Allow
+                Action:
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:DescribeImages
+              - Resource:
+                - !Sub "arn:aws:s3:::${ArtifactBucket}/*"
+                - !Sub "arn:aws:s3:::${ArtifactBucket}"
+                Effect: Allow
+                Action:
+                  - s3:*
+      Tags:
+        - Key: Name
+          Value: !Sub "${applicationName}-${environment}-codepipeline-policy"
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Project
+          Value: !Ref Project
+  BuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub "${applicationName}-${environment}-codebuild-policy"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: "arn:aws:logs:*:*:*"
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+              - Resource: !Sub "arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:service/${ECSCluster}/${ECSService}"
+                Effect: Allow
+                Action:
+                  - ecs:DescribeServices
+                  - ecs:DescribeTaskDefinition
+                  - ecs:DescribeTasks
+                  - ecs:ListTasks
+                  - ecs:RegisterTaskDefinition
+                  - ecs:UpdateService
+                  - iam:PassRole
+              - Resource:
+                  - !Sub "arn:aws:s3:::${ArtifactBucket}/*"
+                  - !Sub "arn:aws:s3:::${ArtifactBucket}"
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+      Tags:
+        - Key: Name
+          Value: !Sub "${applicationName}-${environment}-codebuild-policy"
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Project
+          Value: !Ref Project
+  BuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub "${applicationName}-${environment}-codebuild-project"
+      ServiceRole: !GetAtt BuildServiceRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        PrivilegedMode: true
+        ComputeType: BUILD_GENERAL1_SMALL
+        # Run `aws codebuild list-curated-environment-images` for a complete list of images provided.
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: !Sub |
+          version: 0.2
+          phases:
+            build:
+              commands:
+                - echo Build started on `date`
+                - aws ecs update-service --cluster ${ECSCluster} --service ${ECSService} --force-new-deployment
+            post_build:
+              commands:
+                - echo Build completed on `date`
+
+      TimeoutInMinutes: 10
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${applicationName}-${environment}-codepipeline-artifacts"
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: Name
+          Value: !Sub "${applicationName}-${environment}-S3"
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Project
+          Value: !Ref Project
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub "${applicationName}-${environment}-pipeline"
+      RoleArn: !GetAtt PipelineServiceRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref ArtifactBucket
+      Stages: 
+        - 
+          Name: ECRSource
+          Actions:
+            - InputArtifacts: []
+              ActionTypeId:
+                Version: '1'
+                Owner: AWS
+                Category: Source
+                Provider: ECR
+              OutputArtifacts:
+                - Name: SourceArtifact
+              RunOrder: 1
+              Configuration:
+                ImageTag: !Sub "${ecrImageTag}"
+                RepositoryName: !Sub "${ecrRepository}"
+              Name: ImageSourceAction
+        -
+          Name: ECSDeploy
+          Actions:
+            - Name: Deploy
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Sub "${applicationName}-${environment}-codebuild-project"
+              InputArtifacts:
+                - Name: SourceArtifact
+              # OutputArtifacts:
+              #   - Name: ecs-imagedefjson
+              RunOrder: 1
+      RestartExecutionOnUpdate: false
+      Tags:
+        - Key: Name
+          Value: !Sub "${applicationName}-${environment}-codepipeline"
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Project
+          Value: !Ref Project
+
+Outputs:
+  S3BucketName:
+    Description: The created S3 bucket
+    Value: !Ref ArtifactBucket

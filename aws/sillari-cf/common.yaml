@@ -1,0 +1,576 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Sillari common resources
+
+Parameters:
+  NamePrefix:
+    Type: String
+  Environment:
+    Type: String
+  VPC:
+    Type: String
+  Subnet1:
+    Type: String
+  Subnet2:
+    Type: String
+
+Resources:
+
+  LOADBALANCER:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub "${NamePrefix}-${Environment}"
+      Scheme: internal
+      SecurityGroups:
+        - !Ref LOADBALANCERSG
+      Subnets:
+        - !Ref Subnet1
+        - !Ref Subnet2
+      Tags:
+        - Key: Name
+          Value: !Sub "${NamePrefix}-${Environment}"
+
+  LOADBALANCERSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "${NamePrefix}-elb-${Environment}"
+      GroupDescription: !Sub "${NamePrefix}-elb-${Environment}"
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+
+  LISTENER:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+      - TargetGroupArn: !Ref TARGETGROUPUI
+        Type: forward
+      LoadBalancerArn: !Ref LOADBALANCER
+      Port: 80
+      Protocol: HTTP
+
+  TARGETGROUPUI:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub "${NamePrefix}-ui-${Environment}"
+      VpcId: !Ref VPC
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: "200-499"
+      Port: 8095
+      Protocol: HTTP
+      TargetType: ip
+
+  LISTENERRULEBACKEND:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Priority: 1
+      Conditions:
+      - Field: path-pattern
+        PathPatternConfig:
+          Values:
+          - /api/*
+      Actions:
+      - Type: forward
+        ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn: !Ref TARGETGROUPBACKEND
+      ListenerArn: !Ref LISTENER
+
+  TARGETGROUPBACKEND:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub "${NamePrefix}-backend-${Environment}"
+      VpcId: !Ref VPC
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: "200-499"
+      Port: 8081
+      Protocol: HTTP
+      TargetType: ip
+
+  LISTENERRULEGEOSERVER:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Priority: 2
+      Conditions:
+      - Field: path-pattern
+        PathPatternConfig:
+          Values:
+          - /geoserver/*
+      Actions:
+      - Type: forward
+        ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn: !Ref TARGETGROUPGEOSERVER
+      ListenerArn: !Ref LISTENER
+
+  TARGETGROUPGEOSERVER:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub "${NamePrefix}-geoserver-${Environment}"
+      VpcId: !Ref VPC
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: /geoserver/
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: "200-499"
+      Port: 8080
+      Protocol: HTTP
+      TargetType: ip
+
+  LISTENERRULEPROMETHEUS:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Priority: 3
+      Conditions:
+      - Field: path-pattern
+        PathPatternConfig:
+          Values:
+          - /prometheus/*
+      Actions:
+      - Type: forward
+        ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn: !Ref TARGETGROUPPROMETHEUS
+      ListenerArn: !Ref LISTENER
+
+  TARGETGROUPPROMETHEUS:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub "${NamePrefix}-prometheus-${Environment}"
+      VpcId: !Ref VPC
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: "200-499"
+      Port: 9090
+      Protocol: HTTP
+      TargetType: ip
+
+  LISTENERRULEGRAFANA:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Priority: 4
+      Conditions:
+      - Field: path-pattern
+        PathPatternConfig:
+          Values:
+          - /grafana/*
+      Actions:
+      - Type: forward
+        ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn: !Ref TARGETGROUPGRAFANA
+      ListenerArn: !Ref LISTENER
+
+  TARGETGROUPGRAFANA:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub "${NamePrefix}-grafana-${Environment}"
+      VpcId: !Ref VPC
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: "200-499"
+      Port: 3000
+      Protocol: HTTP
+      TargetType: ip
+
+  ECRUI:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub "${NamePrefix}-ui-${Environment}"
+      ImageScanningConfiguration:
+        ScanOnPush: TRUE
+      RepositoryPolicyText:
+        Version: 2012-10-17
+        Statement:
+          - Sid: AllowPushPull
+            Effect: Allow
+            Principal:
+              AWS:
+                - arn:aws:iam::384409174079:role/SillariAdmin
+                - !Sub "arn:aws:iam::384409174079:role/service-role/codebuild-test-build-sillari-ui-service-role"
+            Action:
+              - ecr:*
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [{
+              "rulePriority": 1,
+              "description": "Keep 3 previous versions of image.",
+              "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 3
+              },
+              "action": {
+                "type": "expire"
+              }
+            }]
+          }
+
+  ECRBACKEND:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub "${NamePrefix}-backend-${Environment}"
+      ImageScanningConfiguration:
+        ScanOnPush: TRUE
+      RepositoryPolicyText:
+        Version: 2012-10-17
+        Statement:
+          - Sid: AllowPushPull
+            Effect: Allow
+            Principal:
+              AWS:
+                - arn:aws:iam::384409174079:role/SillariAdmin
+                - !Sub "arn:aws:iam::384409174079:role/service-role/codebuild-test-build-sillari-ui-service-role"
+            Action:
+              - ecr:*
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [{
+              "rulePriority": 1,
+              "description": "Keep 3 previous versions of image.",
+              "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 3
+              },
+              "action": {
+                "type": "expire"
+              }
+            }]
+          }
+
+  ECRGEOSERVER:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub "${NamePrefix}-geoserver-${Environment}"
+      ImageScanningConfiguration:
+        ScanOnPush: TRUE
+      RepositoryPolicyText:
+        Version: 2012-10-17
+        Statement:
+          - Sid: AllowPushPull
+            Effect: Allow
+            Principal:
+              AWS:
+                - arn:aws:iam::384409174079:role/SillariAdmin
+                - !Sub "arn:aws:iam::384409174079:role/service-role/codebuild-test-build-sillari-ui-service-role"
+            Action:
+              - ecr:*
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [{
+              "rulePriority": 1,
+              "description": "Keep 3 previous versions of image.",
+              "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 3
+              },
+              "action": {
+                "type": "expire"
+              }
+            }]
+          }
+
+  ECRGRAFANA:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub "${NamePrefix}-grafana-${Environment}"
+      ImageScanningConfiguration:
+        ScanOnPush: TRUE
+      RepositoryPolicyText:
+        Version: 2012-10-17
+        Statement:
+          - Sid: AllowPushPull
+            Effect: Allow
+            Principal:
+              AWS:
+                - arn:aws:iam::384409174079:role/SillariAdmin
+                - !Sub "arn:aws:iam::384409174079:role/service-role/codebuild-test-build-sillari-ui-service-role"
+            Action:
+              - ecr:*
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [{
+              "rulePriority": 1,
+              "description": "Keep 3 previous versions of image.",
+              "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 3
+              },
+              "action": {
+                "type": "expire"
+              }
+            }]
+          }
+
+  ECRPROMETHEUS:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub "${NamePrefix}-prometheus-${Environment}"
+      ImageScanningConfiguration:
+        ScanOnPush: TRUE
+      RepositoryPolicyText:
+        Version: 2012-10-17
+        Statement:
+          - Sid: AllowPushPull
+            Effect: Allow
+            Principal:
+              AWS:
+                - arn:aws:iam::384409174079:role/SillariAdmin
+                - !Sub "arn:aws:iam::384409174079:role/service-role/codebuild-test-build-sillari-ui-service-role"
+            Action:
+              - ecr:*
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [{
+              "rulePriority": 1,
+              "description": "Keep 3 previous versions of image.",
+              "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 3
+              },
+              "action": {
+                "type": "expire"
+              }
+            }]
+          }
+
+  S3BUCKET:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName: !Sub "${NamePrefix}-photos-${Environment}"
+
+  # Allow access from dev
+  S3BUCKETPOLICY:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3BUCKET
+      PolicyDocument:
+        Statement:
+          - Action:
+              - "s3:*"
+            Effect: "Allow"
+            Principal:
+              AWS: "arn:aws:iam::384409174079:role/SillariAdmin"
+            Resource:
+              - !Sub "arn:aws:s3:::${S3BUCKET}"
+              - !Sub "arn:aws:s3:::${S3BUCKET}/*"
+
+  S3BUCKET2:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName: !Sub "${NamePrefix}-reports-${Environment}"
+
+  # Allow access from dev
+  S3BUCKET2POLICY:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3BUCKET2
+      PolicyDocument:
+        Statement:
+          - Action:
+              - "s3:*"
+            Effect: "Allow"
+            Principal:
+              AWS: "arn:aws:iam::384409174079:role/SillariAdmin"
+            Resource:
+              - !Sub "arn:aws:s3:::${S3BUCKET2}"
+              - !Sub "arn:aws:s3:::${S3BUCKET2}/*"
+
+  S3BUCKET3:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName: !Sub "${NamePrefix}-permits-${Environment}"
+
+  # Allow access from dev
+  S3BUCKET3POLICY:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3BUCKET3
+      PolicyDocument:
+        Statement:
+          - Action:
+              - "s3:*"
+            Effect: "Allow"
+            Principal:
+              AWS: "arn:aws:iam::384409174079:role/SillariAdmin"
+            Resource:
+              - !Sub "arn:aws:s3:::${S3BUCKET3}"
+              - !Sub "arn:aws:s3:::${S3BUCKET3}/*"
+
+  ECSTASKROLE:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${NamePrefix}-taskrole-${Environment}"
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+              - ecs-tasks.amazonaws.com
+            Action:
+            - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: !Sub "${NamePrefix}-s3policy-${Environment}"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:*
+                Resource:
+                  - !Sub "arn:aws:s3:::${S3BUCKET}"
+                  - !Sub "arn:aws:s3:::${S3BUCKET}/*"
+                  - !Sub "arn:aws:s3:::${S3BUCKET2}"
+                  - !Sub "arn:aws:s3:::${S3BUCKET2}/*"
+                  - !Sub "arn:aws:s3:::${S3BUCKET3}"
+                  - !Sub "arn:aws:s3:::${S3BUCKET3}/*"
+        - PolicyName: !Sub "${NamePrefix}-efspolicy-${Environment}"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - elasticfilesystem:ClientMount
+                  - elasticfilesystem:ClientWrite
+                Resource:
+                  - !Join ["", [!GetAtt EFSFS.Arn, "/*"]]
+                Condition:
+                  StringLike:
+                    "elasticfilesystem:AccessPointArn": !Sub "arn:aws:elasticfilesystem:eu-west-1:${AWS::AccountId}:access-point/*"
+  PHOTOSROLE:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${NamePrefix}-SillariPhotosRole-${Environment}"
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+              - ecs-tasks.amazonaws.com
+            Action:
+            - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: !Sub "${NamePrefix}-SillariPhotosPolicy-${Environment}"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:*
+                Resource:
+                  - !Sub "arn:aws:s3:::${S3BUCKET}"
+                  - !Sub "arn:aws:s3:::${S3BUCKET}/*"
+                  - !Sub "arn:aws:s3:::${S3BUCKET2}"
+                  - !Sub "arn:aws:s3:::${S3BUCKET2}/*"
+                  - !Sub "arn:aws:s3:::${S3BUCKET3}"
+                  - !Sub "arn:aws:s3:::${S3BUCKET3}/*"
+
+  EFSFS:
+    Type: AWS::EFS::FileSystem
+    Properties:
+     Encrypted: true
+     FileSystemTags:
+      - Key: Name
+        Value: !Sub "${NamePrefix}-${Environment}"
+
+  EFSMT1:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EFSFS
+      SecurityGroups:
+        - !Ref LOADBALANCERSG
+      SubnetId: !Ref Subnet1
+
+  EFSMT2:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EFSFS
+      SecurityGroups:
+        - !Ref LOADBALANCERSG
+      SubnetId: !Ref Subnet2
+
+Outputs:
+
+  TARGETGROUPUI:
+    Value: !Ref TARGETGROUPUI
+    Export:
+      Name: !Sub "${NamePrefix}-targetgroup-ui-${Environment}"
+
+  TARGETGROUPBACKEND:
+    Value: !Ref TARGETGROUPBACKEND
+    Export:
+      Name: !Sub "${NamePrefix}-targetgroup-backend-${Environment}"
+
+  TARGETGROUPGEOSERVER:
+    Value: !Ref TARGETGROUPGEOSERVER
+    Export:
+      Name: !Sub "${NamePrefix}-targetgroup-geoserver-${Environment}"
+
+  TARGETGROUPPROMETHEUS:
+    Value: !Ref TARGETGROUPPROMETHEUS
+    Export:
+      Name: !Sub "${NamePrefix}-targetgroup-prometheus-${Environment}"
+
+  TARGETGROUPGRAFANA:
+    Value: !Ref TARGETGROUPGRAFANA
+    Export:
+      Name: !Sub "${NamePrefix}-targetgroup-grafana-${Environment}"
+
+  LOADBALANCERSG:
+    Value: !Ref LOADBALANCERSG
+    Export:
+      Name: !Sub "${NamePrefix}-loadbalancersg-${Environment}"
+
+  EFSFS:
+    Value: !Ref EFSFS
+    Export:
+      Name: !Sub "${NamePrefix}-efsfs-${Environment}"
+
+  ECSTASKROLE:
+    Value: !Ref ECSTASKROLE
+    Export:
+      Name: !Sub "${NamePrefix}-ecstaskrole-${Environment}"
+
+  PHOTOSROLE:
+    Value: !Ref PHOTOSROLE
+    Export:
+      Name: !Sub "${NamePrefix}-SillariPhotosRole-${Environment}"

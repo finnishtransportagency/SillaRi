@@ -1,0 +1,50 @@
+[
+  {
+    "ParameterKey": "NamePrefix",
+    "ParameterValue": "sillari"
+  },
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "prod"
+  },
+  {
+    "ParameterKey": "VPC",
+    "ParameterValue": "vpc-065db82e138f5acd5"
+  },
+  {
+    "ParameterKey": "Subnet1",
+    "ParameterValue": "subnet-061ad996805e94198"
+  },
+  {
+    "ParameterKey": "Subnet2",
+    "ParameterValue": "subnet-092e83e21467b00d3"
+  },
+  {
+    "ParameterKey": "DatabaseHost",
+    "ParameterValue": "rdspg13prod.chw6qe2cqnfv.eu-west-1.rds.amazonaws.com"
+  },
+  {
+    "ParameterKey": "DatabaseName",
+    "ParameterValue": "sillari"
+  },
+  {
+    "ParameterKey": "DatabaseUser",
+    "ParameterValue": "sillari"
+  },
+  {
+    "ParameterKey": "GrafanaDomain",
+    "ParameterValue": "sillari.vaylapilvi.fi"
+  },
+  {
+    "ParameterKey": "GrafanaRootURI",
+    "ParameterValue": "sillari.vaylapilvi.fi/grafana/"
+  },
+  {
+    "ParameterKey": "GrafanaDatabaseName",
+    "ParameterValue": "sillarigrafana"
+  },
+  {
+    "ParameterKey": "GrafanaUser",
+    "ParameterValue": "sillarigrafana"
+  }
+]

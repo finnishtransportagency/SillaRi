@@ -1,0 +1,34 @@
+[
+  {
+    "ParameterKey": "ECSCluster",
+    "ParameterValue": "sillari-test"
+  },
+  {
+    "ParameterKey": "ECSService",
+    "ParameterValue": "sillari-backend-test"
+  },
+  {
+    "ParameterKey": "Owner",
+    "ParameterValue": "Jari Piitulainen"
+  },
+  {
+    "ParameterKey": "Project",
+    "ParameterValue": "Sillari"
+  },
+  {
+    "ParameterKey": "applicationName",
+    "ParameterValue": "sillari-backend"
+  },
+  {
+    "ParameterKey": "ecrImageTag",
+    "ParameterValue": "latest"
+  },
+  {
+    "ParameterKey": "ecrRepository",
+    "ParameterValue": "sillari-ui-test"
+  },
+  {
+    "ParameterKey": "environment",
+    "ParameterValue": "test"
+  }
+]

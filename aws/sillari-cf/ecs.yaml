@@ -1,0 +1,672 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Sillari ECS
+
+Parameters:
+  NamePrefix:
+    Type: String
+  Environment:
+    Type: String
+  VPC:
+    Type: String
+  Subnet1:
+    Type: String
+  Subnet2:
+    Type: String
+  DatabaseHost:
+    Type: String
+  DatabaseName:
+    Type: String
+  DatabaseUser:
+    Type: String
+  DatabasePassword:
+    Type: String
+    Default: "{{resolve:ssm:cs-rds-sillari:1}}"
+  GrafanaDomain:
+    Type: String
+  GrafanaRootURI:
+    Type: String
+  GrafanaDatabaseName:
+    Type: String
+  GrafanaPassword:
+    Type: String
+    Default: "{{resolve:ssm:cs-sillari-grafana-password:1}}"
+  GrafanaPasswordProd:
+    Type: String
+    Default: "{{resolve:ssm:cs-prod-sillari-grafana-password:1}}"
+  GrafanaUser:
+    Type: String
+
+Conditions:
+  Production: !Equals [!Ref Environment, prod]
+
+Resources:
+
+  CLUSTER:
+    Type: AWS::ECS::Cluster
+    Properties:
+     ClusterName: !Sub "${NamePrefix}-${Environment}"
+     Tags:
+      - Key: Name
+        Value: !Sub "${NamePrefix}-${Environment}"
+
+  LOGGROUP:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "${NamePrefix}-${Environment}"
+      RetentionInDays: 14
+
+  UISERVICE:
+    Type: AWS::ECS::Service
+    Properties:
+        ServiceName: !Sub "${NamePrefix}-ui-${Environment}"
+        Cluster: !Ref CLUSTER
+        LaunchType: FARGATE
+        EnableExecuteCommand: true
+        NetworkConfiguration:
+          AwsvpcConfiguration:
+            Subnets:
+              - !Ref Subnet1
+              - !Ref Subnet2
+            SecurityGroups:
+              - Fn::ImportValue: !Sub "${NamePrefix}-loadbalancersg-${Environment}"
+        LoadBalancers:
+          - ContainerName: !Sub "${NamePrefix}-ui-${Environment}"
+            ContainerPort: 8095
+            TargetGroupArn:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-targetgroup-ui-${Environment}"
+        DesiredCount: 1
+        TaskDefinition: !Ref UITASK
+
+  BACKENDSERVICE:
+    Type: AWS::ECS::Service
+    Properties:
+        ServiceName: !Sub "${NamePrefix}-backend-${Environment}"
+        Cluster: !Ref CLUSTER
+        LaunchType: FARGATE
+        EnableExecuteCommand: true
+        NetworkConfiguration:
+          AwsvpcConfiguration:
+            Subnets:
+              - !Ref Subnet1
+              - !Ref Subnet2
+            SecurityGroups:
+              - Fn::ImportValue: !Sub "${NamePrefix}-loadbalancersg-${Environment}"
+        LoadBalancers:
+          - ContainerName: !Sub "${NamePrefix}-backend-${Environment}"
+            ContainerPort: 8081
+            TargetGroupArn:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-targetgroup-backend-${Environment}"
+        DesiredCount: 1
+        TaskDefinition: !Ref BACKENDTASK
+
+  GEOSERVERSERVICE:
+    Type: AWS::ECS::Service
+    Properties:
+        ServiceName: !Sub "${NamePrefix}-geoserver-${Environment}"
+        Cluster: !Ref CLUSTER
+        LaunchType: FARGATE
+        EnableExecuteCommand: true
+        NetworkConfiguration:
+          AwsvpcConfiguration:
+            Subnets:
+              - !Ref Subnet1
+              - !Ref Subnet2
+            SecurityGroups:
+              - Fn::ImportValue: !Sub "${NamePrefix}-loadbalancersg-${Environment}"
+        LoadBalancers:
+          - ContainerName: !Sub "${NamePrefix}-geoserver-${Environment}"
+            ContainerPort: 8080
+            TargetGroupArn:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-targetgroup-geoserver-${Environment}"
+        DesiredCount: 1
+        TaskDefinition: !Ref GEOSERVERTASK
+
+  PROMETHEUSSERVICE:
+    Type: AWS::ECS::Service
+    Properties:
+        ServiceName: !Sub "${NamePrefix}-prometheus-${Environment}"
+        Cluster: !Ref CLUSTER
+        LaunchType: FARGATE
+        EnableExecuteCommand: true
+        NetworkConfiguration:
+          AwsvpcConfiguration:
+            Subnets:
+              - !Ref Subnet1
+              - !Ref Subnet2
+            SecurityGroups:
+              - Fn::ImportValue: !Sub "${NamePrefix}-loadbalancersg-${Environment}"
+        LoadBalancers:
+          - ContainerName: !Sub "${NamePrefix}-prometheus-${Environment}"
+            ContainerPort: 9090
+            TargetGroupArn:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-targetgroup-prometheus-${Environment}"
+        DesiredCount: 1
+        TaskDefinition: !Ref PROMETHEUSTASK
+
+  GRAFANASERVICE:
+    Type: AWS::ECS::Service
+    Properties:
+        ServiceName: !Sub "${NamePrefix}-grafana-${Environment}"
+        Cluster: !Ref CLUSTER
+        LaunchType: FARGATE
+        EnableExecuteCommand: true
+        NetworkConfiguration:
+          AwsvpcConfiguration:
+            Subnets:
+              - !Ref Subnet1
+              - !Ref Subnet2
+            SecurityGroups:
+              - Fn::ImportValue: !Sub "${NamePrefix}-loadbalancersg-${Environment}"
+        LoadBalancers:
+          - ContainerName: !Sub "${NamePrefix}-grafana-${Environment}"
+            ContainerPort: 3000
+            TargetGroupArn:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-targetgroup-grafana-${Environment}"
+        DesiredCount: 1
+        TaskDefinition: !Ref GRAFANATASK
+
+  UITASK:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family:  !Sub "${NamePrefix}-ui-${Environment}"
+      Cpu: "256"
+      Memory: "1024" # "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Fn::ImportValue:
+          !Sub "${NamePrefix}-ecstaskrole-${Environment}"
+      ExecutionRoleArn: !GetAtt EXECUTIONROLE.Arn
+      Volumes:
+        - Name: efsvolume
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+        - Name: efsvolume-1
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/var/sillari"
+        - Name: efsvolume-2
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/logs/grafana"
+        - Name: efsvolume-3
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/grafana_data"
+        - Name: efsvolume-4
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/geoserver"
+        - Name: efsvolume-5
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/prometheus"
+      ContainerDefinitions:
+        - Name: !Sub "${NamePrefix}-ui-${Environment}"
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${NamePrefix}-ui-${Environment}:latest"
+          # Cpu: 256
+          # Memory: 512
+          Essential: true
+          PortMappings:
+            - ContainerPort: 8095
+              HostPort: 8095
+              Protocol: "tcp"
+          MountPoints:
+            - SourceVolume: efsvolume
+              ContainerPath: /data
+              ReadOnly: false
+            - SourceVolume: "efsvolume-1"
+              ContainerPath: "/var/sillari"
+              ReadOnly: false
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LOGGROUP
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: !Sub "${NamePrefix}-ui-${Environment}"
+          Environment:
+            - Name: environment
+              Value: !Ref Environment
+            - Name: database_host
+              Value: !Ref DatabaseHost
+            - Name: db_url
+              Value: !Sub "jdbc:postgresql://${DatabaseHost}:5432/${DatabaseName}"
+            - Name: db_username
+              Value: !Ref DatabaseUser
+            - Name: db_password
+              Value: !Ref DatabasePassword
+            - Name: grafana_database_name
+              Value: !Ref GrafanaDatabaseName
+            - Name: grafana_domain
+              Value: !Ref GrafanaDomain
+            - Name: grafana_password
+              Value: !If [Production, !Ref GrafanaPasswordProd, !Ref GrafanaPassword]
+            - Name: grafana_root_uri
+              Value: !Ref GrafanaRootURI
+            - Name: grafana_user
+              Value: !Ref GrafanaUser
+
+  BACKENDTASK:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family:  !Sub "${NamePrefix}-backend-${Environment}"
+      Cpu: "1024"
+      Memory: "4096"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Fn::ImportValue:
+          !Sub "${NamePrefix}-ecstaskrole-${Environment}"
+      ExecutionRoleArn: !GetAtt EXECUTIONROLE.Arn
+      Volumes:
+        - Name: efsvolume
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+        - Name: efsvolume-1
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/var/sillari"
+        - Name: efsvolume-2
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/logs/grafana"
+        - Name: efsvolume-3
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/grafana_data"
+        - Name: efsvolume-4
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/geoserver"
+        - Name: efsvolume-5
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/prometheus"
+      ContainerDefinitions:
+        - Name: !Sub "${NamePrefix}-backend-${Environment}"
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${NamePrefix}-backend-${Environment}:latest"
+          # Cpu: 1024
+          # Memory: 4096
+          Essential: true
+          PortMappings:
+            - ContainerPort: 8081
+              HostPort: 8081
+              Protocol: "tcp"
+          MountPoints:
+            - SourceVolume: efsvolume
+              ContainerPath: /data
+              ReadOnly: false
+            - SourceVolume: "efsvolume-1"
+              ContainerPath: "/var/sillari"
+              ReadOnly: false
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LOGGROUP
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: !Sub "${NamePrefix}-backend-${Environment}"
+          Environment:
+            - Name: environment
+              Value: !Ref Environment
+            - Name: database_host
+              Value: !Ref DatabaseHost
+            - Name: db_url
+              Value: !Sub "jdbc:postgresql://${DatabaseHost}:5432/${DatabaseName}"
+            - Name: db_username
+              Value: !Ref DatabaseUser
+            - Name: db_password
+              Value: !Ref DatabasePassword
+            - Name: grafana_database_name
+              Value: !Ref GrafanaDatabaseName
+            - Name: grafana_domain
+              Value: !Ref GrafanaDomain
+            - Name: grafana_password
+              Value: !If [Production, !Ref GrafanaPasswordProd, !Ref GrafanaPassword]
+            - Name: grafana_root_uri
+              Value: !Ref GrafanaRootURI
+            - Name: grafana_user
+              Value: !Ref GrafanaUser
+            - Name: roleArn
+              Value: !Sub "arn:aws:iam::384409174079:role/${NamePrefix}-SillariPhotosRole-${Environment}"
+            - Name: "FIM_USERNAME"
+              Value: !Sub "{{resolve:ssm:/sillari-test/fim_username}}"
+            - Name: "FIM_PASSWORD"
+              Value: !Sub "{{resolve:ssm:/sillari-test/fim_password}}"
+
+  GEOSERVERTASK:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family:  !Sub "${NamePrefix}-geoserver-${Environment}"
+      Cpu: "1024"
+      Memory: "8192"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Fn::ImportValue:
+          !Sub "${NamePrefix}-ecstaskrole-${Environment}"
+      ExecutionRoleArn: !GetAtt EXECUTIONROLE.Arn
+      Volumes:
+        - Name: efsvolume
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+        - Name: efsvolume-1
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/var/sillari"
+        - Name: efsvolume-2
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/logs/grafana"
+        - Name: efsvolume-3
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/grafana_data"
+        - Name: efsvolume-4
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/geoserver"
+        - Name: efsvolume-5
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/prometheus"
+      ContainerDefinitions:
+        - Name: !Sub "${NamePrefix}-geoserver-${Environment}"
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${NamePrefix}-geoserver-${Environment}:latest"
+          # Cpu: 1024
+          # Memory: 8192
+          Essential: true
+          PortMappings:
+            - ContainerPort: 8080
+              HostPort: 8080
+              Protocol: "tcp"
+          MountPoints:
+            - SourceVolume: efsvolume
+              ContainerPath: /data
+              ReadOnly: false
+            - SourceVolume: "efsvolume-1"
+              ContainerPath: "/var/sillari"
+              ReadOnly: false
+            - SourceVolume: "efsvolume-4"
+              ContainerPath: "/opt/geoserver"
+              ReadOnly: false
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LOGGROUP
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: !Sub "${NamePrefix}-geoserver-${Environment}"
+          Environment:
+            - Name: environment
+              Value: !Ref Environment
+            - Name: database_host
+              Value: !Ref DatabaseHost
+            - Name: db_url
+              Value: !Sub "jdbc:postgresql://${DatabaseHost}:5432/${DatabaseName}"
+            - Name: db_username
+              Value: !Ref DatabaseUser
+            - Name: db_password
+              Value: !Ref DatabasePassword
+            - Name: grafana_database_name
+              Value: !Ref GrafanaDatabaseName
+            - Name: grafana_domain
+              Value: !Ref GrafanaDomain
+            - Name: grafana_password
+              Value: !If [Production, !Ref GrafanaPasswordProd, !Ref GrafanaPassword]
+            - Name: grafana_root_uri
+              Value: !Ref GrafanaRootURI
+            - Name: grafana_user
+              Value: !Ref GrafanaUser
+
+  PROMETHEUSTASK:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family:  !Sub "${NamePrefix}-prometheus-${Environment}"
+      Cpu: "256" # "128"
+      Memory: "2048"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Fn::ImportValue:
+          !Sub "${NamePrefix}-ecstaskrole-${Environment}"
+      ExecutionRoleArn: !GetAtt EXECUTIONROLE.Arn
+      Volumes:
+        - Name: efsvolume
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+        - Name: efsvolume-1
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/var/sillari"
+        - Name: efsvolume-2
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/logs/grafana"
+        - Name: efsvolume-3
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/grafana_data"
+        - Name: efsvolume-4
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/geoserver"
+        - Name: efsvolume-5
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/prometheus"
+      ContainerDefinitions:
+        - Name: !Sub "${NamePrefix}-prometheus-${Environment}"
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${NamePrefix}-prometheus-${Environment}:latest"
+          # Cpu: 128
+          # Memory: 2048
+          Essential: true
+          PortMappings:
+            - ContainerPort: 9090
+              HostPort: 9090
+              Protocol: "tcp"
+          MountPoints:
+            - SourceVolume: efsvolume
+              ContainerPath: /data
+              ReadOnly: false
+            - SourceVolume: "efsvolume-1"
+              ContainerPath: "/var/sillari"
+              ReadOnly: false
+            - SourceVolume: "efsvolume-5"
+              ContainerPath: "/prometheus_data"
+              ReadOnly: false
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LOGGROUP
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: !Sub "${NamePrefix}-prometheus-${Environment}"
+          Environment:
+            - Name: environment
+              Value: !Ref Environment
+            - Name: database_host
+              Value: !Ref DatabaseHost
+            - Name: db_url
+              Value: !Sub "jdbc:postgresql://${DatabaseHost}:5432/${DatabaseName}"
+            - Name: db_username
+              Value: !Ref DatabaseUser
+            - Name: db_password
+              Value: !Ref DatabasePassword
+            - Name: grafana_database_name
+              Value: !Ref GrafanaDatabaseName
+            - Name: grafana_domain
+              Value: !Ref GrafanaDomain
+            - Name: grafana_password
+              Value: !If [Production, !Ref GrafanaPasswordProd, !Ref GrafanaPassword]
+            - Name: grafana_root_uri
+              Value: !Ref GrafanaRootURI
+            - Name: grafana_user
+              Value: !Ref GrafanaUser
+
+  GRAFANATASK:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family:  !Sub "${NamePrefix}-grafana-${Environment}"
+      Cpu: "256" # "128"
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Fn::ImportValue:
+          !Sub "${NamePrefix}-ecstaskrole-${Environment}"
+      ExecutionRoleArn: !GetAtt EXECUTIONROLE.Arn
+      Volumes:
+        - Name: efsvolume
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+        - Name: efsvolume-1
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/var/sillari"
+        - Name: efsvolume-2
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/logs/grafana"
+        - Name: efsvolume-3
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/grafana_data"
+        - Name: efsvolume-4
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/geoserver"
+        - Name: efsvolume-5
+          EFSVolumeConfiguration:
+            FilesystemId:
+              Fn::ImportValue:
+                !Sub "${NamePrefix}-efsfs-${Environment}"
+            RootDirectory: "/prometheus"
+      ContainerDefinitions:
+        - Name: !Sub "${NamePrefix}-grafana-${Environment}"
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${NamePrefix}-grafana-${Environment}:latest"
+          # Cpu: 128
+          # Memory: 512
+          Essential: true
+          PortMappings:
+            - ContainerPort: 3000
+              HostPort: 3000
+              Protocol: "tcp"
+          MountPoints:
+            - SourceVolume: efsvolume
+              ContainerPath: /data
+              ReadOnly: false
+            - SourceVolume: "efsvolume-1"
+              ContainerPath: "/var/sillari"
+              ReadOnly: false
+            - SourceVolume: "efsvolume-2"
+              ContainerPath: "/var/log/grafana"
+              ReadOnly: false
+            - SourceVolume: "efsvolume-3"
+              ContainerPath: "/var/lib/grafana"
+              ReadOnly: false
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LOGGROUP
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: !Sub "${NamePrefix}-grafana-${Environment}"
+          Environment:
+            - Name: environment
+              Value: !Ref Environment
+            - Name: database_host
+              Value: !Ref DatabaseHost
+            - Name: db_url
+              Value: !Sub "jdbc:postgresql://${DatabaseHost}:5432/${DatabaseName}"
+            - Name: db_username
+              Value: !Ref DatabaseUser
+            - Name: db_password
+              Value: !Ref DatabasePassword
+            - Name: grafana_database_name
+              Value: !Ref GrafanaDatabaseName
+            - Name: grafana_domain
+              Value: !Ref GrafanaDomain
+            - Name: grafana_password
+              Value: !If [Production, !Ref GrafanaPasswordProd, !Ref GrafanaPassword]
+            - Name: grafana_root_uri
+              Value: !Ref GrafanaRootURI
+            - Name: grafana_user
+              Value: !Ref GrafanaUser
+
+  EXECUTIONROLE:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${NamePrefix}-executionrole-${Environment}"
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
