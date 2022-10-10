@@ -26,7 +26,7 @@ Resources:
                 Statement:
                   - Effect: Allow
                     Action: 'secretsmanager:GetSecretValue'
-                    Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:api-key-for-kvt*'
+                    Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:api-key-for-ktv*'
           - PolicyName: sillari-photosnew2-supervisions-s3-policy
             PolicyDocument:
                 Version: '2012-10-17'
@@ -44,12 +44,12 @@ Resources:
     Properties:
       Environment:
         Variables:
-          KTV_API_KEY_SECRET_ID: 'api-key-for-kvt'
+          KTV_API_KEY_SECRET_ID: 'api-key-for-ktv'
           KTV_HOSTNAME: 'devapi.testivaylapilvi.fi'
       Code:
         ZipFile: |
           const https = require('https');
-          async function postFileToKVT(objectData, metadata, apiKey, imageKey) {
+          async function postFileToKTV(objectData, metadata, apiKey, imageKey) {
           return new Promise((resolve, reject) => {
           // Sillarin tunnisteavaruus on 22 ja kuvatyyppi 2101.
           const ID_SPACE = 22;
@@ -140,13 +140,13 @@ Resources:
           console.log('got secret');
           const secretJSON = secret.SecretString;
           const parsed = JSON.parse(secretJSON);
-          const apiKey = parsed['kvt-api-key'];
+          const apiKey = parsed['ktv-api-key'];
           const object = await s3.getObject(params).promise();
           const { Body, Metadata } = object;
           console.log('got object');
           // Convert Body from a Buffer to a String
           const objectData = Body.toString('base64'); // Use the encoding necessary
-          await postFileToKVT(objectData, Metadata, apiKey, imageKey);
+          await postFileToKTV(objectData, Metadata, apiKey, imageKey);
           } catch (error) {
           console.error(error);
           return 0;
@@ -204,7 +204,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: 'secretsmanager:GetSecretValue'
-                Resource: 'arn:aws:secretsmanager:::api-key-for-kvt:kvt-api-key'
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:api-key-for-ktv*'
         - PolicyName: sillari-photosnew2-supervisions-s3-policy
           PolicyDocument:
             Version: '2012-10-17'
@@ -228,7 +228,7 @@ Resources:
       Role: !GetAtt 'KTVREMOVALLAMBDAROLE.Arn'
       Environment:
         Variables:
-          KTV_API_KEY_SECRET_ID: 'api-key-for-kvt'
+          KTV_API_KEY_SECRET_ID: 'api-key-for-ktv'
           KTV_HOSTNAME: 'devapi.testivaylapilvi.fi'
       Code:
         ZipFile: |
@@ -246,7 +246,7 @@ Resources:
           //
           // "poista": "true" -> kuva poistetaan kokonaan, "poista": "false" -> kuva historioidaan Kuvatiedossa.
 
-          async function removeFileFromKVT(apiKey, ktvIdentifier) {
+          async function removeFileFromKTV(apiKey, ktvIdentifier) {
               return new Promise((resolve, reject) => {
                 // Sillarin tunnisteavaruus on 22 ja kuvatyyppi 2101.
                 const idSpace = 22;
@@ -309,7 +309,7 @@ Resources:
 
               const secretJSON = secret.SecretString;
               const parsed = JSON.parse(secretJSON);
-              const apiKey = parsed["kvt-api-key"];
+              const apiKey = parsed["ktv-api-key"];
 
               //supervision_100_SIL-img-101 -> SIL-img-10
               const keyParts = key ? key.split("_") : [];
@@ -322,7 +322,7 @@ Resources:
                 return 0;
               }
 
-              await removeFileFromKVT(apiKey, ktvIdentifier);
+              await removeFileFromKTV(apiKey, ktvIdentifier);
             } catch (error) {
               console.error(error);
               return 0;
