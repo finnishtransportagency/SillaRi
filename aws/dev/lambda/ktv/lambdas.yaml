@@ -20,14 +20,14 @@ Resources:
           - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
           - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
         Policies:
-          - PolicyName: test-ktv-lambda-secret-policy
+          - PolicyName: ktv-lambda-secret-policy
             PolicyDocument:
                 Version: '2012-10-17'
                 Statement:
                   - Effect: Allow
                     Action: 'secretsmanager:GetSecretValue'
-                    Resource: 'arn:aws:secretsmanager:::api-key-for-kvt:kvt-api-key'
-          - PolicyName: test-sillari-photosnew2-supervisions-s3-policy
+                    Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:api-key-for-kvt*'
+          - PolicyName: sillari-photosnew2-supervisions-s3-policy
             PolicyDocument:
                 Version: '2012-10-17'
                 Statement:
@@ -36,6 +36,7 @@ Resources:
                     Resource:
                       - !Sub "arn:aws:s3:::${NamePrefix}-photos-${Environment}/*"
                       - !Sub "arn:aws:s3:::${NamePrefix}-reports-${Environment}/*"
+
 
   KTVADDINGLAMBDA:
     Type: AWS::Lambda::Function
@@ -197,14 +198,14 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
       Policies:
-        - PolicyName: test-ktv-remove-lambda-secret-policy
+        - PolicyName: ktv-remove-lambda-secret-policy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
               - Effect: Allow
                 Action: 'secretsmanager:GetSecretValue'
                 Resource: 'arn:aws:secretsmanager:::api-key-for-kvt:kvt-api-key'
-        - PolicyName: test-sillari-photosnew2-supervisions-s3-policy
+        - PolicyName: sillari-photosnew2-supervisions-s3-policy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
