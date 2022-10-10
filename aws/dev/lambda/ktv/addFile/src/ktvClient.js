@@ -77,7 +77,6 @@ module.exports = {
             ylitys_aloitusaika: supervisionstartedtime,
             ylitys_paattymisaika: supervisionfinishedtime || null, // Is usually undefined for images
             sillantunnus: bridgeidentifier,
-            //sillantunnus: 3, // TODO change after KTV has updated their end, now it has to be number 1-10. This goes to location on ktv map near Loviisa
             valvontatunnus: supervisionid,
             poikkeusjarjestely: isExceptional,
           },
