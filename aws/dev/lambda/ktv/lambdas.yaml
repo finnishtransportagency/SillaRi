@@ -162,8 +162,8 @@ Resources:
       Handler: index.handler
       Runtime: nodejs16.x
       Description: ''
-      MemorySize: 128
-      Timeout: 15
+      MemorySize: 512
+      Timeout: 60
       Role: !GetAtt 'KTVLAMBDAROLE.Arn'
 
   KTVADDINGLAMBDAPHOTOSPERMISSSION:
@@ -224,7 +224,7 @@ Resources:
         An Amazon S3 trigger that retrieves metadata for the object that has
         been updated.
       MemorySize: 128
-      Timeout: 15
+      Timeout: 60
       Role: !GetAtt 'KTVREMOVALLAMBDAROLE.Arn'
       Environment:
         Variables:
