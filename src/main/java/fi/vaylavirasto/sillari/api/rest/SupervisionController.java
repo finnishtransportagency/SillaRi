@@ -251,7 +251,7 @@ public class SupervisionController {
             SillariUser user = uiService.getSillariUser();
             checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
             supervisionService.finishSupervision(supervisionInput.getSupervisionId(), finishTime, user);
-            supervisionService.completeSupervision(supervisionInput.getSupervisionId(), finishTime, user);
+            supervisionService.completeSupervision(supervisionInput.getSupervisionId(), finishTime.plusSeconds(1), user);
 
             // Don't wait for pdf generation before returning the response
             ExecutorService executor = Executors.newWorkStealingPool();
