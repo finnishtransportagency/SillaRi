@@ -191,12 +191,33 @@ const Supervision = (): JSX.Element => {
     });
   };
 
+  const showConfirmSendImmediately = () => {
+    present({
+      header: t("supervision.warning.cancelSupervisionHeader"),
+      message: t("supervision.warning.cancelSupervisionText"),
+      buttons: [
+        t("common.buttons.back2"),
+        {
+          text: t("supervision.buttons.cancel"),
+          handler: () => {
+            const cancelCrossingInput: ICancelCrossingInput = { supervisionId: Number(supervisionId), routeTransportId, cancelTime: new Date() };
+            cancelSupervisionMutation.mutate(cancelCrossingInput);
+          },
+        },
+      ],
+    });
+  };
+
   const cancelSupervisionClicked = (): void => {
     if (supervisionInProgress) {
       showConfirmCancelSupervision();
     } else {
       history.goBack();
     }
+  };
+
+  const sendImmediatelyClicked = (): void => {
+    showConfirmSendImmediately();
   };
 
   const showConfirmLeavePage = () => {
@@ -266,7 +287,7 @@ const Supervision = (): JSX.Element => {
               saveDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit || !reportValid}
               cancelDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit}
               sendImmediatelyDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit || !reportValid}
-              sendImmediately={saveReportClicked}
+              sendImmediately={sendImmediatelyClicked}
               saveChanges={saveReportClicked}
               cancelChanges={cancelSupervisionClicked}
               saveLabel={t("supervision.buttons.summary")}
