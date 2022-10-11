@@ -237,6 +237,33 @@ public class SupervisionController {
         }
     }
 
+
+    @Operation(summary = "Finish and complete supervision")
+    @PostMapping(value = "/finishandcompletesupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> finishAndCompeleteSupervision(@RequestBody SupervisionInputDTO supervisionInput,
+                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime finishTime) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "finishSupervision");
+        try {
+            if (!canSupervisorUpdateSupervision(supervisionInput.getSupervisionId())) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
+            SillariUser user = uiService.getSillariUser();
+            checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
+            supervisionService.finishSupervision(supervisionInput.getSupervisionId(), finishTime, user);
+            supervisionService.completeSupervision(supervisionInput.getSupervisionId(), finishTime, user);
+
+            // Don't wait for pdf generation before returning the response
+            ExecutorService executor = Executors.newWorkStealingPool();
+            executor.submit(() -> supervisionService.createSupervisionPdf(supervisionInput.getSupervisionId()));
+
+            // TODO - check if any data should be returned
+            return ResponseEntity.ok().body(new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Update supervision report")
     @PutMapping(value = "/updatesupervisionreport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")

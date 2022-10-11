@@ -381,6 +381,47 @@ export const completeSupervisions = async (completeCrossingInput: ICompleteCross
   }
 };
 
+export const finishAndCompleteSupervision = async (
+  finishCrossingInput: IFinishCrossingInput,
+  username: string,
+  dispatch: Dispatch
+): Promise<ISupervision> => {
+  try {
+    console.log("FinishSupervision", finishCrossingInput);
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { finishSupervision: false } });
+
+    const { supervisionId, routeTransportId, finishTime } = finishCrossingInput;
+    const time = encodeURIComponent(moment(finishTime).format());
+
+    const transportCode = await getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId);
+
+    const supervisionInput: ISupervisionInput = {
+      supervisionId: supervisionId,
+      routeTransportId: routeTransportId,
+      transportCode: transportCode,
+    };
+
+    const finishSupervisionResponse = await fetch(`${getOrigin()}/api/supervision/finishandcompletesupervision?finishTime=${time}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(supervisionInput),
+    });
+
+    if (finishSupervisionResponse.ok) {
+      const finishedSupervision = (await finishSupervisionResponse.json()) as Promise<ISupervision>;
+      return await finishedSupervision;
+    } else {
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { finishSupervision: true } });
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
+    }
+  } catch (err) {
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { finishSupervision: true } });
+    throw new Error(err as string);
+  }
+};
+
 export const updateSupervisionReport = async (
   updateRequest: ISupervisionReport,
   routeTransportId: number,
