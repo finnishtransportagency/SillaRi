@@ -722,6 +722,9 @@ Resources:
 
   S3BUCKET:
     Type: AWS::S3::Bucket
+    DependsOn:
+      - KTVADDINGLAMBDAPHOTOSPERMISSSION
+      - KTVREMOVALLAMBDAPHOTOSPERMISSION
     Properties:
       AccessControl: Private
       BucketName: !Sub "${NamePrefix}-photos-${Environment}"
@@ -750,6 +753,9 @@ Resources:
 
   S3BUCKET2:
     Type: AWS::S3::Bucket
+    DependsOn:
+      - KTVADDINGLAMBDAREPORTSPERMISSSION
+      - KTVREMOVALLAMBDAREPORTSPERMISSION
     Properties:
       AccessControl: Private
       BucketName: !Sub "${NamePrefix}-reports-${Environment}"
