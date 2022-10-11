@@ -13,11 +13,13 @@ import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector, RootState } from "../store/store";
 import { getUserData, onRetry } from "../utils/backendData";
-import { finishSupervision, getSupervision } from "../utils/supervisionBackendData";
+import { completeSupervisions, finishSupervision, getSupervision } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
 import { SupervisionListType, SupervisionStatus } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 import { isSupervisionReportValid } from "../utils/validation";
+import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
+import ISupervisionInput from "../interfaces/ISupervisionInput";
 
 interface SummaryProps {
   supervisionId: string;
@@ -124,6 +126,18 @@ const SupervisionSummary = (): JSX.Element => {
   );
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
 
+  const sendSupervisionMutation = useMutation(
+    (completeCrossingInput: ICompleteCrossingInput) => completeSupervisions(completeCrossingInput, username, dispatch),
+    {
+      retry: onRetry,
+      onSuccess: () => {
+        queryClient.invalidateQueries(["getSupervisionSendingList"]);
+        setToastMessage(t("sendingList.sentOk"));
+      },
+    }
+  );
+  const { isLoading: isSendingSupervisions } = sendSupervisionMutation;
+
   const isLoading = isLoadingSupervision || isSendingFinishSupervision;
   const notAllowedToEdit = !report || supervisionStatus === SupervisionStatus.REPORT_SIGNED;
   const reportValid = isSupervisionReportValid(report);
@@ -150,7 +164,18 @@ const SupervisionSummary = (): JSX.Element => {
         t("supervision.buttons.back"),
         {
           text: t("supervision.buttons.sendNow"),
-          handler: () => {},
+          handler: () => {
+            const finishCrossingInput: IFinishCrossingInput = {
+              supervisionId: Number(supervisionId),
+              routeTransportId: routeTransportId,
+              finishTime: new Date(),
+            };
+            finishSupervisionMutation.mutate(finishCrossingInput);
+
+            const supervisionInput: ISupervisionInput[] = [{ supervisionId: Number(supervisionId), routeTransportId: routeTransportId }];
+            const completeCrossingInput: ICompleteCrossingInput = { supervisionInputs: supervisionInput, completeTime: new Date() };
+            sendSupervisionMutation.mutate(completeCrossingInput);
+          },
         },
       ],
     });
