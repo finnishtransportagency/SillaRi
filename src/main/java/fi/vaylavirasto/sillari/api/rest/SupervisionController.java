@@ -215,7 +215,7 @@ public class SupervisionController {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "completeSupervisions");
         try {
             if (supervisionInputs != null && !supervisionInputs.isEmpty()) {
-                if (supervisionInputs.stream().anyMatch(input -> !isSendingListSupervisionOfSupervisor(input.getSupervisionId()))) {
+                if (supervisionInputs.stream().anyMatch(input -> !canSupervisorUpdateSupervision(input.getSupervisionId()))) {
                     throw new AccessDeniedException("Supervision not of the user");
                 }
                 SillariUser user = uiService.getSillariUser();
