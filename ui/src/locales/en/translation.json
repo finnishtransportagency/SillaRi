@@ -195,7 +195,8 @@
       "drivingLine": "Driving line",
       "summary": "Go to summary",
       "cancel": "Cancel supervision",
-      "saveToSendList": "Save to the sending list"
+      "saveToSendList": "Save to the sending list",
+      "sendImmediately": "Send supervision immediately"
     },
     "warning": {
       "cancelSupervisionHeader": "Are you sure you want to cancel the supervision?",

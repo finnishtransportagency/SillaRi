@@ -142,6 +142,15 @@ const SupervisionSummary = (): JSX.Element => {
     history.push(`/supervision/${supervisionId}`);
   };
 
+  const sendReportImmediately = (): void => {
+    const finishCrossingInput: IFinishCrossingInput = {
+      supervisionId: Number(supervisionId),
+      routeTransportId: routeTransportId,
+      finishTime: new Date(),
+    };
+    finishSupervisionMutation.mutate(finishCrossingInput);
+  };
+
   const showConfirmLeavePage = () => {
     present({
       header: t("supervision.warning.leavePage"),
@@ -186,10 +195,13 @@ const SupervisionSummary = (): JSX.Element => {
             <SupervisionFooter
               saveDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit || !reportValid}
               cancelDisabled={isLoading || notAllowedToEdit}
+              sendImmediatelyDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit || !reportValid}
               saveChanges={saveReport}
               cancelChanges={editReport}
+              sendImmediately={sendReportImmediately}
               saveLabel={t("supervision.buttons.saveToSendList")}
               cancelLabel={t("common.buttons.edit")}
+              sendImmediatelyLabel={t("supervision.buttons.sendImmediately")}
             />
           </>
         )}

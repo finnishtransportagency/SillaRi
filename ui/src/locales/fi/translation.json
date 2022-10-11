@@ -195,7 +195,8 @@
       "drivingLine": "Ajolinja",
       "summary": "Siirry yhteenvetoon",
       "cancel": "Peru valvonta",
-      "saveToSendList": "Tallenna lähetyslistalle"
+      "saveToSendList": "Tallenna lähetyslistalle",
+      "sendImmediately": "Lähetä valvonta heti"
     },
     "warning": {
       "cancelSupervisionHeader": "Haluatko varmasti perua valvonnan?",

@@ -265,10 +265,13 @@ const Supervision = (): JSX.Element => {
             <SupervisionFooter
               saveDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit || !reportValid}
               cancelDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit}
+              sendImmediatelyDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit || !reportValid}
+              sendImmediately={saveReportClicked}
               saveChanges={saveReportClicked}
               cancelChanges={cancelSupervisionClicked}
               saveLabel={t("supervision.buttons.summary")}
               cancelLabel={supervisionInProgress ? t("supervision.buttons.cancel") : t("common.buttons.cancel")}
+              sendImmediatelyLabel={t("supervision.buttons.sendImmediately")}
             />
           </>
         )}
