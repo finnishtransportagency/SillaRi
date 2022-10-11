@@ -203,7 +203,9 @@
       "cancelSupervisionText": "All data from the report will be deleted.",
       "leavePage": "Are you sure you want to leave the page?",
       "unsavedChanges": "Supervision has unsaved changes.",
-      "supervisionNotFinished": "Supervision has not been saved to send list."
+      "supervisionNotFinished": "Supervision has not been saved to send list.",
+      "sendImmediatelyHeader": "Are you sure you want to send the supervision immediately?",
+      "sendImmediatelyText": "Report data can't be edited nor complemented after sending"
     },
     "summary": {
       "title": "Summary",

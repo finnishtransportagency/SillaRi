@@ -203,7 +203,9 @@
       "cancelSupervisionText": "Raporttiin kirjatut tiedot poistetaan.",
       "leavePage": "Halutko varmasti poistua sivulta?",
       "unsavedChanges": "Valvonnassa on tallentamattomia muutoksia.",
-      "supervisionNotFinished": "Valvontaa ei ole tallennettu lähetyslistalle."
+      "supervisionNotFinished": "Valvontaa ei ole tallennettu lähetyslistalle.",
+      "sendImmediatelyHeader": "Haluatko varmasti lähettää valvonnan heti?",
+      "sendImmediatelyText": "Raporttiin kirjattuja tietoja ei voi muokata eikä täydentää enää lähettämmisen jälkeen"
     },
     "summary": {
       "title": "Yhteenveto",

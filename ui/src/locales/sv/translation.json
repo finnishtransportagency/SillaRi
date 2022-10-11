@@ -203,7 +203,9 @@
       "cancelSupervisionText": "All data från rapporten kommer att avlägsnas.",
       "leavePage": "Är du säker på att du vill lämna sidan?",
       "unsavedChanges": "Övervakningen har osparade ändringar.",
-      "supervisionNotFinished": "Övervakningen har inte sparats till sändningslistan."
+      "supervisionNotFinished": "Övervakningen har inte sparats till sändningslistan.",
+      "sendImmediatelyHeader": "(SV) Haluatko varmasti lähettää valvonnan heti?",
+      "sendImmediatelyText": "(SV) Raporttiin kirjattuja tietoja ei voi muokata eikä täydentää enää lähettämmisen jälkeen"
     },
     "summary": {
       "title": "Sammanfattning",
