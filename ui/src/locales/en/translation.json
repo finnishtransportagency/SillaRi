@@ -196,7 +196,9 @@
       "summary": "Go to summary",
       "cancel": "Cancel supervision",
       "saveToSendList": "Save to the sending list",
-      "sendImmediately": "Send supervision immediately"
+      "sendImmediately": "Send supervision immediately",
+      "sendNow": "Send supervision",
+      "back": "Back"
     },
     "warning": {
       "cancelSupervisionHeader": "Are you sure you want to cancel the supervision?",

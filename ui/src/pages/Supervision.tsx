@@ -193,16 +193,13 @@ const Supervision = (): JSX.Element => {
 
   const showConfirmSendImmediately = () => {
     present({
-      header: t("supervision.warning.cancelSupervisionHeader"),
-      message: t("supervision.warning.cancelSupervisionText"),
+      header: t("supervision.warning.sendImmediatelyHeader"),
+      message: t("supervision.warning.sendImmediatelyText"),
       buttons: [
-        t("common.buttons.back2"),
+        t("supervision.buttons.back"),
         {
-          text: t("supervision.buttons.cancel"),
-          handler: () => {
-            const cancelCrossingInput: ICancelCrossingInput = { supervisionId: Number(supervisionId), routeTransportId, cancelTime: new Date() };
-            cancelSupervisionMutation.mutate(cancelCrossingInput);
-          },
+          text: t("supervision.buttons.sendNow"),
+          handler: () => {},
         },
       ],
     });

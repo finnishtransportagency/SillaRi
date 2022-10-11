@@ -196,7 +196,9 @@
       "summary": "Gå till sammandraget",
       "cancel": "Annulera övervakningen",
       "saveToSendList": "Lagra till sändningslistan",
-      "sendImmediately": "(SV) Lähetä valvonta heti"
+      "sendImmediately": "(SV) Lähetä valvonta heti",
+      "sendNow": "(SV) Lähetä valvonta",
+      "back": "(SV) Takaisin"
     },
     "warning": {
       "cancelSupervisionHeader": "Vill du säkert annulera övervakningen?",

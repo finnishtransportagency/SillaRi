@@ -196,7 +196,9 @@
       "summary": "Siirry yhteenvetoon",
       "cancel": "Peru valvonta",
       "saveToSendList": "Tallenna lähetyslistalle",
-      "sendImmediately": "Lähetä valvonta heti"
+      "sendImmediately": "Lähetä valvonta heti",
+      "sendNow": "Lähetä valvonta",
+      "back": "Takaisin"
     },
     "warning": {
       "cancelSupervisionHeader": "Haluatko varmasti perua valvonnan?",
