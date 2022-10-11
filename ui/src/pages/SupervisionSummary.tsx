@@ -142,13 +142,22 @@ const SupervisionSummary = (): JSX.Element => {
     history.push(`/supervision/${supervisionId}`);
   };
 
+  const showConfirmSendImmediately = () => {
+    present({
+      header: t("supervision.warning.sendImmediatelyHeader"),
+      message: t("supervision.warning.sendImmediatelyText"),
+      buttons: [
+        t("supervision.buttons.back"),
+        {
+          text: t("supervision.buttons.sendNow"),
+          handler: () => {},
+        },
+      ],
+    });
+  };
+
   const sendReportImmediately = (): void => {
-    const finishCrossingInput: IFinishCrossingInput = {
-      supervisionId: Number(supervisionId),
-      routeTransportId: routeTransportId,
-      finishTime: new Date(),
-    };
-    finishSupervisionMutation.mutate(finishCrossingInput);
+    showConfirmSendImmediately();
   };
 
   const showConfirmLeavePage = () => {
