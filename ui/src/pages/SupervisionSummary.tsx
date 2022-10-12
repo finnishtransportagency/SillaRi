@@ -13,13 +13,11 @@ import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
 import { useTypedSelector, RootState } from "../store/store";
 import { getUserData, onRetry } from "../utils/backendData";
-import { completeSupervisions, finishAndCompleteSupervision, finishSupervision, getSupervision } from "../utils/supervisionBackendData";
+import { finishAndCompleteSupervision, finishSupervision, getSupervision } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
 import { SupervisionListType, SupervisionStatus } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 import { isSupervisionReportValid } from "../utils/validation";
-import ICompleteCrossingInput from "../interfaces/ICompleteCrossingInput";
-import ISupervisionInput from "../interfaces/ISupervisionInput";
 
 interface SummaryProps {
   supervisionId: string;
@@ -61,14 +59,15 @@ const SupervisionSummary = (): JSX.Element => {
   const { routeTransportId = 0, report, currentStatus, images = [] } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
 
-  const returnToSupervisionList = () => {
+  const returnToSupervisionList = (mess: string) => {
     // Go back to bridge supervision listing on either SupervisionList or RouteTransportDetail page
     // If selectedSupervisionListType is not set, go to supervisions main page
     if (selectedSupervisionListType === SupervisionListType.BRIDGE) {
       history.push("/supervisions/1");
     } else if (selectedSupervisionListType === SupervisionListType.TRANSPORT) {
       history.push("/supervisions/0"); // Go through main page so back button works as expected on RouteTransportDetail page
-      history.push(`/routeTransportDetail/${routeTransportId}`);
+      console.log("toastMessage::::::::" + toastMessage);
+      history.push(`/routeTransportDetail/${routeTransportId}/${mess}`);
     } else {
       history.push("/supervisions");
     }
@@ -115,7 +114,7 @@ const SupervisionSummary = (): JSX.Element => {
         // Also remove the finished supervision from the route transport list in the UI
         removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
         setToastMessage(t("supervision.summary.saved"));
-        returnToSupervisionList();
+        returnToSupervisionList(toastMessage);
       },
       onSuccess: (data) => {
         // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
@@ -166,7 +165,7 @@ const SupervisionSummary = (): JSX.Element => {
         // Also remove the finished supervision from the route transport list in the UI
         removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
         setToastMessage(t("sendingList.sentOk"));
-        returnToSupervisionList();
+        returnToSupervisionList(toastMessage);
       },
       onSuccess: (data) => {
         // onSuccess doesn't fire when offline due to the retry option, but should fire when online again

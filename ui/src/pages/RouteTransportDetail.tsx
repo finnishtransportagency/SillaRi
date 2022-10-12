@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { onlineManager, useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { IonContent, IonPage } from "@ionic/react";
+import { IonContent, IonPage, IonToast } from "@ionic/react";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import RouteAccordion from "../components/RouteAccordion";
@@ -19,6 +19,7 @@ import { sortSupervisionsByBridgeOrder } from "../utils/supervisionUtil";
 
 interface RouteTransportDetailProps {
   routeTransportId: string;
+  message: string;
 }
 
 const RouteTransportDetail = (): JSX.Element => {
@@ -29,7 +30,8 @@ const RouteTransportDetail = (): JSX.Element => {
     networkStatus: { isFailed = {} },
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
-  const { routeTransportId = "0" } = useParams<RouteTransportDetailProps>();
+  const { routeTransportId = "0", message = "" } = useParams<RouteTransportDetailProps>();
+  const [toastMessage, setToastMessage] = useState(message);
 
   const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
     retry: onRetry,
@@ -82,6 +84,14 @@ const RouteTransportDetail = (): JSX.Element => {
             <BridgeCardList username={username} routeTransport={routeTransport as IRouteTransport} supervisions={supervisions} isOnline={isOnline} />
           </>
         )}
+        <IonToast
+          isOpen={toastMessage.length > 0}
+          message={toastMessage}
+          onDidDismiss={() => setToastMessage("")}
+          duration={5000}
+          position="top"
+          color="success"
+        />
       </IonContent>
     </IonPage>
   );
