@@ -21,6 +21,7 @@ public class SupervisionMapper implements RecordMapper<Record, SupervisionModel>
         model.setPlannedTime(record.get(TableAlias.supervision.PLANNED_TIME));
         model.setConformsToPermit(record.get(TableAlias.supervision.CONFORMS_TO_PERMIT));
         model.setSupervisorCompany(record.get(TableAlias.supervision.SUPERVISOR_COMPANY));
+        model.setSupervisorCompanyName(record.get(TableAlias.company.NAME));
         model.setSupervisorType(record.get(TableAlias.supervision.SUPERVISOR_TYPE, new SupervisorTypeConverter(String.class, SupervisorType.class)));
         model.setRowCreatedTime(record.get(TableAlias.supervision.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.supervision.ROW_UPDATED_TIME));

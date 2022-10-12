@@ -32,6 +32,7 @@ public class SupervisionRepository {
         return dsl.select().from(TableAlias.supervision)
                 .leftJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
                 .leftJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
+                .leftJoin(TableAlias.company).on(TableAlias.supervision.SUPERVISOR_COMPANY.eq(TablesAlias.company.BUSINESS_ID))
                 .where(TableAlias.supervision.ID.eq(id))
                 .fetchOne(this::mapSupervisionWithRouteBridgeAndBridge);
     }
