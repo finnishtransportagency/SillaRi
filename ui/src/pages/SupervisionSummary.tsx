@@ -133,6 +133,7 @@ const SupervisionSummary = (): JSX.Element => {
       onSuccess: () => {
         queryClient.invalidateQueries(["getSupervisionSendingList"]);
         setToastMessage(t("sendingList.sentOk"));
+        returnToSupervisionList();
       },
     }
   );
