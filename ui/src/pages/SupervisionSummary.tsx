@@ -126,14 +126,52 @@ const SupervisionSummary = (): JSX.Element => {
   );
   const { isLoading: isSendingFinishSupervision } = finishSupervisionMutation;
 
+  // Set-up mutations for modifying data later
+  // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
   const sendImmediatelySupervisionMutation = useMutation(
     (completeCrossingInput: IFinishCrossingInput) => finishAndCompleteSupervision(completeCrossingInput, username, dispatch),
     {
       retry: onRetry,
-      onSuccess: () => {
-        queryClient.invalidateQueries(["getSupervisionSendingList"]);
+      onMutate: async (newData: IFinishCrossingInput) => {
+        // onMutate fires before the mutation function
+
+        // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+        await queryClient.cancelQueries(supervisionQueryKey);
+
+        // Set the current status to REPORT_SIGNED here since the backend won't be called yet when offline
+        let updatedSupervision: ISupervision;
+        queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+          updatedSupervision = {
+            ...oldData,
+            currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.REPORT_SIGNED, time: newData.finishTime },
+            savedOffline: !onlineManager.isOnline(),
+            finishedTime: newData.finishTime,
+          } as ISupervision;
+          return updatedSupervision;
+        });
+
+        // Add the finished supervision to the data used by the sending list so it is updated when offline
+        queryClient.setQueryData<ISupervision[]>("getSupervisionSendingList", (oldData) => {
+          return oldData
+            ? oldData.reduce(
+                (acc: ISupervision[], old) => {
+                  return old.id === Number(supervisionId) ? acc : [...acc, old];
+                },
+                [updatedSupervision]
+              )
+            : [];
+        });
+
+        // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
+        // Also remove the finished supervision from the route transport list in the UI
+        removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
         setToastMessage(t("sendingList.sentOk"));
         returnToSupervisionList();
+      },
+      onSuccess: (data) => {
+        // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+
+        queryClient.setQueryData(supervisionQueryKey, data);
       },
     }
   );
