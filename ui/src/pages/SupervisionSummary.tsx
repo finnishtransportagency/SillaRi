@@ -139,7 +139,7 @@ const SupervisionSummary = (): JSX.Element => {
   );
   const { isLoading: isSendingSupervisions } = sendImmediatelySupervisionMutation;
 
-  const isLoading = isLoadingSupervision || isSendingFinishSupervision;
+  const isLoading = isLoadingSupervision || isSendingFinishSupervision || isSendingSupervisions;
   const notAllowedToEdit = !report || supervisionStatus === SupervisionStatus.REPORT_SIGNED;
   const reportValid = isSupervisionReportValid(report);
 
