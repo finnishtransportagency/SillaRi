@@ -290,6 +290,7 @@ const Supervision = (): JSX.Element => {
               saveLabel={t("supervision.buttons.summary")}
               cancelLabel={supervisionInProgress ? t("supervision.buttons.cancel") : t("common.buttons.cancel")}
               sendImmediatelyLabel={t("supervision.buttons.sendImmediately")}
+              sendImmediatelyVisible={false}
             />
           </>
         )}

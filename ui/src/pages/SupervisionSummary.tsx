@@ -232,6 +232,7 @@ const SupervisionSummary = (): JSX.Element => {
               saveLabel={t("supervision.buttons.saveToSendList")}
               cancelLabel={t("common.buttons.edit")}
               sendImmediatelyLabel={t("supervision.buttons.sendImmediately")}
+              sendImmediatelyVisible={true}
             />
           </>
         )}

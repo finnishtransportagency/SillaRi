@@ -5,6 +5,7 @@ interface SupervisionFooterProps {
   saveDisabled: boolean;
   cancelDisabled: boolean;
   sendImmediatelyDisabled: boolean;
+  sendImmediatelyVisible: boolean;
   saveChanges: () => void;
   cancelChanges: () => void;
   sendImmediately: () => void;
@@ -23,6 +24,7 @@ const SupervisionFooter = ({
   saveLabel,
   cancelLabel,
   sendImmediatelyLabel,
+  sendImmediatelyVisible,
 }: SupervisionFooterProps): JSX.Element => {
   return (
     <IonGrid>
@@ -40,13 +42,15 @@ const SupervisionFooter = ({
           </IonButton>
         </IonCol>
       </IonRow>
-      <IonRow>
-        <IonCol className="ion-text-center">
-          <IonButton color="primary" expand="block" size="large" disabled={sendImmediatelyDisabled} onClick={() => sendImmediately()}>
-            {sendImmediatelyLabel}
-          </IonButton>
-        </IonCol>
-      </IonRow>
+      {sendImmediatelyVisible && (
+        <IonRow>
+          <IonCol className="ion-text-center">
+            <IonButton color="primary" expand="block" size="large" disabled={sendImmediatelyDisabled} onClick={() => sendImmediately()}>
+              {sendImmediatelyLabel}
+            </IonButton>
+          </IonCol>
+        </IonRow>
+      )}
     </IonGrid>
   );
 };
