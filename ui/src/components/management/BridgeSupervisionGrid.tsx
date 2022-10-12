@@ -102,7 +102,7 @@ const BridgeSupervisionGrid = ({
             })
             .map((supervision, index, sortedSupervisions) => {
               const { id: supervisionId, routeBridge, supervisorCompanyName } = supervision || {};
-              const { bridge, contractBusinessId = "123456-7" } = routeBridge || {};
+              const { bridge, contractNumber = "", contractBusinessId = "" } = routeBridge || {};
               const { identifier, name } = bridge || {};
               const bridgeName = `${identifier} - ${name}`;
 
@@ -140,7 +140,7 @@ const BridgeSupervisionGrid = ({
                             <small>
                               <IonText>{t("management.transportDetail.bridgeInfo.contractor")}</IonText>
                               <br/>
-                              <IonText>{supervisorCompanyName}</IonText>
+                              <IonText>{supervisorCompanyName} {contractBusinessId} ({contractNumber})</IonText>
                             </small>
                           </IonCol>
                         </IonRow>
