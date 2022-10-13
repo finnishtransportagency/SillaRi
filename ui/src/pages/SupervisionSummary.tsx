@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { onlineManager, useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { IonContent, IonPage, IonToast, useIonAlert } from "@ionic/react";
+import { IonContent, IonPage, useIonAlert } from "@ionic/react";
 import { useHistory, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
@@ -29,7 +29,6 @@ const SupervisionSummary = (): JSX.Element => {
   const history = useHistory();
   const queryClient = useQueryClient();
 
-  const [toastMessage, setToastMessage] = useState("");
   const [present] = useIonAlert();
 
   const { supervisionId = "0" } = useParams<SummaryProps>();
@@ -59,15 +58,14 @@ const SupervisionSummary = (): JSX.Element => {
   const { routeTransportId = 0, report, currentStatus, images = [] } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
 
-  const returnToSupervisionList = (mess: string) => {
+  const returnToSupervisionList = (message: string) => {
     // Go back to bridge supervision listing on either SupervisionList or RouteTransportDetail page
     // If selectedSupervisionListType is not set, go to supervisions main page
     if (selectedSupervisionListType === SupervisionListType.BRIDGE) {
       history.push("/supervisions/1");
     } else if (selectedSupervisionListType === SupervisionListType.TRANSPORT) {
       history.push("/supervisions/0"); // Go through main page so back button works as expected on RouteTransportDetail page
-      console.log("toastMessage::::::::" + toastMessage);
-      history.push(`/routeTransportDetail/${routeTransportId}/${mess}`);
+      history.push(`/routeTransportDetail/${routeTransportId}/${message}`);
     } else {
       history.push("/supervisions");
     }
@@ -113,8 +111,7 @@ const SupervisionSummary = (): JSX.Element => {
         // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
         // Also remove the finished supervision from the route transport list in the UI
         removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
-        setToastMessage(t("supervision.summary.saved"));
-        returnToSupervisionList(toastMessage);
+        returnToSupervisionList(t("supervision.summary.saved"));
       },
       onSuccess: (data) => {
         // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
@@ -164,8 +161,7 @@ const SupervisionSummary = (): JSX.Element => {
         // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
         // Also remove the finished supervision from the route transport list in the UI
         removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
-        setToastMessage(t("sendingList.sentOk"));
-        returnToSupervisionList(toastMessage);
+        returnToSupervisionList(t("sendingList.sentOk"));
       },
       onSuccess: (data) => {
         // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
@@ -274,15 +270,6 @@ const SupervisionSummary = (): JSX.Element => {
             />
           </>
         )}
-
-        <IonToast
-          isOpen={toastMessage.length > 0}
-          message={toastMessage}
-          onDidDismiss={() => setToastMessage("")}
-          duration={5000}
-          position="top"
-          color="success"
-        />
       </IonContent>
     </IonPage>
   );
