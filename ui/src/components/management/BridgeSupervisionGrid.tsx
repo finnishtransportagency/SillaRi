@@ -139,8 +139,10 @@ const BridgeSupervisionGrid = ({
                           <IonCol>
                             <small>
                               <IonText>{t("management.transportDetail.bridgeInfo.contractor")}</IonText>
-                              <br/>
-                              <IonText>{supervisorCompanyName} {contractBusinessId} ({contractNumber})</IonText>
+                              <br />
+                              <IonText>
+                                {supervisorCompanyName} {contractBusinessId} ({contractNumber})
+                              </IonText>
                             </small>
                           </IonCol>
                         </IonRow>
