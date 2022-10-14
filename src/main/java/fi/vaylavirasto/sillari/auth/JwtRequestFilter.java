@@ -140,6 +140,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     logger.debug(String.format("Phone number %s", phoneNumber));
 
                     String businessId = (String) claims.get("custom:ytunnus");
+                    if(businessId == null){
+                        businessId = resolvePossibleLOBusinessId(userNameDetail);
+                    }
                     logger.debug(String.format("Business ID %s", businessId));
 
                     String organization = (String) claims.get("custom:organisaatio");
@@ -209,6 +212,58 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         } finally {
             filterChain.doFilter(request, response);
         }
+    }
+
+    protected String resolvePossibleLOBusinessId(String userNameDetail) {
+        if(userNameDetail == null){
+            return null;
+        }
+        if(!isLOOrLOSV(userNameDetail)){
+            return null;
+        }
+
+        String numberPart = null;
+        if(userNameDetail.startsWith("LOSV")){
+            numberPart = userNameDetail.substring(4);
+        }
+        else if(userNameDetail.startsWith("LO")){
+            numberPart = userNameDetail.substring(2);
+        }
+
+        logger.debug("numberpart: " + numberPart);
+
+        if(numberPart == null){
+            return null;
+        }
+
+        if(numberPart.length() < 8){
+            return null;
+        }
+
+        String yTunnus = numberPart.substring(0,7) + "-" + numberPart.substring(7);
+        logger.debug("yTunnus: " + yTunnus);
+
+        return yTunnus;
+
+    }
+
+
+    // is the usenrane form LO12309832 or LOSV98601767 where number part is y-tunnus without -
+    private boolean isLOOrLOSV(String s) {
+        String numberPart = null;
+        if(s.startsWith("LOSV")){
+            numberPart = s.substring(4);
+        }
+        else if(s.startsWith("LO")){
+            numberPart = s.substring(2);
+        }
+        logger.debug("numberpart: " + numberPart);
+
+        if(numberPart == null){
+            return false;
+        }
+
+        return numberPart.matches("[0-9]+");
     }
 
     protected String removePossibleSquareBrackets(String s) {
