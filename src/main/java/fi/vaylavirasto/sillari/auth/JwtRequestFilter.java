@@ -3,7 +3,6 @@ package fi.vaylavirasto.sillari.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.SignatureException;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,13 +108,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 // logger.debug(String.format("JWT headers json %s", json.toJSONString()));
 
-                String key = getPublicKey((String) json.get("kid"),false);
+                String key = getPublicKey((String) json.get("kid"), false);
                 Claims claims;
                 try {
                     claims = decodeJWT(jwt, key);
                 } catch (SignatureException e) {
                     logger.debug("Invalid key, trying again");
-                    key = getPublicKey((String) json.get("kid"),true);
+                    key = getPublicKey((String) json.get("kid"), true);
                     claims = decodeJWT(jwt, key);
                 }
 
@@ -146,13 +145,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     String organization = (String) claims.get("custom:organisaatio");
                     logger.debug(String.format("Organization %s", organization));
 
-                    String[] roles = ((String) claims.get("custom:rooli")).split("\\,");
+                    String[] roles = (removePossibleSquareBrackets((String) claims.get("custom:rooli")).split("\\,"));
                     logger.debug(String.format("Roles %s", String.join(",", roles)));
 
                     List<GrantedAuthority> authorityList = new ArrayList<>();
 
                     if (ArrayUtils.contains(roles, "sillari_valvoja")
-                      || ArrayUtils.contains(roles, "sillari_sillanvalvoja")) {
+                            || ArrayUtils.contains(roles, "sillari_sillanvalvoja")) {
                         authorityList.add(SillariRole.fromString("SILLARI_SILLANVALVOJA"));
                     }
                     if (ArrayUtils.contains(roles, "sillari_ajojarjestelija")) {
@@ -211,4 +210,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }
     }
+
+    protected String removePossibleSquareBrackets(String s) {
+        if (s.startsWith("[") && s.endsWith("]")) {
+            return s.substring(1, s.length()-1);
+        }
+        return s;
+    }
 }
+
