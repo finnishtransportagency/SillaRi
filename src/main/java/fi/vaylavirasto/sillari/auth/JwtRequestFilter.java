@@ -29,6 +29,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
@@ -149,18 +150,22 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     logger.debug(String.format("Organization %s", organization));
 
                     String[] roles = (removePossibleSquareBrackets((String) claims.get("custom:rooli")).split("\\,"));
-                    logger.debug(String.format("Roles %s", String.join(",", roles)));
+                    List<String> rolesList = new ArrayList<>(Arrays.asList(roles));
+                    List<String> rolesListTrimmed = new ArrayList<>();
+                    rolesList.forEach(i -> rolesListTrimmed.add(i.trim()));
+
+                    logger.debug(String.format("Roles %s", String.join(",", rolesListTrimmed)));
 
                     List<GrantedAuthority> authorityList = new ArrayList<>();
 
-                    if (ArrayUtils.contains(roles, "sillari_valvoja")
-                            || ArrayUtils.contains(roles, "sillari_sillanvalvoja")) {
+                    if (rolesListTrimmed.contains("sillari_valvoja")
+                            || rolesListTrimmed.contains("sillari_sillanvalvoja")) {
                         authorityList.add(SillariRole.fromString("SILLARI_SILLANVALVOJA"));
                     }
-                    if (ArrayUtils.contains(roles, "sillari_ajojarjestelija")) {
+                    if (rolesListTrimmed.contains("sillari_ajojarjestelija")) {
                         authorityList.add(SillariRole.fromString("SILLARI_AJOJARJESTELIJA"));
                     }
-                    if (ArrayUtils.contains(roles, "sillari_kuljettaja")) {
+                    if (rolesListTrimmed.contains("sillari_kuljettaja")) {
                         authorityList.add(SillariRole.fromString("SILLARI_KULJETTAJA"));
                     }
 
