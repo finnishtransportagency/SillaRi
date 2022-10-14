@@ -164,6 +164,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         authorityList.add(SillariRole.fromString("SILLARI_KULJETTAJA"));
                     }
 
+                    logger.debug("authorityList " + authorityList);
+
                     SillariUser userDetails = new SillariUser(userNameDetail, authorityList);
 
                     userDetails.setFirstName(firstName);
