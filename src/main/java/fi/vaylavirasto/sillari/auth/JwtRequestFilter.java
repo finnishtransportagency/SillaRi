@@ -230,8 +230,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             numberPart = userNameDetail.substring(2);
         }
 
-        logger.debug("numberpart: " + numberPart);
-
         if(numberPart == null){
             return null;
         }
@@ -241,14 +239,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         String yTunnus = numberPart.substring(0,7) + "-" + numberPart.substring(7);
-        logger.debug("yTunnus: " + yTunnus);
 
         return yTunnus;
 
     }
 
 
-    // is the usenrane form LO12309832 or LOSV98601767 where number part is y-tunnus without -
+    // is the username form LO12309832 or LOSV98601767 where number part is y-tunnus without -
     private boolean isLOOrLOSV(String s) {
         String numberPart = null;
         if(s.startsWith("LOSV")){
@@ -266,6 +263,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         return numberPart.matches("[0-9]+");
     }
 
+
+    //LO and LOSV usernames have roolis in square bracketed form
     protected String removePossibleSquareBrackets(String s) {
         if (s.startsWith("[") && s.endsWith("]")) {
             return s.substring(1, s.length()-1);
