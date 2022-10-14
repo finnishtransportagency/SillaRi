@@ -140,6 +140,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     logger.debug(String.format("Phone number %s", phoneNumber));
 
                     String businessId = (String) claims.get("custom:ytunnus");
+                    if(businessId == null){
+                        businessId = resolvePossibleLOBusinessId(userNameDetail);
+                    }
                     logger.debug(String.format("Business ID %s", businessId));
 
                     String organization = (String) claims.get("custom:organisaatio");
@@ -211,6 +214,57 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
     }
 
+    protected String resolvePossibleLOBusinessId(String userNameDetail) {
+        if(userNameDetail == null){
+            return null;
+        }
+        if(!isLOOrLOSV(userNameDetail)){
+            return null;
+        }
+
+        String numberPart = null;
+        if(userNameDetail.startsWith("LOSV")){
+            numberPart = userNameDetail.substring(4);
+        }
+        else if(userNameDetail.startsWith("LO")){
+            numberPart = userNameDetail.substring(2);
+        }
+
+        if(numberPart == null){
+            return null;
+        }
+
+        if(numberPart.length() < 8){
+            return null;
+        }
+
+        String yTunnus = numberPart.substring(0,7) + "-" + numberPart.substring(7);
+
+        return yTunnus;
+
+    }
+
+
+    // is the username form LO12309832 or LOSV98601767 where number part is y-tunnus without -
+    private boolean isLOOrLOSV(String s) {
+        String numberPart = null;
+        if(s.startsWith("LOSV")){
+            numberPart = s.substring(4);
+        }
+        else if(s.startsWith("LO")){
+            numberPart = s.substring(2);
+        }
+        logger.debug("numberpart: " + numberPart);
+
+        if(numberPart == null){
+            return false;
+        }
+
+        return numberPart.matches("[0-9]+");
+    }
+
+
+    //LO and LOSV usernames have roolis in square bracketed form
     protected String removePossibleSquareBrackets(String s) {
         if (s.startsWith("[") && s.endsWith("]")) {
             return s.substring(1, s.length()-1);
