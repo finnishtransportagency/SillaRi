@@ -140,6 +140,13 @@ const SupervisionSummary = (): JSX.Element => {
           updatedSupervision = {
             ...oldData,
             currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.REPORT_SIGNED, time: newData.finishTime },
+            statusHistory: oldData?.statusHistory?.push({
+              supervisionId: 0,
+              username: "",
+              id: 0,
+              status: SupervisionStatus.REPORT_SIGNED,
+              time: newData.finishTime,
+            }),
             savedOffline: !onlineManager.isOnline(),
             finishedTime: newData.finishTime,
           } as ISupervision;
