@@ -137,16 +137,19 @@ const SupervisionSummary = (): JSX.Element => {
         // Set the current status to REPORT_SIGNED here since the backend won't be called yet when offline
         let updatedSupervision: ISupervision;
         queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+          //add report_signed status to the status history since the backend won't be called yet when offline
+          //Sending list shows it as sent based on status history having report_signed
+          oldData?.statusHistory?.push({
+            supervisionId: 0,
+            username: "",
+            id: 0,
+            status: SupervisionStatus.REPORT_SIGNED,
+            time: newData.finishTime,
+          });
+
           updatedSupervision = {
             ...oldData,
             currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.REPORT_SIGNED, time: newData.finishTime },
-            statusHistory: oldData?.statusHistory?.push({
-              supervisionId: 0,
-              username: "",
-              id: 0,
-              status: SupervisionStatus.REPORT_SIGNED,
-              time: newData.finishTime,
-            }),
             savedOffline: !onlineManager.isOnline(),
             finishedTime: newData.finishTime,
           } as ISupervision;
