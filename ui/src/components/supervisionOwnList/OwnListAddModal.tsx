@@ -6,6 +6,7 @@ import PermitNumberInputs from "./PermitNumberInputs";
 import SelectRouteInputs from "./SelectRouteInputs";
 import close from "../../theme/icons/close_large_white.svg";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
+import SelectBridgeInputs from "./SelectBridgeInputs";
 
 interface OwnListAddModalProps {
   isOpen: boolean;
@@ -37,6 +38,10 @@ const OwnListAddModal = ({ isOpen, closeModal }: OwnListAddModalProps): JSX.Elem
     setPhase("BRIDGE");
   };
 
+  const phaseBridgeToRoute = () => {
+    setPhase("ROUTE");
+  };
+
   return (
     <IonModal isOpen={isOpen} onDidDismiss={cancel}>
       <IonHeader>
@@ -52,7 +57,7 @@ const OwnListAddModal = ({ isOpen, closeModal }: OwnListAddModalProps): JSX.Elem
       <IonContent class="ion-padding">
         {phase === "PERMIT" && <PermitNumberInputs cancel={cancel} permitRoutes={permitRoutes} toNextPhase={phasePermitToRoute} />}
         {phase === "ROUTE" && <SelectRouteInputs permitRoutes={permitRoutes} toPreviousPhase={phaseRouteToPermit} toNextPhase={phaseRouteToBridge} />}
-        {phase === "BRIDGE" && <div>TODO: Siltojen valinta</div>}
+        {phase === "BRIDGE" && <SelectBridgeInputs permitRoutes={permitRoutes} toPreviousPhase={phaseBridgeToRoute} />}
       </IonContent>
     </IonModal>
   );

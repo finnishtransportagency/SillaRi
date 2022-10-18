@@ -12,21 +12,21 @@ interface SelectRouteInputsProps {
 
 const SelectRouteInputs = ({ permitRoutes, toNextPhase, toPreviousPhase }: SelectRouteInputsProps): JSX.Element => {
   const { t } = useTranslation();
-  const [continueButtonDisabled, setContinueButtonDisabled] = useState<boolean>(true);
+  const [continueButtonDisabled, setContinueButtonDisabled] = useState<boolean>(
+    permitRoutes.findIndex((pr) => {
+      return pr.selectedRouteIndex === null;
+    }) >= 0
+  );
 
   const setContinueButtonState = () => {
-    if (
+    setContinueButtonDisabled(
       permitRoutes.findIndex((pr) => {
         return pr.selectedRouteIndex === null;
-      }) < 0
-    ) {
-      setContinueButtonDisabled(false);
-    } else {
-      setContinueButtonDisabled(true);
-    }
+      }) >= 0
+    );
   };
 
-  const setPermitNumber = (index: number, routeIndex: number) => {
+  const setSelectedRouteIndex = (index: number, routeIndex: number) => {
     permitRoutes[index].selectedRouteIndex = routeIndex;
     setContinueButtonState();
   };
@@ -48,7 +48,13 @@ const SelectRouteInputs = ({ permitRoutes, toNextPhase, toPreviousPhase }: Selec
           </IonRow>
           <IonRow>
             <IonCol>
-              <SelectRouteInput key={i} index={i} routes={permitRoute.routes} onChange={setPermitNumber} />
+              <SelectRouteInput
+                key={i}
+                index={i}
+                routes={permitRoute.routes}
+                selectedRouteIndex={permitRoute.selectedRouteIndex}
+                onChange={setSelectedRouteIndex}
+              />
             </IonCol>
           </IonRow>
         </IonGrid>
