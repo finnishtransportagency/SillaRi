@@ -4,7 +4,7 @@ import SelectBridgeInput from "./SelectBridgeInput";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
 import { useTranslation } from "react-i18next";
 import { OWNLIST_STORAGE_GROUP } from "../../utils/constants";
-import { getPermitRoutes, initiateSupervisions } from "../../utils/areaContractorBackendData";
+import { initiateSupervisions } from "../../utils/areaContractorBackendData";
 import { Preferences } from "@capacitor/preferences";
 import { useDispatch } from "react-redux";
 
