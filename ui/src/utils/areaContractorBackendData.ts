@@ -30,7 +30,9 @@ export const initiateSupervisions = async (routeBridgeTemplateIds: Array<Number>
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { initiateSupervisions: false } });
 
-    const rResponse = await fetch(`${getOrigin()}/api/areaContractor/initiateSupervisions?initiateSupervisions=${encodeURIComponent(routeBridgeTemplateIds.toString())}`);
+    const rResponse = await fetch(
+      `${getOrigin()}/api/areaContractor/initiateSupervisions?initiateSupervisions=${encodeURIComponent(routeBridgeTemplateIds.toString())}`
+    );
 
     if (rResponse.ok) {
       const supervisionIds = rResponse.json() as Promise<Array<Number>>;
