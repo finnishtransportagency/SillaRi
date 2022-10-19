@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import SelectBridgeInput from "./SelectBridgeInput";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
 import { useTranslation } from "react-i18next";
+import { OWNLIST_STORAGE_GROUP } from "../../utils/constants";
+import { Preferences } from "@capacitor/preferences";
 
 interface SelectBridgeInputsProps {
   permitRoutes: Array<OwnListPermitRouteType>;
@@ -11,9 +13,10 @@ interface SelectBridgeInputsProps {
 
 const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase }: SelectBridgeInputsProps): JSX.Element => {
   const { t } = useTranslation();
-
+  const [selectedIds, setSelectedIds] = useState<Array<number>>([]);
   const setSelectedRouteBridgeIds = (index: number, routeBridgeIds: Array<number>) => {
     // TODO: Save selected route bridge ids
+    setSelectedIds(routeBridgeIds);
   };
 
   const getSelectedRouteName = (permitRoute: OwnListPermitRouteType) => {
@@ -25,7 +28,12 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase }: SelectBridgeInput
   };
 
   const done = () => {
-    console.log("DONE");
+    console.log("DONE" + selectedIds);
+
+    //call backend to inititate supervisions and get their ids to own list keys
+
+    //save ownlist to storage
+    Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
     // TODO: Save all selected route bridges into permanent own list
   };
 

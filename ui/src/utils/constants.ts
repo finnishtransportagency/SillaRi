@@ -13,6 +13,8 @@ export const CONFLICT_ERROR = "Conflict";
 export const TRANSPORT_CODE_STORAGE_GROUP = "TRANSCODES";
 export const TRANSPORT_CODE_STORAGE_LIFE_DAYS = 3;
 
+export const OWNLIST_STORAGE_GROUP = "OWNLIST";
+
 export const SILLARI_SYSTEM_USER = "SILLARI_SYSTEM";
 
 export enum SillariErrorCode {

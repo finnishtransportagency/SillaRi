@@ -51,11 +51,11 @@ public class AreaContractorController {
             @ApiResponse(responseCode = "404 NOT_FOUND", description = "Permit not found with given number"),
             @ApiResponse(responseCode = "403 FORBIDDEN", description = "Permit with given number is not customerUsesSillari = false")
     })
-    public ResponseEntity<List<RouteModel>> getRoutes(@Parameter(name = "permitNumber", description  = "The Lelu number (string) identifier of permit", example = "1111/2022")@RequestParam String permitNumber) {
+    public ResponseEntity<List<RouteModel>> getRoutes(@Parameter(name = "permitNumber", description = "The Lelu number (string) identifier of permit", example = "1111/2022") @RequestParam String permitNumber) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getRoutes");
         try {
             PermitModel permitCurrentVersion = permitService.getPermitCurrentVersionByPermitNumber(permitNumber);
-            if(permitCurrentVersion == null){
+            if (permitCurrentVersion == null) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
             }
             if (permitCurrentVersion.getCustomerUsesSillari()) {
@@ -70,24 +70,17 @@ public class AreaContractorController {
         }
     }
 
-    @Operation(summary = "Get bridges of route")
-    @GetMapping(value = "/getBridges", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    /**
-     * @deprecated, not needed because "/getRoutes" returns also the bridges. Maybe UI can get them from there?
-     */
-    @Deprecated
-    public ResponseEntity<List<RouteBridgeModel>> getBridges(@RequestParam Integer routeId) {
-        ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getBridges");
-        try {
-            RouteModel route = routeService.getRoute(routeId);
-            List<RouteBridgeModel> bridges = route.getRouteBridges();
-            SillariUser user = uiService.getSillariUser();
-            bridges = bridges.stream().filter(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId())).collect(Collectors.toList());
-            return ResponseEntity.ok(bridges);
-        } finally {
-            serviceMetric.end();
+
+    private Integer doInitiateSupervision(@RequestParam Integer routeBridgeTemplateId) {
+        SillariUser user = uiService.getSillariUser();
+        if (!isOwnCompanyContractRouteBridge(user, routeBridgeTemplateId)) {
+            throw new AccessDeniedException("Supervision of routebridge not allowed to the user");
         }
+        String contractBusinessId = user.getBusinessId();
+
+        Integer supervisionId = supervisionService.createAreaContractorOwnListPlannedSupervision(routeBridgeTemplateId, contractBusinessId);
+        return supervisionId;
+
     }
 
     @Operation(summary = "Initiate own list supervision. This is to be called from UI when bridge is added to the own list. A supervision object is created and its' id is returned.")
@@ -99,34 +92,30 @@ public class AreaContractorController {
     })
     public ResponseEntity<?> initiateSupervision(@RequestParam Integer routeBridgeTemplateId) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
-        SillariUser user = uiService.getSillariUser();
-        if (!isOwnCompanyContractRouteBridge(user, routeBridgeTemplateId)) {
-            throw new AccessDeniedException("Supervision of routebridge not allowed to the user");
-        }
-        String contractBusinessId = user.getBusinessId();
         try {
-            var supervisionId = supervisionService.createAreaContractorOwnListPlannedSupervision(routeBridgeTemplateId, contractBusinessId);
-                     return ResponseEntity.ok().body(supervisionId != null ? supervisionId : new EmptyJsonResponse());
+            var supervisionId = doInitiateSupervision(routeBridgeTemplateId);
+            return ResponseEntity.ok().body(supervisionId != null ? supervisionId : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
     }
 
-
-    /**
-     * @deprecated, not needed because SupervisionController/startSupervision
-     */
-    @Deprecated
-    @Operation(summary = "Start supervision")
-    @PostMapping(value = "/startSupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Initiate own list supervisions. This is to be called from UI when bridge is added to the own list. A supervision object is created and its' id is returned.")
+    @PostMapping(value = "/initiateSupervisions", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
-    public ResponseEntity<?> startSupervision(@RequestParam Integer supervisionId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startTime) {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200 OK", description = "Supervision initiated"),
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route bridge template not found with given id")
+    })
+    public ResponseEntity<?> initiateSupervisions(@RequestParam Integer[] routeBridgeTemplateIds) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
         try {
-            SupervisionReportModel reportModel = new SupervisionReportModel();
-            reportModel.setSupervisionId(supervisionId);
-            SupervisionModel supervisionModel = supervisionService.startSupervision(reportModel, startTime, uiService.getSillariUser());
-            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+            ArrayList<Integer> supervisionIds = new ArrayList<>();
+            for (Integer routeBridgeTemplateId : routeBridgeTemplateIds) {
+                Integer supervisionId = doInitiateSupervision(routeBridgeTemplateId);
+                supervisionIds.add(supervisionId);
+            }
+            return ResponseEntity.ok().body(supervisionIds);
         } finally {
             serviceMetric.end();
         }
