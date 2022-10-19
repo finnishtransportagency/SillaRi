@@ -26,7 +26,7 @@ export const getPermitRoutes = async (permitNumber: string, dispatch: Dispatch):
   }
 };
 
-export const initiateSupervisions = async (routeBridgeTemplateIds: Array<Number>, dispatch: Dispatch): Promise<Array<Number>> => {
+export const initiateSupervisions = async (routeBridgeTemplateIds: Array<number>, dispatch: Dispatch): Promise<Array<number>> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { initiateSupervisions: false } });
 
@@ -35,7 +35,7 @@ export const initiateSupervisions = async (routeBridgeTemplateIds: Array<Number>
     );
 
     if (rResponse.ok) {
-      const supervisionIds = rResponse.json() as Promise<Array<Number>>;
+      const supervisionIds = rResponse.json() as Promise<Array<number>>;
       console.log("areaContractor/initiateSupervisions", routeBridgeTemplateIds);
       return await supervisionIds;
     } else if (rResponse.status === 403) {
