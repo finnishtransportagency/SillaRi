@@ -108,7 +108,7 @@ public class AreaContractorController {
             @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route bridge template not found with given id")
     })
     public ResponseEntity<?> initiateSupervisions(@RequestParam Integer[] routeBridgeTemplateIds) {
-        ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "startSupervision");
+        ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "initiateSupervisions");
         try {
             ArrayList<Integer> supervisionIds = new ArrayList<>();
             for (Integer routeBridgeTemplateId : routeBridgeTemplateIds) {
