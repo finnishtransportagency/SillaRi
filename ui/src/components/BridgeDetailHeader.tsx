@@ -27,7 +27,7 @@ const BridgeDetailHeader = ({ routeBridge }: BridgeDetailHeaderProps): JSX.Eleme
     const backendImageUrl = `${getOrigin()}/api/routebridge/getBridgeImage?routeBridgeId=${routeBridgeId}`;
     const image = new Image();
     image.src = backendImageUrl;
-    if (image.clientWidth === 0) {
+    if (image.height === 0) {
       return "/assets/silta_oletuskuva.png";
     }
     return backendImageUrl;
