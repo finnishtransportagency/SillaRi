@@ -4,7 +4,9 @@ import SelectBridgeInput from "./SelectBridgeInput";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
 import { useTranslation } from "react-i18next";
 import { OWNLIST_STORAGE_GROUP } from "../../utils/constants";
+import { getPermitRoutes, initiateSupervisions } from "../../utils/areaContractorBackendData";
 import { Preferences } from "@capacitor/preferences";
+import { useDispatch } from "react-redux";
 
 interface SelectBridgeInputsProps {
   permitRoutes: Array<OwnListPermitRouteType>;
@@ -13,6 +15,7 @@ interface SelectBridgeInputsProps {
 
 const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase }: SelectBridgeInputsProps): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const [selectedIds, setSelectedIds] = useState<Array<number>>([]);
   const setSelectedRouteBridgeIds = (index: number, routeBridgeIds: Array<number>) => {
     // TODO: Save selected route bridge ids
@@ -27,11 +30,12 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase }: SelectBridgeInput
     }
   };
 
-  const done = () => {
+  const done = async () => {
     console.log("DONE" + selectedIds);
 
     //call backend to inititate supervisions and get their ids to own list keys
-
+    const supervisionIds = await initiateSupervisions(selectedIds, dispatch);
+    console.log("Hello got ids: " + supervisionIds);
     //save ownlist to storage
     Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
     // TODO: Save all selected route bridges into permanent own list
