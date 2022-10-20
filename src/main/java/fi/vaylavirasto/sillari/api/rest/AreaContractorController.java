@@ -72,6 +72,7 @@ public class AreaContractorController {
 
 
     private Integer doInitiateSupervision(@RequestParam Integer routeBridgeTemplateId) {
+        logger.debug("doInitiateSupervision " + routeBridgeTemplateId);
         SillariUser user = uiService.getSillariUser();
         if (!isOwnCompanyContractRouteBridge(user, routeBridgeTemplateId)) {
             throw new AccessDeniedException("Supervision of routebridge not allowed to the user");
@@ -101,18 +102,24 @@ public class AreaContractorController {
     }
 
     @Operation(summary = "Initiate own list supervisions. This is to be called from UI when bridge is added to the own list. A supervision object is created and its' id is returned.")
-    @PostMapping(value = "/initiateSupervisions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/initiateSupervisions", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200 OK", description = "Supervision initiated"),
             @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route bridge template not found with given id")
     })
-    public ResponseEntity<?> initiateSupervisions(@RequestParam Integer[] routeBridgeTemplateIds) {
+    public ResponseEntity<?> initiateSupervisions(@RequestParam String routeBridgeTemplateIds) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "initiateSupervisions");
         try {
             ArrayList<Integer> supervisionIds = new ArrayList<>();
-            for (Integer routeBridgeTemplateId : routeBridgeTemplateIds) {
-                Integer supervisionId = doInitiateSupervision(routeBridgeTemplateId);
+            if(routeBridgeTemplateIds == null || routeBridgeTemplateIds.isEmpty()){
+                return ResponseEntity.ok().body(supervisionIds);
+            }
+            var routeBridgeTemplateIds2 = routeBridgeTemplateIds.substring(1, routeBridgeTemplateIds.length()-1);
+            logger.debug("routeBridgeTemplateIds2 "+routeBridgeTemplateIds2);
+            var splitted = routeBridgeTemplateIds2.split(",");
+            for (String routeBridgeTemplateId : splitted) {
+                Integer supervisionId = doInitiateSupervision(Integer.valueOf(routeBridgeTemplateId));
                 supervisionIds.add(supervisionId);
             }
             return ResponseEntity.ok().body(supervisionIds);

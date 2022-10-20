@@ -38,7 +38,7 @@ public class RouteTransportController {
 
 
     @Operation(summary = "Get route transport")
-    @GetMapping(value = "/getroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "</getroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
     public ResponseEntity<?> getRouteTransport(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransport");
