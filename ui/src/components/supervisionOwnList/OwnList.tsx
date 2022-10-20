@@ -3,7 +3,7 @@ import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
 import NoNetworkNoData from "../NoNetworkNoData";
 import OwnListAddModal from "./OwnListAddModal";
 import { useTranslation } from "react-i18next";
-import { Preferences } from "@capacitor/preferences";
+import { getOwnlist } from "../../utils/ownlistStorageUtil";
 
 interface OwnListProps {
   username: string;
@@ -18,6 +18,8 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
   useEffect(() => {
     console.log("E.F.F.E.C.T");
   });
+
+  const ownList = getOwnlist(username);
 
   const closeModal = () => {
     setModalOpen(false);
