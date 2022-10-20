@@ -21,6 +21,7 @@ public class RouteBridgeRepository {
     public RouteBridgeModel getRouteBridge(Integer id) {
         return dsl.select().from(TableAlias.routeBridge)
                 .leftJoin(TableAlias.bridge).on(TableAlias.bridge.ID.eq(TableAlias.routeBridge.BRIDGE_ID))
+                .leftJoin(TableAlias.company).on(TableAlias.company.BUSINESS_ID.eq(TableAlias.routeBridge.CONTRACT_BUSINESS_ID))
                 .where(TableAlias.routeBridge.ID.eq(id))
                 .fetchOne(this::mapRouteBridgeRecordWithBridge);
     }

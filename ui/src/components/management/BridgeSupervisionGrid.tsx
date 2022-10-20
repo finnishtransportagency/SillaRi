@@ -101,8 +101,8 @@ const BridgeSupervisionGrid = ({
               return ordinalA - ordinalB;
             })
             .map((supervision, index, sortedSupervisions) => {
-              const { id: supervisionId, routeBridge, supervisorCompanyName } = supervision || {};
-              const { bridge, contractNumber = "", contractBusinessId = "" } = routeBridge || {};
+              const { id: supervisionId, routeBridge } = supervision || {};
+              const { bridge, contractNumber = "", contractBusinessId = "", contractBusinessName = "" } = routeBridge || {};
               const { identifier, name } = bridge || {};
               const bridgeName = `${identifier} - ${name}`;
 
@@ -139,8 +139,10 @@ const BridgeSupervisionGrid = ({
                           <IonCol>
                             <small>
                               <IonText>{t("management.transportDetail.bridgeInfo.contractor")}</IonText>
-                              <br/>
-                              <IonText>{supervisorCompanyName} {contractBusinessId} ({contractNumber})</IonText>
+                              <br />
+                              <IonText>
+                                {contractBusinessName} {contractBusinessId} ({contractNumber})
+                              </IonText>
                             </small>
                           </IonCol>
                         </IonRow>

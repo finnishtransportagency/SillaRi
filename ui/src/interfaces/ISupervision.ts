@@ -14,7 +14,6 @@ export default interface ISupervision {
   plannedTime: Date;
   conformsToPermit: boolean;
   supervisorCompany?: string;
-  supervisorCompanyName?: string;
   supervisorType: SupervisorType;
   denyCrossingReason?: string;
   statusHistory?: ISupervisionStatus[];
