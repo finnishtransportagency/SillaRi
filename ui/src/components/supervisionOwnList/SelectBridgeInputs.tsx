@@ -9,6 +9,7 @@ import { Preferences } from "@capacitor/preferences";
 import { useDispatch } from "react-redux";
 import { useQuery } from "react-query";
 import { getUserData, onRetry } from "../../utils/backendData";
+import { saveToOwnlist } from "../../utils/ownlistStorageUtil";
 
 interface SelectBridgeInputsProps {
   permitRoutes: Array<OwnListPermitRouteType>;
@@ -46,17 +47,7 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase }: SelectBridgeInput
     const supervisionIds = await initiateSupervisions(selectedIds, dispatch);
     console.log("Hello got ids: " + supervisionIds);
     //save ownlist to storage
-    Preferences.configure({ group: OWNLIST_STORAGE_GROUP + "_" + username });
-    supervisionIds.forEach(async (id) => {
-      console.log("Hello got id: " + id);
-      const oldValue = await Preferences.get({ key: id.toString() });
-      if (!oldValue.value) {
-        Preferences.set({
-          key: id.toString(),
-          value: "true",
-        });
-      }
-    });
+    saveToOwnlist(username, supervisionIds);
   };
 
   return (

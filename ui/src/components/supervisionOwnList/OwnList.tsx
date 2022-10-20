@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
 import NoNetworkNoData from "../NoNetworkNoData";
 import OwnListAddModal from "./OwnListAddModal";
 import { useTranslation } from "react-i18next";
+import { Preferences } from "@capacitor/preferences";
 
 interface OwnListProps {
   username: string;
@@ -13,6 +14,10 @@ interface OwnListProps {
 const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Element => {
   const { t } = useTranslation();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log("E.F.F.E.C.T");
+  });
 
   const closeModal = () => {
     setModalOpen(false);
