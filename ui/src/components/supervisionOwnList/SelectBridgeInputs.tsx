@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import SelectBridgeInput from "./SelectBridgeInput";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
@@ -7,6 +7,8 @@ import { OWNLIST_STORAGE_GROUP } from "../../utils/constants";
 import { initiateSupervisions } from "../../utils/areaContractorBackendData";
 import { Preferences } from "@capacitor/preferences";
 import { useDispatch } from "react-redux";
+import { useQuery } from "react-query";
+import { getUserData, onRetry } from "../../utils/backendData";
 
 interface SelectBridgeInputsProps {
   permitRoutes: Array<OwnListPermitRouteType>;
@@ -30,15 +32,31 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase }: SelectBridgeInput
     }
   };
 
+  const { data: user, isLoading: isLoadingUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+
+  const { username = "" } = user || {};
+
   const done = async () => {
     console.log("DONE" + selectedIds);
 
-    //call backend to inititate supervisions and get their ids to own list keys
+    //call backend to initiate supervisions and get their ids to own list keys
     const supervisionIds = await initiateSupervisions(selectedIds, dispatch);
     console.log("Hello got ids: " + supervisionIds);
     //save ownlist to storage
-    Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
-    // TODO: Save all selected route bridges into permanent own list
+    Preferences.configure({ group: OWNLIST_STORAGE_GROUP + "_" + username });
+    supervisionIds.forEach(async (id) => {
+      console.log("Hello got id: " + id);
+      const oldValue = await Preferences.get({ key: id.toString() });
+      if (!oldValue.value) {
+        Preferences.set({
+          key: id.toString(),
+          value: "true",
+        });
+      }
+    });
   };
 
   return (
