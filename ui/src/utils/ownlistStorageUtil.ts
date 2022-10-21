@@ -40,7 +40,7 @@ export const getOwnlistRaw = async (username: string) => {
 export const getOwnlist = async (username: string) => {
   Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
   const ownListRaw = await Preferences.get({ key: username });
-  let ownList: number[] = [];
+  const ownList: number[] = [];
   if (ownListRaw.value) {
     ownListRaw.value.split(",").forEach((id) => {
       ownList.push(Number(id));

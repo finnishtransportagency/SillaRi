@@ -14,12 +14,16 @@ interface OwnListProps {
 const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Element => {
   const { t } = useTranslation();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [ownListIds, setOwnListIds] = useState<Array<number>>([]);
 
   useEffect(() => {
     console.log("E.F.F.E.C.T");
+    getOwnlist(username).then((result) => {
+      if (result) {
+        setOwnListIds(result);
+      }
+    });
   });
-
-  const ownList = getOwnlist(username);
 
   const closeModal = () => {
     setModalOpen(false);
