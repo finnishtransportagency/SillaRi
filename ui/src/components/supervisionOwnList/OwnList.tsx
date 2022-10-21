@@ -17,12 +17,14 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
   const [ownListIds, setOwnListIds] = useState<Array<number>>([]);
 
   useEffect(() => {
+    console.log("efect");
     getOwnlist(username).then((result) => {
       if (result) {
         setOwnListIds(result);
+        console.log(ownListIds);
       }
     });
-  });
+  }, [isModalOpen]);
 
   const closeModal = () => {
     setModalOpen(false);
