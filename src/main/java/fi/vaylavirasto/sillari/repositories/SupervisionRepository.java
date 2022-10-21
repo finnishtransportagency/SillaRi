@@ -6,6 +6,7 @@ import fi.vaylavirasto.sillari.mapper.SupervisionMapper;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.model.TransportStatusType;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +16,7 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static org.jooq.impl.DSL.*;
@@ -66,10 +68,19 @@ public class SupervisionRepository {
                 .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
                 .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
                 .and(supervisionNotCompleted())
+                .and(TableAlias.supervision.PLANNED_TIME.greaterThan(OffsetDateTime.now().minusDays(5)))
+                .and(noRouteTransportEndedMoreThanDaysAgo(5))
                 // Order by planned time takes also seconds and milliseconds into account, when we want to sort by route transport and ordinal
                 // when planned time is the same in MINUTES. Sort in UI instead.
                 //.orderBy(TableAlias.supervision.PLANNED_TIME, TableAlias.supervision.ROUTE_TRANSPORT_ID, TableAlias.routeBridge.ORDINAL)
                 .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
+    }
+
+    private Condition noRouteTransportEndedMoreThanDaysAgo(int daysAgo) {
+        return notExists(selectOne().from(TableAlias.transportStatus
+                .where(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.transportStatus.ROUTE_TRANSPORT_ID)
+                .and(TableAlias.transportStatus.STATUS.eq(TransportStatusType.DEPARTED.toString())
+                .and(TableAlias.transportStatus.TIME.lessThan(OffsetDateTime.now().minusDays(daysAgo)))))));
     }
 
     public SupervisionModel getSupervisionBySupervisionImageId(Integer imageId) {
