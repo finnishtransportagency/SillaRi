@@ -35,8 +35,6 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
     });
   }, [isModalOpen]);
 
-
-
   const closeModal = () => {
     setModalOpen(false);
   };
