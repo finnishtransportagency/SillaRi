@@ -28,11 +28,23 @@ export const saveToOwnlist = async (username: string, supervisionIds: number[]) 
   await Preferences.set({ key: username, value: newOwnList });
 };
 
-export const getOwnlist = async (username: string)=> {
+export const getOwnlistRaw = async (username: string) => {
   Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
   const ownList = await Preferences.get({ key: username });
   if (ownList.value) {
     return ownList.value;
   }
   return null;
+};
+
+export const getOwnlist = async (username: string) => {
+  Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
+  const ownListRaw = await Preferences.get({ key: username });
+  let ownList: number[] = [];
+  if (ownListRaw.value) {
+    ownListRaw.value.split(",").forEach((id) => {
+      ownList.push(Number(id));
+    });
+  }
+  return ownList;
 };

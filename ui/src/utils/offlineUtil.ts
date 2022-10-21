@@ -49,6 +49,17 @@ const prefetchSupervisionsNoPasscode = async (supervisionList: ISupervision[], q
   );
 };
 
+export const prefetchSupervisionsNoPasscodeWithIds = async (supervisionIdsList: number[], queryClient: QueryClient, dispatch: Dispatch) => {
+  await Promise.all(
+    supervisionIdsList.map((id) => {
+      return queryClient.prefetchQuery(["getSupervision", id], () => getSupervisionNoPasscode(id, dispatch), {
+        retry: onRetry,
+        staleTime: Infinity,
+      });
+    })
+  );
+};
+
 const prefetchRouteTransports = async (
   companyTransportsList: ICompanyTransports[],
   username: string,

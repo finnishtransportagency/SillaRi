@@ -7,9 +7,10 @@ import { OWNLIST_STORAGE_GROUP } from "../../utils/constants";
 import { initiateSupervisions } from "../../utils/areaContractorBackendData";
 import { Preferences } from "@capacitor/preferences";
 import { useDispatch } from "react-redux";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { getUserData, onRetry } from "../../utils/backendData";
-import { saveToOwnlist } from "../../utils/ownlistStorageUtil";
+import { getOwnlist, saveToOwnlist } from "../../utils/ownlistStorageUtil";
+import { prefetchSupervisionsNoPasscodeWithIds } from "../../utils/offlineUtil";
 
 interface SelectBridgeInputsProps {
   permitRoutes: Array<OwnListPermitRouteType>;
@@ -40,6 +41,8 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase }: SelectBridgeInput
 
   const { username = "" } = user || {};
 
+  const queryClient = useQueryClient();
+
   const done = async () => {
     console.log("DONE" + selectedIds);
 
@@ -47,7 +50,10 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase }: SelectBridgeInput
     const supervisionIds = await initiateSupervisions(selectedIds, dispatch);
     console.log("Hello got ids: " + supervisionIds);
     //save ownlist to storage
-    saveToOwnlist(username, supervisionIds);
+    await saveToOwnlist(username, supervisionIds);
+    const ownlist = await getOwnlist(username);
+    //prefetch supervisions in ownlist so they can be done offline
+    prefetchSupervisionsNoPasscodeWithIds(ownlist, queryClient, dispatch);
   };
 
   return (
