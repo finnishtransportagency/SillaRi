@@ -10,6 +10,8 @@ import { onRetry } from "../../utils/backendData";
 import { getSupervisionNoPasscode } from "../../utils/supervisionBackendData";
 import { useDispatch } from "react-redux";
 import ISupervision from "../../interfaces/ISupervision";
+import ISupervisionDay from "../../interfaces/ISupervisionDay";
+import OwnListItem from "./OwnListItem";
 
 interface OwnListProps {
   username: string;
@@ -53,6 +55,14 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
           <IonRow>
             <IonCol>
               <OwnListAddModal isOpen={isModalOpen} closeModal={closeModal} />
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              {ownListIds.map((id: number, dIndex) => {
+                const bridgeKey = `bridge_${dIndex}`;
+                return <OwnListItem key={bridgeKey} supervisionId={id}></OwnListItem>;
+              })}
             </IonCol>
           </IonRow>
         </IonGrid>

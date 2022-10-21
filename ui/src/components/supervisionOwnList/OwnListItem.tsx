@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import Moment from "react-moment";
+
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import arrowRight from "../theme/icons/arrow-right.svg";
-import { actions } from "../../store/rootSlice";
+import arrowRight from "../../theme/icons/arrow-right.svg";
+
 import { useQuery } from "react-query";
 import { getSupervisionNoPasscode } from "../../utils/supervisionBackendData";
 import { onRetry } from "../../utils/backendData";
