@@ -3,6 +3,7 @@ import { getOrigin } from "./request";
 import { NETWORK_RESPONSE_NOT_OK } from "./constants";
 import { actions } from "../store/rootSlice";
 import IRoute from "../interfaces/IRoute";
+import ISupervision from "../interfaces/ISupervision";
 
 export const getPermitRoutes = async (permitNumber: string, dispatch: Dispatch): Promise<Array<IRoute>> => {
   try {
@@ -26,7 +27,7 @@ export const getPermitRoutes = async (permitNumber: string, dispatch: Dispatch):
   }
 };
 
-export const initiateSupervisions = async (routeBridgeTemplateIds: Array<number>, dispatch: Dispatch): Promise<Array<number>> => {
+export const initiateSupervisions = async (routeBridgeTemplateIds: Array<number>, dispatch: Dispatch): Promise<Array<ISupervision>> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { initiateSupervisions: false } });
 
@@ -37,7 +38,7 @@ export const initiateSupervisions = async (routeBridgeTemplateIds: Array<number>
     );
 
     if (rResponse.ok) {
-      const supervisionIds = rResponse.json() as Promise<Array<number>>;
+      const supervisionIds = rResponse.json() as Promise<Array<ISupervision>>;
       console.log("areaContractor/initiateSupervisions", routeBridgeTemplateIds);
       return await supervisionIds;
     } else if (rResponse.status === 403) {

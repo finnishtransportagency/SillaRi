@@ -44,10 +44,10 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase }: SelectBridgeInput
     console.log("DONE" + selectedIds);
 
     //call backend to initiate supervisions and get their ids to own list keys
-    const supervisionIds = await initiateSupervisions(selectedIds, dispatch);
-    console.log("Hello got ids: " + supervisionIds);
+    const supervisions = await initiateSupervisions(selectedIds, dispatch);
+    console.log("Hello got ids: " + supervisions);
     //save ownlist to storage
-    saveToOwnlist(username, supervisionIds);
+    saveToOwnlist(username, supervisions);
   };
 
   return (
