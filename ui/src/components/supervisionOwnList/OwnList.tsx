@@ -21,7 +21,6 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
   const { t } = useTranslation();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [ownListIds, setOwnListIds] = useState<Array<number>>([]);
-  const [supervisions, setSupervisions] = useState<Array<ISupervision>>([]);
 
   const dispatch = useDispatch();
 
@@ -36,20 +35,7 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
     });
   }, [isModalOpen]);
 
-  console.log(ownListIds);
-  const supervisions2: Array<ISupervision> = [];
-  ownListIds.forEach((id) => {
-    console.log(id);
-    const { data: supervision } = useQuery(["getSupervision", id], () => getSupervisionNoPasscode(id, dispatch), {
-      retry: onRetry,
-    });
-    if (supervision) {
-      supervisions2.push(supervision);
-    }
-  });
-  setSupervisions(supervisions.concat(supervisions2));
 
-  console.log(supervisions);
 
   const closeModal = () => {
     setModalOpen(false);
