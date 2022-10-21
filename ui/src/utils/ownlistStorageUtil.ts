@@ -42,7 +42,7 @@ export const getOwnlist = async (username: string) => {
   const ownListRaw = await Preferences.get({ key: username });
   const ownList: number[] = [];
   if (ownListRaw.value) {
-    ownListRaw.value.split(",").forEach((id) => {
+    ownListRaw.value.split(",").forEach((id: string) => {
       ownList.push(Number(id));
     });
   }

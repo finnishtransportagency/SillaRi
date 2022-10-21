@@ -52,6 +52,7 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase }: SelectBridgeInput
     //save ownlist to storage
     await saveToOwnlist(username, supervisionIds);
     const ownlist = await getOwnlist(username);
+    console.log("just added to ownlist storage: " + ownlist);
     //prefetch supervisions in ownlist so they can be done offline
     prefetchSupervisionsNoPasscodeWithIds(ownlist, queryClient, dispatch);
   };
