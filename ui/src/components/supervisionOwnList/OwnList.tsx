@@ -3,7 +3,7 @@ import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
 import NoNetworkNoData from "../NoNetworkNoData";
 import OwnListAddModal from "./OwnListAddModal";
 import { useTranslation } from "react-i18next";
-import { getOwnlist } from "../../utils/ownlistStorageUtil";
+import { removeFromOwnlist, getOwnlist } from "../../utils/ownlistStorageUtil";
 import { useDispatch } from "react-redux";
 import OwnListItem from "./OwnListItem";
 
@@ -21,15 +21,16 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("efect");
     getOwnlist(username).then((result) => {
       if (result) {
-        console.log("rsult" + result);
         setOwnListIds(result);
-        console.log(ownListIds);
       }
     });
   }, [isModalOpen]);
+
+  const removeItem = (supervisionId: number | undefined) => {
+    removeFromOwnlist(username, supervisionId);
+  };
 
   const closeModal = () => {
     setModalOpen(false);
@@ -55,7 +56,7 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
             <IonCol>
               {ownListIds.map((id: number, dIndex) => {
                 const bridgeKey = `bridge_${dIndex}`;
-                return <OwnListItem key={bridgeKey} supervisionId={id} username={username}></OwnListItem>;
+                return <OwnListItem key={bridgeKey} supervisionId={id} removalCallback={removeItem}></OwnListItem>;
               })}
             </IonCol>
           </IonRow>

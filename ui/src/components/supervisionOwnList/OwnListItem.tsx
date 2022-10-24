@@ -11,14 +11,13 @@ import erase from "../../theme/icons/erase.svg";
 import { useQuery } from "react-query";
 import { getSupervisionNoPasscode } from "../../utils/supervisionBackendData";
 import { onRetry } from "../../utils/backendData";
-import { removeFromOwnlist, saveToOwnlist } from "../../utils/ownlistStorageUtil";
 
 interface OwnListItemProps {
   supervisionId: number;
-  username: string;
+  removalCallback: (supervisionId: number | undefined) => void;
 }
 
-const OwnListItem = ({ supervisionId, username }: OwnListItemProps): JSX.Element => {
+const OwnListItem = ({ supervisionId, removalCallback }: OwnListItemProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -42,7 +41,7 @@ const OwnListItem = ({ supervisionId, username }: OwnListItemProps): JSX.Element
           text: t("supervisionOwnList.warning.remove"),
           handler: () => {
             console.log("rem clicked");
-            removeFromOwnlist(username, supervision?.id);
+            removalCallback(supervision?.id);
           },
         },
       ],
