@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText, useIonAlert } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -11,15 +11,18 @@ import erase from "../../theme/icons/erase.svg";
 import { useQuery } from "react-query";
 import { getSupervisionNoPasscode } from "../../utils/supervisionBackendData";
 import { onRetry } from "../../utils/backendData";
+import { removeFromOwnlist, saveToOwnlist } from "../../utils/ownlistStorageUtil";
 
 interface OwnListItemProps {
   supervisionId: number;
+  username: string;
 }
 
-const OwnListItem = ({ supervisionId }: OwnListItemProps): JSX.Element => {
+const OwnListItem = ({ supervisionId, username }: OwnListItemProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
+  const [present] = useIonAlert();
 
   const { data: supervision } = useQuery(["getSupervision", supervisionId], () => getSupervisionNoPasscode(supervisionId, dispatch), {
     retry: onRetry,
@@ -30,8 +33,25 @@ const OwnListItem = ({ supervisionId }: OwnListItemProps): JSX.Element => {
     history.push(`/bridgedetail/${supervisionId}`);
   };
 
-  function removeSupervision() {
+  const showConfirmRemoveSupervision = () => {
+    present({
+      header: t("supervisionOwnList.warning.removeHeader"),
+      buttons: [
+        t("common.buttons.back2"),
+        {
+          text: t("supervisionOwnList.warning.remove"),
+          handler: () => {
+            console.log("rem clicked");
+            removeFromOwnlist(username, supervision?.id);
+          },
+        },
+      ],
+    });
+  };
+
+  function removeSupervisionClicked() {
     console.log("del");
+    showConfirmRemoveSupervision();
   }
 
   return (
@@ -51,7 +71,7 @@ const OwnListItem = ({ supervisionId }: OwnListItemProps): JSX.Element => {
               </IonLabel>
               <IonLabel>
                 <small>{t("supervisionOwnList.addedBySupervisor")}</small>
-                <IonButton size="default" fill="clear" onClick={() => removeSupervision()}>
+                <IonButton size="default" fill="clear" onClick={() => removeSupervisionClicked()}>
                   <IonIcon className="otherIcon" icon={erase} />
                   <small>{t("supervisionOwnList.removeFromList")}</small>
                 </IonButton>

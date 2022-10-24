@@ -4,13 +4,7 @@ import NoNetworkNoData from "../NoNetworkNoData";
 import OwnListAddModal from "./OwnListAddModal";
 import { useTranslation } from "react-i18next";
 import { getOwnlist } from "../../utils/ownlistStorageUtil";
-import { useQuery } from "react-query";
-import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
-import { onRetry } from "../../utils/backendData";
-import { getSupervisionNoPasscode } from "../../utils/supervisionBackendData";
 import { useDispatch } from "react-redux";
-import ISupervision from "../../interfaces/ISupervision";
-import ISupervisionDay from "../../interfaces/ISupervisionDay";
 import OwnListItem from "./OwnListItem";
 
 interface OwnListProps {
@@ -61,7 +55,7 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
             <IonCol>
               {ownListIds.map((id: number, dIndex) => {
                 const bridgeKey = `bridge_${dIndex}`;
-                return <OwnListItem key={bridgeKey} supervisionId={id}></OwnListItem>;
+                return <OwnListItem key={bridgeKey} supervisionId={id} username={username}></OwnListItem>;
               })}
             </IonCol>
           </IonRow>
