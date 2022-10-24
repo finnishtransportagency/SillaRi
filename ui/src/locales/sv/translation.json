@@ -169,6 +169,8 @@
   },
   "supervisionOwnList": {
     "addButtonLabel": "(SV) Lisää valvottavia siltoja",
+    "permitLabel": "(SV) Kuljetuslupa",
+    "addedBySupervisor": "(SV) Silta lisätty valvojan toimesta",
     "addModal": {
       "title": "(SV) Lisää valvottavia siltoja",
       "permitNumberInput": {

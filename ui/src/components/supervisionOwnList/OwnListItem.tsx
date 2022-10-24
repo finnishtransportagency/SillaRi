@@ -35,11 +35,16 @@ const OwnListItem = ({ supervisionId }: OwnListItemProps): JSX.Element => {
           <IonCol size="9">
             <IonLabel>
               <IonLabel className="headingText">
-                <IonText>{` (${t("bridgeCard.estimate")})`}</IonText>
+                <IonText>{`${supervision?.routeBridge?.bridge.identifier} ${supervision?.routeBridge?.bridge.name}, ${supervision?.routeBridge?.bridge.municipality}`}</IonText>
               </IonLabel>
-              <IonLabel className="headingText">{supervision?.routeBridge?.bridge.name}</IonLabel>
               <IonLabel>
-                <small>{`${supervision?.routeBridge?.bridge.identifier}, ${supervision?.routeBridge?.bridge.municipality}`}</small>
+                <small>{`${supervision?.routeBridge?.route.name}`}</small>
+              </IonLabel>
+              <IonLabel>
+                <small>{`${t("supervisionOwnList.permitLabel")} ${supervision?.routeBridge?.route.permit.permitNumber}`}</small>
+              </IonLabel>
+              <IonLabel>
+                <small>{t("supervisionOwnList.addedBySupervisor")}</small>
               </IonLabel>
             </IonLabel>
           </IonCol>

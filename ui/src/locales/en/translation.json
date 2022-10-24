@@ -169,6 +169,8 @@
   },
   "supervisionOwnList": {
     "addButtonLabel": "Add bridges",
+    "permitLabel": "Permit",
+    "addedBySupervisor": "Bridge added by suoervisor",
     "addModal": {
       "title": "Add bridges",
       "permitNumberInput": {
