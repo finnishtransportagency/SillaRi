@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import arrowRight from "../../theme/icons/arrow-right.svg";
+import erase from "../../theme/icons/erase.svg";
 
 import { useQuery } from "react-query";
 import { getSupervisionNoPasscode } from "../../utils/supervisionBackendData";
@@ -28,6 +29,11 @@ const OwnListItem = ({ supervisionId }: OwnListItemProps): JSX.Element => {
     // dispatch({ type: actions.SET_SUPERVISION_LIST_TYPE, payload: supervisionListType });
     history.push(`/bridgedetail/${supervisionId}`);
   };
+
+  function removeSupervision() {
+    console.log("del");
+  }
+
   return (
     <IonItem className="small-margin-bottom" lines="full">
       <IonGrid className="ion-no-margin ion-no-padding">
@@ -45,6 +51,10 @@ const OwnListItem = ({ supervisionId }: OwnListItemProps): JSX.Element => {
               </IonLabel>
               <IonLabel>
                 <small>{t("supervisionOwnList.addedBySupervisor")}</small>
+                <IonButton size="default" fill="clear" onClick={() => removeSupervision()}>
+                  <IonIcon className="otherIcon" icon={erase} />
+                  <small>{t("supervisionOwnList.removeFromList")}</small>
+                </IonButton>
               </IonLabel>
             </IonLabel>
           </IonCol>

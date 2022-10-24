@@ -171,6 +171,7 @@
     "addButtonLabel": "Lisää valvottavia siltoja",
     "permitLabel": "Kuljetuslupa",
     "addedBySupervisor": "Silta lisätty valvojan toimesta",
+    "removeFromList": "Poista listalta",
     "addModal": {
       "title": "Lisää valvottavia siltoja",
       "permitNumberInput": {

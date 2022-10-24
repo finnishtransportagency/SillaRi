@@ -171,6 +171,7 @@
     "addButtonLabel": "Add bridges",
     "permitLabel": "Permit",
     "addedBySupervisor": "Bridge added by suoervisor",
+    "removeFromList": "Remove from list",
     "addModal": {
       "title": "Add bridges",
       "permitNumberInput": {
