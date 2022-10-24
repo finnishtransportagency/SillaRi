@@ -172,6 +172,10 @@
     "permitLabel": "(SV) Kuljetuslupa",
     "addedBySupervisor": "(SV) Silta lisätty valvojan toimesta",
     "removeFromList": "(SV) Poista listalta",
+    "warning": {
+      "removeHeader": "(SV) Haluatko varmasti poistaa sillan listalta?",
+      "remove": "(SV) Poista"
+    },
     "addModal": {
       "title": "(SV) Lisää valvottavia siltoja",
       "permitNumberInput": {

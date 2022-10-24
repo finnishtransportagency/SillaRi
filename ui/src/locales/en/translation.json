@@ -172,6 +172,10 @@
     "permitLabel": "Permit",
     "addedBySupervisor": "Bridge added by suoervisor",
     "removeFromList": "Remove from list",
+    "warning": {
+      "removeHeader": "Are you sure you want to remove the bridge from the list?",
+      "remove": "Remove"
+    },
     "addModal": {
       "title": "Add bridges",
       "permitNumberInput": {
