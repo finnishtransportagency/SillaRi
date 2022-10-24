@@ -40,7 +40,6 @@ const OwnListItem = ({ supervisionId, removalCallback }: OwnListItemProps): JSX.
         {
           text: t("supervisionOwnList.warning.remove"),
           handler: () => {
-            console.log("rem clicked");
             removalCallback(supervision?.id);
           },
         },

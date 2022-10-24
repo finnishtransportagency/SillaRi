@@ -3,9 +3,7 @@ import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import SelectBridgeInput from "./SelectBridgeInput";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
 import { useTranslation } from "react-i18next";
-import { OWNLIST_STORAGE_GROUP } from "../../utils/constants";
 import { initiateSupervisions } from "../../utils/areaContractorBackendData";
-import { Preferences } from "@capacitor/preferences";
 import { useDispatch } from "react-redux";
 import { useQuery, useQueryClient } from "react-query";
 import { getUserData, onRetry } from "../../utils/backendData";
@@ -15,14 +13,15 @@ import { prefetchSupervisionsNoPasscodeWithIds } from "../../utils/offlineUtil";
 interface SelectBridgeInputsProps {
   permitRoutes: Array<OwnListPermitRouteType>;
   toPreviousPhase: () => void;
+  updateOwnlistPage: () => void;
+  closeModal: () => void;
 }
 
-const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase }: SelectBridgeInputsProps): JSX.Element => {
+const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, closeModal }: SelectBridgeInputsProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [selectedIds, setSelectedIds] = useState<Array<number>>([]);
   const setSelectedRouteBridgeIds = (index: number, routeBridgeIds: Array<number>) => {
-    // TODO: Save selected route bridge ids
     setSelectedIds(routeBridgeIds);
   };
 
@@ -44,17 +43,18 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase }: SelectBridgeInput
   const queryClient = useQueryClient();
 
   const done = async () => {
-    console.log("DONE" + selectedIds);
-
     //call backend to initiate supervisions and get their ids to own list keys
     const supervisionIds = await initiateSupervisions(selectedIds, dispatch);
-    console.log("Hello got ids: " + supervisionIds);
+
     //save ownlist to storage
     await saveToOwnlist(username, supervisionIds);
     const ownlist = await getOwnlist(username);
-    console.log("just added to ownlist storage: " + ownlist);
+
     //prefetch supervisions in ownlist so they can be done offline
     prefetchSupervisionsNoPasscodeWithIds(ownlist, queryClient, dispatch);
+
+    updateOwnlistPage();
+    closeModal();
   };
 
   return (

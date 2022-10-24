@@ -20,12 +20,16 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  const updateListFromStorage = () => {
     getOwnlist(username).then((result) => {
       if (result) {
         setOwnListIds(result);
       }
     });
+  };
+
+  useEffect(() => {
+    updateListFromStorage();
   }, [isModalOpen]);
 
   const removeItem = (supervisionId: number | undefined) => {
@@ -56,7 +60,7 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
           </IonRow>
           <IonRow>
             <IonCol>
-              <OwnListAddModal isOpen={isModalOpen} closeModal={closeModal} />
+              <OwnListAddModal isOpen={isModalOpen} closeModal={closeModal} updateOwnlistPage={updateListFromStorage} />
             </IonCol>
           </IonRow>
           <IonRow>

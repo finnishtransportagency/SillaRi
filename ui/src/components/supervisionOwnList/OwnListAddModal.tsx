@@ -11,9 +11,10 @@ import SelectBridgeInputs from "./SelectBridgeInputs";
 interface OwnListAddModalProps {
   isOpen: boolean;
   closeModal: () => void;
+  updateOwnlistPage: () => void;
 }
 
-const OwnListAddModal = ({ isOpen, closeModal }: OwnListAddModalProps): JSX.Element => {
+const OwnListAddModal = ({ isOpen, closeModal, updateOwnlistPage }: OwnListAddModalProps): JSX.Element => {
   const { t } = useTranslation();
   const [permitRoutes, setPermitRoutes] = useState<Array<OwnListPermitRouteType>>([]);
   const [phase, setPhase] = useState<"PERMIT" | "ROUTE" | "BRIDGE">("PERMIT");
@@ -57,7 +58,14 @@ const OwnListAddModal = ({ isOpen, closeModal }: OwnListAddModalProps): JSX.Elem
       <IonContent class="ion-padding">
         {phase === "PERMIT" && <PermitNumberInputs cancel={cancel} permitRoutes={permitRoutes} toNextPhase={phasePermitToRoute} />}
         {phase === "ROUTE" && <SelectRouteInputs permitRoutes={permitRoutes} toPreviousPhase={phaseRouteToPermit} toNextPhase={phaseRouteToBridge} />}
-        {phase === "BRIDGE" && <SelectBridgeInputs permitRoutes={permitRoutes} toPreviousPhase={phaseBridgeToRoute} />}
+        {phase === "BRIDGE" && (
+          <SelectBridgeInputs
+            permitRoutes={permitRoutes}
+            toPreviousPhase={phaseBridgeToRoute}
+            updateOwnlistPage={updateOwnlistPage}
+            closeModal={closeModal}
+          />
+        )}
       </IonContent>
     </IonModal>
   );
