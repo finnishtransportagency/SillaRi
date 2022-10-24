@@ -44,7 +44,7 @@ export const removeFromOwnlist = async (username: string, supervisionId: number 
       });
     }
     newOwnList = newOwnList.substring(0, newOwnList.length - 1);
-    await Preferences.set({ key: username, value: newOwnList });
+    return Preferences.set({ key: username, value: newOwnList });
   }
 };
 

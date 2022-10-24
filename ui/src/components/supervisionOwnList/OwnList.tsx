@@ -29,7 +29,14 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
   }, [isModalOpen]);
 
   const removeItem = (supervisionId: number | undefined) => {
-    removeFromOwnlist(username, supervisionId);
+    removeFromOwnlist(username, supervisionId).then(() =>
+      getOwnlist(username).then((result) => {
+        if (result) {
+          console.log(result);
+          setOwnListIds(result);
+        }
+      })
+    );
   };
 
   const closeModal = () => {
