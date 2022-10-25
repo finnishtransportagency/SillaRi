@@ -3,7 +3,6 @@ package fi.vaylavirasto.sillari.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.SignatureException;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +29,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
@@ -109,13 +109,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 // logger.debug(String.format("JWT headers json %s", json.toJSONString()));
 
-                String key = getPublicKey((String) json.get("kid"),false);
+                String key = getPublicKey((String) json.get("kid"), false);
                 Claims claims;
                 try {
                     claims = decodeJWT(jwt, key);
                 } catch (SignatureException e) {
                     logger.debug("Invalid key, trying again");
-                    key = getPublicKey((String) json.get("kid"),true);
+                    key = getPublicKey((String) json.get("kid"), true);
                     claims = decodeJWT(jwt, key);
                 }
 
@@ -141,26 +141,35 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     logger.debug(String.format("Phone number %s", phoneNumber));
 
                     String businessId = (String) claims.get("custom:ytunnus");
+                    if(businessId == null){
+                        businessId = resolvePossibleLOBusinessId(userNameDetail);
+                    }
                     logger.debug(String.format("Business ID %s", businessId));
 
                     String organization = (String) claims.get("custom:organisaatio");
                     logger.debug(String.format("Organization %s", organization));
 
-                    String[] roles = ((String) claims.get("custom:rooli")).split("\\,");
-                    logger.debug(String.format("Roles %s", String.join(",", roles)));
+                    String[] roles = (removePossibleSquareBrackets((String) claims.get("custom:rooli")).split("\\,"));
+                    List<String> rolesList = new ArrayList<>(Arrays.asList(roles));
+                    List<String> rolesListTrimmed = new ArrayList<>();
+                    rolesList.forEach(i -> rolesListTrimmed.add(i.trim()));
+
+                    logger.debug(String.format("Roles %s", String.join(",", rolesListTrimmed)));
 
                     List<GrantedAuthority> authorityList = new ArrayList<>();
 
-                    if (ArrayUtils.contains(roles, "sillari_valvoja")
-                      || ArrayUtils.contains(roles, "sillari_sillanvalvoja")) {
+                    if (rolesListTrimmed.contains("sillari_valvoja")
+                            || rolesListTrimmed.contains("sillari_sillanvalvoja")) {
                         authorityList.add(SillariRole.fromString("SILLARI_SILLANVALVOJA"));
                     }
-                    if (ArrayUtils.contains(roles, "sillari_ajojarjestelija")) {
+                    if (rolesListTrimmed.contains("sillari_ajojarjestelija")) {
                         authorityList.add(SillariRole.fromString("SILLARI_AJOJARJESTELIJA"));
                     }
-                    if (ArrayUtils.contains(roles, "sillari_kuljettaja")) {
+                    if (rolesListTrimmed.contains("sillari_kuljettaja")) {
                         authorityList.add(SillariRole.fromString("SILLARI_KULJETTAJA"));
                     }
+
+                    logger.debug("authorityList " + authorityList);
 
                     SillariUser userDetails = new SillariUser(userNameDetail, authorityList);
 
@@ -211,4 +220,63 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }
     }
+
+    protected String resolvePossibleLOBusinessId(String userNameDetail) {
+        if(userNameDetail == null){
+            return null;
+        }
+        if(!isLOOrLOSV(userNameDetail)){
+            return null;
+        }
+
+        String numberPart = null;
+        if(userNameDetail.startsWith("LOSV")){
+            numberPart = userNameDetail.substring(4);
+        }
+        else if(userNameDetail.startsWith("LO")){
+            numberPart = userNameDetail.substring(2);
+        }
+
+        if(numberPart == null){
+            return null;
+        }
+
+        if(numberPart.length() < 8){
+            return null;
+        }
+
+        String yTunnus = numberPart.substring(0,7) + "-" + numberPart.substring(7);
+
+        return yTunnus;
+
+    }
+
+
+    // is the username form LO12309832 or LOSV98601767 where number part is y-tunnus without -
+    private boolean isLOOrLOSV(String s) {
+        String numberPart = null;
+        if(s.startsWith("LOSV")){
+            numberPart = s.substring(4);
+        }
+        else if(s.startsWith("LO")){
+            numberPart = s.substring(2);
+        }
+        logger.debug("numberpart: " + numberPart);
+
+        if(numberPart == null){
+            return false;
+        }
+
+        return numberPart.matches("[0-9]+");
+    }
+
+
+    //LO and LOSV usernames have roolis in square bracketed form
+    protected String removePossibleSquareBrackets(String s) {
+        if (s.startsWith("[") && s.endsWith("]")) {
+            return s.substring(1, s.length()-1);
+        }
+        return s;
+    }
 }
+
