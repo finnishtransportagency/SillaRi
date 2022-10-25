@@ -4,14 +4,14 @@ import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
 interface SupervisionFooterProps {
   saveDisabled: boolean;
   cancelDisabled: boolean;
-  sendImmediatelyDisabled: boolean;
+  sendImmediatelyDisabled?: boolean;
   sendImmediatelyVisible: boolean;
   saveChanges: () => void;
   cancelChanges: () => void;
-  sendImmediately: () => void;
+  sendImmediately?: () => void;
   saveLabel: string;
   cancelLabel: string;
-  sendImmediatelyLabel: string;
+  sendImmediatelyLabel?: string;
 }
 
 const SupervisionFooter = ({
@@ -42,7 +42,7 @@ const SupervisionFooter = ({
           </IonButton>
         </IonCol>
       </IonRow>
-      {sendImmediatelyVisible && (
+      {sendImmediatelyVisible && sendImmediately && sendImmediatelyLabel && (
         <IonRow>
           <IonCol className="ion-text-center">
             <IonButton color="primary" expand="block" size="large" disabled={sendImmediatelyDisabled} onClick={() => sendImmediately()}>

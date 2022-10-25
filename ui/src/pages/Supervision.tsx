@@ -191,30 +191,12 @@ const Supervision = (): JSX.Element => {
     });
   };
 
-  const showConfirmSendImmediately = () => {
-    present({
-      header: t("supervision.warning.sendImmediatelyHeader"),
-      message: t("supervision.warning.sendImmediatelyText"),
-      buttons: [
-        t("supervision.buttons.back"),
-        {
-          text: t("supervision.buttons.sendNow"),
-          handler: () => {},
-        },
-      ],
-    });
-  };
-
   const cancelSupervisionClicked = (): void => {
     if (supervisionInProgress) {
       showConfirmCancelSupervision();
     } else {
       history.goBack();
     }
-  };
-
-  const sendImmediatelyClicked = (): void => {
-    showConfirmSendImmediately();
   };
 
   const showConfirmLeavePage = () => {
@@ -284,14 +266,11 @@ const Supervision = (): JSX.Element => {
               saveDisabled={
                 !username || (!routeTransportId && supervisorType !== SupervisorType.AREA_CONTRACTOR) || isLoading || notAllowedToEdit || !reportValid
               }
-              cancelDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit}
-              sendImmediatelyDisabled={true}
-              sendImmediately={sendImmediatelyClicked}
+              cancelDisabled={!username || (!routeTransportId && supervisorType !== SupervisorType.AREA_CONTRACTOR) || isLoading || notAllowedToEdit}
               saveChanges={saveReportClicked}
               cancelChanges={cancelSupervisionClicked}
               saveLabel={t("supervision.buttons.summary")}
               cancelLabel={supervisionInProgress ? t("supervision.buttons.cancel") : t("common.buttons.cancel")}
-              sendImmediatelyLabel={t("supervision.buttons.sendImmediately")}
               sendImmediatelyVisible={false}
             />
           </>
