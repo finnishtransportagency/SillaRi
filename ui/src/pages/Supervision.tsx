@@ -285,7 +285,7 @@ const Supervision = (): JSX.Element => {
                 !username || (!routeTransportId && supervisorType !== SupervisorType.AREA_CONTRACTOR) || isLoading || notAllowedToEdit || !reportValid
               }
               cancelDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit}
-              sendImmediatelyDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit || !reportValid}
+              sendImmediatelyDisabled={true}
               sendImmediately={sendImmediatelyClicked}
               saveChanges={saveReportClicked}
               cancelChanges={cancelSupervisionClicked}
