@@ -38,7 +38,7 @@ export const removeFromOwnlist = async (username: string, supervisionId: number 
     if (oldOwnlist && oldOwnlist.length > 0) {
       oldIds = oldOwnlist.split(",");
       oldIds.forEach((id) => {
-        if (Number(id) != supervisionId) {
+        if (Number(id) !== supervisionId) {
           newOwnList += id.toString() + ",";
         }
       });

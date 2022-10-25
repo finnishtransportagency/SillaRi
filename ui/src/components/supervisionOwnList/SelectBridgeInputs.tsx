@@ -95,7 +95,7 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
             <IonButton onClick={toPreviousPhase}>{t("supervisionOwnList.addModal.bridgeSelectInput.cancelButtonLabel")}</IonButton>
           </IonCol>
           <IonCol>
-            <IonButton class="ion-button ion-float-right" onClick={done}>
+            <IonButton class="ion-button ion-float-right" onClick={done} disabled={isLoadingUser || !selectedIds}>
               {t("supervisionOwnList.addModal.bridgeSelectInput.saveButtonLabel")}
             </IonButton>
           </IonCol>
