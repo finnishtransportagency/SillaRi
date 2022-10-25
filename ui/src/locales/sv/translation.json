@@ -232,7 +232,7 @@
       "unsavedChanges": "Övervakningen har osparade ändringar.",
       "supervisionNotFinished": "Övervakningen har inte sparats till sändningslistan.",
       "sendImmediatelyHeader": "(SV) Haluatko varmasti lähettää valvonnan heti?",
-      "sendImmediatelyText": "(SV) Raporttiin kirjattuja tietoja ei voi muokata eikä täydentää enää lähettämmisen jälkeen"
+      "sendImmediatelyText": "(SV) Raporttiin kirjattuja tietoja ei voi muokata eikä täydentää enää lähettämisen jälkeen"
     },
     "summary": {
       "title": "Sammanfattning",

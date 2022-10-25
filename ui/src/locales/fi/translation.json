@@ -238,7 +238,7 @@
       "unsavedChanges": "Valvonnassa on tallentamattomia muutoksia.",
       "supervisionNotFinished": "Valvontaa ei ole tallennettu lähetyslistalle.",
       "sendImmediatelyHeader": "Haluatko varmasti lähettää valvonnan heti?",
-      "sendImmediatelyText": "Raporttiin kirjattuja tietoja ei voi muokata eikä täydentää enää lähettämmisen jälkeen"
+      "sendImmediatelyText": "Raporttiin kirjattuja tietoja ei voi muokata eikä täydentää enää lähettämisen jälkeen"
     },
     "summary": {
       "title": "Yhteenveto",
