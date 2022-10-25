@@ -27,7 +27,7 @@ import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
 import { getUserData, onRetry } from "../utils/backendData";
 import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
-import { SupervisionStatus } from "../utils/constants";
+import { SupervisionStatus, SupervisorType } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 
 interface DenyCrossingProps {
@@ -71,7 +71,7 @@ const DenyCrossing = (): JSX.Element => {
     }
   );
 
-  const { routeTransportId = 0, routeBridge, currentStatus } = supervision || {};
+  const { routeTransportId = 0, routeBridge, currentStatus, supervisorType } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
   const { route, bridge } = routeBridge || {};
   const { name = "", identifier = "" } = bridge || {};
@@ -202,7 +202,14 @@ const DenyCrossing = (): JSX.Element => {
                     color="primary"
                     expand="block"
                     size="large"
-                    disabled={!username || !routeTransportId || isLoadingSupervision || isSendingDenyCrossing || !supervisionPending || !denyReason}
+                    disabled={
+                      !username ||
+                      (!routeTransportId && supervisorType !== SupervisorType.AREA_CONTRACTOR) ||
+                      isLoadingSupervision ||
+                      isSendingDenyCrossing ||
+                      !supervisionPending ||
+                      !denyReason
+                    }
                     onClick={() => denyCrossingClicked()}
                   >
                     {t("common.buttons.send")}

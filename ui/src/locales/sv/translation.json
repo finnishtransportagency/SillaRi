@@ -36,6 +36,7 @@
     "title": "SillaRi",
     "content": "Välkommen!",
     "tab": {
+      "ownList": "(SV) Oma lista",
       "transports": "Transporter",
       "bridges": "Broar"
     },
@@ -166,6 +167,30 @@
     "other": "Annan orsak, vad?",
     "placeholder": "Skriv text här"
   },
+  "supervisionOwnList": {
+    "addButtonLabel": "(SV) Lisää valvottavia siltoja",
+    "permitLabel": "(SV) Kuljetuslupa",
+    "addedBySupervisor": "(SV) Silta lisätty valvojan toimesta",
+    "removeFromList": "(SV) Poista listalta",
+    "warning": {
+      "removeHeader": "(SV) Haluatko varmasti poistaa sillan listalta?",
+      "remove": "(SV) Poista"
+    },
+    "addModal": {
+      "title": "(SV) Lisää valvottavia siltoja",
+      "permitNumberInput": {
+        "inputLabel": "(SV) Lupanumero",
+        "addPermitNumberButtonLabel": "(SV) Lisää lupanumero",
+        "cancelButtonLabel": "(SV) Peruuta",
+        "continueButtonLabel": "(SV) Jatka"
+      },
+      "routeSelectInput": {
+        "permitLabel": "(SV) Kuljetuslupa",
+        "cancelButtonLabel": "(SV) Edellinen",
+        "continueButtonLabel": "(SV) Seuraava"
+      }
+    }
+  },
   "supervision": {
     "title": "Broövervakning",
     "permitNumber": "Tillståndsnummer",
@@ -195,14 +220,19 @@
       "drivingLine": "Körlinje",
       "summary": "Gå till sammandraget",
       "cancel": "Annulera övervakningen",
-      "saveToSendList": "Lagra till sändningslistan"
+      "saveToSendList": "Lagra till sändningslistan",
+      "sendImmediately": "(SV) Lähetä valvonta heti",
+      "sendNow": "(SV) Lähetä valvonta",
+      "back": "(SV) Takaisin"
     },
     "warning": {
       "cancelSupervisionHeader": "Vill du säkert annulera övervakningen?",
       "cancelSupervisionText": "All data från rapporten kommer att avlägsnas.",
       "leavePage": "Är du säker på att du vill lämna sidan?",
       "unsavedChanges": "Övervakningen har osparade ändringar.",
-      "supervisionNotFinished": "Övervakningen har inte sparats till sändningslistan."
+      "supervisionNotFinished": "Övervakningen har inte sparats till sändningslistan.",
+      "sendImmediatelyHeader": "(SV) Haluatko varmasti lähettää valvonnan heti?",
+      "sendImmediatelyText": "(SV) Raporttiin kirjattuja tietoja ei voi muokata eikä täydentää enää lähettämisen jälkeen"
     },
     "summary": {
       "title": "Sammanfattning",
@@ -247,6 +277,7 @@
       "transports": "Transporter",
       "supervision": "Övervakning",
       "includesSupervisions": "(SV) Sisältää sillanvalvontoja",
+      "notUsesSillariPermit": "(SV) Luvan kuljetuksia ei tehdä SillaRissa",
       "noSupervisions": "(SV) Ei sisällä sillanvalvontoja",
       "permitVersion": "(SV) Lupaversio",
       "addTransportButtonLabel": "Lägg till transport",

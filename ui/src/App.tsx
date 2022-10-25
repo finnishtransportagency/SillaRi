@@ -238,6 +238,9 @@ const App: React.FC = () => {
                     <AccessDenied />
                   )}
                 </Route>
+                <Route exact path="/routeTransportDetail/:routeTransportId/:message">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <RouteTransportDetail /> : <AccessDenied />}
+                </Route>
                 <Route exact path="/routeTransportDetail/:routeTransportId">
                   {userHasRole("SILLARI_SILLANVALVOJA") ? <RouteTransportDetail /> : <AccessDenied />}
                 </Route>

@@ -1,6 +1,7 @@
 package fi.vaylavirasto.sillari.service;
 
 import com.amazonaws.util.IOUtils;
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
@@ -12,12 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +36,8 @@ public class PermitService {
     RouteBridgeRepository routeBridgeRepository;
     @Autowired
     RouteTransportRepository routeTransportRepository;
+    @Autowired
+    RouteService routeService;
 
     @Autowired
     AWSS3Client awss3Client;
@@ -158,4 +160,35 @@ public class PermitService {
             }
         }
     }
+
+    public List<RouteModel> getRoutes(String permitNumber) {
+        PermitModel permit = getPermitCurrentVersionByPermitNumber(permitNumber);
+        if (permit != null) {
+            return routeRepository.getRoutesByPermitId(permit.getId());
+        } else {
+            return null;
+        }
+    }
+
+    public PermitModel getPermitCurrentVersionByPermitNumber(String permitNumber) {
+        return permitRepository.getPermitCurrentVersionByPermitNumber(permitNumber);
+    }
+
+    public List<RouteModel> getRoutesForOwnList(String permitNumber, SillariUser user) {
+        List<RouteModel> routes = getRoutes(permitNumber);
+        if (routes == null) {
+            return null;
+        } else {
+            List<RouteModel> routesWithBridgesAndSupervisions = new ArrayList<>();
+            routes.forEach(r -> routesWithBridgesAndSupervisions.add(routeService.getRouteWithSupervisionsForOwnList(r.getId())));
+            //filter out routes that don't have any bridge with user contract business id
+            List<RouteModel> contractBridgeHavingRoutes = routesWithBridgesAndSupervisions.stream().filter(r -> r.getRouteBridges().stream().anyMatch(b -> b.getContractBusinessId() != null && b.getContractBusinessId().equals(user.getBusinessId()))).collect(Collectors.toList());
+
+            //filter out bridges that don't match user contract business id
+            contractBridgeHavingRoutes.forEach(routeModel -> routeModel.setRouteBridges(routeModel.getRouteBridges().stream().filter(routeBridgeModel -> routeBridgeModel.getContractBusinessId() != null && routeBridgeModel.getContractBusinessId().equals(user.getBusinessId())).collect(Collectors.toList())));
+
+            return contractBridgeHavingRoutes;
+        }
+    }
 }
+

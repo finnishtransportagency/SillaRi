@@ -6,10 +6,14 @@ import fi.vaylavirasto.sillari.mapper.SupervisionMapper;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.model.SupervisorType;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jooq.*;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +63,14 @@ public class SupervisionRepository {
                 .fetch(new SupervisionMapper());
     }
 
+    public List<SupervisionModel> getAreaContractorSupervisionsByRouteBridgeId(Integer routeBridgeId) {
+        return dsl.select().from(TableAlias.supervision)
+                .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
+                .and(TableAlias.supervision.SUPERVISOR_TYPE.eq(String.valueOf(SupervisorType.AREA_CONTRACTOR)))
+                .orderBy(TableAlias.supervision.ROW_CREATED_TIME)
+                .fetch(new SupervisionMapper());
+    }
+
 
     public List<SupervisionModel> getSupervisionsBySupervisor(String businessId) {
         return dsl.select().from(TableAlias.supervision)
@@ -103,7 +115,7 @@ public class SupervisionRepository {
 
     public List<SupervisionModel> getFinishedSupervisionsBySupervisor(String businessId) {
         return dsl.select().from(TableAlias.supervision)
-                .innerJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))
+                .leftJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))
                 .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
                 .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
                 .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
@@ -208,6 +220,17 @@ public class SupervisionRepository {
         });
     }
 
+    public void updateSupervisionsRouteBridge(Integer supervisionId, Integer routeBridgeId) {
+
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+            ctx.update(TableAlias.supervision)
+                    .set(TableAlias.supervision.ROUTE_BRIDGE_ID, routeBridgeId)
+                    .where(TableAlias.supervision.ID.eq(supervisionId))
+                    .execute();
+        });
+    }
+
     public void deleteSupervision(SupervisionModel supervisionModel) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
@@ -246,5 +269,19 @@ public class SupervisionRepository {
                         ))
                 ).fetch(TableAlias.supervision.SUPERVISOR_COMPANY);
     }
+
+    public List<SupervisionModel> getSupervisionsOfAreaContractor(String businessId) {
+        return dsl.select().from(TableAlias.supervision)
+                .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
+                .and(supervisionNotCompleted()
+                .and(TableAlias.supervision.ROUTE_BRIDGE_ID.in(
+                        dsl.select(TableAlias.routeBridge.ID).from(TableAlias.routeBridge).where(TableAlias.routeBridge.ROUTE_ID.in(
+                                dsl.select(TableAlias.route.ID).from(TableAlias.route).where(TableAlias.route.PERMIT_ID.in(
+                                        dsl.select(TableAlias.permit.ID).from(TableAlias.permit).where(TableAlias.permit.CUSTOMER_USES_SILLARI.isNull().or(TableAlias.permit.CUSTOMER_USES_SILLARI.eq(false))))
+                                )))
+                        )))
+                .fetch(new SupervisionMapper());
+    }
+
 
 }

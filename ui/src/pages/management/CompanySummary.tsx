@@ -84,7 +84,7 @@ const CompanySummary = (): JSX.Element => {
                             return a.permitNumber.localeCompare(b.permitNumber);
                           })
                           .map((permit, index, permitList) => {
-                            const { id: permitId, permitNumber, leluVersion } = permit;
+                            const { id: permitId, permitNumber, leluVersion, customerUsesSillari } = permit;
                             const key = `permit_${permitNumber}_${leluVersion}`;
 
                             const hasMultipleVersions = permitList.filter((p) => p.permitNumber === permitNumber).length > 1;
@@ -98,8 +98,9 @@ const CompanySummary = (): JSX.Element => {
                                   hasMultiplePermitVersions={hasMultipleVersions}
                                 />
                               ),
-                              isPanelOpen: selectedManagementPermitId ? selectedManagementPermitId === permitId : index === 0,
-                              panel: <PermitAccordionPanel permit={permit} />,
+                              isPanelOpen:
+                                customerUsesSillari && (selectedManagementPermitId ? selectedManagementPermitId === permitId : index === 0),
+                              panel: customerUsesSillari && <PermitAccordionPanel permit={permit} />,
                             };
                           })}
                       />

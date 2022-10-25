@@ -36,6 +36,7 @@
     "title": "SillaRi",
     "content": "Tervetuloa!",
     "tab": {
+      "ownList": "Oma lista",
       "transports": "Kuljetukset",
       "bridges": "Sillat"
     },
@@ -91,7 +92,7 @@
     "management": "Kuljetusten hallinta",
     "transports": "Kuljetukset",
     "logout": "Kirjaudu ulos",
-    "versionLabel": "SillaRi versio"
+    "versionLabel": "SillaRi URAKKAVALVOJA versio"
   },
   "companyTransports": {
     "transportPermit": "Kuljetuslupa",
@@ -166,6 +167,36 @@
     "other": "Jotain muuta, mitä?",
     "placeholder": "Lisää tekstiä tähän"
   },
+  "supervisionOwnList": {
+    "addButtonLabel": "Lisää valvottavia siltoja",
+    "permitLabel": "Kuljetuslupa",
+    "addedBySupervisor": "Silta lisätty valvojan toimesta",
+    "removeFromList": "Poista listalta",
+    "warning": {
+      "removeHeader": "Haluatko varmasti poistaa sillan listalta?",
+      "remove": "Poista"
+    },
+    "addModal": {
+      "title": "Lisää valvottavia siltoja",
+      "permitNumberInput": {
+        "inputLabel": "Lupanumero",
+        "addPermitNumberButtonLabel": "Lisää lupanumero",
+        "cancelButtonLabel": "Peruuta",
+        "continueButtonLabel": "Seuraava"
+      },
+      "routeSelectInput": {
+        "permitLabel": "Kuljetuslupa",
+        "cancelButtonLabel": "Edellinen",
+        "continueButtonLabel": "Seuraava"
+      },
+      "bridgeSelectInput": {
+        "permitLabel": "Kuljetuslupa",
+        "routeLabel": "Reitti",
+        "cancelButtonLabel": "Edellinen",
+        "saveButtonLabel": "Lisää sillat"
+      }
+    }
+  },
   "supervision": {
     "title": "Sillanvalvonta",
     "permitNumber": "Lupanumero",
@@ -195,14 +226,19 @@
       "drivingLine": "Ajolinja",
       "summary": "Siirry yhteenvetoon",
       "cancel": "Peru valvonta",
-      "saveToSendList": "Tallenna lähetyslistalle"
+      "saveToSendList": "Tallenna lähetyslistalle",
+      "sendImmediately": "Lähetä valvonta heti",
+      "sendNow": "Lähetä valvonta",
+      "back": "Takaisin"
     },
     "warning": {
       "cancelSupervisionHeader": "Haluatko varmasti perua valvonnan?",
       "cancelSupervisionText": "Raporttiin kirjatut tiedot poistetaan.",
       "leavePage": "Halutko varmasti poistua sivulta?",
       "unsavedChanges": "Valvonnassa on tallentamattomia muutoksia.",
-      "supervisionNotFinished": "Valvontaa ei ole tallennettu lähetyslistalle."
+      "supervisionNotFinished": "Valvontaa ei ole tallennettu lähetyslistalle.",
+      "sendImmediatelyHeader": "Haluatko varmasti lähettää valvonnan heti?",
+      "sendImmediatelyText": "Raporttiin kirjattuja tietoja ei voi muokata eikä täydentää enää lähettämisen jälkeen"
     },
     "summary": {
       "title": "Yhteenveto",
@@ -247,6 +283,7 @@
       "transports": "Kuljetuksia",
       "supervision": "Sillanvalvonta",
       "includesSupervisions": "Sisältää sillanvalvontoja",
+      "notUsesSillariPermit": "Luvan kuljetuksia ei tehdä SillaRissa",
       "noSupervisions": "Ei sisällä sillanvalvontoja",
       "permitVersion": "Lupaversio",
       "addTransportButtonLabel": "Lisää kuljetus",
