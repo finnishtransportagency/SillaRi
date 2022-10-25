@@ -16,7 +16,7 @@ import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { useTypedSelector, RootState } from "../store/store";
 import { getUserData, onRetry } from "../utils/backendData";
 import { cancelSupervision, deleteSupervisionImages, getSupervision, updateSupervisionReport } from "../utils/supervisionBackendData";
-import { SupervisionStatus } from "../utils/constants";
+import { SupervisionStatus, SupervisorType } from "../utils/constants";
 import { reportHasUnsavedChanges } from "../utils/supervisionUtil";
 import { isSupervisionReportValid } from "../utils/validation";
 
@@ -59,7 +59,7 @@ const Supervision = (): JSX.Element => {
     }
   );
 
-  const { routeTransportId = 0, report: savedReport, currentStatus, images = [] } = supervision || {};
+  const { routeTransportId = 0, supervisorType, report: savedReport, currentStatus, images = [] } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
 
   // Set-up mutations for modifying data later
@@ -281,7 +281,9 @@ const Supervision = (): JSX.Element => {
             />
             <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} disabled={notAllowedToEdit} />
             <SupervisionFooter
-              saveDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit || !reportValid}
+              saveDisabled={
+                !username || (!routeTransportId && supervisorType !== SupervisorType.AREA_CONTRACTOR) || isLoading || notAllowedToEdit || !reportValid
+              }
               cancelDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit}
               sendImmediatelyDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit || !reportValid}
               sendImmediately={sendImmediatelyClicked}

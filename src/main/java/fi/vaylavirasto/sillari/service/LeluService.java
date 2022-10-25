@@ -1,10 +1,9 @@
 package fi.vaylavirasto.sillari.service;
 
 
-import fi.vaylavirasto.sillari.api.lelu.permit.LeluDTOMapper;
-import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
-import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitStatus;
+import fi.vaylavirasto.sillari.api.lelu.LeluBridgeWithExcessTransportNumbersResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.LeluRouteWithExcessTransportNumbersResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.permit.*;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
@@ -88,15 +87,23 @@ public class LeluService {
         Integer companyId = getOrCreateCompany(permitModel.getCompany());
         permitModel.setCompanyId(companyId);
 
+        // If no "uses sillari" info from Lelu post or it is false -> handle as area contractor supervised permit
+        if (permitModel.getCustomerUsesSillari() == null || !permitModel.getCustomerUsesSillari().booleanValue()) {
+            //RouteBridgei:stä tehdään (normi kuljetuskertaisten lisäksi) "templaatti"routeBridge joka on kuljetuskertariippumaton (transportNumber =-1)
+            produceTemplateRouteBridges(permitModel.getRoutes());
+        }
+
         // Find bridges with OID from DB and set corresponding bridgeIds to routeBridges
         produceBridgeDataForRouteBridges(permitModel.getRoutes());
 
         // Insert new permit and all child records
         Integer permitModelId = permitRepository.createPermit(permitModel);
 
+
         response.setPermitId(permitModelId);
         return response;
     }
+
 
     private void handlePreviousPermitVersions(PermitModel permitModel, LeluPermitResponseDTO response) throws LeluPermitSaveException {
         // Check if we already have permits with the same permit number
@@ -159,6 +166,20 @@ public class LeluService {
     }
 
 
+    // An template RouteBridge is produced (in addition to normal ones with transport numbers). The "template" routeBridge is indepedent of transport numbers (transportNumber =-1)
+    // It is used for area contractor supervisions that are all first attached to the template and are attached to real route bridges with transport numbers as late as sendig list send time
+    private void produceTemplateRouteBridges(List<RouteModel> routes) {
+        for (RouteModel route : routes) {
+
+            Set<String> uniqueBridgeIdentifiers = new HashSet<>(route.getRouteBridges().size());
+            List<RouteBridgeModel> templateRouteBridges = route.getRouteBridges().stream().filter(b -> uniqueBridgeIdentifiers.add(b.getBridge().getIdentifier())).map(routeBridgeModel -> new RouteBridgeModel(routeBridgeModel, -1)).collect(Collectors.toList());
+
+            route.getRouteBridges().addAll(templateRouteBridges);
+
+        }
+    }
+
+
     private void produceBridgeDataForRouteBridges(List<RouteModel> routes) {
         // Get bridge IDs for unique bridges in routes
         // What to do if bridge is not found?
@@ -178,7 +199,6 @@ public class LeluService {
             }
         }
     }
-
 
 
     private Integer addTrexBridgeToDB(RouteBridgeModel routeBridge, String oid) {
@@ -280,4 +300,60 @@ public class LeluService {
 
     }
 
+    public List<LeluPermitsWithExcessTransportNumbersResponseDTO> getPermitsWithExcessTransportNumbers() {
+        List<RouteBridgeModel> routeBridgesWithExcessTransportNumbers = routeBridgeRepository.getRouteBridgesWithExcessTransportNumbers();
+        HashMap<Integer,RouteModel> routemap  = new HashMap<>();
+        HashMap<Integer,PermitModel> permitmap  = new HashMap<>();
+        routeBridgesWithExcessTransportNumbers.forEach(routeBridgeModel -> {
+            RouteModel route = routemap.get(routeBridgeModel.getRouteId());
+            if(route == null) {
+              route = routeRepository.getRoute(routeBridgeModel.getRouteId());
+              routemap.put(route.getId(), route);
+            }
+            route.getRouteBridges().add(routeBridgeModel);
+
+            PermitModel permit = permitmap.get(route.getPermitId());
+            if(permit == null) {
+                permit = permitRepository.getPermit(route.getPermitId());
+                permitmap.put(permit.getId(), permit);
+            }
+
+        });
+
+        permitmap.values().forEach(permitModel -> permitModel.getRoutes().addAll(routemap.values().stream().filter(routeModel -> routeModel.getPermitId().equals(permitModel.getId())).collect(Collectors.toList())));
+
+
+        List<LeluPermitsWithExcessTransportNumbersResponseDTO> permitDTOs = new ArrayList<>();
+
+        permitmap.values().forEach(permitModel -> {
+            LeluPermitsWithExcessTransportNumbersResponseDTO permitDTO = dtoMapper.fromModelTODTO(permitModel);
+            permitDTO.getRoutes().forEach(route -> handleMaxTransNums(route));
+            permitDTOs.add(permitDTO);
+
+        });
+        
+        
+        return permitDTOs;
+    }
+
+    private void handleMaxTransNums(LeluRouteWithExcessTransportNumbersResponseDTO route) {
+        handleBridgeMaxTransNums(route);
+        handleRouteMaxTransCount(route);
+    }
+
+    private void handleRouteMaxTransCount(LeluRouteWithExcessTransportNumbersResponseDTO route) {
+        route.setTransportCountActual(route.getRouteBridges().stream().max(Comparator.comparing(LeluBridgeWithExcessTransportNumbersResponseDTO::getTransportNumberActualMax)).orElseThrow().getTransportNumberActualMax());
+    }
+
+    //remove equal bridges so that only the ones with max transport number are left
+    private void handleBridgeMaxTransNums(LeluRouteWithExcessTransportNumbersResponseDTO route) {
+        List<LeluBridgeWithExcessTransportNumbersResponseDTO> bridges = route.getRouteBridges();
+        Iterator<LeluBridgeWithExcessTransportNumbersResponseDTO> bridgeIterator = bridges.iterator();
+        while(bridgeIterator.hasNext()){
+            LeluBridgeWithExcessTransportNumbersResponseDTO bridge = bridgeIterator.next();
+            if(bridges.stream().anyMatch(bridge2 -> (bridge.getIdentifier().equals(bridge2.getIdentifier()) && bridge.getTransportNumberActualMax().compareTo(bridge2.getTransportNumberActualMax())<0))){
+                bridgeIterator.remove();
+            }
+        }
+    }
 }

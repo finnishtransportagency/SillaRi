@@ -36,6 +36,7 @@
     "title": "SillaRi",
     "content": "Welcome!",
     "tab": {
+      "ownList": "Own list",
       "transports": "Transports",
       "bridges": "Bridges"
     },
@@ -166,6 +167,30 @@
     "other": "Something else, what?",
     "placeholder": "Add text here"
   },
+  "supervisionOwnList": {
+    "addButtonLabel": "Add bridges",
+    "permitLabel": "Permit",
+    "addedBySupervisor": "Bridge added by suoervisor",
+    "removeFromList": "Remove from list",
+    "warning": {
+      "removeHeader": "Are you sure you want to remove the bridge from the list?",
+      "remove": "Remove"
+    },
+    "addModal": {
+      "title": "Add bridges",
+      "permitNumberInput": {
+        "inputLabel": "Permit number",
+        "addPermitNumberButtonLabel": "Add permit number",
+        "cancelButtonLabel": "Cancel",
+        "continueButtonLabel": "Next"
+      },
+      "routeSelectInput": {
+        "permitLabel": "Permit",
+        "cancelButtonLabel": "Previous",
+        "continueButtonLabel": "Next"
+      }
+    }
+  },
   "supervision": {
     "title": "Bridge supervision",
     "permitNumber": "Permit number",
@@ -252,6 +277,7 @@
       "transports": "Transports",
       "supervision": "Supervision",
       "includesSupervisions": "Includes bridge supervisions",
+      "notUsesSillariPermit": "Permit transports not allocated in SillaRi",
       "noSupervisions": "Does not include bridge supervisions",
       "permitVersion": "Permit version",
       "addTransportButtonLabel": "Add transport",

@@ -20,7 +20,8 @@ import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static org.jooq.impl.DSL.*;
+import static org.jooq.impl.DSL.exists;
+import static org.jooq.impl.DSL.select;
 
 @Repository
 public class PermitRepository {
@@ -62,6 +63,12 @@ public class PermitRepository {
                 .on(TableAlias.permit.ID.eq(TableAlias.unloadedTransportDimensions.PERMIT_ID))
                 .where(TableAlias.permit.ID.eq(id))
                 .fetchOne(this::mapPermitRecordWithAxleChartAndDimensions);
+    }
+
+    public PermitModel getPermitCurrentVersionByPermitNumber(String permitNumber) {
+        return dsl.select().from(TableAlias.permit)
+                .where(TableAlias.permit.PERMIT_NUMBER.eq(permitNumber).and(TableAlias.permit.IS_CURRENT_VERSION.isTrue()))
+                .fetchOne(new PermitMapper());
     }
 
     public PermitModel getPermitByRouteTransportId(Integer routeTransportId) {
@@ -109,6 +116,8 @@ public class PermitRepository {
                 .fetchOne();
         return record != null ? record.value1() : null;
     }
+
+
 
     public OffsetDateTime getPermitValidEndDateByRouteTransportId(DSLContext ctx, Integer routeTransportId) {
         Record1<OffsetDateTime> record = ctx.select(TableAlias.permit.VALID_END_DATE)
@@ -176,6 +185,8 @@ public class PermitRepository {
             return permitId;
         });
     }
+
+
 
     private void insertTransportDimensions(DSLContext ctx, PermitModel permitModel) {
         TransportDimensionsModel transportDimensionsModel = permitModel.getTransportDimensions();

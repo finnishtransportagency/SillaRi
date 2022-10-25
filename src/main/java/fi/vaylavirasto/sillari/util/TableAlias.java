@@ -14,7 +14,7 @@ public class TableAlias {
     public static final Route route = Tables.ROUTE.as("ro");
     public static final Address departureAddress = Tables.ADDRESS.as("da");
     public static final Address arrivalAddress = Tables.ADDRESS.as("aa");
-    public static final RouteBridge routeBridge = Tables.ROUTE_BRIDGE.as("rbr");;
+    public static final RouteBridge routeBridge = Tables.ROUTE_BRIDGE.as("rbr");
     public static final Bridge bridge = Tables.BRIDGE.as("br");
     public static final BridgeImage bridgeImage = Tables.BRIDGE_IMAGE.as("bi");
     public static final RouteTransport routeTransport = Tables.ROUTE_TRANSPORT.as("rtr");

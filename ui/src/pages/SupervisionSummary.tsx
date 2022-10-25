@@ -15,7 +15,7 @@ import { useTypedSelector, RootState } from "../store/store";
 import { getUserData, onRetry } from "../utils/backendData";
 import { finishAndCompleteSupervision, finishSupervision, getSupervision } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
-import { SupervisionListType, SupervisionStatus } from "../utils/constants";
+import { SupervisionListType, SupervisionStatus, SupervisorType } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 import { isSupervisionReportValid } from "../utils/validation";
 
@@ -55,7 +55,7 @@ const SupervisionSummary = (): JSX.Element => {
     }
   );
 
-  const { routeTransportId = 0, report, currentStatus, images = [] } = supervision || {};
+  const { routeTransportId = 0, report, currentStatus, supervisorType, images = [] } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
 
   const returnToSupervisionList = (message: string) => {
@@ -89,7 +89,11 @@ const SupervisionSummary = (): JSX.Element => {
         queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
           updatedSupervision = {
             ...oldData,
-            currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.FINISHED, time: newData.finishTime },
+            currentStatus: {
+              ...oldData?.currentStatus,
+              status: SupervisionStatus.FINISHED,
+              time: newData.finishTime,
+            },
             savedOffline: !onlineManager.isOnline(),
             finishedTime: newData.finishTime,
           } as ISupervision;
@@ -267,7 +271,9 @@ const SupervisionSummary = (): JSX.Element => {
             <SupervisionPhotos images={images} headingKey="supervision.photos" disabled={isLoading || notAllowedToEdit} />
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
-              saveDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit || !reportValid}
+              saveDisabled={
+                !username || (!routeTransportId && supervisorType !== SupervisorType.AREA_CONTRACTOR) || isLoading || notAllowedToEdit || !reportValid
+              }
               cancelDisabled={isLoading || notAllowedToEdit}
               sendImmediatelyDisabled={!username || !routeTransportId || isLoading || notAllowedToEdit || !reportValid}
               saveChanges={saveReport}

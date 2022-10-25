@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SupervisionService {
@@ -55,6 +53,8 @@ public class SupervisionService {
     RouteTransportStatusRepository routeTransportStatusRepository;
     @Autowired
     RouteRepository routeRepository;
+    @Autowired
+    RouteBridgeRepository routeBridgeRepository;
     @Autowired
     PermitRepository permitRepository;
     @Autowired
@@ -122,6 +122,16 @@ public class SupervisionService {
         return supervisions;
     }
 
+    public List<SupervisionModel> getSupervisionsOfAreaContractorSupervisor(SillariUser user) {
+        List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsOfAreaContractor(user.getBusinessId());
+        for (SupervisionModel supervision : supervisions) {
+            // Sets also current status and status timestamps
+            supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
+            supervision.setRouteTransport(routeTransportRepository.getRouteTransportById(supervision.getRouteTransportId()));
+        }
+        return supervisions;
+    }
+
     public SupervisionModel getSupervisionBySupervisionImageId(Integer imageId) {
         return supervisionRepository.getSupervisionBySupervisionImageId(imageId);
     }
@@ -152,12 +162,13 @@ public class SupervisionService {
     }
 
 
-    // Creates new supervision and adds a new status with type PLANNED
+    // Creates new supervision and adds a new status
     // The timestamp in PLANNED is the current time, not planned_time which can be updated later.
-    public void createSupervision(SupervisionModel supervisionModel, SillariUser user) {
+    public Integer createSupervision(SupervisionModel supervisionModel, String username, SupervisionStatusType supervisionStatusType) {
         Integer supervisionId = supervisionRepository.createSupervision(supervisionModel);
-        SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.PLANNED, OffsetDateTime.now(), user.getUsername());
+        SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, supervisionStatusType, OffsetDateTime.now(), username);
         supervisionStatusRepository.insertSupervisionStatus(status);
+        return supervisionId;
     }
 
     // Updates supervision fields (supervisors, planned time)
@@ -386,4 +397,51 @@ public class SupervisionService {
         return companyRepository.getCompanyByRouteBridgeId(supervision.getRouteBridgeId());
     }
 
+
+    /*Created OWN_LIST_PLANNED -status supervision for permits with customerUsesSillari = false
+     * These are visible on area contractor UI.
+     * OWN_LIST_PLANNED -supervision are not connected to route transports.
+     */
+
+    public Integer createAreaContractorOwnListPlannedSupervision(Integer routeBridgeTemplateId, String contractBusinessId) {
+        SupervisionModel supervision = new SupervisionModel();
+        supervision.setRouteBridgeId(routeBridgeTemplateId);
+        supervision.setConformsToPermit(false);
+        supervision.setSupervisorCompany(contractBusinessId);
+        supervision.setSupervisorType(SupervisorType.AREA_CONTRACTOR);
+        return createSupervision(supervision, "SILLARI_SYSTEM", SupervisionStatusType.OWN_LIST_PLANNED);
+    }
+
+    /*
+     This is used for area contractor supervisions (permit.customerUsesSillari = false).
+     Those supervisions are without "real" route transport up to this point; becuse transport number handling happens here.
+     a) supervision is linked to the right routeBridge, choosing the routeBridge with the lowest available transportNumber
+     b) if all the routeBridges obtained from Lelu with different transportNumbers have been used, a new one is created and added to which transportNumber = max(transportNumber) + 1,
+         for these routeBridges, a new boolean field MAX_TRANSPORTS_EXCEEDED = true is set.*/
+    public void attachSupervisionToTransportNumberedRouteBridge(Integer supervisionId) {
+        SupervisionModel supervision = getSupervision(supervisionId, true, false);
+        RouteBridgeModel templateRouteBridge = supervision.getRouteBridge();
+        templateRouteBridge.getBridge().getIdentifier();
+        templateRouteBridge.getRouteId();
+
+        //Only the template routebridge and those added earlier here have supervisions, so we can filter them out
+        List<RouteBridgeModel> availableRouteBridges = routeBridgeRepository.getRouteBridgesWithNoSupervisions(templateRouteBridge.getRouteId(),templateRouteBridge.getBridge().getIdentifier());
+        Optional<RouteBridgeModel> selectedRouteBridge = availableRouteBridges.stream().min(Comparator.comparing(RouteBridgeModel::getTransportNumber));
+
+        if(selectedRouteBridge.isPresent()){
+            //supervision.setRouteBridge(selectedRouteBridge.get());
+            supervisionRepository.updateSupervisionsRouteBridge(supervision.getId(), selectedRouteBridge.get().getId());
+        }else{
+           /* if all the routeBridges obtained from Lelu with different transportNumbers have been used, a new one is created and added to which transportNumber = max(transportNumber) + 1,
+         for these routeBridges, a new boolean field MAX_TRANSPORTS_EXCEEDED = true is set */
+            RouteBridgeModel extraRouteBridge = new RouteBridgeModel(templateRouteBridge, null);
+            extraRouteBridge.setMaxTransportsExceeded(true);
+            //supervision.setRouteBridge(extraRouteBridge);
+            Integer extraRouteBridgeId = routeBridgeRepository.insertExtraRouteBridge(extraRouteBridge);
+            supervisionRepository.updateSupervisionsRouteBridge(supervision.getId(), extraRouteBridgeId);
+        }
+
+
+
+    }
 }

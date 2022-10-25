@@ -36,6 +36,7 @@
     "title": "SillaRi",
     "content": "Välkommen!",
     "tab": {
+      "ownList": "(SV) Oma lista",
       "transports": "Transporter",
       "bridges": "Broar"
     },
@@ -166,6 +167,30 @@
     "other": "Annan orsak, vad?",
     "placeholder": "Skriv text här"
   },
+  "supervisionOwnList": {
+    "addButtonLabel": "(SV) Lisää valvottavia siltoja",
+    "permitLabel": "(SV) Kuljetuslupa",
+    "addedBySupervisor": "(SV) Silta lisätty valvojan toimesta",
+    "removeFromList": "(SV) Poista listalta",
+    "warning": {
+      "removeHeader": "(SV) Haluatko varmasti poistaa sillan listalta?",
+      "remove": "(SV) Poista"
+    },
+    "addModal": {
+      "title": "(SV) Lisää valvottavia siltoja",
+      "permitNumberInput": {
+        "inputLabel": "(SV) Lupanumero",
+        "addPermitNumberButtonLabel": "(SV) Lisää lupanumero",
+        "cancelButtonLabel": "(SV) Peruuta",
+        "continueButtonLabel": "(SV) Jatka"
+      },
+      "routeSelectInput": {
+        "permitLabel": "(SV) Kuljetuslupa",
+        "cancelButtonLabel": "(SV) Edellinen",
+        "continueButtonLabel": "(SV) Seuraava"
+      }
+    }
+  },
   "supervision": {
     "title": "Broövervakning",
     "permitNumber": "Tillståndsnummer",
@@ -252,6 +277,7 @@
       "transports": "Transporter",
       "supervision": "Övervakning",
       "includesSupervisions": "(SV) Sisältää sillanvalvontoja",
+      "notUsesSillariPermit": "(SV) Luvan kuljetuksia ei tehdä SillaRissa",
       "noSupervisions": "(SV) Ei sisällä sillanvalvontoja",
       "permitVersion": "(SV) Lupaversio",
       "addTransportButtonLabel": "Lägg till transport",
