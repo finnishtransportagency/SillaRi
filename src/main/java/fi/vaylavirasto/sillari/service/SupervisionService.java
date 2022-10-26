@@ -414,7 +414,7 @@ public class SupervisionService {
 
     /*
      This is used for area contractor supervisions (permit.customerUsesSillari = false).
-     Those supervisions are without "real" route transport up to this point; becuse transport number handling happens here.
+     Those supervisions are without "real" route transport up to this point; because transport number handling happens here.
      a) supervision is linked to the right routeBridge, choosing the routeBridge with the lowest available transportNumber
      b) if all the routeBridges obtained from Lelu with different transportNumbers have been used, a new one is created and added to which transportNumber = max(transportNumber) + 1,
          for these routeBridges, a new boolean field MAX_TRANSPORTS_EXCEEDED = true is set.*/

@@ -248,7 +248,7 @@ public class SupervisionController {
                         checkTransportCodeMatches(user, input.getRouteTransportId(), input.getTransportCode());
                     }else{
                         // For area contractor supervised permits (permit.customerUsesSillari = false)
-                        // the supervisions are all attached to a "template" route tarnsport up to this point.
+                        // the supervisions are all attached to a "template" route transport up to this point.
                         // Now supervisions must be attached to route transports with transport number so Lelu can poll them
                         supervisionService.attachSupervisionToTransportNumberedRouteBridge(input.getSupervisionId());
 
