@@ -62,6 +62,12 @@ public class AreaContractorController {
                 throw new AccessDeniedException("Not own list allowed permit.");
             }
             SillariUser user = uiService.getSillariUser();
+
+            //Add -1 transport numbered routeBridge for route bridges that don't have it all ready.
+            //They are added when "not uses sillari" permit is created by lelu interfaces.
+            //But for permits done prior to update or if set manually to db; we do it here
+            permitService.produceTemplateRouteBridges(permitNumber);
+
             List<RouteModel> routes = permitService.getRoutesForOwnList(permitNumber, user);
             return ResponseEntity.ok(routes != null ? routes : new ArrayList<>());
 

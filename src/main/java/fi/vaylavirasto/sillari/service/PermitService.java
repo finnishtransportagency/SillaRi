@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -179,6 +176,8 @@ public class PermitService {
         if (routes == null) {
             return null;
         } else {
+
+
             List<RouteModel> routesWithBridgesAndSupervisions = new ArrayList<>();
             routes.forEach(r -> routesWithBridgesAndSupervisions.add(routeService.getRouteWithSupervisionsForOwnList(r.getId())));
             //filter out routes that don't have any bridge with user contract business id
@@ -189,6 +188,19 @@ public class PermitService {
 
             return contractBridgeHavingRoutes;
         }
+    }
+
+    // An template RouteBridge is produced (in addition to normal ones with transport numbers). The "template" routeBridge is indepedent of transport numbers (transportNumber =-1)
+    // It is used for area contractor supervisions that are all first attached to the template and are attached to real route bridges with transport numbers as late as sendig list send time
+    public void produceTemplateRouteBridges(String permitNumber) {
+        List<RouteModel> routes = getRoutes(permitNumber);
+        for (RouteModel route : routes) {
+            Set<String> uniqueBridgeIdentifiers = new HashSet<>(route.getRouteBridges().size());
+            List<RouteBridgeModel> templateRouteBridges = route.getRouteBridges().stream().filter(b -> uniqueBridgeIdentifiers.add(b.getBridge().getIdentifier())).map(routeBridgeModel -> new RouteBridgeModel(routeBridgeModel, -1)).collect(Collectors.toList());
+            templateRouteBridges.forEach(t -> routeBridgeRepository.insertExtraRouteBridge(t));
+        }
+
+
     }
 }
 
