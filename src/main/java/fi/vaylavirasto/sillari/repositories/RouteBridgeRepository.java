@@ -92,7 +92,32 @@ public class RouteBridgeRepository {
     }
 
 
-
+    public Integer insertRouteBridge(RouteBridgeModel routeBridgeModel) {
+        return dsl.transactionResult(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+            Record1<Integer> routeBridgeIdResult = ctx.insertInto(TableAlias.routeBridge,
+                            TableAlias.routeBridge.ROUTE_ID,
+                            TableAlias.routeBridge.BRIDGE_ID,
+                            TableAlias.routeBridge.ORDINAL,
+                            TableAlias.routeBridge.CROSSING_INSTRUCTION,
+                            TableAlias.routeBridge.CONTRACT_NUMBER,
+                            TableAlias.routeBridge.CONTRACT_BUSINESS_ID,
+                            TableAlias.routeBridge.TRANSPORT_NUMBER,
+                            TableAlias.routeBridge.MAX_TRANSPORTS_EXCEEDED)
+                    .values(routeBridgeModel.getRouteId(),
+                            routeBridgeModel.getBridgeId(),
+                            routeBridgeModel.getOrdinal(),
+                            routeBridgeModel.getCrossingInstruction(),
+                            routeBridgeModel.getContractNumber(),
+                            routeBridgeModel.getContractBusinessId(),
+                            routeBridgeModel.getTransportNumber(),
+                            routeBridgeModel.getMaxTransportsExceeded())
+                    .returningResult(TableAlias.routeBridge.ID)
+                    .fetchOne(); // Execute and return zero or one record;
+            Integer routeBridgeId = routeBridgeIdResult != null ? routeBridgeIdResult.value1() : null;
+            return routeBridgeId;
+        });
+    }
 
     public Integer insertExtraRouteBridge(RouteBridgeModel extraRouteBridge) {
         return dsl.transactionResult(configuration -> {

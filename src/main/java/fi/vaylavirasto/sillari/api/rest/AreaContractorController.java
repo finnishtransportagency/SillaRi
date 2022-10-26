@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +20,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @Timed
@@ -66,7 +63,7 @@ public class AreaContractorController {
             //Add -1 transport numbered routeBridge for route bridges that don't have it all ready.
             //They are added when "not uses sillari" permit is created by lelu interfaces.
             //But for permits done prior to update or if set manually to db; we do it here
-            permitService.produceTemplateRouteBridges(permitNumber);
+            permitService.produceTemplateRouteBridgesIfNeeded(permitNumber);
 
             List<RouteModel> routes = permitService.getRoutesForOwnList(permitNumber, user);
             return ResponseEntity.ok(routes != null ? routes : new ArrayList<>());

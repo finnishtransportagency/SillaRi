@@ -190,14 +190,19 @@ public class PermitService {
         }
     }
 
-    // An template RouteBridge is produced (in addition to normal ones with transport numbers). The "template" routeBridge is indepedent of transport numbers (transportNumber =-1)
+    // A template RouteBridge is produced (in addition to normal ones with transport numbers). The "template" routeBridge is indepedent of transport numbers (transportNumber =-1)
     // It is used for area contractor supervisions that are all first attached to the template and are attached to real route bridges with transport numbers as late as sendig list send time
-    public void produceTemplateRouteBridges(String permitNumber) {
+    public void produceTemplateRouteBridgesIfNeeded(String permitNumber) {
         List<RouteModel> routes = getRoutes(permitNumber);
+
         for (RouteModel route : routes) {
-            Set<String> uniqueBridgeIdentifiers = new HashSet<>(route.getRouteBridges().size());
-            List<RouteBridgeModel> templateRouteBridges = route.getRouteBridges().stream().filter(b -> uniqueBridgeIdentifiers.add(b.getBridge().getIdentifier())).map(routeBridgeModel -> new RouteBridgeModel(routeBridgeModel, -1)).collect(Collectors.toList());
-            templateRouteBridges.forEach(t -> routeBridgeRepository.insertExtraRouteBridge(t));
+
+            var routeBridges = routeBridgeRepository.getRouteBridges(route.getId());
+            if(routeBridges.stream().noneMatch(r->r.getTransportNumber()==-1)) {
+                Set<String> uniqueBridgeIdentifiers = new HashSet<>(routeBridges.size());
+                List<RouteBridgeModel> templateRouteBridges = routeBridges.stream().filter(b -> uniqueBridgeIdentifiers.add(b.getBridge().getIdentifier())).map(routeBridgeModel -> new RouteBridgeModel(routeBridgeModel, -1)).collect(Collectors.toList());
+                templateRouteBridges.forEach(t -> routeBridgeRepository.insertRouteBridge(t));
+            }
         }
 
 
