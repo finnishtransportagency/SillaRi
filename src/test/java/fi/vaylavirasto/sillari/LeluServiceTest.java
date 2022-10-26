@@ -225,6 +225,8 @@ public class LeluServiceTest {
 
     private LeluPermitDTO getPermitDTO() {
         LeluPermitDTO permit = new LeluPermitDTO();
+        permit.setCustomerUsesSillari(true);
+
         permit.setNumber("1234/2021");
         permit.setLastModifiedDate(LocalDateTime.of(2021, 10, 1, 8, 10));
         permit.setVersion(1);
