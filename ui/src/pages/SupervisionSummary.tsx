@@ -18,8 +18,8 @@ import SupervisionFooter from "../components/SupervisionFooter";
 import { SupervisionListType, SupervisionStatus, SupervisorType } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 import { isSupervisionReportValid } from "../utils/validation";
-import {removeFromOwnlist} from "../utils/ownlistStorageUtil";
-import {use} from "i18next";
+import { removeFromOwnlist } from "../utils/ownlistStorageUtil";
+import { use } from "i18next";
 
 interface SummaryProps {
   supervisionId: string;
