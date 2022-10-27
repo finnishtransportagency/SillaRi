@@ -33,13 +33,19 @@ export const removeFromOwnlist = async (username: string, supervisionId: number 
     Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
     const oldValue = await Preferences.get({ key: username });
     const oldOwnlist = oldValue.value;
+    console.log("oldOwnlist");
+    console.log(oldOwnlist);
     let oldIds: string[] = [];
     let newOwnList = "";
     if (oldOwnlist && oldOwnlist.length > 0) {
       oldIds = oldOwnlist.split(",");
+      console.log("oldIds");
+      console.log(oldIds);
       oldIds.forEach((id) => {
         if (Number(id) !== supervisionId) {
           newOwnList += id.toString() + ",";
+          console.log("newOwnList");
+          console.log(newOwnList);
         }
       });
     }
