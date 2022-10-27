@@ -122,8 +122,7 @@ const SupervisionSummary = (): JSX.Element => {
         removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
         console.log(username);
         console.log(supervisionId);
-        removeFromOwnlist(username, Number(supervisionId));
-        returnToSupervisionList(t("supervision.summary.saved"));
+        removeFromOwnlist(username, Number(supervisionId)).then(() => returnToSupervisionList(t("supervision.summary.saved")));
       },
       onSuccess: (data) => {
         // onSuccess doesn't fire when offline due to the retry option, but should fire when online again

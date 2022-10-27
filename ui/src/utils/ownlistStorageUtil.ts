@@ -49,7 +49,9 @@ export const removeFromOwnlist = async (username: string, supervisionId: number 
         }
       });
     }
+    console.log(newOwnList);
     newOwnList = newOwnList.substring(0, newOwnList.length - 1);
+    console.log(newOwnList);
     return Preferences.set({ key: username, value: newOwnList });
   }
 };
