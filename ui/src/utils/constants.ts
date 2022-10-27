@@ -55,4 +55,5 @@ export enum VehicleRole {
 export enum SupervisionListType {
   TRANSPORT = "TRANSPORT",
   BRIDGE = "BRIDGE",
+  OWNLIST = "OWNLIST",
 }
