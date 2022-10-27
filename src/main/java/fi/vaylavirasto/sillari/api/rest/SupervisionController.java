@@ -280,7 +280,9 @@ public class SupervisionController {
                 throw new AccessDeniedException("Supervision not of the user");
             }
             SillariUser user = uiService.getSillariUser();
-            checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
+            if(permitUsesSillari(supervisionInput.getSupervisionId())) {
+                checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
+            }
             supervisionService.finishSupervision(supervisionInput.getSupervisionId(), finishTime, user);
             supervisionService.completeSupervision(supervisionInput.getSupervisionId(), finishTime.plusSeconds(1), user);
 
@@ -353,7 +355,6 @@ public class SupervisionController {
     private boolean canSupervisorUpdateSupervision(Integer supervisionId) {
         SillariUser user = uiService.getSillariUser();
         List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsOfSupervisorNoDetails(user);
-
         return supervisionsOfSupervisor.stream().anyMatch(s -> s.getId().equals(supervisionId));
     }
 
