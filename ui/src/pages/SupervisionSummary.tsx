@@ -18,6 +18,8 @@ import SupervisionFooter from "../components/SupervisionFooter";
 import { SupervisionListType, SupervisionStatus, SupervisorType } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 import { isSupervisionReportValid } from "../utils/validation";
+import {removeFromOwnlist} from "../utils/ownlistStorageUtil";
+import {use} from "i18next";
 
 interface SummaryProps {
   supervisionId: string;
@@ -59,7 +61,7 @@ const SupervisionSummary = (): JSX.Element => {
   const { status: supervisionStatus } = currentStatus || {};
 
   const returnToSupervisionList = (message: string) => {
-    // Go back to bridge supervision listing on either SupervisionList or RouteTransportDetail page
+    // Go back to bridge supervision listing on either SupervisionList or RouteTransportDetail page or OwnList
     // If selectedSupervisionListType is not set, go to supervisions main page
     if (selectedSupervisionListType === SupervisionListType.BRIDGE) {
       history.push("/supervisions/1");
@@ -117,6 +119,7 @@ const SupervisionSummary = (): JSX.Element => {
         // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
         // Also remove the finished supervision from the route transport list in the UI
         removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
+        removeFromOwnlist(username, Number(supervisionId));
         returnToSupervisionList(t("supervision.summary.saved"));
       },
       onSuccess: (data) => {
@@ -177,6 +180,7 @@ const SupervisionSummary = (): JSX.Element => {
         // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
         // Also remove the finished supervision from the route transport list in the UI
         removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
+        removeFromOwnlist(username, Number(supervisionId));
         returnToSupervisionList(t("sendingList.sentOk"));
       },
       onSuccess: (data) => {
