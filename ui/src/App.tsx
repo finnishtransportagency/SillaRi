@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { IonApp, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Drivers, Storage as IonicStorage } from "@ionic/storage";
@@ -88,6 +88,7 @@ const App: React.FC = () => {
   const [isInitialisedOffline, setInitialisedOffline] = useState<boolean>(false);
   const [isOkToContinue, setOkToContinue] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const {
     networkStatus: { isFailed = {}, failedStatus = {} },
@@ -168,6 +169,11 @@ const App: React.FC = () => {
       Object.keys(cookies).forEach((key) => {
         Cookies.remove(key);
       });
+      // FIXME: Five lines below try to clear cached login.
+      localStorage.clear();
+      setUserData(undefined);
+      history.replace("/");
+      history.go(0);
       window.location.reload();
     });
   };

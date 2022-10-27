@@ -57,10 +57,12 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ version }) => {
       Object.keys(cookies).forEach((key) => {
         Cookies.remove(key);
       });
-
-      // Reload the page
-      history.go(0);
     });
+    // FIXME: Four lines below try to clear cached login.
+    localStorage.clear();
+    history.replace("/");
+    history.go(0);
+    window.location.reload();
   };
 
   return (
