@@ -11,6 +11,8 @@ import erase from "../../theme/icons/erase.svg";
 import { useQuery } from "react-query";
 import { getSupervisionNoPasscode } from "../../utils/supervisionBackendData";
 import { onRetry } from "../../utils/backendData";
+import { actions } from "../../store/rootSlice";
+import { SupervisionListType } from "../../utils/constants";
 
 interface OwnListItemProps {
   supervisionId: number;
@@ -28,7 +30,7 @@ const OwnListItem = ({ supervisionId, removalCallback }: OwnListItemProps): JSX.
   });
 
   const navigateToBridgeDetail = () => {
-    // dispatch({ type: actions.SET_SUPERVISION_LIST_TYPE, payload: supervisionListType });
+    dispatch({ type: actions.SET_SUPERVISION_LIST_TYPE, payload: SupervisionListType.OWNLIST });
     history.push(`/bridgedetail/${supervisionId}`);
   };
 

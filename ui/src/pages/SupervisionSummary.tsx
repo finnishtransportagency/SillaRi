@@ -66,6 +66,8 @@ const SupervisionSummary = (): JSX.Element => {
     } else if (selectedSupervisionListType === SupervisionListType.TRANSPORT) {
       history.push("/supervisions/0"); // Go through main page so back button works as expected on RouteTransportDetail page
       history.push(`/routeTransportDetail/${routeTransportId}/${message}`);
+    } else if (selectedSupervisionListType === SupervisionListType.OWNLIST) {
+      history.push("/supervisions/2");
     } else {
       history.push("/supervisions");
     }
