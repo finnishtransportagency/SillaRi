@@ -30,7 +30,7 @@ export const saveToOwnlist = async (username: string, supervisionIds: number[]) 
 
 export const removeFromOwnlist = async (username: string, supervisionId: number | undefined) => {
   if (supervisionId) {
-    Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
+    await Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
     const oldValue = await Preferences.get({ key: username });
     const oldOwnlist = oldValue.value;
     console.log("oldOwnlist");
@@ -52,6 +52,7 @@ export const removeFromOwnlist = async (username: string, supervisionId: number 
     console.log(newOwnList);
     newOwnList = newOwnList.substring(0, newOwnList.length - 1);
     console.log(newOwnList);
+    await Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
     return Preferences.set({ key: username, value: newOwnList });
   }
 };
