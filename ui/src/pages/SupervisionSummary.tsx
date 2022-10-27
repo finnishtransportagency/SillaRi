@@ -82,6 +82,7 @@ const SupervisionSummary = (): JSX.Element => {
     {
       retry: onRetry,
       onMutate: async (newData: IFinishCrossingInput) => {
+        console.log("finishSupervisionMutation");
         // onMutate fires before the mutation function
 
         // Cancel any outgoing refetches so they don't overwrite the optimistic update below
@@ -119,6 +120,8 @@ const SupervisionSummary = (): JSX.Element => {
         // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
         // Also remove the finished supervision from the route transport list in the UI
         removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
+        console.log(username);
+        console.log(supervisionId);
         removeFromOwnlist(username, Number(supervisionId));
         returnToSupervisionList(t("supervision.summary.saved"));
       },
