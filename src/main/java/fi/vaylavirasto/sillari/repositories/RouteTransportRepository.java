@@ -7,6 +7,7 @@ import fi.vaylavirasto.sillari.model.TransportStatusType;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.exception.DataAccessException;
@@ -67,10 +68,28 @@ public class RouteTransportRepository {
                         .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)
                                 .and((TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.FINISHED.toString()))
                                         .or(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.CROSSING_DENIED.toString()))
-                                        .or(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.REPORT_SIGNED.toString())))))))
+                                        .or(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.REPORT_SIGNED.toString()))
+                                .and(TableAlias.supervision.PLANNED_TIME.greaterThan(OffsetDateTime.now().minusDays(5)))
+                                .and(noRouteTransportEndedMoreThanDaysAgo(5))
+                                .and(permitNotEnded()))))))
                 .groupBy(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME, TableAlias.routeTransport.TRACTOR_UNIT)
                 .fetch(new RouteTransportMapper());
     }
+
+    private Condition noRouteTransportEndedMoreThanDaysAgo(int daysAgo) {
+        return notExists(selectOne().from(TableAlias.transportStatus
+                .where(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.transportStatus.ROUTE_TRANSPORT_ID)
+                .and(TableAlias.transportStatus.STATUS.eq(TransportStatusType.DEPARTED.toString())
+                .and(TableAlias.transportStatus.TIME.lessThan(OffsetDateTime.now().minusDays(daysAgo)))))));
+    }
+
+    private Condition permitNotEnded() {
+        return notExists(selectOne().from(TableAlias.permit)
+                .innerJoin(TableAlias.route).on(TableAlias.route.PERMIT_ID.eq(TableAlias.route.PERMIT_ID))
+                .innerJoin(TableAlias.routeBridge).on(TableAlias.routeBridge.ROUTE_ID.eq(TableAlias.route.ID))
+                .innerJoin(TableAlias.supervision).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
+                .where(TableAlias.permit.VALID_END_DATE.lessThan(OffsetDateTime.now())));
+    }        
 
     public Integer createRouteTransport(RouteTransportModel routeTransportModel, String password) throws DataAccessException {
         return dsl.transactionResult(configuration -> {

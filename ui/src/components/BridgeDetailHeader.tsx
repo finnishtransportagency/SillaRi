@@ -23,11 +23,19 @@ const BridgeDetailHeader = ({ routeBridge }: BridgeDetailHeaderProps): JSX.Eleme
     onlineManager.subscribe(() => setOnline(onlineManager.isOnline()));
   }, []);
 
-  const backendImageUrl = `${getOrigin()}/api/routebridge/getBridgeImage?routeBridgeId=${routeBridgeId}`;
+  const getBridgeImageUrl = () => {
+    const backendImageUrl = `${getOrigin()}/api/routebridge/getBridgeImage?routeBridgeId=${routeBridgeId}`;
+    const image = new Image();
+    image.src = backendImageUrl;
+    if (image.height === 0) {
+      return "/assets/silta_oletuskuva.png";
+    }
+    return backendImageUrl;
+  };
 
   return (
     <>
-      {isOnline && <IonImg className="bridgeImage" src={backendImageUrl} />}
+      {isOnline && <IonImg className="bridgeImage" src={getBridgeImageUrl()} />}
       <IonItem className="header" lines="none">
         <IonLabel>{t("bridge.title").toUpperCase()}</IonLabel>
       </IonItem>
