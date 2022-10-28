@@ -181,8 +181,7 @@ const SupervisionSummary = (): JSX.Element => {
         // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
         // Also remove the finished supervision from the route transport list in the UI
         removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
-        removeFromOwnlist(username, Number(supervisionId));
-        returnToSupervisionList(t("sendingList.sentOk"));
+        removeFromOwnlist(username, Number(supervisionId)).then(() => returnToSupervisionList(t("sendingList.sentOk")));
       },
       onSuccess: (data) => {
         // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
