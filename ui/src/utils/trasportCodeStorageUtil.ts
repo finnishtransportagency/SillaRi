@@ -65,14 +65,10 @@ export const savePasswordToStorage = async (username: string, id: number, passwo
 };
 
 export const getPasswordFromStorage = async (username: string, type: SupervisionListType, id: number): Promise<string | null> => {
-  console.log("getPasswordFromStorage");
-  console.log(type);
-  console.log(id);
   //we get only current cause maybe obsolete not removed yet
   for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
     const transportCode = await Preferences.get({ key: constructStorageKeyForDaysAgo(username, type, id, n) });
     if (transportCode.value) {
-      console.log(transportCode.value);
       return transportCode.value;
     }
   }
@@ -81,22 +77,16 @@ export const getPasswordFromStorage = async (username: string, type: Supervision
 
 // TODO get list of keyValues from storage so that we configure storage only once?
 export const getPasswordAndIdFromStorage = async (username: string, type: SupervisionListType, id: number): Promise<IKeyValue> => {
-  console.log("getPasswordAndIdFromStorage");
-  console.log(type);
-  console.log(id);
   const code = await getPasswordFromStorage(username, type, id);
-  console.log(code);
   return { key: id, value: code };
 };
 
 const isCurrent = (dateTimePart: string) => {
   for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
     if (formatDate(getPastDate(n)) === dateTimePart) {
-      console.log("current date is: " + dateTimePart);
       return true;
     }
   }
-  console.log("current date aint: " + dateTimePart);
   return false;
 };
 
@@ -112,9 +102,6 @@ const removeIfObsolete = async (key: string) => {
 };
 
 export const removeObsoletePasswords = async () => {
-  console.log("removeObsoletePasswords");
   const allKeys = await Preferences.keys();
-  console.log(allKeys);
   allKeys.keys.forEach((k) => removeIfObsolete(k));
-  console.log(allKeys);
 };
