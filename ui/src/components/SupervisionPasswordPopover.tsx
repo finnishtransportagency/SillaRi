@@ -150,6 +150,7 @@ const SupervisionPasswordPopover = ({
       trigger={popoverPlacement.trigger}
       isOpen={isOpen}
       className="large-popover"
+      id="password-popover"
       size="auto"
       side={popoverPlacement.side}
       alignment={popoverPlacement.alignment}
