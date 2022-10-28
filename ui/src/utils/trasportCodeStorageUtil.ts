@@ -3,28 +3,8 @@ import { Preferences } from "@capacitor/preferences";
 import { SHA1 } from "crypto-js";
 import IKeyValue from "../interfaces/IKeyValue";
 
-export const constructStorageKey = (username: string, type: SupervisionListType, id: number): string => {
-  //username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
-  return `${username}_${type}_${id}`;
-};
-
 const formatDate = (date: Date): string => {
   return date.toISOString().slice(0, 10);
-};
-
-const configureStorageForAll = async () => {
-  await Preferences.configure({ group: TRANSPORT_CODE_STORAGE_GROUP });
-};
-
-const configureStorageForDay = async (day: Date) => {
-  const dayString = formatDate(day);
-  const storageGroup = TRANSPORT_CODE_STORAGE_GROUP + "." + dayString;
-  console.log("Config storage grouop: " + storageGroup);
-  await Preferences.configure({ group: storageGroup });
-};
-
-const configureStorageForToday = async () => {
-  await configureStorageForDay(new Date());
 };
 
 const getPastDate = (daysAgo: number): Date => {
@@ -33,19 +13,52 @@ const getPastDate = (daysAgo: number): Date => {
   return date;
 };
 
-const configureStorageForDaysAgo = async (days: number) => {
-  await configureStorageForDay(getPastDate(days));
+const getPrefixForAll = (): string => {
+  return TRANSPORT_CODE_STORAGE_GROUP;
+};
+
+const getPrefixForDay = (day: Date): string => {
+  const dayString = formatDate(day);
+  const storageGroup = TRANSPORT_CODE_STORAGE_GROUP + "." + dayString;
+  return storageGroup;
+};
+
+const getPrefixForToday = (): string => {
+  return getPrefixForDay(new Date());
+};
+
+const getPrefixForDaysAgo = (days: number): string => {
+  return getPrefixForDay(getPastDate(days));
+};
+
+export const constructStorageKeyWithoutPrefix = (username: string, type: SupervisionListType, id: number): string => {
+  //username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
+  return `${username}_${type}_${id}`;
+};
+
+export const constructStorageKeyForAll = (username: string, type: SupervisionListType, id: number): string => {
+  //username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
+  return `${getPrefixForAll()}.${username}_${type}_${id}`;
+};
+
+export const constructStorageKeyForDaysAgo = (username: string, type: SupervisionListType, id: number, days: number): string => {
+  //username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
+  return `${getPrefixForDaysAgo(days)}.${username}_${type}_${id}`;
+};
+
+export const constructStorageKeyForToday = (username: string, type: SupervisionListType, id: number): string => {
+  //username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
+  return `${getPrefixForToday()}.${username}_${type}_${id}`;
 };
 
 export const savePasswordToStorage = async (username: string, id: number, password: string, type: SupervisionListType) => {
   //remove if password is already under different date
-  await configureStorageForAll();
-  await Preferences.remove({ key: constructStorageKey(username, type, id) });
 
-  await configureStorageForToday();
+  await Preferences.remove({ key: constructStorageKeyWithoutPrefix(username, type, id) });
+
   return Preferences.set({
     // username + TRANSPORT/BRIDGE + routeTransportId/supervisionId
-    key: constructStorageKey(username, type, id),
+    key: constructStorageKeyForToday(username, type, id),
     // username + route transport password
     value: SHA1(`${username}${password}`).toString(),
   });
@@ -54,8 +67,7 @@ export const savePasswordToStorage = async (username: string, id: number, passwo
 export const getPasswordFromStorage = async (username: string, type: SupervisionListType, id: number): Promise<string | null> => {
   //we get only current cause maybe obsolete not removed yet
   for (let n = 0; n < TRANSPORT_CODE_STORAGE_LIFE_DAYS; n++) {
-    await configureStorageForDaysAgo(n);
-    const transportCode = await Preferences.get({ key: constructStorageKey(username, type, id) });
+    const transportCode = await Preferences.get({ key: constructStorageKeyForDaysAgo(username, type, id, n) });
     if (transportCode.value) {
       return transportCode.value;
     }
@@ -81,6 +93,9 @@ const isCurrent = (dateTimePart: string) => {
 };
 
 const removeIfObsolete = async (key: string) => {
+  if (key.includes(TRANSPORT_CODE_STORAGE_GROUP)) {
+    return;
+  }
   const splitted = key.split(".");
   const dateTimePart = splitted[0];
   if (!isCurrent(dateTimePart)) {
@@ -90,7 +105,7 @@ const removeIfObsolete = async (key: string) => {
 
 export const removeObsoletePasswords = async () => {
   console.log("removeObsoletePasswords");
-  await configureStorageForAll();
   const allKeys = await Preferences.keys();
+  console.log(allKeys);
   allKeys.keys.forEach((k) => removeIfObsolete(k));
 };
