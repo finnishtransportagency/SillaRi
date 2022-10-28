@@ -182,7 +182,9 @@
         "inputLabel": "Permit number",
         "addPermitNumberButtonLabel": "Add permit number",
         "cancelButtonLabel": "Cancel",
-        "continueButtonLabel": "Next"
+        "continueButtonLabel": "Next",
+        "notFound": "Permit doesn't exist with given number",
+        "noRights": "Contract supervisor has no rights to given permit"
       },
       "routeSelectInput": {
         "permitLabel": "Permit",

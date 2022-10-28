@@ -33,12 +33,13 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   useEffect(() => {
+    setErrorCode("");
     console.log(failedStatus.getPermitRoutes);
     if (failedStatus.getPermitRoutes) {
       if (failedStatus.getPermitRoutes === 404) {
-        setErrorCode("Not found");
+        setErrorCode(t("supervisionOwnList.addModal.permitNumberInput.notFound"));
       } else if (failedStatus.getPermitRoutes === 403) {
-        setErrorCode("Contrator has no right to permit");
+        setErrorCode(t("supervisionOwnList.addModal.permitNumberInput.noRights"));
       }
     }
   }, [failedStatus.getPermitRoutes]);

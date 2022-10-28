@@ -182,7 +182,9 @@
         "inputLabel": "(SV) Lupanumero",
         "addPermitNumberButtonLabel": "(SV) Lisää lupanumero",
         "cancelButtonLabel": "(SV) Peruuta",
-        "continueButtonLabel": "(SV) Jatka"
+        "continueButtonLabel": "(SV) Jatka",
+        "notFound": "(SV) Lupaa ei ole olemassa annetulla numerolla",
+        "noRights": "(SV) Urakkavalvojalla ei oikeuksia lupaan"
       },
       "routeSelectInput": {
         "permitLabel": "(SV) Kuljetuslupa",

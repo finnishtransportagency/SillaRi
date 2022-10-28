@@ -182,7 +182,9 @@
         "inputLabel": "Lupanumero",
         "addPermitNumberButtonLabel": "Lisää lupanumero",
         "cancelButtonLabel": "Peruuta",
-        "continueButtonLabel": "Seuraava"
+        "continueButtonLabel": "Seuraava",
+        "notFound": "Lupaa ei ole olemassa annetulla numerolla",
+        "noRights": "Urakkavalvojalla ei oikeuksia lupaan"
       },
       "routeSelectInput": {
         "permitLabel": "Kuljetuslupa",
