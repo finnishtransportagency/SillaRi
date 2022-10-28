@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -72,6 +74,8 @@ public class RouteBridgeController {
                 if (bridgeImageModel != null) {
                     // Get the file from S3 bucket or local file system and write to response
                     bridgeImageService.getImageFile(response, bridgeImageModel);
+                } else {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found.");
                 }
             }
         } finally {
