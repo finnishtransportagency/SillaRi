@@ -20,7 +20,7 @@ export const getPermitRoutes = async (permitNumber: string, dispatch: Dispatch):
         type: actions.SET_FAILED_QUERY_STATUS,
         payload: { failedQuery: { getPermitRoutes: true }, failedQueryStatus: { getPermitRoutes: rResponse.status } },
       });
-      throw new Error(NETWORK_RESPONSE_NOT_OK);
+      throw new Error(rResponse.status.toString());
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermitRoutes: true } });

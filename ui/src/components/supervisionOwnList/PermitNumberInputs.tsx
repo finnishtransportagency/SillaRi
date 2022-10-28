@@ -32,6 +32,17 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
     networkStatus: { isFailed = {}, failedStatus = {} },
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
+  console.log(failedStatus.getPermitRoutes);
+
+  if (failedStatus.getPermitRoutes) {
+    console.log("failed");
+    if (failedStatus.getPermitRoutes === 404) {
+      setErrorCode("Not found");
+    } else if (failedStatus.getPermitRoutes === 403) {
+      setErrorCode("Contrator has no right to permit");
+    }
+  }
+
   const getPermits = async () => {
     permitRoutes = [];
     for (let i = 0; i < permitNumbers.length; i++) {
@@ -41,15 +52,6 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
           permitRoutes.push({ permitNumber: permitNumbers[i], routes: routes, selectedRouteIndex: null });
         } catch (err) {
           console.error(err);
-        }
-        console.log("here");
-        if (failedStatus.getPermitRoutes) {
-          console.log("failed");
-          if (failedStatus.getPermitRoutes == 404) {
-            setErrorCode("Not found");
-          } else if (failedStatus.getPermitRoutes == 403) {
-            setErrorCode("Contrator has no right to permit");
-          }
         }
       }
     }
