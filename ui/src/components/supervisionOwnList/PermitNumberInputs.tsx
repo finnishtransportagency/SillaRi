@@ -36,7 +36,11 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
     permitRoutes = [];
     for (let i = 0; i < permitNumbers.length; i++) {
       if (permitNumbers[i].length > 0) {
-        const routes = await getPermitRoutes(permitNumbers[i], dispatch);
+        try {
+          const routes = await getPermitRoutes(permitNumbers[i], dispatch);
+        } catch (err) {
+          console.error(err);
+        }
 
         if (failedStatus.getPermitRoutes) {
           console.log("failed");
