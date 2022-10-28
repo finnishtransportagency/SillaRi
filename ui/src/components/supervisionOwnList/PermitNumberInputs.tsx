@@ -34,15 +34,6 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
 
   console.log(failedStatus.getPermitRoutes);
 
-  if (failedStatus.getPermitRoutes) {
-    console.log("failed");
-    if (failedStatus.getPermitRoutes === 404) {
-      setErrorCode("Not found");
-    } else if (failedStatus.getPermitRoutes === 403) {
-      setErrorCode("Contrator has no right to permit");
-    }
-  }
-
   const getPermits = async () => {
     permitRoutes = [];
     for (let i = 0; i < permitNumbers.length; i++) {
