@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
+import {IonButton, IonCol, IonGrid, IonRow, IonToast} from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import PermitNumberInput from "./PermitNumberInput";
 import { getPermitRoutes } from "../../utils/areaContractorBackendData";
@@ -17,6 +17,7 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [permitNumbers, setPermitNumbers] = useState<Array<string>>(permitRoutes.length ? permitRoutes.map((pr) => pr.permitNumber) : Array(""));
+  const [errorCode, setErrorCode] = useState<string>("");
 
   const setPermitNumber = (index: number, value: string) => {
     permitNumbers[index] = value;
@@ -28,8 +29,10 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
   };
 
   const {
-    networkStatus: { isFailed = {}, failedStatus },
+    networkStatus: { isFailed = {}, failedStatus = {} },
   } = useTypedSelector((state: RootState) => state.rootReducer);
+
+  const statusCode = failedStatus.getPermitRoutes > 0 ? failedStatus.getPermitRoutes : errorCode;
 
   console.log("fail?");
   console.log(isFailed);
@@ -40,6 +43,16 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
     for (let i = 0; i < permitNumbers.length; i++) {
       if (permitNumbers[i].length > 0) {
         const routes = await getPermitRoutes(permitNumbers[i], dispatch);
+        const {
+          networkStatus: { isFailed = {}, failedStatus = {} },
+        } = useTypedSelector((state: RootState) => state.rootReducer);
+        if (!failedStatus.getPermitRoutes) {
+          if (failedStatus.getPermitRoutes == 404) {
+            setErrorCode("Not found");
+          } else if (failedStatus.getPermitRoutes == 403) {
+            setErrorCode("Contrator has no right to permit");
+          }
+        }
         permitRoutes.push({ permitNumber: permitNumbers[i], routes: routes, selectedRouteIndex: null });
       }
     }
@@ -68,6 +81,14 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
           </IonCol>
         </IonRow>
       </IonGrid>
+      <IonToast
+          isOpen={errorCode.length > 0}
+          message={errorCode}
+          onDidDismiss={() => setErrorCode("")}
+          duration={5000}
+          position="top"
+          color="success"
+      />
     </>
   );
 };
