@@ -8,7 +8,7 @@ export const getPermitRoutes = async (permitNumber: string, dispatch: Dispatch):
   try {
     dispatch({
       type: actions.SET_FAILED_QUERY_STATUS,
-      payload: { failedQuery: { getPermitRoutes: false }, failedQueryStatus: -1 },
+      payload: { failedQuery: { getPermitRoutes: false }, failedQueryStatus: { getPermitRoutes: -1 } },
     });
 
     const rResponse = await fetch(`${getOrigin()}/api/areaContractor/getRoutes?permitNumber=${encodeURIComponent(permitNumber)}`);
