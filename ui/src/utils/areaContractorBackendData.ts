@@ -14,14 +14,16 @@ export const getPermitRoutes = async (permitNumber: string, dispatch: Dispatch):
       const routes = rResponse.json() as Promise<Array<IRoute>>;
       console.log("areaContractor/getRoutes", permitNumber);
       return await routes;
-    } else if (rResponse.status === 403) {
-      return [];
     } else {
-      dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermitRoutes: true } });
+      dispatch({
+        type: actions.SET_FAILED_QUERY_STATUS,
+        payload: { failedQuery: { getPermitRoutes: true }, failedQueryStatus: { getPermitRoutes: rResponse.status } },
+      });
       throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getPermitRoutes: true } });
     throw new Error(err as string);
   }
 };
