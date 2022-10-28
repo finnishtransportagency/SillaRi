@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {IonButton, IonCol, IonGrid, IonRow, IonToast} from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonRow, IonToast } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import PermitNumberInput from "./PermitNumberInput";
 import { getPermitRoutes } from "../../utils/areaContractorBackendData";
@@ -82,12 +82,12 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
         </IonRow>
       </IonGrid>
       <IonToast
-          isOpen={errorCode.length > 0}
-          message={errorCode}
-          onDidDismiss={() => setErrorCode("")}
-          duration={5000}
-          position="top"
-          color="success"
+        isOpen={errorCode.length > 0}
+        message={errorCode}
+        onDidDismiss={() => setErrorCode("")}
+        duration={5000}
+        position="top"
+        color="success"
       />
     </>
   );
