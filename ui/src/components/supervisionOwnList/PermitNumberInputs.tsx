@@ -5,6 +5,7 @@ import PermitNumberInput from "./PermitNumberInput";
 import { getPermitRoutes } from "../../utils/areaContractorBackendData";
 import { useDispatch } from "react-redux";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
+import { RootState, useTypedSelector } from "../../store/store";
 
 interface PermitNumberInputsProps {
   permitRoutes: Array<OwnListPermitRouteType>;
@@ -25,6 +26,14 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
     permitNumbers.push("");
     setPermitNumbers([...permitNumbers]);
   };
+
+  const {
+    networkStatus: { isFailed = {}, failedStatus },
+  } = useTypedSelector((state: RootState) => state.rootReducer);
+
+  console.log("fail?");
+  console.log(isFailed);
+  console.log(failedStatus);
 
   const getPermits = async () => {
     permitRoutes = [];
