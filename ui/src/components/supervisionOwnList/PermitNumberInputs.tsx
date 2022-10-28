@@ -38,7 +38,7 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
       if (permitNumbers[i].length > 0) {
         const routes = await getPermitRoutes(permitNumbers[i], dispatch);
 
-        if (!failedStatus.getPermitRoutes) {
+        if (failedStatus.getPermitRoutes) {
           if (failedStatus.getPermitRoutes == 404) {
             setErrorCode("Not found");
           } else if (failedStatus.getPermitRoutes == 403) {
