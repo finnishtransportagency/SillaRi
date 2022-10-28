@@ -41,7 +41,7 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
         setErrorCode("Contrator has no right to permit");
       }
     }
-  });
+  }, [failedStatus.getPermitRoutes]);
 
   const getPermits = async () => {
     permitRoutes = [];
