@@ -28,7 +28,7 @@ export const saveToOwnlist = async (username: string, supervisionIds: number[]) 
     }
   });
 
-  await Preferences.set({ key: constructKey(username), value: newOwnList });
+  await Preferences.set({ key: constructKey("xxxx"), value: newOwnList });
 };
 
 export const removeFromOwnlist = async (username: string, supervisionId: number | undefined) => {
