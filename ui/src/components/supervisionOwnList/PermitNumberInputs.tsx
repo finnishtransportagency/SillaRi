@@ -38,10 +38,11 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
       if (permitNumbers[i].length > 0) {
         try {
           const routes = await getPermitRoutes(permitNumbers[i], dispatch);
+          permitRoutes.push({ permitNumber: permitNumbers[i], routes: routes, selectedRouteIndex: null });
         } catch (err) {
           console.error(err);
         }
-
+        console.log("here");
         if (failedStatus.getPermitRoutes) {
           console.log("failed");
           if (failedStatus.getPermitRoutes == 404) {
@@ -50,7 +51,6 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
             setErrorCode("Contrator has no right to permit");
           }
         }
-        permitRoutes.push({ permitNumber: permitNumbers[i], routes: routes, selectedRouteIndex: null });
       }
     }
     if (permitRoutes.length > 0) {
