@@ -1,6 +1,10 @@
 import { OWNLIST_STORAGE_GROUP } from "./constants";
 import { Preferences } from "@capacitor/preferences";
 
+function constructKey(username: string) {
+  return OWNLIST_STORAGE_GROUP + "." + username;
+}
+
 export const saveToOwnlist = async (username: string, supervisionIds: number[]) => {
   const oldValue = await Preferences.get({ key: OWNLIST_STORAGE_GROUP + "." + username });
   const oldOwnlist = oldValue.value;
@@ -24,12 +28,8 @@ export const saveToOwnlist = async (username: string, supervisionIds: number[]) 
     }
   });
 
-  await Preferences.set({ key: username, value: newOwnList });
+  await Preferences.set({ key: constructKey(username), value: newOwnList });
 };
-
-function constructKey(username: string) {
-  return OWNLIST_STORAGE_GROUP + "." + username;
-}
 
 export const removeFromOwnlist = async (username: string, supervisionId: number | undefined) => {
   if (supervisionId) {
