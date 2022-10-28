@@ -28,14 +28,16 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
     setPermitNumbers([...permitNumbers]);
   };
 
+  const {
+    networkStatus: { isFailed = {}, failedStatus = {} },
+  } = useTypedSelector((state: RootState) => state.rootReducer);
+
   const getPermits = async () => {
     permitRoutes = [];
     for (let i = 0; i < permitNumbers.length; i++) {
       if (permitNumbers[i].length > 0) {
         const routes = await getPermitRoutes(permitNumbers[i], dispatch);
-        const {
-          networkStatus: { isFailed = {}, failedStatus = {} },
-        } = useTypedSelector((state: RootState) => state.rootReducer);
+
         if (!failedStatus.getPermitRoutes) {
           if (failedStatus.getPermitRoutes == 404) {
             setErrorCode("Not found");
