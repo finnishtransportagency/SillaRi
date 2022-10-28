@@ -35,9 +35,9 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
   useEffect(() => {
     console.log(failedStatus.getPermitRoutes);
     if (failedStatus.getPermitRoutes) {
-      if (failedStatus.getPermitRoutes == 404) {
+      if (failedStatus.getPermitRoutes === 404) {
         setErrorCode("Not found");
-      } else if (failedStatus.getPermitRoutes == 403) {
+      } else if (failedStatus.getPermitRoutes === 403) {
         setErrorCode("Contrator has no right to permit");
       }
     }
@@ -50,6 +50,7 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
         try {
           const routes = await getPermitRoutes(permitNumbers[i], dispatch);
           permitRoutes.push({ permitNumber: permitNumbers[i], routes: routes, selectedRouteIndex: null });
+          setErrorCode("");
         } catch (err) {
           console.error(err);
         }
