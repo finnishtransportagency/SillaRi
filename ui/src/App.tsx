@@ -30,7 +30,7 @@ import Photos from "./pages/Photos";
 import UserInfo from "./pages/UserInfo";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import { useTypedSelector, RootState } from "./store/store";
-import { getUserData, getVersionInfo } from "./utils/backendData";
+import { getUserData, getVersionInfo, logoutUser } from "./utils/backendData";
 import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/offlineUtil";
@@ -164,12 +164,14 @@ const App: React.FC = () => {
   }, []);
 
   const logoutFromApp = () => {
-    serviceWorkerRegistration.unregister(() => {
-      const cookies = Cookies.get();
-      Object.keys(cookies).forEach((key) => {
-        Cookies.remove(key);
+    logoutUser().then(() => {
+      serviceWorkerRegistration.unregister(() => {
+        const cookies = Cookies.get();
+        Object.keys(cookies).forEach((key) => {
+          Cookies.remove(key);
+        });
       });
-      // FIXME: Five lines below try to clear cached login.
+
       localStorage.clear();
       setUserData(undefined);
       history.replace("/");

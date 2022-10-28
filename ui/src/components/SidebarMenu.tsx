@@ -30,7 +30,7 @@ import truck from "../theme/icons/truck.svg";
 import user from "../theme/icons/user.svg";
 import vayla_logo from "../theme/icons/vayla_fi_white_192x160.png";
 import close from "../theme/icons/close_large_white.svg";
-import { getUserData, onRetry } from "../utils/backendData";
+import { getUserData, logoutUser, onRetry } from "../utils/backendData";
 import "./SidebarMenu.css";
 
 interface SidebarMenuProps {
@@ -50,19 +50,21 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ version }) => {
   const roles = userData?.roles || [];
 
   const logoutFromApp = () => {
-    // Unregister service worker
-    unregister(() => {
-      // Remove all cookies for this site
-      const cookies = Cookies.get();
-      Object.keys(cookies).forEach((key) => {
-        Cookies.remove(key);
+    logoutUser().then(() => {
+      // Unregister service worker
+      unregister(() => {
+        // Remove all cookies for this site
+        const cookies = Cookies.get();
+        Object.keys(cookies).forEach((key) => {
+          Cookies.remove(key);
+        });
       });
+
+      localStorage.clear();
+      history.replace("/");
+      history.go(0);
+      window.location.reload();
     });
-    // FIXME: Four lines below try to clear cached login.
-    localStorage.clear();
-    history.replace("/");
-    history.go(0);
-    window.location.reload();
   };
 
   return (
