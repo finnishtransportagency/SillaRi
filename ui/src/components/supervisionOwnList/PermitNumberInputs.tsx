@@ -28,16 +28,6 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
     setPermitNumbers([...permitNumbers]);
   };
 
-  const {
-    networkStatus: { isFailed = {}, failedStatus = {} },
-  } = useTypedSelector((state: RootState) => state.rootReducer);
-
-  const statusCode = failedStatus.getPermitRoutes > 0 ? failedStatus.getPermitRoutes : errorCode;
-
-  console.log("fail?");
-  console.log(isFailed);
-  console.log(failedStatus);
-
   const getPermits = async () => {
     permitRoutes = [];
     for (let i = 0; i < permitNumbers.length; i++) {
