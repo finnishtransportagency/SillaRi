@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IonButton, IonCol, IonGrid, IonRow, IonToast } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import PermitNumberInput from "./PermitNumberInput";
@@ -32,7 +32,16 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
     networkStatus: { isFailed = {}, failedStatus = {} },
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
-  console.log(failedStatus.getPermitRoutes);
+  useEffect(() => {
+    console.log(failedStatus.getPermitRoutes);
+    if (failedStatus.getPermitRoutes) {
+      if (failedStatus.getPermitRoutes == 404) {
+        setErrorCode("Not found");
+      } else if (failedStatus.getPermitRoutes == 403) {
+        setErrorCode("Contrator has no right to permit");
+      }
+    }
+  });
 
   const getPermits = async () => {
     permitRoutes = [];
