@@ -19,4 +19,5 @@ export default interface IPermit {
   axleChart?: IAxleChart;
   transportTotalMass: number;
   pdfObjectKey: string;
+  customerUsesSillari: boolean;
 }

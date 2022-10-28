@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { IonApp, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Drivers, Storage as IonicStorage } from "@ionic/storage";
@@ -30,7 +30,7 @@ import Photos from "./pages/Photos";
 import UserInfo from "./pages/UserInfo";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import { useTypedSelector, RootState } from "./store/store";
-import { getUserData, getVersionInfo } from "./utils/backendData";
+import { getUserData, getVersionInfo, logoutUser } from "./utils/backendData";
 import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/offlineUtil";
@@ -88,6 +88,7 @@ const App: React.FC = () => {
   const [isInitialisedOffline, setInitialisedOffline] = useState<boolean>(false);
   const [isOkToContinue, setOkToContinue] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const {
     networkStatus: { isFailed = {}, failedStatus = {} },
@@ -163,11 +164,18 @@ const App: React.FC = () => {
   }, []);
 
   const logoutFromApp = () => {
-    serviceWorkerRegistration.unregister(() => {
-      const cookies = Cookies.get();
-      Object.keys(cookies).forEach((key) => {
-        Cookies.remove(key);
+    logoutUser().then(() => {
+      serviceWorkerRegistration.unregister(() => {
+        const cookies = Cookies.get();
+        Object.keys(cookies).forEach((key) => {
+          Cookies.remove(key);
+        });
       });
+
+      localStorage.clear();
+      setUserData(undefined);
+      history.replace("/");
+      history.go(0);
       window.location.reload();
     });
   };
@@ -237,6 +245,9 @@ const App: React.FC = () => {
                   ) : (
                     <AccessDenied />
                   )}
+                </Route>
+                <Route exact path="/routeTransportDetail/:routeTransportId/:message">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <RouteTransportDetail /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/routeTransportDetail/:routeTransportId">
                   {userHasRole("SILLARI_SILLANVALVOJA") ? <RouteTransportDetail /> : <AccessDenied />}

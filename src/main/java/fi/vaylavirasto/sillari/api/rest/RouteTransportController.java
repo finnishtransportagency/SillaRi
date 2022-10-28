@@ -38,7 +38,7 @@ public class RouteTransportController {
 
 
     @Operation(summary = "Get route transport")
-    @GetMapping(value = "/getroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "</getroutetransport", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
     public ResponseEntity<?> getRouteTransport(@RequestParam Integer routeTransportId) {
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "getRouteTransport");
@@ -164,7 +164,7 @@ public class RouteTransportController {
                         if (supervisionModel.getId() != null && supervisionModel.getId() > 0) {
                             supervisionService.updateSupervision(supervisionModel);
                         } else {
-                            supervisionService.createSupervision(supervisionModel, user);
+                            supervisionService.createSupervision(supervisionModel, user.getUsername(), SupervisionStatusType.PLANNED);
                         }
                     });
                 }
@@ -196,7 +196,7 @@ public class RouteTransportController {
                     if (supervisionModel.getId() != null && supervisionModel.getId() > 0) {
                         supervisionService.updateSupervision(supervisionModel);
                     } else {
-                        supervisionService.createSupervision(supervisionModel, user);
+                        supervisionService.createSupervision(supervisionModel, user.getUsername(), SupervisionStatusType.PLANNED);
                     }
                 });
             }

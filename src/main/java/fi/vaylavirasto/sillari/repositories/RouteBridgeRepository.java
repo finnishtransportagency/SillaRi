@@ -7,11 +7,15 @@ import fi.vaylavirasto.sillari.model.tables.records.RouteBridgeRecord;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.jooq.impl.DSL.*;
 
 @Repository
 public class RouteBridgeRepository {
@@ -30,6 +34,13 @@ public class RouteBridgeRepository {
                 .leftJoin(TableAlias.bridge).on(TableAlias.bridge.ID.eq(TableAlias.routeBridge.BRIDGE_ID))
                 .where(TableAlias.routeBridge.ROUTE_ID.eq(routeId))
                 .orderBy(TableAlias.routeBridge.ORDINAL)
+                .fetch(this::mapRouteBridgeRecordWithBridge);
+    }
+
+    public List<RouteBridgeModel> getRouteBridgesWithExcessTransportNumbers() {
+        return dsl.select().from(TableAlias.routeBridge)
+                .leftJoin(TableAlias.bridge).on(TableAlias.bridge.ID.eq(TableAlias.routeBridge.BRIDGE_ID))
+                .where(TableAlias.routeBridge.MAX_TRANSPORTS_EXCEEDED.eq(true))
                 .fetch(this::mapRouteBridgeRecordWithBridge);
     }
 
@@ -58,6 +69,18 @@ public class RouteBridgeRepository {
                 .fetchGroups(RouteBridgeRecord::getRouteId, new RouteBridgeMapper());
     }
 
+    public List<RouteBridgeModel> getRouteBridgesWithNoSupervisions(Integer routeId, String bridgeIdentifier) {
+        return dsl.select().from(TableAlias.routeBridge)
+                .leftJoin(TableAlias.bridge).on(TableAlias.bridge.ID.eq(TableAlias.routeBridge.BRIDGE_ID))
+                .where(TableAlias.routeBridge.ROUTE_ID.eq(routeId))
+                .and(TableAlias.routeBridge.TRANSPORT_NUMBER.notEqual(-1))
+                .and(TableAlias.bridge.IDENTIFIER.eq(bridgeIdentifier))
+                .and(notExists(selectOne()
+                        .from(TableAlias.supervision)
+                        .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))))
+                .fetch(this::mapRouteBridgeRecordWithBridge);
+    }
+
     private RouteBridgeModel mapRouteBridgeRecordWithBridge(Record record) {
         RouteBridgeMapper routeBridgeMapper = new RouteBridgeMapper();
         RouteBridgeModel routeBridge = routeBridgeMapper.map(record);
@@ -69,4 +92,66 @@ public class RouteBridgeRepository {
     }
 
 
+    public Integer insertRouteBridge(RouteBridgeModel routeBridgeModel) {
+        return dsl.transactionResult(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+            Record1<Integer> routeBridgeIdResult = ctx.insertInto(TableAlias.routeBridge,
+                            TableAlias.routeBridge.ROUTE_ID,
+                            TableAlias.routeBridge.BRIDGE_ID,
+                            TableAlias.routeBridge.ORDINAL,
+                            TableAlias.routeBridge.CROSSING_INSTRUCTION,
+                            TableAlias.routeBridge.CONTRACT_NUMBER,
+                            TableAlias.routeBridge.CONTRACT_BUSINESS_ID,
+                            TableAlias.routeBridge.TRANSPORT_NUMBER,
+                            TableAlias.routeBridge.MAX_TRANSPORTS_EXCEEDED)
+                    .values(routeBridgeModel.getRouteId(),
+                            routeBridgeModel.getBridgeId(),
+                            routeBridgeModel.getOrdinal(),
+                            routeBridgeModel.getCrossingInstruction(),
+                            routeBridgeModel.getContractNumber(),
+                            routeBridgeModel.getContractBusinessId(),
+                            routeBridgeModel.getTransportNumber(),
+                            routeBridgeModel.getMaxTransportsExceeded())
+                    .returningResult(TableAlias.routeBridge.ID)
+                    .fetchOne(); // Execute and return zero or one record;
+            Integer routeBridgeId = routeBridgeIdResult != null ? routeBridgeIdResult.value1() : null;
+            return routeBridgeId;
+        });
+    }
+
+    public Integer insertExtraRouteBridge(RouteBridgeModel extraRouteBridge) {
+        return dsl.transactionResult(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+            Integer transportNumber = extraRouteBridge.getTransportNumber();
+            if (transportNumber == null) {
+                transportNumber = (Integer) ctx.select(max(TableAlias.routeBridge.TRANSPORT_NUMBER))
+                        .from(TableAlias.routeBridge)
+                        .where(TableAlias.routeBridge.ROUTE_ID.eq(extraRouteBridge.getRouteId()))
+                        .and(TableAlias.routeBridge.BRIDGE_ID.eq(extraRouteBridge.getBridgeId()))
+                        .fetch().getValue(0, 0);
+                transportNumber ++;
+            }
+            Record1<Integer> routeBridgeIdResult = ctx.insertInto(TableAlias.routeBridge,
+                    TableAlias.routeBridge.ROUTE_ID,
+                    TableAlias.routeBridge.BRIDGE_ID,
+                    TableAlias.routeBridge.ORDINAL,
+                    TableAlias.routeBridge.CROSSING_INSTRUCTION,
+                    TableAlias.routeBridge.CONTRACT_NUMBER,
+                    TableAlias.routeBridge.CONTRACT_BUSINESS_ID,
+                    TableAlias.routeBridge.TRANSPORT_NUMBER,
+                    TableAlias.routeBridge.MAX_TRANSPORTS_EXCEEDED)
+                    .values(extraRouteBridge.getRouteId(),
+                            extraRouteBridge.getBridgeId(),
+                            extraRouteBridge.getOrdinal(),
+                            extraRouteBridge.getCrossingInstruction(),
+                            extraRouteBridge.getContractNumber(),
+                            extraRouteBridge.getContractBusinessId(),
+                            transportNumber,
+                            extraRouteBridge.getMaxTransportsExceeded())
+                    .returningResult(TableAlias.routeBridge.ID)
+                    .fetchOne(); // Execute and return zero or one record;
+            Integer routeBridgeId = routeBridgeIdResult != null ? routeBridgeIdResult.value1() : null;
+            return routeBridgeId;
+        });
+    }
 }

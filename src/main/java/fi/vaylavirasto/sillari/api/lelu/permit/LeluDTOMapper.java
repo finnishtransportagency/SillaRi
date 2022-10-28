@@ -1,6 +1,10 @@
 package fi.vaylavirasto.sillari.api.lelu.permit;
 
-import fi.vaylavirasto.sillari.api.lelu.supervision.*;
+import fi.vaylavirasto.sillari.api.lelu.LeluBridgeWithExcessTransportNumbersResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.LeluRouteWithExcessTransportNumbersResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluSupervisionReportDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluSupervisionStatus;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.util.DateMapper;
 import org.mapstruct.Mapper;
@@ -89,5 +93,28 @@ public interface LeluDTOMapper {
             @Mapping(target = "additionalInfo", source = "model.additionalInfo")
     })
     LeluSupervisionReportDTO fromModelToDTO(SupervisionReportModel model);
+
+    @Mappings({
+            @Mapping(target = "number", source = "model.permitNumber"),
+            @Mapping(target = "version", source = "model.leluVersion"),
+            @Mapping(target = "routes", source = "model.routes")
+    })
+    LeluPermitsWithExcessTransportNumbersResponseDTO fromModelTODTO(PermitModel model);
+
+    @Mappings({
+            @Mapping(target = "id", source = "model.leluId"),
+            @Mapping(target = "name", source = "model.name"),
+            @Mapping(target = "transportCount", source = "model.transportCount"),
+            @Mapping(target = "routeBridges", source = "model.routeBridges")
+    })
+    LeluRouteWithExcessTransportNumbersResponseDTO fromModelTODTO(RouteModel model);
+
+    @Mappings({
+            @Mapping(target = "oid", source = "model.bridge.oid"),
+            @Mapping(target = "identifier", source = "model.bridge.identifier"),
+            @Mapping(target = "transportNumberActualMax", source = "model.transportNumber"),
+            @Mapping(target = "name", source = "model.bridge.name")
+    })
+    LeluBridgeWithExcessTransportNumbersResponseDTO fromModelTODTO(RouteBridgeModel model);
 
 }

@@ -34,6 +34,15 @@ export const createCustomError = (err: unknown): Error => {
   throw new Error(errMessage);
 };
 
+export const logoutUser = async (): Promise<boolean> => {
+  const logoutResponse = await fetch(`${getOrigin()}/api/ui/userlogout`);
+  if (logoutResponse.ok) {
+    return true;
+  } else {
+    throw new Error("Logout failed");
+  }
+};
+
 export const getUserData = async (dispatch: Dispatch): Promise<IUserData> => {
   try {
     console.log("getUserData");

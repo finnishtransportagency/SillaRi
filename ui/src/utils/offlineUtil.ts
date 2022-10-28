@@ -7,6 +7,8 @@ import {
   getRouteTransportOfSupervisor,
   getSupervision,
   getSupervisionList,
+  getSupervisionListAreaContractor,
+  getSupervisionNoPasscode,
   getSupervisionSendingList,
 } from "./supervisionBackendData";
 import { getUserData, onRetry } from "./backendData";
@@ -29,6 +31,28 @@ const prefetchSupervisions = async (supervisionList: ISupervision[], username: s
   await Promise.all(
     filteredIdsAndCodes.map((kv) => {
       return queryClient.prefetchQuery(["getSupervision", Number(kv.key)], () => getSupervision(kv.key, username, kv.value, dispatch), {
+        retry: onRetry,
+        staleTime: Infinity,
+      });
+    })
+  );
+};
+
+const prefetchSupervisionsNoPasscode = async (supervisionList: ISupervision[], queryClient: QueryClient, dispatch: Dispatch) => {
+  await Promise.all(
+    supervisionList.map((s) => {
+      return queryClient.prefetchQuery(["getSupervision", Number(s.id)], () => getSupervisionNoPasscode(s.id, dispatch), {
+        retry: onRetry,
+        staleTime: Infinity,
+      });
+    })
+  );
+};
+
+export const prefetchSupervisionsNoPasscodeWithIds = async (supervisionIdsList: number[], queryClient: QueryClient, dispatch: Dispatch) => {
+  await Promise.all(
+    supervisionIdsList.map((id) => {
+      return queryClient.prefetchQuery(["getSupervision", id], () => getSupervisionNoPasscode(id, dispatch), {
         retry: onRetry,
         staleTime: Infinity,
       });
@@ -134,7 +158,11 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
       retry: onRetry,
       staleTime: Infinity,
     }),
-    queryClient.prefetchQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
+    queryClient.fetchQuery(["getSupervisionList"], () => getSupervisionList(dispatch), {
+      retry: onRetry,
+      staleTime: Infinity,
+    }),
+    queryClient.fetchQuery(["getSupervisionListAreaContractor"], () => getSupervisionListAreaContractor(dispatch), {
       retry: onRetry,
       staleTime: Infinity,
     }),
@@ -144,17 +172,21 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   const { username } = mainData[0] || {};
   const companyTransportsList = mainData[1];
   const supervisionSendingList = mainData[2];
+  const supervisionsCompanyUsesSillari = mainData[4];
 
   // Fetch only routeTransports and supervisions that have the password in storage
   // Otherwise query fails, and we don't get any routeTransports or supervisions in the cache for offline use
   // TODO could also fetch everything but then we cannot throw the error from backend, because it does not resolve the promise
   // but throws the error, and we cannot proceed to get the supervisions for the resolved routeTransports if another routeTransport fails
+
   await Promise.all([
     // getRouteTransportOfSupervisor for each route transport on CompanyTransportsList
     // and getSupervision for each supervision on supervisor's list (transport list or bridge list)
     prefetchRouteTransports(companyTransportsList, username, queryClient, dispatch),
     // getSupervision for each supervision on the sending list, so that the modify button and report modal work offline
     prefetchSupervisions(supervisionSendingList, username, queryClient, dispatch),
+    // getSupervisions that are companyUsesSillari == false, they are not under routeTransports and dont require passcode
+    prefetchSupervisionsNoPasscode(supervisionsCompanyUsesSillari, queryClient, dispatch),
   ]);
 };
 

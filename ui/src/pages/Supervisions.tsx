@@ -14,6 +14,7 @@ import CompanyTransportsAccordion from "../components/CompanyTransportsAccordion
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import { groupSupervisionsByPlannedDate, sortSupervisionsByTimeAndBridgeOrder } from "../utils/supervisionUtil";
 import { useHistory, useParams } from "react-router-dom";
+import OwnList from "../components/supervisionOwnList/OwnList";
 
 interface SupervisionsProps {
   tabId: string;
@@ -73,6 +74,7 @@ const Supervisions = (): JSX.Element => {
     }
   };
 
+  const ownListCount = "?";
   const transportsCount = companyTransportsList.map((ct) => (ct.transports ? ct.transports.length : 0)).reduce((prev, next) => prev + next, 0);
   const bridgesCount = supervisionDays.map((sd) => (sd.supervisions ? sd.supervisions.length : 0)).reduce((prev, next) => prev + next, 0);
 
@@ -90,6 +92,9 @@ const Supervisions = (): JSX.Element => {
         // includeUnsentOfflineCheck={onlineManager.isOnline()}
       />
       <IonSegment className="mainSegment" value={currentSegment} onIonChange={changeSegment}>
+        <IonSegmentButton className="mainSegmentButton" value="2">
+          <IonLabel>{`${t("main.tab.ownList")} (${ownListCount})`}</IonLabel>
+        </IonSegmentButton>
         <IonSegmentButton className="mainSegmentButton" value="0">
           <IonLabel>{`${t("main.tab.transports")} (${transportsCount})`}</IonLabel>
         </IonSegmentButton>
@@ -109,6 +114,7 @@ const Supervisions = (): JSX.Element => {
         {currentSegment === "1" && (
           <SupervisionList username={username} supervisionDays={supervisionDays} noNetworkNoData={noNetworkNoData} isOnline={isOnline} />
         )}
+        {currentSegment === "2" && <OwnList username={username} noNetworkNoData={noNetworkNoData} isOnline={isOnline} />}
       </IonContent>
     </IonPage>
   );

@@ -3,8 +3,9 @@ package fi.vaylavirasto.sillari.service;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
-import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
 import fi.vaylavirasto.sillari.repositories.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,8 @@ public class RouteService {
     @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
 
+    private static final Logger logger = LogManager.getLogger();
+
     public RouteModel getRoute(Integer routeId) {
         RouteModel route = routeRepository.getRoute(routeId);
 
@@ -35,6 +38,26 @@ public class RouteService {
                 routeBridges.forEach(routeBridge -> {
                     String bridgeGeoJson = bridgeRepository.getBridgeGeoJson(routeBridge.getBridge().getId());
                     routeBridge.getBridge().setGeojson(bridgeGeoJson);
+                });
+            }
+            route.setRouteBridges(routeBridges);
+        }
+        return route;
+    }
+
+
+    public RouteModel getRouteWithSupervisionsForOwnList(Integer routeId) {
+        RouteModel route = routeRepository.getRoute(routeId);
+
+        if (route != null) {
+            String routeGeoJson = routeRepository.getRouteGeoJson(routeId);
+            route.setGeojson(routeGeoJson);
+
+            List<RouteBridgeModel> routeBridges = routeBridgeRepository.getRouteBridges(routeId, -1);
+            if (routeBridges != null) {
+                routeBridges.forEach(routeBridge -> {
+                    List<SupervisionModel> supervisionModels = supervisionRepository.getAreaContractorSupervisionsByRouteBridgeId(routeBridge.getId());
+                    routeBridge.getSupervisions().addAll(supervisionModels);
                 });
             }
             route.setRouteBridges(routeBridges);
