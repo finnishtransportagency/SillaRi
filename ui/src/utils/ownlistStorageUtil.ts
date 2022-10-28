@@ -2,8 +2,7 @@ import { OWNLIST_STORAGE_GROUP } from "./constants";
 import { Preferences } from "@capacitor/preferences";
 
 export const saveToOwnlist = async (username: string, supervisionIds: number[]) => {
-  Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
-  const oldValue = await Preferences.get({ key: username });
+  const oldValue = await Preferences.get({ key: OWNLIST_STORAGE_GROUP + "." + username });
   const oldOwnlist = oldValue.value;
   let oldIds: string[] = [];
   let newOwnList = "";
@@ -28,10 +27,13 @@ export const saveToOwnlist = async (username: string, supervisionIds: number[]) 
   await Preferences.set({ key: username, value: newOwnList });
 };
 
+function constructKey(username: string) {
+  return OWNLIST_STORAGE_GROUP + "." + username;
+}
+
 export const removeFromOwnlist = async (username: string, supervisionId: number | undefined) => {
   if (supervisionId) {
-    await Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
-    const oldValue = await Preferences.get({ key: username });
+    const oldValue = await Preferences.get({ key: constructKey(username) });
     const oldOwnlist = oldValue.value;
     console.log("oldOwnlist");
     console.log(oldOwnlist);
@@ -52,14 +54,12 @@ export const removeFromOwnlist = async (username: string, supervisionId: number 
     console.log(newOwnList);
     newOwnList = newOwnList.substring(0, newOwnList.length - 1);
     console.log(newOwnList);
-    await Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
-    return Preferences.set({ key: username, value: newOwnList });
+    return Preferences.set({ key: constructKey(username), value: newOwnList });
   }
 };
 
 export const getOwnlist = async (username: string) => {
-  Preferences.configure({ group: OWNLIST_STORAGE_GROUP });
-  const ownListRaw = await Preferences.get({ key: username });
+  const ownListRaw = await Preferences.get({ key: OWNLIST_STORAGE_GROUP + "." + username });
   const ownList: number[] = [];
   if (ownListRaw.value) {
     ownListRaw.value.split(",").forEach((id: string) => {
