@@ -41,16 +41,17 @@ public class AreaContractorController {
     RouteBridgeService routeBridgeService;
 
     @Operation(summary = "Get routes of permit, if the permit is customerUsesSillari = false")
-    @GetMapping(value = "/getRoutes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/getRoutes", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200 OK", description = "Routes returned"),
             @ApiResponse(responseCode = "404 NOT_FOUND", description = "Permit not found with given number"),
             @ApiResponse(responseCode = "403 FORBIDDEN", description = "Permit with given number is not customerUsesSillari = false")
     })
-    public ResponseEntity<List<RouteModel>> getRoutes(@Parameter(name = "permitNumber", description = "The Lelu number (string) identifier of permit", example = "1111/2022") @RequestParam String permitNumber) {
+    public ResponseEntity<List<RouteModel>> getRoutes(@RequestBody PermitNumberInputDTO permitNumberInputDTO) {
         ServiceMetric serviceMetric = new ServiceMetric("AreaContractorController", "getRoutes");
         try {
+            String permitNumber = permitNumberInputDTO.getPermitNumber();
             PermitModel permitCurrentVersion = permitService.getPermitCurrentVersionByPermitNumber(permitNumber);
             if (permitCurrentVersion == null) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
