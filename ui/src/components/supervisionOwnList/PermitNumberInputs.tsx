@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { IonButton, IonCol, IonGrid, IonRow, IonToast } from "@ionic/react";
+import {IonButton, IonCol, IonGrid, IonIcon, IonRow, IonToast} from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import PermitNumberInput from "./PermitNumberInput";
 import { getPermitRoutes } from "../../utils/areaContractorBackendData";
 import { useDispatch } from "react-redux";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
+import add from "../theme/icons/add.svg";
 import { RootState, useTypedSelector } from "../../store/store";
+import close from "../../theme/icons/close_large_white.svg";
 
 interface PermitNumberInputsProps {
   permitRoutes: Array<OwnListPermitRouteType>;
@@ -68,12 +70,17 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
         <PermitNumberInput key={i} index={i} initialValue={permitNumber} onChange={setPermitNumber} />
       ))}
 
-      <IonButton onClick={() => addPermitNumber()}>{t("supervisionOwnList.addModal.permitNumberInput.addPermitNumberButtonLabel")}</IonButton>
+      <IonButton onClick={() => addPermitNumber()} border-width="0px" fill="clear" color-contrast="primary">
+        <IonIcon className="otherIcon" icon={add} />
+        {t("supervisionOwnList.addModal.permitNumberInput.addPermitNumberButtonLabel")}{" "}
+      </IonButton>
 
       <IonGrid class="ion-no-padding">
         <IonRow>
           <IonCol class="ion-button ion-float-left">
-            <IonButton onClick={cancel}>{t("supervisionOwnList.addModal.permitNumberInput.cancelButtonLabel")}</IonButton>
+            <IonButton onClick={cancel} color="secondary">
+              {t("supervisionOwnList.addModal.permitNumberInput.cancelButtonLabel")}
+            </IonButton>
           </IonCol>
           <IonCol>
             <IonButton class="ion-button ion-float-right" onClick={getPermits}>
