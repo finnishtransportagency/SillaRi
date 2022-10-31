@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {IonButton, IonCol, IonGrid, IonIcon, IonRow, IonToast} from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonIcon, IonRow, IonToast } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import PermitNumberInput from "./PermitNumberInput";
 import { getPermitRoutes } from "../../utils/areaContractorBackendData";
 import { useDispatch } from "react-redux";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
-import add from "../theme/icons/add.svg";
+import add from "../../theme/icons/add.svg";
 import { RootState, useTypedSelector } from "../../store/store";
-import close from "../../theme/icons/close_large_white.svg";
 
 interface PermitNumberInputsProps {
   permitRoutes: Array<OwnListPermitRouteType>;
