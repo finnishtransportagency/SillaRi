@@ -192,7 +192,7 @@ public class PermitService {
 
     // A template RouteBridge is produced (in addition to normal ones with transport numbers). The "template" routeBridge is indepedent of transport numbers (transportNumber =-1)
     // It is used for area contractor supervisions that are all first attached to the template and are attached to real route bridges with transport numbers as late as sendig list send time
-    public void produceTemplateRouteBridgesIfNeeded(String number, String businessID) {
+    public void produceTemplateRouteBridgesIfNeeded(String permitNumber, String businessID) {
         List<RouteModel> routes = getRoutes(permitNumber);
 
         for (RouteModel route : routes) {
