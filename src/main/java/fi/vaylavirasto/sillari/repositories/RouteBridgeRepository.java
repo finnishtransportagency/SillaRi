@@ -37,6 +37,15 @@ public class RouteBridgeRepository {
                 .fetch(this::mapRouteBridgeRecordWithBridge);
     }
 
+    public List<RouteBridgeModel> getContractRouteBridges(Integer routeId, String contractBusinessId) {
+        return dsl.select().from(TableAlias.routeBridge)
+                .leftJoin(TableAlias.bridge).on(TableAlias.bridge.ID.eq(TableAlias.routeBridge.BRIDGE_ID))
+                .where(TableAlias.routeBridge.ROUTE_ID.eq(routeId))
+                .and(TableAlias.routeBridge.CONTRACT_BUSINESS_ID.eq(contractBusinessId))
+                .orderBy(TableAlias.routeBridge.ORDINAL)
+                .fetch(this::mapRouteBridgeRecordWithBridge);
+    }
+
     public List<RouteBridgeModel> getRouteBridgesWithExcessTransportNumbers() {
         return dsl.select().from(TableAlias.routeBridge)
                 .leftJoin(TableAlias.bridge).on(TableAlias.bridge.ID.eq(TableAlias.routeBridge.BRIDGE_ID))
