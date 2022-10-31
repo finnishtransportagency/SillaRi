@@ -36,6 +36,7 @@
     "title": "SillaRi",
     "content": "Welcome!",
     "tab": {
+      "ownList": "Own list",
       "transports": "Transports",
       "bridges": "Bridges"
     },
@@ -166,6 +167,32 @@
     "other": "Something else, what?",
     "placeholder": "Add text here"
   },
+  "supervisionOwnList": {
+    "addButtonLabel": "Add bridges",
+    "permitLabel": "Permit",
+    "addedBySupervisor": "Bridge added by suoervisor",
+    "removeFromList": "Remove from list",
+    "warning": {
+      "removeHeader": "Are you sure you want to remove the bridge from the list?",
+      "remove": "Remove"
+    },
+    "addModal": {
+      "title": "Add bridges",
+      "permitNumberInput": {
+        "inputLabel": "Permit number",
+        "addPermitNumberButtonLabel": "Add permit number",
+        "cancelButtonLabel": "Cancel",
+        "continueButtonLabel": "Next",
+        "notFound": "Permit doesn't exist with given number",
+        "noRights": "Contract supervisor has no rights to given permit"
+      },
+      "routeSelectInput": {
+        "permitLabel": "Permit",
+        "cancelButtonLabel": "Previous",
+        "continueButtonLabel": "Next"
+      }
+    }
+  },
   "supervision": {
     "title": "Bridge supervision",
     "permitNumber": "Permit number",
@@ -195,14 +222,19 @@
       "drivingLine": "Driving line",
       "summary": "Go to summary",
       "cancel": "Cancel supervision",
-      "saveToSendList": "Save to the sending list"
+      "saveToSendList": "Save to the sending list",
+      "sendImmediately": "Send supervision immediately",
+      "sendNow": "Send supervision",
+      "back": "Back"
     },
     "warning": {
       "cancelSupervisionHeader": "Are you sure you want to cancel the supervision?",
       "cancelSupervisionText": "All data from the report will be deleted.",
       "leavePage": "Are you sure you want to leave the page?",
       "unsavedChanges": "Supervision has unsaved changes.",
-      "supervisionNotFinished": "Supervision has not been saved to send list."
+      "supervisionNotFinished": "Supervision has not been saved to send list.",
+      "sendImmediatelyHeader": "Are you sure you want to send the supervision immediately?",
+      "sendImmediatelyText": "Report data can't be edited nor complemented after sending"
     },
     "summary": {
       "title": "Summary",
@@ -247,6 +279,7 @@
       "transports": "Transports",
       "supervision": "Supervision",
       "includesSupervisions": "Includes bridge supervisions",
+      "notUsesSillariPermit": "Permit transports not allocated in SillaRi",
       "noSupervisions": "Does not include bridge supervisions",
       "permitVersion": "Permit version",
       "addTransportButtonLabel": "Add transport",

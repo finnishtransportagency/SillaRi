@@ -247,3 +247,11 @@ ion-popover.large-popover {
   --ion-color-shade: var(--ion-color-orange-shade);
   --ion-color-tint: var(--ion-color-orange-tint);
 }
+
+ion-popover#password-popover::part(content) {
+  position: relative;
+  left: unset;
+  right: 0;
+  top: 0;
+  margin-left: 2%;
+}
