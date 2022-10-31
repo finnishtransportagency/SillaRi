@@ -3,9 +3,6 @@ import { getOrigin } from "./request";
 import { NETWORK_RESPONSE_NOT_OK, SupervisionListType } from "./constants";
 import { actions } from "../store/rootSlice";
 import IRoute from "../interfaces/IRoute";
-import IStartCrossingInput from "../interfaces/IStartCrossingInput";
-import ISupervision from "../interfaces/ISupervision";
-import { getPasswordFromStorage } from "./trasportCodeStorageUtil";
 
 export const getPermitRoutes = async (permitNumber: string, dispatch: Dispatch): Promise<Array<IRoute>> => {
   try {
@@ -41,8 +38,6 @@ export const getPermitRoutes = async (permitNumber: string, dispatch: Dispatch):
     throw new Error(err as string);
   }
 };
-
-
 
 export const initiateSupervisions = async (routeBridgeTemplateIds: Array<number>, dispatch: Dispatch): Promise<Array<number>> => {
   try {
