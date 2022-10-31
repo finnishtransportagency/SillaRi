@@ -1,6 +1,6 @@
 import type { Dispatch } from "redux";
 import { getOrigin } from "./request";
-import { NETWORK_RESPONSE_NOT_OK } from "./constants";
+import { NETWORK_RESPONSE_NOT_OK, SupervisionListType } from "./constants";
 import { actions } from "../store/rootSlice";
 import IRoute from "../interfaces/IRoute";
 
@@ -11,7 +11,15 @@ export const getPermitRoutes = async (permitNumber: string, dispatch: Dispatch):
       payload: { failedQuery: { getPermitRoutes: false }, failedQueryStatus: { getPermitRoutes: -1 } },
     });
 
-    const rResponse = await fetch(`${getOrigin()}/api/areaContractor/getRoutes?permitNumber=${encodeURIComponent(permitNumber)}`);
+    const body = { permitNumber: permitNumber };
+
+    const rResponse = await fetch(`${getOrigin()}/api/areaContractor/getRoutes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
 
     if (rResponse.ok) {
       const routes = rResponse.json() as Promise<Array<IRoute>>;
