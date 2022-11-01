@@ -68,3 +68,14 @@ export const getOwnlist = async (username: string) => {
   }
   return ownList;
 };
+
+export const getOwnlistCount = async (username: string) => {
+  const ownListRaw = await Preferences.get({ key: OWNLIST_STORAGE_GROUP + "." + username });
+  const ownList: number[] = [];
+  if (ownListRaw.value) {
+    ownListRaw.value.split(",").forEach((id: string) => {
+      ownList.push(Number(id));
+    });
+  }
+  return ownList.length;
+};

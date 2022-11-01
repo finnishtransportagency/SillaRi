@@ -15,6 +15,7 @@ import ISupervisionDay from "../interfaces/ISupervisionDay";
 import { groupSupervisionsByPlannedDate, sortSupervisionsByTimeAndBridgeOrder } from "../utils/supervisionUtil";
 import { useHistory, useParams } from "react-router-dom";
 import OwnList from "../components/supervisionOwnList/OwnList";
+import { getOwnlistCount } from "../utils/ownlistStorageUtil";
 
 interface SupervisionsProps {
   tabId: string;
@@ -29,6 +30,7 @@ const Supervisions = (): JSX.Element => {
 
   const [currentSegment, setCurrentSegment] = useState<string>(tabId);
   const [supervisionDays, setSupervisionDays] = useState<ISupervisionDay[]>([]);
+  const [ownListCount, setOwnListCount] = useState<number>(0);
   const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
 
   const {
@@ -66,6 +68,14 @@ const Supervisions = (): JSX.Element => {
     }
   }, [supervisionList]);
 
+  useEffect(() => {
+    getOwnlistCount(username).then((result) => {
+      if (result) {
+        setOwnListCount(result);
+      }
+    });
+  }, [username]);
+
   const changeSegment = (evt: CustomEvent<SegmentChangeEventDetail>) => {
     const newValue = evt.detail.value;
     if (newValue !== undefined) {
@@ -74,7 +84,6 @@ const Supervisions = (): JSX.Element => {
     }
   };
 
-  const ownListCount = "?";
   const transportsCount = companyTransportsList.map((ct) => (ct.transports ? ct.transports.length : 0)).reduce((prev, next) => prev + next, 0);
   const bridgesCount = supervisionDays.map((sd) => (sd.supervisions ? sd.supervisions.length : 0)).reduce((prev, next) => prev + next, 0);
 
