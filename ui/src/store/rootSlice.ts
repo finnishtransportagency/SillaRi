@@ -8,6 +8,7 @@ interface IStateProps {
   networkStatus: INetworkStatus;
   selectedManagementPermitId?: number;
   selectedSupervisionListType?: string;
+  ownListCount: number;
 }
 
 const initialState: IStateProps = {
@@ -17,6 +18,7 @@ const initialState: IStateProps = {
   },
   selectedManagementPermitId: undefined,
   selectedSupervisionListType: undefined,
+  ownListCount: 0,
 };
 
 const rootSlice = createSlice({
@@ -45,6 +47,10 @@ const rootSlice = createSlice({
     SET_SUPERVISION_LIST_TYPE: (state, action: PayloadAction<string | undefined>) => {
       // console.log("SET_SUPERVISION_LIST_TYPE", action.payload);
       return { ...state, selectedSupervisionListType: action.payload };
+    },
+    SET_OWNLIST_COUNT: (state, action: PayloadAction<number>) => {
+      // console.log("SET_OWNLIST_COUNT", action.payload);
+      return { ...state, ownListCount: action.payload };
     },
   },
 });

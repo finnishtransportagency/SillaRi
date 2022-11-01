@@ -15,7 +15,6 @@ import ISupervisionDay from "../interfaces/ISupervisionDay";
 import { groupSupervisionsByPlannedDate, sortSupervisionsByTimeAndBridgeOrder } from "../utils/supervisionUtil";
 import { useHistory, useParams } from "react-router-dom";
 import OwnList from "../components/supervisionOwnList/OwnList";
-import { getOwnlistCount } from "../utils/ownlistStorageUtil";
 
 interface SupervisionsProps {
   tabId: string;
@@ -30,11 +29,11 @@ const Supervisions = (): JSX.Element => {
 
   const [currentSegment, setCurrentSegment] = useState<string>(tabId);
   const [supervisionDays, setSupervisionDays] = useState<ISupervisionDay[]>([]);
-  const [ownListCount, setOwnListCount] = useState<number>(0);
   const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
 
   const {
     networkStatus: { isFailed = {} },
+    ownListCount,
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
@@ -67,14 +66,6 @@ const Supervisions = (): JSX.Element => {
       setSupervisionDays(groupedSupervisions);
     }
   }, [supervisionList]);
-
-  useEffect(() => {
-    getOwnlistCount(username).then((result) => {
-      if (result) {
-        setOwnListCount(result);
-      }
-    });
-  }, [username]);
 
   const changeSegment = (evt: CustomEvent<SegmentChangeEventDetail>) => {
     const newValue = evt.detail.value;
