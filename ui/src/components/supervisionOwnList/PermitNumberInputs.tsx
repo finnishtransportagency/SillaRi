@@ -47,7 +47,7 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
         setErrorCode(notRightsErrorText);
       }
     }
-  }, [failedStatus.getPermitRoutes]);
+  }, [failedStatus.getPermitRoutes, notFoundErrorText, notRightsErrorText]);
 
   const getPermits = async () => {
     permitRoutes = [];
