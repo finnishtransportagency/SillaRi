@@ -157,12 +157,11 @@ public class UIController {
     @Operation(summary = "Log out user")
     @GetMapping(value = "/userlogout")
     public ResponseEntity<?> userLogout(HttpServletRequest request) {
-        SecurityContextHolder.clearContext();
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        String url = sillariConfig.getAmazonCognito().getUrl();
+        String clientId = sillariConfig.getAmazonCognito().getClientId();
+        HashMap<String, Object> responseBody = new HashMap<>();
+        responseBody.put("redirectUrl", url + "/logout/?client_id=" + clientId);
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
     @Operation(summary = "Get user data")

@@ -218,6 +218,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             logger.error(ex);
         } finally {
             filterChain.doFilter(request, response);
+            SecurityContextHolder.clearContext();
         }
     }
 
