@@ -85,7 +85,7 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
           <IonCol>
             <IonButton class="ion-button ion-float-right" onClick={getPermits}>
               {t("supervisionOwnList.addModal.permitNumberInput.continueButtonLabel")}
-              <IonIcon className="otherIcon" icon={arrowRight} />
+              <IonIcon className="otherIcon" color="light" icon={arrowRight} />
             </IonButton>
           </IonCol>
         </IonRow>
