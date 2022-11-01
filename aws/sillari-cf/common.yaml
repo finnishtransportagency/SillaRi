@@ -751,17 +751,17 @@ Resources:
               - !Sub "arn:aws:s3:::${S3BUCKET}"
               - !Sub "arn:aws:s3:::${S3BUCKET}/*"
 
-  S3BUCKET2:
+  S3BUCKETX:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: Private
       BucketName: !Sub "${NamePrefix}-supervisions-${Environment}"
 
     # Allow access from dev
-  S3BUCKET2POLICY:
+  S3BUCKETXPOLICY:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref S3BUCKET2
+      Bucket: !Ref S3BUCKETX
       PolicyDocument:
         Statement:
           - Action:
@@ -770,10 +770,10 @@ Resources:
             Principal:
               AWS: "arn:aws:iam::384409174079:role/SillariAdmin"
             Resource:
-              - !Sub "arn:aws:s3:::${S3BUCKET2}"
-              - !Sub "arn:aws:s3:::${S3BUCKET2}/*"
+              - !Sub "arn:aws:s3:::${S3BUCKETX}"
+              - !Sub "arn:aws:s3:::${S3BUCKETX}/*"
 
-  S3BUCKET4:
+  S3BUCKET2:
     Type: AWS::S3::Bucket
     DependsOn:
       - KTVADDINGLAMBDAREPORTSPERMISSSION
@@ -789,10 +789,10 @@ Resources:
             Function: !GetAtt KTVREMOVALLAMBDA.Arn
 
   # Allow access from dev
-  S3BUCKET4POLICY:
+  S3BUCKET2POLICY:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref S3BUCKET4
+      Bucket: !Ref S3BUCKET2
       PolicyDocument:
         Statement:
           - Action:
@@ -801,8 +801,8 @@ Resources:
             Principal:
               AWS: "arn:aws:iam::384409174079:role/SillariAdmin"
             Resource:
-              - !Sub "arn:aws:s3:::${S3BUCKET4}"
-              - !Sub "arn:aws:s3:::${S3BUCKET4}/*"
+              - !Sub "arn:aws:s3:::${S3BUCKET2}"
+              - !Sub "arn:aws:s3:::${S3BUCKET2}/*"
 
   S3BUCKET3:
     Type: AWS::S3::Bucket
@@ -850,12 +850,12 @@ Resources:
                 Resource:
                   - !Sub "arn:aws:s3:::${S3BUCKET}"
                   - !Sub "arn:aws:s3:::${S3BUCKET}/*"
-                  - !Sub "arn:aws:s3:::${S3BUCKET2}"
-                  - !Sub "arn:aws:s3:::${S3BUCKET2}/*"
+                  - !Sub "arn:aws:s3:::${S3BUCKETX}"
+                  - !Sub "arn:aws:s3:::${S3BUCKETX}/*"
                   - !Sub "arn:aws:s3:::${S3BUCKET3}"
                   - !Sub "arn:aws:s3:::${S3BUCKET3}/*"
-                  - !Sub "arn:aws:s3:::${S3BUCKET4}"
-                  - !Sub "arn:aws:s3:::${S3BUCKET4}/*"
+                  - !Sub "arn:aws:s3:::${S3BUCKET2}"
+                  - !Sub "arn:aws:s3:::${S3BUCKET2}/*"
         - PolicyName: !Sub "${NamePrefix}-efspolicy-${Environment}"
           PolicyDocument:
             Version: 2012-10-17
@@ -893,12 +893,12 @@ Resources:
                 Resource:
                   - !Sub "arn:aws:s3:::${S3BUCKET}"
                   - !Sub "arn:aws:s3:::${S3BUCKET}/*"
-                  - !Sub "arn:aws:s3:::${S3BUCKET2}"
-                  - !Sub "arn:aws:s3:::${S3BUCKET2}/*"
+                  - !Sub "arn:aws:s3:::${S3BUCKETX}"
+                  - !Sub "arn:aws:s3:::${S3BUCKETX}/*"
                   - !Sub "arn:aws:s3:::${S3BUCKET3}"
                   - !Sub "arn:aws:s3:::${S3BUCKET3}/*"
-                  - !Sub "arn:aws:s3:::${S3BUCKET4}"
-                  - !Sub "arn:aws:s3:::${S3BUCKET4}/*"
+                  - !Sub "arn:aws:s3:::${S3BUCKET2}"
+                  - !Sub "arn:aws:s3:::${S3BUCKET2}/*"
 
   EFSFS:
     Type: AWS::EFS::FileSystem
