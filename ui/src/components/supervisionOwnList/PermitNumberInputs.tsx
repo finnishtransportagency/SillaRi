@@ -37,21 +37,17 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
   const notFoundErrorText = t("supervisionOwnList.addModal.permitNumberInput.notFound");
   const notRightsErrorText = t("supervisionOwnList.addModal.permitNumberInput.noRights");
 
-  useEffect(
-    () => {
-      setErrorCode("");
-      console.log(failedStatus.getPermitRoutes);
-      if (failedStatus.getPermitRoutes) {
-        if (failedStatus.getPermitRoutes === 404) {
-          setErrorCode(notFoundErrorText);
-        } else if (failedStatus.getPermitRoutes === 403) {
-          setErrorCode(notRightsErrorText);
-        }
+  useEffect(() => {
+    setErrorCode("");
+    console.log(failedStatus.getPermitRoutes);
+    if (failedStatus.getPermitRoutes) {
+      if (failedStatus.getPermitRoutes === 404) {
+        setErrorCode(notFoundErrorText);
+      } else if (failedStatus.getPermitRoutes === 403) {
+        setErrorCode(notRightsErrorText);
       }
-    },
-    [failedStatus.getPermitRoutes],
-    t
-  );
+    }
+  }, [failedStatus.getPermitRoutes]);
 
   const getPermits = async () => {
     permitRoutes = [];
