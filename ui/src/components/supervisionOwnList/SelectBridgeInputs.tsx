@@ -22,7 +22,7 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
   const dispatch = useDispatch();
   const [selectedIds, setSelectedIds] = useState<Array<number>>([]);
   const setSelectedRouteBridgeIds = (index: number, routeBridgeIds: Array<number>) => {
-    setSelectedIds(routeBridgeIds);
+    setSelectedIds([...selectedIds, ...routeBridgeIds]);
   };
 
   const getSelectedRouteName = (permitRoute: OwnListPermitRouteType) => {
