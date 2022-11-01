@@ -1,6 +1,6 @@
 import type { Dispatch } from "redux";
 import { getOrigin } from "./request";
-import { NETWORK_RESPONSE_NOT_OK, SupervisionListType } from "./constants";
+import { NETWORK_RESPONSE_NOT_OK } from "./constants";
 import { actions } from "../store/rootSlice";
 import IRoute from "../interfaces/IRoute";
 

@@ -31,20 +31,27 @@ const PermitNumberInputs = ({ permitRoutes, cancel, toNextPhase }: PermitNumberI
   };
 
   const {
-    networkStatus: { isFailed = {}, failedStatus = {} },
+    networkStatus: { failedStatus = {} },
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
-  useEffect(() => {
-    setErrorCode("");
-    console.log(failedStatus.getPermitRoutes);
-    if (failedStatus.getPermitRoutes) {
-      if (failedStatus.getPermitRoutes === 404) {
-        setErrorCode(t("supervisionOwnList.addModal.permitNumberInput.notFound"));
-      } else if (failedStatus.getPermitRoutes === 403) {
-        setErrorCode(t("supervisionOwnList.addModal.permitNumberInput.noRights"));
+  const notFoundErrorText = t("supervisionOwnList.addModal.permitNumberInput.notFound");
+  const notRightsErrorText = t("supervisionOwnList.addModal.permitNumberInput.noRights");
+
+  useEffect(
+    () => {
+      setErrorCode("");
+      console.log(failedStatus.getPermitRoutes);
+      if (failedStatus.getPermitRoutes) {
+        if (failedStatus.getPermitRoutes === 404) {
+          setErrorCode(notFoundErrorText);
+        } else if (failedStatus.getPermitRoutes === 403) {
+          setErrorCode(notRightsErrorText);
+        }
       }
-    }
-  }, [failedStatus.getPermitRoutes]);
+    },
+    [failedStatus.getPermitRoutes],
+    t
+  );
 
   const getPermits = async () => {
     permitRoutes = [];
