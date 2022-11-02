@@ -161,9 +161,9 @@ public class UIController {
     public ResponseEntity<?> userLogout(HttpServletRequest request) {
         String url = sillariConfig.getAmazonCognito().getUrl();
         String clientId = sillariConfig.getAmazonCognito().getClientId();
-        String logoutUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
+        String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
         HashMap<String, Object> responseBody = new HashMap<>();
-        responseBody.put("redirectUrl", url + "/logout/?client_id=" + clientId + "&logout_uri=" + URLEncoder.encode(logoutUrl, StandardCharsets.UTF_8));
+        responseBody.put("redirectUrl", url + "/logout/?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
