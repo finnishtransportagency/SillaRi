@@ -3,7 +3,7 @@ import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import SelectBridgeInput from "./SelectBridgeInput";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
 import { useTranslation } from "react-i18next";
-import { initiateSupervisionss } from "../../utils/areaContractorBackendData";
+import { initiateSupervisions } from "../../utils/areaContractorBackendData";
 import { useDispatch } from "react-redux";
 import { useQuery, useQueryClient } from "react-query";
 import { getUserData, onRetry } from "../../utils/backendData";
@@ -22,9 +22,7 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
   const dispatch = useDispatch();
   const [selectedIds, setSelectedIds] = useState<Array<Array<number>>>([]);
   const setSelectedRouteBridgeIds = (index: number, routeBridgeIds: Array<number>) => {
-    console.log(index);
     selectedIds[index] = routeBridgeIds;
-    console.log(selectedIds);
   };
 
   const getSelectedRouteName = (permitRoute: OwnListPermitRouteType) => {
@@ -46,7 +44,7 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
 
   const done = async () => {
     //call backend to initiate supervisions and get their ids to own list keys
-    const supervisionIds = await initiateSupervisionss(selectedIds, dispatch);
+    const supervisionIds = await initiateSupervisions(selectedIds, dispatch);
 
     //save ownlist to storage
     await saveToOwnlist(username, supervisionIds, dispatch);
@@ -97,7 +95,7 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
             <IonButton onClick={toPreviousPhase}>{t("supervisionOwnList.addModal.bridgeSelectInput.cancelButtonLabel")}</IonButton>
           </IonCol>
           <IonCol>
-            <IonButton class="ion-button ion-float-right" onClick={done} disabled={isLoadingUser || !selectedIds}>
+            <IonButton class="ion-button ion-float-right" onClick={done} disabled={isLoadingUser || !selectedIds || selectedIds === []}>
               {t("supervisionOwnList.addModal.bridgeSelectInput.saveButtonLabel")}
             </IonButton>
           </IonCol>
