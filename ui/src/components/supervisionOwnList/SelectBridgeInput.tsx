@@ -17,15 +17,15 @@ const SelectBridgeInput = ({ index, routes, selectedRouteIndex, onChange }: Sele
     if (selected === true) {
       selectedIds.push(selectedId);
       setSelectedIds(selectedIds);
+      onChange(index, selectedIds);
     } else {
       const array = selectedIds.filter((id) => {
-        console.log(id + " " + selectedId + " " + (id !== selectedId));
         return id !== selectedId;
       });
+
       setSelectedIds(array);
+      onChange(index, array);
     }
-    console.log(selectedIds);
-    onChange(index, selectedIds);
   };
 
   const route = selectedRouteIndex === null ? null : routes[selectedRouteIndex];

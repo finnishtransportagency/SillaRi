@@ -33,6 +33,7 @@ const Supervisions = (): JSX.Element => {
 
   const {
     networkStatus: { isFailed = {} },
+    ownListCount,
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
@@ -74,7 +75,6 @@ const Supervisions = (): JSX.Element => {
     }
   };
 
-  const ownListCount = "?";
   const transportsCount = companyTransportsList.map((ct) => (ct.transports ? ct.transports.length : 0)).reduce((prev, next) => prev + next, 0);
   const bridgesCount = supervisionDays.map((sd) => (sd.supervisions ? sd.supervisions.length : 0)).reduce((prev, next) => prev + next, 0);
 

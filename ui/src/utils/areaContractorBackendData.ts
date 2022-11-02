@@ -1,6 +1,6 @@
 import type { Dispatch } from "redux";
 import { getOrigin } from "./request";
-import { NETWORK_RESPONSE_NOT_OK, SupervisionListType } from "./constants";
+import { NETWORK_RESPONSE_NOT_OK } from "./constants";
 import { actions } from "../store/rootSlice";
 import IRoute from "../interfaces/IRoute";
 
@@ -39,11 +39,13 @@ export const getPermitRoutes = async (permitNumber: string, dispatch: Dispatch):
   }
 };
 
-export const initiateSupervisions = async (routeBridgeTemplateIds: Array<number>, dispatch: Dispatch): Promise<Array<number>> => {
+export const initiateSupervisions = async (routeBridgeTemplateIds: Array<Array<number>>, dispatch: Dispatch): Promise<Array<number>> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { initiateSupervisions: false } });
 
-    const idsArrayParam = `[${routeBridgeTemplateIds.toString()}]`;
+    let idsArrayParam = "";
+    routeBridgeTemplateIds.forEach((r) => (idsArrayParam += "," + r.toString()));
+    idsArrayParam = "[" + idsArrayParam.substring(1) + "]";
     console.log("idsArrayParam" + idsArrayParam);
     const rResponse = await fetch(
       `${getOrigin()}/api/areaContractor/initiateSupervisions?routeBridgeTemplateIds=${encodeURIComponent(idsArrayParam)}`

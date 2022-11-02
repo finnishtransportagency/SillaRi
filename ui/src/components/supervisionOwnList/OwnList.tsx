@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
 import NoNetworkNoData from "../NoNetworkNoData";
 import OwnListAddModal from "./OwnListAddModal";
@@ -14,11 +15,12 @@ interface OwnListProps {
 
 const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [ownListIds, setOwnListIds] = useState<Array<number>>([]);
 
   const updateListFromStorage = () => {
-    getOwnlist(username).then((result) => {
+    getOwnlist(username, dispatch).then((result) => {
       if (result) {
         setOwnListIds(result);
       }
@@ -26,7 +28,7 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
   };
 
   useEffect(() => {
-    getOwnlist(username).then((result) => {
+    getOwnlist(username, dispatch).then((result) => {
       if (result) {
         setOwnListIds(result);
       }
@@ -34,8 +36,8 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
   }, [isModalOpen, username]);
 
   const removeItem = (supervisionId: number | undefined) => {
-    removeFromOwnlist(username, supervisionId).then(() =>
-      getOwnlist(username).then((result) => {
+    removeFromOwnlist(username, supervisionId, dispatch).then(() =>
+      getOwnlist(username, dispatch).then((result) => {
         if (result) {
           console.log(result);
           setOwnListIds(result);
