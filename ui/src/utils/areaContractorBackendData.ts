@@ -64,3 +64,31 @@ export const initiateSupervisions = async (routeBridgeTemplateIds: Array<number>
     throw new Error(err as string);
   }
 };
+
+export const initiateSupervisionss = async (routeBridgeTemplateIds: Array<Array<number>>, dispatch: Dispatch): Promise<Array<number>> => {
+  try {
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { initiateSupervisions: false } });
+
+    let idsArrayParam = "";
+    routeBridgeTemplateIds.forEach((r) => (idsArrayParam += "," + r.toString()));
+    idsArrayParam = "[" + idsArrayParam + "]";
+    console.log("idsArrayParam" + idsArrayParam);
+    const rResponse = await fetch(
+      `${getOrigin()}/api/areaContractor/initiateSupervisions?routeBridgeTemplateIds=${encodeURIComponent(idsArrayParam)}`
+    );
+
+    if (rResponse.ok) {
+      const supervisionIds = rResponse.json() as Promise<Array<number>>;
+      console.log("areaContractor/initiateSupervisions", routeBridgeTemplateIds);
+      return await supervisionIds;
+    } else if (rResponse.status === 403) {
+      return [];
+    } else {
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
+    }
+  } catch (err) {
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
+    throw new Error(err as string);
+  }
+};

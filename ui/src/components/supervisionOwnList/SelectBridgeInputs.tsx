@@ -3,7 +3,7 @@ import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import SelectBridgeInput from "./SelectBridgeInput";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
 import { useTranslation } from "react-i18next";
-import { initiateSupervisions } from "../../utils/areaContractorBackendData";
+import { initiateSupervisionss } from "../../utils/areaContractorBackendData";
 import { useDispatch } from "react-redux";
 import { useQuery, useQueryClient } from "react-query";
 import { getUserData, onRetry } from "../../utils/backendData";
@@ -20,17 +20,11 @@ interface SelectBridgeInputsProps {
 const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, closeModal }: SelectBridgeInputsProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [selectedIds, setSelectedIds] = useState<Array<number>>([]);
+  const [selectedIds, setSelectedIds] = useState<Array<Array<number>>>([]);
   const setSelectedRouteBridgeIds = (index: number, routeBridgeIds: Array<number>) => {
-    console.log("-----------------");
+    console.log(index);
+    selectedIds[index] = routeBridgeIds;
     console.log(selectedIds);
-    console.log(routeBridgeIds);
-    console.log(...selectedIds);
-    console.log(...routeBridgeIds);
-    const a = [...selectedIds, ...routeBridgeIds];
-    console.log(a);
-    console.log("-----------------");
-    setSelectedIds([...selectedIds, ...routeBridgeIds]);
   };
 
   const getSelectedRouteName = (permitRoute: OwnListPermitRouteType) => {
@@ -52,7 +46,7 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
 
   const done = async () => {
     //call backend to initiate supervisions and get their ids to own list keys
-    const supervisionIds = await initiateSupervisions(selectedIds, dispatch);
+    const supervisionIds = await initiateSupervisionss(selectedIds, dispatch);
 
     //save ownlist to storage
     await saveToOwnlist(username, supervisionIds, dispatch);
