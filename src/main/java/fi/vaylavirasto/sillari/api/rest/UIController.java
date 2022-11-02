@@ -25,6 +25,8 @@ import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -159,8 +161,9 @@ public class UIController {
     public ResponseEntity<?> userLogout(HttpServletRequest request) {
         String url = sillariConfig.getAmazonCognito().getUrl();
         String clientId = sillariConfig.getAmazonCognito().getClientId();
+        String logoutUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
         HashMap<String, Object> responseBody = new HashMap<>();
-        responseBody.put("redirectUrl", url + "/logout/?client_id=" + clientId);
+        responseBody.put("redirectUrl", url + "/logout/?client_id=" + clientId + "&logout_uri=" + URLEncoder.encode(logoutUrl, StandardCharsets.UTF_8));
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 

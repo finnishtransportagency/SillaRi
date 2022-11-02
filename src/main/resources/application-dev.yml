@@ -19,7 +19,8 @@ sillari:
     password: ${FIM_PASSWORD}
   amazoncognito:
     url: https://sillaridev.auth.eu-west-1.amazoncognito.com
-    clientId: 152i189u2cu0cae9dpg6am44b6    
+    clientId: 152i189u2cu0cae9dpg6am44b6
+    redirectUrl: https://sillaridev.testivaylapilvi.fi
 spring:
   application:
     name: SillaRi
