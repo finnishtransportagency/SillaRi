@@ -17,6 +17,19 @@ interface SelectBridgeInputsProps {
   closeModal: () => void;
 }
 
+const hasOnlyEmptyArrays = (ids: Array<Array<number>>) => {
+  console.log("hello");
+  console.log(ids);
+
+  ids.forEach((s) => {
+    console.log(s.length);
+    if (s.length > 0) {
+      return false;
+    }
+  });
+  return true;
+};
+
 const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, closeModal }: SelectBridgeInputsProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -58,19 +71,6 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
 
     updateOwnlistPage();
     closeModal();
-  };
-
-  const hasOnlyEmptyArrays = (ids: Array<Array<number>>) => {
-    console.log("hello");
-    console.log(ids);
-
-    ids.forEach((s) => {
-      console.log(s.length);
-      if (s.length > 0) {
-        return false;
-      }
-    });
-    return true;
   };
 
   return (
