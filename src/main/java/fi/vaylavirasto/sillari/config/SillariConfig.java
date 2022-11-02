@@ -15,6 +15,8 @@ public class SillariConfig {
     private Wmts wmts;
     @NotNull
     private Geoserver geoserver;
+    @NotNull
+    private AmazonCognito amazonCognito;
 
     @Data
     public static class Wmts {
@@ -30,5 +32,11 @@ public class SillariConfig {
         private String url;
         private String proxyHost;
         private Integer proxyPort;
+    }
+
+    @Data
+    public static class AmazonCognito {
+        private String url;
+        private String clientId;
     }
 }

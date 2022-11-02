@@ -18,6 +18,9 @@ sillari:
     #url: https://testiapi.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/getGroup2?displayName=sillari_sillanvalvoja
     username: ${FIM_USERNAME}
     password: ${FIM_PASSWORD}
+  amazoncognito:
+    url: http://localhost:3000
+    clientId: na  
 spring:
   application:
     name: SillaRi

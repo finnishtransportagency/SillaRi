@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Redirect, Route, Switch, useHistory } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import { IonApp, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Drivers, Storage as IonicStorage } from "@ionic/storage";
@@ -8,7 +8,6 @@ import { onlineManager, QueryClient, QueryClientProvider } from "react-query";
 import { persistQueryClient } from "react-query/persistQueryClient-experimental";
 import { createAsyncStoragePersistor } from "react-query/createAsyncStoragePersistor-experimental";
 import { useDispatch } from "react-redux";
-import Cookies from "js-cookie";
 import Supervisions from "./pages/Supervisions";
 import Settings from "./pages/Settings";
 import Map from "./pages/Map";
@@ -28,7 +27,6 @@ import AccessDenied from "./pages/AccessDenied";
 import IUserData from "./interfaces/IUserData";
 import Photos from "./pages/Photos";
 import UserInfo from "./pages/UserInfo";
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import { useTypedSelector, RootState } from "./store/store";
 import { getUserData, getVersionInfo, logoutUser } from "./utils/backendData";
 import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
@@ -88,7 +86,6 @@ const App: React.FC = () => {
   const [isInitialisedOffline, setInitialisedOffline] = useState<boolean>(false);
   const [isOkToContinue, setOkToContinue] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const history = useHistory();
 
   const {
     networkStatus: { isFailed = {}, failedStatus = {} },
@@ -164,19 +161,8 @@ const App: React.FC = () => {
   }, []);
 
   const logoutFromApp = () => {
-    logoutUser().then(() => {
-      serviceWorkerRegistration.unregister(() => {
-        const cookies = Cookies.get();
-        Object.keys(cookies).forEach((key) => {
-          Cookies.remove(key);
-        });
-      });
-
-      localStorage.clear();
-      setUserData(undefined);
-      history.replace("/");
-      history.go(0);
-      window.location.reload();
+    logoutUser().then((data) => {
+      window.location.href = data.redirectUrl;
     });
   };
 
