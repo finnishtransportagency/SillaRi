@@ -23,6 +23,9 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
   const [selectedIds, setSelectedIds] = useState<Array<Array<number>>>([]);
   const setSelectedRouteBridgeIds = (index: number, routeBridgeIds: Array<number>) => {
     selectedIds[index] = routeBridgeIds;
+    console.log("moi");
+    console.log(selectedIds);
+    console.log(hasOnlyEmptyArrays(selectedIds));
   };
 
   const getSelectedRouteName = (permitRoute: OwnListPermitRouteType) => {
@@ -58,7 +61,9 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
   };
 
   const hasOnlyEmptyArrays = (ids: Array<Array<number>>) => {
+    console.log("hello");
     console.log(ids);
+
     ids.forEach((s) => {
       console.log(s.length);
       if (s.length > 0) {
