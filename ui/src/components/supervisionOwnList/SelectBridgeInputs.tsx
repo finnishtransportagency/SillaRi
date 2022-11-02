@@ -57,6 +57,15 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
     closeModal();
   };
 
+  const hasOnlyEmptyArrays = (selectedIds: Array<Array<number>>) => {
+    selectedIds.forEach((s) => {
+      if (s.length > 0) {
+        return false;
+      }
+    });
+    return true;
+  };
+
   return (
     <>
       {permitRoutes.map((permitRoute, i) => (
@@ -95,7 +104,11 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
             <IonButton onClick={toPreviousPhase}>{t("supervisionOwnList.addModal.bridgeSelectInput.cancelButtonLabel")}</IonButton>
           </IonCol>
           <IonCol>
-            <IonButton class="ion-button ion-float-right" onClick={done} disabled={isLoadingUser || !selectedIds || selectedIds.length === 0}>
+            <IonButton
+              class="ion-button ion-float-right"
+              onClick={done}
+              disabled={isLoadingUser || !selectedIds || selectedIds.length === 0 || hasOnlyEmptyArrays(selectedIds)}
+            >
               {t("supervisionOwnList.addModal.bridgeSelectInput.saveButtonLabel")}
             </IonButton>
           </IonCol>
