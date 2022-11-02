@@ -71,7 +71,7 @@ export const initiateSupervisionss = async (routeBridgeTemplateIds: Array<Array<
 
     let idsArrayParam = "";
     routeBridgeTemplateIds.forEach((r) => (idsArrayParam += "," + r.toString()));
-    idsArrayParam = "[" + idsArrayParam + "]";
+    idsArrayParam = "[" + idsArrayParam.substring(1) + "]";
     console.log("idsArrayParam" + idsArrayParam);
     const rResponse = await fetch(
       `${getOrigin()}/api/areaContractor/initiateSupervisions?routeBridgeTemplateIds=${encodeURIComponent(idsArrayParam)}`
