@@ -18,18 +18,14 @@ interface SelectBridgeInputsProps {
 }
 
 const hasOnlyEmptyArrays = (ids: Array<Array<number>>) => {
-  console.log("hello");
-  console.log(ids);
-
+  let found = false;
   ids.forEach((s) => {
-    console.log(s.length);
     if (s.length > 0) {
-      console.log("here");
-      return false;
+      found = true;
     }
   });
-  console.log("there");
-  return true;
+
+  return !found;
 };
 
 const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, closeModal }: SelectBridgeInputsProps): JSX.Element => {
