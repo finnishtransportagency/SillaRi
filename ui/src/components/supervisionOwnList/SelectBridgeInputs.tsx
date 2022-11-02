@@ -57,8 +57,8 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
     closeModal();
   };
 
-  const hasOnlyEmptyArrays = (selectedIds: Array<Array<number>>) => {
-    selectedIds.forEach((s) => {
+  const hasOnlyEmptyArrays = (ids: Array<Array<number>>) => {
+    ids.forEach((s) => {
       if (s.length > 0) {
         return false;
       }
