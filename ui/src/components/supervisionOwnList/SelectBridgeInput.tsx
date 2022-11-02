@@ -14,19 +14,18 @@ const SelectBridgeInput = ({ index, routes, selectedRouteIndex, onChange }: Sele
   const [selectedIds, setSelectedIds] = useState<Array<number>>([]);
 
   const updateSelectedRouteBridges = (selectedId: number, selected: boolean) => {
-    console.log("updateSelectedRouteBridges");
     if (selected === true) {
       selectedIds.push(selectedId);
       setSelectedIds(selectedIds);
+      onChange(index, selectedIds);
     } else {
       const array = selectedIds.filter((id) => {
-        console.log(id + "HELLO " + selectedId + " " + (id !== selectedId));
         return id !== selectedId;
       });
+
       setSelectedIds(array);
+      onChange(index, array);
     }
-    console.log(selectedIds);
-    onChange(index, selectedIds);
   };
 
   const route = selectedRouteIndex === null ? null : routes[selectedRouteIndex];

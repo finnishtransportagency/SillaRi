@@ -17,26 +17,13 @@ interface SelectBridgeInputsProps {
   closeModal: () => void;
 }
 
-const hasOnlyEmptyArrays = (ids: Array<Array<number>>) => {
-  let found = false;
-  ids.forEach((s) => {
-    if (s.length > 0) {
-      found = true;
-    }
-  });
-
-  return !found;
-};
-
 const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, closeModal }: SelectBridgeInputsProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [selectedIds, setSelectedIds] = useState<Array<Array<number>>>([]);
   const setSelectedRouteBridgeIds = (index: number, routeBridgeIds: Array<number>) => {
     selectedIds[index] = routeBridgeIds;
-    console.log("moi");
-    console.log(selectedIds);
-    console.log(hasOnlyEmptyArrays(selectedIds));
+    setSelectedIds(selectedIds);
   };
 
   const getSelectedRouteName = (permitRoute: OwnListPermitRouteType) => {
@@ -109,11 +96,7 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
             <IonButton onClick={toPreviousPhase}>{t("supervisionOwnList.addModal.bridgeSelectInput.cancelButtonLabel")}</IonButton>
           </IonCol>
           <IonCol>
-            <IonButton
-              class="ion-button ion-float-right"
-              onClick={done}
-              disabled={isLoadingUser || !selectedIds || selectedIds.length === 0 || hasOnlyEmptyArrays(selectedIds)}
-            >
+            <IonButton class="ion-button ion-float-right" onClick={done} disabled={isLoadingUser || !selectedIds}>
               {t("supervisionOwnList.addModal.bridgeSelectInput.saveButtonLabel")}
             </IonButton>
           </IonCol>
