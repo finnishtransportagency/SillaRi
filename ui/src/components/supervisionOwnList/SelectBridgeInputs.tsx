@@ -24,9 +24,11 @@ const hasOnlyEmptyArrays = (ids: Array<Array<number>>) => {
   ids.forEach((s) => {
     console.log(s.length);
     if (s.length > 0) {
+      console.log("here");
       return false;
     }
   });
+  console.log("there");
   return true;
 };
 
