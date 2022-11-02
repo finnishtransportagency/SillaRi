@@ -70,7 +70,7 @@ public class AWSS3Client {
         if ("dev".equals(environment) || "localhost".equals(environment)) {
             return SILLARI_REPORT_PDF_BUCKET_DEV;
         } else {
-            return SILLARI_REPORT_PDF_BUCKET_DEV + "-" + environment;
+            return SILLARI_PHOTOS_BUCKET_DEV + "-" + environment;
         }
     }
 
