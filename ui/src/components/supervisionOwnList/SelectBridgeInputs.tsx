@@ -58,7 +58,9 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
   };
 
   const hasOnlyEmptyArrays = (ids: Array<Array<number>>) => {
+    console.log(ids);
     ids.forEach((s) => {
+      console.log(s.length);
       if (s.length > 0) {
         return false;
       }
