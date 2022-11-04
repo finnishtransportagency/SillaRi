@@ -16,7 +16,7 @@ import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { useTypedSelector, RootState } from "../store/store";
 import { getUserData, onRetry } from "../utils/backendData";
 import { cancelSupervision, deleteSupervisionImages, getSupervision, updateSupervisionReport } from "../utils/supervisionBackendData";
-import { SupervisionStatus, SupervisorType } from "../utils/constants";
+import { SupervisionStatus } from "../utils/constants";
 import { isCustomerUsesSillariPermitSupervision, reportHasUnsavedChanges } from "../utils/supervisionUtil";
 import { isSupervisionReportValid } from "../utils/validation";
 

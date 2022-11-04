@@ -27,7 +27,7 @@ import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
 import { getUserData, onRetry } from "../utils/backendData";
 import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
-import { SupervisionStatus, SupervisorType } from "../utils/constants";
+import { SupervisionStatus } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 import { isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
 

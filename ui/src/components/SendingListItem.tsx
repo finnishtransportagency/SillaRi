@@ -25,7 +25,7 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
   const [supervisionUnlocked, setSupervisionUnlocked] = useState<boolean>(false);
   const [passwordPopoverOpen, setPasswordPopoverOpen] = useState<boolean>(false);
 
-  const { id: supervisionId, routeTransportId, routeBridge, routeTransport, startedTime, savedOffline, supervisorType } = supervision;
+  const { id: supervisionId, routeTransportId, routeBridge, routeTransport, startedTime, savedOffline } = supervision;
   const { bridge, route } = routeBridge || {};
   const { identifier = "", name = "" } = bridge || {};
   const { permit } = route || {};
@@ -56,7 +56,7 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
       }
     }
     // Deps must include passwordPopoverOpen to trigger page refresh after password has been provided in popover
-  }, [username, supervisionId, supervisorType, passwordPopoverOpen]);
+  }, [username, supervisionId, passwordPopoverOpen]);
 
   return (
     <IonItem className="ion-margin-top" lines="none">
