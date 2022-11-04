@@ -11,14 +11,15 @@ import SupervisionObservationsSummary from "../components/SupervisionObservation
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
-import { useTypedSelector, RootState } from "../store/store";
+import { RootState, useTypedSelector } from "../store/store";
 import { getUserData, onRetry } from "../utils/backendData";
 import { finishAndCompleteSupervision, finishSupervision, getSupervision } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
-import { SupervisionListType, SupervisionStatus, SupervisorType } from "../utils/constants";
+import { SupervisionListType, SupervisionStatus } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 import { isSupervisionReportValid } from "../utils/validation";
 import { removeFromOwnlist } from "../utils/ownlistStorageUtil";
+import { isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
 
 interface SummaryProps {
   supervisionId: string;
@@ -278,11 +279,11 @@ const SupervisionSummary = (): JSX.Element => {
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
               saveDisabled={
-                !username || (!routeTransportId && supervisorType !== SupervisorType.AREA_CONTRACTOR) || isLoading || notAllowedToEdit || !reportValid
+                !username || (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) || isLoading || notAllowedToEdit || !reportValid
               }
               cancelDisabled={isLoading || notAllowedToEdit}
               sendImmediatelyDisabled={
-                !username || (!routeTransportId && supervisorType !== SupervisorType.AREA_CONTRACTOR) || isLoading || notAllowedToEdit || !reportValid
+                !username || (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) || isLoading || notAllowedToEdit || !reportValid
               }
               saveChanges={saveReport}
               cancelChanges={editReport}

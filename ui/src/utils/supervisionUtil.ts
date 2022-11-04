@@ -198,35 +198,39 @@ export const getTransportTime = (transport: IRouteTransport): Date | undefined =
   return departedStatus.length > 0 ? departedStatus[0].time : plannedDepartureTime;
 };
 
-export const isCustomerUsesSillariPermitSupervision = (supervision: ISupervision): boolean => {
-  console.log("isCustomerUsesSillariPermitSupervision " + supervision.id);
-  const { routeBridge } = supervision;
-  if (routeBridge) {
-    const { route } = routeBridge;
-    if (route) {
-      const { permit } = route;
-      if (permit) {
-        console.log(permit.customerUsesSillari);
-        if (permit.customerUsesSillari === undefined) {
-          console.log("customerUsesSillari is undefined, we treat that false");
-          return false;
-        } else {
-          console.log("customerUsesSillari not undefined, we return " + permit.customerUsesSillari);
+export const isCustomerUsesSillariPermitSupervision = (supervision: undefined | ISupervision): boolean => {
+  if (supervision) {
+    console.log("isCustomerUsesSillariPermitSupervision " + supervision.id);
+    const { routeBridge } = supervision;
+    if (routeBridge) {
+      const { route } = routeBridge;
+      if (route) {
+        const { permit } = route;
+        if (permit) {
+          console.log(permit.customerUsesSillari);
+          if (permit.customerUsesSillari === undefined) {
+            console.log("customerUsesSillari is undefined, we treat that false");
+            return false;
+          } else {
+            console.log("customerUsesSillari not undefined, we return " + permit.customerUsesSillari);
+            return permit.customerUsesSillari;
+          }
           return permit.customerUsesSillari;
         }
-        return permit.customerUsesSillari;
+      } else {
+        console.log(
+          "Supervision routebridge  doesn't have route. Should not happen. Could not see if parmit is customer uses sillari. We use supervision.supervisorType instaed which migth be wronb with old supervisions. " +
+            supervision.id
+        );
       }
     } else {
       console.log(
-        "Supervision routebridge  doesn't have route. Should not happen. Could not see if parmit is customer uses sillari. We use supervision.supervisorType instaed which migth be wronb with old supervisions. " +
+        "Supervision doesn't have route bridge. Should not happen. Could not see if parmit is customer uses sillari. We use supervision.supervisorType instaed which migth be wronb with old supervisions. " +
           supervision.id
       );
     }
   } else {
-    console.log(
-      "Supervision doesn't have route bridge. Should not happen. Could not see if parmit is customer uses sillari. We use supervision.supervisorType instaed which migth be wronb with old supervisions. " +
-        supervision.id
-    );
+    console.log("Supervision doesn't exist. Should not happen. Could not see if parmit is customer uses sillari. Total fail. ");
   }
   return !(supervision.supervisorType === SupervisorType.AREA_CONTRACTOR);
 };

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { IonButton, IonCheckbox, IonCol, IonGrid, IonItem, IonLabel, IonRow, useIonAlert } from "@ionic/react";
 import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
-import { SILLARI_SYSTEM_USER, SupervisionStatus, SupervisorType, TransportStatus } from "../utils/constants";
+import { SILLARI_SYSTEM_USER, SupervisionStatus, TransportStatus } from "../utils/constants";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import IStartCrossingInput from "../interfaces/IStartCrossingInput";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import SupervisionStatusInfo from "./SupervisionStatusInfo";
 import PermitLinkItem from "./PermitLinkItem";
+import { isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
 
 interface BridgeDetailFooterProps {
   permit: IPermit;
@@ -67,7 +68,7 @@ const BridgeDetailFooter = ({ permit, supervision, username, isLoadingSupervisio
   const statusByCurrentSupervisor =
     statusUser === SILLARI_SYSTEM_USER || (!isLoadingSupervisorUser && currentSupervisor && statusUser === currentSupervisor);
   const startingAllowed =
-    username && supervisionId && (routeTransportId || supervisorType === SupervisorType.AREA_CONTRACTOR) && conformsToPermit && !crossingDenied;
+    username && supervisionId && (routeTransportId || !isCustomerUsesSillariPermitSupervision(supervision)) && conformsToPermit && !crossingDenied;
 
   // Set-up mutations for modifying data later
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error

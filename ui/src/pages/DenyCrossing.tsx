@@ -29,6 +29,7 @@ import { getUserData, onRetry } from "../utils/backendData";
 import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
 import { SupervisionStatus, SupervisorType } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
+import {isCustomerUsesSillariPermitSupervision} from "../utils/supervisionUtil";
 
 interface DenyCrossingProps {
   supervisionId: string;
@@ -204,7 +205,7 @@ const DenyCrossing = (): JSX.Element => {
                     size="large"
                     disabled={
                       !username ||
-                      (!routeTransportId && supervisorType !== SupervisorType.AREA_CONTRACTOR) ||
+                      (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) ||
                       isLoadingSupervision ||
                       isSendingDenyCrossing ||
                       !supervisionPending ||

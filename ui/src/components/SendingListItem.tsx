@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { IonButton, IonCheckbox, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import moment from "moment";
 import ISupervision from "../interfaces/ISupervision";
-import { DATE_TIME_FORMAT_MIN, SupervisionListType, SupervisorType } from "../utils/constants";
+import { DATE_TIME_FORMAT_MIN, SupervisionListType } from "../utils/constants";
 import { isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
 import "./SendingList.css";
 import { useTranslation } from "react-i18next";
