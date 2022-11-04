@@ -186,8 +186,10 @@ const SupervisionSummary = (): JSX.Element => {
       },
       onSuccess: (data) => {
         // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
-
         queryClient.setQueryData(supervisionQueryKey, data);
+
+        queryClient.invalidateQueries(["getSupervisionSendingList"]);
+        //setToastMessage(t("sendingList.sentOk"));
       },
     }
   );
