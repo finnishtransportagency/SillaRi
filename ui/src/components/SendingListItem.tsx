@@ -56,7 +56,7 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
       }
     }
     // Deps must include passwordPopoverOpen to trigger page refresh after password has been provided in popover
-  }, [username, supervisionId, passwordPopoverOpen]);
+  }, [username, supervision, supervisionId, passwordPopoverOpen]);
 
   return (
     <IonItem className="ion-margin-top" lines="none">
