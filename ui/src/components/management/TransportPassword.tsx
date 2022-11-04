@@ -13,7 +13,7 @@ interface TransportPasswordProps {
   permit: IPermit;
   modifiedRouteTransportDetail: IRouteTransport;
   isSendingTransportUpdate: boolean;
-  routeTransportPasswordMutation: UseMutationResult<IRouteTransportPassword, string, number, unknown>;
+  routeTransportPasswordMutation: UseMutationResult<IRouteTransportPassword, Error | string, number, unknown>;
   dismissPassword: () => void;
 }
 

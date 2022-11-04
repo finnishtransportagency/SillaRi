@@ -410,11 +410,11 @@ export const completeSupervisions = async (completeCrossingInput: ICompleteCross
       console.log("completeSupervisions response", completeSupervisionsResult);
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { completeSupervisions: true } });
-      throw new Error(NETWORK_RESPONSE_NOT_OK);
+      throw createErrorFromStatusCode(completeSupervisionsResponse.status);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { completeSupervisions: true } });
-    throw new Error(err as string);
+    throw createCustomError(err);
   }
 };
 
