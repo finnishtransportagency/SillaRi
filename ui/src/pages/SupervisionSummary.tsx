@@ -281,11 +281,19 @@ const SupervisionSummary = (): JSX.Element => {
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
               saveDisabled={
-                !username || (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) || isLoading || notAllowedToEdit || !reportValid
+                !username ||
+                (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) ||
+                isLoading ||
+                notAllowedToEdit ||
+                !reportValid
               }
               cancelDisabled={isLoading || notAllowedToEdit}
               sendImmediatelyDisabled={
-                !username || (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) || isLoading || notAllowedToEdit || !reportValid
+                !username ||
+                (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) ||
+                isLoading ||
+                notAllowedToEdit ||
+                !reportValid
               }
               saveChanges={saveReport}
               cancelChanges={editReport}
