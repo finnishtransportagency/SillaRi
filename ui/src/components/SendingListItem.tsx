@@ -3,6 +3,7 @@ import { IonButton, IonCheckbox, IonCol, IonGrid, IonIcon, IonItem, IonLabel, Io
 import moment from "moment";
 import ISupervision from "../interfaces/ISupervision";
 import { DATE_TIME_FORMAT_MIN, SupervisionListType, SupervisorType } from "../utils/constants";
+import { isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
 import "./SendingList.css";
 import { useTranslation } from "react-i18next";
 import { getPasswordFromStorage } from "../utils/trasportCodeStorageUtil";
@@ -43,7 +44,7 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
   useEffect(() => {
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
     if (username) {
-      if (supervisorType === SupervisorType.AREA_CONTRACTOR) {
+      if (!isCustomerUsesSillariPermitSupervision(supervision)) {
         setSupervisionUnlocked(true);
       } else {
         getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId).then((result) => {
