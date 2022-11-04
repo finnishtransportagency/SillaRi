@@ -3,7 +3,7 @@ import IRouteTransport from "../interfaces/IRouteTransport";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
-import { SupervisionStatus, TransportStatus } from "./constants";
+import { SupervisionStatus, SupervisorType, TransportStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 import { Moment } from "moment/moment";
 
@@ -207,7 +207,7 @@ export const isCustomerUsesSillariPermitSupervision = (supervision: ISupervision
       const { permit } = route;
       if (permit) {
         console.log(permit.customerUsesSillari);
-        if (permit.customerUsesSillari !== undefined) {
+        if (permit.customerUsesSillari === undefined) {
           console.log("customerUsesSillari is undefined, we treat that false");
           return false;
         } else {
@@ -228,5 +228,5 @@ export const isCustomerUsesSillariPermitSupervision = (supervision: ISupervision
         supervision.id
     );
   }
-  return true;
+  return !(supervision.supervisorType === SupervisorType.AREA_CONTRACTOR);
 };
