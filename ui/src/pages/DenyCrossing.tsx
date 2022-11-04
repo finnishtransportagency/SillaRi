@@ -29,7 +29,7 @@ import { getUserData, onRetry } from "../utils/backendData";
 import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
 import { SupervisionStatus, SupervisorType } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
-import {isCustomerUsesSillariPermitSupervision} from "../utils/supervisionUtil";
+import { isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
 
 interface DenyCrossingProps {
   supervisionId: string;
