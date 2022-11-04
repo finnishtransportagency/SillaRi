@@ -207,12 +207,11 @@ export const isCustomerUsesSillariPermitSupervision = (supervision: ISupervision
       const { permit } = route;
       if (permit) {
         console.log(permit.customerUsesSillari);
-        if(permit.customerUsesSillari !== undefined){
-          console.log("customerUsesSillari is undefined, we treat that false")
+        if (permit.customerUsesSillari !== undefined) {
+          console.log("customerUsesSillari is undefined, we treat that false");
           return false;
-        }
-        else{
-          console.log("customerUsesSillari not undefined, we return " + permit.customerUsesSillari)
+        } else {
+          console.log("customerUsesSillari not undefined, we return " + permit.customerUsesSillari);
           return permit.customerUsesSillari;
         }
         return permit.customerUsesSillari;
