@@ -387,7 +387,6 @@ public class SupervisionController {
             isPermitCustomerUsesSillari = supervisionModel.getRouteBridge().getRoute().getPermit().getCustomerUsesSillari();
         }
         catch (NullPointerException nullPointerException){
-            var a = supervisionService.getSupervision(supervisionModel.getId(), true, false);
             isPermitCustomerUsesSillari = supervisionService.getSupervision(supervisionModel.getId(), true, false).getRouteBridge().getRoute().getPermit().getCustomerUsesSillari();
         }
         return isPermitCustomerUsesSillari;

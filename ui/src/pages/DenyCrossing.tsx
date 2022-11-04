@@ -72,7 +72,7 @@ const DenyCrossing = (): JSX.Element => {
     }
   );
 
-  const { routeTransportId = 0, routeBridge, currentStatus, supervisorType } = supervision || {};
+  const { routeTransportId = 0, routeBridge, currentStatus } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
   const { route, bridge } = routeBridge || {};
   const { name = "", identifier = "" } = bridge || {};

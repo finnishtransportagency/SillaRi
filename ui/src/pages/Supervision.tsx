@@ -59,7 +59,7 @@ const Supervision = (): JSX.Element => {
     }
   );
 
-  const { routeTransportId = 0, supervisorType, report: savedReport, currentStatus, images = [] } = supervision || {};
+  const { routeTransportId = 0, report: savedReport, currentStatus, images = [] } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
 
   // Set-up mutations for modifying data later
