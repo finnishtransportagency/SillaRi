@@ -200,26 +200,26 @@ export const getTransportTime = (transport: IRouteTransport): Date | undefined =
 
 export const isCustomerUsesSillariPermitSupervision = (supervision: undefined | ISupervision): boolean => {
   if (supervision) {
-    console.log("isCustomerUsesSillariPermitSupervision " + supervision.id);
+    //console.log("isCustomerUsesSillariPermitSupervision " + supervision.id);
     const { routeBridge } = supervision;
     if (routeBridge) {
       const { route } = routeBridge;
       if (route) {
         const { permit } = route;
         if (permit) {
-          console.log(permit.customerUsesSillari);
+          //console.log(permit.customerUsesSillari);
           if (permit.customerUsesSillari === undefined) {
-            console.log("customerUsesSillari is undefined, we treat that false");
+            //console.log("customerUsesSillari is undefined, we treat that false");
             return false;
           } else {
-            console.log("customerUsesSillari not undefined, we return " + permit.customerUsesSillari);
+            //console.log("customerUsesSillari not undefined, we return " + permit.customerUsesSillari);
             return permit.customerUsesSillari;
           }
           return permit.customerUsesSillari;
         }
       } else {
-        console.log(
-          "Supervision routebridge  doesn't have route. Should not happen. Could not see if parmit is customer uses sillari. We use supervision.supervisorType instaed which migth be wronb with old supervisions. " +
+        console.error(
+          "Supervision routebridge  doesn't have route. Should not happen. Could not see if permit is customer uses sillari. We use supervision.supervisorType instead which migth be wronb with old supervisions. " +
             supervision.id
         );
       }
