@@ -14,6 +14,7 @@ interface SentSupervisionReportsAccordionProps {
   sentSupervisions: ISupervision[];
   setReportModalOpen: Dispatch<SetStateAction<boolean>>;
   setSelectedSupervisionId: Dispatch<SetStateAction<number | undefined>>;
+  setIsCustomerUsesSillariPermitSupervision: Dispatch<SetStateAction<boolean>>;
 }
 
 const SentSupervisionReportsAccordion = ({
@@ -21,11 +22,14 @@ const SentSupervisionReportsAccordion = ({
   sentSupervisions,
   setReportModalOpen,
   setSelectedSupervisionId,
+  setIsCustomerUsesSillariPermitSupervision,
 }: SentSupervisionReportsAccordionProps): JSX.Element => {
   const [supervisionDays, setSupervisionDays] = useState<ISupervisionDay[]>([]);
 
   useEffect(() => {
     if (sentSupervisions && sentSupervisions.length > 0) {
+      console.log("in accordion sentSupervisions");
+      console.log(sentSupervisions);
       const groupedSupervisions = groupSupervisionsBySignedDate(sentSupervisions);
       groupedSupervisions.forEach((day) => {
         const { supervisions = [] } = day;
@@ -70,6 +74,7 @@ const SentSupervisionReportsAccordion = ({
                     username={username}
                     setReportModalOpen={setReportModalOpen}
                     setSelectedSupervisionId={setSelectedSupervisionId}
+                    setIsCustomerUsesSillariPermitSupervision={setIsCustomerUsesSillariPermitSupervision}
                   />
                 );
               })}

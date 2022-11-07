@@ -13,6 +13,7 @@ interface SentSupervisionReportItemProps {
   supervision: ISupervision;
   setReportModalOpen: Dispatch<SetStateAction<boolean>>;
   setSelectedSupervisionId: Dispatch<SetStateAction<number | undefined>>;
+  setIsCustomerUsesSillariPermitSupervision: Dispatch<SetStateAction<boolean>>;
 }
 
 const SentSupervisionReportItem = ({
@@ -20,6 +21,7 @@ const SentSupervisionReportItem = ({
   supervision,
   setReportModalOpen,
   setSelectedSupervisionId,
+  setIsCustomerUsesSillariPermitSupervision: setIsCustomerUsesSillariPermitSupervision,
 }: SentSupervisionReportItemProps): JSX.Element => {
   const { t } = useTranslation();
   const [supervisionUnlocked, setSupervisionUnlocked] = useState<boolean>(false);
@@ -28,12 +30,15 @@ const SentSupervisionReportItem = ({
   const { bridge, route } = routeBridge || {};
   const { identifier = "", name = "", municipality = "" } = bridge || {};
   const { permit } = route || {};
-  const { permitNumber } = permit || {};
+  const { permitNumber, customerUsesSillari } = permit || {};
   const { tractorUnit = "" } = routeTransport || {};
   const reportSignedTime = getReportSignedTime(supervision);
 
   const openSupervisionReport = () => {
     setSelectedSupervisionId(supervisionId);
+    console.log("settin to2 " + customerUsesSillari ? customerUsesSillari : false);
+    console.log("settin to " + customerUsesSillari);
+    setIsCustomerUsesSillariPermitSupervision(customerUsesSillari ? customerUsesSillari : false);
     setReportModalOpen(true);
   };
 

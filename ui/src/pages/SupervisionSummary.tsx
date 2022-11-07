@@ -57,7 +57,7 @@ const SupervisionSummary = (): JSX.Element => {
     }
   );
 
-  const { routeTransportId = 0, report, currentStatus, supervisorType, images = [] } = supervision || {};
+  const { routeTransportId = 0, report, currentStatus, images = [] } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
 
   const returnToSupervisionList = (message: string) => {
@@ -102,6 +102,8 @@ const SupervisionSummary = (): JSX.Element => {
             savedOffline: !onlineManager.isOnline(),
             finishedTime: newData.finishTime,
           } as ISupervision;
+          console.log("updatedSupervision in    finish");
+          console.log(updatedSupervision);
           return updatedSupervision;
         });
 
@@ -126,7 +128,8 @@ const SupervisionSummary = (): JSX.Element => {
       },
       onSuccess: (data) => {
         // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
-
+        console.log("setQueryData" + supervisionQueryKey);
+        console.log(data);
         queryClient.setQueryData(supervisionQueryKey, data);
       },
     }
@@ -144,6 +147,7 @@ const SupervisionSummary = (): JSX.Element => {
 
         // Cancel any outgoing refetches so they don't overwrite the optimistic update below
         await queryClient.cancelQueries(supervisionQueryKey);
+        await queryClient.cancelQueries("getSupervisionSendingList");
 
         // Set the current status to REPORT_SIGNED here since the backend won't be called yet when offline
         let updatedSupervision: ISupervision;
@@ -164,6 +168,9 @@ const SupervisionSummary = (): JSX.Element => {
             savedOffline: !onlineManager.isOnline(),
             finishedTime: newData.finishTime,
           } as ISupervision;
+
+          console.log("updatedSupervision in    finish and compl");
+          console.log(updatedSupervision);
           return updatedSupervision;
         });
 
@@ -186,6 +193,8 @@ const SupervisionSummary = (): JSX.Element => {
       },
       onSuccess: (data) => {
         // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+        console.log("setQueryData" + supervisionQueryKey);
+        console.log(data);
         queryClient.setQueryData(supervisionQueryKey, data);
 
         queryClient.invalidateQueries(["getSupervisionSendingList"]);

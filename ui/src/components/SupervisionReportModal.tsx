@@ -16,7 +16,8 @@ interface SupervisionReportModalProps {
 
 const SupervisionReportModal = ({ isOpen, supervision, closeModal }: SupervisionReportModalProps): JSX.Element => {
   const { t } = useTranslation();
-
+  console.log("Booboo2");
+  console.log(supervision);
   const { report, images = [] } = supervision || {};
 
   return (

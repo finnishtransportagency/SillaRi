@@ -199,6 +199,20 @@ export const getSupervisionNoPasscode = async (supervisionId: number, dispatch: 
   }
 };
 
+export const getSupervisionMaybeNoPasscode = async (
+  supervisionId: number,
+  usePassCode: boolean,
+  username: string | null,
+  transportCode: string | null,
+  dispatch: Dispatch
+): Promise<ISupervision> => {
+  if (usePassCode) {
+    return getSupervision(supervisionId, typeof username === "string" ? username : "", transportCode, dispatch);
+  } else {
+    return getSupervisionNoPasscode(supervisionId, dispatch);
+  }
+};
+
 export const updateConformsToPermit = async (updateRequest: ISupervision, username: string, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("UpdateConformsToPermit", updateRequest);
