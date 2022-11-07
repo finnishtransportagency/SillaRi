@@ -79,7 +79,10 @@ const DenyCrossing = (): JSX.Element => {
   const { permit } = route || {};
 
   const supervisionPending =
-    !isLoadingSupervision && (supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED);
+    !isLoadingSupervision &&
+    (supervisionStatus === SupervisionStatus.PLANNED ||
+      supervisionStatus === SupervisionStatus.CANCELLED ||
+      supervisionStatus === SupervisionStatus.OWN_LIST_PLANNED);
 
   // Set-up mutations for modifying data later
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
