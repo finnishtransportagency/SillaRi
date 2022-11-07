@@ -28,8 +28,6 @@ const SentSupervisionReportsAccordion = ({
 
   useEffect(() => {
     if (sentSupervisions && sentSupervisions.length > 0) {
-      console.log("in accordion sentSupervisions");
-      console.log(sentSupervisions);
       const groupedSupervisions = groupSupervisionsBySignedDate(sentSupervisions);
       groupedSupervisions.forEach((day) => {
         const { supervisions = [] } = day;

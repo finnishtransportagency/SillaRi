@@ -28,11 +28,6 @@ const SentSupervisionReportModalContainer = ({
 }: SentSupervisionReportProps): JSX.Element => {
   const dispatch = useDispatch();
 
-  console.log("Boo id oo");
-  console.log(selectedSupervisionId);
-  console.log(username);
-  console.log(isCustomerUsesSillariPermitSupervision);
-
   const { data: supervision } = useQuery(
     ["getSupervision", Number(selectedSupervisionId)],
     () => getSupervisionMaybeNoPasscode(Number(selectedSupervisionId), isCustomerUsesSillariPermitSupervision, username, null, dispatch),
@@ -49,9 +44,6 @@ const SentSupervisionReportModalContainer = ({
       },
     }
   );
-
-  console.log("Booboo");
-  console.log(supervision);
 
   const closeModal = () => {
     setSelectedSupervisionId(undefined);

@@ -66,16 +66,12 @@ const Header = ({
       });
       setSentSupervisions(sent);
 
-      console.log("sent set ti");
-      console.log(sent);
-
       const unsent = supervisionList.filter((supervision) => {
         const { statusHistory = [] } = supervision || {};
         return !isSupervisionSigned(statusHistory);
       });
       setUnsentSupervisions(unsent);
-      console.log("unsent set ti");
-      console.log(unsent);
+
       // Store whether a supervision was saved to the sending list when offline
       // Note: this only works if the user does not refresh the page after coming back online
       // NOTE: this has been removed until later as it's related to further development
