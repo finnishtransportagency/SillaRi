@@ -36,8 +36,6 @@ const SentSupervisionReportItem = ({
 
   const openSupervisionReport = () => {
     setSelectedSupervisionId(supervisionId);
-    console.log("settin to2 " + customerUsesSillari ? customerUsesSillari : false);
-    console.log("settin to " + customerUsesSillari);
     setIsCustomerUsesSillariPermitSupervision(customerUsesSillari ? customerUsesSillari : false);
     setReportModalOpen(true);
   };

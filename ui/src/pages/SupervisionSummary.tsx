@@ -102,8 +102,6 @@ const SupervisionSummary = (): JSX.Element => {
             savedOffline: !onlineManager.isOnline(),
             finishedTime: newData.finishTime,
           } as ISupervision;
-          console.log("updatedSupervision in    finish");
-          console.log(updatedSupervision);
           return updatedSupervision;
         });
 
@@ -128,8 +126,7 @@ const SupervisionSummary = (): JSX.Element => {
       },
       onSuccess: (data) => {
         // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
-        console.log("setQueryData" + supervisionQueryKey);
-        console.log(data);
+
         queryClient.setQueryData(supervisionQueryKey, data);
       },
     }
@@ -168,9 +165,6 @@ const SupervisionSummary = (): JSX.Element => {
             savedOffline: !onlineManager.isOnline(),
             finishedTime: newData.finishTime,
           } as ISupervision;
-
-          console.log("updatedSupervision in    finish and compl");
-          console.log(updatedSupervision);
           return updatedSupervision;
         });
 
@@ -193,8 +187,7 @@ const SupervisionSummary = (): JSX.Element => {
       },
       onSuccess: (data) => {
         // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
-        console.log("setQueryData" + supervisionQueryKey);
-        console.log(data);
+
         queryClient.setQueryData(supervisionQueryKey, data);
 
         queryClient.invalidateQueries(["getSupervisionSendingList"]);
