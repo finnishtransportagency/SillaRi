@@ -36,8 +36,7 @@ const SentSupervisionReportModalContainer = ({
       staleTime: Infinity,
       enabled: !!username && selectedSupervisionId !== undefined,
       onSuccess: (data) => {
-        console.log("Boo GetSupervision done", data.id);
-        console.log(supervision);
+        console.log("GetSupervision done", data.id);
       },
       onError: () => {
         console.error("Fetching report fail", selectedSupervisionId);

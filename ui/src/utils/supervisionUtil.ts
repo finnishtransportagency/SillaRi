@@ -224,14 +224,14 @@ export const isCustomerUsesSillariPermitSupervision = (supervision: undefined | 
         );
       }
     } else {
-      console.log(
-        "Supervision doesn't have route bridge. Should not happen. Could not see if parmit is customer uses sillari. We use supervision.supervisorType instaed which migth be wronb with old supervisions. " +
+      console.error(
+        "Supervision doesn't have route bridge. Should not happen. Could not see if parmit is customer uses sillari. We use supervision.supervisorType instead which might be wrong with old supervisions. " +
           supervision.id
       );
     }
     return !(supervision.supervisorType === SupervisorType.AREA_CONTRACTOR);
   } else {
-    console.log("Supervision doesn't exist. Should not happen. Could not see if parmit is customer uses sillari. Total fail. ");
+    console.error("Supervision doesn't exist. Should not happen. Could not see if parmit is customer uses sillari. Total fail. ");
   }
   //never should be here
   return false;
