@@ -13,7 +13,6 @@ interface SentSupervisionReportProps {
   selectedSupervisionId: number | undefined;
   setSelectedSupervisionId: Dispatch<SetStateAction<number | undefined>>;
   isCustomerUsesSillariPermitSupervision: boolean;
-  setIsCustomerUsesSillariPermitSupervision: Dispatch<SetStateAction<boolean>>;
   username: string;
 }
 
@@ -23,7 +22,6 @@ const SentSupervisionReportModalContainer = ({
   selectedSupervisionId,
   setSelectedSupervisionId,
   isCustomerUsesSillariPermitSupervision,
-  setIsCustomerUsesSillariPermitSupervision,
   username,
 }: SentSupervisionReportProps): JSX.Element => {
   const dispatch = useDispatch();

@@ -21,7 +21,7 @@ const SentSupervisionReportItem = ({
   supervision,
   setReportModalOpen,
   setSelectedSupervisionId,
-  setIsCustomerUsesSillariPermitSupervision: setIsCustomerUsesSillariPermitSupervision,
+  setIsCustomerUsesSillariPermitSupervision,
 }: SentSupervisionReportItemProps): JSX.Element => {
   const { t } = useTranslation();
   const [supervisionUnlocked, setSupervisionUnlocked] = useState<boolean>(false);

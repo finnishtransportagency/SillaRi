@@ -225,7 +225,6 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
         setSelectedSupervisionId={setSelectedSupervisionId}
         username={username}
         isCustomerUsesSillariPermitSupervision={isCustomerUsesSillariPermitSupervision}
-        setIsCustomerUsesSillariPermitSupervision={setIsCustomerUsesSillariPermitSupervision}
       />
     </IonModal>
   );
