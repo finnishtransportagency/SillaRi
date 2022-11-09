@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonLabel, IonRow, IonText } from "@ionic/react";
 import SelectRouteInput from "./SelectRouteInput";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
 import { useTranslation } from "react-i18next";
@@ -41,9 +41,15 @@ const SelectRouteInputs = ({ permitRoutes, toNextPhase, toPreviousPhase }: Selec
         <IonGrid key={"permit_" + i}>
           <IonRow>
             <IonCol>
-              <IonText>
-                {t("supervisionOwnList.addModal.routeSelectInput.permitLabel")} {permitRoute.permitNumber}
-              </IonText>
+              <IonLabel className="headingText">{t("supervisionOwnList.addModal.routeSelectInput.permitLabel")}</IonLabel>
+            </IonCol>
+            <IonCol className="ion-text-left" size="8">
+              <IonText>{permitRoute.permitNumber}</IonText>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              <IonLabel className="headingText">{t("supervisionOwnList.addModal.routeSelectInput.routeLabel")}</IonLabel>
             </IonCol>
           </IonRow>
           <IonRow>
