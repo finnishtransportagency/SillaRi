@@ -1,4 +1,4 @@
-package fi.vaylavirasto.sillari.api.lelu;
+package fi.vaylavirasto.sillari.api.lelu.excesssupervisions;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,12 +19,12 @@ public class LeluRouteWithExcessTransportNumbersResponseDTO {
     @Schema(description = "Route name describing the route", required = true, example = "Kotka - Tampere")
     private String name;
 
-    @Schema(description = "Number of crossings done for the route", example = "1")
+    @Schema(description = "Number of crossings done for the route", example = "3")
     private Integer transportCountActual;
 
     @Schema(description = "Number of crossings permitted for the route", example = "1")
     private Integer transportCount;
 
-    @Schema(description = "List of bridges on the route", required = true)
+    @Schema(description = "List of bridges on the route with transport number exceeding the transport count sent from Lelu", required = true)
     private List<LeluBridgeWithExcessTransportNumbersResponseDTO> routeBridges;
 }
