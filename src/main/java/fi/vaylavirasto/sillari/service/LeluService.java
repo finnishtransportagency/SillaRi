@@ -1,8 +1,9 @@
 package fi.vaylavirasto.sillari.service;
 
 
-import fi.vaylavirasto.sillari.api.lelu.LeluBridgeWithExcessTransportNumbersResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.LeluRouteWithExcessTransportNumbersResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.excesssupervisions.LeluBridgeWithExcessTransportNumbersResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.excesssupervisions.LeluRouteWithExcessTransportNumbersResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.excesssupervisions.LeluPermitsWithExcessTransportNumbersResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.*;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;

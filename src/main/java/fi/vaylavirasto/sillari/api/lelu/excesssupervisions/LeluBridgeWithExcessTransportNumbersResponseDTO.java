@@ -1,4 +1,4 @@
-package fi.vaylavirasto.sillari.api.lelu;
+package fi.vaylavirasto.sillari.api.lelu.excesssupervisions;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -18,6 +18,6 @@ public class LeluBridgeWithExcessTransportNumbersResponseDTO {
     @Schema(description = "Bridge name", required = true, example = "Maijanojan silta")
     private String name;
 
-    @Schema(description = "Order number of crossing, starting from 1.", example = "1")
+    @Schema(description = "Maximum transport number done for this bridge on this route", example = "3")
     private Integer transportNumberActualMax;
 }
