@@ -9,6 +9,7 @@ import { getPasswordFromStorage } from "../utils/trasportCodeStorageUtil";
 import lock from "../theme/icons/lock_closed_white.svg";
 import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import IPopoverPlacement from "../interfaces/IPopoverPlacement";
+import { useHistory } from "react-router-dom";
 
 interface SendingListItemProps {
   supervision: ISupervision;
@@ -39,6 +40,7 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
     alignment: "start",
   };
   const openSupervision = () => console.log("Password provided");
+  const history = useHistory();
 
   useEffect(() => {
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
@@ -104,8 +106,9 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                       size="default"
                       disabled={!supervisionUnlocked}
                       onClick={() => {
-                        setTargetUrl(`/supervision/${supervisionId}`);
+                        history.push(`/supervision/${supervisionId}`);
                         setOpen(false);
+                        history.go(0);
                       }}
                     >
                       {t("common.buttons.edit")}
