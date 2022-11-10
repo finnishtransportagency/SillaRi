@@ -13,10 +13,10 @@ import java.util.List;
 @ToString
 public class LeluRouteWithExcessTransportNumbersResponseDTO {
 
-    @Schema(description = "Route ID in LeLu, needed for fetching route lines.", required = true, example = "12345")
+    @Schema(description = "Route ID in LeLu, needed for fetching route lines.", example = "12345")
     private Long id;
 
-    @Schema(description = "Route name describing the route", required = true, example = "Kotka - Tampere")
+    @Schema(description = "Route name describing the route", example = "Kotka - Tampere")
     private String name;
 
     @Schema(description = "Number of crossings done for the route", example = "3")
@@ -25,6 +25,6 @@ public class LeluRouteWithExcessTransportNumbersResponseDTO {
     @Schema(description = "Number of crossings permitted for the route", example = "1")
     private Integer transportCount;
 
-    @Schema(description = "List of bridges on the route with transport number exceeding the transport count sent from Lelu", required = true)
+    @Schema(description = "List of bridges on the route with transport number exceeding the transport count sent from Lelu")
     private List<LeluBridgeWithExcessTransportNumbersResponseDTO> routeBridges;
 }
