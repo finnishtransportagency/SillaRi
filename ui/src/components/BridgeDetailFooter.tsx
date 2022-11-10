@@ -51,7 +51,7 @@ const BridgeDetailFooter = ({ permit, supervision, username, isLoadingSupervisio
   const { status: transportStatus } = currentTransportStatus || {};
 
   const transportInProgress =
-    supervisionStatus === SupervisionStatus.OWN_LIST_PLANNED || (transportStatus && transportStatus !== TransportStatus.PLANNED);
+    !isCustomerUsesSillariPermitSupervision(supervision) || (transportStatus && transportStatus !== TransportStatus.PLANNED);
   const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
 
   const supervisionPending =
