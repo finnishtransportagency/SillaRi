@@ -10,8 +10,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -165,10 +167,19 @@ public class UIController {
         HashMap<String, Object> responseBody = new HashMap<>();
         responseBody.put("redirectUrl", url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
         
-        HttpSession session = request.getSession();
-        session.invalidate();
-        
-        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+        ResponseCookie deleteAwsALBCookie = ResponseCookie.from("AWSALB", null).build();
+        ResponseCookie deleteAwsELB0Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-0", null).build();
+        ResponseCookie deleteAwsELB1Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-1", null).build();
+        ResponseCookie deleteAwsELBSillari0Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-0", null).build();
+        ResponseCookie deleteAwsELBSillari1Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-1", null).build();
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, deleteAwsALBCookie.toString(), null)
+            .header(HttpHeaders.SET_COOKIE, deleteAwsELB0Cookie.toString(), null)
+            .header(HttpHeaders.SET_COOKIE, deleteAwsELB1Cookie.toString(), null)
+            .header(HttpHeaders.SET_COOKIE, deleteAwsELBSillari0Cookie.toString(), null)
+            .header(HttpHeaders.SET_COOKIE, deleteAwsELBSillari1Cookie.toString(), null)
+            .body(responseBody);
     }
 
     @Operation(summary = "Get user data")
