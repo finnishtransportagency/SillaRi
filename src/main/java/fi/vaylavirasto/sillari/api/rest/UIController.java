@@ -164,6 +164,10 @@ public class UIController {
         String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
         HashMap<String, Object> responseBody = new HashMap<>();
         responseBody.put("redirectUrl", url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
+        
+        HttpSession session = request.getSession();
+        session.invalidate();
+        
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
