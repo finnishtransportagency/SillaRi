@@ -12,13 +12,13 @@ import java.util.List;
 @ToString
 public class LeluPermitsWithExcessTransportNumbersResponseDTO {
 
-    @Schema(description = "Number identifying the permit", required = true, example = "1234/2021")
+    @Schema(description = "Number identifying the permit", example = "1234/2021")
     private String number;
 
-    @Schema(description = "Version number of the approved permit, starting from 1.", required = true, example = "1")
+    @Schema(description = "Version number of the approved permit, starting from 1.", example = "1")
     private Integer version;
 
-    @Schema(description = "List of routes that have exceeded the transport count sent from Lelu", required = true)
+    @Schema(description = "List of routes that have exceeded the transport count sent from Lelu")
     private List<LeluRouteWithExcessTransportNumbersResponseDTO> routes;
 
 }
