@@ -20,6 +20,7 @@ sillari:
   amazoncognito:
     url: https://sillaritest.auth.eu-west-1.amazoncognito.com
     clientId: 152i189u2cu0cae9dpg6am44b6
+    redirectUrl: https://sillaritest.testivaylapilvi.fi
 spring:
   application:
     name: SillaRi

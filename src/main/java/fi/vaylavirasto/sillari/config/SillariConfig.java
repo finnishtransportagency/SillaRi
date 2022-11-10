@@ -38,5 +38,6 @@ public class SillariConfig {
     public static class AmazonCognito {
         private String url;
         private String clientId;
+        private String redirectUrl;
     }
 }

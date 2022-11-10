@@ -20,7 +20,8 @@ sillari:
     password: ${FIM_PASSWORD}
   amazoncognito:
     url: http://localhost:3000
-    clientId: na  
+    clientId: na
+    redirectUrl: http://localhost:3000
 spring:
   application:
     name: SillaRi

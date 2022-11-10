@@ -17,6 +17,8 @@ import {
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
+import Cookies from "js-cookie";
+import * as serviceWorkerRegistration from "../serviceWorkerRegistration";
 import { useDispatch } from "react-redux";
 import { menuController } from "@ionic/core/components";
 import calendar from "../theme/icons/calendar.svg";
@@ -47,6 +49,11 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ version }) => {
 
   const logoutFromApp = () => {
     logoutUser().then((data) => {
+      serviceWorkerRegistration.unregister(() => {});
+      const cookies = Cookies.get();
+      Object.keys(cookies).forEach((key) => {
+        Cookies.remove(key);
+      });
       window.location.href = data.redirectUrl;
     });
   };
