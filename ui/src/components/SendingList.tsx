@@ -106,6 +106,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   };
 
   const handleClose = () => {
+    isOpen = false;
     if (targetUrl) {
       history.push(targetUrl);
     }
