@@ -15,6 +15,7 @@ import ISupervisionDay from "../interfaces/ISupervisionDay";
 import { groupSupervisionsByPlannedDate, sortSupervisionsByTimeAndBridgeOrder } from "../utils/supervisionUtil";
 import { useHistory, useParams } from "react-router-dom";
 import OwnList from "../components/supervisionOwnList/OwnList";
+import { getOwnlist } from "../utils/ownlistStorageUtil";
 
 interface SupervisionsProps {
   tabId: string;
@@ -51,6 +52,11 @@ const Supervisions = (): JSX.Element => {
     retry: onRetry,
     staleTime: Infinity,
   });
+
+  useEffect(() => {
+    //we call get ownlist to set the count in the redux, so it shows right in the tab
+    getOwnlist(username, dispatch);
+  }, [username, dispatch]);
 
   useEffect(() => {
     onlineManager.subscribe(() => {

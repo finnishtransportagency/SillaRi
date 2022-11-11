@@ -21,9 +21,7 @@ const PermitNumberInput = ({ index, initialValue, onChange }: PermitNumberInputP
 
   return (
     <>
-      <IonLabel className="headingText">
-        <small>{t("supervisionOwnList.addModal.permitNumberInput.inputLabel")}</small>
-      </IonLabel>
+      <IonLabel className="headingText">{t("supervisionOwnList.addModal.permitNumberInput.inputLabel")}</IonLabel>
       <IonInput
         className="small-margin-top"
         type="text"

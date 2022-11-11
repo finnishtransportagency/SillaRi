@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonIcon, IonLabel, IonRow, IonText } from "@ionic/react";
 import SelectRouteInput from "./SelectRouteInput";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
 import { useTranslation } from "react-i18next";
+import arrowRight from "../../theme/icons/arrow-right_white.svg";
+import arrowLeft from "../../theme/icons/arrow-left_white.svg";
 
 interface SelectRouteInputsProps {
   permitRoutes: Array<OwnListPermitRouteType>;
@@ -41,9 +43,15 @@ const SelectRouteInputs = ({ permitRoutes, toNextPhase, toPreviousPhase }: Selec
         <IonGrid key={"permit_" + i}>
           <IonRow>
             <IonCol>
-              <IonText>
-                {t("supervisionOwnList.addModal.routeSelectInput.permitLabel")} {permitRoute.permitNumber}
-              </IonText>
+              <IonLabel className="headingText">{t("supervisionOwnList.addModal.routeSelectInput.permitLabel")}</IonLabel>
+            </IonCol>
+            <IonCol className="ion-text-left" size="8">
+              <IonText>{permitRoute.permitNumber}</IonText>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              <IonLabel className="headingText">{t("supervisionOwnList.addModal.routeSelectInput.routeLabel")}</IonLabel>
             </IonCol>
           </IonRow>
           <IonRow>
@@ -63,11 +71,15 @@ const SelectRouteInputs = ({ permitRoutes, toNextPhase, toPreviousPhase }: Selec
       <IonGrid class="ion-no-padding">
         <IonRow>
           <IonCol class="ion-button ion-float-left">
-            <IonButton onClick={toPreviousPhase}>{t("supervisionOwnList.addModal.routeSelectInput.cancelButtonLabel")}</IonButton>
+            <IonButton onClick={toPreviousPhase} color="secondary">
+              <IonIcon className="otherIcon" icon={arrowLeft} />
+              {t("supervisionOwnList.addModal.routeSelectInput.cancelButtonLabel")}
+            </IonButton>
           </IonCol>
           <IonCol>
             <IonButton class="ion-button ion-float-right" onClick={done} disabled={continueButtonDisabled}>
               {t("supervisionOwnList.addModal.routeSelectInput.continueButtonLabel")}
+              <IonIcon className="otherIcon" icon={arrowRight} />
             </IonButton>
           </IonCol>
         </IonRow>

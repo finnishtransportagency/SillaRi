@@ -40,26 +40,20 @@ export const removeFromOwnlist = async (username: string, supervisionId: number 
   if (supervisionId) {
     const oldValue = await Preferences.get({ key: constructKey(username) });
     const oldOwnlist = oldValue.value;
-    console.log("oldOwnlist");
-    console.log(oldOwnlist);
     let oldIds: string[] = [];
     let newOwnList = "";
     if (oldOwnlist && oldOwnlist.length > 0) {
       oldIds = oldOwnlist.split(",");
-      console.log("oldIds");
-      console.log(oldIds);
       oldIds.forEach((id) => {
         if (Number(id) !== supervisionId) {
           newOwnList += id.toString() + ",";
-          console.log("newOwnList");
-          console.log(newOwnList);
         }
       });
     }
-    console.log(newOwnList);
+
     newOwnList = newOwnList.substring(0, newOwnList.length - 1);
-    console.log(newOwnList);
-    const count = newOwnList.split(",").length;
+    const count = newOwnList.length > 0 ? newOwnList.split(",").length : 0;
+
     dispatch({ type: actions.SET_OWNLIST_COUNT, payload: count });
     return Preferences.set({ key: constructKey(username), value: newOwnList });
   }
@@ -76,15 +70,4 @@ export const getOwnlist = async (username: string, dispatch: Dispatch) => {
     dispatch({ type: actions.SET_OWNLIST_COUNT, payload: count });
   }
   return ownList;
-};
-
-const getOwnlistCount = async (username: string) => {
-  const ownListRaw = await Preferences.get({ key: OWNLIST_STORAGE_GROUP + "." + username });
-  const ownList: number[] = [];
-  if (ownListRaw.value) {
-    ownListRaw.value.split(",").forEach((id: string) => {
-      ownList.push(Number(id));
-    });
-  }
-  return ownList.length;
 };

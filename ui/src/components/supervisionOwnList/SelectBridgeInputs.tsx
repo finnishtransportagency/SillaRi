@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonIcon, IonLabel, IonRow, IonText } from "@ionic/react";
 import SelectBridgeInput from "./SelectBridgeInput";
 import OwnListPermitRouteType from "./OwnListPermitRouteType";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,7 @@ import { useQuery, useQueryClient } from "react-query";
 import { getUserData, onRetry } from "../../utils/backendData";
 import { getOwnlist, saveToOwnlist } from "../../utils/ownlistStorageUtil";
 import { prefetchSupervisionsNoPasscodeWithIds } from "../../utils/offlineUtil";
+import arrowLeft from "../../theme/icons/arrow-left_white.svg";
 
 interface SelectBridgeInputsProps {
   permitRoutes: Array<OwnListPermitRouteType>;
@@ -64,16 +65,23 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
         <IonGrid key={"permit_" + i}>
           <IonRow>
             <IonCol>
-              <IonText>
-                {t("supervisionOwnList.addModal.bridgeSelectInput.permitLabel")} {permitRoute.permitNumber}
-              </IonText>
+              <IonLabel className="headingText">{t("supervisionOwnList.addModal.bridgeSelectInput.permitLabel")}</IonLabel>
+            </IonCol>
+            <IonCol className="ion-text-left" size="8">
+              <IonText>{permitRoute.permitNumber}</IonText>
+            </IonCol>
+          </IonRow>
+          <IonRow className="ion-padding-bottom">
+            <IonCol>
+              <IonLabel className="headingText">{t("supervisionOwnList.addModal.bridgeSelectInput.routeLabel")}</IonLabel>
+            </IonCol>
+            <IonCol className="ion-text-left" size="8">
+              <IonText>{getSelectedRouteName(permitRoute)}</IonText>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonText>
-                {t("supervisionOwnList.addModal.bridgeSelectInput.routeLabel")} {getSelectedRouteName(permitRoute)}
-              </IonText>
+              <IonLabel className="headingText">{t("supervisionOwnList.addModal.bridgeSelectInput.bridgesLabel")}</IonLabel>
             </IonCol>
           </IonRow>
           <IonRow>
@@ -93,7 +101,10 @@ const SelectBridgeInputs = ({ permitRoutes, toPreviousPhase, updateOwnlistPage, 
       <IonGrid class="ion-no-padding">
         <IonRow>
           <IonCol class="ion-button ion-float-left">
-            <IonButton onClick={toPreviousPhase}>{t("supervisionOwnList.addModal.bridgeSelectInput.cancelButtonLabel")}</IonButton>
+            <IonButton onClick={toPreviousPhase} color="secondary">
+              <IonIcon className="otherIcon" icon={arrowLeft} />
+              {t("supervisionOwnList.addModal.bridgeSelectInput.cancelButtonLabel")}
+            </IonButton>
           </IonCol>
           <IonCol>
             <IonButton class="ion-button ion-float-right" onClick={done} disabled={isLoadingUser || !selectedIds}>
