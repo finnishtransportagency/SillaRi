@@ -161,17 +161,20 @@ public class UIController {
     @Operation(summary = "Log out user")
     @GetMapping(value = "/userlogout")
     public ResponseEntity<?> userLogout(HttpServletRequest request) {
-        String url = sillariConfig.getAmazonCognito().getUrl();
-        String clientId = sillariConfig.getAmazonCognito().getClientId();
-        String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
+        //String url = sillariConfig.getAmazonCognito().getUrl();
+        //String clientId = sillariConfig.getAmazonCognito().getClientId();
+        //String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
         HashMap<String, Object> responseBody = new HashMap<>();
-        responseBody.put("redirectUrl", url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
+        // FIXME clean up after after finished working logout
+        //responseBody.put("redirectUrl", url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
+        responseBody.put("redirectUrl", "/sso/logout?auth=1");
         
         ResponseCookie deleteAwsALBCookie = ResponseCookie.from("AWSALB", null).build();
         ResponseCookie deleteAwsELB0Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-0", null).build();
         ResponseCookie deleteAwsELB1Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-1", null).build();
         ResponseCookie deleteAwsELBSillari0Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-0", null).build();
         ResponseCookie deleteAwsELBSillari1Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-1", null).build();
+        ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", null).build();
 
         return ResponseEntity.ok()
             .header(HttpHeaders.SET_COOKIE, deleteAwsALBCookie.toString(), null)
@@ -179,6 +182,7 @@ public class UIController {
             .header(HttpHeaders.SET_COOKIE, deleteAwsELB1Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELBSillari0Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELBSillari1Cookie.toString(), null)
+            .header(HttpHeaders.SET_COOKIE, deleteCookieSession1.toString(), null)
             .body(responseBody);
     }
 

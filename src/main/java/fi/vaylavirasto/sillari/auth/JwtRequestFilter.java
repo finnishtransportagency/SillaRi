@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +16,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import fi.vaylavirasto.sillari.config.SillariConfig;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.FilterChain;
@@ -39,6 +42,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private static String publicKey = null;
     private static PublicKey ecPublicKey = null;
+
+    @Autowired
+    private SillariConfig sillariConfig;
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
@@ -216,9 +222,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         } catch (Exception ex) {
             logger.error(ex);
+            // FIXME trying redirect to login page here, clean up later if needed
+            String url = sillariConfig.getAmazonCognito().getUrl();
+            String clientId = sillariConfig.getAmazonCognito().getClientId();
+            String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
+        
+            String sendRedirectUrl = url + "/login?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
+
+            response.sendRedirect(sendRedirectUrl);
         } finally {
             filterChain.doFilter(request, response);
-            SecurityContextHolder.clearContext();
+            // FIXME restore this line if needed
+            //SecurityContextHolder.clearContext();
         }
     }
 
