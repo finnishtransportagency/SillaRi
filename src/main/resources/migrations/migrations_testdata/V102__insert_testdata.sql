@@ -734,39 +734,10 @@ INSERT INTO sillari.supervision_status (id, supervision_id, status, "time", reas
 INSERT INTO sillari.supervision_status (id, supervision_id, status, "time", reason, username, row_created_time, row_updated_time) VALUES (322, 161, 'PLANNED', '2021-09-28 06:02:00+00', NULL, 'T012345', NULL, NULL);
 
 
---
--- Data for Name: supervisor; Type: TABLE DATA; Schema: sillari; Owner: sillari
---
-
-INSERT INTO sillari.supervisor (id, firstname, lastname, username, row_created_time, row_updated_time) VALUES (1, 'Saara', 'Sillanvalvoja', 'USER1', NULL, NULL);
-INSERT INTO sillari.supervisor (id, firstname, lastname, username, row_created_time, row_updated_time) VALUES (2, 'Ville', 'Varavalvoja', 'USER2', NULL, NULL);
-INSERT INTO sillari.supervisor (id, firstname, lastname, username, row_created_time, row_updated_time) VALUES (3, 'CGI-Local', 'Testikäyttäjä', 'T012345', NULL, NULL);
 
 
---
--- Data for Name: supervision_supervisor; Type: TABLE DATA; Schema: sillari; Owner: sillari
---
 
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (11, 1, 2, 2, 'USER2', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (12, 2, 2, 2, 'USER2', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (13, 3, 2, 2, 'USER2', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (14, 4, 2, 2, 'USER2', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (15, 5, 2, 2, 'USER2', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (16, 6, 2, 2, 'USER2', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (17, 7, 2, 2, 'USER2', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (18, 8, 2, 2, 'USER2', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (19, 9, 2, 2, 'USER2', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (20, 10, 2, 2, 'USER2', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (1, 1, 3, 1, 'T012345', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (2, 2, 3, 1, 'T012345', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (3, 3, 3, 1, 'T012345', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (4, 4, 3, 1, 'T012345', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (5, 5, 3, 1, 'T012345', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (6, 6, 3, 1, 'T012345', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (7, 7, 3, 1, 'T012345', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (8, 8, 3, 1, 'T012345', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (9, 9, 3, 1, 'T012345', NULL, NULL);
-INSERT INTO sillari.supervision_supervisor (id, supervision_id, supervisor_id, priority, username, row_created_time, row_updated_time) VALUES (10, 10, 3, 1, 'T012345', NULL, NULL);
+
 
 
 --
@@ -854,7 +825,7 @@ SELECT pg_catalog.setval('sillari.permit_id_seq', 4, true);
 -- Name: route_bridge_id_seq; Type: SEQUENCE SET; Schema: sillari; Owner: sillari
 --
 
-SELECT pg_catalog.setval('sillari.route_bridge_id_seq', 161, true);
+SELECT pg_catalog.setval('sillari.route_bridge_id_seq', 254, true);
 
 
 --
@@ -863,12 +834,6 @@ SELECT pg_catalog.setval('sillari.route_bridge_id_seq', 161, true);
 
 SELECT pg_catalog.setval('sillari.route_id_seq', 4, true);
 
-
---
--- Name: route_transport_id_seq; Type: SEQUENCE SET; Schema: sillari; Owner: sillari
---
-
-SELECT pg_catalog.setval('sillari.route_transport_id_seq', 4, true);
 
 
 --
@@ -913,19 +878,6 @@ SELECT pg_catalog.setval('sillari.supervision_report_id_seq', 1, false);
 SELECT pg_catalog.setval('sillari.supervision_status_id_seq', 322, true);
 
 
---
--- Name: supervision_supervisor_id_seq; Type: SEQUENCE SET; Schema: sillari; Owner: sillari
---
-
-SELECT pg_catalog.setval('sillari.supervision_supervisor_id_seq', 20, true);
-
-
---
--- Name: supervisor_id_seq; Type: SEQUENCE SET; Schema: sillari; Owner: sillari
---
-
-SELECT pg_catalog.setval('sillari.supervisor_id_seq', 3, true);
-
 
 --
 -- Name: transport_dimensions_id_seq; Type: SEQUENCE SET; Schema: sillari; Owner: sillari
@@ -933,19 +885,6 @@ SELECT pg_catalog.setval('sillari.supervisor_id_seq', 3, true);
 
 SELECT pg_catalog.setval('sillari.transport_dimensions_id_seq', 4, true);
 
-
---
--- Name: transport_id_seq; Type: SEQUENCE SET; Schema: sillari; Owner: sillari
---
-
-SELECT pg_catalog.setval('sillari.transport_id_seq', 17508, true);
-
-
---
--- Name: transport_registration_id_seq; Type: SEQUENCE SET; Schema: sillari; Owner: sillari
---
-
-SELECT pg_catalog.setval('sillari.transport_registration_id_seq', 35016, true);
 
 
 --
