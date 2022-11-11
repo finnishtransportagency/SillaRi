@@ -234,8 +234,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             response.sendRedirect(sendRedirectUrl);
         } finally {
             filterChain.doFilter(request, response);
-            // FIXME restore this line if needed
-            //SecurityContextHolder.clearContext();
+            SecurityContextHolder.clearContext();
         }
     }
 
