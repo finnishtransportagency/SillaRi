@@ -28,6 +28,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
@@ -227,7 +229,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String clientId = sillariConfig.getAmazonCognito().getClientId();
             String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
         
-            String sendRedirectUrl = url + "/login?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
+            String sendRedirectUrl = url + "/login?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid";
 
             response.sendRedirect(sendRedirectUrl);
         } finally {
