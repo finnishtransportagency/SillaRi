@@ -4,7 +4,7 @@ import { IonCol, IonGrid, IonItem, IonLabel, IonRow, IonText } from "@ionic/reac
 import { DATE_TIME_FORMAT_MIN, SupervisionListType } from "../utils/constants";
 import "./SentSupervisionReportsAccordion.css";
 import moment from "moment";
-import { getReportSignedTime } from "../utils/supervisionUtil";
+import { getReportSignedTime, isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
 import { useTranslation } from "react-i18next";
 import { getPasswordFromStorage } from "../utils/trasportCodeStorageUtil";
 
@@ -13,6 +13,7 @@ interface SentSupervisionReportItemProps {
   supervision: ISupervision;
   setReportModalOpen: Dispatch<SetStateAction<boolean>>;
   setSelectedSupervisionId: Dispatch<SetStateAction<number | undefined>>;
+  setIsCustomerUsesSillariPermitSupervision: Dispatch<SetStateAction<boolean>>;
 }
 
 const SentSupervisionReportItem = ({
@@ -20,6 +21,7 @@ const SentSupervisionReportItem = ({
   supervision,
   setReportModalOpen,
   setSelectedSupervisionId,
+  setIsCustomerUsesSillariPermitSupervision,
 }: SentSupervisionReportItemProps): JSX.Element => {
   const { t } = useTranslation();
   const [supervisionUnlocked, setSupervisionUnlocked] = useState<boolean>(false);
@@ -28,26 +30,31 @@ const SentSupervisionReportItem = ({
   const { bridge, route } = routeBridge || {};
   const { identifier = "", name = "", municipality = "" } = bridge || {};
   const { permit } = route || {};
-  const { permitNumber } = permit || {};
+  const { permitNumber, customerUsesSillari } = permit || {};
   const { tractorUnit = "" } = routeTransport || {};
   const reportSignedTime = getReportSignedTime(supervision);
 
   const openSupervisionReport = () => {
     setSelectedSupervisionId(supervisionId);
+    setIsCustomerUsesSillariPermitSupervision(customerUsesSillari ? customerUsesSillari : false);
     setReportModalOpen(true);
   };
 
   useEffect(() => {
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
     if (username) {
-      getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId).then((result) => {
-        if (result) {
-          console.log("setSupervisionUnlocked", supervisionId);
-          setSupervisionUnlocked(true);
-        }
-      });
+      if (!isCustomerUsesSillariPermitSupervision(supervision)) {
+        setSupervisionUnlocked(true);
+      } else {
+        getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId).then((result) => {
+          if (result) {
+            console.log("setSupervisionUnlocked", supervisionId);
+            setSupervisionUnlocked(true);
+          }
+        });
+      }
     }
-  }, [username, supervisionId]);
+  }, [username, supervision, supervisionId]);
 
   return (
     <IonItem fill="outline" lines="none" className="ion-margin-horizontal">

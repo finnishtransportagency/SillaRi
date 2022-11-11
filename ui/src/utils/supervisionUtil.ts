@@ -3,7 +3,7 @@ import IRouteTransport from "../interfaces/IRouteTransport";
 import ISupervision from "../interfaces/ISupervision";
 import ISupervisionDay from "../interfaces/ISupervisionDay";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
-import { SupervisionStatus, TransportStatus } from "./constants";
+import { SupervisionStatus, SupervisorType, TransportStatus } from "./constants";
 import ISupervisionStatus from "../interfaces/ISupervisionStatus";
 import { Moment } from "moment/moment";
 
@@ -196,4 +196,43 @@ export const getTransportTime = (transport: IRouteTransport): Date | undefined =
     return history.status === TransportStatus.DEPARTED;
   });
   return departedStatus.length > 0 ? departedStatus[0].time : plannedDepartureTime;
+};
+
+export const isCustomerUsesSillariPermitSupervision = (supervision: undefined | ISupervision): boolean => {
+  if (supervision) {
+    //console.log("isCustomerUsesSillariPermitSupervision " + supervision.id);
+    const { routeBridge } = supervision;
+    if (routeBridge) {
+      const { route } = routeBridge;
+      if (route) {
+        const { permit } = route;
+        if (permit) {
+          //console.log(permit.customerUsesSillari);
+          if (permit.customerUsesSillari === undefined) {
+            //console.log("customerUsesSillari is undefined, we treat that false");
+            return false;
+          } else {
+            //console.log("customerUsesSillari not undefined, we return " + permit.customerUsesSillari);
+            return permit.customerUsesSillari;
+          }
+          return permit.customerUsesSillari;
+        }
+      } else {
+        console.error(
+          "Supervision routebridge  doesn't have route. Should not happen. Could not see if permit is customer uses sillari. We use supervision.supervisorType instead which migth be wronb with old supervisions. " +
+            supervision.id
+        );
+      }
+    } else {
+      console.error(
+        "Supervision doesn't have route bridge. Should not happen. Could not see if parmit is customer uses sillari. We use supervision.supervisorType instead which might be wrong with old supervisions. " +
+          supervision.id
+      );
+    }
+    return !(supervision.supervisorType === SupervisorType.AREA_CONTRACTOR);
+  } else {
+    console.error("Supervision doesn't exist. Should not happen. Could not see if parmit is customer uses sillari. Total fail. ");
+  }
+  //never should be here
+  return false;
 };

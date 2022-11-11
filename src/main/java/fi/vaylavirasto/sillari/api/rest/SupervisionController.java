@@ -253,7 +253,7 @@ public class SupervisionController {
                         supervisionService.attachSupervisionToTransportNumberedRouteBridge(input.getSupervisionId());
 
                     }
-                    supervisionService.completeSupervision(input.getSupervisionId(), completeTime, user);
+                    supervisionService.completeSupervision(input.getSupervisionId(), completeTime, user, false);
                 });
 
                 // Don't wait for pdf generation before returning the response
@@ -291,14 +291,14 @@ public class SupervisionController {
                 // Now supervisions must be attached to route transports with transport number so Lelu can poll them
                 supervisionService.attachSupervisionToTransportNumberedRouteBridge(supervisionInput.getSupervisionId());
             }
-            supervisionService.completeSupervision(supervisionInput.getSupervisionId(), finishTime.plusSeconds(1), user);
+            SupervisionModel supervisionModel = supervisionService.completeSupervision(supervisionInput.getSupervisionId(), finishTime.plusSeconds(1), user, true);
 
             // Don't wait for pdf generation before returning the response
             ExecutorService executor = Executors.newWorkStealingPool();
             executor.submit(() -> supervisionService.createSupervisionPdf(supervisionInput.getSupervisionId()));
 
-            // TODO - check if any data should be returned
-            return ResponseEntity.ok().body(new EmptyJsonResponse());
+            supervisionService.finishSupervision(supervisionInput.getSupervisionId(), finishTime, user);
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
@@ -387,7 +387,6 @@ public class SupervisionController {
             isPermitCustomerUsesSillari = supervisionModel.getRouteBridge().getRoute().getPermit().getCustomerUsesSillari();
         }
         catch (NullPointerException nullPointerException){
-            var a = supervisionService.getSupervision(supervisionModel.getId(), true, false);
             isPermitCustomerUsesSillari = supervisionService.getSupervision(supervisionModel.getId(), true, false).getRouteBridge().getRoute().getPermit().getCustomerUsesSillari();
         }
         return isPermitCustomerUsesSillari;
