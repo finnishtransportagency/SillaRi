@@ -156,10 +156,6 @@ const App: React.FC = () => {
       } catch (e) {
         console.log("App error", e);
         setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
-
-        clearDataAndRedirect(
-          "https://sillaritest.auth.eu-west-1.amazoncognito.com/login?client_id=152i189u2cu0cae9dpg6am44b6&redirect_uri=https%3A%2F%2Fsillaridev.testivaylapilvi.fi%2Foauth2%2Fidpresponse&response_type=code&scope=openid"
-        );
       }
     };
 

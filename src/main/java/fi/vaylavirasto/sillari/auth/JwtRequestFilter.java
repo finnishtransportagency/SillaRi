@@ -221,6 +221,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
 
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                filterChain.doFilter(request, response);
             }
         } catch (Exception ex) {
             logger.error(ex);
@@ -232,8 +233,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String sendRedirectUrl = url + "/login?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid";
 
             response.sendRedirect(sendRedirectUrl);
-        } finally {
-            filterChain.doFilter(request, response);
+        } finally {            
             SecurityContextHolder.clearContext();
         }
     }
