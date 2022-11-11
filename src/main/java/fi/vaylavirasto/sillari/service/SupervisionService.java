@@ -210,9 +210,14 @@ public class SupervisionService {
     }
 
     // Completes the supervision by adding the status REPORT_SIGNED
-    public void completeSupervision(Integer supervisionId, OffsetDateTime completeTime, SillariUser user) {
+    public SupervisionModel completeSupervision(Integer supervisionId, OffsetDateTime completeTime, SillariUser user, boolean fillDetailsAndReturn) {
         SupervisionStatusModel status = new SupervisionStatusModel(supervisionId, SupervisionStatusType.REPORT_SIGNED, completeTime, user.getUsername());
         supervisionStatusRepository.insertSupervisionStatus(status);
+        if(fillDetailsAndReturn){
+            return getSupervision(supervisionId, true, true);
+        }else{
+            return null;
+        }
     }
 
     public void createSupervisionPdf(Integer supervisionId) {

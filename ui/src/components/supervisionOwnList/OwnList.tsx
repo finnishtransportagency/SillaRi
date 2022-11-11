@@ -33,7 +33,7 @@ const OwnList = ({ username, noNetworkNoData, isOnline }: OwnListProps): JSX.Ele
         setOwnListIds(result);
       }
     });
-  }, [isModalOpen, username]);
+  }, [isModalOpen, username, dispatch]);
 
   const removeItem = (supervisionId: number | undefined) => {
     removeFromOwnlist(username, supervisionId, dispatch).then(() =>

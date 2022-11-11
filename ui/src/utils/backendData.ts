@@ -8,9 +8,7 @@ import IUserData from "../interfaces/IUserData";
 import IVersionInfo from "../interfaces/IVersionInfo";
 import ILogoutData from "../interfaces/ILogoutData";
 
-// Must use err type any, because it might be either string or Error. If we use type 'unknown', mutation result is the wrong type.
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export const onRetry = (failureCount: number, err: any): boolean => {
+export const onRetry = (failureCount: number, err: Error | string): boolean => {
   // By default, retry forever by returning true - unless error is FORBIDDEN.
   console.log("err is Error type", err instanceof Error);
   // FIXME find out when err is string and when Error (preferably fix so that it's never a string, although might not be possible)
