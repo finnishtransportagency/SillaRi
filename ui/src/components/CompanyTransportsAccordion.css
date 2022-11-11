@@ -1,0 +1,12 @@
+.companyAccordion ion-accordion {
+  border: none;
+  margin-bottom: 4px;
+}
+
+.companyAccordion [slot="header"] {
+  border-bottom: 1px solid var(--ion-color-step-100);
+}
+
+.companyAccordion .accordion-expanded [slot="header"] {
+  border-bottom: 1px solid transparent;
+}

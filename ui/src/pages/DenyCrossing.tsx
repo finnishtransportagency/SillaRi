@@ -18,15 +18,18 @@ import {
   IonRow,
   IonTextarea,
 } from "@ionic/react";
-import { useTypedSelector } from "../store/store";
+import { useTypedSelector, RootState } from "../store/store";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
 import PermitLinkItem from "../components/PermitLinkItem";
 import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 import IPermit from "../interfaces/IPermit";
-import { onRetry } from "../utils/backendData";
+import ISupervision from "../interfaces/ISupervision";
+import { getUserData, onRetry } from "../utils/backendData";
 import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
 import { SupervisionStatus } from "../utils/constants";
+import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
+import { isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
 
 interface DenyCrossingProps {
   supervisionId: string;
@@ -39,10 +42,11 @@ const DenyCrossing = (): JSX.Element => {
   const queryClient = useQueryClient();
 
   const { supervisionId = "0" } = useParams<DenyCrossingProps>();
+  const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
 
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.rootReducer);
+  } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const [denyReason, setDenyReason] = useState<string | undefined>(undefined);
   const [otherReasonSelected, setOtherReasonSelected] = useState<boolean>(false);
@@ -52,30 +56,66 @@ const DenyCrossing = (): JSX.Element => {
   const obstacleOnBridge = tFI("denyCrossing.obstacleOnBridge");
   const otherReason = "other";
 
+  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const { username = "" } = supervisorUser || {};
+
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", supervisionId],
-    () => getSupervision(Number(supervisionId), dispatch),
-    { retry: onRetry }
+    supervisionQueryKey,
+    () => getSupervision(Number(supervisionId), username, null, dispatch),
+    {
+      retry: onRetry,
+      staleTime: Infinity,
+      enabled: !!username,
+    }
   );
 
-  const denyCrossingMutation = useMutation((denyCrossingInput: IDenyCrossingInput) => denyCrossing(denyCrossingInput, dispatch), {
-    retry: onRetry,
-    onSuccess: (data) => {
-      // Update "getSupervision" query to return the updated data
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
-      history.goBack();
-    },
-  });
-  const { isLoading: isSendingDenyCrossing } = denyCrossingMutation;
-
-  const { routeBridge, currentStatus } = supervision || {};
+  const { routeTransportId = 0, routeBridge, currentStatus } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
   const { route, bridge } = routeBridge || {};
   const { name = "", identifier = "" } = bridge || {};
   const { permit } = route || {};
 
   const supervisionPending =
-    !isLoadingSupervision && (supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED);
+    !isLoadingSupervision &&
+    (supervisionStatus === SupervisionStatus.PLANNED ||
+      supervisionStatus === SupervisionStatus.CANCELLED ||
+      supervisionStatus === SupervisionStatus.OWN_LIST_PLANNED);
+
+  // Set-up mutations for modifying data later
+  // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
+  const denyCrossingMutation = useMutation((denyCrossingInput: IDenyCrossingInput) => denyCrossing(denyCrossingInput, username, dispatch), {
+    retry: onRetry,
+    onMutate: async (newData: IDenyCrossingInput) => {
+      // onMutate fires before the mutation function
+
+      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+      await queryClient.cancelQueries(supervisionQueryKey);
+
+      // Set the current status to CROSSING_DENIED here since the backend won't be called yet when offline
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+        return {
+          ...oldData,
+          currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.CROSSING_DENIED, time: newData.denyTime },
+          crossingDeniedTime: newData.denyTime,
+        } as ISupervision;
+      });
+
+      // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
+      // Also remove the finished supervision from the route transport list in the UI
+      removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
+      history.goBack();
+    },
+    onSuccess: (data) => {
+      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+
+      // Update "getSupervision" query to return the updated data
+      queryClient.setQueryData(supervisionQueryKey, data);
+    },
+  });
+  const { isLoading: isSendingDenyCrossing } = denyCrossingMutation;
 
   const radioClicked = (radioValue: string) => {
     if (radioValue === otherReason) {
@@ -95,7 +135,12 @@ const DenyCrossing = (): JSX.Element => {
 
   const denyCrossingClicked = () => {
     if (denyReason) {
-      const denyCrossingInput: IDenyCrossingInput = { supervisionId: Number(supervisionId), denyReason: denyReason };
+      const denyCrossingInput: IDenyCrossingInput = {
+        supervisionId: Number(supervisionId),
+        routeTransportId: routeTransportId,
+        denyReason: denyReason,
+        denyTime: new Date(),
+      };
       denyCrossingMutation.mutate(denyCrossingInput);
     }
   };
@@ -104,7 +149,7 @@ const DenyCrossing = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} includeSendingList />
+      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} includeSendingList includeOfflineBanner />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />
@@ -161,7 +206,14 @@ const DenyCrossing = (): JSX.Element => {
                     color="primary"
                     expand="block"
                     size="large"
-                    disabled={isLoadingSupervision || isSendingDenyCrossing || !supervisionPending || !denyReason}
+                    disabled={
+                      !username ||
+                      (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) ||
+                      isLoadingSupervision ||
+                      isSendingDenyCrossing ||
+                      !supervisionPending ||
+                      !denyReason
+                    }
                     onClick={() => denyCrossingClicked()}
                   >
                     {t("common.buttons.send")}

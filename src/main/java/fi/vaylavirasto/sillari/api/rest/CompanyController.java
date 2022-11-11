@@ -40,6 +40,7 @@ public class CompanyController {
         try {
             SillariUser user = uiService.getSillariUser();
 
+            
             CompanyModel company = companyService.getCompanyByBusinessId(user.getBusinessId());
             return ResponseEntity.ok().body(company != null ? company : new EmptyJsonResponse());
         } finally {
@@ -49,12 +50,12 @@ public class CompanyController {
 
     @Operation(summary = "Get supervisor transports grouped by company")
     @GetMapping(value = "/getcompanytransportlistofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public ResponseEntity<?> getCompanyTransportListOfSupervisor() {
         ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getCompanyTransportListOfSupervisor");
         try {
             SillariUser user = uiService.getSillariUser();
-            List<CompanyTransportsDTO> companyList = companyService.getCompanyTransportListOfSupervisor(user.getUsername());
+            List<CompanyTransportsDTO> companyList = companyService.getCompanyTransportListOfSupervisor(user);
             return ResponseEntity.ok().body(companyList != null ? companyList : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();

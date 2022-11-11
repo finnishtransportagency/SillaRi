@@ -8,10 +8,19 @@ services:
     environment:
       - environment=local
       - SPRING_DATASOURCE_URL=jdbc:postgresql://sillari-local-db:5432/sillari
+      - FIM_USERNAME=<insert_here>
+      - FIM_PASSWORD=<insert_here>
     ports:
       - 8080:8080
     depends_on:
       - sillari-local-db
+  sillari-ui:
+    hostname: sillari-ui
+    build:
+      context: ./sillari-ui
+      dockerfile: Dockerfile_local
+    ports:
+      - 3000:8095
   sillari-geoserver:
     hostname: sillari-geoserver
     build:

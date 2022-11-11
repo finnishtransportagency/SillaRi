@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
-import { IonApp, IonButton, IonContent, setupIonicReact } from "@ionic/react";
+import { IonApp, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
+import { Drivers, Storage as IonicStorage } from "@ionic/storage";
 import { withTranslation } from "react-i18next";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { onlineManager, QueryClient, QueryClientProvider } from "react-query";
+import { persistQueryClient } from "react-query/persistQueryClient-experimental";
+import { createAsyncStoragePersistor } from "react-query/createAsyncStoragePersistor-experimental";
+import { useDispatch } from "react-redux";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import Supervisions from "./pages/Supervisions";
 import Settings from "./pages/Settings";
 import Map from "./pages/Map";
@@ -14,149 +19,207 @@ import BridgeDetail from "./pages/BridgeDetail";
 import SupervisionSummary from "./pages/SupervisionSummary";
 import CompanySummary from "./pages/management/CompanySummary";
 import AddTransport from "./pages/management/AddTransport";
-import TransportCodeInput from "./pages/transport/TransportCodeInput";
+import TransportCodeForm from "./pages/transport/TransportCodeForm";
 import Transport from "./pages/transport/Transport";
 import TransportDetail from "./pages/management/TransportDetail";
+import AppCheck from "./components/AppCheck";
 import SidebarMenu from "./components/SidebarMenu";
 import AccessDenied from "./pages/AccessDenied";
-
-/* Core CSS required for Ionic components to work properly */
-import "@ionic/react/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
-import "@ionic/react/css/normalize.css";
-import "@ionic/react/css/structure.css";
-import "@ionic/react/css/typography.css";
-
-/* Optional CSS utils that can be commented out */
-import "@ionic/react/css/padding.css";
-import "@ionic/react/css/float-elements.css";
-import "@ionic/react/css/text-alignment.css";
-import "@ionic/react/css/text-transformation.css";
-import "@ionic/react/css/flex-utils.css";
-import "@ionic/react/css/display.css";
-
-/* Theme variables */
-import "./theme/variables.css";
+import IUserData from "./interfaces/IUserData";
+import Photos from "./pages/Photos";
+import UserInfo from "./pages/UserInfo";
+import Cookies from "js-cookie";
+import { useTypedSelector, RootState } from "./store/store";
+import { getUserData, getVersionInfo, logoutUser } from "./utils/backendData";
+import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
+import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
+import { prefetchOfflineData } from "./utils/offlineUtil";
+import IonicAsyncStorage from "./IonicAsyncStorage";
 
 /* Sillari.css */
 import "./theme/sillari.css";
-import IUserData from "./interfaces/IUserData";
-import { getOrigin } from "./utils/request";
-import Photos from "./pages/Photos";
-
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
-import Cookies from "js-cookie";
 
 // Use the same style for all platforms
 setupIonicReact({
   mode: "md",
 });
 
-// NOTE: the react-query client is currently using the default options as described here: https://react-query.tanstack.com/guides/important-defaults
+// NOTE 1: the react-query client is currently using the default options as described here: https://react-query.tanstack.com/guides/important-defaults
 // This means cached data is considered as stale, so data is always refetched, for example during page navigation or when the browser window gets focus
 // The queries themselves are stored in the cache based on a query key (using the query parameters), and garbage collected after 5 minutes if not used again
-const queryClient = new QueryClient();
+// NOTE 2: to allow offline use for the supervisions app, staleTime must be set to something, such as Infinity to store data forever
+// However, it should not be added here, since it affects the transport company and transport apps which are not used offline
+// So instead use staleTime separately in the options of each query used by the supervisions app
+// NOTE 3: use cacheTime to set how long data should be persisted in local storage, used when offline, which is a different concept than staleTime
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: REACT_QUERY_CACHE_TIME,
+    },
+  },
+});
+
+// NOTE 1: these persistence utilities are experimental in react-query v3 and subject to change
+// However at time of writing, they have not changed for months, and v4 is in active development which will include proper versions
+// The maxAge value is the same as the cacheTime value so garbage collection occurs at the expected time
+// NOTE 2: using localStorage doesn't work well with supervision images due to size limitations and performance issues
+// So use an AsyncStorage wrapper around Ionic Storage to store the data in IndexedDB instead, which solves these issues
+const store = new IonicStorage({
+  name: "_ionicstorage",
+  driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
+});
+store.create();
+const asyncStoragePersistor = createAsyncStoragePersistor({ storage: IonicAsyncStorage(store) });
+if (onlineManager.isOnline()) {
+  // When online, clear the persisted data to always get the latest from the backend on application start-up
+  asyncStoragePersistor.removeClient();
+}
+persistQueryClient({
+  queryClient,
+  persistor: asyncStoragePersistor,
+  maxAge: REACT_QUERY_CACHE_TIME,
+});
 
 const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
-  const [homePage, setHomePage] = useState<string>("/supervisions");
+  const [homePage, setHomePage] = useState<string>("");
   const [errorCode, setErrorCode] = useState<number>(0);
+  const [version, setVersion] = useState<string>("-");
+  const [isInitialisedOffline, setInitialisedOffline] = useState<boolean>(false);
+  const [isOkToContinue, setOkToContinue] = useState<boolean>(false);
+  const dispatch = useDispatch();
+
+  const {
+    networkStatus: { isFailed = {}, failedStatus = {} },
+  } = useTypedSelector((state: RootState) => state.rootReducer);
+
+  const clearDataAndRedirect = (url: string) => {
+    serviceWorkerRegistration.unregister(() => {});
+    const cookies = Cookies.get();
+    Object.keys(cookies).forEach((key) => {
+      Cookies.remove(key);
+    });
+    window.location.href = url;
+  };
 
   useEffect(() => {
+    removeObsoletePasswords();
+    // Add or remove the "dark" class based on if the media query matches
+    const toggleDarkTheme = (shouldAdd: boolean) => {
+      document.body.classList.toggle("dark", shouldAdd);
+    };
+
+    // Use matchMedia to check the user preference
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+    toggleDarkTheme(prefersDark.matches);
+
+    // Listen for changes to the prefers-color-scheme media query
+    prefersDark.addEventListener("change", (mediaQuery) => toggleDarkTheme(mediaQuery.matches));
+
     const fetchUserData = async () => {
       try {
-        /* Disabling caching to avoid getting stale user data. */
-        const headers = new Headers();
-        headers.append("pragma", "no-cache");
-        headers.append("cache-control", "no-store");
+        const [userDataResponse, versionResponse] = await Promise.all([
+          queryClient.fetchQuery(["getSupervisor"], () => getUserData(dispatch), {
+            // retry: onRetry,
+            staleTime: Infinity,
+          }),
+          queryClient.fetchQuery(["getVersionInfo"], () => getVersionInfo(dispatch), {
+            // retry: onRetry,
+            staleTime: Infinity,
+          }),
+        ]);
 
-        const userDataResponse = await fetch(`${getOrigin()}/api/ui/userdata`, { method: "GET", headers: headers });
+        if (!isFailed.getVersionInfo) {
+          setVersion(versionResponse.version);
+        }
 
-        if (userDataResponse?.ok) {
-          const responseData = await (userDataResponse.json() as Promise<IUserData>);
-          if (responseData.roles.length > 0) {
-            if (responseData.roles.includes("SILLARI_SILLANVALVOJA")) {
+        if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
+          if (userDataResponse.roles.length > 0) {
+            if (userDataResponse.roles.includes("SILLARI_SILLANVALVOJA")) {
               setHomePage("/supervisions");
-            } else if (responseData.roles.includes("SILLARI_AJOJARJESTELIJA")) {
+            } else if (userDataResponse.roles.includes("SILLARI_AJOJARJESTELIJA")) {
               setHomePage("/management");
-            } else if (responseData.roles.includes("SILLARI_KULJETTAJA")) {
+            } else if (userDataResponse.roles.includes("SILLARI_KULJETTAJA")) {
               setHomePage("/transport");
             }
-            setUserData(responseData);
+            setUserData(userDataResponse);
           } else {
             /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
-            setErrorCode(1001);
+            setErrorCode(SillariErrorCode.NO_USER_ROLES);
           }
         } else {
-          console.log(userDataResponse);
-          if (userDataResponse.status === 401) {
-            /* Returned by Väylä access control. */
-            setErrorCode(401);
-          } else if (userDataResponse.status === 403) {
-            /* Returned by SillaRi backend if user does not have SillaRi roles. */
-            setErrorCode(403);
-          } else {
-            /* Properly handling other response code not handled yet. */
-            setErrorCode(1002);
-          }
+          // Note: status codes from the backend such as 401 or 403 are now contained in failedStatus.getUserData
+          console.log("User data response", userDataResponse);
+          setErrorCode(SillariErrorCode.NO_USER_DATA);
         }
       } catch (e) {
-        console.log(e);
-        setErrorCode(1003);
+        console.log("App error", e);
+        setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
       }
     };
-    fetchUserData();
+
+    // Only fetch user data from the backend (and login if necessary) when online
+    // When offline, the user data will be set on this page later via AppCheck.tsx
+    if (onlineManager.isOnline()) {
+      fetchUserData();
+    } else {
+      setInitialisedOffline(true);
+    }
+
+    // Fetch the user data on first render only, using a workaround utilising useEffect with empty dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const logoutFromApp = () => {
-    serviceWorkerRegistration.unregister(() => {
-      const cookies = Cookies.get();
-      Object.keys(cookies).forEach((key) => {
-        Cookies.remove(key);
-      });
-      window.location.reload();
+    logoutUser().then((data) => {
+      clearDataAndRedirect(data.redirectUrl);
     });
   };
 
-  const userHasRole = (role: string) => {
-    if (userData) {
-      return userData.roles.includes(role);
-    }
-    return false;
-  };
+  const userHasRole = useCallback(
+    (role: string) => {
+      if (userData) {
+        return userData.roles.includes(role);
+      }
+      return false;
+    },
+    [userData]
+  );
 
-  const renderError = (code: number) => {
-    return (
-      <>
-        {code === 401 ? (
-          <div>
-            <h1>Pääsy estetty</h1>
-            <p>Kirjaudu sisään käyttääksesi sovellusta.</p>
-            <IonButton color="primary" expand="block" size="large" onClick={logoutFromApp}>
-              Kirjaudu sisään
-            </IonButton>
-          </div>
-        ) : code === 403 ? (
-          <div>
-            <h1>Pääsy estetty</h1>
-            <p>Sinulla ei ole oikeuksia käyttää SillaRi-sovellusta.</p>
-          </div>
-        ) : (
-          <div>Käsittelemätön virhetilanne: {code}</div>
-        )}
-      </>
-    );
-  };
+  useEffect(() => {
+    const prefetchData = async () => {
+      // Only the supervisions app allows offline use, so only prefetch data for those users
+      // Use await to prefetch all required data before continuing
+      // TODO - maybe add a spinner to indicate loading?
+      if (userHasRole("SILLARI_SILLANVALVOJA")) {
+        await prefetchOfflineData(queryClient, dispatch);
+      }
+    };
+
+    // Only prefetch data when online
+    if (onlineManager.isOnline()) {
+      prefetchData();
+    }
+  }, [userHasRole, dispatch]);
+
+  const statusCode = failedStatus.getUserData > 0 ? failedStatus.getUserData : errorCode;
 
   return (
     <QueryClientProvider client={queryClient}>
       <IonApp>
-        {!userData ? (
-          <IonContent className="ion-padding">{errorCode ? <>{renderError(errorCode)}</> : <div>Starting app...</div>}</IonContent>
+        {(!userData || homePage.length === 0 || isInitialisedOffline) && !isOkToContinue ? (
+          <AppCheck
+            statusCode={statusCode}
+            isInitialisedOffline={isInitialisedOffline}
+            setOkToContinue={setOkToContinue}
+            setUserData={setUserData}
+            setHomePage={setHomePage}
+            logoutFromApp={logoutFromApp}
+          />
         ) : (
           <IonReactRouter>
-            <SidebarMenu roles={userData.roles} />
+            <SidebarMenu version={version} />
             <IonContent id="MainContent">
               <Switch>
                 <Route exact path="/supervisions">
@@ -167,18 +230,21 @@ const App: React.FC = () => {
                   {userHasRole("SILLARI_SILLANVALVOJA") ? <Supervisions /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/bridgemap/:routeBridgeId">
-                  {userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                  {userHasRole("SILLARI_KULJETTAJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
                     <Map />
                   ) : (
                     <AccessDenied />
                   )}
                 </Route>
                 <Route exact path="/routemap/:routeId">
-                  {userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                  {userHasRole("SILLARI_KULJETTAJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
                     <Map />
                   ) : (
                     <AccessDenied />
                   )}
+                </Route>
+                <Route exact path="/routeTransportDetail/:routeTransportId/:message">
+                  {userHasRole("SILLARI_SILLANVALVOJA") ? <RouteTransportDetail /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/routeTransportDetail/:routeTransportId">
                   {userHasRole("SILLARI_SILLANVALVOJA") ? <RouteTransportDetail /> : <AccessDenied />}
@@ -208,13 +274,20 @@ const App: React.FC = () => {
                   {userHasRole("SILLARI_AJOJARJESTELIJA") ? <TransportDetail /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/transport">
-                  {userHasRole("SILLARI_KULJETTAJA") ? <TransportCodeInput /> : <AccessDenied />}
+                  {userHasRole("SILLARI_KULJETTAJA") ? <TransportCodeForm /> : <AccessDenied />}
                 </Route>
-                <Route exact path="/transport/:routeTransportId">
+                <Route exact path="/transport/:transportPassword">
                   {userHasRole("SILLARI_KULJETTAJA") ? <Transport /> : <AccessDenied />}
                 </Route>
                 <Route exact path="/settings">
                   <Settings />
+                </Route>
+                <Route exact path="/userinfo">
+                  {userHasRole("SILLARI_KULJETTAJA") || userHasRole("SILLARI_SILLANVALVOJA") || userHasRole("SILLARI_AJOJARJESTELIJA") ? (
+                    <UserInfo />
+                  ) : (
+                    <AccessDenied />
+                  )}
                 </Route>
                 <Route exact path="/">
                   <Redirect to={homePage} />

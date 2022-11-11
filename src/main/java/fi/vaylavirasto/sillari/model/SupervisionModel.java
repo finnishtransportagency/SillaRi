@@ -17,16 +17,17 @@ public class SupervisionModel extends BaseModel {
     private Integer routeTransportId;
     private OffsetDateTime plannedTime;
     private Boolean conformsToPermit;
+    private String supervisorCompany;
     private SupervisorType supervisorType;
     private SupervisionStatusModel currentStatus;
     private List<SupervisionStatusModel> statusHistory;
-    private List<SupervisorModel> supervisors;
     private SupervisionReportModel report;
     private List<SupervisionImageModel> images;
 
     private OffsetDateTime startedTime; // Latest IN_PROGRESS in statusHistory (because might have been started and cancelled and started again)
     private OffsetDateTime crossingDeniedTime; // First (and only) CROSSING_DENIED in statusHistory
     private OffsetDateTime finishedTime; // First (and only) FINISHED in statusHistory
+
 
     // Parents
     private RouteBridgeModel routeBridge;
@@ -64,6 +65,16 @@ public class SupervisionModel extends BaseModel {
         this.startedTime = startedTime;
         this.crossingDeniedTime = crossingDeniedTime;
         this.finishedTime = finishedTime;
+    }
+
+
+    // Used only by LeluDTOMapper
+    public boolean getExceptional() {
+        if (getReport() == null) {
+            return false;
+        } else {
+            return report.getAnomalies() || !report.getSpeedLimitOk() || !report.getDrivingLineOk();
+        }
     }
 
 }

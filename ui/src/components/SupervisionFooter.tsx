@@ -2,30 +2,55 @@ import React from "react";
 import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
 
 interface SupervisionFooterProps {
-  disabled: boolean;
+  saveDisabled: boolean;
+  cancelDisabled: boolean;
+  sendImmediatelyDisabled?: boolean;
+  sendImmediatelyVisible: boolean;
   saveChanges: () => void;
   cancelChanges: () => void;
+  sendImmediately?: () => void;
   saveLabel: string;
   cancelLabel: string;
+  sendImmediatelyLabel?: string;
 }
 
-const SupervisionFooter = ({ disabled, saveChanges, cancelChanges, saveLabel, cancelLabel }: SupervisionFooterProps): JSX.Element => {
+const SupervisionFooter = ({
+  saveDisabled,
+  cancelDisabled,
+  sendImmediatelyDisabled,
+  saveChanges,
+  cancelChanges,
+  sendImmediately,
+  saveLabel,
+  cancelLabel,
+  sendImmediatelyLabel,
+  sendImmediatelyVisible,
+}: SupervisionFooterProps): JSX.Element => {
   return (
     <IonGrid>
       <IonRow>
         <IonCol className="ion-text-center">
-          <IonButton color="primary" expand="block" size="large" disabled={disabled} onClick={() => saveChanges()}>
+          <IonButton color="primary" expand="block" size="large" disabled={saveDisabled} onClick={() => saveChanges()}>
             {saveLabel}
           </IonButton>
         </IonCol>
       </IonRow>
       <IonRow>
         <IonCol className="ion-text-center">
-          <IonButton color="tertiary" expand="block" size="large" disabled={disabled} onClick={() => cancelChanges()}>
+          <IonButton color="tertiary" expand="block" size="large" disabled={cancelDisabled} onClick={() => cancelChanges()}>
             {cancelLabel}
           </IonButton>
         </IonCol>
       </IonRow>
+      {sendImmediatelyVisible && sendImmediately && sendImmediatelyLabel && (
+        <IonRow>
+          <IonCol className="ion-text-center">
+            <IonButton color="primary" expand="block" size="large" disabled={sendImmediatelyDisabled} onClick={() => sendImmediately()}>
+              {sendImmediatelyLabel}
+            </IonButton>
+          </IonCol>
+        </IonRow>
+      )}
     </IonGrid>
   );
 };

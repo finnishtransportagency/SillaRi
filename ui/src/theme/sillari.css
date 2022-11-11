@@ -1,3 +1,22 @@
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/react/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/react/css/normalize.css";
+@import "@ionic/react/css/structure.css";
+@import "@ionic/react/css/typography.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/react/css/padding.css";
+@import "@ionic/react/css/float-elements.css";
+@import "@ionic/react/css/text-alignment.css";
+@import "@ionic/react/css/text-transformation.css";
+@import "@ionic/react/css/flex-utils.css";
+@import "@ionic/react/css/display.css";
+
+/* Theme variables */
+@import "./variables.css";
+
 @font-face {
   font-family: "Exo2";
   font-weight: 400;
@@ -57,6 +76,14 @@
   cursor: pointer;
 }
 
+.passwordButton {
+  margin: 4px 4px 18px 4px;
+  --padding-top: 25px;
+  --padding-bottom: 25px;
+  --padding-start: 13px;
+  --padding-end: 13px;
+}
+
 .iconLink {
   cursor: pointer;
 }
@@ -84,16 +111,25 @@
 }
 
 .whiteBackground {
-  background-color: white;
+  background-color: var(--ion-background-color);
 }
 
 .lightBackground {
   background-color: var(--ion-color-light);
 }
 
+.selectedBackground {
+  background-color: var(--ion-color-secondary-5);
+}
+
 ion-select,
 ion-input {
-  border: 2px solid var(--ion-color-base);
+  border: 1px solid var(--ion-color-step-150);
+}
+
+ion-textarea {
+  --background: var(--ion-color-light) !important;
+  padding-left: 16px;
 }
 
 ion-button,
@@ -121,6 +157,58 @@ ion-label {
 ion-icon {
   /* prevent title popup on Ionic icons */
   pointer-events: none;
+}
+
+/* Wider popovers: Ionic only supports the size of the triggering element (e.g. button) or default size */
+ion-popover.medium-popover {
+  --width: 95%;
+  --max-width: 95%;
+}
+@media only screen and (min-width: 600px) {
+  ion-popover.medium-popover {
+    --width: 380px;
+  }
+}
+
+ion-popover.large-popover {
+  --width: 95%;
+  --max-width: 95%;
+}
+@media only screen and (min-width: 600px) {
+  ion-popover.large-popover {
+    --width: 500px;
+  }
+}
+
+/*
+  NOTE: The following ion-margin overrides are required to fix a problem with react-scripts 5.0.0, which now uses Webpack 5
+  The production build incorrectly sets margin-left and margin-right to 'unset' in the compiled css after defining the margin sizes, and so sets all margins to 0
+  This is likely caused by build plugin changes, since it does not happen in the dev env, nor in the previous version of react-scripts
+*/
+.ion-margin {
+  margin: var(--ion-margin, 16px);
+}
+.ion-margin-start {
+  margin-left: var(--ion-margin, 16px);
+}
+.ion-margin-end {
+  margin-right: var(--ion-margin, 16px);
+}
+
+.small-margin-top {
+  margin-top: 4px;
+}
+
+.small-margin-bottom {
+  margin-bottom: 4px;
+}
+
+.medium-margin-start {
+  margin-left: 8px;
+}
+
+.medium-margin-end {
+  margin-right: 8px;
 }
 
 /** Additional Vayla colors **/
@@ -158,4 +246,12 @@ ion-icon {
   --ion-color-contrast-rgb: var(--ion-color-orange-contrast-rgb);
   --ion-color-shade: var(--ion-color-orange-shade);
   --ion-color-tint: var(--ion-color-orange-tint);
+}
+
+ion-popover#password-popover::part(content) {
+  position: relative;
+  left: unset;
+  right: 0;
+  top: 0;
+  margin-left: 2%;
 }

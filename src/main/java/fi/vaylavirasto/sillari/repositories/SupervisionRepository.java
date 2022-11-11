@@ -6,6 +6,8 @@ import fi.vaylavirasto.sillari.mapper.SupervisionMapper;
 import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
+import fi.vaylavirasto.sillari.model.TransportStatusType;
+import fi.vaylavirasto.sillari.model.SupervisorType;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +20,7 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static org.jooq.impl.DSL.*;
@@ -28,8 +31,6 @@ public class SupervisionRepository {
 
     @Autowired
     private DSLContext dsl;
-    @Autowired
-    SupervisorRepository supervisorRepository;
     @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
 
@@ -49,6 +50,14 @@ public class SupervisionRepository {
                 .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
     }
 
+    public List<SupervisionModel> getSupervisionsByRouteTransportId(List<Integer> routeTransportIds) {
+        return dsl.select().from(TableAlias.supervision)
+                .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
+                .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
+                .where(TableAlias.supervision.ROUTE_TRANSPORT_ID.in(routeTransportIds))
+                .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
+    }
+
     public List<SupervisionModel> getSupervisionsByRouteBridgeId(Integer routeBridgeId) {
         return dsl.select().from(TableAlias.supervision)
                 .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
@@ -56,26 +65,60 @@ public class SupervisionRepository {
                 .fetch(new SupervisionMapper());
     }
 
-    public List<SupervisionModel> getSupervisionsBySupervisorUsername(String username) {
+    public List<SupervisionModel> getAreaContractorSupervisionsByRouteBridgeId(Integer routeBridgeId) {
         return dsl.select().from(TableAlias.supervision)
-                .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
+                .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId))
+                .and(TableAlias.supervision.SUPERVISOR_TYPE.eq(String.valueOf(SupervisorType.AREA_CONTRACTOR)))
+                .orderBy(TableAlias.supervision.ROW_CREATED_TIME)
+                .fetch(new SupervisionMapper());
+    }
+
+
+    public List<SupervisionModel> getSupervisionsBySupervisor(String businessId) {
+        return dsl.select().from(TableAlias.supervision)
                 .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
                 .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
-                .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
+                .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
                 .and(supervisionNotCompleted())
+                .and(TableAlias.supervision.PLANNED_TIME.greaterThan(OffsetDateTime.now().minusDays(5)))
+                .and(noRouteTransportEndedMoreThanDaysAgo(5))
+                .and(permitNotEnded())
                 // Order by planned time takes also seconds and milliseconds into account, when we want to sort by route transport and ordinal
                 // when planned time is the same in MINUTES. Sort in UI instead.
                 //.orderBy(TableAlias.supervision.PLANNED_TIME, TableAlias.supervision.ROUTE_TRANSPORT_ID, TableAlias.routeBridge.ORDINAL)
                 .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
     }
 
-    public List<SupervisionModel> getSupervisionsByRouteTransportAndSupervisorUsername(Integer routeTransportId, String username) {
+    private Condition noRouteTransportEndedMoreThanDaysAgo(int daysAgo) {
+        return notExists(selectOne().from(TableAlias.transportStatus
+                .where(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.transportStatus.ROUTE_TRANSPORT_ID)
+                .and(TableAlias.transportStatus.STATUS.eq(TransportStatusType.DEPARTED.toString())
+                .and(TableAlias.transportStatus.TIME.lessThan(OffsetDateTime.now().minusDays(daysAgo)))))));
+    }
+
+    private Condition permitNotEnded() {
+        return notExists(selectOne().from(TableAlias.permit)
+                .innerJoin(TableAlias.route).on(TableAlias.route.PERMIT_ID.eq(TableAlias.route.PERMIT_ID))
+                .innerJoin(TableAlias.routeBridge).on(TableAlias.routeBridge.ROUTE_ID.eq(TableAlias.route.ID))
+                .innerJoin(TableAlias.supervision).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
+                .where(TableAlias.permit.VALID_END_DATE.lessThan(OffsetDateTime.now())));
+    }    
+
+    public SupervisionModel getSupervisionBySupervisionImageId(Integer imageId) {
+        return dsl.select().from(TableAlias.supervision).where(TableAlias.supervision.ID.eq(
+                        dsl.select(TableAlias.supervisionImage.SUPERVISION_ID).from(TableAlias.supervisionImage).where(TableAlias.supervisionImage.ID.eq(
+                                imageId
+                        ))
+                ))
+                .fetchOne(new SupervisionMapper());
+    }
+
+    public List<SupervisionModel> getSupervisionsByRouteTransportAndSupervisor(Integer routeTransportId, String businessId) {
         return dsl.select().from(TableAlias.supervision)
                 .innerJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))
                 .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
                 .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
-                .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
-                .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
+                .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
                 .and(TableAlias.routeTransport.ID.eq(routeTransportId))
                 .and(supervisionNotCompleted())
                 .orderBy(TableAlias.routeBridge.ORDINAL)
@@ -90,13 +133,22 @@ public class SupervisionRepository {
                                 .or(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.REPORT_SIGNED.toString()))))));
     }
 
-    public List<SupervisionModel> getFinishedButUnsignedSupervisionsBySupervisorUsername(String username) {
+    public List<SupervisionModel> getFinishedSupervisionsBySupervisor(String businessId) {
         return dsl.select().from(TableAlias.supervision)
-                .innerJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))
+                .leftJoin(TableAlias.routeTransport).on(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.routeTransport.ID))
                 .innerJoin(TableAlias.routeBridge).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
                 .innerJoin(TableAlias.bridge).on(TableAlias.routeBridge.BRIDGE_ID.eq(TableAlias.bridge.ID))
-                .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
-                .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
+                .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
+                .and(exists(selectOne()
+                        .from(TableAlias.supervisionStatus)
+                        .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)
+                                .and(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.FINISHED.toString())))))
+                .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
+    }
+
+    public List<SupervisionModel> getFinishedButUnsignedSupervisionsBySupervisor(String businessId) {
+        return dsl.select().from(TableAlias.supervision)
+                .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
                 .and(exists(selectOne()
                         .from(TableAlias.supervisionStatus)
                         .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)
@@ -105,7 +157,23 @@ public class SupervisionRepository {
                         .from(TableAlias.supervisionStatus)
                         .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)
                                 .and(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.REPORT_SIGNED.toString())))))
-                .fetch(this::mapSupervisionWithRouteBridgeAndBridge);
+                .fetch(new SupervisionMapper());
+    }
+
+    public List<SupervisionModel> getUnsignedSupervisionsBySupervisor(String businessId) {
+        return dsl.select().from(TableAlias.supervision)
+                .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
+                .and(notExists(selectOne()
+                        .from(TableAlias.supervisionStatus)
+                        .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)
+                                .and(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.REPORT_SIGNED.toString())))))
+                .fetch(new SupervisionMapper());
+    }
+
+    public List<SupervisionModel> getAllSupervisionsOfSupervisor(String businessId) {
+        return dsl.select().from(TableAlias.supervision)
+                .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
+                .fetch(new SupervisionMapper());
     }
 
     private SupervisionModel mapSupervisionWithRouteBridgeAndBridge(Record record) {
@@ -132,25 +200,20 @@ public class SupervisionRepository {
                             TableAlias.supervision.ROUTE_BRIDGE_ID,
                             TableAlias.supervision.ROUTE_TRANSPORT_ID,
                             TableAlias.supervision.PLANNED_TIME,
+                            TableAlias.supervision.SUPERVISOR_COMPANY,
                             TableAlias.supervision.SUPERVISOR_TYPE,
                             TableAlias.supervision.CONFORMS_TO_PERMIT
                     ).values(
-                            supervisionModel.getRouteBridgeId(),
-                            supervisionModel.getRouteTransportId(),
-                            supervisionModel.getPlannedTime(),
-                            supervisionModel.getSupervisorType().toString(),
-                            false)
+                    supervisionModel.getRouteBridgeId(),
+                    supervisionModel.getRouteTransportId(),
+                    supervisionModel.getPlannedTime(),
+                    supervisionModel.getSupervisorCompany(),
+                    supervisionModel.getSupervisorType().toString(),
+                    false)
                     .returningResult(TableAlias.supervision.ID)
                     .fetchOne(); // Execute and return zero or one record
 
-            Integer supervisionId = supervisionIdResult != null ? supervisionIdResult.value1() : null;
-            supervisionModel.setId(supervisionId);
-
-            supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionId, supervisorModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
-            });
-
-            return supervisionId;
+            return supervisionIdResult != null ? supervisionIdResult.value1() : null;
         });
     }
 
@@ -163,11 +226,6 @@ public class SupervisionRepository {
                     .set(TableAlias.supervision.SUPERVISOR_TYPE, supervisionModel.getSupervisorType().toString())
                     .where(TableAlias.supervision.ID.eq(supervisionModel.getId()))
                     .execute();
-
-            supervisorRepository.deleteSupervisionSupervisors(ctx, supervisionModel.getId());
-            supervisionModel.getSupervisors().forEach(supervisorModel -> {
-                supervisorRepository.insertSupervisionSupervisor(ctx, supervisionModel.getId(), supervisorModel.getId(), supervisorModel.getPriority(), supervisorModel.getUsername());
-            });
         });
     }
 
@@ -182,11 +240,21 @@ public class SupervisionRepository {
         });
     }
 
+    public void updateSupervisionsRouteBridge(Integer supervisionId, Integer routeBridgeId) {
+
+        dsl.transaction(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+            ctx.update(TableAlias.supervision)
+                    .set(TableAlias.supervision.ROUTE_BRIDGE_ID, routeBridgeId)
+                    .where(TableAlias.supervision.ID.eq(supervisionId))
+                    .execute();
+        });
+    }
+
     public void deleteSupervision(SupervisionModel supervisionModel) {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
-            supervisorRepository.deleteSupervisionSupervisors(ctx, supervisionModel.getId());
             supervisionStatusRepository.deleteSupervisionStatuses(ctx, supervisionModel.getId());
 
             ctx.delete(TableAlias.supervision)
@@ -194,4 +262,46 @@ public class SupervisionRepository {
                     .execute();
         });
     }
+
+    public List<String> getSupervisorsByRouteTransportId(Integer routeTransportId) {
+        return dsl.select(TableAlias.supervision.SUPERVISOR_COMPANY).from(TableAlias.supervision)
+                .where(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(routeTransportId)).fetch(TableAlias.supervision.SUPERVISOR_COMPANY);
+    }
+
+    public List<String> getSupervisorsByRouteBridgeId(Integer routeBridgeId) {
+        return dsl.select(TableAlias.supervision.SUPERVISOR_COMPANY).from(TableAlias.supervision)
+                .where(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(routeBridgeId)).fetch(TableAlias.supervision.SUPERVISOR_COMPANY);
+    }
+
+    public List<String> getSupervisorsByRouteId(Integer routeId) {
+        return dsl.select(TableAlias.supervision.SUPERVISOR_COMPANY).from(TableAlias.supervision)
+                .where(TableAlias.supervision.ROUTE_BRIDGE_ID.in(
+                        dsl.select(TableAlias.routeBridge.ID).from(TableAlias.routeBridge)
+                                .where(TableAlias.routeBridge.ROUTE_ID.eq(routeId))))
+                .fetch(TableAlias.supervision.SUPERVISOR_COMPANY);
+    }
+
+    public List<String> getSupervisorsByPermitId(Integer permitId) {
+        return dsl.select(TableAlias.supervision.SUPERVISOR_COMPANY).from(TableAlias.supervision)
+                .where(TableAlias.supervision.ROUTE_BRIDGE_ID.in(
+                        dsl.select(TableAlias.routeBridge.ID).from(TableAlias.routeBridge).where(TableAlias.routeBridge.ROUTE_ID.in(
+                                dsl.select(TableAlias.route.ID).from(TableAlias.route).where(TableAlias.route.PERMIT_ID.eq(permitId)))
+                        ))
+                ).fetch(TableAlias.supervision.SUPERVISOR_COMPANY);
+    }
+
+    public List<SupervisionModel> getSupervisionsOfAreaContractor(String businessId) {
+        return dsl.select().from(TableAlias.supervision)
+                .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
+                .and(supervisionNotCompleted()
+                .and(TableAlias.supervision.ROUTE_BRIDGE_ID.in(
+                        dsl.select(TableAlias.routeBridge.ID).from(TableAlias.routeBridge).where(TableAlias.routeBridge.ROUTE_ID.in(
+                                dsl.select(TableAlias.route.ID).from(TableAlias.route).where(TableAlias.route.PERMIT_ID.in(
+                                        dsl.select(TableAlias.permit.ID).from(TableAlias.permit).where(TableAlias.permit.CUSTOMER_USES_SILLARI.isNull().or(TableAlias.permit.CUSTOMER_USES_SILLARI.eq(false))))
+                                )))
+                        )))
+                .fetch(new SupervisionMapper());
+    }
+
+
 }

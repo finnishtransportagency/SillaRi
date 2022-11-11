@@ -2,6 +2,7 @@ import IRoute from "./IRoute";
 import IVehicle from "./IVehicle";
 import ITransportDimensions from "./ITransportDimensions";
 import IAxleChart from "./IAxleChart";
+import ICompany from "./ICompany";
 
 export default interface IPermit {
   id: number;
@@ -9,10 +10,14 @@ export default interface IPermit {
   permitNumber: string;
   validStartDate: string;
   validEndDate: string;
-  routes: IRoute[];
-  transportDimensions: ITransportDimensions;
-  vehicles: IVehicle[];
-  axleChart: IAxleChart;
+  leluVersion: number;
+  isCurrentVersion: boolean;
+  company?: ICompany;
+  routes?: IRoute[];
+  transportDimensions?: ITransportDimensions;
+  vehicles?: IVehicle[];
+  axleChart?: IAxleChart;
   transportTotalMass: number;
   pdfObjectKey: string;
+  customerUsesSillari: boolean;
 }

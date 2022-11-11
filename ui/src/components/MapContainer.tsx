@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
@@ -10,11 +9,12 @@ import type { Extent } from "ol/extent";
 import Feature from "ol/Feature";
 import { WMTSCapabilities } from "ol/format";
 import { Geometry, Point } from "ol/geom";
-import { Layer, Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import BaseLayer from "ol/layer/Base";
 import MapOL from "ol/Map";
-import { get as getProj, fromLonLat } from "ol/proj";
+import { fromLonLat } from "ol/proj";
 import { register } from "ol/proj/proj4";
-import { Source, TileDebug } from "ol/source";
+import { TileDebug } from "ol/source";
 import View from "ol/View";
 import proj4 from "proj4";
 import TileSource from "ol/source/Tile";
@@ -30,22 +30,18 @@ import { getRouteGeometry, getRouteBridgeGeometry, onRetry } from "../utils/back
 import "./MapContainer.scss";
 
 interface MapContainerProps {
-  routeBridgeId: string;
-  routeId: string;
+  routeBridgeIdParam?: string;
+  routeIdParam?: string;
 }
 
-const MapContainer = (): JSX.Element => {
+const MapContainer = ({ routeBridgeIdParam, routeIdParam }: MapContainerProps): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const mapRef = useRef<HTMLDivElement>(null);
 
-  // The page route provides either routeBridgeId or routeId, but not both
-  // These values are checked later, so don't use default values here
-  const { routeBridgeId: routeBridgeIdParam, routeId: routeIdParam } = useParams<MapContainerProps>();
-
   const [backgroundLayer, setBackgroundLayer] = useState<TileLayer<TileSource>>();
-  const [bridgeLayer, setBridgeLayer] = useState<Layer<Source>>();
-  const [routeLayer, setRouteLayer] = useState<Layer<Source>>();
+  const [bridgeLayer, setBridgeLayer] = useState<BaseLayer>();
+  const [routeLayer, setRouteLayer] = useState<BaseLayer>();
   const [userLayer, setUserLayer] = useState<VectorLayer<VectorSource<Geometry>>>();
   const [bridgeCoords, setBridgeCoords] = useState<Point>();
   const [routeExtent, setRouteExtent] = useState<Extent>();
@@ -177,14 +173,14 @@ const MapContainer = (): JSX.Element => {
     // This function is called several times from useEffect when the dependencies change
     // However, the map should only be initialised once, otherwise duplicate OpenLayers viewports are rendered
     if (!mapInitialised && backgroundLayer && bridgeLayer && routeLayer && userLayer) {
-      const backgroundTileGrid = backgroundLayer.getSource().getTileGrid();
+      const backgroundTileGrid = backgroundLayer.getSource()?.getTileGrid();
 
       // The tile grid and layer for the background map are defined, so create the OpenLayers view and map, and any other related components
       const view = new View({
         zoom: 3,
         center: [400000, 7000000],
         projection,
-        resolutions: backgroundTileGrid.getResolutions(),
+        resolutions: backgroundTileGrid?.getResolutions(),
         minZoom: 0,
         maxZoom: 15,
       });
@@ -204,7 +200,7 @@ const MapContainer = (): JSX.Element => {
         controls: defaults(),
       });
 
-      if (debug) {
+      if (debug && backgroundTileGrid) {
         // For debug purposes, show the mouse coordinates and tile grid overlay
         const mousePositionControl = new MousePosition({
           projection,
@@ -214,7 +210,7 @@ const MapContainer = (): JSX.Element => {
 
         const debugLayer = new TileLayer({
           source: new TileDebug({
-            projection: getProj(projection),
+            projection: projection,
             tileGrid: backgroundTileGrid,
           }),
         });
@@ -254,8 +250,8 @@ const MapContainer = (): JSX.Element => {
           if (userPosition.coords && userPosition.coords.longitude > 0 && userPosition.coords.latitude > 0) {
             const userPoint = new Point(fromLonLat([userPosition.coords.longitude, userPosition.coords.latitude], projection));
             const userFeature = new Feature({ geometry: userPoint });
-            userLayer.getSource().clear();
-            userLayer.getSource().addFeature(userFeature);
+            userLayer.getSource()?.clear();
+            userLayer.getSource()?.addFeature(userFeature);
           }
         } catch (err) {
           console.log("ERROR", err);

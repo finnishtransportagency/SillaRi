@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.3</version>
+        <version>2.7.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>fi.vaylavirasto</groupId>
@@ -17,8 +17,8 @@
     <properties>
         <leluApiVersion>0.0.1</leluApiVersion>
         <java.version>11</java.version>
-        <aws.sdk.version>1.12.150</aws.sdk.version>
-        <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <aws.sdk.version>1.12.321</aws.sdk.version>
+        <mapstruct.version>1.5.3.Final</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <log4j2.version>2.17.1</log4j2.version>
         <sillari.flyway.migrations.both.dir>migrations</sillari.flyway.migrations.both.dir>
@@ -74,7 +74,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.5</version>
+            <version>1.6.12</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -142,22 +142,22 @@
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_spring_web</artifactId>
-            <version>0.14.1</version>
+            <version>0.16.0</version>
         </dependency>
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient</artifactId>
-            <version>0.14.1</version>
+            <version>0.16.0</version>
         </dependency>
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_hotspot</artifactId>
-            <version>0.14.1</version>
+            <version>0.16.0</version>
         </dependency>
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_httpserver</artifactId>
-            <version>0.14.1</version>
+            <version>0.16.0</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -167,7 +167,7 @@
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_servlet</artifactId>
-            <version>0.14.1</version>
+            <version>0.16.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -181,18 +181,18 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.11.2</version>
+            <version>0.11.5</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>0.11.2</version>
+            <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.2</version>
+            <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -220,7 +220,7 @@
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
-            <version>2.2.1</version>
+            <version>2.5.0</version>
         </dependency>
         <!-- DTO mapping
         https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
@@ -248,39 +248,41 @@
         <dependency>
             <groupId>org.passay</groupId>
             <artifactId>passay</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>2.0.25</version>
+            <version>2.0.27</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.9</version>
+            <version>1.10.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
         <!-- MONTHLY DEPENDENCY CHECK -->
-        <!--
-        <dependency>
+        <!--<dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>6.5.3</version>
+            <version>7.3.0</version>
             <type>maven-plugin</type>
         </dependency>
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-core</artifactId>
-            <version>6.5.3</version>
+            <version>7.3.0</version>
             <type>maven-plugin</type>
         </dependency>
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-utils</artifactId>
-            <version>6.5.3</version>
+            <version>7.3.0</version>
             <type>maven-plugin</type>
-        </dependency>
-        -->
+        </dependency>-->
     </dependencies>
 
     <build>
@@ -375,7 +377,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version>
                 <configuration>
                     <release>11</release>
                     <!-- Needed for MapStruct DTO mapping -->
@@ -421,11 +423,10 @@
                 </executions>
             </plugin>
             <!-- MONTHLY DEPENDENCY CHECK -->
-            <!--
-            <plugin>
+            <!--<plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>6.5.0</version>
+                <version>7.3.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -433,12 +434,11 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            -->
+            </plugin>-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.8.1</version>
+                <version>2.10.0</version>
                 <configuration>
                     <rulesUri>file:///${project.basedir}/maven-version-rules.xml</rulesUri>
                 </configuration>

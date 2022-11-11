@@ -5,15 +5,29 @@
       "back": "Back",
       "back2": "Back",
       "cancel": "Cancel",
+      "continue": "Continue",
       "search": "Search",
       "edit": "Edit",
       "save": "Save",
-      "send": "Send"
+      "send": "Send",
+      "close": "Close",
+      "closeAlert": "Close alert"
     },
     "answer": {
       "yes": "Yes",
       "no": "No"
-    }
+    },
+    "validation": {
+      "checkDate": "Check the date",
+      "checkTime": "Check the time",
+      "checkDateShort": "Check the date",
+      "checkTimeShort": "Check the time",
+      "invalidTime": "Invalid time",
+      "fixTimes": "Check and correct conflicting times for estimated bridge crossings before proceeding.",
+      "transportNumbersUsed": "Transport times used for route",
+      "transportNumbersUsedInfo": "All transport times permitted for the route in the transport permit have been used. The transport cannot cross any supervised bridges."
+    },
+    "error": "An error occurred"
   },
   "main": {
     "header": {
@@ -22,10 +36,15 @@
     "title": "SillaRi",
     "content": "Welcome!",
     "tab": {
+      "ownList": "Own list",
       "transports": "Transports",
       "bridges": "Bridges"
     },
-    "noNetworkNoData": "Unable to retrieve data, trying again..."
+    "noNetwork": "No network connection",
+    "noNetworkNoData": "Unable to retrieve data, trying again...",
+    "loading": "Loading...",
+    "offline": "Offline mode",
+    "useOffline": "Use SillaRi in offline mode"
   },
   "map": {
     "attribution": "Material"
@@ -41,6 +60,23 @@
       "en": "English"
     }
   },
+  "userInfo": {
+    "header": {
+      "title": "Own information"
+    },
+    "usernameLabel": "Username",
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "phoneNumberLabel": "Phone number",
+    "organizationLabel": "Organization",
+    "roleLabel": "User role",
+    "role": {
+      "ajojarjestelija": "Ajojärjestelijä",
+      "sillanvalvoja": "Sillanvalvoja",
+      "kuljettaja": "Kuljettaja"
+    },
+    "errorInfo": "If there are errors in your contact details, please contact your company's representative."
+  },
   "camera": {
     "takePhotoButtonLabel": "Add photos",
     "listLabel": "Photos",
@@ -52,21 +88,17 @@
     "title": "SillaRi",
     "mainPage": "Transports and bridges",
     "settings": "Settings",
-    "map": "Map",
-    "camera": "Camera",
+    "userInfo": "Own information",
     "management": "Management",
     "transports": "Transports",
-    "logout": "Logout"
+    "logout": "Logout",
+    "versionLabel": "SillaRi version"
   },
-  "company": {
+  "companyTransports": {
     "transportPermit": "Transport permit",
-    "validityPeriod": "Validity period",
-    "transport": {
-      "transportDeparted": "Transport departed",
-      "transportArrived": "Transport arrived",
-      "nextTransport": "Next transport",
-      "estimatedDepartureTime": "estimated departure"
-    }
+    "transportNumber": "Transport time",
+    "nextSupervision": "Next supervision",
+    "estimate": "estimate"
   },
   "route": {
     "departureTime": "Departure time",
@@ -83,7 +115,9 @@
       "route": "Route",
       "showRouteOnMap": "Show route on map",
       "departurePoint": "Departure point",
-      "arrivalPoint": "Arrival point"
+      "arrivalPoint": "Arrival point",
+      "transportNumber": "Transport time",
+      "transportNumbersUsed": "All transport times used for route"
     },
     "bridgesToSupervise": "Bridges to supervise"
   },
@@ -109,9 +143,6 @@
     "crossingInstructions": {
       "title": "Instructions"
     },
-    "trafficSupervisors": {
-      "title": "Traffic supervisors"
-    },
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Transport conforms to permit",
     "startSupervision": "Start supervision",
@@ -120,7 +151,13 @@
     "supervisionMissing": "Bridge supervision is not yet planned",
     "supervisionStarted": "Supervision started",
     "crossingDenied": "Bridge crossing cancelled",
-    "supervisionFinished": "Supervision finished"
+    "supervisionFinished": "Supervision finished",
+    "warning": {
+      "confirmStartSupervision": "Are you sure you want to start the supervision?",
+      "confirmContinueSupervision": "Are you sure you want to continue the supervision?",
+      "confirmDenyCrossing": "Are you sure you want to cancel the crossing?",
+      "transportNotStarted": "The transport has not yet started."
+    }
   },
   "denyCrossing": {
     "cantCross": "Transport cannot cross the bridge",
@@ -129,6 +166,32 @@
     "obstacleOnBridge": "Physical obstacle on bridge",
     "other": "Something else, what?",
     "placeholder": "Add text here"
+  },
+  "supervisionOwnList": {
+    "addButtonLabel": "Add bridges",
+    "permitLabel": "Permit",
+    "addedBySupervisor": "Bridge added by suoervisor",
+    "removeFromList": "Remove from list",
+    "warning": {
+      "removeHeader": "Are you sure you want to remove the bridge from the list?",
+      "remove": "Remove"
+    },
+    "addModal": {
+      "title": "Add bridges",
+      "permitNumberInput": {
+        "inputLabel": "Permit number",
+        "addPermitNumberButtonLabel": "Add permit number",
+        "cancelButtonLabel": "Cancel",
+        "continueButtonLabel": "Next",
+        "notFound": "Permit doesn't exist with given number",
+        "noRights": "Contract supervisor has no rights to given permit"
+      },
+      "routeSelectInput": {
+        "permitLabel": "Permit",
+        "cancelButtonLabel": "Previous",
+        "continueButtonLabel": "Next"
+      }
+    }
   },
   "supervision": {
     "title": "Bridge supervision",
@@ -159,14 +222,19 @@
       "drivingLine": "Driving line",
       "summary": "Go to summary",
       "cancel": "Cancel supervision",
-      "saveToSendList": "Save to the sending list"
+      "saveToSendList": "Save to the sending list",
+      "sendImmediately": "Send supervision immediately",
+      "sendNow": "Send supervision",
+      "back": "Back"
     },
     "warning": {
       "cancelSupervisionHeader": "Are you sure you want to cancel the supervision?",
       "cancelSupervisionText": "All data from the report will be deleted.",
       "leavePage": "Are you sure you want to leave the page?",
       "unsavedChanges": "Supervision has unsaved changes.",
-      "supervisionNotFinished": "Supervision has not been saved to send list."
+      "supervisionNotFinished": "Supervision has not been saved to send list.",
+      "sendImmediatelyHeader": "Are you sure you want to send the supervision immediately?",
+      "sendImmediatelyText": "Report data can't be edited nor complemented after sending"
     },
     "summary": {
       "title": "Summary",
@@ -186,9 +254,15 @@
     "transportPermit": "Transport permit",
     "tractorUnit": "Tractor unit",
     "supervisionStarted": "Supervision started",
+    "reportSent": "Report sent",
+    "removed": "Removed from list",
+    "report": "Supervision report",
     "sendSelected": "Send selected",
     "sentOk": "Selected supervisions have been sent",
-    "nothingToSend": "No supervision reports to send"
+    "nothingToSend": "No supervision reports to send.",
+    "sentReports": "Sent supervision reports",
+    "offlineSuffix": "Offline",
+    "passwordButton": "Open with password"
   },
   "permitPdf": {
     "title": "Transport permit",
@@ -200,10 +274,25 @@
   },
   "management": {
     "companySummary": {
+      "noPermitsWarning": "Permits not found",
       "permitListTitle": "Transport permits and management",
       "transports": "Transports",
       "supervision": "Supervision",
+      "includesSupervisions": "Includes bridge supervisions",
+      "notUsesSillariPermit": "Permit transports not allocated in SillaRi",
+      "noSupervisions": "Does not include bridge supervisions",
+      "permitVersion": "Permit version",
       "addTransportButtonLabel": "Add transport",
+      "transportCount": "Transport times",
+      "showByRoute": "Show by route",
+      "transportCountModal": {
+        "title": "Transport times of permit {{permit}} by route ",
+        "used": "Used",
+        "amount": "Amount in permit",
+        "unlimited": "Unlimited",
+        "usedInfo": "The total number of used transport times consists of the transport times carried out for the current transport permit and possible other versions of the transport permit (the latter in brackets).",
+        "amountInfo": "The total amount of transport times permitted for the route in the transport permit."
+      },
       "filter": {
         "show": "Show",
         "status": {
@@ -230,7 +319,8 @@
       "action": {
         "details": "Details",
         "modify": "Modify",
-        "show": "Show"
+        "show": "Show",
+        "delete": "Delete"
       },
       "transportStatusLog": "Transport tracking",
       "logStatus": {
@@ -244,6 +334,7 @@
     },
     "transportDetail": {
       "headerTitleAdd": "Add new transport",
+      "headerTitleEdit": "Edit transport",
       "headerTitleDetail": "Transport details",
       "transportPermit": "Transport permit",
       "validityPeriod": "Validity period",
@@ -252,38 +343,60 @@
       "bridgesToSupervise": "Bridges to supervise",
       "buttons": {
         "generatePassword": "New password",
-        "deleteTransport": "Delete transport"
+        "deleteTransport": "Delete transport",
+        "setDepartureTime": "Set estimated departure time",
+        "updateDepartureTime": "Update departure time"
       },
       "alert": {
         "generatePassword": "Are you sure you want to generate a new password?",
         "deleteTransport": "Are you sure you want to delete the transport?"
       },
+      "error": {
+        "transportNumberConflict": "Transport number is already used for another transport instance. Please refresh the page."
+      },
       "saved": "Saved",
       "deleted": "Deleted",
       "password": "Transport password",
       "passwordUnknown": "Unknown",
+      "passwordNotGenerated": "Password is generated on the first save",
       "routeInfo": {
-        "estimatedDepartureDate": "Estimated departure date",
-        "estimatedDepartureTime": "time",
+        "estimatedDepartureTime": "Estimated departure time",
         "route": "Route",
         "origin": "Origin",
         "destination": "Destination",
         "showRouteOnMap": "Show route on map",
-        "tractorUnitIdentifier": "Vehicle registration number (tractor unit)",
+        "tractorUnitIdentifier": "Vehicle registration number (first tractor unit)",
         "tractorUnitNotSelected": "Registration number missing",
         "pushingVehicle": "additional or pushing vehicle"
       },
       "bridgeInfo": {
         "bridge": "Bridge",
         "estimatedCrossingTime": "Estimated crossing time",
+        "supervision": "Supervision",
         "bridgeSupervisors": "Bridge supervisors",
         "ownSupervisor": "Own supervisors",
         "contractor": "Maintenance contractor",
-        "contractNumber": "Contract number",
         "bridgeSupervisor": "Bridge supervisor (1.) and backup supervisor (2.)",
         "supervisor1": "Bridge supervisor (1.)",
         "supervisor2": "Backup supervisor (2.)",
-        "copySupervisor": "Copy to all bridges"
+        "copySupervisor": "Copy to all bridges",
+        "noBridges": "No bridges to supervise on the route",
+        "report": "Supervision report",
+        "supervisionStatus": {
+          "in_progress": "Supervision in progress",
+          "crossing_denied": "Crossing cancelled",
+          "finished": "Supervision finished",
+          "report_signed": "Report completed"
+        }
+      },
+      "transportDepartureTime": {
+        "header": "Estimated departure time",
+        "estimatedDepartureDate": "Estimated departure date",
+        "estimatedDepartureTime": "time",
+        "departureAt": "at",
+        "setTime": "Set",
+        "updateTime": "Update",
+        "info": "IMPORTANT. Departure time affects the estimated crossing times of the bridges."
       }
     },
     "supervisionType": {
@@ -297,14 +410,13 @@
       "departed": "On the move",
       "stopped": "On a break",
       "in_progress": "On the move",
-      "arrived": "Arrived"
+      "arrived": "Arrived",
+      "supervisionStarted": "Supervision started",
+      "outdatedPermit": "Add to new permit version"
     }
   },
   "transports": {
     "transportCodeInput": {
-      "header": {
-        "title": "Transports"
-      },
       "inputTitle": "Upcoming transport",
       "inputLabel": "Transport password",
       "inputPlaceholder": "Password",
@@ -349,6 +461,35 @@
       "title": "SillaRi"
     },
     "title": "Access Denied!",
-    "content": "You do no not have permission to see this page."
+    "content": "You do not have permission to see this page."
+  },
+  "appCheck": {
+    "accessDenied": "Access denied",
+    "loginToUse": "Login to use the application.",
+    "login": "Login",
+    "noData": "SillaRi's data cannot be retrieved",
+    "tryAgainLater": "Try again when the network connection is restored.",
+    "noRights": "You do not have permission to use the SillaRi application.",
+    "unhandledError": "Unhandled error condition",
+    "startingApp": "Starting application..."
+  },
+  "offlineInfo": {
+    "title": "Offline mode",
+    "info1": "SillaRi's transports and bridges to be supervised were last updated",
+    "info2": "Only transports and bridges opened with a password in online mode are available in offline mode.",
+    "info3": "You can use SillaRi in offline mode, in which case it is possible to save the bridge supervision report temporarily to this device.",
+    "info4": "You can sent the supervision report later when the network connection is in use again and you login to SillaRi."
+  },
+  "sendingListOfflineNotice": {
+    "title": "Sending is not possible in offline mode",
+    "notice": "You can send the supervision reports when the network connection is restored."
+  },
+  "unsentOffline": {
+    "title": "Unsent reports",
+    "notice": "The sending list has unsent supervision reports",
+    "question": "Do you want to go to the sending list?",
+    "goToSendingList": "Go to sending list",
+    "continueToMain": "Continue to SillaRi's main page",
+    "info": "You can also get to the sending list from the main page."
   }
 }

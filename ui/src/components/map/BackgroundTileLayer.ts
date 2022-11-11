@@ -38,7 +38,7 @@ export default class BackgroundTileLayer extends TileLayer<TileSource> {
 
       const xyzSource = new XYZ({
         url: "https://tiles.kartat.kapsi.fi/taustakartta_3067/{z}/{x}/{y}.jpg",
-        projection: getProj(projection),
+        projection: projection,
         tileGrid: xyzTileGrid,
         cacheSize: 2048,
         attributions: mmlAttribution,

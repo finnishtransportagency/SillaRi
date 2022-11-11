@@ -2,23 +2,20 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitDTO;
 import fi.vaylavirasto.sillari.api.lelu.permit.LeluPermitResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.excesssupervisions.LeluPermitsWithExcessTransportNumbersResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.permitPdf.LeluPermiPdfResponseDTO;
 import fi.vaylavirasto.sillari.api.lelu.routeGeometry.LeluRouteGeometryResponseDTO;
-import fi.vaylavirasto.sillari.api.lelu.supervision.LeluRouteResponseDTO;
+import fi.vaylavirasto.sillari.api.lelu.supervision.LeluBridgeSupervisionResponseDTO;
 import fi.vaylavirasto.sillari.api.rest.error.*;
+import fi.vaylavirasto.sillari.model.BridgeImageModel;
 import fi.vaylavirasto.sillari.model.BridgeModel;
-import fi.vaylavirasto.sillari.model.SupervisionModel;
+import fi.vaylavirasto.sillari.service.BridgeImageService;
 import fi.vaylavirasto.sillari.service.BridgeService;
 import fi.vaylavirasto.sillari.service.LeluService;
-import fi.vaylavirasto.sillari.service.SupervisionImageService;
-import fi.vaylavirasto.sillari.service.SupervisionService;
-import fi.vaylavirasto.sillari.service.trex.TRexService;
-import fi.vaylavirasto.sillari.util.PDFGenerator;
+import fi.vaylavirasto.sillari.service.trex.TRexBridgeInfoService;
+import fi.vaylavirasto.sillari.service.trex.TRexPicService;
 import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.logging.log4j.LogManager;
@@ -33,14 +30,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.*;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 
 @RestController
 @RequestMapping("/lelu")
@@ -48,30 +42,25 @@ public class LeluController {
     private static final Logger logger = LogManager.getLogger();
     private static final String LELU_API_VERSION_HEADER_NAME = "lelu-api-accept-version";
 
-    @Value("${spring.profiles.active:Unknown}")
-    private String activeProfile;
-
     @Value("${sillari.lelu.version}")
     private String currentApiVersion;
 
 
-    private final LeluService leluService;
-    private final TRexService trexService;
-    private final BridgeService bridgeService;
-    private final MessageSource messageSource;
-    private final SupervisionService supervisionService;
-
-
-    @Autowired
-    SupervisionImageService supervisionImageService;
+    private LeluService leluService;
+    private BridgeService bridgeService;
+    private BridgeImageService bridgeImageService;
+    private TRexBridgeInfoService trexBridgeInfoService;
+    private TRexPicService tRexPicService;
+    private MessageSource messageSource;
 
     @Autowired
-    public LeluController(LeluService leluService, TRexService trexService, BridgeService bridgeService, MessageSource messageSource, SupervisionService supervisionService) {
+    public LeluController(LeluService leluService, TRexBridgeInfoService trexBridgeInfoService, BridgeService bridgeService, BridgeImageService bridgeImageService, TRexPicService tRexPicService, MessageSource messageSource) {
         this.leluService = leluService;
-        this.trexService = trexService;
+        this.trexBridgeInfoService = trexBridgeInfoService;
         this.bridgeService = bridgeService;
+        this.tRexPicService = tRexPicService;
+        this.bridgeImageService = bridgeImageService;
         this.messageSource = messageSource;
-        this.supervisionService = supervisionService;
 
     }
 
@@ -123,6 +112,7 @@ public class LeluController {
         return "Hello LeLu! SillaRi got post: " + body;
     }
 
+
     @PostMapping(value = "/permit")
     @ResponseBody
     @Operation(summary = "Create or update permit", description = "Adds a new permit from LeLu to SillaRi. " +
@@ -133,17 +123,17 @@ public class LeluController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200 OK", description = "Permit saved/updated"),
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
+            @ApiResponse(responseCode = "406 NOT_ACCEPTABLE", description = "Permit already exists with the same permit number and greater version number"),
+            @ApiResponse(responseCode = "409 CONFLICT", description = "Permit already exists with the same permit number and version")
     })
     public ResponseEntity<LeluPermitResponseDTO> savePermit(@Valid @RequestBody LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPermitSaveException {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             try {
-                // Get Bridges From Trex To DB
+                LeluPermitResponseDTO permit = leluService.createPermit(permitDTO);
 
-                //TODO call non dev version when time
-                LeluPermitResponseDTO permit = leluService.createOrUpdatePermitDevVersion(permitDTO);
-
-                //update bridges from trex in the background so we can response lelu quicker
+                // Get Bridges From TREX to DB
+                // Update bridges from TREX in the background, so we can get the response to Lelu quicker
                 ExecutorService executor = Executors.newWorkStealingPool();
                 executor.submit(() -> {
                     permitDTO.getRoutes().forEach(r -> r.getBridges().forEach(b -> getBridgeFromTrexToDB(b.getOid())));
@@ -156,7 +146,7 @@ public class LeluController {
                 throw leluPermitSaveException;
             } catch (Exception e) {
                 logger.error(e.getMessage());
-                throw new LeluPermitSaveException(messageSource.getMessage("lelu.permit.save.failed", null, Locale.ROOT) + " " + e.getClass().getName() + " " + e.getMessage());
+                throw new LeluPermitSaveException(HttpStatus.INTERNAL_SERVER_ERROR, messageSource.getMessage("lelu.permit.save.failed", null, Locale.ROOT) + " " + e.getClass().getName() + " " + e.getMessage());
             }
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
@@ -164,12 +154,19 @@ public class LeluController {
     }
 
 
+
+
+
     private void getBridgeFromTrexToDB(String oid) {
         logger.debug("get bridge {}", oid);
         try {
-            BridgeModel bridge = trexService.getBridge(oid);
-            bridgeService.createOrUpdateBridge(bridge);
+            BridgeModel bridge = trexBridgeInfoService.getBridge(oid);
+            Integer bridgeId = bridgeService.createOrUpdateBridge(bridge);
             logger.debug("bridge inserted or updated: {}", bridge);
+            BridgeImageModel bridgeImageModel = tRexPicService.getPicFromTrex(oid, bridgeId);
+            if(bridgeImageModel != null){
+                bridgeImageService.saveBridgeIntoDBAndS3(bridgeImageModel);
+            }
         } catch (TRexRestException e) {
             logger.warn("Trex fail getting bridge: {}", oid, e);
         } catch (Exception e) {
@@ -210,7 +207,7 @@ public class LeluController {
     })
     public LeluPermiPdfResponseDTO uploadPermitPdf(@RequestParam(required = true) String permitNumber, @RequestParam(required = true) Integer permitVersion,
                                                    @RequestPart("file") MultipartFile file)
-            throws LeluPdfUploadException {
+            throws PDFUploadException {
         logger.debug("Lelu uploadpermitpdf {}", permitNumber);
         logger.debug("FILE name:" + file.getName());
         logger.debug("FILE OriginalFilename:" + file.getOriginalFilename());
@@ -231,29 +228,32 @@ public class LeluController {
 
 
     /**
-     * Get supervisions of a route.
-     * Lelu uses this to see which supervision have report generated (status REPORT_SIGNED)
+     * Get supervision of a route.
+     * Lelu uses this to poll individual supervisions
+     * to see which supervision have report generated (status REPORT_SIGNED)
      * and gets the report pdf:s with /supervisionReport
      *
      * @param routeId
-     * @param apiVersion
+     * @param bridgeIdentifier
+     * @param transportNumber
      * @param apiVersion
      * @return
      * @throws APIVersionException
      */
-    @RequestMapping(value = "/supervisions", method = RequestMethod.GET)
+    @RequestMapping(value = "/supervision", method = RequestMethod.GET)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get bridge supervisions of a route")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200 OK", description = ""),
             @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
+            @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route, bridge or transport not found with provided id."),
     })
-    public LeluRouteResponseDTO getSupervisions(@RequestParam Long routeId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
-        logger.debug("Lelu getSupervisions " + routeId);
+    public LeluBridgeSupervisionResponseDTO getSupervision(@RequestParam Long routeId, @RequestParam String bridgeIdentifier, @RequestParam Integer transportNumber, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluRouteNotFoundException {
+        logger.debug("Lelu getSupervision " + routeId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
-            return leluService.getWholeRoute(routeId);
+            return leluService.getSupervision(routeId, bridgeIdentifier, transportNumber);
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
         }
@@ -261,81 +261,26 @@ public class LeluController {
 
 
     /**
-     * Get the pdf supervision report from S3 (disk on dev localhost).
-     * LeLu calls this after getting REPORT_SIGNED-status of a report from /supervisions.
-     * The report has been generated and status set to REPORT_SIGNED when /completesupervisions has happened in app
-     *
-     * @param reportId   This is actually technically supervision id but is called reportId in the LeLu-interface.
-     * @param apiVersion requested LeLu API version
-     * @throws APIVersionException when requested API version does not correspond to the current version
-     * @throws LeluPdfDownloadException when file download fails
-     * @return PDF file as byte[]
+     * @param apiVersion
+     * @return
+     * @throws APIVersionException
      */
-    @GetMapping(value = "/supervisionreport")
+    @RequestMapping(value = "/permitsWithExcessTransportNumbers", method = RequestMethod.GET)
     @ResponseBody
-    @Operation(summary = "Get bridge supervision report pdf by report id acquired from /lelu/supervisions ")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
-    public void getSupervisionReport(HttpServletResponse response, @RequestParam Long reportId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPdfDownloadException {
-        logger.debug("LeLu getReport " + reportId);
-
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Uusi rajapinta SillaRiin jota lelu pollaa 'harvoin' esim 1krt / päivä \n" +
+            " - palauttaa tiedon : luvalla x reitillä y sillalla z ylitetty ylitysmäärien käyttökerrat  \n" +
+            " - palauttaa listan instansseja [reitti-silta-maksimi ylityskertanumero ] jotta lelu osaa käydä hakemassa nämä ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200 OK", description = ""),
+            @ApiResponse(responseCode = "400 BAD_REQUEST", description = "API version mismatch"),
+    })
+    public List<LeluPermitsWithExcessTransportNumbersResponseDTO> getPermitsWithExcessTransportNumbers(@RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
-            try {
-                byte[] file = supervisionService.getSupervisionPdf(reportId);
-                if (file != null) {
-                    response.setContentType("application/pdf");
-                    OutputStream out = response.getOutputStream();
-                    out.write(file);
-                    out.close();
-                    return;
-                } else {
-                    throw new LeluPdfDownloadException(messageSource.getMessage("lelu.supervision.pdf.download.failed", null, Locale.ROOT), HttpStatus.NOT_FOUND);
-                }
-            } catch (IOException e) {
-                throw new LeluPdfDownloadException("Error downloading pdf file", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            return leluService.getPermitsWithExcessTransportNumbers();
         } else {
             throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
         }
     }
 
-
-
-
-    // TODO remove after old test supervisions have pdf created or move to some test tools controller
-    // For testing purposes only; generate report for given supervision id; save to local disk or S3; return pdf in rest response
-    @GetMapping(value = "/generatereportpdf")
-    @ResponseBody
-    @Operation(summary = "Generate bridge supervision report pdf by report id acquired from /lelu/supervisions. Use with GET request in browser to open PDF.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = byte.class))))})
-    public void generateSupervisionReport(HttpServletResponse response, @RequestParam Long supervisionId, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPdfUploadException {
-        logger.debug("Lelu generateReport " + supervisionId);
-
-        if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
-            try {
-                SupervisionModel supervision = supervisionService.getSupervision(Math.toIntExact(supervisionId));
-                if (supervision != null && supervision.getReport() != null) {
-                    supervision.setImages(supervisionImageService.getSupervisionImages(supervision.getId()));
-                    List<byte[]> images = supervisionService.getImageFiles(supervision.getImages(), activeProfile.equals("local"));
-                    byte[] reportPDF = new PDFGenerator().generateReportPDF(supervision, images);
-                    supervisionService.savePdf(reportPDF, supervision.getId());
-                    response.setContentType("application/pdf");
-                    OutputStream out = response.getOutputStream();
-                    out.write(reportPDF);
-                    out.close();
-                    return;
-                } else {
-                    throw new LeluPdfUploadException("Supervision or report not found with supervision id " + supervisionId, HttpStatus.NOT_FOUND);
-                }
-            } catch (LeluPdfUploadException e) {
-                throw e;
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                logger.error(e.getClass().getName());
-                throw new LeluPdfUploadException("Error generating pdf file", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            throw new APIVersionException(messageSource.getMessage("lelu.api.wrong.version", null, Locale.ROOT) + " " + apiVersion + " vs " + currentApiVersion);
-        }
-    }
 }
-

@@ -2,27 +2,28 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
-import { IonCol, IonContent, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
+import { IonCol, IonContent, IonGrid, IonItem, IonPage, IonRow, IonText } from "@ionic/react";
 import Header from "../../components/Header";
 import NoNetworkNoData from "../../components/NoNetworkNoData";
 import CustomAccordion from "../../components/common/CustomAccordion";
 import PermitAccordionHeading from "../../components/management/PermitAccordionHeading";
 import PermitAccordionPanel from "../../components/management/PermitAccordionPanel";
-import { useTypedSelector } from "../../store/store";
+import { useTypedSelector, RootState } from "../../store/store";
 import { onRetry } from "../../utils/backendData";
 import { getCompany } from "../../utils/managementBackendData";
+import Loading from "../../components/Loading";
 
 const CompanySummary = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const management = useTypedSelector((state) => state.rootReducer);
+  const management = useTypedSelector((state: RootState) => state.rootReducer);
   const {
     networkStatus: { isFailed = {} },
     selectedManagementPermitId,
   } = management;
 
-  const { data: selectedCompanyDetail } = useQuery(["getCompany"], () => getCompany(dispatch), {
+  const { isLoading: loadingData, data: selectedCompanyDetail } = useQuery(["getCompany"], () => getCompany(dispatch), {
     retry: onRetry,
   });
 
@@ -46,10 +47,21 @@ const CompanySummary = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={name} somethingFailed={isFailed.getCompany} />
+      <Header
+        title={t("main.header.title")}
+        secondaryTitle={name}
+        titleStyle="headingBoldText ion-text-center"
+        somethingFailed={isFailed.getCompany}
+      />
       <IonContent color="light">
         {noNetworkNoData ? (
           <NoNetworkNoData />
+        ) : loadingData ? (
+          <Loading />
+        ) : name === "" || permits.length < 1 ? (
+          <IonItem lines="none" color="warning">
+            {t("management.companySummary.noPermitsWarning")}
+          </IonItem>
         ) : (
           <IonGrid className="ion-no-padding" fixed>
             <IonRow>
@@ -65,17 +77,30 @@ const CompanySummary = (): JSX.Element => {
                     <IonCol>
                       <CustomAccordion
                         items={permits
-                          .sort((a, b) => a.permitNumber.localeCompare(b.permitNumber))
-                          .map((permit, index) => {
-                            const { id: permitId } = permit;
-                            const key = `permit_${index}`;
+                          .sort((a, b) => {
+                            if (a.permitNumber === b.permitNumber) {
+                              return b.leluVersion - a.leluVersion;
+                            }
+                            return a.permitNumber.localeCompare(b.permitNumber);
+                          })
+                          .map((permit, index, permitList) => {
+                            const { id: permitId, permitNumber, leluVersion, customerUsesSillari } = permit;
+                            const key = `permit_${permitNumber}_${leluVersion}`;
+
+                            const hasMultipleVersions = permitList.filter((p) => p.permitNumber === permitNumber).length > 1;
 
                             return {
                               uuid: key,
-                              // headingColor: "primary",
-                              heading: <PermitAccordionHeading ref={(el: HTMLIonGridElement) => setRef(permitId, el)} permit={permit} />,
-                              isPanelOpen: selectedManagementPermitId ? selectedManagementPermitId === permitId : index === 0,
-                              panel: <PermitAccordionPanel permit={permit} />,
+                              heading: (
+                                <PermitAccordionHeading
+                                  ref={(el: HTMLIonGridElement) => setRef(permitId, el)}
+                                  permit={permit}
+                                  hasMultiplePermitVersions={hasMultipleVersions}
+                                />
+                              ),
+                              isPanelOpen:
+                                customerUsesSillari && (selectedManagementPermitId ? selectedManagementPermitId === permitId : index === 0),
+                              panel: customerUsesSillari && <PermitAccordionPanel permit={permit} />,
                             };
                           })}
                       />

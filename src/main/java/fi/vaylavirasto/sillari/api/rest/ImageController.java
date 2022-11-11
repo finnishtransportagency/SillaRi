@@ -1,74 +1,52 @@
 package fi.vaylavirasto.sillari.api.rest;
 
-import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
-import fi.vaylavirasto.sillari.aws.AWSS3Client;
-import fi.vaylavirasto.sillari.model.FileInputModel;
+import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.SupervisionImageModel;
+import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.service.SupervisionImageService;
+import fi.vaylavirasto.sillari.service.SupervisionService;
+import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
-import org.apache.tika.Tika;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.util.Base64;
 import java.util.List;
 
 @RestController
 @Timed
 @RequestMapping("/images")
 public class ImageController {
-    @Autowired
-    AWSS3Client awss3Client;
+    private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     SupervisionImageService supervisionImageService;
+    @Autowired
+    SupervisionService supervisionService;
+    @Autowired
+    UIService uiService;
 
-    @Value("${spring.profiles.active:Unknown}")
-    private String activeProfile;
 
     @Operation(summary = "Get image")
     @GetMapping("/get")
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public void getImage(HttpServletResponse response, @RequestParam String objectKey) throws IOException {
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public void getImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "getImage");
         try {
-            String decodedKey = new String(Base64.getDecoder().decode(objectKey));
-
-            if (activeProfile.equals("local")) {
-                // Get from local file system
-                String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
-
-                File inputFile = new File("/", filename);
-                if (inputFile.exists()) {
-                    response.setContentType("image/jpeg");
-                    OutputStream out = response.getOutputStream();
-                    FileInputStream in = new FileInputStream(inputFile);
-                    IOUtils.copy(in, out);
-                    out.close();
-                    in.close();
-                }
-            } else {
-                // Get from AWS
-                byte[] image = awss3Client.download(decodedKey, awss3Client.getPhotoBucketName());
-                if (image != null) {
-                    response.setContentType("image/jpeg");
-                    OutputStream out = response.getOutputStream();
-                    ByteArrayInputStream in = new ByteArrayInputStream(image);
-                    IOUtils.copy(in, out);
-                    out.close();
-                    in.close();
-                }
+            if (!isSupervisionImageOfSupervisor(id)) {
+                throw new AccessDeniedException("Image not of the user");
             }
+
+            SupervisionImageModel supervisionImageModel = supervisionImageService.getSupervisionImage(id);
+            // Get the file from S3 bucket or local file system and write to response
+            supervisionImageService.getImageFile(response, supervisionImageModel);
         } finally {
             serviceMetric.end();
         }
@@ -76,55 +54,47 @@ public class ImageController {
 
     @Operation(summary = "Upload image")
     @PostMapping("/upload")
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public SupervisionImageModel uploadImage(@RequestBody FileInputModel fileInputModel) {
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public SupervisionImageModel uploadImage(@RequestBody SupervisionImageModel fileInputModel) {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "uploadImage");
-        SupervisionImageModel model = new SupervisionImageModel();
+        SupervisionImageModel image = new SupervisionImageModel();
+
         try {
-            model.setObjectKey("supervision/" + fileInputModel.getSupervisionId() + "/" + fileInputModel.getFilename());
-            model.setFilename(fileInputModel.getFilename());
-            model.setMimetype("");
-            model.setEncoding("");
-            model.setTaken(fileInputModel.getTaken());
-            model.setSupervisionId(Integer.parseInt(fileInputModel.getSupervisionId()));
-            model = supervisionImageService.createFile(model);
-
-            Tika tika = new Tika();
-            int dataStart = fileInputModel.getBase64().indexOf(",") + 1;
-            byte[] decodedString = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(fileInputModel.getBase64().substring(dataStart).getBytes("UTF-8"));
-            String contentType = tika.detect(decodedString);
-            if (contentType == null) {
-                contentType = "application/octet-stream";
+            if (!canSupervisorUpdateSupervision(fileInputModel.getSupervisionId())) {
+                throw new AccessDeniedException("Supervision not of the user");
             }
 
-            if (activeProfile.equals("local")) {
-                // Save to local file system
-                File outputFile = new File("/", fileInputModel.getFilename());
-                Files.write(outputFile.toPath(), decodedString);
-            } else {
-                // Upload to AWS
-                awss3Client.upload(model.getObjectKey(), decodedString,  contentType, awss3Client.getPhotoBucketName(), AWSS3Client.SILLARI_PHOTOS_ROLE_SESSION_NAME);
+            image.setFilename(fileInputModel.getFilename());
+            image.setTaken(fileInputModel.getTaken());
+            image.setSupervisionId(fileInputModel.getSupervisionId());
+            // Object key and KTV object id are generated when image is inserted to DB
+            image = supervisionImageService.createSupervisionImage(image);
+
+            if (image.getId() != null && image.getObjectKey() != null && image.getKtvObjectId() != null) {
+                // Base64 string is not saved to DB, get it from fileInputModel
+                image.setBase64(fileInputModel.getBase64());
+
+                // Upload image to AWS S3 bucket
+                supervisionImageService.saveImageFile(image);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             serviceMetric.end();
         }
-        return model;
+        return image;
     }
 
     @Operation(summary = "Delete image")
     @DeleteMapping("/delete")
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public boolean deleteImage(HttpServletResponse response, @RequestParam String objectKey) throws IOException {
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public boolean deleteImage(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deleteImage");
         try {
-            String decodedKey = new String(Base64.getDecoder().decode(objectKey));
-            // Delete image from AWS bucket or local file system
-            deleteFile(decodedKey);
-
-            // Delete the image row from the database
-            supervisionImageService.deleteSupervisionImage(decodedKey);
+            if (!isSupervisionImageOfSupervisor(id)) {
+                throw new AccessDeniedException("Image not of the user");
+            }
+            supervisionImageService.deleteSupervisionImage(id);
         } finally {
             serviceMetric.end();
         }
@@ -133,20 +103,13 @@ public class ImageController {
 
     @Operation(summary = "Delete all supervision images")
     @DeleteMapping("/deletesupervisionimages")
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public boolean deleteSupervisionImages(@RequestParam Integer supervisionId) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("ImageController", "deletesupervisionimages");
-
         try {
-            List<SupervisionImageModel> images = supervisionImageService.getSupervisionImages(supervisionId);
-
-            // Delete images from AWS bucket or local file system
-            for (SupervisionImageModel image : images) {
-                String decodedKey = new String(Base64.getDecoder().decode(image.getObjectKey()));
-                deleteFile(decodedKey);
+            if (!canSupervisorUpdateSupervision(supervisionId)) {
+                throw new AccessDeniedException("Supervision not of the user");
             }
-
-            // Delete image rows from the database
             supervisionImageService.deleteSupervisionImages(supervisionId);
         } finally {
             serviceMetric.end();
@@ -154,24 +117,28 @@ public class ImageController {
         return true;
     }
 
-    private void deleteFile(String decodedKey) throws IOException {
-        if (activeProfile.equals("local")) {
-            // Delete from local file system
-            String filename = decodedKey.substring(decodedKey.lastIndexOf("/"));
-
-            File deleteFile = new File("/", filename);
-            if (deleteFile.exists()) {
-                Files.delete(deleteFile.toPath());
-            }
-        } else {
-            // Delete from AWS
-            awss3Client.delete(decodedKey, awss3Client.getPhotoBucketName());
-        }
-    }
-
     @Operation(summary = "Keep alive")
     @GetMapping("/keepalive")
     public String keepalive() {
         return "Alive";
+    }
+
+
+    /* Check that image belongs to a supervision of the user */
+    private boolean isSupervisionImageOfSupervisor(Integer imageId) {
+        SupervisionModel supervisionOfImage = supervisionService.getSupervisionBySupervisionImageId(imageId);
+        SillariUser user = uiService.getSillariUser();
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getAllSupervisionsOfSupervisorNoDetails(user);
+
+        return supervisionsOfSupervisor.stream().anyMatch(s -> s.getId().equals(supervisionOfImage.getId()));
+    }
+
+    /* Check that supervision belongs to the user and report is not signed */
+    private boolean canSupervisorUpdateSupervision(Integer supervisionId) {
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+        SillariUser user = uiService.getSillariUser();
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsOfSupervisorNoDetails(user);
+
+        return supervisionsOfSupervisor.stream().anyMatch(s -> s.getId().equals(supervision.getId()));
     }
 }

@@ -6,8 +6,9 @@ import ISupervision from "./ISupervision";
 export default interface IRouteTransport {
   id: number;
   routeId: number;
-  plannedDepartureTime: Date;
+  plannedDepartureTime?: Date;
   tractorUnit: string;
+  transportNumber?: number;
   departureTime?: Date; // actual departure time from statusHistory
   arrivalTime?: Date; // actual arrival time from statusHistory
   currentStatus?: IRouteTransportStatus;

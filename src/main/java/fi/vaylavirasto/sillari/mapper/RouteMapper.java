@@ -18,12 +18,14 @@ public class RouteMapper implements RecordMapper<Record, RouteModel> {
         model.setDepartureAddressId(record.get(TableAlias.route.DEPARTURE_ADDRESS_ID));
         model.setArrivalAddressId(record.get(TableAlias.route.ARRIVAL_ADDRESS_ID));
         model.setLeluId(record.get(TableAlias.route.LELU_ID));
+        model.setOrdinal(record.get(TableAlias.route.ORDINAL));
         model.setName(record.get(TableAlias.route.NAME));
         model.setTransportCount(record.get(TableAlias.route.TRANSPORT_COUNT));
         model.setAlternativeRoute(record.get(TableAlias.route.ALTERNATIVE_ROUTE));
         model.setRowCreatedTime(record.get(TableAlias.route.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.route.ROW_UPDATED_TIME));
         model.setRouteBridges(new ArrayList<>());
+        model.setRouteTransportNumbers(new ArrayList<>());
         return model;
     }
 }

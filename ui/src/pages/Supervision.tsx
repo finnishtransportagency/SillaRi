@@ -10,13 +10,15 @@ import SupervisionFooter from "../components/SupervisionFooter";
 import SupervisionHeader from "../components/SupervisionHeader";
 import SupervisionObservations from "../components/SupervisionObservations";
 import SupervisionPhotos from "../components/SupervisionPhotos";
+import ICancelCrossingInput from "../interfaces/ICancelCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
-import { useTypedSelector } from "../store/store";
-import { onRetry } from "../utils/backendData";
-import { cancelSupervision, deleteSupervisionImages, getSupervision, updateSupervisionReport } from "../utils/supervisionBackendData";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
+import { useTypedSelector, RootState } from "../store/store";
+import { getUserData, onRetry } from "../utils/backendData";
+import { cancelSupervision, deleteSupervisionImages, getSupervision, updateSupervisionReport } from "../utils/supervisionBackendData";
 import { SupervisionStatus } from "../utils/constants";
-import { reportHasUnsavedChanges } from "../utils/supervisionUtil";
+import { isCustomerUsesSillariPermitSupervision, reportHasUnsavedChanges } from "../utils/supervisionUtil";
+import { isSupervisionReportValid } from "../utils/validation";
 
 interface SupervisionProps {
   supervisionId: string;
@@ -31,55 +33,121 @@ const Supervision = (): JSX.Element => {
   const { supervisionId = "0" } = useParams<SupervisionProps>();
   const {
     networkStatus: { isFailed = {} },
-  } = useTypedSelector((state) => state.rootReducer);
+  } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const [modifiedReport, setModifiedReport] = useState<ISupervisionReport | undefined>(undefined);
   const [present] = useIonAlert();
 
+  const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
+
+  const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const { username = "" } = supervisorUser || {};
+
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
-    ["getSupervision", supervisionId],
-    () => getSupervision(Number(supervisionId), dispatch),
+    supervisionQueryKey,
+    () => getSupervision(Number(supervisionId), username, null, dispatch),
     {
       retry: onRetry,
+      staleTime: Infinity,
+      enabled: !!username,
       onSuccess: (data) => {
         console.log("GetSupervision done", data.id, data.currentStatus, "draft: ", data.report ? data.report.draft : "");
       },
     }
   );
 
-  const reportUpdateMutation = useMutation((updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, dispatch), {
-    retry: onRetry,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["getSupervision", supervisionId], data);
-    },
-  });
+  const { routeTransportId = 0, report: savedReport, currentStatus, images = [] } = supervision || {};
+  const { status: supervisionStatus } = currentStatus || {};
+
+  // Set-up mutations for modifying data later
+  // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
+  const reportUpdateMutation = useMutation(
+    (updatedReport: ISupervisionReport) => updateSupervisionReport(updatedReport, routeTransportId, username, dispatch),
+    {
+      retry: onRetry,
+      onMutate: async (newData: ISupervisionReport) => {
+        // onMutate fires before the mutation function
+
+        // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+        await queryClient.cancelQueries(supervisionQueryKey);
+
+        // Optimistically update to the new report
+        queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+          return {
+            ...oldData,
+            report: { ...oldData?.report, ...newData },
+          } as ISupervision;
+        });
+      },
+      onSuccess: (data) => {
+        // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+
+        queryClient.setQueryData(supervisionQueryKey, data);
+      },
+    }
+  );
   const { isLoading: isSendingReportUpdate } = reportUpdateMutation;
 
   const deleteImagesMutation = useMutation((superId: string) => deleteSupervisionImages(Number(superId), dispatch), {
     retry: onRetry,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["getSupervision", supervisionId]);
+    onMutate: async () => {
+      // onMutate fires before the mutation function
+
+      // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+      await queryClient.cancelQueries(supervisionQueryKey);
+
+      // Clear the images here since the backend won't be called yet when offline
+      queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+        return { ...oldData, images: [] } as ISupervision;
+      });
+
       // We don't want to allow the user to get back to this page by using "back"
+      // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
       history.replace(`/bridgeDetail/${supervisionId}`, { direction: "back" });
+    },
+    onSuccess: () => {
+      // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
+
+      // Fetch the latest data from the backend now that the app is online again
+      queryClient.invalidateQueries(supervisionQueryKey);
     },
   });
   const { isLoading: isSendingDeleteImages } = deleteImagesMutation;
 
-  const cancelSupervisionMutation = useMutation((superId: string) => cancelSupervision(Number(superId), dispatch), {
-    retry: onRetry,
-    onSuccess: () => {
-      deleteImagesMutation.mutate(supervisionId);
-    },
-  });
-  const { isLoading: isSendingCancelSupervision } = cancelSupervisionMutation;
+  const cancelSupervisionMutation = useMutation(
+    (cancelCrossingInput: ICancelCrossingInput) => cancelSupervision(cancelCrossingInput, username, dispatch),
+    {
+      retry: onRetry,
+      onMutate: async (newData: ICancelCrossingInput) => {
+        // onMutate fires before the mutation function
 
-  const { report: savedReport, currentStatus, images = [] } = supervision || {};
-  const { status: supervisionStatus } = currentStatus || {};
+        // Cancel any outgoing refetches so they don't overwrite the optimistic update below
+        await queryClient.cancelQueries(supervisionQueryKey);
+
+        // Clear the report and set the current status to CANCELLED here since the backend won't be called yet when offline
+        queryClient.setQueryData<ISupervision>(supervisionQueryKey, (oldData) => {
+          return {
+            ...oldData,
+            report: undefined,
+            currentStatus: { ...oldData?.currentStatus, status: SupervisionStatus.CANCELLED, time: newData.cancelTime },
+          } as ISupervision;
+        });
+
+        // Since onSuccess doesn't fire when offline, other mutations need to be called here instead
+        deleteImagesMutation.mutate(supervisionId);
+      },
+    }
+  );
+  const { isLoading: isSendingCancelSupervision } = cancelSupervisionMutation;
 
   const isLoading = isLoadingSupervision || isSendingReportUpdate || isSendingCancelSupervision || isSendingDeleteImages;
   const supervisionInProgress = !isLoading && supervisionStatus === SupervisionStatus.IN_PROGRESS;
   const supervisionFinished = !isLoading && supervisionStatus === SupervisionStatus.FINISHED;
   const notAllowedToEdit = !savedReport || (!supervisionInProgress && !supervisionFinished);
+  const reportValid = isSupervisionReportValid(modifiedReport);
 
   // Save changes in report
   const saveReport = (isDraft: boolean): void => {
@@ -115,7 +183,8 @@ const Supervision = (): JSX.Element => {
         {
           text: t("supervision.buttons.cancel"),
           handler: () => {
-            cancelSupervisionMutation.mutate(supervisionId);
+            const cancelCrossingInput: ICancelCrossingInput = { supervisionId: Number(supervisionId), routeTransportId, cancelTime: new Date() };
+            cancelSupervisionMutation.mutate(cancelCrossingInput);
           },
         },
       ],
@@ -172,7 +241,13 @@ const Supervision = (): JSX.Element => {
 
   return (
     <IonPage>
-      <Header title={t("supervision.title")} somethingFailed={isFailed.getSupervision} includeSendingList confirmGoBack={confirmGoBack} />
+      <Header
+        title={t("supervision.title")}
+        somethingFailed={isFailed.getSupervision}
+        includeSendingList
+        includeOfflineBanner
+        confirmGoBack={confirmGoBack}
+      />
       <IonContent>
         {noNetworkNoData ? (
           <NoNetworkNoData />
@@ -188,11 +263,21 @@ const Supervision = (): JSX.Element => {
             />
             <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} disabled={notAllowedToEdit} />
             <SupervisionFooter
-              disabled={isLoading || notAllowedToEdit}
+              saveDisabled={
+                !username ||
+                (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) ||
+                isLoading ||
+                notAllowedToEdit ||
+                !reportValid
+              }
+              cancelDisabled={
+                !username || (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) || isLoading || notAllowedToEdit
+              }
               saveChanges={saveReportClicked}
               cancelChanges={cancelSupervisionClicked}
               saveLabel={t("supervision.buttons.summary")}
               cancelLabel={supervisionInProgress ? t("supervision.buttons.cancel") : t("common.buttons.cancel")}
+              sendImmediatelyVisible={false}
             />
           </>
         )}

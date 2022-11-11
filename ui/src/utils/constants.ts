@@ -3,10 +3,29 @@ export const TIME_FORMAT_MIN = "HH:mm";
 export const DATE_TIME_FORMAT = "DD.MM.YYYY HH:mm:ss";
 export const DATE_TIME_FORMAT_MIN = "DD.MM.YYYY HH:mm";
 
+export const REACT_QUERY_CACHE_TIME = 1000 * 60 * 60 * 24; // 24 hours
+// export const REACT_QUERY_CACHE_TIME = 1000 * 30; // 30 seconds, for testing
+
 export const NETWORK_RESPONSE_NOT_OK = "Network response was not ok";
+export const FORBIDDEN_ERROR = "Forbidden";
+export const CONFLICT_ERROR = "Conflict";
+
+export const TRANSPORT_CODE_STORAGE_GROUP = "TRANSCODES";
+export const TRANSPORT_CODE_STORAGE_LIFE_DAYS = 3;
+
+export const OWNLIST_STORAGE_GROUP = "OWNLIST";
+
+export const SILLARI_SYSTEM_USER = "SILLARI_SYSTEM";
+
+export enum SillariErrorCode {
+  NO_USER_ROLES = 1001,
+  NO_USER_DATA = 1002,
+  OTHER_USER_FETCH_ERROR = 1003,
+}
 
 export enum SupervisionStatus {
   PLANNED = "PLANNED",
+  OWN_LIST_PLANNED = "OWN_LIST_PLANNED",
   IN_PROGRESS = "IN_PROGRESS",
   CANCELLED = "CANCELLED",
   FINISHED = "FINISHED",
@@ -36,4 +55,5 @@ export enum VehicleRole {
 export enum SupervisionListType {
   TRANSPORT = "TRANSPORT",
   BRIDGE = "BRIDGE",
+  OWNLIST = "OWNLIST",
 }

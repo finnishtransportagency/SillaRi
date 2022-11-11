@@ -7,6 +7,7 @@ import fi.vaylavirasto.sillari.model.TransportStatusType;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.exception.DataAccessException;
@@ -47,24 +48,48 @@ public class RouteTransportRepository {
                 .on(TableAlias.permit.ID.eq(TableAlias.route.PERMIT_ID))
                 .where(TableAlias.permit.ID.eq(permitId))
                 .fetch(new RouteTransportMapper());
+
     }
 
-    public List<RouteTransportModel> getRouteTransportsOfSupervisor(String username) {
+    public List<RouteTransportModel> getRouteTransportsByRouteId(Integer routeId) {
+        return dsl.select().from(TableAlias.routeTransport)
+                .where(TableAlias.routeTransport.ROUTE_ID.eq(routeId))
+                .fetch(new RouteTransportMapper());
+    }
+
+    public List<RouteTransportModel> getRouteTransportsOfSupervisor(String businessId) {
         return dsl.select(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME,
-                        TableAlias.routeTransport.TRACTOR_UNIT, TableAlias.routeTransport.ROW_CREATED_TIME, TableAlias.routeTransport.ROW_UPDATED_TIME)
+                        TableAlias.routeTransport.TRACTOR_UNIT, TableAlias.routeTransport.ROW_CREATED_TIME, TableAlias.routeTransport.ROW_UPDATED_TIME, TableAlias.routeTransport.TRANSPORT_NUMBER)
                 .from(TableAlias.routeTransport)
                 .innerJoin(TableAlias.supervision).on(TableAlias.routeTransport.ID.eq(TableAlias.supervision.ROUTE_TRANSPORT_ID))
-                .innerJoin(TableAlias.supervisionSupervisor).on(TableAlias.supervision.ID.eq(TableAlias.supervisionSupervisor.SUPERVISION_ID))
-                .where(TableAlias.supervisionSupervisor.USERNAME.eq(username))
+                .where(TableAlias.supervision.SUPERVISOR_COMPANY.eq(businessId))
                 // Ignore routeTransports with only completed supervisions
                 .and(notExists(selectOne().from(TableAlias.supervisionStatus
                         .where(TableAlias.supervisionStatus.SUPERVISION_ID.eq(TableAlias.supervision.ID)
                                 .and((TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.FINISHED.toString()))
                                         .or(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.CROSSING_DENIED.toString()))
-                                        .or(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.REPORT_SIGNED.toString())))))))
+                                        .or(TableAlias.supervisionStatus.STATUS.eq(SupervisionStatusType.REPORT_SIGNED.toString()))
+                                .and(TableAlias.supervision.PLANNED_TIME.greaterThan(OffsetDateTime.now().minusDays(5)))
+                                .and(noRouteTransportEndedMoreThanDaysAgo(5))
+                                .and(permitNotEnded()))))))
                 .groupBy(TableAlias.routeTransport.ID, TableAlias.routeTransport.ROUTE_ID, TableAlias.routeTransport.PLANNED_DEPARTURE_TIME, TableAlias.routeTransport.TRACTOR_UNIT)
                 .fetch(new RouteTransportMapper());
     }
+
+    private Condition noRouteTransportEndedMoreThanDaysAgo(int daysAgo) {
+        return notExists(selectOne().from(TableAlias.transportStatus
+                .where(TableAlias.supervision.ROUTE_TRANSPORT_ID.eq(TableAlias.transportStatus.ROUTE_TRANSPORT_ID)
+                .and(TableAlias.transportStatus.STATUS.eq(TransportStatusType.DEPARTED.toString())
+                .and(TableAlias.transportStatus.TIME.lessThan(OffsetDateTime.now().minusDays(daysAgo)))))));
+    }
+
+    private Condition permitNotEnded() {
+        return notExists(selectOne().from(TableAlias.permit)
+                .innerJoin(TableAlias.route).on(TableAlias.route.PERMIT_ID.eq(TableAlias.route.PERMIT_ID))
+                .innerJoin(TableAlias.routeBridge).on(TableAlias.routeBridge.ROUTE_ID.eq(TableAlias.route.ID))
+                .innerJoin(TableAlias.supervision).on(TableAlias.supervision.ROUTE_BRIDGE_ID.eq(TableAlias.routeBridge.ID))
+                .where(TableAlias.permit.VALID_END_DATE.lessThan(OffsetDateTime.now())));
+    }        
 
     public Integer createRouteTransport(RouteTransportModel routeTransportModel, String password) throws DataAccessException {
         return dsl.transactionResult(configuration -> {
@@ -73,11 +98,13 @@ public class RouteTransportRepository {
             Record1<Integer> routeTransportIdResult = ctx.insertInto(TableAlias.routeTransport,
                             TableAlias.routeTransport.ROUTE_ID,
                             TableAlias.routeTransport.PLANNED_DEPARTURE_TIME,
-                            TableAlias.routeTransport.TRACTOR_UNIT
+                            TableAlias.routeTransport.TRACTOR_UNIT,
+                            TableAlias.routeTransport.TRANSPORT_NUMBER
                     ).values(
                             routeTransportModel.getRouteId(),
                             routeTransportModel.getPlannedDepartureTime(),
-                            routeTransportModel.getTractorUnit()
+                            routeTransportModel.getTractorUnit(),
+                            routeTransportModel.getTransportNumber()
                     )
                     .returningResult(TableAlias.routeTransport.ID)
                     .fetchOne(); // Execute and return zero or one record

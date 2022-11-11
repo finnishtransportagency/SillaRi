@@ -1,6 +1,6 @@
 sillari:
   wmts:
-    url: https://oag.vayla.fi/rasteripalvelu-mml/wmts/maasto/1.0.0/
+    url: https://testiapi.vayla.fi/rasteripalvelu-mml/wmts/maasto/1.0.0/
   geoserver:
     url: http://sillari-geoserver:8080/geoserver/
   lelu:
@@ -8,6 +8,20 @@ sillari:
     routeuploadpath: /tmp
   trex:
     url: http://localhost:8080/api/devtools/localHardCodedBridgeInfoJson
+    pic-url: http://localhost:8080/api/devtools/localHardCodedPicJson/
+    pic-bin-path: yleiskuva
+    pic-info-path: kuvatiedot
+    username: na
+    password: na
+  fim:
+    url: http://localhost:8080/api/devtools/localHardCodedSupervisors
+    #url: https://testiapi.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/getGroup2?displayName=sillari_sillanvalvoja
+    username: ${FIM_USERNAME}
+    password: ${FIM_PASSWORD}
+  amazoncognito:
+    url: http://localhost:3000
+    clientId: na
+    redirectUrl: http://localhost:3000
 spring:
   application:
     name: SillaRi
@@ -27,6 +41,10 @@ logging:
   config: classpath:log4j2-local.xml
 server:
   port: 8080
+  compression:
+    enabled: true
+    mime-types: application/json
+    min-response-size: 1024
   servlet: # 2.0
     context-path: /api
 management:

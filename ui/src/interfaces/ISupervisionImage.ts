@@ -4,6 +4,5 @@ export default interface ISupervisionImage {
   objectKey: string;
   taken: string;
   filename: string;
-  mimetype: string;
-  encoding: string;
+  base64?: string;
 }

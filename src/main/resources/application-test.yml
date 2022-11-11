@@ -1,0 +1,82 @@
+sillari:
+  wmts:
+    url: https://testiapi.vayla.fi/rasteripalvelu-mml/wmts/maasto/1.0.0/
+  geoserver:
+    url: https://sillaritest.testivaylapilvi.fi/geoserver/
+  lelu:
+    version: @leluApiVersion@
+    routeuploadpath: /tmp
+  trex:
+    url: https://testiapi.vayla.fi/trex/rajapinta/taitorakenne/v2/yleistiedot/silta
+    pic-url: https://testiapi.vayla.fi/trex/rajapinta/rakennekuva-api/v1/
+    pic-bin-path: yleiskuva
+    pic-info-path: kuvatiedot
+    username: ${FIM_USERNAME}
+    password: ${FIM_PASSWORD}
+  fim:
+    url: https://testiapi.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/getGroup2?displayName=sillari_sillanvalvoja
+    username: ${FIM_USERNAME}
+    password: ${FIM_PASSWORD}
+  amazoncognito:
+    url: https://sillaritest.auth.eu-west-1.amazoncognito.com
+    clientId: 152i189u2cu0cae9dpg6am44b6
+    redirectUrl: https://sillaritest.testivaylapilvi.fi/
+spring:
+  application:
+    name: SillaRi
+  datasource:
+    # Values from pom.xml profile properties
+    url: @db.url@
+    username: @db.username@
+    password: @db.password@
+    driver-class-name: @db.driver@
+  jooq:
+    sql-dialect: POSTGRES
+  flyway:
+    enabled: true
+    baselineOnMigrate: true
+logging:
+  config: classpath:log4j2-test.xml
+server:
+  port: 8081
+  compression:
+    enabled: true
+    mime-types: application/json
+    min-response-size: 1024
+  servlet: # 2.0
+    context-path: /api
+management:
+  contextPath: /actuator
+  security:
+    enabled: false
+  endpoints:
+    prometheus:
+      enabled: true
+    web:
+      exposure:
+        include: '*'
+      base-path: /actuator
+  health:
+    jms:
+      enabled: false
+  info:
+    git:
+      mode: full
+endpoints:
+  prometheus:
+    enabled: true
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operationsSorter: alpha
+    tagsSorter: alpha
+  show-actuator: true
+  version: 3.0
+  api-docs:
+    groups:
+      enabled: true
+  group-configs:
+    - group: api
+      packagesToScan: fi.vaylavirasto.sillari.api

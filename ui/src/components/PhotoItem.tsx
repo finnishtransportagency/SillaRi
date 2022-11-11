@@ -1,27 +1,27 @@
 import React from "react";
-import { IonButton, IonIcon, IonImg, IonItem, IonLabel, IonThumbnail } from "@ionic/react";
+import { IonButton, IonIcon, IonItem, IonLabel } from "@ionic/react";
 import Moment from "react-moment";
+import { useTranslation } from "react-i18next";
+import ISupervisionImage from "../interfaces/ISupervisionImage";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import erase from "../theme/icons/erase.svg";
-import { useTranslation } from "react-i18next";
+import ImageThumbnail from "./ImageThumbnail";
 import "./PhotoItem.css";
 
 interface PhotoItemProps {
-  imageUrl: string | undefined;
+  image: ISupervisionImage;
   taken: Date;
   isLoading: boolean;
-  showImage: () => void;
+  showImage: (imageUrl?: string) => void;
   removeImage: () => void;
 }
 
-const PhotoItem = ({ imageUrl, taken, isLoading, showImage, removeImage }: PhotoItemProps): JSX.Element => {
+const PhotoItem = ({ image, taken, isLoading, showImage, removeImage }: PhotoItemProps): JSX.Element => {
   const { t } = useTranslation();
 
   return (
     <IonItem lines="none">
-      <IonThumbnail className="photoThumbnail" slot="start" onClick={() => showImage()}>
-        <IonImg src={imageUrl} />
-      </IonThumbnail>
+      <ImageThumbnail image={image} className="photoThumbnail" slot="start" showImage={showImage} />
       <IonLabel>
         <IonLabel>
           <Moment format={DATE_TIME_FORMAT}>{taken}</Moment>

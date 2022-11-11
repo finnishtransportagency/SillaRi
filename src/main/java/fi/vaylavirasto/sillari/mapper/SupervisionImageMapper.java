@@ -26,16 +26,23 @@ public class SupervisionImageMapper implements RecordMapper<Record, SupervisionI
         SupervisionImageModel model = new SupervisionImageModel();
         model.setId(record.get(TableAlias.supervisionImage.ID));
         model.setSupervisionId(record.get(TableAlias.supervisionImage.SUPERVISION_ID));
+
+        String objectKey = record.get(TableAlias.supervisionImage.OBJECT_KEY);
+        String objectId = record.get(TableAlias.supervisionImage.KTV_OBJECT_ID);
         if (this.base64on) {
-            model.setObjectKey(Base64.getEncoder().encodeToString(record.get(TableAlias.supervisionImage.OBJECT_KEY).getBytes()));
+            if (objectKey != null) {
+                model.setObjectKey(Base64.getEncoder().encodeToString(objectKey.getBytes()));
+            }
+            if (objectId != null) {
+                model.setKtvObjectId(Base64.getEncoder().encodeToString(objectId.getBytes()));
+            }
         } else {
-            model.setObjectKey(record.get(TableAlias.supervisionImage.OBJECT_KEY));
+            model.setObjectKey(objectKey);
+            model.setKtvObjectId(objectId);
         }
         model.setFilename(record.get(TableAlias.supervisionImage.FILENAME));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
         model.setTaken(record.get(TableAlias.supervisionImage.TAKEN).format(formatter));
-        model.setMimetype("");
-        model.setEncoding("");
         model.setRowCreatedTime(record.get(TableAlias.supervisionImage.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.supervisionImage.ROW_UPDATED_TIME));
         return model;

@@ -3,19 +3,19 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { IonContent, IonPage, IonToast } from "@ionic/react";
+import { IonPage } from "@ionic/react";
 import moment from "moment";
 import Header from "../../components/Header";
-import NoNetworkNoData from "../../components/NoNetworkNoData";
 import RouteTransportInfo from "../../components/management/RouteTransportInfo";
 import IPermit from "../../interfaces/IPermit";
 import IRoute from "../../interfaces/IRoute";
 import IRouteTransport from "../../interfaces/IRouteTransport";
-import ISupervisor from "../../interfaces/ISupervisor";
-import { useTypedSelector } from "../../store/store";
+import { useTypedSelector, RootState } from "../../store/store";
 import { onRetry } from "../../utils/backendData";
-import { getPermitOfRouteTransport, getRouteTransport, getSupervisors } from "../../utils/managementBackendData";
+import { getPermitOfRouteTransport, getRouteTransport } from "../../utils/managementBackendData";
 import IVehicle from "../../interfaces/IVehicle";
+import { isTransportEditable } from "../../utils/validation";
+import IToastMessage from "../../interfaces/IToastMessage";
 
 interface TransportDetailProps {
   routeTransportId: string;
@@ -24,13 +24,13 @@ interface TransportDetailProps {
 const TransportDetail = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [toastMessage, setToastMessage] = useState<string>("");
+  const [toastMessage, setToastMessage] = useState<IToastMessage>({ message: "", color: "" });
 
   const [modifiedRouteTransportDetail, setModifiedRouteTransportDetail] = useState<IRouteTransport | undefined>(undefined);
   const [selectedRouteOption, setSelectedRouteOption] = useState<IRoute | undefined>(undefined);
   const [selectedVehicle, setSelectedVehicle] = useState<IVehicle | undefined>(undefined);
 
-  const management = useTypedSelector((state) => state.rootReducer);
+  const management = useTypedSelector((state: RootState) => state.rootReducer);
   const {
     networkStatus: { isFailed = {} },
   } = management;
@@ -38,22 +38,22 @@ const TransportDetail = (): JSX.Element => {
   const { routeTransportId = "0" } = useParams<TransportDetailProps>();
 
   const { isLoading: isLoadingTransport, data: selectedRouteTransportDetail } = useQuery(
-    ["getRouteTransport", routeTransportId],
+    ["getRouteTransport", Number(routeTransportId)],
     () => getRouteTransport(Number(routeTransportId), dispatch),
     {
       retry: onRetry,
       refetchOnWindowFocus: false,
     }
   );
+
   const { isLoading: isLoadingPermit, data: selectedPermitDetail } = useQuery(
-    ["getPermitOfRouteTransport", routeTransportId],
+    ["getPermitOfRouteTransport", Number(routeTransportId)],
     () => getPermitOfRouteTransport(Number(routeTransportId), dispatch),
     {
       retry: onRetry,
       refetchOnWindowFocus: false,
     }
   );
-  const { data: supervisorList } = useQuery(["getSupervisors"], () => getSupervisors(dispatch), { retry: onRetry, refetchOnWindowFocus: false });
 
   const { routeId, tractorUnit } = selectedRouteTransportDetail || {};
 
@@ -65,7 +65,7 @@ const TransportDetail = (): JSX.Element => {
       // The route transport currentStatus is needed by some components, but is set to undefined before saving
       const { plannedDepartureTime, supervisions = [] } = selectedRouteTransportDetail || {};
       const modifiedSupervisions = supervisions.map((supervision) => {
-        return { ...supervision, plannedTime: moment(supervision.plannedTime).toDate(), currentStatus: undefined, statusHistory: undefined };
+        return { ...supervision, plannedTime: moment(supervision.plannedTime).toDate(), statusHistory: undefined };
       });
       const modifiedRouteTransport = {
         ...selectedRouteTransportDetail,
@@ -102,42 +102,31 @@ const TransportDetail = (): JSX.Element => {
 
   const noNetworkNoData =
     (isFailed.getRouteTransport && selectedRouteTransportDetail === undefined) ||
-    (isFailed.getPermitOfRouteTransport && selectedPermitDetail === undefined) ||
-    (isFailed.getSupervisors && (!supervisorList || supervisorList.length === 0));
+    (isFailed.getPermitOfRouteTransport && selectedPermitDetail === undefined);
+
+  const notReady = noNetworkNoData || isLoadingTransport || isLoadingPermit;
+
+  const title = isTransportEditable(modifiedRouteTransportDetail, selectedPermitDetail)
+    ? t("management.transportDetail.headerTitleEdit")
+    : t("management.transportDetail.headerTitleDetail");
 
   return (
     <IonPage>
-      <Header
-        title={t("management.transportDetail.headerTitleDetail")}
-        somethingFailed={isFailed.getRouteTransport || isFailed.getPermitOfRouteTransport || isFailed.getSupervisors}
+      <Header title={title} somethingFailed={isFailed.getRouteTransport || isFailed.getPermitOfRouteTransport || isFailed.getSupervisors} />
+      <RouteTransportInfo
+        routeTransportId={Number(routeTransportId)}
+        permit={selectedPermitDetail as IPermit}
+        modifiedRouteTransportDetail={modifiedRouteTransportDetail as IRouteTransport}
+        setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
+        selectedRouteOption={selectedRouteOption as IRoute}
+        setSelectedRouteOption={setSelectedRouteOption}
+        selectedVehicle={selectedVehicle}
+        setSelectedVehicle={setSelectedVehicle}
+        toastMessage={toastMessage}
+        setToastMessage={setToastMessage}
+        noNetworkNoData={noNetworkNoData}
+        notReady={notReady}
       />
-      <IonContent color="light">
-        {noNetworkNoData ? (
-          <NoNetworkNoData />
-        ) : (
-          <RouteTransportInfo
-            routeTransportId={Number(routeTransportId)}
-            permit={selectedPermitDetail as IPermit}
-            supervisors={supervisorList as ISupervisor[]}
-            modifiedRouteTransportDetail={modifiedRouteTransportDetail as IRouteTransport}
-            setModifiedRouteTransportDetail={setModifiedRouteTransportDetail}
-            selectedRouteOption={selectedRouteOption as IRoute}
-            setSelectedRouteOption={setSelectedRouteOption}
-            selectedVehicle={selectedVehicle}
-            setSelectedVehicle={setSelectedVehicle}
-            setToastMessage={setToastMessage}
-          />
-        )}
-
-        <IonToast
-          isOpen={toastMessage.length > 0}
-          message={toastMessage}
-          onDidDismiss={() => setToastMessage("")}
-          duration={5000}
-          position="top"
-          color="success"
-        />
-      </IonContent>
     </IonPage>
   );
 };

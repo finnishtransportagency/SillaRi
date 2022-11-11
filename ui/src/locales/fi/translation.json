@@ -5,15 +5,29 @@
       "back": "Peru",
       "back2": "Takaisin",
       "cancel": "Peruuta",
+      "continue": "Jatka",
       "search": "Hae",
       "edit": "Muokkaa",
       "save": "Tallenna",
-      "send": "Lähetä"
+      "send": "Lähetä",
+      "close": "Sulje",
+      "closeAlert": "Sulje ilmoitus"
     },
     "answer": {
       "yes": "Kyllä",
       "no": "Ei"
-    }
+    },
+    "validation": {
+      "checkDate": "Tarkista päivämäärä",
+      "checkTime": "Tarkista kellonaika",
+      "checkDateShort": "Tarkista päivä",
+      "checkTimeShort": "Tarkista aika",
+      "invalidTime": "Virheellinen kellonaika",
+      "fixTimes": "Tarkista ja korjaa ristiriitaiset kellonajat siltojen arvioiduista ylitysajoista ennen jatkamista.",
+      "transportNumbersUsed": "Reitin kuljetuskerrat käytetty",
+      "transportNumbersUsedInfo": "Kaikki reitin kuljetuskerrat on käytetty myönnetystä kuljetusluvasta. Kuljetus ei saa ylittää valvottavia siltoja."
+    },
+    "error": "Virhe tapahtui"
   },
   "main": {
     "header": {
@@ -22,10 +36,15 @@
     "title": "SillaRi",
     "content": "Tervetuloa!",
     "tab": {
+      "ownList": "Oma lista",
       "transports": "Kuljetukset",
       "bridges": "Sillat"
     },
-    "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen..."
+    "noNetwork": "Ei verkkoyhteyttä",
+    "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen...",
+    "loading": "Ladataan...",
+    "offline": "Offline-tila",
+    "useOffline": "Käytä SillaRia offline-tilassa"
   },
   "map": {
     "attribution": "Aineisto"
@@ -41,6 +60,23 @@
       "en": "English"
     }
   },
+  "userInfo": {
+    "header": {
+      "title": "Omat tiedot"
+    },
+    "usernameLabel": "Käyttäjätunnus",
+    "nameLabel": "Nimi",
+    "emailLabel": "Sähköpostiosoite",
+    "phoneNumberLabel": "Puhelinnumero",
+    "organizationLabel": "Organisaatio",
+    "roleLabel": "Käyttäjärooli",
+    "role": {
+      "ajojarjestelija": "Ajojärjestelijä",
+      "sillanvalvoja": "Sillanvalvoja",
+      "kuljettaja": "Kuljettaja"
+    },
+    "errorInfo": "Mikäli yhteystiedoissasi on virheitä, ota yhteyttä yrityksesi käyttövaltuusvastaavaan."
+  },
   "camera": {
     "takePhotoButtonLabel": "Lisää valokuvia",
     "listLabel": "Valokuvia",
@@ -52,21 +88,17 @@
     "title": "SillaRi",
     "mainPage": "Kuljetukset ja sillat",
     "settings": "Asetukset",
-    "map": "Kartta",
-    "camera": "Kamera",
+    "userInfo": "Omat tiedot",
     "management": "Kuljetusten hallinta",
     "transports": "Kuljetukset",
-    "logout": "Kirjaudu ulos"
+    "logout": "Kirjaudu ulos",
+    "versionLabel": "SillaRi versio"
   },
-  "company": {
+  "companyTransports": {
     "transportPermit": "Kuljetuslupa",
-    "validityPeriod": "Voimassaoloaika",
-    "transport": {
-      "transportDeparted": "Kuljetus lähtenyt",
-      "transportArrived": "Kuljetus päättynyt",
-      "nextTransport": "Seuraava kuljetus",
-      "estimatedDepartureTime": "arvioitu lähtöaika"
-    }
+    "transportNumber": "Kuljetuskerta",
+    "nextSupervision": "Seuraava sillanvalvonta",
+    "estimate": "arvio"
   },
   "route": {
     "departureTime": "Lähtöaika",
@@ -75,15 +107,17 @@
     "permitInfo": {
       "title": "Luvan tiedot",
       "permitNumber": "Luvan numero",
-      "routeDeparturePoint": "Reitin lähtöpiste",
-      "routeArrivalPoint": "Reitin päätepiste"
+      "routeDeparturePoint": "Reitin lähtöpaikka",
+      "routeArrivalPoint": "Reitin määräpaikka"
     },
     "routeInfo": {
       "title": "Reitin tiedot",
       "route": "Reitti",
       "showRouteOnMap": "Reitti kartalla",
-      "departurePoint": "Lähtöpiste",
-      "arrivalPoint": "Päätepiste"
+      "departurePoint": "Lähtöpaikka",
+      "arrivalPoint": "Määräpaikka",
+      "transportNumber": "Kuljetuskerta",
+      "transportNumbersUsed": "Kaikki reitin kuljetuskerrat käytetty"
     },
     "bridgesToSupervise": "Valvottavat sillat"
   },
@@ -109,9 +143,6 @@
     "crossingInstructions": {
       "title": "Ohjeet"
     },
-    "trafficSupervisors": {
-      "title": "Liikenteenohjaajat"
-    },
     "permitNumber": "Lupanumero",
     "conformsToPermit": "Kuljetus on luvanmukainen",
     "startSupervision": "Aloita valvonta",
@@ -120,7 +151,13 @@
     "supervisionMissing": "Sillanvalvontaa ei ole vielä suunniteltu",
     "supervisionStarted": "Valvonta aloitettu",
     "crossingDenied": "Sillan ylitys peruttu",
-    "supervisionFinished": "Valvonta päättynyt"
+    "supervisionFinished": "Valvonta päättynyt",
+    "warning": {
+      "confirmStartSupervision": "Haluatko varmasti aloittaa valvonnan?",
+      "confirmContinueSupervision": "Haluatko varmasti jatkaa valvontaa?",
+      "confirmDenyCrossing": "Halutko varmasti peruuttaa ylityksen?",
+      "transportNotStarted": "Kuljetus ei ole lähtenyt vielä liikkeelle."
+    }
   },
   "denyCrossing": {
     "cantCross": "Kuljetus ei voi ylittää siltaa",
@@ -130,8 +167,40 @@
     "other": "Jotain muuta, mitä?",
     "placeholder": "Lisää tekstiä tähän"
   },
+  "supervisionOwnList": {
+    "addButtonLabel": "Lisää valvottavia siltoja",
+    "permitLabel": "Kuljetuslupa",
+    "addedBySupervisor": "Silta lisätty valvojan toimesta",
+    "removeFromList": "Poista listalta",
+    "warning": {
+      "removeHeader": "Haluatko varmasti poistaa sillan listalta?",
+      "remove": "Poista"
+    },
+    "addModal": {
+      "title": "Lisää valvottavia siltoja",
+      "permitNumberInput": {
+        "inputLabel": "Lupanumero",
+        "addPermitNumberButtonLabel": "Lisää lupanumero",
+        "cancelButtonLabel": "Peruuta",
+        "continueButtonLabel": "Seuraava",
+        "notFound": "Lupaa ei ole olemassa annetulla numerolla",
+        "noRights": "Urakkavalvojalla ei oikeuksia lupaan"
+      },
+      "routeSelectInput": {
+        "permitLabel": "Kuljetuslupa",
+        "cancelButtonLabel": "Edellinen",
+        "continueButtonLabel": "Seuraava"
+      },
+      "bridgeSelectInput": {
+        "permitLabel": "Kuljetuslupa",
+        "routeLabel": "Reitti",
+        "cancelButtonLabel": "Edellinen",
+        "saveButtonLabel": "Lisää sillat"
+      }
+    }
+  },
   "supervision": {
-    "title": "Sillan valvonta",
+    "title": "Sillanvalvonta",
     "permitNumber": "Lupanumero",
     "supervisionStarted": "Valvonta aloitettu",
     "bridgeName": "Sillan tiedot",
@@ -142,7 +211,7 @@
       "observations": "Havainnot",
       "drivingLineOk": "Ajolinjaa on noudatettu",
       "drivingLineInfo": "Miksi ajolinjaa ei noudatettu?",
-      "speedLimitOk": "Ajonopeus on noudatettu",
+      "speedLimitOk": "Ajonopeutta on noudatettu",
       "speedLimitInfo": "Miksi ajonopeutta ei noudatettu?",
       "anomalies": "Poikkeavia havaintoja",
       "anomaliesInfo": "Tarkenna poikkeavia havaintoja",
@@ -159,14 +228,19 @@
       "drivingLine": "Ajolinja",
       "summary": "Siirry yhteenvetoon",
       "cancel": "Peru valvonta",
-      "saveToSendList": "Tallenna lähetyslistalle"
+      "saveToSendList": "Tallenna lähetyslistalle",
+      "sendImmediately": "Lähetä valvonta heti",
+      "sendNow": "Lähetä valvonta",
+      "back": "Takaisin"
     },
     "warning": {
       "cancelSupervisionHeader": "Haluatko varmasti perua valvonnan?",
       "cancelSupervisionText": "Raporttiin kirjatut tiedot poistetaan.",
       "leavePage": "Halutko varmasti poistua sivulta?",
       "unsavedChanges": "Valvonnassa on tallentamattomia muutoksia.",
-      "supervisionNotFinished": "Valvontaa ei ole tallennettu lähetyslistalle."
+      "supervisionNotFinished": "Valvontaa ei ole tallennettu lähetyslistalle.",
+      "sendImmediatelyHeader": "Haluatko varmasti lähettää valvonnan heti?",
+      "sendImmediatelyText": "Raporttiin kirjattuja tietoja ei voi muokata eikä täydentää enää lähettämisen jälkeen"
     },
     "summary": {
       "title": "Yhteenveto",
@@ -186,9 +260,15 @@
     "transportPermit": "Kuljetuslupa",
     "tractorUnit": "Vetoauto",
     "supervisionStarted": "Valvonta aloitettu",
+    "reportSent": "Raportti lähetetty",
+    "removed": "Poistuu listalta",
+    "report": "Valvontaraportti",
     "sendSelected": "Lähetä valitut",
     "sentOk": "Valitut valvonnat on lähetetty",
-    "nothingToSend": "Ei lähetettäviä valvontaraportteja"
+    "nothingToSend": "Ei lähetettäviä valvontaraportteja.",
+    "sentReports": "Lähetetyt valvontaraportit",
+    "offlineSuffix": "Offline",
+    "passwordButton": "Avaa salasanalla"
   },
   "permitPdf": {
     "title": "Kuljetuslupa",
@@ -200,10 +280,25 @@
   },
   "management": {
     "companySummary": {
+      "noPermitsWarning": "Järjestelmässä ei ole kuljetuslupia yrityksellesi.",
       "permitListTitle": "Kuljetusluvat ja kuljetusten hallinta",
       "transports": "Kuljetuksia",
       "supervision": "Sillanvalvonta",
+      "includesSupervisions": "Sisältää sillanvalvontoja",
+      "notUsesSillariPermit": "Luvan kuljetuksia ei tehdä SillaRissa",
+      "noSupervisions": "Ei sisällä sillanvalvontoja",
+      "permitVersion": "Lupaversio",
       "addTransportButtonLabel": "Lisää kuljetus",
+      "transportCount": "Kuljetuskerrat",
+      "showByRoute": "Näytä reittikohtaisesti",
+      "transportCountModal": {
+        "title": "Luvan {{permit}} reittikohtaiset kuljetuskerrat",
+        "used": "Käytetty",
+        "amount": "Määrä luvalla",
+        "unlimited": "Rajoittamaton",
+        "usedInfo": "Käytettyjen kuljetuskertojen kokonaismäärä koostuu nykyiselle kuljetusluvalle tehdyistä kuljetuksista sekä mahdollisille muille lupaversioille tehdyistä kuljetuksista (suluissa jälkimmäisenä).",
+        "amountInfo": "Määrä luvalla näyttää luvalle myönnettyjen kuljetuskertojen kokonaismäärän reittikohtaisesti."
+      },
       "filter": {
         "show": "Näytä",
         "status": {
@@ -230,7 +325,8 @@
       "action": {
         "details": "Lisätiedot",
         "modify": "Muokkaa",
-        "show": "Näytä"
+        "show": "Näytä",
+        "delete": "Poista"
       },
       "transportStatusLog": "Kuljetuksen seuranta",
       "logStatus": {
@@ -244,6 +340,7 @@
     },
     "transportDetail": {
       "headerTitleAdd": "Lisää uusi kuljetus",
+      "headerTitleEdit": "Muokkaa kuljetusta",
       "headerTitleDetail": "Kuljetuksen tiedot",
       "transportPermit": "Kuljetuslupa",
       "validityPeriod": "Voimassaoloaika",
@@ -252,38 +349,60 @@
       "bridgesToSupervise": "Valvottavat sillat",
       "buttons": {
         "generatePassword": "Uusi salasana",
-        "deleteTransport": "Poista kuljetus"
+        "deleteTransport": "Poista kuljetus",
+        "setDepartureTime": "Aseta arvioitu lähtöaika",
+        "updateDepartureTime": "Muuta lähtöaikaa"
       },
       "alert": {
         "generatePassword": "Oletko varma, että haluat generoida uuden salasanan?",
         "deleteTransport": "Oletko varma, että haluat poistaa kuljetuksen?"
       },
+      "error": {
+        "transportNumberConflict": "Kuljetuskerta on jo käytetty toiselle kuljetukselle. Ole hyvä ja päivitä sivu."
+      },
       "saved": "Tallennettu",
       "deleted": "Poistettu",
       "password": "Kuljetuksen salasana",
       "passwordUnknown": "Puuttuu",
+      "passwordNotGenerated": "Salasana muodostetaan ensimmäisen tallennuksen yhteydessä",
       "routeInfo": {
-        "estimatedDepartureDate": "Arvioitu lähtöpäivä",
-        "estimatedDepartureTime": "klo",
+        "estimatedDepartureTime": "Kuljetuksen arvioitu lähtöaika",
         "route": "Reitti",
         "origin": "Lähtöpaikka",
         "destination": "Määräpaikka",
         "showRouteOnMap": "Näytä reitti kartalla",
-        "tractorUnitIdentifier": "Ajoneuvon rekisteritunnus (vetoauto)",
+        "tractorUnitIdentifier": "Ajoneuvon rekisteritunnus (ensimmäinen vetoauto)",
         "tractorUnitNotSelected": "Rekisteritunnus puuttuu",
         "pushingVehicle": "lisä- tai työntöauto"
       },
       "bridgeInfo": {
         "bridge": "Silta",
         "estimatedCrossingTime": "Arvioitu ylitysaika",
+        "supervision": "Valvonta",
         "bridgeSupervisors": "Sillanvalvojat",
         "ownSupervisor": "Omat valvojat",
         "contractor": "Hoitourakoitsija",
-        "contractNumber": "Urakkasopimus",
         "bridgeSupervisor": "Sillanvalvoja (1.) ja varavalvoja (2.)",
         "supervisor1": "Sillanvalvoja (1.)",
         "supervisor2": "Varavalvoja (2.)",
-        "copySupervisor": "Kopioi kaikille silloille"
+        "copySupervisor": "Kopioi kaikille silloille",
+        "noBridges": "Reitillä ei ole valvottavia siltoja",
+        "report": "Valvontaraportti",
+        "supervisionStatus": {
+          "in_progress": "Valvonta käynnissä",
+          "crossing_denied": "Ylitys peruttu",
+          "finished": "Valvonta päättynyt",
+          "report_signed": "Raportti valmis"
+        }
+      },
+      "transportDepartureTime": {
+        "header": "Arvioitu lähtöaika",
+        "estimatedDepartureDate": "Arvioitu lähtöpäivä",
+        "estimatedDepartureTime": "klo",
+        "departureAt": "klo",
+        "setTime": "Aseta",
+        "updateTime": "Päivitä",
+        "info": "HUOM. Lähtöaika vaikuttaa myös siltojen arvioituihin ylitysaikoihin."
       }
     },
     "supervisionType": {
@@ -297,14 +416,13 @@
       "departed": "Liikkeellä",
       "stopped": "Tauolla",
       "in_progress": "Liikkeellä",
-      "arrived": "Päättynyt"
+      "arrived": "Päättynyt",
+      "supervisionStarted": "Valvonta aloitettu",
+      "outdatedPermit": "Tee uudelle lupaversiolle"
     }
   },
   "transports": {
     "transportCodeInput": {
-      "header": {
-        "title": "Kuljetukset"
-      },
       "inputTitle": "Tuleva kuljetus",
       "inputLabel": "Kuljetuksen salasana",
       "inputPlaceholder": "Salasana",
@@ -350,5 +468,34 @@
     },
     "title": "Pääsy estetty!",
     "content": "Sinulla ei ole oikeuksia nähdä tätä sivua."
+  },
+  "appCheck": {
+    "accessDenied": "Pääsy estetty",
+    "loginToUse": "Kirjaudu sisään käyttääksesi sovellusta.",
+    "login": "Kirjaudu sisään",
+    "noData": "SillaRin tietoja ei voida hakea",
+    "tryAgainLater": "Yritä uudelleen verkkoyhteyden palattua.",
+    "noRights": "Sinulla ei ole oikeuksia käyttää SillaRi-sovellusta.",
+    "unhandledError": "Käsittelemätön virhetilanne",
+    "startingApp": "Käynnistetään sovellus..."
+  },
+  "offlineInfo": {
+    "title": "Offline-tila",
+    "info1": "SillaRin kuljetukset ja valvottavat sillat on päivitetty viimeksi",
+    "info2": "Ainoastaan salasanalla online-tilassa avatut kuljetukset ja sillat ovat käytettävissä offline-tilassa.",
+    "info3": "Voit käyttää SillaRia offline-tilassa, jolloin sillanvalvonnan raportti on mahdollista tallentaa väliaikaisesti tälle laitteelle.",
+    "info4": "Valvontaraportin voit lähettää myöhemmin, kun verkkoyhteys on jälleen käytössä ja kirjaudut SillaRiin."
+  },
+  "sendingListOfflineNotice": {
+    "title": "Offline-tilassa lähettäminen ei ole mahdollista",
+    "notice": "Voit lähettää valvontaraportit verkkoyhteyden palattua."
+  },
+  "unsentOffline": {
+    "title": "Lähettämättömiä raportteja",
+    "notice": "Lähetyslistalla on lähettämättömiä valvontaraportteja",
+    "question": "Haluatko siirtyä lähetyslistalle?",
+    "goToSendingList": "Siirry lähetyslistalle",
+    "continueToMain": "Jatka SillaRin päänäkymään",
+    "info": "Pääset lähetyslistalle myös päänäkymästä."
   }
 }

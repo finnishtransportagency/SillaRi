@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { IonCol, IonImg, IonRow, IonThumbnail } from "@ionic/react";
+import { IonCol, IonRow, IonSpinner } from "@ionic/react";
+import { onlineManager, useIsMutating } from "react-query";
 import moment from "moment";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
-import { getOrigin } from "../utils/request";
 import ImagePreview from "./ImagePreview";
+import ImageThumbnail from "./ImageThumbnail";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import "./ImageThumbnailRow.css";
 
@@ -20,10 +21,20 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
     setImagePreviewUrl(imageUrl || imagePreviewUrl);
   };
 
+  // Check if images are being uploaded using the mutationKey defined in Photos.tsx
+  const isImageUploadMutating = useIsMutating(["imageUpload"]);
+
   // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
   return (
     <IonRow>
-      {images &&
+      {isImageUploadMutating > 0 && onlineManager.isOnline() && (
+        <IonCol>
+          <IonSpinner color="primary" className="imageSpinner" />
+        </IonCol>
+      )}
+
+      {(isImageUploadMutating === 0 || !onlineManager.isOnline()) &&
+        images &&
         images.length > 0 &&
         [...images]
           .sort((a, b) => {
@@ -31,14 +42,12 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
             const bm = moment(b.taken, DATE_TIME_FORMAT);
             return bm.diff(am, "seconds");
           })
-          .map((image) => {
-            const imageUrl = `${getOrigin()}/api/images/get?objectKey=${image.objectKey}`;
+          .map((image, index) => {
+            const key = `image_${index}`;
 
             return (
-              <IonCol key={image.id} size="3">
-                <IonThumbnail className="imageThumbnail" onClick={() => showImage(true, imageUrl)}>
-                  <IonImg src={imageUrl} />
-                </IonThumbnail>
+              <IonCol key={key} size="3">
+                <ImageThumbnail image={image} className="imageThumbnail" showImage={(imageUrl) => showImage(true, imageUrl)} />
               </IonCol>
             );
           })}

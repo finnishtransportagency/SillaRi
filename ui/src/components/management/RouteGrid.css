@@ -1,10 +1,12 @@
 .routeGrid {
-  border: 2px solid var(--ion-color-base);
+  border-width: 0 2px 2px 2px;
+  border-style: solid;
+  border-color: var(--ion-color-light);
   --ion-grid-columns: 24;
 }
 
 .routeGrid > ion-row {
-  border-top: 2px solid var(--ion-color-base);
+  border-top: 2px solid var(--ion-color-light);
 }
 
 .routeSubGrid {
@@ -13,6 +15,7 @@
 
 .routeGridStatus {
   padding: 6px;
+  color: #000000 !important; /* always black due to colours defined below */
 }
 
 .routeGridStatus_departed,
@@ -29,5 +32,17 @@
 }
 
 .routeGridStatusUnknown {
-  color: var(--ion-color-warning-shade);
+  color: var(--ion-color-danger);
+}
+
+.routeGridStatusSupervisionStarted {
+  color: var(--ion-color-warning);
+}
+
+.ascendingColumn {
+  border-top: 4px solid var(--ion-color-primary);
+}
+
+.descendingColumn {
+  border-bottom: 4px solid var(--ion-color-primary);
 }

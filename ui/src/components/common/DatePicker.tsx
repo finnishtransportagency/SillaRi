@@ -6,6 +6,8 @@ import "./DatePicker.css";
 interface DatePickerProps {
   value: Date;
   onChange: (value: Date) => void;
+  hasError?: boolean;
+  usePortal?: boolean;
 }
 
 const getDaysArray = (start: Date, end: Date) => {
@@ -45,7 +47,7 @@ const validateInput = (inputValue: string, prevInputValue: string) => {
   }
 };
 
-const DatePicker = ({ value, onChange }: DatePickerProps): JSX.Element => {
+const DatePicker = ({ value, onChange, hasError, usePortal }: DatePickerProps): JSX.Element => {
   const min = moment(value).isBefore(moment()) ? value : moment().toDate();
   const max = moment().add(100, "days").toDate();
   return (
@@ -58,12 +60,16 @@ const DatePicker = ({ value, onChange }: DatePickerProps): JSX.Element => {
         onChange(moment(date).toDate());
       }}
       validateInput={validateInput}
+      hasError={hasError}
+      usePortal={usePortal}
     />
   );
 };
 
 DatePicker.defaultProps = {
   className: undefined,
+  hasError: false,
+  usePortal: false,
 };
 
 export default DatePicker;

@@ -2,12 +2,12 @@ import React, { MouseEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IonButton, IonButtons, IonCol, IonContent, IonFab, IonGrid, IonHeader, IonIcon, IonModal, IonRow, IonTitle, IonToolbar } from "@ionic/react";
 import { Document, Page } from "react-pdf";
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import close from "../theme/icons/close_large_white.svg";
 import { getOrigin } from "../utils/request";
 
 interface PermitPdfPreviewProps {
-  pdfObjectKey: string;
+  id: number;
   isOpen: boolean;
   setOpen: (isOpen: boolean) => void;
 }
@@ -16,9 +16,9 @@ interface PermitPdfPreviewProps {
 // This uses react-pdf (https://github.com/wojtekmaj/react-pdf) which uses PDF.js from Mozilla (https://github.com/mozilla/pdfjs-dist)
 // The version of pdfjs-dist must match the version used in react-pdf otherwise errors occur
 // If the react-pdf dependency is updated, do the following:
-//   1. Manually update the pdfjs-dist version in package.json to the version used in react-pdf (currently 2.10.377)
+//   1. Manually update the pdfjs-dist version in package.json to the version used in react-pdf (currently 2.12.313)
 //   2. Copy pdf.worker.js from ./node_modules/pdfjs-dist/build to ./public
-const PermitPdfPreview = ({ pdfObjectKey, isOpen, setOpen }: PermitPdfPreviewProps): JSX.Element => {
+const PermitPdfPreview = ({ id, isOpen, setOpen }: PermitPdfPreviewProps): JSX.Element => {
   const contentRef = useRef<HTMLIonContentElement>(null);
   const { t } = useTranslation();
 
@@ -40,17 +40,17 @@ const PermitPdfPreview = ({ pdfObjectKey, isOpen, setOpen }: PermitPdfPreviewPro
     <IonModal isOpen={isOpen} onDidDismiss={() => setOpen(false)}>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle class="headingBoldText">{t("permitPdf.title")}</IonTitle>
+          <IonTitle class="headingText">{t("permitPdf.title")}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={(evt) => closePreview(evt as MouseEvent)}>
-              <IonIcon className="otherIconLarge" icon={close}></IonIcon>
+              <IonIcon className="otherIconLarge" icon={close} />
             </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent ref={contentRef} scrollX={false} scrollY={false} onClick={(evt) => evt.stopPropagation()}>
         <Document
-          file={`${getOrigin()}/api/permit/getpermitpdf?objectKey=${pdfObjectKey}`}
+          file={`${getOrigin()}/api/permit/getpermitpdf?id=${id}`}
           renderMode="svg"
           onLoadSuccess={onDocumentLoadSuccess}
           loading={t("permitPdf.loading")}

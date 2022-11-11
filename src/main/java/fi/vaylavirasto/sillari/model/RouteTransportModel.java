@@ -20,6 +20,7 @@ public class RouteTransportModel extends BaseModel {
     private RouteTransportStatusModel currentStatus;
     private List<RouteTransportStatusModel> statusHistory;
     private RouteModel route;
+    private Integer transportNumber;
     private List<SupervisionModel> supervisions;
 
     private OffsetDateTime departureTime; // First DEPARTED in statusHistory
@@ -27,6 +28,8 @@ public class RouteTransportModel extends BaseModel {
 
     // Only returned to the transport company admin UI
     private RouteTransportPasswordModel currentTransportPassword;
+
+
 
     public void setStatusHistory(List<RouteTransportStatusModel> statusHistory) {
         this.statusHistory = statusHistory;

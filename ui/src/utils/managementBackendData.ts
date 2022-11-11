@@ -6,8 +6,8 @@ import ICompany from "../interfaces/ICompany";
 import IPermit from "../interfaces/IPermit";
 import IRouteTransport from "../interfaces/IRouteTransport";
 import IRouteTransportPassword from "../interfaces/IRouteTransportPassword";
-import IRouteTransportStatus from "../interfaces/IRouteTransportStatus";
-import ISupervisor from "../interfaces/ISupervisor";
+import ISupervision from "../interfaces/ISupervision";
+import { createCustomError, createErrorFromStatusCode } from "./backendData";
 
 export const getCompany = async (dispatch: Dispatch): Promise<ICompany> => {
   try {
@@ -89,26 +89,6 @@ export const getRouteTransport = async (routeTransportId: number, dispatch: Disp
   }
 };
 
-export const findRouteTransportPassword = async (transportPassword: string, dispatch: Dispatch): Promise<IRouteTransportPassword> => {
-  try {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: false } });
-
-    const rtpResponse = await fetch(`${getOrigin()}/api/transportpassword/login?transportPassword=${transportPassword}`);
-
-    if (rtpResponse.ok) {
-      const rtp = (await rtpResponse.json()) as Promise<IRouteTransportPassword>;
-      console.log("findRouteTransportPassword", transportPassword);
-      return await rtp;
-    } else {
-      dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
-      throw new Error(NETWORK_RESPONSE_NOT_OK);
-    }
-  } catch (err) {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { findRouteTransportByPassword: true } });
-    throw new Error(err as string);
-  }
-};
-
 export const generateNewRouteTransportPassword = async (routeTransportId: number, dispatch: Dispatch): Promise<IRouteTransportPassword> => {
   try {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { generateNewRouteTransportPassword: false } });
@@ -167,11 +147,13 @@ export const createRouteTransport = async (routeTransport: IRouteTransport, disp
       return await plannedRouteTransport;
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
-      throw new Error(NETWORK_RESPONSE_NOT_OK);
+
+      // Create routeTransport might return 409 when there's a conflict with transportNumber
+      throw createErrorFromStatusCode(createRouteTransportResponse.status);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { createRouteTransport: true } });
-    throw new Error(err as string);
+    throw createCustomError(err);
   }
 };
 
@@ -226,48 +208,22 @@ export const deleteRouteTransport = async (routeTransportId: number, dispatch: D
   }
 };
 
-export const changeRouteTransportStatus = async (routeTransportStatus: IRouteTransportStatus, dispatch: Dispatch): Promise<IRouteTransport> => {
+export const getSupervisionOfTransportCompany = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: false } });
+    console.log("GetSupervisionOfTransportCompany", supervisionId);
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: false } });
 
-    const changeRouteTransportStatusResponse = await fetch(`${getOrigin()}/api/routetransport/changeroutetransportstatus`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(routeTransportStatus),
-    });
+    const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisionoftransportcompany?supervisionId=${supervisionId}`);
 
-    if (changeRouteTransportStatusResponse.ok) {
-      const changedRouteTransport = (await changeRouteTransportStatusResponse.json()) as Promise<IRouteTransport>;
-      console.log("changeRouteTransportStatus", changedRouteTransport);
-      return await changedRouteTransport;
+    if (supervisionResponse.ok) {
+      const supervision = (await supervisionResponse.json()) as Promise<ISupervision>;
+      return await supervision;
     } else {
-      dispatch({ type: actions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: true } });
+      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: true } });
       throw new Error(NETWORK_RESPONSE_NOT_OK);
     }
   } catch (err) {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { changeRouteTransportStatus: true } });
-    throw new Error(err as string);
-  }
-};
-
-export const getSupervisors = async (dispatch: Dispatch): Promise<ISupervisor[]> => {
-  try {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: false } });
-
-    const supervisorsResponse = await fetch(`${getOrigin()}/api/supervision/getsupervisors`);
-
-    if (supervisorsResponse.ok) {
-      const supervisors = (await supervisorsResponse.json()) as Promise<ISupervisor[]>;
-      console.log("getSupervisors", supervisors);
-      return await supervisors;
-    } else {
-      dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
-      throw new Error(NETWORK_RESPONSE_NOT_OK);
-    }
-  } catch (err) {
-    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisors: true } });
+    dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervisionOfTransportCompany: true } });
     throw new Error(err as string);
   }
 };

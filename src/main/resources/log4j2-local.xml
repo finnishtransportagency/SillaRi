@@ -13,12 +13,7 @@
 
         <!-- Use the custom SQLDebugLogging to get the SQL statements only -->
         <Logger name="fi.vaylavirasto.sillari.config.SQLDebugLogging" additivity="false">
-            <AppenderRef ref="ConsoleAppender" level="debug"/>
-        </Logger>
-
-        <!-- Use this for all other SillaRi debug logging -->
-        <Logger name="fi.vaylavirasto.sillari" additivity="false">
-            <AppenderRef ref="ConsoleAppender" level="debug"/>
+            <AppenderRef ref="ConsoleAppender" level="error"/>
         </Logger>
 
         <Logger name="fi.vaylavirasto.sillari.service.UIService" additivity="false">
@@ -27,6 +22,11 @@
 
         <Logger name="fi.vaylavirasto.sillari.auth.JwtRequestFilter" additivity="true">
             <AppenderRef ref="ConsoleAppender" level="info"/>
+        </Logger>
+
+        <!-- Use this for all other SillaRi debug logging -->
+        <Logger name="fi.vaylavirasto.sillari" additivity="false">
+            <AppenderRef ref="ConsoleAppender" level="debug"/>
         </Logger>
 
         <Logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">

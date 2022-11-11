@@ -14,15 +14,17 @@ public class TableAlias {
     public static final Route route = Tables.ROUTE.as("ro");
     public static final Address departureAddress = Tables.ADDRESS.as("da");
     public static final Address arrivalAddress = Tables.ADDRESS.as("aa");
-    public static final RouteBridge routeBridge = Tables.ROUTE_BRIDGE.as("rbr");;
+    public static final RouteBridge routeBridge = Tables.ROUTE_BRIDGE.as("rbr");
     public static final Bridge bridge = Tables.BRIDGE.as("br");
+    public static final BridgeImage bridgeImage = Tables.BRIDGE_IMAGE.as("bi");
     public static final RouteTransport routeTransport = Tables.ROUTE_TRANSPORT.as("rtr");
+    public static final RouteTransportNumber routeTransportNumber = Tables.ROUTE_TRANSPORT_NUMBER.as("rtn");
+    public static final RouteTransportNumberView routeTransportNumberView = Tables.ROUTE_TRANSPORT_NUMBER_VIEW.as("rtv");
     public static final RouteTransportStatus transportStatus = Tables.ROUTE_TRANSPORT_STATUS.as("rts");
     public static final RouteTransportPassword routeTransportPassword = Tables.ROUTE_TRANSPORT_PASSWORD.as("rtp");
     public static final Supervision supervision = Tables.SUPERVISION.as("sn");
     public static final SupervisionStatus supervisionStatus = Tables.SUPERVISION_STATUS.as("sns");
     public static final SupervisionReport supervisionReport = Tables.SUPERVISION_REPORT.as("snr");
     public static final SupervisionImage supervisionImage = Tables.SUPERVISION_IMAGE.as("sni");
-    public static final SupervisionSupervisor supervisionSupervisor = Tables.SUPERVISION_SUPERVISOR.as("ss");
-    public static final Supervisor supervisor = Tables.SUPERVISOR.as("sr");
+    public static final SupervisionPdf supervisionPdf = Tables.SUPERVISION_PDF.as("snp");
 }

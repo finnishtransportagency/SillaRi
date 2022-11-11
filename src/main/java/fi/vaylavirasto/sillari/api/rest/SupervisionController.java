@@ -2,20 +2,27 @@ package fi.vaylavirasto.sillari.api.rest;
 
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
+import fi.vaylavirasto.sillari.dto.SupervisionInputDTO;
+import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.model.SupervisionReportModel;
-import fi.vaylavirasto.sillari.model.SupervisorModel;
+import fi.vaylavirasto.sillari.service.RouteTransportPasswordService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,18 +31,52 @@ import java.util.concurrent.Executors;
 @Timed
 @RequestMapping("/supervision")
 public class SupervisionController {
+    private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     UIService uiService;
     @Autowired
     SupervisionService supervisionService;
+    @Autowired
+    RouteTransportPasswordService rtpService;
 
+    /**
+     * @param supervisionId
+     * @param transportCode aka usernameAndPasswordHashed; SHA1 hashed from "USER_ID" + "TRANSPORTATION_PASSWORD", for example SHA1("LXVALVOJA1234")
+     * @return
+     */
     @Operation(summary = "Get supervision")
     @GetMapping(value = "/getsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId) {
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> getSupervision(@RequestParam Integer supervisionId, @RequestParam(required = false) String transportCode) {
+        logger.info("usernameAndPasswordHashed aka transportCode: " + transportCode);
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervision");
         try {
-            SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId);
+            if (!isSupervisionOfSupervisor(supervisionId)) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
+            SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId, true, true);
+
+            SillariUser user = uiService.getSillariUser();
+            if (permitUsesSillari(supervisionModel)) {
+                checkTransportCodeMatches(user, supervisionModel.getRouteTransportId(), transportCode);
+            }
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Get supervision of transport company")
+    @GetMapping(value = "/getsupervisionoftransportcompany", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariAjojarjestelija(authentication)")
+    public ResponseEntity<?> getSupervisionOfTransportCompany(@RequestParam Integer supervisionId) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionOfTransportCompany");
+        try {
+            if (!isSupervisionOfTransportCompany(supervisionId)) {
+                throw new AccessDeniedException("Supervision not of the transport company");
+            }
+            SupervisionModel supervisionModel = supervisionService.getSupervision(supervisionId, true, true);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -44,12 +85,26 @@ public class SupervisionController {
 
     @Operation(summary = "Get supervisions of supervisor")
     @GetMapping(value = "/getsupervisionsofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public ResponseEntity<?> getSupervisionsOfSupervisor() {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionsOfSupervisor");
         try {
             SillariUser user = uiService.getSillariUser();
-            List<SupervisionModel> supervisions = supervisionService.getSupervisionsOfSupervisor(user.getUsername());
+            List<SupervisionModel> supervisions = supervisionService.getSupervisionsOfSupervisor(user);
+            return ResponseEntity.ok().body(supervisions != null ? supervisions : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Get supervisions of AreaContractor supervisor")
+    @GetMapping(value = "/getsupervisionsofareacontractorsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> getSupervisionsOfAreaContractorSupervisor() {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionsOfSupervisor");
+        try {
+            SillariUser user = uiService.getSillariUser();
+            List<SupervisionModel> supervisions = supervisionService.getSupervisionsOfAreaContractorSupervisor(user);
             return ResponseEntity.ok().body(supervisions != null ? supervisions : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -58,26 +113,13 @@ public class SupervisionController {
 
     @Operation(summary = "Get supervisions of supervisor")
     @GetMapping(value = "/getsupervisionsendinglistofsupervisor", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public ResponseEntity<?> getSupervisionSendingListOfSupervisor() {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisionSendingListOfSupervisor");
         try {
             SillariUser user = uiService.getSillariUser();
-            List<SupervisionModel> supervisions = supervisionService.getFinishedButUnsignedSupervisions(user.getUsername());
+            List<SupervisionModel> supervisions = supervisionService.getFinishedSupervisions(user);
             return ResponseEntity.ok().body(supervisions != null ? supervisions : new EmptyJsonResponse());
-        } finally {
-            serviceMetric.end();
-        }
-    }
-
-    @Operation(summary = "Get supervisors")
-    @GetMapping(value = "/getsupervisors", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> getSupervisors() {
-        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "getSupervisors");
-        try {
-            List<SupervisorModel> supervisors = supervisionService.getSupervisors();
-            return ResponseEntity.ok().body(supervisors != null ? supervisors : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
@@ -85,10 +127,19 @@ public class SupervisionController {
 
     @Operation(summary = "Update conforms to permit attribute in supervision")
     @PutMapping(value = "/updateconformstopermit", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> updateConformsToPermit(@RequestBody SupervisionModel supervision) {
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> updateConformsToPermit(@RequestBody SupervisionModel supervision, @RequestParam String transportCode) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateConformsToPermit");
         try {
+            if (!canSupervisorUpdateSupervision(supervision.getId())) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
+            SillariUser user = uiService.getSillariUser();
+
+            if (permitUsesSillari(supervision)) {
+                checkTransportCodeMatches(user, supervision.getRouteTransportId(), transportCode);
+            }
+
             SupervisionModel supervisionModel = supervisionService.updateConformsToPermit(supervision);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
@@ -98,12 +149,18 @@ public class SupervisionController {
 
     @Operation(summary = "Start supervision, create supervision report")
     @PostMapping(value = "/startsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> startSupervision(@RequestBody SupervisionReportModel report) {
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> startSupervision(@RequestBody SupervisionReportModel report, @RequestParam(required = false) Integer routeTransportId, @RequestParam(required = false) String transportCode) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "startSupervision");
         try {
+            if (!canSupervisorUpdateSupervision(report.getSupervisionId())) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
             SillariUser user = uiService.getSillariUser();
-            SupervisionModel supervisionModel = supervisionService.startSupervision(report, user);
+            if (permitUsesSillari(report.getSupervisionId())) {
+                checkTransportCodeMatches(user, routeTransportId, transportCode);
+            }
+            SupervisionModel supervisionModel = supervisionService.startSupervision(report, report.getStartTime(), user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -112,12 +169,19 @@ public class SupervisionController {
 
     @Operation(summary = "Cancel supervision, delete supervision report")
     @PostMapping(value = "/cancelsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> cancelSupervision(@RequestParam Integer supervisionId) {
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> cancelSupervision(@RequestBody SupervisionInputDTO supervisionInput,
+                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime cancelTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "cancelSupervision");
         try {
+            if (!canSupervisorUpdateSupervision(supervisionInput.getSupervisionId())) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
             SillariUser user = uiService.getSillariUser();
-            SupervisionModel supervisionModel = supervisionService.cancelSupervision(supervisionId, user);
+            if (permitUsesSillari(supervisionInput.getSupervisionId())) {
+                checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
+            }
+            SupervisionModel supervisionModel = supervisionService.cancelSupervision(supervisionInput.getSupervisionId(), cancelTime, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -126,12 +190,19 @@ public class SupervisionController {
 
     @Operation(summary = "Deny crossing")
     @PostMapping(value = "/denycrossing", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> denyCrossing(@RequestParam Integer supervisionId, @RequestParam String denyReason) {
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> denyCrossing(@RequestBody SupervisionInputDTO supervisionInput, @RequestParam String denyReason,
+                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime denyTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "denyCrossing");
         try {
+            if (!canSupervisorUpdateSupervision(supervisionInput.getSupervisionId())) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
             SillariUser user = uiService.getSillariUser();
-            SupervisionModel supervisionModel = supervisionService.denyCrossing(supervisionId, denyReason, user);
+            if (permitUsesSillari(supervisionInput.getSupervisionId())) {
+                checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
+            }
+            SupervisionModel supervisionModel = supervisionService.denyCrossing(supervisionInput.getSupervisionId(), denyReason, denyTime, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -140,12 +211,19 @@ public class SupervisionController {
 
     @Operation(summary = "Finish supervision")
     @PostMapping(value = "/finishsupervision", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> finishSupervision(@RequestParam Integer supervisionId) {
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> finishSupervision(@RequestBody SupervisionInputDTO supervisionInput,
+                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime finishTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "finishSupervision");
         try {
+            if (!canSupervisorUpdateSupervision(supervisionInput.getSupervisionId())) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
             SillariUser user = uiService.getSillariUser();
-            SupervisionModel supervisionModel = supervisionService.finishSupervision(supervisionId, user);
+            if (permitUsesSillari(supervisionInput.getSupervisionId())) {
+                checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
+            }
+            SupervisionModel supervisionModel = supervisionService.finishSupervision(supervisionInput.getSupervisionId(), finishTime, user);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
@@ -154,18 +232,33 @@ public class SupervisionController {
 
     @Operation(summary = "Complete supervisions")
     @PostMapping(value = "/completesupervisions", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> completeSupervisions(@RequestParam List<Integer> supervisionIds) {
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> completeSupervisions(@RequestBody List<SupervisionInputDTO> supervisionInputs,
+                                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime completeTime) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "completeSupervisions");
         try {
-            SillariUser user = uiService.getSillariUser();
+            if (supervisionInputs != null && !supervisionInputs.isEmpty()) {
+                if (supervisionInputs.stream().anyMatch(input -> !canSupervisorUpdateSupervision(input.getSupervisionId()))) {
+                    throw new AccessDeniedException("Supervision not of the user");
+                }
+                SillariUser user = uiService.getSillariUser();
 
-            if (supervisionIds != null && !supervisionIds.isEmpty()) {
-                supervisionIds.forEach(supervisionId -> supervisionService.completeSupervision(supervisionId, user));
+                supervisionInputs.forEach(input -> {
+                    if (permitUsesSillari(input.getSupervisionId())) {
+                        checkTransportCodeMatches(user, input.getRouteTransportId(), input.getTransportCode());
+                    }else{
+                        // For area contractor supervised permits (permit.customerUsesSillari = false)
+                        // the supervisions are all attached to a "template" route transport up to this point.
+                        // Now supervisions must be attached to route transports with transport number so Lelu can poll them
+                        supervisionService.attachSupervisionToTransportNumberedRouteBridge(input.getSupervisionId());
+
+                    }
+                    supervisionService.completeSupervision(input.getSupervisionId(), completeTime, user, false);
+                });
 
                 // Don't wait for pdf generation before returning the response
                 ExecutorService executor = Executors.newWorkStealingPool();
-                executor.submit(() -> supervisionIds.forEach(supervisionId -> supervisionService.createSupervisionPdf(supervisionId)));
+                executor.submit(() -> supervisionInputs.forEach(input -> supervisionService.createSupervisionPdf(input.getSupervisionId())));
             }
 
             // TODO - check if any data should be returned
@@ -175,17 +268,129 @@ public class SupervisionController {
         }
     }
 
+
+    @Operation(summary = "Finish and complete supervision")
+    @PostMapping(value = "/finishandcompletesupervision", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> finishAndCompeleteSupervision(@RequestBody SupervisionInputDTO supervisionInput,
+                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime finishTime) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "finishSupervision");
+        try {
+            if (!canSupervisorUpdateSupervision(supervisionInput.getSupervisionId())) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
+            SillariUser user = uiService.getSillariUser();
+            if(permitUsesSillari(supervisionInput.getSupervisionId())) {
+                checkTransportCodeMatches(user, supervisionInput.getRouteTransportId(), supervisionInput.getTransportCode());
+            }
+            supervisionService.finishSupervision(supervisionInput.getSupervisionId(), finishTime, user);
+
+            if(!permitUsesSillari(supervisionInput.getSupervisionId())) {
+                // For area contractor supervised permits (permit.customerUsesSillari = false)
+                // the supervisions are all attached to a "template" route transport up to this point.
+                // Now supervisions must be attached to route transports with transport number so Lelu can poll them
+                supervisionService.attachSupervisionToTransportNumberedRouteBridge(supervisionInput.getSupervisionId());
+            }
+            SupervisionModel supervisionModel = supervisionService.completeSupervision(supervisionInput.getSupervisionId(), finishTime.plusSeconds(1), user, true);
+
+            // Don't wait for pdf generation before returning the response
+            ExecutorService executor = Executors.newWorkStealingPool();
+            executor.submit(() -> supervisionService.createSupervisionPdf(supervisionInput.getSupervisionId()));
+
+            supervisionService.finishSupervision(supervisionInput.getSupervisionId(), finishTime, user);
+            return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
     @Operation(summary = "Update supervision report")
     @PutMapping(value = "/updatesupervisionreport", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
-    public ResponseEntity<?> updateSupervisionReport(@RequestBody SupervisionReportModel report) {
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> updateSupervisionReport(@RequestBody SupervisionReportModel report, @RequestParam(required = false) Integer routeTransportId, @RequestParam(required = false) String transportCode) {
         ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "updateSupervisionReport");
         try {
+            if (!canSupervisorUpdateSupervision(report.getSupervisionId())) {
+                throw new AccessDeniedException("Supervision not of the user");
+            }
+            SillariUser user = uiService.getSillariUser();
+            if (permitUsesSillari(report.getSupervisionId())) {
+                checkTransportCodeMatches(user, routeTransportId, transportCode);
+            }
             SupervisionModel supervisionModel = supervisionService.updateSupervisionReport(report);
             return ResponseEntity.ok().body(supervisionModel != null ? supervisionModel : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
     }
+
+    /* Check that hashed transportCode matches the hashed password of the route transport */
+    private void checkTransportCodeMatches(SillariUser user, Integer routeTransportId, String transportCode) {
+        if (transportCode != null) {
+            boolean passwordOk = rtpService.doesTransportPasswordMatch(transportCode, user.getUsername(), routeTransportId);
+            if (!passwordOk) {
+                throw new AccessDeniedException("Transport code does not match");
+            }
+        } else {
+            throw new AccessDeniedException("Transport code missing");
+        }
+    }
+
+    /* Check that supervision belongs to the user */
+    private boolean isSupervisionOfSupervisor(Integer supervisionId) {
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+        SillariUser user = uiService.getSillariUser();
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getAllSupervisionsOfSupervisorNoDetails(user);
+
+        return supervisionsOfSupervisor.stream().anyMatch(s -> s.getId().equals(supervision.getId()));
+    }
+
+    /* Check that supervision is of the transport company */
+    private boolean isSupervisionOfTransportCompany(Integer supervisionId) {
+        SillariUser user = uiService.getSillariUser();
+
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+        if (supervision != null) {
+            CompanyModel company = supervisionService.getCompanyOfSupervision(supervision);
+            return user.getBusinessId().equals(company.getBusinessId());
+        }
+
+        return false;
+    }
+
+    /* Check that supervision belongs to the user and report is not signed */
+    private boolean canSupervisorUpdateSupervision(Integer supervisionId) {
+        SillariUser user = uiService.getSillariUser();
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getUnsignedSupervisionsOfSupervisorNoDetails(user);
+        return supervisionsOfSupervisor.stream().anyMatch(s -> s.getId().equals(supervisionId));
+    }
+
+    /* Check that supervision is on the user's sending list */
+    private boolean isSendingListSupervisionOfSupervisor(Integer supervisionId) {
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId);
+        SillariUser user = uiService.getSillariUser();
+        List<SupervisionModel> supervisionsOfSupervisor = supervisionService.getFinishedButUnsignedSupervisionsNoDetails(user);
+
+        return supervisionsOfSupervisor.stream().anyMatch(s -> s.getId().equals(supervision.getId()));
+    }
+
+    /* Check that isAreaContractorSupervision */
+    private boolean permitUsesSillari(Integer supervisionId) {
+        SupervisionModel supervision = supervisionService.getSupervision(supervisionId, true, false);
+        return permitUsesSillari(supervision);
+    }
+
+    /* Check that isAreaContractorSupervision */
+    private boolean permitUsesSillari(SupervisionModel supervisionModel) {
+        Boolean isPermitCustomerUsesSillari = false;
+        try {
+            isPermitCustomerUsesSillari = supervisionModel.getRouteBridge().getRoute().getPermit().getCustomerUsesSillari();
+        }
+        catch (NullPointerException nullPointerException){
+            isPermitCustomerUsesSillari = supervisionService.getSupervision(supervisionModel.getId(), true, false).getRouteBridge().getRoute().getPermit().getCustomerUsesSillari();
+        }
+        return isPermitCustomerUsesSillari;
+    }
+
 
 }

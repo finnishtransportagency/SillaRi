@@ -80,6 +80,8 @@ public class SupervisionReportRepository {
         dsl.transaction(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
+            // Update using the supervision id so that this works if the report was created while the UI was offline
+            // In this case when coming online, the report id is -1 in both startSupervision and updateSupervisionReport
             ctx.update(TableAlias.supervisionReport)
                     .set(TableAlias.supervisionReport.DRIVING_LINE_OK, supervisionReport.getDrivingLineOk())
                     .set(TableAlias.supervisionReport.DRIVING_LINE_INFO, supervisionReport.getDrivingLineInfo())
@@ -94,7 +96,8 @@ public class SupervisionReportRepository {
                     .set(TableAlias.supervisionReport.OTHER_OBSERVATIONS_INFO, supervisionReport.getOtherObservationsInfo())
                     .set(TableAlias.supervisionReport.ADDITIONAL_INFO, supervisionReport.getAdditionalInfo())
                     .set(TableAlias.supervisionReport.DRAFT, supervisionReport.getDraft())
-                    .where(TableAlias.supervisionReport.ID.eq(supervisionReport.getId()))
+                    // .where(TableAlias.supervisionReport.ID.eq(supervisionReport.getId()))
+                    .where(TableAlias.supervisionReport.SUPERVISION_ID.eq(supervisionReport.getSupervisionId()))
                     .execute();
         });
     }

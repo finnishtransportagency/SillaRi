@@ -1,96 +1,72 @@
 import React, { ForwardedRef, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonButton, IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 import Moment from "react-moment";
 import IPermit from "../../interfaces/IPermit";
 import { actions } from "../../store/rootSlice";
-import { onRetry } from "../../utils/backendData";
-import { getRouteTransportsOfPermit } from "../../utils/managementBackendData";
-import { DATE_FORMAT, SupervisorType } from "../../utils/constants";
+import { DATE_FORMAT } from "../../utils/constants";
 import { isPermitValid } from "../../utils/validation";
 import PermitLinkText from "../PermitLinkText";
+import { permitIncludesSupervisions } from "../../utils/managementUtil";
 
 interface PermitAccordionHeadingProps {
   permit: IPermit;
+  hasMultiplePermitVersions: boolean;
 }
 
-const PermitAccordionHeading = ({ permit }: PermitAccordionHeadingProps, ref: ForwardedRef<HTMLIonGridElement>): JSX.Element => {
+const PermitAccordionHeading = (
+  { permit, hasMultiplePermitVersions }: PermitAccordionHeadingProps,
+  ref: ForwardedRef<HTMLIonGridElement>
+): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { id: permitId, validStartDate, validEndDate } = permit;
+  const { id: permitId, validStartDate, validEndDate, leluVersion, isCurrentVersion, customerUsesSillari, routes = [] } = permit;
 
-  const { data: routeTransportList } = useQuery(
-    ["getRouteTransportsOfPermit", permitId],
-    () => getRouteTransportsOfPermit(Number(permitId), dispatch),
-    {
-      retry: onRetry,
-    }
-  );
-
-  const supervisionText = () => {
-    // Get the unique non-null supervisor types from each transport and map them to translated text
-    const supervisorTypes = routeTransportList
-      ? routeTransportList
-          .flatMap((routeTransport) => {
-            const { supervisions } = routeTransport;
-
-            return supervisions
-              ? supervisions
-                  .map((supervision) => {
-                    const { routeBridge } = supervision;
-                    const { contractNumber = 0 } = routeBridge || {};
-                    return contractNumber > 0 ? SupervisorType.AREA_CONTRACTOR : SupervisorType.OWN_SUPERVISOR;
-                  })
-                  .filter((v, i, a) => v && a.indexOf(v) === i)
-              : [];
-          })
-          .filter((v, i, a) => v && a.indexOf(v) === i)
-      : [];
-
-    return supervisorTypes.length > 0
-      ? supervisorTypes.map((st) => t(`management.supervisionType.${st.toLowerCase()}`)).join(", ")
-      : t("management.supervisionType.unknown");
-  };
+  const includesSupervisions = permitIncludesSupervisions(routes);
 
   return (
     <IonGrid className="ion-no-padding" ref={ref}>
-      <IonRow className="ion-margin ion-align-items-center">
-        <IonCol size="12" size-md="8">
+      <IonRow className="ion-margin-vertical ion-align-items-center ion-justify-content-between">
+        <IonCol size="12" size-md="6">
           <IonGrid className="ion-no-padding">
             <IonRow>
               <IonCol>
                 <PermitLinkText permit={permit} className="headingText" />
               </IonCol>
-              <IonCol>
-                <IonText>{`${t("management.companySummary.transports")}: ${routeTransportList ? routeTransportList.length : 0}`}</IonText>
-              </IonCol>
+              {hasMultiplePermitVersions && (
+                <IonCol className={isCurrentVersion ? "" : "disabled"}>
+                  <IonText>{`${t("management.companySummary.permitVersion")} ${leluVersion}`}</IonText>
+                </IonCol>
+              )}
             </IonRow>
             <IonRow>
-              <IonCol size="12" size-lg="6" className={!isPermitValid(permit) ? "disabled" : ""}>
+              <IonCol className={!isPermitValid(permit) ? "disabled" : ""}>
                 <small>
                   <Moment format={DATE_FORMAT}>{validStartDate}</Moment>
                   <IonText>{" - "}</IonText>
                   <Moment format={DATE_FORMAT}>{validEndDate}</Moment>
                 </small>
               </IonCol>
-              <IonCol size="12" size-lg="6">
+              <IonCol>
                 <small>
-                  <IonText>{`${t("management.companySummary.supervision")}: ${supervisionText()}`}</IonText>
+                  {customerUsesSillari
+                    ? includesSupervisions
+                      ? t("management.companySummary.includesSupervisions")
+                      : t("management.companySummary.noSupervisions")
+                    : t("management.companySummary.notUsesSillariPermit")}
                 </small>
               </IonCol>
             </IonRow>
           </IonGrid>
         </IonCol>
 
-        <IonCol size="12" size-md="4" className="ion-hide-md-down">
-          {isPermitValid(permit) && (
+        <IonCol size="12" size-md="auto" className="ion-hide-md-down">
+          {isPermitValid(permit) && isCurrentVersion && customerUsesSillari && (
             <IonButton
               color="secondary"
-              // expand="block"
-              size="large"
+              size="default"
               routerLink={`/management/addTransport/${permitId}`}
               onClick={(evt) => {
                 dispatch({ type: actions.SET_MANAGEMENT_PERMIT_ID, payload: permitId });

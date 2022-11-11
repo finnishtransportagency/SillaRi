@@ -1,35 +1,60 @@
-import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonTitle, IonToolbar } from "@ionic/react";
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonImg,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonMenu,
+  IonMenuToggle,
+  IonThumbnail,
+  IonTitle,
+  IonToolbar,
+} from "@ionic/react";
 import React from "react";
-import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 import Cookies from "js-cookie";
-import { unregister } from "../serviceWorkerRegistration";
+import * as serviceWorkerRegistration from "../serviceWorkerRegistration";
+import { useDispatch } from "react-redux";
+import { menuController } from "@ionic/core/components";
 import calendar from "../theme/icons/calendar.svg";
 import lane from "../theme/icons/lane.svg";
 import logout from "../theme/icons/logout.svg";
 import settings from "../theme/icons/settings.svg";
 import truck from "../theme/icons/truck.svg";
+import user from "../theme/icons/user.svg";
+import vayla_logo from "../theme/icons/vayla_fi_white_192x160.png";
+import close from "../theme/icons/close_large_white.svg";
+import { getUserData, logoutUser, onRetry } from "../utils/backendData";
 import "./SidebarMenu.css";
 
 interface SidebarMenuProps {
-  roles: string[];
+  version: string;
 }
 
-const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
+const SidebarMenu: React.FC<SidebarMenuProps> = ({ version }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const dispatch = useDispatch();
+
+  // Get the user data from the cache when offline or the backend when online
+  const { data: userData } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
+    retry: onRetry,
+    staleTime: Infinity,
+  });
+  const roles = userData?.roles || [];
 
   const logoutFromApp = () => {
-    // Unregister service worker
-    unregister(() => {
-      // Remove all cookies for this site
+    logoutUser().then((data) => {
+      serviceWorkerRegistration.unregister(() => {});
       const cookies = Cookies.get();
       Object.keys(cookies).forEach((key) => {
         Cookies.remove(key);
       });
-
-      // Reload the page
-      history.go(0);
+      window.location.href = data.redirectUrl;
     });
   };
 
@@ -38,7 +63,15 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
       <IonContent>
         <IonHeader>
           <IonToolbar color="primary">
-            <IonTitle className="headingBoldText">{t("SidebarMenu.title")}</IonTitle>
+            <IonThumbnail slot="start" className="logo ion-margin-vertical ion-margin-start">
+              <IonImg src={vayla_logo} alt="Väylävirasto" />
+            </IonThumbnail>
+            <IonTitle className="headingBoldText ion-text-center">{t("SidebarMenu.title")}</IonTitle>
+            <IonButtons slot="end">
+              <IonButton onClick={async () => menuController.close()}>
+                <IonIcon className="otherIconLarge" icon={close} />
+              </IonButton>
+            </IonButtons>
           </IonToolbar>
         </IonHeader>
         <IonList>
@@ -73,12 +106,21 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ roles }) => {
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle>
+            <IonItem routerLink="/userinfo">
+              <IonIcon className="otherIcon" icon={user} slot="start" />
+              <IonLabel>{t("SidebarMenu.userInfo")}</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle>
             <IonItem button onClick={logoutFromApp}>
               <IonIcon className="otherIcon" icon={logout} slot="start" />
               <IonLabel>{t("SidebarMenu.logout")}</IonLabel>
             </IonItem>
           </IonMenuToggle>
         </IonList>
+        <div className="versionArea">
+          {t("SidebarMenu.versionLabel")} {version}
+        </div>
       </IonContent>
     </IonMenu>
   );

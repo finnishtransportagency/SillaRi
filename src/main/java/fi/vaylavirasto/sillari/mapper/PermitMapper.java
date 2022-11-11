@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 
 public class PermitMapper implements RecordMapper<Record, PermitModel> {
-    private boolean base64on;
+    private final boolean base64on;
 
     public PermitMapper() {
         this.base64on = false;
@@ -28,6 +28,7 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         model.setCompanyId(record.get(TableAlias.permit.COMPANY_ID));
         model.setPermitNumber(record.get(TableAlias.permit.PERMIT_NUMBER));
         model.setLeluVersion(record.get(TableAlias.permit.LELU_VERSION));
+        model.setIsCurrentVersion(record.get(TableAlias.permit.IS_CURRENT_VERSION));
         model.setLeluLastModifiedDate(record.get(TableAlias.permit.LELU_LAST_MODIFIED_DATE));
         model.setValidStartDate(record.get(TableAlias.permit.VALID_START_DATE));
         model.setValidEndDate(record.get(TableAlias.permit.VALID_END_DATE));
@@ -42,6 +43,13 @@ public class PermitMapper implements RecordMapper<Record, PermitModel> {
         model.setRowCreatedTime(record.get(TableAlias.permit.ROW_CREATED_TIME));
         model.setRowUpdatedTime(record.get(TableAlias.permit.ROW_UPDATED_TIME));
         model.setRoutes(new ArrayList<>());
+        Boolean customerUses = record.get(TableAlias.permit.CUSTOMER_USES_SILLARI);
+        if(customerUses == null || customerUses == false){
+            model.setCustomerUsesSillari(false);
+        }
+        else{
+            model.setCustomerUsesSillari(true);
+        }
         return model;
     }
 }

@@ -1,61 +1,22 @@
-.customAccordion .accordion__panel {
-  border: 2px solid var(--ion-color-base);
-  border-top: 0;
+.customAccordion ion-accordion {
+  border: 1px solid var(--ion-color-step-100);
 }
 
-.customAccordion .accordion__button {
-  cursor: pointer;
-  border: 2px solid var(--ion-color-base);
-  border-bottom: 2px solid var(--ion-color-light);
+.customAccordion [slot="header"] {
+  border-top: 4px solid transparent;
 }
 
-.customAccordion .accordion__button[aria-expanded="true"],
-.customAccordion .accordion__button[aria-selected="true"] {
-  border-bottom: 0;
-}
-
-.customAccordion .accordion__button[aria-expanded="false"] .accordionHeaderItem {
+.customAccordion:hover [slot="header"] {
   border-top: 4px solid var(--ion-color-light);
 }
 
-.customAccordion .accordion__button[aria-expanded="true"] .accordionHeaderItem {
-  --background: var(--ion-color-secondary-5);
+.customAccordion .accordion-expanding [slot="header"],
+.customAccordion .accordion-collapsing [slot="header"] {
   border-top: 4px solid var(--ion-color-primary);
-  border-bottom: 2px solid var(--ion-color-secondary-50);
 }
 
-.customAccordion .accordion__button .openIcon {
-  display: inline;
-}
-
-.customAccordion .accordion__button .closeIcon {
-  display: none;
-}
-
-.customAccordion .accordion__button[aria-expanded="true"] .openIcon,
-.customAccordion .accordion__button[aria-selected="true"] .openIcon {
-  display: none;
-}
-
-.customAccordion .accordion__button[aria-expanded="true"] .closeIcon,
-.customAccordion .accordion__button[aria-selected="true"] .closeIcon {
-  display: inline;
-}
-
-.customAccordion .accordion__panel {
-  animation: fadein 0.35s ease-in;
-}
-
-/* -------------------------------------------------- */
-/* ---------------- Animation part ------------------ */
-/* -------------------------------------------------- */
-
-@keyframes fadein {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
+.customAccordion .accordion-expanded [slot="header"] {
+  border-top: 4px solid var(--ion-color-primary);
+  --background: var(--ion-color-secondary-5);
+  border-bottom: none;
 }

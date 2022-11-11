@@ -1,0 +1,10 @@
+.offlineNoticeItem {
+  --background: var(--ion-color-light);
+}
+
+.offlineNoticeGrid {
+  /* always use yellow background and black text regardless of dark mode */
+  background-color: var(--ion-color-warning-10);
+  border: var(--ion-color-warning) 1px solid;
+  color: #000000;
+}
