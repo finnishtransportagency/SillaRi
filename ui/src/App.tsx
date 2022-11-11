@@ -8,6 +8,7 @@ import { onlineManager, QueryClient, QueryClientProvider } from "react-query";
 import { persistQueryClient } from "react-query/persistQueryClient-experimental";
 import { createAsyncStoragePersistor } from "react-query/createAsyncStoragePersistor-experimental";
 import { useDispatch } from "react-redux";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import Supervisions from "./pages/Supervisions";
 import Settings from "./pages/Settings";
 import Map from "./pages/Map";
@@ -27,6 +28,7 @@ import AccessDenied from "./pages/AccessDenied";
 import IUserData from "./interfaces/IUserData";
 import Photos from "./pages/Photos";
 import UserInfo from "./pages/UserInfo";
+import Cookies from "js-cookie";
 import { useTypedSelector, RootState } from "./store/store";
 import { getUserData, getVersionInfo, logoutUser } from "./utils/backendData";
 import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
@@ -145,6 +147,9 @@ const App: React.FC = () => {
       } catch (e) {
         console.log("App error", e);
         setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
+
+        window.location.href =
+          "https://sillaritest.auth.eu-west-1.amazoncognito.com/login?client_id=152i189u2cu0cae9dpg6am44b6&redirect_uri=https%3A%2F%2Fsillaridev.testivaylapilvi.fi%2Foauth2%2Fidpresponse&response_type=code&scope=openid";
       }
     };
 
@@ -162,6 +167,11 @@ const App: React.FC = () => {
 
   const logoutFromApp = () => {
     logoutUser().then((data) => {
+      serviceWorkerRegistration.unregister(() => {});
+      const cookies = Cookies.get();
+      Object.keys(cookies).forEach((key) => {
+        Cookies.remove(key);
+      });
       window.location.href = data.redirectUrl;
     });
   };
