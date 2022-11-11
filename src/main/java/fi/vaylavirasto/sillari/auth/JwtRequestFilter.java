@@ -220,11 +220,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 }
 
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);                
             }
+            filterChain.doFilter(request, response);
         } catch (Exception ex) {
             logger.error(ex);
-            // FIXME trying redirect to login page here, clean up later if needed
+            
             String url = sillariConfig.getAmazonCognito().getUrl();
             String clientId = sillariConfig.getAmazonCognito().getClientId();
             String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
@@ -232,8 +233,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String sendRedirectUrl = url + "/login?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid";
 
             response.sendRedirect(sendRedirectUrl);
-        } finally {
-            filterChain.doFilter(request, response);
+        } finally {            
             SecurityContextHolder.clearContext();
         }
     }
