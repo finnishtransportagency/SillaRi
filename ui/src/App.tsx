@@ -93,6 +93,15 @@ const App: React.FC = () => {
     networkStatus: { isFailed = {}, failedStatus = {} },
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
+  const clearDataAndRedirect = (url: string) => {
+    serviceWorkerRegistration.unregister(() => {});
+    const cookies = Cookies.get();
+    Object.keys(cookies).forEach((key) => {
+      Cookies.remove(key);
+    });
+    window.location.href = url;
+  };
+
   useEffect(() => {
     removeObsoletePasswords();
     // Add or remove the "dark" class based on if the media query matches
@@ -148,8 +157,9 @@ const App: React.FC = () => {
         console.log("App error", e);
         setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
 
-        window.location.href =
-          "https://sillaritest.auth.eu-west-1.amazoncognito.com/login?client_id=152i189u2cu0cae9dpg6am44b6&redirect_uri=https%3A%2F%2Fsillaridev.testivaylapilvi.fi%2Foauth2%2Fidpresponse&response_type=code&scope=openid";
+        clearDataAndRedirect(
+          "https://sillaritest.auth.eu-west-1.amazoncognito.com/login?client_id=152i189u2cu0cae9dpg6am44b6&redirect_uri=https%3A%2F%2Fsillaridev.testivaylapilvi.fi%2Foauth2%2Fidpresponse&response_type=code&scope=openid"
+        );
       }
     };
 
@@ -167,12 +177,7 @@ const App: React.FC = () => {
 
   const logoutFromApp = () => {
     logoutUser().then((data) => {
-      serviceWorkerRegistration.unregister(() => {});
-      const cookies = Cookies.get();
-      Object.keys(cookies).forEach((key) => {
-        Cookies.remove(key);
-      });
-      window.location.href = data.redirectUrl;
+      clearDataAndRedirect(data.redirectUrl);
     });
   };
 
