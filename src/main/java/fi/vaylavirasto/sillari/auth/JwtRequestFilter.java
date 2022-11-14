@@ -236,7 +236,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String url = sillariConfig.getAmazonCognito().getUrl();
             String sendRedirectUrl = url + "/sso/logout?auth=1";
 
-            response.sendRedirect(sendRedirectUrl);
+            response.setHeader("Location", sendRedirectUrl);
+            response.setStatus(302);
         } finally {            
             SecurityContextHolder.clearContext();
         }
