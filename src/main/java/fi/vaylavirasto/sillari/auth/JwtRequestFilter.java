@@ -223,10 +223,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 }
 
-                if (!awsCognitoClient.isLoggedIn(jwt)) {
-                    throw new RuntimeException("User not logged in Cognito");
-                }
-
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);                
             }
             filterChain.doFilter(request, response);
