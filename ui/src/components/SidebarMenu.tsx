@@ -15,13 +15,12 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import React from "react";
-import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
+import Cookies from "js-cookie";
+import * as serviceWorkerRegistration from "../serviceWorkerRegistration";
 import { useDispatch } from "react-redux";
 import { menuController } from "@ionic/core/components";
-import Cookies from "js-cookie";
-import { unregister } from "../serviceWorkerRegistration";
 import calendar from "../theme/icons/calendar.svg";
 import lane from "../theme/icons/lane.svg";
 import logout from "../theme/icons/logout.svg";
@@ -39,7 +38,6 @@ interface SidebarMenuProps {
 
 const SidebarMenu: React.FC<SidebarMenuProps> = ({ version }) => {
   const { t } = useTranslation();
-  const history = useHistory();
   const dispatch = useDispatch();
 
   // Get the user data from the cache when offline or the backend when online
@@ -50,20 +48,13 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ version }) => {
   const roles = userData?.roles || [];
 
   const logoutFromApp = () => {
-    logoutUser().then(() => {
-      // Unregister service worker
-      unregister(() => {
-        // Remove all cookies for this site
-        const cookies = Cookies.get();
-        Object.keys(cookies).forEach((key) => {
-          Cookies.remove(key);
-        });
+    logoutUser().then((data) => {
+      serviceWorkerRegistration.unregister(() => {});
+      const cookies = Cookies.get();
+      Object.keys(cookies).forEach((key) => {
+        Cookies.remove(key);
       });
-
-      localStorage.clear();
-      history.replace("/");
-      history.go(0);
-      window.location.reload();
+      window.location.href = data.redirectUrl;
     });
   };
 

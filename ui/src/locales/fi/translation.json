@@ -188,12 +188,14 @@
       },
       "routeSelectInput": {
         "permitLabel": "Kuljetuslupa",
+        "routeLabel": "Reitti",
         "cancelButtonLabel": "Edellinen",
         "continueButtonLabel": "Seuraava"
       },
       "bridgeSelectInput": {
         "permitLabel": "Kuljetuslupa",
         "routeLabel": "Reitti",
+        "bridgesLabel": "Valvottavat sillat",
         "cancelButtonLabel": "Edellinen",
         "saveButtonLabel": "Lisää sillat"
       }

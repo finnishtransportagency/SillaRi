@@ -47,6 +47,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   const queryClient = useQueryClient();
 
   const [selectedSupervisions, setSelectedSupervisions] = useState<ISupervision[]>([]);
+  const [isCustomerUsesSillariPermitSupervision, setIsCustomerUsesSillariPermitSupervision] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
   const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
   const [selectedSupervisionId, setSelectedSupervisionId] = useState<number | undefined>(undefined);
@@ -106,6 +107,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   };
 
   const handleClose = () => {
+    isOpen = false;
     if (targetUrl) {
       history.push(targetUrl);
     }
@@ -200,6 +202,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
                   sentSupervisions={sentSupervisions}
                   setReportModalOpen={setReportModalOpen}
                   setSelectedSupervisionId={setSelectedSupervisionId}
+                  setIsCustomerUsesSillariPermitSupervision={setIsCustomerUsesSillariPermitSupervision}
                 />
               ),
             },
@@ -222,6 +225,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
         selectedSupervisionId={selectedSupervisionId}
         setSelectedSupervisionId={setSelectedSupervisionId}
         username={username}
+        isCustomerUsesSillariPermitSupervision={isCustomerUsesSillariPermitSupervision}
       />
     </IonModal>
   );

@@ -11,14 +11,15 @@ import SupervisionObservationsSummary from "../components/SupervisionObservation
 import SupervisionPhotos from "../components/SupervisionPhotos";
 import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
-import { useTypedSelector, RootState } from "../store/store";
+import { RootState, useTypedSelector } from "../store/store";
 import { getUserData, onRetry } from "../utils/backendData";
 import { finishAndCompleteSupervision, finishSupervision, getSupervision } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
-import { SupervisionListType, SupervisionStatus, SupervisorType } from "../utils/constants";
+import { SupervisionListType, SupervisionStatus } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 import { isSupervisionReportValid } from "../utils/validation";
 import { removeFromOwnlist } from "../utils/ownlistStorageUtil";
+import { isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
 
 interface SummaryProps {
   supervisionId: string;
@@ -56,7 +57,7 @@ const SupervisionSummary = (): JSX.Element => {
     }
   );
 
-  const { routeTransportId = 0, report, currentStatus, supervisorType, images = [] } = supervision || {};
+  const { routeTransportId = 0, report, currentStatus, images = [] } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
 
   const returnToSupervisionList = (message: string) => {
@@ -143,6 +144,7 @@ const SupervisionSummary = (): JSX.Element => {
 
         // Cancel any outgoing refetches so they don't overwrite the optimistic update below
         await queryClient.cancelQueries(supervisionQueryKey);
+        await queryClient.cancelQueries("getSupervisionSendingList");
 
         // Set the current status to REPORT_SIGNED here since the backend won't be called yet when offline
         let updatedSupervision: ISupervision;
@@ -187,6 +189,9 @@ const SupervisionSummary = (): JSX.Element => {
         // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
 
         queryClient.setQueryData(supervisionQueryKey, data);
+
+        queryClient.invalidateQueries(["getSupervisionSendingList"]);
+        //setToastMessage(t("sendingList.sentOk"));
       },
     }
   );
@@ -278,11 +283,19 @@ const SupervisionSummary = (): JSX.Element => {
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
               saveDisabled={
-                !username || (!routeTransportId && supervisorType !== SupervisorType.AREA_CONTRACTOR) || isLoading || notAllowedToEdit || !reportValid
+                !username ||
+                (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) ||
+                isLoading ||
+                notAllowedToEdit ||
+                !reportValid
               }
               cancelDisabled={isLoading || notAllowedToEdit}
               sendImmediatelyDisabled={
-                !username || (!routeTransportId && supervisorType !== SupervisorType.AREA_CONTRACTOR) || isLoading || notAllowedToEdit || !reportValid
+                !username ||
+                (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) ||
+                isLoading ||
+                notAllowedToEdit ||
+                !reportValid
               }
               saveChanges={saveReport}
               cancelChanges={editReport}

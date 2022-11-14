@@ -2,13 +2,15 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { IonButton, IonCheckbox, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
 import moment from "moment";
 import ISupervision from "../interfaces/ISupervision";
-import { DATE_TIME_FORMAT_MIN, SupervisionListType, SupervisorType } from "../utils/constants";
+import { DATE_TIME_FORMAT_MIN, SupervisionListType } from "../utils/constants";
+import { isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
 import "./SendingList.css";
 import { useTranslation } from "react-i18next";
 import { getPasswordFromStorage } from "../utils/trasportCodeStorageUtil";
 import lock from "../theme/icons/lock_closed_white.svg";
 import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import IPopoverPlacement from "../interfaces/IPopoverPlacement";
+import { useHistory } from "react-router-dom";
 
 interface SendingListItemProps {
   supervision: ISupervision;
@@ -24,7 +26,7 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
   const [supervisionUnlocked, setSupervisionUnlocked] = useState<boolean>(false);
   const [passwordPopoverOpen, setPasswordPopoverOpen] = useState<boolean>(false);
 
-  const { id: supervisionId, routeTransportId, routeBridge, routeTransport, startedTime, savedOffline, supervisorType } = supervision;
+  const { id: supervisionId, routeTransportId, routeBridge, routeTransport, startedTime, savedOffline } = supervision;
   const { bridge, route } = routeBridge || {};
   const { identifier = "", name = "" } = bridge || {};
   const { permit } = route || {};
@@ -39,11 +41,12 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
     alignment: "start",
   };
   const openSupervision = () => console.log("Password provided");
+  const history = useHistory();
 
   useEffect(() => {
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
     if (username) {
-      if (supervisorType === SupervisorType.AREA_CONTRACTOR) {
+      if (!isCustomerUsesSillariPermitSupervision(supervision)) {
         setSupervisionUnlocked(true);
       } else {
         getPasswordFromStorage(username, SupervisionListType.BRIDGE, supervisionId).then((result) => {
@@ -55,7 +58,7 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
       }
     }
     // Deps must include passwordPopoverOpen to trigger page refresh after password has been provided in popover
-  }, [username, supervisionId, supervisorType, passwordPopoverOpen]);
+  }, [username, supervision, supervisionId, passwordPopoverOpen]);
 
   return (
     <IonItem className="ion-margin-top" lines="none">
@@ -104,8 +107,9 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                       size="default"
                       disabled={!supervisionUnlocked}
                       onClick={() => {
-                        setTargetUrl(`/supervision/${supervisionId}`);
+                        history.push(`/supervision/${supervisionId}`);
                         setOpen(false);
+                        history.go(0);
                       }}
                     >
                       {t("common.buttons.edit")}

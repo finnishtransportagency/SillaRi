@@ -199,6 +199,20 @@ export const getSupervisionNoPasscode = async (supervisionId: number, dispatch: 
   }
 };
 
+export const getSupervisionMaybeNoPasscode = async (
+  supervisionId: number,
+  usePassCode: boolean,
+  username: string | null,
+  transportCode: string | null,
+  dispatch: Dispatch
+): Promise<ISupervision> => {
+  if (usePassCode) {
+    return getSupervision(supervisionId, typeof username === "string" ? username : "", transportCode, dispatch);
+  } else {
+    return getSupervisionNoPasscode(supervisionId, dispatch);
+  }
+};
+
 export const updateConformsToPermit = async (updateRequest: ISupervision, username: string, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("UpdateConformsToPermit", updateRequest);
@@ -410,11 +424,11 @@ export const completeSupervisions = async (completeCrossingInput: ICompleteCross
       console.log("completeSupervisions response", completeSupervisionsResult);
     } else {
       dispatch({ type: actions.SET_FAILED_QUERY, payload: { completeSupervisions: true } });
-      throw new Error(NETWORK_RESPONSE_NOT_OK);
+      throw createErrorFromStatusCode(completeSupervisionsResponse.status);
     }
   } catch (err) {
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { completeSupervisions: true } });
-    throw new Error(err as string);
+    throw createCustomError(err);
   }
 };
 

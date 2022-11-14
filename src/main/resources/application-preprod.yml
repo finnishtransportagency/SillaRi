@@ -17,6 +17,10 @@ sillari:
     url: https://api.vayla.fi/FIMGET/SimpleREST4FIM/1/group.svc/getGroup2?displayName=sillari_sillanvalvoja
     username: ${FIM_USERNAME}
     password: ${FIM_PASSWORD}
+  amazoncognito:
+    url: https://sillaritest.auth.eu-west-1.amazoncognito.com
+    clientId: 152i189u2cu0cae9dpg6am44b6
+    redirectUrl: https://sillaritest.testivaylapilvi.fi
 spring:
   application:
     name: SillaRi

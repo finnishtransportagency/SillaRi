@@ -6,10 +6,9 @@ import IRoute from "../interfaces/IRoute";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import IUserData from "../interfaces/IUserData";
 import IVersionInfo from "../interfaces/IVersionInfo";
+import ILogoutData from "../interfaces/ILogoutData";
 
-// Must use err type any, because it might be either string or Error. If we use type 'unknown', mutation result is the wrong type.
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export const onRetry = (failureCount: number, err: any): boolean => {
+export const onRetry = (failureCount: number, err: Error | string): boolean => {
   // By default, retry forever by returning true - unless error is FORBIDDEN.
   console.log("err is Error type", err instanceof Error);
   // FIXME find out when err is string and when Error (preferably fix so that it's never a string, although might not be possible)
@@ -34,13 +33,15 @@ export const createCustomError = (err: unknown): Error => {
   throw new Error(errMessage);
 };
 
-export const logoutUser = async (): Promise<boolean> => {
-  const logoutResponse = await fetch(`${getOrigin()}/api/ui/userlogout`);
-  if (logoutResponse.ok) {
-    return true;
-  } else {
-    throw new Error("Logout failed");
-  }
+export const logoutUser = async (): Promise<ILogoutData> => {
+  return fetch(`${getOrigin()}/api/ui/userlogout`).then((data) => {
+    if (data.ok) {
+      const logoutData = data.json() as Promise<ILogoutData>;
+      return Promise.resolve(logoutData);
+    } else {
+      throw new Error("Logout failed");
+    }
+  });
 };
 
 export const getUserData = async (dispatch: Dispatch): Promise<IUserData> => {

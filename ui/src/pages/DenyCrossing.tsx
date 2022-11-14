@@ -27,8 +27,9 @@ import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
 import { getUserData, onRetry } from "../utils/backendData";
 import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
-import { SupervisionStatus, SupervisorType } from "../utils/constants";
+import { SupervisionStatus } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
+import { isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
 
 interface DenyCrossingProps {
   supervisionId: string;
@@ -71,14 +72,17 @@ const DenyCrossing = (): JSX.Element => {
     }
   );
 
-  const { routeTransportId = 0, routeBridge, currentStatus, supervisorType } = supervision || {};
+  const { routeTransportId = 0, routeBridge, currentStatus } = supervision || {};
   const { status: supervisionStatus } = currentStatus || {};
   const { route, bridge } = routeBridge || {};
   const { name = "", identifier = "" } = bridge || {};
   const { permit } = route || {};
 
   const supervisionPending =
-    !isLoadingSupervision && (supervisionStatus === SupervisionStatus.PLANNED || supervisionStatus === SupervisionStatus.CANCELLED);
+    !isLoadingSupervision &&
+    (supervisionStatus === SupervisionStatus.PLANNED ||
+      supervisionStatus === SupervisionStatus.CANCELLED ||
+      supervisionStatus === SupervisionStatus.OWN_LIST_PLANNED);
 
   // Set-up mutations for modifying data later
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
@@ -204,7 +208,7 @@ const DenyCrossing = (): JSX.Element => {
                     size="large"
                     disabled={
                       !username ||
-                      (!routeTransportId && supervisorType !== SupervisorType.AREA_CONTRACTOR) ||
+                      (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) ||
                       isLoadingSupervision ||
                       isSendingDenyCrossing ||
                       !supervisionPending ||
