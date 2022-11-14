@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import fi.vaylavirasto.sillari.aws.AWSCognitoClient;
 import fi.vaylavirasto.sillari.config.SillariConfig;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -45,6 +46,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private static String publicKey = null;
     private static PublicKey ecPublicKey = null;
 
+    @Autowired
+    private AWSCognitoClient awsCognitoClient;
     @Autowired
     private SillariConfig sillariConfig;
 
@@ -220,6 +223,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 }
 
+                if (!awsCognitoClient.isLoggedIn(jwt)) {
+                    throw new RuntimeException("User not logged in Cognito");
+                }
+
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);                
             }
             filterChain.doFilter(request, response);
@@ -227,10 +234,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             logger.error(ex);
             
             String url = sillariConfig.getAmazonCognito().getUrl();
-            String clientId = sillariConfig.getAmazonCognito().getClientId();
-            String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
-        
-            String sendRedirectUrl = url + "/login?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid";
+            String sendRedirectUrl = url + "/sso/logout?auth=1";
 
             response.sendRedirect(sendRedirectUrl);
         } finally {            
