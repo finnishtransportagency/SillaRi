@@ -188,8 +188,16 @@
       },
       "routeSelectInput": {
         "permitLabel": "Transporttillstånd",
+        "routeLabel": "Rutt",
         "cancelButtonLabel": "Föregående",
         "continueButtonLabel": "Nästa"
+      },
+      "bridgeSelectInput": {
+        "permitLabel": "Transporttillstånd",
+        "routeLabel": "Rutt",
+        "bridgesLabel": "Broar som övervakas",
+        "cancelButtonLabel": "Föregående",
+        "saveButtonLabel": "Lägg till broar"
       }
     }
   },
