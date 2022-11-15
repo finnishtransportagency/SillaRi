@@ -16,14 +16,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -160,14 +158,14 @@ public class UIController {
 
     @Operation(summary = "Log out user")
     @GetMapping(value = "/userlogout")
-    public ResponseEntity<?> userLogout(HttpServletRequest request) {
-        //String url = sillariConfig.getAmazonCognito().getUrl();
-        //String clientId = sillariConfig.getAmazonCognito().getClientId();
-        //String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
+    public ResponseEntity<?> userLogout(HttpServletRequest request) {      
+        String url = sillariConfig.getAmazonCognito().getUrl();
+        String clientId = sillariConfig.getAmazonCognito().getClientId();
+        String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
+
         HashMap<String, Object> responseBody = new HashMap<>();
-        // FIXME clean up after after finished working logout
-        //responseBody.put("redirectUrl", url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
-        responseBody.put("redirectUrl", "/sso/logout?auth=1");
+
+        responseBody.put("redirectUrl", url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
         
         ResponseCookie deleteAwsALBCookie = ResponseCookie.from("AWSALB", null).build();
         ResponseCookie deleteAwsELB0Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-0", null).build();
