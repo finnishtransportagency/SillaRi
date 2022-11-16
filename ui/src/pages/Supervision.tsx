@@ -18,7 +18,6 @@ import { getUserData, onRetry } from "../utils/backendData";
 import {
   cancelSupervision,
   deleteSupervisionImages,
-  getSupervision,
   getSupervisionTryWithPasscodeAndWithout,
   updateSupervisionReport,
 } from "../utils/supervisionBackendData";

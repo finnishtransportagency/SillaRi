@@ -150,6 +150,7 @@ export const getSupervision = async (
   dispatch: Dispatch
 ): Promise<ISupervision> => {
   try {
+    console.log("getSupervision (WithPasscode)");
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
 
     // Use transportCode if already fetched, otherwise get from storage
@@ -177,6 +178,7 @@ export const getSupervision = async (
       throw new Error(FORBIDDEN_ERROR);
     }
   } catch (err) {
+    console.log("catch and throw");
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
     throw createCustomError(err);
   }
@@ -219,12 +221,17 @@ export const getSupervisionTryWithPasscodeAndWithout = async (
   transportCode: string | null,
   dispatch: Dispatch
 ): Promise<ISupervision> => {
+  console.log("getSuperWithoutvisionTryWithPasscodeAndWithout");
+  let returnValue;
   try {
-    return getSupervision(supervisionId, typeof username === "string" ? username : "", transportCode, dispatch);
+    returnValue = await getSupervision(supervisionId, typeof username === "string" ? username : "", transportCode, dispatch);
+    console.log("success with passcode" + returnValue);
   } catch (err) {
+    console.log("failed with passcode");
     console.log(err);
-    return getSupervisionNoPasscode(supervisionId, dispatch);
+    returnValue = getSupervisionNoPasscode(supervisionId, dispatch);
   }
+  return returnValue;
 };
 
 export const updateConformsToPermit = async (updateRequest: ISupervision, username: string, dispatch: Dispatch): Promise<ISupervision> => {
