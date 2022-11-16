@@ -13,7 +13,7 @@ import IPermit from "../interfaces/IPermit";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import ISupervision from "../interfaces/ISupervision";
 import { getUserData, onRetry } from "../utils/backendData";
-import { getSupervision, updateConformsToPermit } from "../utils/supervisionBackendData";
+import { getSupervisionTryWithPasscodeAndWithout, updateConformsToPermit } from "../utils/supervisionBackendData";
 
 interface BridgeDetailProps {
   supervisionId: string;
@@ -38,7 +38,7 @@ const BridgeDetail = (): JSX.Element => {
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
-    () => getSupervision(Number(supervisionId), username, null, dispatch),
+    () => getSupervisionTryWithPasscodeAndWithout(Number(supervisionId), username, null, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,
