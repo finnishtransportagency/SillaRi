@@ -3,9 +3,7 @@ package fi.vaylavirasto.sillari.api.rest;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.config.SillariConfig;
-import fi.vaylavirasto.sillari.model.CompanyModel;
-import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
-import fi.vaylavirasto.sillari.model.OwnListModel;
+import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.service.OwnListService;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
@@ -20,10 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -256,6 +251,20 @@ public class UIController {
             SillariUser user = uiService.getSillariUser();
             OwnListModel ownListModel = ownListService.getOwnlist(user.getUsername(), listname);
             return ResponseEntity.ok().body(ownListModel != null ? ownListModel.getList() : new EmptyJsonResponse());
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Save ownlist")
+    @PutMapping(value = "/saveownlist", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
+    public ResponseEntity<?> startSupervision(@RequestParam(required = true) String listName, @RequestParam(required = true) String list) {
+        ServiceMetric serviceMetric = new ServiceMetric("SupervisionController", "startSupervision");
+        try {
+            SillariUser user = uiService.getSillariUser();
+            ownListService.saveOwnList(user.getBusinessId(), user.getUsername(), listName, list);
+            return ResponseEntity.ok().body(new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }

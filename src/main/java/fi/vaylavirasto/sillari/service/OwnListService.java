@@ -16,4 +16,15 @@ public class OwnListService {
     public OwnListModel getOwnlist(String username, String listname) {
         return ownlistRepository.getOwnlist(username, listname);
     }
+
+    public void saveOwnList(String businessId, String username, String listName, String list) {
+        logger.debug("saveOwnList " + username+listName+list);
+        if(getOwnlist(username,listName ) != null){
+            ownlistRepository.updateOwnlist(businessId, username, listName, list);
+        }
+        else {
+            ownlistRepository.saveOwnlist(businessId, username, listName, list);
+        }
+
+    }
 }
