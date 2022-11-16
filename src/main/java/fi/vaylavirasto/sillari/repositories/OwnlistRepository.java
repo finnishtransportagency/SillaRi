@@ -1,19 +1,15 @@
 package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.OwnListMapper;
-import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.model.OwnListModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.time.OffsetDateTime;
 
 @Repository
 public class OwnlistRepository {
@@ -36,13 +32,13 @@ public class OwnlistRepository {
                 .fetchOne(new OwnListMapper());
     }
 
-    public void saveOwnlist(String businessId, String username, String listName, String list) {
+    public Integer saveOwnlist(String businessId, String username, String listName, String list) {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
 
-            Record1<Integer> companyIdResult = ctx.insertInto(TableAlias.ownList,
-                    TableAlias.ownList.BUSINESS_ID,
-                    TableAlias.ownList.NAME,
+            Record1<Integer> result = ctx.insertInto(TableAlias.ownList,
+                    TableAlias.ownList.BUSINESSID,
+                    TableAlias.ownList.USERNAME,
                     TableAlias.ownList.LISTNAME,
                     TableAlias.ownList.LIST
             ).values(
@@ -51,8 +47,12 @@ public class OwnlistRepository {
                     listName,
                     list
             )
-      .execute();
-            return 1;
+                    .returningResult(TableAlias.company.ID)
+                    .fetchOne(); // Execute and return zero or one record
+
+            Integer id = result != null ? result.value1() : null;
+
+            return id;
 
         });
     }
