@@ -213,6 +213,20 @@ export const getSupervisionMaybeNoPasscode = async (
   }
 };
 
+export const getSupervisionTryWithPasscodeAndWithout = async (
+  supervisionId: number,
+  username: string | null,
+  transportCode: string | null,
+  dispatch: Dispatch
+): Promise<ISupervision> => {
+  try {
+    return getSupervision(supervisionId, typeof username === "string" ? username : "", transportCode, dispatch);
+  } catch (err) {
+    console.log(err);
+    return getSupervisionNoPasscode(supervisionId, dispatch);
+  }
+};
+
 export const updateConformsToPermit = async (updateRequest: ISupervision, username: string, dispatch: Dispatch): Promise<ISupervision> => {
   try {
     console.log("UpdateConformsToPermit", updateRequest);
