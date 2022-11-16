@@ -37,6 +37,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 
 @Component
@@ -112,6 +113,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     logger.debug(String.format("Header %s=%s", key, value));
                 }
                 */
+
+                if (!awsCognitoClient.isLoggedIn(jwt)) {
+                    throw new RuntimeException("User not logged in Cognito");
+                }
 
                 String jwt_headers = jwt.split("\\.")[0];
                 String decoded_jwt_headers = new String(Base64.getDecoder().decode(jwt_headers));
@@ -196,6 +201,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
 
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+                filterChain.doFilter(request, response);
             } else {
                 logger.debug("No JWT header found");
 
@@ -221,13 +228,20 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                     authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                }
 
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);                
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);                
+
+                    filterChain.doFilter(request, response);
+                }              
             }
-            filterChain.doFilter(request, response);
         } catch (Exception ex) {
             logger.error(ex);
+            
+            String url = sillariConfig.getAmazonCognito().getUrl();
+            String clientId = sillariConfig.getAmazonCognito().getClientId();
+            String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
+
+            response.sendRedirect(url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
         } finally {            
             SecurityContextHolder.clearContext();
         }
