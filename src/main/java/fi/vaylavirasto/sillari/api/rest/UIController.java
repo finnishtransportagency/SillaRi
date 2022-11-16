@@ -3,6 +3,10 @@ package fi.vaylavirasto.sillari.api.rest;
 import fi.vaylavirasto.sillari.api.ServiceMetric;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.config.SillariConfig;
+import fi.vaylavirasto.sillari.model.CompanyModel;
+import fi.vaylavirasto.sillari.model.EmptyJsonResponse;
+import fi.vaylavirasto.sillari.model.OwnListModel;
+import fi.vaylavirasto.sillari.service.OwnListService;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +44,9 @@ public class UIController {
 
     @Autowired
     private UIService uiService;
+
+    @Autowired
+    private OwnListService ownListService;
 
     @Autowired
     private SillariConfig sillariConfig;
@@ -235,6 +242,20 @@ public class UIController {
             responseBody.put("versionNumber", versionNumber);
             responseBody.put("version", version);
             return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+        } finally {
+            serviceMetric.end();
+        }
+    }
+
+    @Operation(summary = "Get ownList")
+    @GetMapping(value = "/getownlist", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
+    public ResponseEntity<?> getOwnList(@RequestParam String listname) {
+        ServiceMetric serviceMetric = new ServiceMetric("CompanyController", "getownlist");
+        try {
+            SillariUser user = uiService.getSillariUser();
+            OwnListModel ownListModel = ownListService.getOwnlist(user.getUsername(), listname);
+            return ResponseEntity.ok().body(ownListModel != null ? ownListModel.getList() : new EmptyJsonResponse());
         } finally {
             serviceMetric.end();
         }
