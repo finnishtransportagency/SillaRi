@@ -28,7 +28,7 @@ public class OwnlistRepository {
     public OwnListModel getOwnlist(String username, String listname) {
         return dsl.select().from(TableAlias.ownList)
                 .where(TableAlias.ownList.USERNAME.eq(username))
-                .and(TableAlias.ownList.LISTNAME.eq(username))
+                .and(TableAlias.ownList.LISTNAME.eq(listname))
                 .fetchOne(new OwnListMapper());
     }
 
@@ -47,7 +47,7 @@ public class OwnlistRepository {
                     listName,
                     list
             )
-                    .returningResult(TableAlias.company.ID)
+                    .returningResult(TableAlias.ownList.ID)
                     .fetchOne(); // Execute and return zero or one record
 
             Integer id = result != null ? result.value1() : null;

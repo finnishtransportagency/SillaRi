@@ -14,6 +14,7 @@ public class OwnListService {
     OwnlistRepository ownlistRepository;
 
     public OwnListModel getOwnlist(String username, String listname) {
+        logger.debug("getOwnlist " + username+listname);
         return ownlistRepository.getOwnlist(username, listname);
     }
 
