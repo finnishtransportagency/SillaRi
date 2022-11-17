@@ -105,10 +105,14 @@ const SupervisionPasswordPopover = ({
         const limit = pLimit(5);
 
         const fetchSupervision: (supervisionId: number) => Promise<void> = (supervisionId: number) => {
-          return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervisionWithPassCode(supervisionId, username, null, dispatch), {
-            retry: onRetry,
-            staleTime: Infinity,
-          });
+          return queryClient.prefetchQuery(
+            ["getSupervision", Number(supervisionId)],
+            () => getSupervisionWithPassCode(supervisionId, username, null, dispatch),
+            {
+              retry: onRetry,
+              staleTime: Infinity,
+            }
+          );
         };
 
         // Save each supervisionId with password to storage (process in parallel)
