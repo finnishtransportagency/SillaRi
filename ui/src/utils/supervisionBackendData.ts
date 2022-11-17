@@ -143,14 +143,14 @@ export const getSupervisionSendingList = async (dispatch: Dispatch): Promise<ISu
   }
 };
 
-export const getSupervision = async (
+export const getSupervisionWithPassCode = async (
   supervisionId: number,
   username: string,
   transportCode: string | null,
   dispatch: Dispatch
 ): Promise<ISupervision> => {
   try {
-    console.log("getSupervision (WithPasscode)");
+    console.log("getSupervisionWithPassCode");
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
 
     // Use transportCode if already fetched, otherwise get from storage
@@ -186,6 +186,7 @@ export const getSupervision = async (
 
 export const getSupervisionNoPasscode = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
+    console.log("getSupervisionNoPasscode");
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
     const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}`);
     if (supervisionResponse.ok) {
@@ -209,7 +210,7 @@ export const getSupervisionMaybeNoPasscode = async (
   dispatch: Dispatch
 ): Promise<ISupervision> => {
   if (usePassCode) {
-    return getSupervision(supervisionId, typeof username === "string" ? username : "", transportCode, dispatch);
+    return getSupervisionWithPassCode(supervisionId, typeof username === "string" ? username : "", transportCode, dispatch);
   } else {
     return getSupervisionNoPasscode(supervisionId, dispatch);
   }
@@ -221,10 +222,10 @@ export const getSupervisionTryWithPasscodeAndWithout = async (
   transportCode: string | null,
   dispatch: Dispatch
 ): Promise<ISupervision> => {
-  console.log("getSuperWithoutvisionTryWithPasscodeAndWithout");
+  console.log("getSupervisionTryWithPasscodeAndWithout");
   let returnValue;
   try {
-    returnValue = await getSupervision(supervisionId, typeof username === "string" ? username : "", transportCode, dispatch);
+    returnValue = await getSupervisionWithPassCode(supervisionId, typeof username === "string" ? username : "", transportCode, dispatch);
     console.log("success with passcode" + returnValue);
   } catch (err) {
     console.log("failed with passcode");

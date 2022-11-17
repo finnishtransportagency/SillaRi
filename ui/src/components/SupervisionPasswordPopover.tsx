@@ -5,7 +5,7 @@ import close from "../theme/icons/close.svg";
 import TransportCodeInput from "./TransportCodeInput";
 import { useDispatch } from "react-redux";
 import ISupervision from "../interfaces/ISupervision";
-import { checkTransportCode, getRouteTransportOfSupervisor, getSupervision } from "../utils/supervisionBackendData";
+import { checkTransportCode, getRouteTransportOfSupervisor, getSupervisionWithPassCode } from "../utils/supervisionBackendData";
 import { useQuery, useQueryClient } from "react-query";
 import { getUserData, onRetry } from "../utils/backendData";
 import { SupervisionListType } from "../utils/constants";
@@ -105,7 +105,7 @@ const SupervisionPasswordPopover = ({
         const limit = pLimit(5);
 
         const fetchSupervision: (supervisionId: number) => Promise<void> = (supervisionId: number) => {
-          return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervision(supervisionId, username, null, dispatch), {
+          return queryClient.prefetchQuery(["getSupervision", Number(supervisionId)], () => getSupervisionWithPassCode(supervisionId, username, null, dispatch), {
             retry: onRetry,
             staleTime: Infinity,
           });
