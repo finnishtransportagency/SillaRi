@@ -230,9 +230,6 @@ export const isCustomerUsesSillariPermitSupervision = (supervision: undefined | 
       );
     }
     return !(supervision.supervisorType === SupervisorType.AREA_CONTRACTOR);
-  } else {
-    console.error("Supervision doesn't exist. Should not happen. Could not see if parmit is customer uses sillari. Total fail. ");
   }
-  //never should be here
   return false;
 };
