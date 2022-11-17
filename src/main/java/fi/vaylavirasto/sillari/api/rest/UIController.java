@@ -178,7 +178,7 @@ public class UIController {
         ResponseCookie deleteAwsELBSillari1Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-1", null).path(cookiePath).maxAge(-1).build();
         ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", null).path(cookiePath).maxAge(-1).build();
 
-        return ResponseEntity.status(HttpStatus.FOUND)
+        return ResponseEntity.ok()
             .header(HttpHeaders.SET_COOKIE, deleteAwsALBCookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELB0Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELB1Cookie.toString(), null)
