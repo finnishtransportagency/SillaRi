@@ -179,12 +179,12 @@ public class UIController {
         ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", null).path(cookiePath).maxAge(0).build();
 
         return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, deleteAwsALBCookie.toString(), null)
+/*            .header(HttpHeaders.SET_COOKIE, deleteAwsALBCookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELB0Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELB1Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELBSillari0Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELBSillari1Cookie.toString(), null)
-            .header(HttpHeaders.SET_COOKIE, deleteCookieSession1.toString(), null)
+            .header(HttpHeaders.SET_COOKIE, deleteCookieSession1.toString(), null)*/
             .body(responseBody);
     }
 
