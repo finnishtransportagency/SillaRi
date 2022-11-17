@@ -169,7 +169,7 @@ public class UIController {
 
         responseBody.put("redirectUrl", url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");            
 
-        String cookiePath = request.getContextPath() + "/";
+        String cookiePath = "/";
         
         ResponseCookie deleteAwsALBCookie = ResponseCookie.from("AWSALB", null).path(cookiePath).maxAge(0).build();
         ResponseCookie deleteAwsELB0Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-0", null).path(cookiePath).maxAge(0).build();
@@ -179,7 +179,6 @@ public class UIController {
         ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", null).path(cookiePath).maxAge(0).build();
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, "TESTEST", "HELLO")
             .header(HttpHeaders.SET_COOKIE, deleteAwsALBCookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELB0Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELB1Cookie.toString(), null)
