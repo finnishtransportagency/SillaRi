@@ -170,13 +170,17 @@ public class UIController {
         responseBody.put("redirectUrl", url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
 
         String cookiePath = "/";
+        String domain = "sillaridev.testivaylapilvi.fi";
 
-        ResponseCookie deleteAwsALBCookie = ResponseCookie.from("AWSALB", null).path(cookiePath).maxAge(0).build();
-        ResponseCookie deleteAwsELB0Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-0", null).path(cookiePath).maxAge(0).build();
-        ResponseCookie deleteAwsELB1Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-1", null).path(cookiePath).maxAge(0).build();
-        ResponseCookie deleteAwsELBSillari0Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-0", null).path(cookiePath).maxAge(0).httpOnly(true).build();
-        ResponseCookie deleteAwsELBSillari1Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-1", null).path(cookiePath).maxAge(0).httpOnly(true).build();
-        ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", null).path(cookiePath).maxAge(0).httpOnly(true).build();
+        ResponseCookie deleteAwsALBCookie = ResponseCookie.from("AWSALB", null).path(cookiePath).maxAge(0).domain(domain).build();
+        ResponseCookie deleteAwsELB0Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-0", null).path(cookiePath).maxAge(0).secure(true).domain(domain).build();
+        ResponseCookie deleteAwsELB1Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-1", null).path(cookiePath).maxAge(0).secure(true).domain(domain).build();
+        ResponseCookie deleteAwsELBSillari0Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-0", null).path(cookiePath).maxAge(0).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
+        ResponseCookie deleteAwsELBSillari1Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-1", null).path(cookiePath).maxAge(0).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
+        ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", null).path(cookiePath).maxAge(0).httpOnly(true).secure(true).domain(domain).build();
+
+
+        ResponseCookie helloCookie = ResponseCookie.from("HELLOTEST", "hello1").path(cookiePath).maxAge(3000).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
 
         return ResponseEntity.ok()
             .header(HttpHeaders.SET_COOKIE, deleteAwsALBCookie.toString(), null)
@@ -185,6 +189,7 @@ public class UIController {
             .header(HttpHeaders.SET_COOKIE, deleteAwsELBSillari0Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELBSillari1Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteCookieSession1.toString(), null)
+                .header(HttpHeaders.SET_COOKIE, helloCookie.toString(), "hello2")
             .body(responseBody);
     }
 
