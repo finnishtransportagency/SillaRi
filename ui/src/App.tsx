@@ -95,6 +95,10 @@ const App: React.FC = () => {
 
   const clearDataAndRedirect = (url: string) => {
     serviceWorkerRegistration.unregister(() => {});
+    const cookies = Cookies.get();
+    Object.keys(cookies).forEach((key) => {
+      Cookies.remove(key);
+    });
     window.location.href = url;
   };
 
