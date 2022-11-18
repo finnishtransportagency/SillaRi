@@ -58,7 +58,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ version }) => {
       });
       console.log("cookies after");
       console.log(cookies);
-      window.location.href = data.redirectUrl;
+      //    window.location.href = data.redirectUrl;
     });
   };
 
