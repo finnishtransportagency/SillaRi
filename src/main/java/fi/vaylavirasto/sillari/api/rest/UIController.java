@@ -182,6 +182,8 @@ public class UIController {
 
         HashMap<String, Object> responseBody = new HashMap<>();
 
+        logger.debug( "logoutUrl:" + url + "/logout?client_id=" + clientId + "&logout_uri=" + URLEncoder.encode(logoutUrl, StandardCharsets.UTF_8));
+
         responseBody.put("logoutUrl", url + "/logout?client_id=" + clientId + "&logout_uri=" + URLEncoder.encode(logoutUrl, StandardCharsets.UTF_8));
 
         String cookiePath = "/";
@@ -194,8 +196,6 @@ public class UIController {
         ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", "").path(cookiePath).maxAge(0).httpOnly(true).secure(true).sameSite("None").build();
 
 
-        ResponseCookie helloCookie = ResponseCookie.from("HELLOTEST", "").path(cookiePath).maxAge(3000).httpOnly(true).secure(true).sameSite("None").build();
-
         return ResponseEntity.ok()
             .header(HttpHeaders.SET_COOKIE, deleteAwsALBCookie.toString())
             .header(HttpHeaders.SET_COOKIE, deleteAwsELB0Cookie.toString())
@@ -203,7 +203,6 @@ public class UIController {
             .header(HttpHeaders.SET_COOKIE, deleteAwsELBSillari0Cookie.toString())
             .header(HttpHeaders.SET_COOKIE, deleteAwsELBSillari1Cookie.toString())
             .header(HttpHeaders.SET_COOKIE, deleteCookieSession1.toString())
-                .header(HttpHeaders.SET_COOKIE, helloCookie.toString())
             .body(responseBody);
     }
 

@@ -25,9 +25,9 @@ sillari:
     oamLogoutUrl: https://sillaridev.testivaylapilvi.fi
     #
     adfsIss: eu-west-1_oNzPsiXEJ
-    adfsUrl: https://sillaritest.auth.eu-west-1.amazoncognito.com
+    adfsUrl: https://vaylatest.auth.eu-west-1.amazoncognito.com
     adfsClientId: 3ctc20d3i4ghv94ks0semt4e15
-    adfsLogoutUrl: https://vaylatest.auth.eu-west-1.amazoncognito.com
+    adfsLogoutUrl: https://sillaridev.testivaylapilvi.fi
 spring:
   application:
     name: SillaRi
