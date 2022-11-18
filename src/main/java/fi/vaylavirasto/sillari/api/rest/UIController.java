@@ -161,16 +161,30 @@ public class UIController {
     @Operation(summary = "Log out user")
     @GetMapping(value = "/userlogout")
     public ResponseEntity<?> userLogout(HttpServletRequest request) {
-        String url = sillariConfig.getAmazonCognito().getUrl();
-        String clientId = sillariConfig.getAmazonCognito().getClientId();
-        String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
+
+        SillariUser user = uiService.getSillariUser();
+
+        String url;
+        String clientId;
+        String logoutUrl;
+
+        if(user != null && user.getIss().contains(sillariConfig.getAmazonCognito().getAdfsIss())){
+            url = sillariConfig.getAmazonCognito().getAdfsUrl();
+            clientId = sillariConfig.getAmazonCognito().getAdfsClientId();
+            logoutUrl = sillariConfig.getAmazonCognito().getAdfsLogoutUrl();
+        }
+        else{
+            url = sillariConfig.getAmazonCognito().getOamUrl();
+            clientId = sillariConfig.getAmazonCognito().getOamClientId();
+            logoutUrl = sillariConfig.getAmazonCognito().getOamLogoutUrl();
+        }
+
 
         HashMap<String, Object> responseBody = new HashMap<>();
 
-        responseBody.put("redirectUrl", url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
+        responseBody.put("logoutUrl", url + "/logout?client_id=" + clientId + "&logout_uri=" + URLEncoder.encode(logoutUrl, StandardCharsets.UTF_8));
 
         String cookiePath = "/";
-        String domain = "sillaridev.testivaylapilvi.fi";
 
         ResponseCookie deleteAwsALBCookie = ResponseCookie.from("AWSALB", "").path(cookiePath).maxAge(0).build();
         ResponseCookie deleteAwsELB0Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-0", "").path(cookiePath).maxAge(0).secure(true).build();

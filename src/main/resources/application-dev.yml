@@ -18,9 +18,16 @@ sillari:
     username: ${FIM_USERNAME}
     password: ${FIM_PASSWORD}
   amazoncognito:
-    url: https://sillaritest.auth.eu-west-1.amazoncognito.com
-    clientId: 152i189u2cu0cae9dpg6am44b6
-    redirectUrl: https://sillaridev.testivaylapilvi.fi
+    #
+    oamIss: eu-west-1_yuYOlE8U5
+    oamUrl: https://sillaritest.auth.eu-west-1.amazoncognito.com
+    oamClientId: 152i189u2cu0cae9dpg6am44b6
+    oamLogoutUrl: https://sillaridev.testivaylapilvi.fi
+    #
+    adfsIss: eu-west-1_oNzPsiXEJ
+    adfsUrl: https://sillaritest.auth.eu-west-1.amazoncognito.com
+    adfsClientId: 3ctc20d3i4ghv94ks0semt4e15
+    adfsLogoutUrl: https://vaylatest.auth.eu-west-1.amazoncognito.com
 spring:
   application:
     name: SillaRi
