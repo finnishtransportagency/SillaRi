@@ -177,7 +177,7 @@ public class UIController {
         ResponseCookie deleteAwsELB1Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-1", null).path(cookiePath).maxAge(0).secure(true).domain(domain).build();
         ResponseCookie deleteAwsELBSillari0Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-0", null).path(cookiePath).maxAge(0).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
         ResponseCookie deleteAwsELBSillari1Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-1", null).path(cookiePath).maxAge(0).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
-        ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", null).path(cookiePath).maxAge(0).httpOnly(true).secure(true).domain(domain).build();
+        ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", null).path(cookiePath).maxAge(0).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
 
 
         ResponseCookie helloCookie = ResponseCookie.from("HELLOTEST", "hello1").path(cookiePath).maxAge(3000).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
