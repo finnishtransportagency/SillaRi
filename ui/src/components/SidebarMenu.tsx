@@ -50,10 +50,6 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ version }) => {
   const logoutFromApp = () => {
     logoutUser().then((data) => {
       serviceWorkerRegistration.unregister(() => {});
-      const cookies = Cookies.get();
-      Object.keys(cookies).forEach((key) => {
-        Cookies.remove(key);
-      });
       window.location.href = data.redirectUrl;
     });
   };

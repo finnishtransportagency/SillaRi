@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -162,61 +160,32 @@ public class UIController {
 
     @Operation(summary = "Log out user")
     @GetMapping(value = "/userlogout")
-    public void userLogout(HttpServletResponse response) throws IOException {
+    public ResponseEntity<?> userLogout(HttpServletRequest request) {
         String url = sillariConfig.getAmazonCognito().getUrl();
         String clientId = sillariConfig.getAmazonCognito().getClientId();
         String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
 
         HashMap<String, Object> responseBody = new HashMap<>();
 
-        final String logoutUrl = url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid";
-        responseBody.put("redirectUrl", logoutUrl);
+        responseBody.put("redirectUrl", url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
 
         String cookiePath = "/";
 
-/*        ResponseCookie deleteAwsALBCookie = ResponseCookie.from("AWSALB", null).path(cookiePath).maxAge(-1).build();
+        ResponseCookie deleteAwsALBCookie = ResponseCookie.from("AWSALB", null).path(cookiePath).maxAge(-1).build();
         ResponseCookie deleteAwsELB0Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-0", null).path(cookiePath).maxAge(-1).build();
         ResponseCookie deleteAwsELB1Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-1", null).path(cookiePath).maxAge(-1).build();
-        ResponseCookie deleteAwsELBSillari0Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-0", null).path(cookiePath).maxAge(-1).build();
-        ResponseCookie deleteAwsELBSillari1Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-1", null).path(cookiePath).maxAge(-1).build();
-        ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", null).path(cookiePath).maxAge(-1).build();*/
+        ResponseCookie deleteAwsELBSillari0Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-0", null).path(cookiePath).maxAge(-1).httpOnly(true).build();
+        ResponseCookie deleteAwsELBSillari1Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-1", null).path(cookiePath).maxAge(-1).httpOnly(true).build();
+        ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", null).path(cookiePath).maxAge(-1).httpOnly(true).build();
 
-
-        final Cookie awsalb = new Cookie("AWSALB", null);
-        awsalb.setPath(cookiePath);
-        response.addCookie(awsalb);
-
-        final Cookie cookie = new Cookie("AWSELBAuthSessionCookie-0", null);
-        cookie.setPath(cookiePath);
-        response.addCookie(cookie);
-
-        final Cookie cookie1 = new Cookie("AWSELBAuthSessionCookie-1", null);
-        cookie1.setPath(cookiePath);
-        response.addCookie(cookie1);
-
-        final Cookie cookie2 = new Cookie("AWSELBAuthSessionCookieSillari-0", null);
-        cookie2.setPath(cookiePath);
-        response.addCookie(cookie2);
-
-        final Cookie cookie3 = new Cookie("AWSELBAuthSessionCookieSillari-1", null);
-        cookie3.setPath(cookiePath);
-        response.addCookie(cookie3);
-
-        final Cookie cookiesession1 = new Cookie("cookiesession1", null);
-        cookiesession1.setPath(cookiePath);
-        response.addCookie(cookiesession1);
-
-        response.sendRedirect(logoutUrl);
-
-
-/*        return ResponseEntity.ok()
+        return ResponseEntity.ok()
             .header(HttpHeaders.SET_COOKIE, deleteAwsALBCookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELB0Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELB1Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELBSillari0Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteAwsELBSillari1Cookie.toString(), null)
             .header(HttpHeaders.SET_COOKIE, deleteCookieSession1.toString(), null)
-            .body(responseBody);*/
+            .body(responseBody);
     }
 
     @Operation(summary = "Get user data")
