@@ -37,7 +37,7 @@ export const logoutUser = async (): Promise<ILogoutData> => {
   return fetch(`${getOrigin()}/api/ui/userlogout`).then((data) => {
     if (data.ok) {
       const logoutData = data.json() as Promise<ILogoutData>;
-      var a = Promise.resolve(logoutData);
+      const a = Promise.resolve(logoutData);
       console.log(a);
       return a;
     } else {
