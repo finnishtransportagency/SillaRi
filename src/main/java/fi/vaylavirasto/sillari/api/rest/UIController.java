@@ -172,15 +172,15 @@ public class UIController {
         String cookiePath = "/";
         String domain = "sillaridev.testivaylapilvi.fi";
 
-        ResponseCookie deleteAwsALBCookie = ResponseCookie.from("AWSALB", "deleted").path(cookiePath).maxAge(0).domain(domain).build();
-        ResponseCookie deleteAwsELB0Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-0", "deleted").path(cookiePath).maxAge(0).secure(true).domain(domain).build();
-        ResponseCookie deleteAwsELB1Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-1", "deleted").path(cookiePath).maxAge(0).secure(true).domain(domain).build();
-        ResponseCookie deleteAwsELBSillari0Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-0", "deleted").path(cookiePath).maxAge(0).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
-        ResponseCookie deleteAwsELBSillari1Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-1", "deleted").path(cookiePath).maxAge(0).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
-        ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", "deleted").path(cookiePath).maxAge(0).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
+        ResponseCookie deleteAwsALBCookie = ResponseCookie.from("AWSALB", "").path(cookiePath).maxAge(0).domain(domain).build();
+        ResponseCookie deleteAwsELB0Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-0", "").path(cookiePath).maxAge(0).secure(true).domain(domain).build();
+        ResponseCookie deleteAwsELB1Cookie = ResponseCookie.from("AWSELBAuthSessionCookie-1", "").path(cookiePath).maxAge(0).secure(true).domain(domain).build();
+        ResponseCookie deleteAwsELBSillari0Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-0", "").path(cookiePath).maxAge(0).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
+        ResponseCookie deleteAwsELBSillari1Cookie = ResponseCookie.from("AWSELBAuthSessionCookieSillari-1", "").path(cookiePath).maxAge(0).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
+        ResponseCookie deleteCookieSession1 = ResponseCookie.from("cookiesession1", "").path(cookiePath).maxAge(0).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
 
 
-        ResponseCookie helloCookie = ResponseCookie.from("HELLOTEST", "deleted").path(cookiePath).maxAge(3000).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
+        ResponseCookie helloCookie = ResponseCookie.from("HELLOTEST", "").path(cookiePath).maxAge(3000).httpOnly(true).secure(true).sameSite("None").domain(domain).build();
 
         return ResponseEntity.ok()
             .header(HttpHeaders.SET_COOKIE, deleteAwsALBCookie.toString())
