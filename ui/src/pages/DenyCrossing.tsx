@@ -30,6 +30,7 @@ import { denyCrossing, getSupervisionTryWithPasscodeAndWithout } from "../utils/
 import { SupervisionStatus } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 import { isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
+import { removeFromOwnlist } from "../utils/ownlistStorageUtil";
 
 interface DenyCrossingProps {
   supervisionId: string;
@@ -106,7 +107,7 @@ const DenyCrossing = (): JSX.Element => {
       // Since onSuccess doesn't fire when offline, the page transition needs to be done here instead
       // Also remove the finished supervision from the route transport list in the UI
       removeSupervisionFromRouteTransportList(queryClient, String(routeTransportId), supervisionId);
-      history.goBack();
+      removeFromOwnlist(username, Number(supervisionId), dispatch).then(() => history.goBack());
     },
     onSuccess: (data) => {
       // onSuccess doesn't fire when offline due to the retry option, but should fire when online again
