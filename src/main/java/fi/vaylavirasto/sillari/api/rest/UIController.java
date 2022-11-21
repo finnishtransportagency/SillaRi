@@ -182,9 +182,9 @@ public class UIController {
 
         HashMap<String, Object> responseBody = new HashMap<>();
 
-        logger.debug( "logoutUrl:" + url + "/logout?client_id=" + clientId + "&logout_uri=" + URLEncoder.encode(logoutUrl, StandardCharsets.UTF_8));
+        logger.debug( "redirectUrl:" + url + "/logout?client_id=" + clientId + "&logout_uri=" + URLEncoder.encode(logoutUrl, StandardCharsets.UTF_8));
 
-        responseBody.put("logoutUrl", url + "/logout?client_id=" + clientId + "&logout_uri=" + URLEncoder.encode(logoutUrl, StandardCharsets.UTF_8));
+        responseBody.put("redirectUrl", url + "/logout?client_id=" + clientId + "&logout_uri=" + URLEncoder.encode(logoutUrl, StandardCharsets.UTF_8));
 
         String cookiePath = "/";
 
