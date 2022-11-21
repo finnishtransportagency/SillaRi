@@ -9,7 +9,7 @@ import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import camera from "../theme/icons/camera_white.svg";
 import { getUserData, onRetry } from "../utils/backendData";
-import { deleteImage, getSupervision, sendImageUpload } from "../utils/supervisionBackendData";
+import { deleteImage, getSupervisionTryWithPasscodeAndWithout, sendImageUpload } from "../utils/supervisionBackendData";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import ImagePreview from "../components/ImagePreview";
 import ISupervision from "../interfaces/ISupervision";
@@ -42,7 +42,7 @@ const Photos = (): JSX.Element => {
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
-    () => getSupervision(Number(supervisionId), username, null, dispatch),
+    () => getSupervisionTryWithPasscodeAndWithout(Number(supervisionId), username, null, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,

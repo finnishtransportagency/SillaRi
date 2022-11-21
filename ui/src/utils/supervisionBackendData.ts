@@ -143,13 +143,14 @@ export const getSupervisionSendingList = async (dispatch: Dispatch): Promise<ISu
   }
 };
 
-export const getSupervision = async (
+export const getSupervisionWithPassCode = async (
   supervisionId: number,
   username: string,
   transportCode: string | null,
   dispatch: Dispatch
 ): Promise<ISupervision> => {
   try {
+    console.log("getSupervisionWithPassCode");
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
 
     // Use transportCode if already fetched, otherwise get from storage
@@ -177,6 +178,7 @@ export const getSupervision = async (
       throw new Error(FORBIDDEN_ERROR);
     }
   } catch (err) {
+    console.log("catch and throw");
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: true } });
     throw createCustomError(err);
   }
@@ -184,6 +186,7 @@ export const getSupervision = async (
 
 export const getSupervisionNoPasscode = async (supervisionId: number, dispatch: Dispatch): Promise<ISupervision> => {
   try {
+    console.log("getSupervisionNoPasscode");
     dispatch({ type: actions.SET_FAILED_QUERY, payload: { getSupervision: false } });
     const supervisionResponse = await fetch(`${getOrigin()}/api/supervision/getsupervision?supervisionId=${supervisionId}`);
     if (supervisionResponse.ok) {
@@ -207,10 +210,29 @@ export const getSupervisionMaybeNoPasscode = async (
   dispatch: Dispatch
 ): Promise<ISupervision> => {
   if (usePassCode) {
-    return getSupervision(supervisionId, typeof username === "string" ? username : "", transportCode, dispatch);
+    return getSupervisionWithPassCode(supervisionId, typeof username === "string" ? username : "", transportCode, dispatch);
   } else {
     return getSupervisionNoPasscode(supervisionId, dispatch);
   }
+};
+
+export const getSupervisionTryWithPasscodeAndWithout = async (
+  supervisionId: number,
+  username: string | null,
+  transportCode: string | null,
+  dispatch: Dispatch
+): Promise<ISupervision> => {
+  console.log("getSupervisionTryWithPasscodeAndWithout");
+  let returnValue;
+  try {
+    returnValue = await getSupervisionWithPassCode(supervisionId, typeof username === "string" ? username : "", transportCode, dispatch);
+    console.log("success with passcode" + returnValue);
+  } catch (err) {
+    console.log("failed with passcode");
+    console.log(err);
+    returnValue = getSupervisionNoPasscode(supervisionId, dispatch);
+  }
+  return returnValue;
 };
 
 export const updateConformsToPermit = async (updateRequest: ISupervision, username: string, dispatch: Dispatch): Promise<ISupervision> => {

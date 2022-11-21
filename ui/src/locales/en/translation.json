@@ -188,8 +188,16 @@
       },
       "routeSelectInput": {
         "permitLabel": "Permit",
+        "routeLabel": "Route",
         "cancelButtonLabel": "Previous",
         "continueButtonLabel": "Next"
+      },
+      "bridgeSelectInput": {
+        "permitLabel": "Permit",
+        "routeLabel": "Route",
+        "bridgesLabel": "Bridges to supervise",
+        "cancelButtonLabel": "Previous",
+        "saveButtonLabel": "Add bridges"
       }
     }
   },

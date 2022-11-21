@@ -5,7 +5,7 @@ import ISupervision from "../interfaces/ISupervision";
 import {
   getCompanyTransportsList,
   getRouteTransportOfSupervisor,
-  getSupervision,
+  getSupervisionWithPassCode,
   getSupervisionList,
   getSupervisionListAreaContractor,
   getSupervisionNoPasscode,
@@ -30,7 +30,7 @@ const prefetchSupervisions = async (supervisionList: ISupervision[], username: s
 
   await Promise.all(
     filteredIdsAndCodes.map((kv) => {
-      return queryClient.prefetchQuery(["getSupervision", Number(kv.key)], () => getSupervision(kv.key, username, kv.value, dispatch), {
+      return queryClient.prefetchQuery(["getSupervision", Number(kv.key)], () => getSupervisionWithPassCode(kv.key, username, kv.value, dispatch), {
         retry: onRetry,
         staleTime: Infinity,
       });
@@ -112,7 +112,7 @@ const prefetchRouteTransports = async (
 
           return queryClient.prefetchQuery(
             ["getSupervision", Number(supervisionId)],
-            () => getSupervision(supervisionId, username, transportCode, dispatch),
+            () => getSupervisionWithPassCode(supervisionId, username, transportCode, dispatch),
             {
               retry: onRetry,
               staleTime: Infinity,

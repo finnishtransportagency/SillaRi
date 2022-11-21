@@ -11,23 +11,23 @@
       "save": "Spara",
       "send": "Sänd",
       "close": "Stäng",
-      "closeAlert": "(SV) Close alert"
+      "closeAlert": "Stäng avisering"
     },
     "answer": {
       "yes": "Ja",
       "no": "Nej"
     },
     "validation": {
-      "checkDate": "(SV) Check the date",
-      "checkTime": "Kontrollera tiden",
-      "checkDateShort": "(SV) Check the date",
-      "checkTimeShort": "(SV) Check the time",
-      "invalidTime": "(SV) Invalid time",
-      "fixTimes": "(SV) Check and correct conflicting times for estimated bridge crossings before proceeding.",
-      "transportNumbersUsed": "(SV) Reitin kuljetuskerrat käytetty",
-      "transportNumbersUsedInfo": "(SV) Kaikki reitin kuljetuskerrat on käytetty myönnetystä kuljetusluvasta. Kuljetus ei saa ylittää valvottavia siltoja."
+      "checkDate": "Kontrollera datum",
+      "checkTime": "Kontrollera klocktiden",
+      "checkDateShort": "Kontrollera dagen",
+      "checkTimeShort": "Kontrollera tiden",
+      "invalidTime": "Felaktig tidpunkt",
+      "fixTimes": "Kontrollera och ändra motstridiga tidpunkter för de uppskattade broöverfarterna innan du fortsätter.",
+      "transportNumbersUsed": "Alla ruttens transporter använda",
+      "transportNumbersUsedInfo": "Alla beviljade transporttillstånd för rutten har använts.  Transporten får inte köra över broar som bör övervakas."
     },
-    "error": "(SV) Virhe tapahtui"
+    "error": "Ett fel inträffade"
   },
   "main": {
     "header": {
@@ -36,15 +36,15 @@
     "title": "SillaRi",
     "content": "Välkommen!",
     "tab": {
-      "ownList": "(SV) Oma lista",
+      "ownList": "Din egen lista",
       "transports": "Transporter",
       "bridges": "Broar"
     },
-    "noNetwork": "(SV) No network connection",
+    "noNetwork": "Ingen nätverksförbindelse",
     "noNetworkNoData": "Data kan inte hämtas, försöker igen...",
     "loading": "Laddar...",
     "offline": "Offline-tillstånd",
-    "useOffline": "(SV) Use SillaRi in offline mode"
+    "useOffline": "Använd SillaRi i offline-läge"
   },
   "map": {
     "attribution": "Material"
@@ -96,9 +96,9 @@
   },
   "companyTransports": {
     "transportPermit": "Transporttillstånd",
-    "transportNumber": "(SV) Kuljetuskerta",
-    "nextSupervision": "(SV) Seuraava sillanvalvonta",
-    "estimate": "(SV) arvio"
+    "transportNumber": "Transport",
+    "nextSupervision": "Nästa broövervakning",
+    "estimate": "uppskattning"
   },
   "route": {
     "departureTime": "Avgångstid",
@@ -116,8 +116,8 @@
       "showRouteOnMap": "Visa rutten på kartan",
       "departurePoint": "Avgångsplats",
       "arrivalPoint": "Destination",
-      "transportNumber": "(SV) Kuljetuskerta",
-      "transportNumbersUsed": "(SV) Kaikki reitin kuljetuskerrat käytetty"
+      "transportNumber": "Transport",
+      "transportNumbersUsed": "Alla ruttens transporter använda"
     },
     "bridgesToSupervise": "Broar som övervakas"
   },
@@ -153,10 +153,10 @@
     "crossingDenied": "Broöverfarten inställd",
     "supervisionFinished": "Övervakningen avslutad",
     "warning": {
-      "confirmStartSupervision": "(SV) Haluatko varmasti aloittaa valvonnan?",
-      "confirmContinueSupervision": "(SV) Haluatko varmasti jatkaa valvontaa?",
-      "confirmDenyCrossing": "(SV) Halutko varmasti peruuttaa ylityksen?",
-      "transportNotStarted": "(SV) Kuljetus ei ole lähtenyt vielä liikkeelle."
+      "confirmStartSupervision": "Vill du säkert börja övervakningen?",
+      "confirmContinueSupervision": "Vill du säkert fortsätta övervakningen?",
+      "confirmDenyCrossing": "Vill du säkert avbryta övergången?",
+      "transportNotStarted": "Transporten har ännu inte startat."
     }
   },
   "denyCrossing": {
@@ -168,42 +168,50 @@
     "placeholder": "Skriv text här"
   },
   "supervisionOwnList": {
-    "addButtonLabel": "(SV) Lisää valvottavia siltoja",
-    "permitLabel": "(SV) Kuljetuslupa",
-    "addedBySupervisor": "(SV) Silta lisätty valvojan toimesta",
-    "removeFromList": "(SV) Poista listalta",
+    "addButtonLabel": "Mera broar som övervakas",
+    "permitLabel": "Transporttillstånd",
+    "addedBySupervisor": "Bron tillsatt av övervakaren",
+    "removeFromList": "Ta bort från listan",
     "warning": {
-      "removeHeader": "(SV) Haluatko varmasti poistaa sillan listalta?",
-      "remove": "(SV) Poista"
+      "removeHeader": "Vill du säkert ta bort bron från listan?",
+      "remove": "Ta bort"
     },
     "addModal": {
-      "title": "(SV) Lisää valvottavia siltoja",
+      "title": "Lägg till broar som övervakas",
       "permitNumberInput": {
-        "inputLabel": "(SV) Lupanumero",
-        "addPermitNumberButtonLabel": "(SV) Lisää lupanumero",
-        "cancelButtonLabel": "(SV) Peruuta",
-        "continueButtonLabel": "(SV) Jatka",
-        "notFound": "(SV) Lupaa ei ole olemassa annetulla numerolla",
-        "noRights": "(SV) Urakkavalvojalla ei oikeuksia lupaan"
+        "inputLabel": "Tillståndsnummer",
+        "addPermitNumberButtonLabel": "Lägg till tillståndsnummer",
+        "cancelButtonLabel": "Avbryt",
+        "continueButtonLabel": "Fortsätt",
+        "notFound": "Inget tillstånd med det angivna numret",
+        "noRights": "Övervakaren har inte rättigheter till tillståndet"
       },
       "routeSelectInput": {
-        "permitLabel": "(SV) Kuljetuslupa",
-        "cancelButtonLabel": "(SV) Edellinen",
-        "continueButtonLabel": "(SV) Seuraava"
+        "permitLabel": "Transporttillstånd",
+        "routeLabel": "Rutt",
+        "cancelButtonLabel": "Föregående",
+        "continueButtonLabel": "Nästa"
+      },
+      "bridgeSelectInput": {
+        "permitLabel": "Transporttillstånd",
+        "routeLabel": "Rutt",
+        "bridgesLabel": "Broar som övervakas",
+        "cancelButtonLabel": "Föregående",
+        "saveButtonLabel": "Lägg till broar"
       }
     }
   },
   "supervision": {
     "title": "Broövervakning",
     "permitNumber": "Tillståndsnummer",
-    "supervisionStarted": "Övervakning påbörjjad",
+    "supervisionStarted": " Övervakning påbörjad",
     "bridgeName": "Brodetaljer",
     "crossingInstructions": "Instruktioner för överfarten",
     "photos": "Bilder",
     "photosDrivingLine": "Bilder och körlinje",
     "report": {
       "observations": "Observationer",
-      "drivingLineOk": "Körlinjen har följts",
+      "drivingLineOk": "Körlinjen följdes",
       "drivingLineInfo": "Varför följdes inte den rekommenderade körlinjen?",
       "speedLimitOk": "Körhastigheten följdes",
       "speedLimitInfo": "Varför följdes inte den rekommenderade körhastigheten?",
@@ -223,9 +231,9 @@
       "summary": "Gå till sammandraget",
       "cancel": "Annulera övervakningen",
       "saveToSendList": "Lagra till sändningslistan",
-      "sendImmediately": "(SV) Lähetä valvonta heti",
-      "sendNow": "(SV) Lähetä valvonta",
-      "back": "(SV) Takaisin"
+      "sendImmediately": "Sänd övervakningen på en gång",
+      "sendNow": "Sänd övervakningen",
+      "back": "Tillbaka"
     },
     "warning": {
       "cancelSupervisionHeader": "Vill du säkert annulera övervakningen?",
@@ -233,8 +241,8 @@
       "leavePage": "Är du säker på att du vill lämna sidan?",
       "unsavedChanges": "Övervakningen har osparade ändringar.",
       "supervisionNotFinished": "Övervakningen har inte sparats till sändningslistan.",
-      "sendImmediatelyHeader": "(SV) Haluatko varmasti lähettää valvonnan heti?",
-      "sendImmediatelyText": "(SV) Raporttiin kirjattuja tietoja ei voi muokata eikä täydentää enää lähettämisen jälkeen"
+      "sendImmediatelyHeader": "Vill du säkert sända övervakningen på en gång?",
+      "sendImmediatelyText": "Uppgifterna i rapporten kan inte ändras eller kompletteras efter att den sänts"
     },
     "summary": {
       "title": "Sammanfattning",
@@ -246,7 +254,7 @@
       "additionalInfo": "Ytterligare information",
       "approved": "Godkänd",
       "notApproved": "Inte godkänd",
-      "saved": "Övervakningen har sparats till sändningslistan"
+      "saved": "Övervakningen har sparats på sändningslistan"
     }
   },
   "sendingList": {
@@ -254,15 +262,15 @@
     "transportPermit": "Transporttillstånd",
     "tractorUnit": "Dragfordon",
     "supervisionStarted": "Övervakningen påbörjad",
-    "reportSent": "(SV) Report sent",
-    "removed": "(SV) Removed from list",
-    "report": "(SV) Supervision report",
+    "reportSent": "Rapporten sänd",
+    "removed": "Tas bort från listan",
+    "report": "Övervakningsrapport",
     "sendSelected": "Sänd de valda",
     "sentOk": "De valda övervakningsrapporterna har sänts",
     "nothingToSend": "Inga övervakningsrapporter att sända",
-    "sentReports": "(SV) Sent supervision reports",
+    "sentReports": "Sända övervakningsrapporter",
     "offlineSuffix": "Offline",
-    "passwordButton": "(SV) Avaa salasanalla"
+    "passwordButton": "Öppna med lösenord"
   },
   "permitPdf": {
     "title": "Transporttillstånd",
@@ -274,24 +282,24 @@
   },
   "management": {
     "companySummary": {
-      "noPermitsWarning": "(SV) Permits not found",
+      "noPermitsWarning": "Systemet innehåller inga transporttillstånd för företaget",
       "permitListTitle": "Transporttillstånd och hantering",
       "transports": "Transporter",
       "supervision": "Övervakning",
-      "includesSupervisions": "(SV) Sisältää sillanvalvontoja",
-      "notUsesSillariPermit": "(SV) Luvan kuljetuksia ei tehdä SillaRissa",
-      "noSupervisions": "(SV) Ei sisällä sillanvalvontoja",
-      "permitVersion": "(SV) Lupaversio",
+      "includesSupervisions": "Innehåller broövervakningar",
+      "notUsesSillariPermit": "SillaRi används inte för transporterna i lovet",
+      "noSupervisions": "Innehåller inte broövervakningar",
+      "permitVersion": "Version av tillståndet",
       "addTransportButtonLabel": "Lägg till transport",
-      "transportCount": "(SV) Kuljetuskerrat",
-      "showByRoute": "(SV) Näytä reittikohtaisesti",
+      "transportCount": "Transporter",
+      "showByRoute": "Visa per rutt",
       "transportCountModal": {
-        "title": "(SV) Luvan {{permit}} reittikohtaiset kuljetuskerrat",
-        "used": "(SV) Käytetty",
-        "amount": "(SV) Määrä luvalla",
-        "unlimited": "(SV) Rajoittamaton",
-        "usedInfo": "(SV) Käytettyjen kuljetuskertojen kokonaismäärä koostuu nykyiselle kuljetusluvalle tehdyistä kuljetuksista sekä mahdollisille muille lupaversioille tehdyistä kuljetuksista (suluissa jälkimmäisenä).",
-        "amountInfo": "(SV) Määrä luvalla näyttää luvalle myönnettyjen kuljetuskertojen kokonaismäärän reittikohtaisesti."
+        "title": "Tillståndets transportantal per rutt",
+        "used": "Använt",
+        "amount": "Antal på tillståndet",
+        "unlimited": "Obegränsad",
+        "usedInfo": "Totala antalet använda transporter består av de gjorda transporterna för det nuvarande tillståndet samt för möjliga andra tillståndsversioner (den sista).",
+        "amountInfo": "Antal på tillståndet anger det beviljade totalantalet transporter per rutt."
       },
       "filter": {
         "show": "Visa",
@@ -320,9 +328,9 @@
         "details": "Detaljer",
         "modify": "Redigera",
         "show": "Visa",
-        "delete": "(SV) Poista"
+        "delete": "Ta bort"
       },
-      "transportStatusLog": "Transportspårning",
+      "transportStatusLog": "Transportens läge",
       "logStatus": {
         "unknown": "Information saknas",
         "planned": "Planerad",
@@ -334,16 +342,16 @@
     },
     "transportDetail": {
       "headerTitleAdd": "Lägg till transport",
-      "headerTitleEdit": "(SV) Muokkaa kuljetusta",
+      "headerTitleEdit": "Ändra på transporten",
       "headerTitleDetail": "Transportdetaljer",
-      "transportPermit": "Transporttilstånd",
+      "transportPermit": "Transporttillstånd",
       "validityPeriod": "Giltighetstid",
       "transportId": "Transport ID",
       "transportInformation": "Transport information",
       "bridgesToSupervise": "Broar som övervakas",
       "buttons": {
         "generatePassword": "Nytt lösenord",
-        "deleteTransport": "Ta bort transport",
+        "deleteTransport": "Ta bort transporten",
         "setDepartureTime": "Uppskatta avgångstid",
         "updateDepartureTime": "Uppdatera avgångstid"
       },
@@ -352,13 +360,13 @@
         "deleteTransport": "Är du säker på att du vill ta bort transporten?"
       },
       "error": {
-        "transportNumberConflict": "(SV) Kuljetuskerta on jo käytetty toiselle kuljetukselle. Ole hyvä ja päivitä sivu."
+        "transportNumberConflict": "Ordningsnumret för transporten är redan använd för en annan transport. Var god uppdatera sidan."
       },
       "saved": "Sparad",
       "deleted": "Borttagen",
       "password": "Lösenord för transporten",
       "passwordUnknown": "Okänd",
-      "passwordNotGenerated": "(SV) Salasana muodostetaan ensimmäisen tallennuksen yhteydessä",
+      "passwordNotGenerated": "ösenordets bildas när du sparat uppgifterna första gången",
       "routeInfo": {
         "estimatedDepartureTime": "Uppskattad avgångstid",
         "route": "Rutt",
@@ -367,11 +375,11 @@
         "showRouteOnMap": "Visa rutten på kartan",
         "tractorUnitIdentifier": "Dragfordonets registernummer (första dragfordonet)",
         "tractorUnitNotSelected": "Registernumret saknas",
-        "pushingVehicle": "extra- eller skjutande fordon"
+        "pushingVehicle": " Extra- eller skjutfordon"
       },
       "bridgeInfo": {
         "bridge": "Bron",
-        "estimatedCrossingTime": "Uppskattad överfartstid",
+        "estimatedCrossingTime": "Uppskattad tid för överfarten",
         "supervision": "Övervakning",
         "bridgeSupervisors": "Broövervakare",
         "ownSupervisor": "Egen övervakare",
@@ -380,13 +388,13 @@
         "supervisor1": "Broövervakare (1.)",
         "supervisor2": "stf. broövervakare(2.)",
         "copySupervisor": "Kopiera till alla broar",
-        "noBridges": "(SV) Reitillä ei ole valvottavia siltoja",
-        "report": "(SV) Valvontaraportti",
+        "noBridges": "Rutten har inga broar som måste övervakas",
+        "report": "Övervakningsrapport",
         "supervisionStatus": {
-          "in_progress": "(SV) Valvonta käynnissä",
+          "in_progress": "Övervakning pågår",
           "crossing_denied": "Broöverfarten inställd",
           "finished": "Övervakningen avslutad",
-          "report_signed": "(SV) Raportti valmis"
+          "report_signed": "Rapporten färdig"
         }
       },
       "transportDepartureTime": {
@@ -396,7 +404,7 @@
         "departureAt": "kl.",
         "setTime": "Ställ",
         "updateTime": "Uppdatera",
-        "info": "VIKTIGT. Avgångstiden påverkar också de uppskattade överfartstiderna för broarna."
+        "info": "VIKTIGT! Avgångstiden påverkar också de uppskattade överfartstiderna för broarna."
       }
     },
     "supervisionType": {
@@ -411,8 +419,8 @@
       "stopped": "Paus",
       "in_progress": "På väg",
       "arrived": "Transporten avslutad",
-      "supervisionStarted": "(SV) Valvonta aloitettu",
-      "outdatedPermit": "(SV) Tee uudelle lupaversiolle"
+      "supervisionStarted": "Övervakningen påbörjad",
+      "outdatedPermit": "Gör för en ny tillståndsversion"
     }
   },
   "transports": {
@@ -461,35 +469,35 @@
       "title": "SillaRi"
     },
     "title": "Tillträde beviljas ej!",
-    "content": "Du har inte rätten att se den här sidan."
+    "content": "Du har inte tillgång till den här sidan."
   },
   "appCheck": {
     "accessDenied": "Tillträde beviljas ej",
-    "loginToUse": "(SV) Login to use the application.",
-    "login": "(SV) Login",
-    "noData": "(SV) SillaRi's data cannot be retrieved",
-    "tryAgainLater": "(SV) Try again when the network connection is restored.",
-    "noRights": "(SV) You do not have permission to use the SillaRi application.",
-    "unhandledError": "(SV) Unhandled error condition",
-    "startingApp": "(SV) Starting application..."
+    "loginToUse": "Logga in för att använda applikationen",
+    "login": "Logga in",
+    "noData": "Uppgifter kan inte hämtas",
+    "tryAgainLater": "Försök på nytt när du har nätförbindelse.",
+    "noRights": "Du har inte rätt att använda SillaRi-applikationen.",
+    "unhandledError": "Obehandlad felsituation",
+    "startingApp": "Startar applikationen..."
   },
   "offlineInfo": {
     "title": "Offline-tillstånd",
-    "info1": "(SV) SillaRin kuljetukset ja valvottavat sillat on päivitetty viimeksi",
-    "info2": "(SV) Ainoastaan salasanalla online-tilassa avatut kuljetukset ja sillat ovat käytettävissä offline-tilassa.",
-    "info3": "(SV) Voit käyttää SillaRia offline-tilassa, jolloin sillanvalvonnan raportti on mahdollista tallentaa väliaikaisesti tälle laitteelle.",
-    "info4": "(SV) Valvontaraportin voit lähettää myöhemmin, kun verkkoyhteys on jälleen käytössä ja kirjaudut SillaRiin."
+    "info1": "Transport- och brouppgifter har senast uppdaterats i SillaRi",
+    "info2": "Du måste först logga in med ett lösenord i online-läge för att kunna se transporter och broar i offline-läge",
+    "info3": "Du kan använda SillaRi i offline-läge. Då lagras övervakningsrapporten tillfälligt i den här apparaten.",
+    "info4": "Du kan sända övervakningsrapporten när nätförbindelsen igen fungerar och du har loggat in i applikationen."
   },
   "sendingListOfflineNotice": {
-    "title": "(SV) Sending is not possible in offline mode",
-    "notice": "(SV) You can send the supervision reports when the network connection is restored."
+    "title": "Du kan inte sända övervakningsrapporten i offline-läge",
+    "notice": "Du kan sända övervakningsrapporten när nätförbindelsen igen fungerar."
   },
   "unsentOffline": {
-    "title": "(SV) Unsent reports",
-    "notice": "(SV) The sending list has unsent supervision reports",
-    "question": "(SV) Do you want to go to the sending list?",
-    "goToSendingList": "(SV) Go to sending list",
-    "continueToMain": "(SV) Continue to SillaRi's main page",
-    "info": "(SV) You can also get to the sending list from the main page."
+    "title": "Osända rapporter",
+    "notice": "Listan innehåller osända övervakningsrapporter",
+    "question": "Vill du förflytta dig till listan med osända övervakningsrapporter?",
+    "goToSendingList": "Gå till listan med osända övervakningsrapporter",
+    "continueToMain": "Fortsätt till SillaRis huvudsida",
+    "info": "Du kommer också till listan med osända övervakningsrapporter via huvudsidan."
   }
 }

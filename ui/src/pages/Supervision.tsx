@@ -15,7 +15,12 @@ import ISupervision from "../interfaces/ISupervision";
 import ISupervisionReport from "../interfaces/ISupervisionReport";
 import { useTypedSelector, RootState } from "../store/store";
 import { getUserData, onRetry } from "../utils/backendData";
-import { cancelSupervision, deleteSupervisionImages, getSupervision, updateSupervisionReport } from "../utils/supervisionBackendData";
+import {
+  cancelSupervision,
+  deleteSupervisionImages,
+  getSupervisionTryWithPasscodeAndWithout,
+  updateSupervisionReport,
+} from "../utils/supervisionBackendData";
 import { SupervisionStatus } from "../utils/constants";
 import { isCustomerUsesSillariPermitSupervision, reportHasUnsavedChanges } from "../utils/supervisionUtil";
 import { isSupervisionReportValid } from "../utils/validation";
@@ -48,7 +53,7 @@ const Supervision = (): JSX.Element => {
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
-    () => getSupervision(Number(supervisionId), username, null, dispatch),
+    () => getSupervisionTryWithPasscodeAndWithout(Number(supervisionId), username, null, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,
