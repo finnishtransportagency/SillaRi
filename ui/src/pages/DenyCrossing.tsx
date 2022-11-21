@@ -26,7 +26,7 @@ import IDenyCrossingInput from "../interfaces/IDenyCrossingInput";
 import IPermit from "../interfaces/IPermit";
 import ISupervision from "../interfaces/ISupervision";
 import { getUserData, onRetry } from "../utils/backendData";
-import { denyCrossing, getSupervision } from "../utils/supervisionBackendData";
+import { denyCrossing, getSupervisionTryWithPasscodeAndWithout } from "../utils/supervisionBackendData";
 import { SupervisionStatus } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
 import { isCustomerUsesSillariPermitSupervision } from "../utils/supervisionUtil";
@@ -64,7 +64,7 @@ const DenyCrossing = (): JSX.Element => {
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
-    () => getSupervision(Number(supervisionId), username, null, dispatch),
+    () => getSupervisionTryWithPasscodeAndWithout(Number(supervisionId), username, null, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,

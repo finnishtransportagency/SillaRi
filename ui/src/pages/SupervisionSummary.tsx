@@ -13,7 +13,7 @@ import IFinishCrossingInput from "../interfaces/IFinishCrossingInput";
 import ISupervision from "../interfaces/ISupervision";
 import { RootState, useTypedSelector } from "../store/store";
 import { getUserData, onRetry } from "../utils/backendData";
-import { finishAndCompleteSupervision, finishSupervision, getSupervision } from "../utils/supervisionBackendData";
+import { finishAndCompleteSupervision, finishSupervision, getSupervisionTryWithPasscodeAndWithout } from "../utils/supervisionBackendData";
 import SupervisionFooter from "../components/SupervisionFooter";
 import { SupervisionListType, SupervisionStatus } from "../utils/constants";
 import { removeSupervisionFromRouteTransportList } from "../utils/offlineUtil";
@@ -49,7 +49,7 @@ const SupervisionSummary = (): JSX.Element => {
 
   const { data: supervision, isLoading: isLoadingSupervision } = useQuery(
     supervisionQueryKey,
-    () => getSupervision(Number(supervisionId), username, null, dispatch),
+    () => getSupervisionTryWithPasscodeAndWithout(Number(supervisionId), username, null, dispatch),
     {
       retry: onRetry,
       staleTime: Infinity,
