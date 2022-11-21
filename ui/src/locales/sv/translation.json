@@ -82,7 +82,8 @@
     "listLabel": "Bilder",
     "item": {
       "deleteButtonLabel": "Radera bild"
-    }
+    },
+    "returnToSupervision": "Palaa sillanvalvontaan [SV]"
   },
   "SidebarMenu": {
     "title": "SillaRi",

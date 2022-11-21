@@ -82,7 +82,8 @@
     "listLabel": "Photos",
     "item": {
       "deleteButtonLabel": "Delete image"
-    }
+    },
+    "returnToSupervision": "Return to supervision"
   },
   "SidebarMenu": {
     "title": "SillaRi",
