@@ -165,8 +165,7 @@ const App: React.FC = () => {
         });
         console.log("cookies after");
         console.log(cookies);
-        //alert("Authentication session expired. Please close the browser and come back to login.");
-        window.location.reload();
+        alert("Authentication session expired. Please close the browser and come back to login.");
       }
     };
 
@@ -208,7 +207,7 @@ const App: React.FC = () => {
       }
     };
 
-    // Only prefetch data when online
+    // Only prefetch data when onlineF
     if (onlineManager.isOnline()) {
       prefetchData();
     }
