@@ -155,6 +155,7 @@ const App: React.FC = () => {
         }
       } catch (e) {
         console.log("App error", e);
+        console.error(e);
         setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
         localStorage.setItem("token", "");
         const cookies = Cookies.get();
