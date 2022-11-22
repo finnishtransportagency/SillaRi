@@ -241,7 +241,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String clientId = sillariConfig.getAmazonCognito().getClientId();
             String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
 
-            response.sendRedirect(url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
+            //response.sendRedirect(url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
         } finally {            
             SecurityContextHolder.clearContext();
         }
