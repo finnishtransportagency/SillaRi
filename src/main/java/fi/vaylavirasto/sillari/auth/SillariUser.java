@@ -16,6 +16,7 @@ public class SillariUser extends User {
     @Getter @Setter private String phoneNumber;
     @Getter @Setter private String businessId;
     @Getter @Setter private String organization;
+    @Getter @Setter private String iss;
     @Getter @Setter private Set<String> roles;
 
     public SillariUser(String username, Collection<? extends GrantedAuthority> authorities) {
