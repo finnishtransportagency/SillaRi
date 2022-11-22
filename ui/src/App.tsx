@@ -165,7 +165,8 @@ const App: React.FC = () => {
         });
         console.log("cookies after");
         console.log(cookies);
-        alert("Authentication session expired. Please close the browser and come back to login.");
+        // alert("Authentication session expired. Please close the browser and come back to login.");
+        window.location.replace("https://sillaridev.testivaylapilvi.fi");
       }
     };
 
