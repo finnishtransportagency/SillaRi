@@ -49,7 +49,6 @@ public class SillariApplication {
         config.addAllowedOrigin("https://sillaripreprod.testivaylapilvi.fi");
         config.addAllowedOrigin("https://sillari.vaylapilvi.fi");
         config.addAllowedOrigin("https://vaylatest.auth.eu-west-1.amazoncognito.com");
-        config.addAllowedOrigin("https://sillaritest.auth.eu-west-1.amazoncognito.com");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);

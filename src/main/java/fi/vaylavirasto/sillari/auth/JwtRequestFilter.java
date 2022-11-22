@@ -141,7 +141,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     claims.forEach((k, v) -> logger.debug(String.format("Claim %s=%s", k, v)));
 
                     String username = (String) claims.get("username");
-                    String iss = (String) claims.get("iss");
                     String uid = (String) claims.get("custom:uid");
                     String userNameDetail = (uid != null) ? uid : username;
 
@@ -196,7 +195,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     userDetails.setPhoneNumber(phoneNumber);
                     userDetails.setBusinessId(businessId);
                     userDetails.setOrganization(organization);
-                    userDetails.setIss(iss);
 
                     authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -238,10 +236,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         } catch (Exception ex) {
             logger.error(ex);
-            //todo, like fi.vaylavirasto.sillari.api.rest.UIController.userLogout
-/*            String url = sillariConfig.getAmazonCognito().getUrl();
+            
+            String url = sillariConfig.getAmazonCognito().getUrl();
             String clientId = sillariConfig.getAmazonCognito().getClientId();
-            String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();*/
+            String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();
 
             //response.sendRedirect(url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
         } finally {            

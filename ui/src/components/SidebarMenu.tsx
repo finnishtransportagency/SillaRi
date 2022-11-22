@@ -51,14 +51,9 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ version }) => {
     logoutUser().then((data) => {
       serviceWorkerRegistration.unregister(() => {});
       const cookies = Cookies.get();
-      console.log("cookies before");
-      console.log(cookies);
       Object.keys(cookies).forEach((key) => {
         Cookies.remove(key);
       });
-      console.log("cookies after");
-      console.log(cookies);
-      console.log("reidirecting to: " + data.redirectUrl);
       window.location.href = data.redirectUrl;
     });
   };

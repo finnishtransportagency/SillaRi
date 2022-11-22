@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { onlineManager, useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
@@ -40,14 +40,6 @@ const SupervisionSummary = (): JSX.Element => {
     networkStatus: { isFailed = {} },
     selectedSupervisionListType,
   } = useTypedSelector((state: RootState) => state.rootReducer);
-
-  const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
-
-  useEffect(() => {
-    onlineManager.subscribe(() => {
-      setOnline(onlineManager.isOnline());
-    });
-  }, []);
 
   const { data: supervisorUser } = useQuery(["getSupervisor"], () => getUserData(dispatch), {
     retry: onRetry,
@@ -299,7 +291,6 @@ const SupervisionSummary = (): JSX.Element => {
               }
               cancelDisabled={isLoading || notAllowedToEdit}
               sendImmediatelyDisabled={
-                !isOnline ||
                 !username ||
                 (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) ||
                 isLoading ||
