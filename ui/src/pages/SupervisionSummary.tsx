@@ -291,9 +291,10 @@ const SupervisionSummary = (): JSX.Element => {
               }
               cancelDisabled={isLoading || notAllowedToEdit}
               sendImmediatelyDisabled={
+                !onlineManager.isOnline() ||
                 !username ||
                 !routeTransportId ||
-                !isCustomerUsesSillariPermitSupervision(supervision) ||
+                (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) ||
                 isLoading ||
                 notAllowedToEdit ||
                 !reportValid
