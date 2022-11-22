@@ -37,16 +37,6 @@
             <AppenderRef ref="DebugAppender" level="debug"/>
         </Logger>
 
-        <Logger name="org.apache">
-            <AppenderRef ref="ConsoleAppender" level="warn"/>
-            <AppenderRef ref="DebugAppender" level="warn"/>
-        </Logger>
-
-        <Logger name="httpclient">
-            <AppenderRef ref="ConsoleAppender" level="warn"/>
-            <AppenderRef ref="DebugAppender" level="warn"/>
-        </Logger>
-
         <Root level="all">
             <AppenderRef ref="ConsoleAppender" level="info"/>
             <AppenderRef ref="DebugAppender" level="debug"/>
