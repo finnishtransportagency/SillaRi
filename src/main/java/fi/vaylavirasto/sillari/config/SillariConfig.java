@@ -36,8 +36,13 @@ public class SillariConfig {
 
     @Data
     public static class AmazonCognito {
-        private String url;
-        private String clientId;
-        private String redirectUrl;
+        private String oamIss;
+        private String oamUrl;
+        private String oamClientId;
+        private String oamLogoutUrl;
+        private String adfsIss;
+        private String adfsUrl;
+        private String adfsClientId;
+        private String adfsLogoutUrl;
     }
 }
