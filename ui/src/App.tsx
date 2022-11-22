@@ -158,8 +158,6 @@ const App: React.FC = () => {
         console.error(e);
         setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
         localStorage.setItem("token", "");
- 
-        //alert("Authentication session expired. Please close the browser and come back to login.");
       }
     };
 
