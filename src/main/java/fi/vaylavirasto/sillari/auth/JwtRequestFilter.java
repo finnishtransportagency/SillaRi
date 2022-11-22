@@ -114,9 +114,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
                 */
 
-                if (!awsCognitoClient.isLoggedIn(jwt)) {
+                //todo is this needed? I think this prevents UAT login.
+                /*if (!awsCognitoClient.isLoggedIn(jwt)) {
                     throw new RuntimeException("User not logged in Cognito");
-                }
+                }*/
 
                 String jwt_headers = jwt.split("\\.")[0];
                 String decoded_jwt_headers = new String(Base64.getDecoder().decode(jwt_headers));
