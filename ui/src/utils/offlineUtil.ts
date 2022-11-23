@@ -188,8 +188,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
     // getSupervision for each supervision on the sending list, so that the modify button and report modal work offline
     prefetchSupervisions(supervisionSendingList, username, queryClient, dispatch),
     // getSupervisions that are companyUsesSillari == false, they are not under routeTransports and dont require passcode
-
-    limit(() => prefetchSupervisionsNoPasscode(supervisionsCompanyUsesSillari, queryClient, dispatch)),
+    prefetchSupervisionsNoPasscode(supervisionsCompanyUsesSillari, queryClient, dispatch),
   ]);
 };
 
