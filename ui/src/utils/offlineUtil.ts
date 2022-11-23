@@ -18,6 +18,7 @@ import IKeyValue from "../interfaces/IKeyValue";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
 import pLimit from "p-limit";
 
+const limit = pLimit(5);
 const prefetchSupervisions = async (supervisionList: ISupervision[], username: string, queryClient: QueryClient, dispatch: Dispatch) => {
   // Get transportCodes from storage for each supervisionId
   const idsAndTransportCodes: IKeyValue[] = await Promise.all(
@@ -40,14 +41,14 @@ const prefetchSupervisions = async (supervisionList: ISupervision[], username: s
 };
 
 const prefetchSupervisionsNoPasscode = async (supervisionList: ISupervision[], queryClient: QueryClient, dispatch: Dispatch) => {
-  await Promise.all(
-    supervisionList.map((s) => {
-      return queryClient.prefetchQuery(["getSupervision", Number(s.id)], () => getSupervisionNoPasscode(s.id, dispatch), {
-        retry: onRetry,
-        staleTime: Infinity,
-      });
-    })
-  );
+  const fetchSupervision: (supervisionId: number) => Promise<void> = (supervisionId: number) => {
+    return queryClient.prefetchQuery(["getSupervision", supervisionId], () => getSupervisionNoPasscode(supervisionId, dispatch), {
+      retry: onRetry,
+      staleTime: Infinity,
+    });
+  };
+
+  await Promise.all(supervisionList.map((s) => limit(() => fetchSupervision(Number(s.id)))));
 };
 
 export const prefetchSupervisionsNoPasscodeWithIds = async (supervisionIdsList: number[], queryClient: QueryClient, dispatch: Dispatch) => {
@@ -174,7 +175,6 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   const companyTransportsList = mainData[1];
   const supervisionSendingList = mainData[2];
   const supervisionsCompanyUsesSillari = mainData[4];
-  const limit = pLimit(5);
 
   // Fetch only routeTransports and supervisions that have the password in storage
   // Otherwise query fails, and we don't get any routeTransports or supervisions in the cache for offline use
