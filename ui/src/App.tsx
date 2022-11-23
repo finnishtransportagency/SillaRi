@@ -156,16 +156,6 @@ const App: React.FC = () => {
       } catch (e) {
         console.log("App error", e);
         setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
-        localStorage.setItem("token", "");
-        const cookies = Cookies.get();
-        console.log("cookies before");
-        console.log(cookies);
-        Object.keys(cookies).forEach((key) => {
-          Cookies.remove(key);
-        });
-        console.log("cookies after");
-        console.log(cookies);
-        alert("Authentication session expired. Please close the browser and come back to login.");
       }
     };
 
