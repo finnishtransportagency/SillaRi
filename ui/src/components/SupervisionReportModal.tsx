@@ -33,7 +33,7 @@ const SupervisionReportModal = ({ isOpen, supervision, closeModal }: Supervision
       </IonHeader>
       <IonContent>
         <SupervisionHeader supervision={supervision as ISupervision} />
-        <SupervisionPhotos images={images} headingKey="supervision.photos" disabled={true} supervisionId={supervision.id} />
+        <SupervisionPhotos images={images} headingKey="supervision.photos" disabled={true} supervisionId={supervision ? supervision.id : -1} />
         <SupervisionObservationsSummary report={report} />
       </IonContent>
     </IonModal>
