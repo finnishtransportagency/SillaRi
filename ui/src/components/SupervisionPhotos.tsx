@@ -12,9 +12,17 @@ interface SupervisionPhotosProps {
   disabled: boolean;
   isButtonsIncluded?: boolean;
   takePhotos?: () => void;
+  supervisionId: number;
 }
 
-const SupervisionPhotos = ({ images = [], headingKey, disabled, isButtonsIncluded, takePhotos }: SupervisionPhotosProps): JSX.Element => {
+const SupervisionPhotos = ({
+  images = [],
+  headingKey,
+  disabled,
+  isButtonsIncluded,
+  takePhotos,
+  supervisionId,
+}: SupervisionPhotosProps): JSX.Element => {
   const { t } = useTranslation();
 
   const takePhotosClicked = (): void => {
@@ -30,7 +38,7 @@ const SupervisionPhotos = ({ images = [], headingKey, disabled, isButtonsInclude
       </IonItem>
 
       <IonGrid>
-        <ImageThumbnailRow images={images} />
+        <ImageThumbnailRow images={images} supervisionId={supervisionId} />
         <IonRow>
           <IonCol>
             <IonText>{`${t("camera.listLabel")}: ${images ? images.length : 0}`}</IonText>

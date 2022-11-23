@@ -265,6 +265,7 @@ const Supervision = (): JSX.Element => {
               isButtonsIncluded
               takePhotos={takePhotosClicked}
               disabled={isLoading || notAllowedToEdit}
+              supervisionId={Number(supervisionId)}
             />
             <SupervisionObservations modifiedReport={modifiedReport} setModifiedReport={setModifiedReport} disabled={notAllowedToEdit} />
             <SupervisionFooter

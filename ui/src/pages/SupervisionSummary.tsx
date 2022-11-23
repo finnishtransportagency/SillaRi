@@ -287,7 +287,12 @@ const SupervisionSummary = (): JSX.Element => {
         ) : (
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
-            <SupervisionPhotos images={images} headingKey="supervision.photos" disabled={isLoading || notAllowedToEdit} />
+            <SupervisionPhotos
+              images={images}
+              headingKey="supervision.photos"
+              disabled={isLoading || notAllowedToEdit}
+              supervisionId={Number(supervisionId)}
+            />
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
               saveDisabled={

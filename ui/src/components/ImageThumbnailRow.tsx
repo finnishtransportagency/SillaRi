@@ -10,9 +10,10 @@ import "./ImageThumbnailRow.css";
 
 interface ImageThumbnailRowProps {
   images: ISupervisionImage[];
+  supervisionId: number;
 }
 
-const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
+const ImageThumbnailRow = ({ images, supervisionId }: ImageThumbnailRowProps): JSX.Element => {
   const [isImagePreviewOpen, setImagePreviewOpen] = useState<boolean>(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
 
@@ -22,9 +23,9 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
   };
 
   // Check if images are being uploaded using the mutationKey defined in Photos.tsx
-  const isImageUploadMutating = useIsMutating(["imageUpload" + images[0].supervisionId]);
+  const isImageUploadMutating = useIsMutating(["imageUpload" + supervisionId]);
 
-  // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
+  // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"e
   return (
     <IonRow>
       {isImageUploadMutating > 0 && onlineManager.isOnline() && (
