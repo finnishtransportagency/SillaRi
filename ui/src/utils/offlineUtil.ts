@@ -16,6 +16,7 @@ import { SupervisionListType } from "./constants";
 import { getPasswordAndIdFromStorage } from "./trasportCodeStorageUtil";
 import IKeyValue from "../interfaces/IKeyValue";
 import ICompanyTransports from "../interfaces/ICompanyTransports";
+import pLimit from "p-limit";
 
 const prefetchSupervisions = async (supervisionList: ISupervision[], username: string, queryClient: QueryClient, dispatch: Dispatch) => {
   // Get transportCodes from storage for each supervisionId
@@ -173,6 +174,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   const companyTransportsList = mainData[1];
   const supervisionSendingList = mainData[2];
   const supervisionsCompanyUsesSillari = mainData[4];
+  const limit = pLimit(50);
 
   // Fetch only routeTransports and supervisions that have the password in storage
   // Otherwise query fails, and we don't get any routeTransports or supervisions in the cache for offline use
@@ -186,7 +188,8 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
     // getSupervision for each supervision on the sending list, so that the modify button and report modal work offline
     prefetchSupervisions(supervisionSendingList, username, queryClient, dispatch),
     // getSupervisions that are companyUsesSillari == false, they are not under routeTransports and dont require passcode
-    prefetchSupervisionsNoPasscode(supervisionsCompanyUsesSillari, queryClient, dispatch),
+
+    limit(() => prefetchSupervisionsNoPasscode(supervisionsCompanyUsesSillari, queryClient, dispatch)),
   ]);
 };
 
