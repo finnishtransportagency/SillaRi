@@ -174,7 +174,7 @@ export const prefetchOfflineData = async (queryClient: QueryClient, dispatch: Di
   const companyTransportsList = mainData[1];
   const supervisionSendingList = mainData[2];
   const supervisionsCompanyUsesSillari = mainData[4];
-  const limit = pLimit(50);
+  const limit = pLimit(5);
 
   // Fetch only routeTransports and supervisions that have the password in storage
   // Otherwise query fails, and we don't get any routeTransports or supervisions in the cache for offline use
