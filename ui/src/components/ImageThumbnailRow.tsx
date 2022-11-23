@@ -7,7 +7,6 @@ import ImagePreview from "./ImagePreview";
 import ImageThumbnail from "./ImageThumbnail";
 import { DATE_TIME_FORMAT } from "../utils/constants";
 import "./ImageThumbnailRow.css";
-import { image } from "ionicons/icons";
 
 interface ImageThumbnailRowProps {
   images: ISupervisionImage[];
@@ -23,7 +22,7 @@ const ImageThumbnailRow = ({ images }: ImageThumbnailRowProps): JSX.Element => {
   };
 
   // Check if images are being uploaded using the mutationKey defined in Photos.tsx
-  const isImageUploadMutating = images && images.length > 0 && useIsMutating(["imageUpload" + images[0].supervisionId]);
+  const isImageUploadMutating = useIsMutating(["imageUpload" + images[0].supervisionId]);
 
   // Sort using copies of the arrays to avoid the error "TypeError: Cannot delete property '0' of [object Array]"
   return (
