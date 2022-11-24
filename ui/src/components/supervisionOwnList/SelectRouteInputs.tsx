@@ -30,6 +30,8 @@ const SelectRouteInputs = ({ permitRoutes, toNextPhase, toPreviousPhase }: Selec
 
   const setSelectedRouteIndex = (index: number, routeIndex: number) => {
     permitRoutes[index].selectedRouteIndex = routeIndex;
+    console.log("hello");
+    console.log(permitRoutes);
     setContinueButtonState();
   };
 
@@ -58,7 +60,7 @@ const SelectRouteInputs = ({ permitRoutes, toNextPhase, toPreviousPhase }: Selec
             <IonCol>
               <SelectRouteInput
                 key={i}
-                index={i}
+                permitIndex={i}
                 routes={permitRoute.routes}
                 selectedRouteIndex={permitRoute.selectedRouteIndex}
                 onChange={setSelectedRouteIndex}
