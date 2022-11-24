@@ -106,7 +106,7 @@ const App: React.FC = () => {
   const logoutFromApp = () => {
     logoutUser().then(
       (data) => {
-        clearDataAndRedirect(process.env.PUBLIC_URL + "?ts=" + Date.now());
+        clearDataAndRedirect(data.redirectUrl);
       },
       (error) => {
         console.log(error);
