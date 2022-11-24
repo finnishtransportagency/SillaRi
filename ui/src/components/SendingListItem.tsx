@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { IonButton, IonCheckbox, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCheckbox, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonSpinner, IonText } from "@ionic/react";
 import moment from "moment";
 import ISupervision from "../interfaces/ISupervision";
 import { DATE_TIME_FORMAT_MIN, SupervisionListType } from "../utils/constants";
@@ -11,7 +11,7 @@ import lock from "../theme/icons/lock_closed_white.svg";
 import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import IPopoverPlacement from "../interfaces/IPopoverPlacement";
 import { useHistory } from "react-router-dom";
-import { useIsMutating } from "react-query";
+import { onlineManager, useIsMutating } from "react-query";
 
 interface SendingListItemProps {
   supervision: ISupervision;
@@ -71,9 +71,10 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
       <IonGrid className="ion-no-padding">
         <IonRow>
           <IonCol size="1">
+            {isImageUploadMutating > 0 && isOnline && <IonSpinner color="primary" className="imageSpinner" />}
             <IonCheckbox
               value={String(supervisionId)}
-              disabled={!isOnline || !supervisionUnlocked}
+              disabled={!isOnline || !supervisionUnlocked || isImageUploadMutating > 0}
               onIonChange={(e) => selectSupervision(e.detail.value, e.detail.checked)}
             />
           </IonCol>
