@@ -270,7 +270,8 @@
     "nothingToSend": "No supervision reports to send.",
     "sentReports": "Sent supervision reports",
     "offlineSuffix": "Offline",
-    "passwordButton": "Open with password"
+    "passwordButton": "Open with password",
+    "loadingPhotos": "Loading photos..."
   },
   "permitPdf": {
     "title": "Transport permit",

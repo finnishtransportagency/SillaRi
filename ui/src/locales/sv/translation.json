@@ -270,7 +270,8 @@
     "nothingToSend": "Inga övervakningsrapporter att sända",
     "sentReports": "Sända övervakningsrapporter",
     "offlineSuffix": "Offline",
-    "passwordButton": "Öppna med lösenord"
+    "passwordButton": "Öppna med lösenord",
+    "loadingPhotos": "Laddar bilder..."
   },
   "permitPdf": {
     "title": "Transporttillstånd",
