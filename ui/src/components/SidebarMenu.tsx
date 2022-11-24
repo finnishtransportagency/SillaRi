@@ -17,8 +17,6 @@ import {
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
-import Cookies from "js-cookie";
-import * as serviceWorkerRegistration from "../serviceWorkerRegistration";
 import { useDispatch } from "react-redux";
 import { menuController } from "@ionic/core/components";
 import calendar from "../theme/icons/calendar.svg";
@@ -29,14 +27,15 @@ import truck from "../theme/icons/truck.svg";
 import user from "../theme/icons/user.svg";
 import vayla_logo from "../theme/icons/vayla_fi_white_192x160.png";
 import close from "../theme/icons/close_large_white.svg";
-import { getUserData, logoutUser, onRetry } from "../utils/backendData";
+import { getUserData, onRetry } from "../utils/backendData";
 import "./SidebarMenu.css";
 
 interface SidebarMenuProps {
   version: string;
+  logoutFromApp: () => void;
 }
 
-const SidebarMenu: React.FC<SidebarMenuProps> = ({ version }) => {
+const SidebarMenu: React.FC<SidebarMenuProps> = ({ version, logoutFromApp }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -46,22 +45,6 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ version }) => {
     staleTime: Infinity,
   });
   const roles = userData?.roles || [];
-
-  const logoutFromApp = () => {
-    logoutUser().then((data) => {
-      serviceWorkerRegistration.unregister(() => {});
-      const cookies = Cookies.get();
-      console.log("cookies before");
-      console.log(cookies);
-      Object.keys(cookies).forEach((key) => {
-        Cookies.remove(key);
-      });
-      console.log("cookies after");
-      console.log(cookies);
-      console.log("reidirecting to: " + data.redirectUrl);
-      window.location.href = data.redirectUrl;
-    });
-  };
 
   return (
     <IonMenu disabled={false} hidden={false} side="start" content-id="MainContent">

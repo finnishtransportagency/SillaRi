@@ -1,18 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import "./OwnListAddModal.css";
 import CustomSelect from "../common/CustomSelect";
 import IRoute from "../../interfaces/IRoute";
 
 interface SelectRouteInputProps {
-  index: number;
+  permitIndex: number;
   routes: Array<IRoute>;
   selectedRouteIndex: number | null;
-  onChange: (index: number, routeIndex: number) => void;
+  onChange: (permitIndex: number, routeIndex: number) => void;
 }
 
-const SelectRouteInput = ({ index, routes, selectedRouteIndex, onChange }: SelectRouteInputProps): JSX.Element => {
+const SelectRouteInput = ({ permitIndex, routes, selectedRouteIndex, onChange }: SelectRouteInputProps): JSX.Element => {
+  const [localSelectedRouteIndex, setLocalSelectedRouteIndex] = useState<string | number | undefined>(
+    selectedRouteIndex === null ? undefined : selectedRouteIndex
+  );
+
   const setSelectedRouteIndex = (selectedIndex: string | number | undefined) => {
-    onChange(index, selectedIndex as number);
+    setLocalSelectedRouteIndex(selectedIndex);
+    onChange(permitIndex, selectedIndex as number);
   };
 
   const getOptions = () => {
@@ -23,13 +28,9 @@ const SelectRouteInput = ({ index, routes, selectedRouteIndex, onChange }: Selec
     return options;
   };
 
-  const getSelectedIndex = () => {
-    return selectedRouteIndex === null ? undefined : selectedRouteIndex;
-  };
-
   return (
     <>
-      <CustomSelect options={getOptions()} selectedValue={getSelectedIndex()} onChange={setSelectedRouteIndex} />
+      <CustomSelect options={getOptions()} selectedValue={localSelectedRouteIndex} onChange={setSelectedRouteIndex} />
     </>
   );
 };
