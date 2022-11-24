@@ -85,11 +85,7 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                     <IonText className="headingText">{name}</IonText>
                   </IonLabel>
                 </IonCol>
-                {isImageUploadMutating > 0 && isOnline && (
-                  <IonCol>
-                    <IonSpinner color="primary" className="imageSpinnerSmall" />
-                  </IonCol>
-                )}
+                <IonCol>{isImageUploadMutating > 0 && isOnline && <IonSpinner color="primary" className="imageSpinnerSmall" />}</IonCol>
                 <IonCol size="3" className="ion-text-right">
                   <IonText>{identifier}</IonText>
                 </IonCol>
