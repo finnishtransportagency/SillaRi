@@ -20,7 +20,7 @@ public class AWSCognitoClient {
     }
 
     public boolean isLoggedIn(String accessToken) {
-        if (Arrays.asList("localhost", "local", "dev").contains(environment)) {
+        if (Arrays.asList("localhost", "local").contains(environment)) {
             return true;
         }
 
