@@ -156,6 +156,7 @@ const App: React.FC = () => {
       } catch (e) {
         console.log("App error", e);
         setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
+        window.location.href = "/sso/logout?auth=1";
       }
     };
 
