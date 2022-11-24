@@ -11,7 +11,7 @@ import lock from "../theme/icons/lock_closed_white.svg";
 import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import IPopoverPlacement from "../interfaces/IPopoverPlacement";
 import { useHistory } from "react-router-dom";
-import { onlineManager, useIsMutating } from "react-query";
+import { useIsMutating } from "react-query";
 
 interface SendingListItemProps {
   supervision: ISupervision;
@@ -71,7 +71,6 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
       <IonGrid className="ion-no-padding">
         <IonRow>
           <IonCol size="1">
-            {isImageUploadMutating > 0 && isOnline && <IonSpinner color="primary" className="imageSpinner" />}
             <IonCheckbox
               value={String(supervisionId)}
               disabled={!isOnline || !supervisionUnlocked || isImageUploadMutating > 0}
@@ -86,6 +85,11 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                     <IonText className="headingText">{name}</IonText>
                   </IonLabel>
                 </IonCol>
+                {isImageUploadMutating > 0 && isOnline && (
+                  <IonCol>
+                    <IonSpinner color="primary" className="imageSpinner" />
+                  </IonCol>
+                )}
                 <IonCol size="3" className="ion-text-right">
                   <IonText>{identifier}</IonText>
                 </IonCol>
