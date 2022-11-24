@@ -270,7 +270,8 @@
     "nothingToSend": "Ei lähetettäviä valvontaraportteja.",
     "sentReports": "Lähetetyt valvontaraportit",
     "offlineSuffix": "Offline",
-    "passwordButton": "Avaa salasanalla"
+    "passwordButton": "Avaa salasanalla",
+    "loadingPhotos": "Valokuvia ladataan..."
   },
   "permitPdf": {
     "title": "Kuljetuslupa",

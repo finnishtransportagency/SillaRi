@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { onlineManager, useMutation, useQuery, useQueryClient } from "react-query";
+import { onlineManager, useIsMutating, useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { IonContent, IonPage, useIonAlert } from "@ionic/react";
 import { useHistory, useParams } from "react-router-dom";
@@ -42,6 +42,11 @@ const SupervisionSummary = (): JSX.Element => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
+
+  // Check if images are being uploaded using the mutationKey defined in Photos.tsx
+  const isImageUploadMutating = useIsMutating(["imageUpload" + supervisionId]) > 0;
+
+  console.log("mutatin in summary" + supervisionId + " " + isImageUploadMutating);
 
   useEffect(() => {
     onlineManager.subscribe(() => {
@@ -287,7 +292,12 @@ const SupervisionSummary = (): JSX.Element => {
         ) : (
           <>
             <SupervisionHeader supervision={supervision as ISupervision} />
-            <SupervisionPhotos images={images} headingKey="supervision.photos" disabled={isLoading || notAllowedToEdit} />
+            <SupervisionPhotos
+              images={images}
+              headingKey="supervision.photos"
+              disabled={isLoading || notAllowedToEdit}
+              supervisionId={Number(supervisionId)}
+            />
             <SupervisionObservationsSummary report={report} />
             <SupervisionFooter
               saveDisabled={
@@ -301,6 +311,7 @@ const SupervisionSummary = (): JSX.Element => {
               sendImmediatelyDisabled={
                 !isOnline ||
                 !username ||
+                isImageUploadMutating ||
                 (!routeTransportId && isCustomerUsesSillariPermitSupervision(supervision)) ||
                 isLoading ||
                 notAllowedToEdit ||
