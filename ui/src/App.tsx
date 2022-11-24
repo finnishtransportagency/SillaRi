@@ -106,11 +106,11 @@ const App: React.FC = () => {
   const logoutFromApp = () => {
     logoutUser().then(
       (data) => {
-        clearDataAndRedirect(data.redirectUrl);
+        clearDataAndRedirect(process.env.PUBLIC_URL + "?ts=" + Date.now());
       },
       (error) => {
         console.log(error);
-        clearDataAndRedirect("/");
+        clearDataAndRedirect(process.env.PUBLIC_URL + "?ts=" + Date.now());
       }
     );
   };
