@@ -87,7 +87,7 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                 </IonCol>
                 {isImageUploadMutating > 0 && isOnline && (
                   <IonCol>
-                    <IonSpinner color="primary" className="imageSpinner" />
+                    <IonSpinner color="primary" className="imageSpinnerSmall" />
                   </IonCol>
                 )}
                 <IonCol size="3" className="ion-text-right">
