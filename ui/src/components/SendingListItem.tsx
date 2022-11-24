@@ -94,13 +94,15 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                 <IonCol>
                   <IonLabel>{`${t("sendingList.transportPermit")}: ${permitNumber}`}</IonLabel>
                 </IonCol>
-                <IonCol>{isImageUploadMutating > 0 && isOnline && <IonSpinner color="primary" className="imageSpinnerSmall" />}</IonCol>
+                <IonCol className="ion-text-right">
+                  {isImageUploadMutating > 0 && isOnline && <IonSpinner color="primary" className="imageSpinnerSmall" />}
+                </IonCol>
               </IonRow>
               <IonRow>
                 <IonCol>
                   <IonLabel>{`${t("sendingList.tractorUnit")}: ${tractorUnit ? tractorUnit.toUpperCase() : ""}`}</IonLabel>
                 </IonCol>
-                <IonCol>
+                <IonCol className="ion-text-right">
                   {isImageUploadMutating > 0 && isOnline && <IonText className="headingText">{`${t("sendingList.loadingPhotos")}`}</IonText>}
                 </IonCol>
               </IonRow>
