@@ -102,6 +102,12 @@ const App: React.FC = () => {
     window.location.href = url;
   };
 
+  const logoutFromApp = () => {
+    logoutUser().then((data) => {
+      clearDataAndRedirect(data.redirectUrl);
+    });
+  };
+
   useEffect(() => {
     removeObsoletePasswords();
     // Add or remove the "dark" class based on if the media query matches
@@ -156,6 +162,7 @@ const App: React.FC = () => {
       } catch (e) {
         console.log("App error", e);
         setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
+        logoutFromApp();
       }
     };
 
@@ -170,12 +177,6 @@ const App: React.FC = () => {
     // Fetch the user data on first render only, using a workaround utilising useEffect with empty dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const logoutFromApp = () => {
-    logoutUser().then((data) => {
-      clearDataAndRedirect(data.redirectUrl);
-    });
-  };
 
   const userHasRole = useCallback(
     (role: string) => {
