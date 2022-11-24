@@ -1,0 +1,1 @@
+ALTER TABLE sillari.address RENAME COLUMN street TO streetaddress;
