@@ -94,18 +94,25 @@ const App: React.FC = () => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const clearDataAndRedirect = (url: string) => {
-    serviceWorkerRegistration.unregister(() => {});
-    const cookies = Cookies.get();
-    Object.keys(cookies).forEach((key) => {
-      Cookies.remove(key);
+    serviceWorkerRegistration.unregister(() => {
+      const cookies = Cookies.get();
+      Object.keys(cookies).forEach((key) => {
+        Cookies.remove(key);
+      });
+      window.location.href = url;
     });
-    window.location.href = url;
   };
 
   const logoutFromApp = () => {
-    logoutUser().then((data) => {
-      clearDataAndRedirect(data.redirectUrl);
-    });
+    logoutUser().then(
+      (data) => {
+        clearDataAndRedirect(data.redirectUrl);
+      },
+      (error) => {
+        console.log(error);
+        clearDataAndRedirect("/");
+      }
+    );
   };
 
   useEffect(() => {
@@ -220,7 +227,7 @@ const App: React.FC = () => {
           />
         ) : (
           <IonReactRouter>
-            <SidebarMenu version={version} />
+            <SidebarMenu version={version} logoutFromApp={logoutFromApp} />
             <IonContent id="MainContent">
               <Switch>
                 <Route exact path="/supervisions">
