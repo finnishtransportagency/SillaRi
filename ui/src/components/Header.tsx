@@ -20,6 +20,7 @@ interface HeaderProps {
   titleStyle?: string;
   somethingFailed?: boolean;
   includeSendingList?: boolean;
+  forceOpenSendingList?: boolean;
   includeOfflineBanner?: boolean;
   // includeUnsentOfflineCheck?: boolean;
   confirmGoBack?: () => void;
@@ -31,6 +32,7 @@ const Header = ({
   titleStyle,
   somethingFailed,
   includeSendingList,
+  forceOpenSendingList,
   includeOfflineBanner,
   // includeUnsentOfflineCheck,
   confirmGoBack,
@@ -77,6 +79,11 @@ const Header = ({
       // Note: this only works if the user does not refresh the page after coming back online
       // NOTE: this has been removed until later as it's related to further development
       // setUnsentOfflineOpen(supervisionList.some((supervision) => supervision.savedOffline));
+
+      //
+      if (forceOpenSendingList && forceOpenSendingList == true) {
+        setSendingListOpen(true);
+      }
     }
   }, [supervisionList]);
 

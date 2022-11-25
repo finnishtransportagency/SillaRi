@@ -38,10 +38,11 @@ const Supervision = (): JSX.Element => {
   const { supervisionId = "0" } = useParams<SupervisionProps>();
   const {
     networkStatus: { isFailed = {} },
+    supervisionOpenedFromSendingList,
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const [modifiedReport, setModifiedReport] = useState<ISupervisionReport | undefined>(undefined);
-  const [isSupervisionOpenedFromSendingList, setSupervisionOpenedFromSendingList] = useState<boolean>(false);
+  const [isForceOpenSendingList, setForceOpenSendingList] = useState<boolean>(false);
   const [present] = useIonAlert();
 
   const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
@@ -200,9 +201,9 @@ const Supervision = (): JSX.Element => {
   const cancelSupervisionClicked = (): void => {
     if (supervisionInProgress) {
       showConfirmCancelSupervision();
-    } else if (isSupervisionOpenedFromSendingList){
-
-    } else{
+    } else if (supervisionOpenedFromSendingList) {
+      setForceOpenSendingList(true);
+    } else {
       history.goBack();
     }
   };
@@ -253,6 +254,7 @@ const Supervision = (): JSX.Element => {
         title={t("supervision.title")}
         somethingFailed={isFailed.getSupervision}
         includeSendingList
+        forceOpenSendingList={isForceOpenSendingList}
         includeOfflineBanner
         confirmGoBack={confirmGoBack}
       />

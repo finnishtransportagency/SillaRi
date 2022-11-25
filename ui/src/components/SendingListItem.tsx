@@ -12,6 +12,8 @@ import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import IPopoverPlacement from "../interfaces/IPopoverPlacement";
 import { useHistory } from "react-router-dom";
 import { useIsMutating } from "react-query";
+import { useDispatch } from "react-redux";
+import { actions } from "../store/rootSlice";
 
 interface SendingListItemProps {
   supervision: ISupervision;
@@ -24,6 +26,7 @@ interface SendingListItemProps {
 
 const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen, isOnline, username }: SendingListItemProps): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const [supervisionUnlocked, setSupervisionUnlocked] = useState<boolean>(false);
   const [passwordPopoverOpen, setPasswordPopoverOpen] = useState<boolean>(false);
 
@@ -122,6 +125,10 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                       size="default"
                       disabled={!supervisionUnlocked}
                       onClick={() => {
+                        dispatch({
+                          type: actions.SET_SUPERVISION_OPENED_FROM_SENDING_LIST,
+                          payload: true,
+                        });
                         setTargetUrl(`/supervision/${supervisionId}`);
                         setOpen(false);
                       }}
