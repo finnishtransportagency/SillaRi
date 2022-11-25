@@ -4,18 +4,16 @@ import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.model.RouteTransportNumberModel;
 import fi.vaylavirasto.sillari.repositories.RouteTransportNumberRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class RouteTransportNumberService {
-    private static final Logger logger = LogManager.getLogger();
-
     private RouteTransportNumberRepository routeTransportNumberRepository;
 
     @Autowired
@@ -46,7 +44,7 @@ public class RouteTransportNumberService {
                 List<Integer> allUsedTransportNumbers = allTransportNumbersPerRoute.values().stream().flatMap(Collection::stream)
                         .filter((RouteTransportNumberModel::isUsed)).map(RouteTransportNumberModel::getTransportNumber).collect(Collectors.toList());
 
-                logger.debug("Used transport numbers for route {} with leluId {} and permit number {}: {}", route.getId(), route.getLeluId(), permitNumber, allUsedTransportNumbers);
+                log.debug("Used transport numbers for route {} with leluId {} and permit number {}: {}", route.getId(), route.getLeluId(), permitNumber, allUsedTransportNumbers);
                 int totalUsedTransportNumberCount = allUsedTransportNumbers.size();
 
                 if (totalTransportCount > totalUsedTransportNumberCount) {
@@ -55,12 +53,12 @@ public class RouteTransportNumberService {
                     List<Integer> availableTransportNumbers = allTransportNumbersPerRoute.get(currentRouteId).stream()
                             .filter(routeTransportNumber -> !routeTransportNumber.isUsed() && !allUsedTransportNumbers.contains(routeTransportNumber.getTransportNumber()))
                             .map(RouteTransportNumberModel::getTransportNumber).collect(Collectors.toList());
-                    logger.debug("Available transport numbers for route {} with leluId {} and permit number {}: {}", route.getId(), route.getLeluId(), permitNumber, availableTransportNumbers);
+                    log.debug("Available transport numbers for route {} with leluId {} and permit number {}: {}", route.getId(), route.getLeluId(), permitNumber, availableTransportNumbers);
 
                     // Select the smallest available transport number for this route
                     return !availableTransportNumbers.isEmpty() ? availableTransportNumbers.stream().min(Integer::compare).get() : null;
                 } else {
-                    logger.debug("All transport numbers used for route {} with leluId {} and permit number {}", route.getId(), route.getLeluId(), permitNumber);
+                    log.debug("All transport numbers used for route {} with leluId {} and permit number {}", route.getId(), route.getLeluId(), permitNumber);
                     return null;
                 }
             } else {

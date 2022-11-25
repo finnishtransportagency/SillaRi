@@ -1,0 +1,44 @@
+<configuration>
+    <springProperty name="LOG_LEVEL" source="LOG_LEVEL" defaultValue="INFO"/>
+
+    <appender name="json" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <fieldNames>
+                <thread>[ignore]</thread>
+                <version>[ignore]</version>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+            <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                <maxDepthPerThrowable>30</maxDepthPerThrowable>
+                <maxLength>1024</maxLength>
+                <exclude>^org\.springframework\..*</exclude>
+                <exclude>^java\..*</exclude>
+                <exclude>^javax\.servlet\..*</exclude>
+                <exclude>^org\.apache\..*</exclude>
+                <exclude>^jdk\..*</exclude>
+                <rootCauseFirst>true</rootCauseFirst>
+            </throwableConverter>
+            <includeMdcKeyName>username</includeMdcKeyName>
+        </encoder>
+    </appender>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} %-5level %logger{36}:%L - %X - %msg%n%ex{short}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework" level="WARN"/>
+
+    <springProfile name="dev,testl">
+        <root level="info">
+            <appender-ref ref="json"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="!dev,!test">
+        <root level="info">
+            <appender-ref ref="console"/>
+        </root>
+    </springProfile>
+</configuration>

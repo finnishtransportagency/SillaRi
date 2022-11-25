@@ -5,8 +5,7 @@ import fi.vaylavirasto.sillari.model.RouteTransportModel;
 import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import fi.vaylavirasto.sillari.model.TransportStatusType;
 import fi.vaylavirasto.sillari.util.TableAlias;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
@@ -21,10 +20,9 @@ import java.util.List;
 import static org.jooq.impl.DSL.notExists;
 import static org.jooq.impl.DSL.selectOne;
 
+@Slf4j
 @Repository
 public class RouteTransportRepository {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     private DSLContext dsl;
     @Autowired

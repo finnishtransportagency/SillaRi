@@ -6,11 +6,9 @@ import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.service.*;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,12 +21,11 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 @Timed
 @RequestMapping("/areaContractor")
 public class AreaContractorController {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     UIService uiService;
     @Autowired
@@ -76,7 +73,7 @@ public class AreaContractorController {
 
 
     private Integer doInitiateSupervision(@RequestParam Integer routeBridgeTemplateId) {
-        logger.debug("doInitiateSupervision " + routeBridgeTemplateId);
+        log.debug("doInitiateSupervision " + routeBridgeTemplateId);
         SillariUser user = uiService.getSillariUser();
         if (!isOwnCompanyContractRouteBridge(user, routeBridgeTemplateId)) {
             throw new AccessDeniedException("Supervision of routebridge not allowed to the user");
@@ -120,7 +117,7 @@ public class AreaContractorController {
                 return ResponseEntity.ok().body(supervisionIds);
             }
             var routeBridgeTemplateIds2 = routeBridgeTemplateIds.substring(1, routeBridgeTemplateIds.length()-1);
-            logger.debug("routeBridgeTemplateIds2 "+routeBridgeTemplateIds2);
+            log.debug("routeBridgeTemplateIds2 "+routeBridgeTemplateIds2);
             var splitted = routeBridgeTemplateIds2.split(",");
             for (String routeBridgeTemplateId : splitted) {
                 Integer supervisionId = doInitiateSupervision(Integer.valueOf(routeBridgeTemplateId));

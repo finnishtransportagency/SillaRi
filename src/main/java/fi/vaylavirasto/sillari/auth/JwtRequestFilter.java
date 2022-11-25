@@ -3,11 +3,9 @@ package fi.vaylavirasto.sillari.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.SignatureException;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,8 +40,6 @@ import java.util.List;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-    private static final Logger logger = LogManager.getLogger();
-
     private static String publicKey = null;
     private static PublicKey ecPublicKey = null;
 
@@ -144,6 +140,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     String iss = (String) claims.get("iss");
                     String uid = (String) claims.get("custom:uid");
                     String userNameDetail = (uid != null) ? uid : username;
+                    MDC.put("username", userNameDetail);
 
                     logger.debug(String.format("Username %s", userNameDetail));
 
@@ -246,6 +243,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             //response.sendRedirect(url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
         } finally {            
             SecurityContextHolder.clearContext();
+            MDC.clear();
         }
     }
 

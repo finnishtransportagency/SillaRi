@@ -6,8 +6,6 @@ import fi.vaylavirasto.sillari.model.Sequences;
 import fi.vaylavirasto.sillari.model.SupervisionPdfModel;
 import fi.vaylavirasto.sillari.util.ObjectKeyUtil;
 import fi.vaylavirasto.sillari.util.TableAlias;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.exception.DataAccessException;
@@ -19,8 +17,6 @@ import java.time.OffsetDateTime;
 
 @Repository
 public class SupervisionPdfRepository {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     private DSLContext dsl;
 

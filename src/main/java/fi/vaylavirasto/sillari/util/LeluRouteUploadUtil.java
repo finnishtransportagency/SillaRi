@@ -2,9 +2,8 @@ package fi.vaylavirasto.sillari.util;
 
 import fi.vaylavirasto.sillari.api.rest.LeluRouteUploadResponseWrapper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -26,10 +25,9 @@ import java.util.*;
 import java.nio.charset.StandardCharsets;
 
 
-
+@Slf4j
 @Service
 public class LeluRouteUploadUtil {
-    private static final Logger logger = LogManager.getLogger();
     public static final String LELU_IMPORT_ROUTE_SCRIPT_FILENAME = "lelu_import_route_zip.sh";
 
     @Autowired
@@ -53,29 +51,29 @@ public class LeluRouteUploadUtil {
         try {
             String connectionString = constructConnectionString(datasourceUrl, datasourceUsername, datasourcePassword);
             File routeUploadDirectory = new File(routeUploadPathString);
-            logger.debug("routeUploadPath: " + routeUploadPathString);
-            logger.debug("connectionString: " + connectionString);
+            log.debug("routeUploadPath: " + routeUploadPathString);
+            log.debug("connectionString: " + connectionString);
             if (routeUploadDirectory.exists() && routeUploadDirectory.isDirectory() && routeUploadDirectory.canWrite()) {
                 if (routeId != null && routeId > 0 && file != null && !file.isEmpty()) {
                     // Save the file to the path specified in the config
                     String zipFileName = file.getOriginalFilename();
-                    logger.debug("zip filename " + zipFileName);
+                    log.debug("zip filename " + zipFileName);
                     Path zipFilePath = Paths.get(routeUploadPathString, zipFileName);
-                    logger.debug("zipFilePath: " + zipFilePath.toString());
+                    log.debug("zipFilePath: " + zipFilePath.toString());
                     file.transferTo(zipFilePath);
 
                     //maybe file is base64; try decode
                     try {
                         String newFileName = routeUploadPathString+"/"+zipFileName+".zip";
-                        logger.debug("newFileName: " + newFileName);
+                        log.debug("newFileName: " + newFileName);
                         String fileString = Files.readString(zipFilePath, StandardCharsets.US_ASCII);
                         FileUtils.writeByteArrayToFile(new File(newFileName), MyAwesomeBase64.getDecoder().decode(fileString));
                         zipFileName = newFileName;
-                        logger.debug("created fiel in:" + newFileName);
+                        log.debug("created fiel in:" + newFileName);
 
                     }
                     catch (Exception e){
-                        logger.debug("couldnt base64 decode, prolly isnt encoded. " + e.getMessage());
+                        log.debug("couldnt base64 decode, prolly isnt encoded. " + e.getMessage());
                         //add zip extension if missing
                         if(!zipFileName.toLowerCase().endsWith(".zip")){
                             String newZipFileName = zipFileName + ".zip";
@@ -97,7 +95,7 @@ public class LeluRouteUploadUtil {
 
 
                     Path fullScriptPath = Paths.get(routeUploadPathString, LELU_IMPORT_ROUTE_SCRIPT_FILENAME);
-                    logger.debug("script path: " + fullScriptPath.toString());
+                    log.debug("script path: " + fullScriptPath.toString());
                     Files.write(fullScriptPath, inputStream.readAllBytes());
 
                     Files.setPosixFilePermissions(fullScriptPath, perms);
@@ -114,14 +112,14 @@ public class LeluRouteUploadUtil {
 
 
 
-                    // Write the script output to the debug logger
-                    ogr2ogr.command().forEach((String a) -> logger.debug("Script param: " + a));
+                    // Write the script output to the debug logFile
+                    ogr2ogr.command().forEach((String a) -> log.debug("Script param: " + a));
 
                     //log script out to a temp file
-                    final String tempLogFileName = routeUploadPathString +"/routeImport"+routeId+".log";
-                    File log = new File(tempLogFileName);
+                    final String tempLogFileName = routeUploadPathString +"/routeImport"+routeId+".logFile";
+                    File logFile = new File(tempLogFileName);
                     ogr2ogr.redirectErrorStream(true);/*from w w w .  j  av a 2  s. c o m*/
-                    ogr2ogr.redirectOutput(ProcessBuilder.Redirect.appendTo(log));
+                    ogr2ogr.redirectOutput(ProcessBuilder.Redirect.appendTo(logFile));
 
                     // Run the process and check the result to see if it worked
                     Process process = ogr2ogr.start();
@@ -132,35 +130,35 @@ public class LeluRouteUploadUtil {
 
 
                     if (result != 0) {
-                        logger.error("Error uploading route file: " + result);
+                        log.error("Error uploading route file: " + result);
                         logTempFile(tempLogFileName, true);
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LeluRouteUploadResponseWrapper(result, "Error uploading route geometry file"));
                     }
 
                     String message = "Upload succeeded!";
-                    logger.debug(message);
+                    log.debug(message);
                     logTempFile(tempLogFileName, false);
                     return ResponseEntity.status(HttpStatus.OK).body(new LeluRouteUploadResponseWrapper(result, message));
                 } else if (file == null || file.isEmpty()) {
                     String message = "File is empty!";
-                    logger.debug(message);
+                    log.debug(message);
 
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LeluRouteUploadResponseWrapper(-1, message));
                 } else {
                     String message = "Calculation id is not specified!";
-                    logger.debug(message);
+                    log.debug(message);
 
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LeluRouteUploadResponseWrapper(-1, message));
                 }
             } else {
                 String message = "Upload directory is invalid!";
-                logger.debug(message);
+                log.debug(message);
 
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LeluRouteUploadResponseWrapper(-1, message));
             }
         } catch (Exception ex) {
             String message = "Exception while uploading route geometry file!";
-            logger.error(message, ex);
+            log.error(message, ex);
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LeluRouteUploadResponseWrapper(-1, message));
         }
@@ -172,15 +170,15 @@ public class LeluRouteUploadUtil {
             List<String> lines = Files.readAllLines(path);
             for(String line: lines){
                 if(isError){
-                    logger.error("IMPORT SCRIPT ERROR: " +line);
+                    log.error("IMPORT SCRIPT ERROR: " +line);
                 }else{
-                    logger.debug("IMPORT SCRIPT DEBUG: " +line);
+                    log.debug("IMPORT SCRIPT DEBUG: " +line);
                 }
             }
             Files.delete(path);
         } catch (IOException e) {
             e.printStackTrace();
-            logger.warn("Error logging import script out.");
+            log.warn("Error logging import script out.");
         }
 
 

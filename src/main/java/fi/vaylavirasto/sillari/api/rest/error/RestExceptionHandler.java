@@ -1,7 +1,6 @@
 package fi.vaylavirasto.sillari.api.rest.error;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -22,10 +21,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     private MessageSource messageSource;
 
@@ -43,7 +41,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        logger.warn("MethodArgumentNotValidException 'errors':'{}', 'headers':'{}', 'status':'{}'", errors, headers, status);
+        log.warn("MethodArgumentNotValidException 'errors':'{}', 'headers':'{}', 'status':'{}'", errors, headers, status);
 
         return createErrorResponse(status, null, errors);
     }
@@ -51,55 +49,55 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     // Let Spring handle the exception, we just override the status code
     @ExceptionHandler(Exception.class)
     public void other(Exception ex, HttpServletResponse response) throws IOException {
-        logger.error("General Exception: ", ex);
+        log.error("General Exception: ", ex);
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
-        logger.error("AccessDeniedException: ", ex);
+        log.error("AccessDeniedException: ", ex);
         return new ResponseEntity<>("", HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(LeluPermitSaveException.class)
     public ResponseEntity<Object> leluPermitSaveException(LeluPermitSaveException ex) {
-        logger.error("LeluPermitSaveException 'id':'{}'", ex.getMessage());
+        log.error("LeluPermitSaveException 'id':'{}'", ex.getMessage());
         return handleCustomException(ex.getStatusCode(), ex.getMessage());
     }
 
     @ExceptionHandler(LeluRouteGeometryUploadException.class)
     public ResponseEntity<Object> leluRouteGeometryUploadException(LeluRouteGeometryUploadException ex) {
-        logger.error("LeluRouteGeometryUploadException 'reason':'{}'", ex.getMessage());
+        log.error("LeluRouteGeometryUploadException 'reason':'{}'", ex.getMessage());
         return handleCustomException(ex.getStatusCode(), ex.getMessage());
     }
 
     @ExceptionHandler(PDFUploadException.class)
     public ResponseEntity<Object> pdfUploadException(PDFUploadException ex) {
-        logger.error("PDFUploadException 'reason':'{}'", ex.getMessage());
+        log.error("PDFUploadException 'reason':'{}'", ex.getMessage());
         return handleCustomException(ex.getStatusCode(), ex.getMessage());
     }
 
     @ExceptionHandler(PDFDownloadException.class)
     public ResponseEntity<Object> pdfDownloadException(PDFDownloadException ex) {
-        logger.error("PDFDownloadException 'reason':'{}'", ex.getMessage());
+        log.error("PDFDownloadException 'reason':'{}'", ex.getMessage());
         return handleCustomException(ex.getStatusCode(), ex.getMessage());
     }
 
     @ExceptionHandler(LeluRouteNotFoundException.class)
     public ResponseEntity<Object> leluRouteNotFoundException(LeluRouteNotFoundException ex) {
-        logger.error("LeluRouteNotFoundException 'reason':'{}'", ex.getMessage());
+        log.error("LeluRouteNotFoundException 'reason':'{}'", ex.getMessage());
         return handleCustomException(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(APIVersionException.class)
     public ResponseEntity<Object> apiVersionException(APIVersionException ex) {
-        logger.error("apiVersionException 'reason':'{}'", ex.getMessage());
+        log.error("apiVersionException'", ex);
         return createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
     }
 
     @ExceptionHandler(TransportNumberConflictException.class)
     public ResponseEntity<Object> transportNumberConflictException(TransportNumberConflictException ex) {
-        logger.error("transportNumberConflictException 'reason':'{}'", ex.getMessage());
+        log.error("transportNumberConflictException 'reason':'{}'", ex.getMessage());
         return createErrorResponse(HttpStatus.CONFLICT, ex.getMessage(), null);
     }
 
@@ -120,13 +118,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 message = messageSource.getMessage("trex.500", null, Locale.ROOT);
         }
 
-        logger.error("TRexRestException 'statusCode':{}, 'originalMessage':'{}', 'newMessage':'{}'", ex.getStatusCode().value(), ex.getMessage(), message);
+        log.error("TRexRestException 'statusCode':{}, 'originalMessage':'{}', 'newMessage':'{}'", ex.getStatusCode().value(), ex.getMessage(), message);
         return handleCustomException(ex.getStatusCode(), message);
     }
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Object> responseStatusException(ResponseStatusException ex) {
-        logger.error("ResponseStatusException 'reason':'{}'", ex.getMessage());
+        log.error("ResponseStatusException 'reason':'{}'", ex.getMessage());
         return handleCustomException(ex.getStatus(), ex.getMessage());
     }
 

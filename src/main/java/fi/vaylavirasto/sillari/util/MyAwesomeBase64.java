@@ -1,18 +1,16 @@
 package fi.vaylavirasto.sillari.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class MyAwesomeBase64 {
     private MyAwesomeBase64() {
     }
 
-    private static final Logger logger = LogManager.getLogger();
 
 
 
@@ -125,7 +123,7 @@ public class MyAwesomeBase64 {
                                 decodedBytes[dp++] = (byte) bits0;
                                 continue;
                             }
-                            logger.debug("decodedBytes: " +decodedBytes);
+                            log.debug("decodedBytes: " +decodedBytes);
                             currentWhatever -= 4;
                         }
 

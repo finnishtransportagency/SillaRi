@@ -1,8 +1,7 @@
 package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.auth.SillariUser;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,15 +16,14 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class UIService {
-    private static final Logger logger = LogManager.getLogger();
-
     private static String getEncodedKeyValue(Map.Entry<String, String> p) {
         try {
             return String.format("%s=%s", URLEncoder.encode(p.getKey(), StandardCharsets.UTF_8.toString()), URLEncoder.encode(p.getValue(), StandardCharsets.UTF_8.toString()));
         } catch (UnsupportedEncodingException ex) {
-            logger.error(ex);
+            log.error(ex.getMessage(), ex);
             return "";
         }
     }
@@ -36,7 +34,7 @@ public class UIService {
                     .map(UIService::getEncodedKeyValue)
                     .collect(Collectors.joining("&"));
 
-            logger.debug(String.format("Sending request %s?%s", baseUrl, paramString));
+            log.debug(String.format("Sending request %s?%s", baseUrl, paramString));
 
             URL url = new URL(baseUrl + "?" + paramString);
             HttpURLConnection con;
@@ -72,7 +70,7 @@ public class UIService {
 
                 con.disconnect();
 
-                logger.debug(String.format("Response status %s for %s?%s", status, baseUrl, paramString));
+                log.debug(String.format("Response status %s for %s?%s", status, baseUrl, paramString));
 
                 return ResponseEntity.status(status).body(baos.toByteArray());
             } else {
@@ -93,13 +91,13 @@ public class UIService {
 
                 con.disconnect();
 
-                logger.debug(String.format("Response status %s for %s?%s", status, baseUrl, paramString));
+                log.debug(String.format("Response status %s for %s?%s", status, baseUrl, paramString));
 
                 return ResponseEntity.status(status).body(content);
             }
         }
         else {
-            logger.debug(String.format("Bad request: %s, %s", baseUrl, params));
+            log.debug(String.format("Bad request: %s, %s", baseUrl, params));
 
             return ResponseEntity.badRequest().build();
         }

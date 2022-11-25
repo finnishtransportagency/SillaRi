@@ -6,8 +6,7 @@ import fi.vaylavirasto.sillari.config.SillariConfig;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
@@ -34,12 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+@Slf4j
 @RestController
 @Timed
 @RequestMapping("/ui")
 public class UIController {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     private UIService uiService;
 
@@ -62,7 +60,7 @@ public class UIController {
             }
             catch (Exception ex) {
                 String message = "Error getting background map xml";
-                logger.error(message, ex);
+                log.error(message, ex);
 
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("response", message));
             }
@@ -93,7 +91,7 @@ public class UIController {
             }
             catch (Exception ex) {
                 String message = "Error getting geoserver data xml";
-                logger.error(message, ex);
+                log.error(message, ex);
 
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("response", message));
             }
@@ -118,7 +116,7 @@ public class UIController {
             }
             catch (Exception ex) {
                 String message = "Error getting background map image";
-                logger.error(message, ex);
+                log.error(message, ex);
 
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("response", message));
             }
@@ -149,7 +147,7 @@ public class UIController {
             }
             catch (Exception ex) {
                 String message = "Error getting background map image";
-                logger.error(message, ex);
+                log.error(message, ex);
 
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("response", message));
             }
@@ -182,7 +180,7 @@ public class UIController {
 
         HashMap<String, Object> responseBody = new HashMap<>();
 
-        logger.debug( "redirectUrl:" + url + "/logout?client_id=" + clientId + "&logout_uri=" + URLEncoder.encode(logoutUrl, StandardCharsets.UTF_8));
+        log.debug( "redirectUrl:" + url + "/logout?client_id=" + clientId + "&logout_uri=" + URLEncoder.encode(logoutUrl, StandardCharsets.UTF_8));
 
         responseBody.put("redirectUrl", url + "/logout?client_id=" + clientId + "&logout_uri=" + URLEncoder.encode(logoutUrl, StandardCharsets.UTF_8));
 
@@ -248,7 +246,7 @@ public class UIController {
                         version = prop.getProperty("version");
                     } catch (IOException ex) {
                         ex.printStackTrace();
-                        logger.error(ex.toString());
+                        log.error(ex.toString());
                     }
                 }
             }

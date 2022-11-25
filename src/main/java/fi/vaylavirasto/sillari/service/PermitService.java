@@ -5,8 +5,7 @@ import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class PermitService {
     @Autowired
@@ -43,8 +43,6 @@ public class PermitService {
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
-
-    private static final Logger logger = LogManager.getLogger();
 
     public PermitModel getPermit(Integer permitId) {
         return permitRepository.getPermit(permitId);
@@ -100,7 +98,7 @@ public class PermitService {
                     route.setNextAvailableTransportNumber(transportNumber);
                 }
 
-                logger.debug("getting permit {} route {} bridges with transport number: {}", permit.getPermitNumber(), route.getName(), transportNumber);
+                log.debug("getting permit {} route {} bridges with transport number: {}", permit.getPermitNumber(), route.getName(), transportNumber);
                 if (transportNumber != null && transportNumber > 0) {
                     route.setRouteBridges(routeBridgeRepository.getRouteBridges(routeId, transportNumber));
                 } else {

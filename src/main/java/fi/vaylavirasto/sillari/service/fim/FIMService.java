@@ -7,8 +7,7 @@ import fi.vaylavirasto.sillari.service.fim.responseModel.FIMUserMapper;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Group;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Groups;
 import fi.vaylavirasto.sillari.service.fim.responseModel.Person;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,10 +21,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+@Slf4j
 @Service
 public class FIMService {
-    private static final Logger logger = LogManager.getLogger();
-
     @Value("${sillari.fim.url}")
     private String fimUrl;
     @Value("${sillari.fim.username}")
@@ -40,7 +38,7 @@ public class FIMService {
 
     public List<SillariUser> getSupervisorUsers() throws FIMRestException, ExecutionException, InterruptedException {
         if (!cachedDataCurrent()) {
-            logger.trace("Get from FIM. Not using cached supervisor users");
+            log.trace("Get from FIM. Not using cached supervisor users");
             if (supervisorUsers == null || supervisorUsers.isDone()) {
                 supervisorsLastQueryedInMillis = System.currentTimeMillis();
                 ExecutorService executor = Executors.newWorkStealingPool();
@@ -67,7 +65,7 @@ public class FIMService {
     }
 
     public Groups getSupervisorUsersXML() throws FIMRestException {
-        logger.trace("Get sillari supervisor users from fimrest");
+        log.trace("Get sillari supervisor users from fimrest");
         WebClient webClient = buildClient();
         try {
             String xml = webClient.get()
@@ -76,7 +74,7 @@ public class FIMService {
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
-            logger.trace("groups: " + xml);
+            log.trace("groups: " + xml);
             XmlMapper xmlMapper = new XmlMapper();
 
             Groups groups;
@@ -85,7 +83,7 @@ public class FIMService {
             return groups;
 
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
             throw new FIMRestException(e.getMessage());
         }
     }

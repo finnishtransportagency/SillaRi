@@ -6,8 +6,7 @@ import fi.vaylavirasto.sillari.mapper.TransportDimensionsMapper;
 import fi.vaylavirasto.sillari.mapper.UnloadedTransportDimensionsMapper;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.util.TableAlias;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -23,9 +22,9 @@ import java.util.List;
 import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.select;
 
+@Slf4j
 @Repository
 public class PermitRepository {
-    private static final Logger logger = LogManager.getLogger();
     @Autowired
     private DSLContext dsl;
 
@@ -399,7 +398,7 @@ public class PermitRepository {
                                 routeBridge.getTransportNumber())
                         .execute();
             } else {
-                logger.warn("BridgeId missing for routeBridge, cannot insert");
+                log.warn("BridgeId missing for routeBridge, cannot insert");
             }
         }
     }

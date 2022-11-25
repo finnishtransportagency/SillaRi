@@ -5,11 +5,8 @@ import fi.vaylavirasto.sillari.auth.SillariRole;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.service.*;
-import fi.vaylavirasto.sillari.service.trex.TRexPicService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +27,6 @@ import java.util.List;
 @Timed
 @RequestMapping("/routebridge")
 public class RouteBridgeController {
-    private static final Logger logger = LogManager.getLogger();
     @Autowired
     RouteBridgeService routeBridgeService;
     @Autowired

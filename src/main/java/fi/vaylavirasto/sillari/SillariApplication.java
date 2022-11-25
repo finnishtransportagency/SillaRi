@@ -1,7 +1,6 @@
 package fi.vaylavirasto.sillari;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -16,15 +15,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.filter.CorsFilter;
 
+@Slf4j
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableCaching
 public class SillariApplication {
-    private static final Logger logger = LogManager.getLogger();
     public static void main(String[] args) {
-        logger.debug("application starting");
-        logger.info("db.url = " + System.getenv("db.url"));
-        logger.info("db.username = " + System.getenv("db.username"));
+        log.debug("application starting");
+        log.info("db.url = " + System.getenv("db.url"));
+        log.info("db.username = " + System.getenv("db.username"));
         System.out.println("db.url = " + System.getenv("db.url"));
         System.out.println("db.username = " + System.getenv("db.username"));
         System.out.println("db_url = " + System.getenv("db_url"));

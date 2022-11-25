@@ -9,8 +9,6 @@ import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +22,6 @@ import java.util.List;
 @Timed
 @RequestMapping("/images")
 public class ImageController {
-    private static final Logger logger = LogManager.getLogger();
 
     @Autowired
     SupervisionImageService supervisionImageService;

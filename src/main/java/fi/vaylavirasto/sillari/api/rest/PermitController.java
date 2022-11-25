@@ -10,8 +10,7 @@ import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.UIService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +25,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @RestController
 @Timed
 @RequestMapping("/permit")
 public class PermitController {
-    private static final Logger logger = LogManager.getLogger();
 
     @Autowired
     PermitService permitService;
@@ -80,9 +79,9 @@ public class PermitController {
     public void getPermitPdf(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         ServiceMetric serviceMetric = new ServiceMetric("PermitController", "getPermitPdf");
         try {
-            logger.debug("getPermitPdf: " +id);
+            log.debug("getPermitPdf: " +id);
             if (!userHasRightsToViewPermit(id)) {
-                logger.warn("not userHasRightsToViewPermit");
+                log.warn("not userHasRightsToViewPermit");
                 throw new AccessDeniedException("No right to view permit.");
             }
             PermitModel permit = permitService.getPermit(id);
