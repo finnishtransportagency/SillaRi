@@ -52,6 +52,7 @@ const Header = ({
   const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : history.goBack;
 
   const [isSendingListOpen, setSendingListOpen] = useState<boolean>(false);
+  const [isSupervisionOpenedFromSendingList, setSupervisionOpenedFromSendingList] = useState<boolean>(false);
   // const [isUnsentOfflineOpen, setUnsentOfflineOpen] = useState<boolean>(false);
 
   const [sentSupervisions, setSentSupervisions] = useState<ISupervision[]>([]);

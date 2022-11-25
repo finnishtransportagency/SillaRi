@@ -41,6 +41,7 @@ const Supervision = (): JSX.Element => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const [modifiedReport, setModifiedReport] = useState<ISupervisionReport | undefined>(undefined);
+  const [isSupervisionOpenedFromSendingList, setSupervisionOpenedFromSendingList] = useState<boolean>(false);
   const [present] = useIonAlert();
 
   const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
@@ -199,7 +200,9 @@ const Supervision = (): JSX.Element => {
   const cancelSupervisionClicked = (): void => {
     if (supervisionInProgress) {
       showConfirmCancelSupervision();
-    } else {
+    } else if (isSupervisionOpenedFromSendingList){
+
+    } else{
       history.goBack();
     }
   };

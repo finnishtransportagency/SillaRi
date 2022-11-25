@@ -122,9 +122,8 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                       size="default"
                       disabled={!supervisionUnlocked}
                       onClick={() => {
-                        history.push(`/supervision/${supervisionId}`);
+                        setTargetUrl(`/supervision/${supervisionId}`);
                         setOpen(false);
-                        history.go(0);
                       }}
                     >
                       {t("common.buttons.edit")}
