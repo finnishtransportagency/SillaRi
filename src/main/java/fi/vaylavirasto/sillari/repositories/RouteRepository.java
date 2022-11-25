@@ -4,8 +4,7 @@ import fi.vaylavirasto.sillari.mapper.AddressMapper;
 import fi.vaylavirasto.sillari.mapper.RouteMapper;
 import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +13,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Repository
 public class RouteRepository {
     @Autowired
     private DSLContext dsl;
-
-    private static final Logger logger = LogManager.getLogger();
 
     public List<RouteModel> getRoutesByPermitId(Integer permitId) {
         return dsl.select().from(TableAlias.route)
@@ -93,7 +91,7 @@ public class RouteRepository {
                 .fetch();
 
         Map<Long, Integer> resultMap = result.intoMap(TableAlias.route.LELU_ID, TableAlias.route.ID);
-        logger.debug("Route LeLu IDs with corresponding Route IDs resultMap={}", resultMap);
+        log.debug("Route LeLu IDs with corresponding Route IDs resultMap={}", resultMap);
         return resultMap;
     }
 

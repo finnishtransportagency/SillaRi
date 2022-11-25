@@ -6,8 +6,7 @@ import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
 import fi.vaylavirasto.sillari.dto.SupervisionMetadataDTO;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,10 +16,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.time.OffsetDateTime;
 
+@Slf4j
 @Service
 public class S3FileService {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     AWSS3Client awss3Client;
     @Autowired
@@ -69,7 +67,7 @@ public class S3FileService {
             File outputFile = new File("/", filename);
             Files.write(outputFile.toPath(), decodedString);
 
-            logger.debug("wrote local file: " + outputFile.getAbsolutePath() + ", filename: " + outputFile.getName());
+            log.debug("wrote local file: " + outputFile.getAbsolutePath() + ", filename: " + outputFile.getName());
             return true;
         } else {
             // Upload to AWS
@@ -79,9 +77,9 @@ public class S3FileService {
 
             boolean success = awss3Client.upload(decodedString, contentType, bucketName, AWSS3Client.SILLARI_BACKEND_ROLE_SESSION_NAME, supervisionDetails);
             if (success) {
-                logger.debug("Uploaded to AWS: " + objectKey);
+                log.debug("Uploaded to AWS: " + objectKey);
             } else {
-                logger.warn("Upload to AWS failed: " + objectKey);
+                log.warn("Upload to AWS failed: " + objectKey);
             }
             return success;
         }
@@ -94,19 +92,19 @@ public class S3FileService {
             try {
                 Files.write(outputFile.toPath(), decodedString);
             } catch (IOException e) {
-                logger.debug("write local file failed");
+                log.debug("write local file failed");
             }
 
-            logger.debug("wrote local file: " + outputFile.getAbsolutePath() + ", filename: " + outputFile.getName());
+            log.debug("wrote local file: " + outputFile.getAbsolutePath() + ", filename: " + outputFile.getName());
             return true;
         } else {
             // Upload to AWS
 
             boolean success = awss3Client.upload(objectKey, decodedString, contentType, bucketName, AWSS3Client.SILLARI_BACKEND_ROLE_SESSION_NAME);
             if (success) {
-                logger.debug("Uploaded to AWS: " + objectKey);
+                log.debug("Uploaded to AWS: " + objectKey);
             } else {
-                logger.warn("Upload to AWS failed: " + objectKey);
+                log.warn("Upload to AWS failed: " + objectKey);
             }
             return success;
         }
@@ -162,7 +160,7 @@ public class S3FileService {
                 try {
                     Files.delete(deleteFile.toPath());
                 } catch (IOException e) {
-                    logger.debug("Local file deletion failed");
+                    log.debug("Local file deletion failed");
                 }
             }
         } else {

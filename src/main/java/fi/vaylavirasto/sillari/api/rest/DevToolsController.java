@@ -1,5 +1,19 @@
 package fi.vaylavirasto.sillari.api.rest;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
 import com.amazonaws.util.IOUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,32 +35,23 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.apache.logging.log4j.LogManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.imageio.stream.ImageOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
+@Slf4j
 @RestController
 @Profile({"local", "dev"})
 @RequestMapping(value = "/devtools")
 public class DevToolsController {
-    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger();
-
     @Autowired
     TRexBridgeInfoService tRexBridgeInfoService;
     @Autowired
@@ -108,7 +113,7 @@ public class DevToolsController {
             imageService.expireSupervisionImage(id);
             return true;
         } catch (IOException e) {
-            logger.error("Expire image failed", e);
+            log.error("Expire image failed", e);
             return false;
         }
     }
@@ -116,19 +121,19 @@ public class DevToolsController {
     @RequestMapping(value = "/testGetSupervisorsRawFromFim", method = RequestMethod.GET)
     @Operation(summary = "Test get SillaRi supervisor users from FIM")
     public Groups testConnectionToFim() {
-        logger.debug("Test connections to fim");
+        log.debug("Test connections to fim");
 
         try {
             Groups groups = fimService.getSupervisorUsersXML();
             if (groups == null) {
-                logger.error("FIM fail no xml");
+                log.error("FIM fail no xml");
                 return null;
             } else {
-                logger.debug("success getting user xml from fim");
+                log.debug("success getting user xml from fim");
                 return groups;
             }
         } catch (Exception e) {
-            logger.error("fimrest fail " + e.getClass().getName() + " " + e.getMessage());
+            log.error("fimrest fail " + e.getClass().getName() + " " + e.getMessage());
             return null;
         }
     }
@@ -239,20 +244,20 @@ public class DevToolsController {
     @Operation(summary = "Test basic get request with constant bridge")
     public TrexBridgeInfoResponseJson testConnectionToTrex() throws TRexRestException {
 
-        logger.debug("HELLO test connections");
+        log.debug("HELLO test connections");
         TrexBridgeInfoResponseJson b = null;
         try {
             b = tRexBridgeInfoService.getBridgeInfo("1.2.246.578.1.15.401830");
             if (b == null) {
-                logger.error("trex fail  bridge null");
+                log.error("trex fail  bridge null");
                 return null;
 
             } else {
-                logger.debug("success getting bridge from trex: " + b);
+                log.debug("success getting bridge from trex: " + b);
                 return b;
             }
         } catch (Exception e) {
-            logger.error("trex fail " + e.getClass().getName() + " " + e.getMessage());
+            log.error("trex fail " + e.getClass().getName() + " " + e.getMessage());
             return null;
         }
 
@@ -276,7 +281,7 @@ public class DevToolsController {
             TrexPicInfoResponseJson a = objectMapper.readValue(trexHardPicInfoString(), TrexPicInfoResponseJson.class);
             return a;
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
         return null;
     }
@@ -422,7 +427,7 @@ public class DevToolsController {
             TrexBridgeInfoResponseJson a = objectMapper.readValue(trexHardString(), TrexBridgeInfoResponseJson.class);
             return a;
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
         return null;
     }

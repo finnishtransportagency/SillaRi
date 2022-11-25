@@ -2,10 +2,9 @@ package fi.vaylavirasto.sillari.util;
 
 import fi.vaylavirasto.sillari.api.rest.error.PDFGenerationException;
 import fi.vaylavirasto.sillari.model.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.WordUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -22,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class PDFGenerator {
 
     public static final String pdf_title = "Sillanvalvontaraportti";
@@ -46,8 +46,6 @@ public class PDFGenerator {
     public static final String pdf_photo = "kuva";
 
     public static final int TOP_MARGIN = 50;
-    private static final Logger logger = LogManager.getLogger();
-
 
     private PDDocument document;
     private PDPageContentStream contentStream;
@@ -62,7 +60,7 @@ public class PDFGenerator {
     public byte[] generateReportPDF(SupervisionModel supervision, List<byte[]> images) throws PDFGenerationException {
 
 
-        logger.debug("Generate pdf for supervision {}", supervision);
+        log.debug("Generate pdf for supervision {}", supervision);
         BridgeModel bridge = supervision.getRouteBridge().getBridge();
         RouteModel route = supervision.getRouteBridge().getRoute();
         SupervisionReportModel report = supervision.getReport();
@@ -136,7 +134,7 @@ public class PDFGenerator {
                         contentStream.showText(line);
                         newLine();
                     } catch (IOException e) {
-                        logger.warn("Problem generating pdf: " + line + " " + e.getClass().getName() + e.getMessage());
+                        log.warn("Problem generating pdf: " + line + " " + e.getClass().getName() + e.getMessage());
                     }
                 }
             }
@@ -188,7 +186,7 @@ public class PDFGenerator {
                 try {
                     contentStream.close();
                 } catch (Exception e) {
-                    logger.warn("Closing pdf content stream fail: " + e.getClass().getName() + e.getMessage());
+                    log.warn("Closing pdf content stream fail: " + e.getClass().getName() + e.getMessage());
                 }
             }
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -196,12 +194,12 @@ public class PDFGenerator {
             InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
             document.close();
 
-            logger.debug("Generated pdf");
+            log.debug("Generated pdf");
             return IOUtils.toByteArray(inputStream);
         } catch (PDFGenerationException pdfGenerationException) {
             throw pdfGenerationException;
         } catch (Exception e) {
-            logger.error("PDF generation failed: " + e.getClass().getName() + e.getMessage());
+            log.error("PDF generation failed: " + e.getClass().getName() + e.getMessage());
             throw new PDFGenerationException(e.getClass().getName() + " " + e.getMessage());
         }
 
@@ -238,7 +236,7 @@ public class PDFGenerator {
 
 
         } catch (IOException e) {
-            logger.error("New page failed: " + e.getClass().getName() + e.getMessage());
+            log.error("New page failed: " + e.getClass().getName() + e.getMessage());
             throw new PDFGenerationException(e.getClass().getName() + " " + e.getMessage());
         }
 
@@ -263,7 +261,7 @@ public class PDFGenerator {
             document.addPage(page);
             contentStream = new PDPageContentStream(document, page);
         } catch (IOException e) {
-            logger.error("New image page failed: " + e.getClass().getName() + e.getMessage());
+            log.error("New image page failed: " + e.getClass().getName() + e.getMessage());
             throw new PDFGenerationException(e.getClass().getName() + " " + e.getMessage());
         }
 
@@ -277,13 +275,13 @@ public class PDFGenerator {
             try {
                 imageBytes = images.get(n);
             } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
-                logger.error("No corresponding image bytes for metadata. Proceeding pdf report without the image " + imageData.getFilename());
+                log.error("No corresponding image bytes for metadata. Proceeding pdf report without the image " + imageData.getFilename());
             }
             if (imageBytes != null) {
                 try {
                     pdImage = PDImageXObject.createFromByteArray(document, imageBytes, imageData.getFilename());
                 } catch (IOException e) {
-                    logger.error("Image creation from AWS failed. Proceeding pdf report without the image " + e.getClass().getName() + e.getMessage());
+                    log.error("Image creation from AWS failed. Proceeding pdf report without the image " + e.getClass().getName() + e.getMessage());
                 }
             }
             n++;
@@ -317,7 +315,7 @@ public class PDFGenerator {
                 try {
                     newImagePage();
                 } catch (PDFGenerationException e) {
-                    logger.error("newImagePage failed. Proceeding pdf report without the image " + e.getClass().getName() + e.getMessage());
+                    log.error("newImagePage failed. Proceeding pdf report without the image " + e.getClass().getName() + e.getMessage());
                 }
                 y -= 20 + newHeight;
             }
@@ -332,7 +330,7 @@ public class PDFGenerator {
                 }
                 y -= 20;
             } catch (Exception e) {
-                logger.error("Draw image failed. Proceeding pdf report without the image " + e.getClass().getName() + e.getMessage());
+                log.error("Draw image failed. Proceeding pdf report without the image " + e.getClass().getName() + e.getMessage());
                 e.printStackTrace();
 
             }

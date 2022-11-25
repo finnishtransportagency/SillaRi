@@ -1,7 +1,5 @@
 package fi.vaylavirasto.sillari.config;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.conf.RenderQuotedNames;
@@ -20,8 +18,6 @@ import javax.sql.DataSource;
 
 @Configuration
 public class InitialConfiguration {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     private DataSource dataSource;
 

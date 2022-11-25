@@ -18,8 +18,7 @@ import fi.vaylavirasto.sillari.util.SemanticVersioningUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -36,10 +35,10 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Slf4j
 @RestController
 @RequestMapping("/lelu")
 public class LeluController {
-    private static final Logger logger = LogManager.getLogger();
     private static final String LELU_API_VERSION_HEADER_NAME = "lelu-api-accept-version";
 
     @Value("${sillari.lelu.version}")
@@ -67,7 +66,7 @@ public class LeluController {
     // Handle JSON parse exceptions (thrown through @RequestBody)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> handleException(HttpMessageNotReadableException ex) {
-        logger.warn("HttpMessageNotReadableException 'message':'{}'", ex.getMessage());
+        log.warn("HttpMessageNotReadableException", ex);
         // Get only the first segment of the message to not include nested exceptions
         String truncatedMsg = ex.getMessage() != null ? ex.getMessage().split(";")[0] : null;
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(truncatedMsg);
@@ -83,7 +82,7 @@ public class LeluController {
     @RequestMapping(value = "/testGet", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
     public String getTest() {
-        logger.debug("Hello Lelu testGet!");
+        log.debug("Hello Lelu testGet!");
         return "Hello LeLu, this is SillaRi!";
     }
 
@@ -91,7 +90,7 @@ public class LeluController {
     @RequestMapping(value = "/testGetWithVersion", method = RequestMethod.GET)
     @Operation(summary = "Test basic get request")
     public String getTestWithVersion(@RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException {
-        logger.debug("Lelu testGet version " + apiVersion);
+        log.debug("Lelu testGet version " + apiVersion);
 
         if (apiVersion == null) {
             return "api version missing";
@@ -108,7 +107,7 @@ public class LeluController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Test basic post request", description = "Returns posted string")
     public String postTest(@RequestBody String body) {
-        logger.debug("Hello Lelu testPost!");
+        log.debug("Hello Lelu testPost!");
         return "Hello LeLu! SillaRi got post: " + body;
     }
 
@@ -128,7 +127,7 @@ public class LeluController {
     })
     public ResponseEntity<LeluPermitResponseDTO> savePermit(@Valid @RequestBody LeluPermitDTO permitDTO, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluPermitSaveException {
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
-            logger.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
+            log.debug("LeLu savePermit='number':'{}', 'version':{}", permitDTO.getNumber(), permitDTO.getVersion());
             try {
                 LeluPermitResponseDTO permit = leluService.createPermit(permitDTO);
 
@@ -139,13 +138,13 @@ public class LeluController {
                     permitDTO.getRoutes().forEach(r -> r.getBridges().forEach(b -> getBridgeFromTrexToDB(b.getOid())));
                 });
 
-                logger.debug("LeLu savePermit returning");
+                log.debug("LeLu savePermit returning");
                 return ResponseEntity.ok(permit);
             } catch (LeluPermitSaveException leluPermitSaveException) {
-                logger.error(leluPermitSaveException.getMessage());
+                log.error(leluPermitSaveException.getMessage());
                 throw leluPermitSaveException;
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                log.error(e.getMessage());
                 throw new LeluPermitSaveException(HttpStatus.INTERNAL_SERVER_ERROR, messageSource.getMessage("lelu.permit.save.failed", null, Locale.ROOT) + " " + e.getClass().getName() + " " + e.getMessage());
             }
         } else {
@@ -158,19 +157,19 @@ public class LeluController {
 
 
     private void getBridgeFromTrexToDB(String oid) {
-        logger.debug("get bridge {}", oid);
+        log.debug("get bridge {}", oid);
         try {
             BridgeModel bridge = trexBridgeInfoService.getBridge(oid);
             Integer bridgeId = bridgeService.createOrUpdateBridge(bridge);
-            logger.debug("bridge inserted or updated: {}", bridge);
+            log.debug("bridge inserted or updated: {}", bridge);
             BridgeImageModel bridgeImageModel = tRexPicService.getPicFromTrex(oid, bridgeId);
             if(bridgeImageModel != null){
                 bridgeImageService.saveBridgeIntoDBAndS3(bridgeImageModel);
             }
         } catch (TRexRestException e) {
-            logger.warn("Trex fail getting bridge: {}", oid, e);
+            log.warn("Trex fail getting bridge: {}", oid, e);
         } catch (Exception e) {
-            logger.error("Fail getBridgeFromTrexToDB", e);
+            log.error("Fail getBridgeFromTrexToDB", e);
         }
     }
 
@@ -188,11 +187,11 @@ public class LeluController {
                                                             @RequestPart("file") MultipartFile file)
         // @ApiParam(required = true, value = "Geometry shapefiles (.shp, .shx, .dbf, .prj, .cst, .fix compressed to a single zip file")
             throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
-        logger.debug("Lelu uploadroutegeometry {}", routeId);
-        logger.debug("FILE name:" + file.getName());
-        logger.debug("FILE OriginalFilename:" + file.getOriginalFilename());
-        logger.debug("FILE size:" + file.getSize());
-        logger.debug("FILE contenttype:" + file.getContentType());
+        log.debug("Lelu uploadroutegeometry {}", routeId);
+        log.debug("FILE name:" + file.getName());
+        log.debug("FILE OriginalFilename:" + file.getOriginalFilename());
+        log.debug("FILE size:" + file.getSize());
+        log.debug("FILE contenttype:" + file.getContentType());
         return leluService.uploadRouteGeometry(routeId, file);
     }
 
@@ -208,11 +207,11 @@ public class LeluController {
     public LeluPermiPdfResponseDTO uploadPermitPdf(@RequestParam(required = true) String permitNumber, @RequestParam(required = true) Integer permitVersion,
                                                    @RequestPart("file") MultipartFile file)
             throws PDFUploadException {
-        logger.debug("Lelu uploadpermitpdf {}", permitNumber);
-        logger.debug("FILE name:" + file.getName());
-        logger.debug("FILE OriginalFilename:" + file.getOriginalFilename());
-        logger.debug("FILE size:" + file.getSize());
-        logger.debug("FILE contenttype:" + file.getContentType());
+        log.debug("Lelu uploadpermitpdf {}", permitNumber);
+        log.debug("FILE name:" + file.getName());
+        log.debug("FILE OriginalFilename:" + file.getOriginalFilename());
+        log.debug("FILE size:" + file.getSize());
+        log.debug("FILE contenttype:" + file.getContentType());
         return leluService.uploadPermitPdf(permitNumber, permitVersion, file);
     }
 
@@ -222,7 +221,7 @@ public class LeluController {
     public LeluRouteGeometryResponseDTO uploadRouteGeometry2(@RequestParam Long routeId,
                                                              @RequestParam("file") MultipartFile file)
             throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
-        logger.debug("Lelu uploadroutegeometry2 {}", routeId);
+        log.debug("Lelu uploadroutegeometry2 {}", routeId);
         return leluService.uploadRouteGeometry(routeId, file);
     }
 
@@ -250,7 +249,7 @@ public class LeluController {
             @ApiResponse(responseCode = "404 NOT_FOUND", description = "Route, bridge or transport not found with provided id."),
     })
     public LeluBridgeSupervisionResponseDTO getSupervision(@RequestParam Long routeId, @RequestParam String bridgeIdentifier, @RequestParam Integer transportNumber, @RequestHeader(value = LELU_API_VERSION_HEADER_NAME, required = false) String apiVersion) throws APIVersionException, LeluRouteNotFoundException {
-        logger.debug("Lelu getSupervision " + routeId);
+        log.debug("Lelu getSupervision " + routeId);
 
         if (apiVersion == null || SemanticVersioningUtil.legalVersion(apiVersion, currentApiVersion)) {
             return leluService.getSupervision(routeId, bridgeIdentifier, transportNumber);

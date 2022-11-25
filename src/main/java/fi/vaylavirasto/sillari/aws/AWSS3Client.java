@@ -15,20 +15,18 @@ import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
 import com.amazonaws.services.securitytoken.model.Credentials;
 import com.amazonaws.util.IOUtils;
 import fi.vaylavirasto.sillari.dto.SupervisionMetadataDTO;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+@Slf4j
 @Component
 public class AWSS3Client {
 
-    private static final Logger logger = LogManager.getLogger();
     public static final String SILLARI_BACKEND_ROLE_SESSION_NAME = "SILLARI-BACKEND";
     private static final String EXPIRED_TAG = "supervision_expired";
     private AmazonS3 s3Client = null;
@@ -55,7 +53,7 @@ public class AWSS3Client {
             secretKey = System.getenv("secretKey");
         }
         roleArn = System.getenv("roleArn");
-        logger.info(environment);
+        log.info(environment);
     }
 
     public String getPermitBucketName() {
@@ -94,7 +92,7 @@ public class AWSS3Client {
         if (roleResponse != null) {
             long now = new Date().getTime();
             if (roleResponse.getCredentials().getExpiration().getTime() < now + 60 * 1000L) {
-                logger.debug("renew credentials " + roleResponse.getCredentials().getExpiration());
+                log.debug("renew credentials " + roleResponse.getCredentials().getExpiration());
                 s3Client = null;
             }
         }
@@ -188,7 +186,7 @@ public class AWSS3Client {
     public boolean upload(String key, byte[] bytes, String contentType, String bucketName, String roleSessionName, Map<String, String> userMetadata) {
         try {
             init(roleSessionName);
-            logger.info("upload " + bucketName + " contentType " + contentType + " userMetadata " + userMetadata);
+            log.info("upload " + bucketName + " contentType " + contentType + " userMetadata " + userMetadata);
             ByteArrayInputStream byteInputStream = new ByteArrayInputStream(bytes);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contentType);
@@ -205,7 +203,7 @@ public class AWSS3Client {
             try {
                 s3Client.putObject(request);
             } catch (Exception e) {
-                logger.warn("Couldn't post file with key '{}' to S3. Re-trying without custom metadata={}. ERROR={}", key, userMetadata, e + " " + e.getMessage());
+                log.warn("Couldn't post file with key '{}' to S3. Re-trying without custom metadata={}. ERROR={}", key, userMetadata, e + " " + e.getMessage());
                 metadata = new ObjectMetadata();
                 metadata.setContentType(contentType);
                 metadata.setContentLength(bytes.length);
@@ -213,7 +211,7 @@ public class AWSS3Client {
                 s3Client.putObject(request);
             }
         } catch (Exception e) {
-            logger.error("S3 upload failed. " + e + " " + e.getMessage());
+            log.error("S3 upload failed. " + e + " " + e.getMessage());
             return false;
         }
         return true;
@@ -222,12 +220,12 @@ public class AWSS3Client {
     public byte[] download(String objectKey, String bucketName) {
         try {
             init(SILLARI_BACKEND_ROLE_SESSION_NAME);
-            logger.info("download " + bucketName + " objectKey " + objectKey);
+            log.info("download " + bucketName + " objectKey " + objectKey);
             GetObjectRequest request = new GetObjectRequest(bucketName, objectKey);
             S3Object object = s3Client.getObject(request);
             return IOUtils.toByteArray(object.getObjectContent());
         } catch (Exception e) {
-            logger.error(e);
+            log.error(e.getMessage(), e);
         }
         return null;
     }
@@ -238,7 +236,7 @@ public class AWSS3Client {
             DeleteObjectRequest request = new DeleteObjectRequest(bucketName, objectKey);
             s3Client.deleteObject(request);
         } catch (Exception e) {
-            logger.error("Failed deleting from S3. " + bucketName + " " + objectKey + " " + e.getMessage());
+            log.error("Failed deleting from S3. " + bucketName + " " + objectKey + " " + e.getMessage());
         }
     }
 
@@ -250,7 +248,7 @@ public class AWSS3Client {
             newTags.add(new Tag(EXPIRED_TAG, "true"));
             s3Client.setObjectTagging(new SetObjectTaggingRequest(bucketName, objectKey, new ObjectTagging(newTags)));
         } catch (Exception e) {
-            logger.error(e);
+            log.error(e.getMessage(), e);
         }
     }
 }

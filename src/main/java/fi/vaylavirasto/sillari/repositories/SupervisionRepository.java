@@ -9,8 +9,6 @@ import fi.vaylavirasto.sillari.model.SupervisionStatusType;
 import fi.vaylavirasto.sillari.model.TransportStatusType;
 import fi.vaylavirasto.sillari.model.SupervisorType;
 import fi.vaylavirasto.sillari.util.TableAlias;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -27,8 +25,6 @@ import static org.jooq.impl.DSL.*;
 
 @Repository
 public class SupervisionRepository {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     private DSLContext dsl;
     @Autowired

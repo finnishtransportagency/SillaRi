@@ -3,8 +3,6 @@ package fi.vaylavirasto.sillari.repositories;
 import fi.vaylavirasto.sillari.mapper.CompanyMapper;
 import fi.vaylavirasto.sillari.model.CompanyModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.exception.DataAccessException;
@@ -18,8 +16,6 @@ import static org.jooq.impl.DSL.lower;
 
 @Repository
 public class CompanyRepository {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     private DSLContext dsl;
 

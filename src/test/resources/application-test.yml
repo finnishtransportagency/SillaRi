@@ -15,8 +15,6 @@ spring:
   flyway:
     enabled: true
     baselineOnMigrate: true
-logging:
-  config: classpath:log4j2-local.xml
 server:
   port: 8080
   servlet: # 2.0

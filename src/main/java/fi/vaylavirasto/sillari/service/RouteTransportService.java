@@ -4,8 +4,7 @@ import fi.vaylavirasto.sillari.api.rest.error.TransportNumberConflictException;
 import fi.vaylavirasto.sillari.auth.SillariUser;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class RouteTransportService {
-
-    private static final Logger logger = LogManager.getLogger();
 
     @Autowired
     RouteTransportRepository routeTransportRepository;
@@ -213,13 +211,13 @@ public class RouteTransportService {
 
         // Check that next available route transport number matches the transport number of the route transport
         if ((nextAvailableTransportNumber == null && currentTransportNumber != null) || (nextAvailableTransportNumber != null && !nextAvailableTransportNumber.equals(currentTransportNumber))) {
-            logger.error("CONFLICT for nextAvailableTransportNumber {} vs routeTransport.transportNumber {} for route {}", nextAvailableTransportNumber, currentTransportNumber, route.getName());
+            log.error("CONFLICT for nextAvailableTransportNumber {} vs routeTransport.transportNumber {} for route {}", nextAvailableTransportNumber, currentTransportNumber, route.getName());
             throw new TransportNumberConflictException("Next available transportNumber " + nextAvailableTransportNumber + " does not match the transport number " + currentTransportNumber + " of the route transport");
         }
 
         // Check that there are no supervisions if all transport numbers are used
         if (currentTransportNumber == null && supervisions != null && supervisions.size() > 0) {
-            logger.error("CONFLICT transport number for route {} is null but there are {} supervisions", route.getName(), supervisions.size());
+            log.error("CONFLICT transport number for route {} is null but there are {} supervisions", route.getName(), supervisions.size());
             throw new TransportNumberConflictException("No supervisions allowed when transport number is null");
         }
 
@@ -229,7 +227,7 @@ public class RouteTransportService {
             Integer selectedNumber = routeBridge.getTransportNumber();
 
             if (!currentTransportNumber.equals(selectedNumber)) {
-                logger.error("CONFLICT for route transport transportNumber {} vs bridge transportNumber {} for route {}", currentTransportNumber, selectedNumber, route.getName());
+                log.error("CONFLICT for route transport transportNumber {} vs bridge transportNumber {} for route {}", currentTransportNumber, selectedNumber, route.getName());
                 throw new TransportNumberConflictException("Route transport transportNumber " + currentTransportNumber + " does not match the transport number " + selectedNumber + " of the bridges");
             }
         }

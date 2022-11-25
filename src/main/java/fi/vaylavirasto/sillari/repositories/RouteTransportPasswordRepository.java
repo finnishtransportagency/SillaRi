@@ -4,8 +4,6 @@ import fi.vaylavirasto.sillari.mapper.RouteTransportPasswordMapper;
 import fi.vaylavirasto.sillari.model.RouteTransportPasswordModel;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import fi.vaylavirasto.sillari.util.TransportPasswordGenerator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +13,6 @@ import java.time.OffsetDateTime;
 
 @Repository
 public class RouteTransportPasswordRepository {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     private DSLContext dsl;
 

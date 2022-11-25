@@ -1,15 +1,14 @@
 package fi.vaylavirasto.sillari.api;
 
+import java.net.InetAddress;
+
 import io.prometheus.client.Counter;
 import io.prometheus.client.Histogram;
 import io.prometheus.client.Summary;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
-import java.net.InetAddress;
-
+@Slf4j
 public class ServiceMetric {
-    private static final Logger logger = LogManager.getLogger(ServiceMetric.class);
     private static final String hostName = getHostName();
     private static final Histogram histogram = Histogram.build()
             .name("service_request_latency_histogram").help("Request latency in seconds (histogram).")
@@ -41,7 +40,7 @@ public class ServiceMetric {
             summaryTimer = summary.labels(ServiceMetric.hostName,this.serviceName, operation).startTimer();
             histogramTimer = histogram.labels(ServiceMetric.hostName,this.serviceName, operation).startTimer();
         } catch(Exception e) {
-            logger.error(e);
+            log.error(e.getMessage(), e);
         }
     }
     public void end() {
@@ -49,7 +48,7 @@ public class ServiceMetric {
             summaryTimer.observeDuration();
             histogramTimer.observeDuration();
         } catch(Exception e) {
-            logger.error(e);
+            log.error(e.getMessage(), e);
         }
     }
     public static String getHostName() {
@@ -57,7 +56,7 @@ public class ServiceMetric {
             InetAddress ip = InetAddress.getLocalHost();
             return ip.getHostName();
         } catch(Exception e) {
-            logger.error("getHostName failed",e);
+            log.error("getHostName failed",e);
         }
         return "na";
     }

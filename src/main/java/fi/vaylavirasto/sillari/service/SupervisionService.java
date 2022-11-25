@@ -8,8 +8,7 @@ import fi.vaylavirasto.sillari.aws.AWSS3Client;
 import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.util.PDFGenerator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -25,10 +24,9 @@ import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.*;
 
+@Slf4j
 @Service
 public class SupervisionService {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     AWSS3Client awss3Client;
     @Autowired
@@ -232,24 +230,24 @@ public class SupervisionService {
             try {
                 pdf = new PDFGenerator().generateReportPDF(supervision, images);
 
-                logger.debug("Generated pdf report for supervision: " + supervisionId);
+                log.debug("Generated pdf report for supervision: " + supervisionId);
 
                 savePdf(pdf, pdfModel);
                 pdfModel.setStatus(SupervisionPdfStatusType.SUCCESS);
                 pdfService.updateSupervisionPdfStatus(pdfModel);
-                logger.debug("Saved pdf report for supervision: " + supervisionId);
+                log.debug("Saved pdf report for supervision: " + supervisionId);
             } catch (PDFGenerationException e) {
-                logger.warn("Generating pdf report for supervision failed. " + supervisionId + " " + e.getMessage());
+                log.warn("Generating pdf report for supervision failed. " + supervisionId + " " + e.getMessage());
                 pdfModel.setStatus(SupervisionPdfStatusType.FAILED);
                 pdfService.updateSupervisionPdfStatus(pdfModel);
             } catch (PDFUploadException e) {
-                logger.warn("Saving pdf report for supervision failed. " + supervisionId + " " + e.getMessage());
+                log.warn("Saving pdf report for supervision failed. " + supervisionId + " " + e.getMessage());
                 pdfModel.setStatus(SupervisionPdfStatusType.FAILED);
                 pdfService.updateSupervisionPdfStatus(pdfModel);
             }
 
         } else {
-            logger.error("supervision or report null, cannot create pdf for supervision={}", supervisionId);
+            log.error("supervision or report null, cannot create pdf for supervision={}", supervisionId);
         }
     }
 
@@ -298,7 +296,7 @@ public class SupervisionService {
 
 
     public void savePdf(byte[] reportPDF, SupervisionPdfModel pdfModel) throws PDFUploadException {
-        logger.debug("save pdf for supervision: " + pdfModel.getSupervisionId());
+        log.debug("save pdf for supervision: " + pdfModel.getSupervisionId());
 
         try {
             boolean success = s3FileService.saveFile(reportPDF, "application/pdf", awss3Client.getReportBucketName(), pdfModel.getObjectKey(), pdfModel.getKtvObjectId(), pdfModel.getFilename(), pdfModel.getRowCreatedTime(), pdfModel.getSupervisionId());
@@ -306,7 +304,7 @@ public class SupervisionService {
                 throw new PDFUploadException("Error uploading file to AWS.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (IOException e) {
-            logger.error("Error writing file to local file system." + e.getClass().getName() + " " + e.getMessage());
+            log.error("Error writing file to local file system." + e.getClass().getName() + " " + e.getMessage());
             throw new PDFUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -329,10 +327,10 @@ public class SupervisionService {
                         byte[] imageBytes = Files.readAllBytes(Path.of(inputFile.getPath()));
                         images.add(imageBytes);
                     } catch (IOException e) {
-                        logger.error("Local image creation failed: " + e.getClass().getName() + e.getMessage());
+                        log.error("Local image creation failed: " + e.getClass().getName() + e.getMessage());
                     }
                 } else {
-                    logger.debug("No local input file");
+                    log.debug("No local input file");
                 }
             } else {
                 //from aws s3
@@ -364,7 +362,7 @@ public class SupervisionService {
                             String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(imageBytes);
                             supervisionImageModel.setBase64("data:" + contentType + ";base64," + encodedString);
                         } catch (IOException e) {
-                            logger.debug("No local input file");
+                            log.debug("No local input file");
                         }
                     }
                 } else {

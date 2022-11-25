@@ -4,8 +4,6 @@ import fi.vaylavirasto.sillari.model.RouteBridgeModel;
 import fi.vaylavirasto.sillari.model.RouteModel;
 import fi.vaylavirasto.sillari.model.SupervisionModel;
 import fi.vaylavirasto.sillari.repositories.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +21,6 @@ public class RouteService {
     SupervisionRepository supervisionRepository;
     @Autowired
     SupervisionStatusRepository supervisionStatusRepository;
-
-    private static final Logger logger = LogManager.getLogger();
 
     public RouteModel getRoute(Integer routeId) {
         RouteModel route = routeRepository.getRoute(routeId);

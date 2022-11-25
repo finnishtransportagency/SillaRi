@@ -4,8 +4,6 @@ import fi.vaylavirasto.sillari.mapper.RouteTransportNumberViewMapper;
 import fi.vaylavirasto.sillari.model.RouteTransportNumberModel;
 import fi.vaylavirasto.sillari.model.tables.records.RouteTransportNumberViewRecord;
 import fi.vaylavirasto.sillari.util.TableAlias;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
@@ -19,8 +17,6 @@ import java.util.Map;
 public class RouteTransportNumberRepository {
     @Autowired
     private DSLContext dsl;
-
-    private static final Logger logger = LogManager.getLogger();
 
     public Map<Long, List<RouteTransportNumberModel>> getRouteTransportNumbersByRouteLeluIds(List<Long> leluIds, String permitNumber) {
         return dsl.selectFrom(TableAlias.routeTransportNumberView)

@@ -3,15 +3,13 @@ package fi.vaylavirasto.sillari.service;
 import fi.vaylavirasto.sillari.dto.CoordinatesDTO;
 import fi.vaylavirasto.sillari.model.BridgeModel;
 import fi.vaylavirasto.sillari.repositories.BridgeRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class BridgeService {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     BridgeRepository bridgeRepository;
 
@@ -22,10 +20,10 @@ public class BridgeService {
             bridge.setId(oldBridge.getId());
             bridgeRepository.updateBridge(bridge);
             bridgeId = bridge.getId();
-            logger.debug("updatedBridge");
+            log.debug("updatedBridge");
         } else {
             bridgeId = bridgeRepository.createBridge(bridge);
-            logger.debug("createdBridge");
+            log.debug("createdBridge");
         }
         return bridgeId;
     }

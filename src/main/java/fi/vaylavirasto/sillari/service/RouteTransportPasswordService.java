@@ -2,8 +2,7 @@ package fi.vaylavirasto.sillari.service;
 
 import fi.vaylavirasto.sillari.model.RouteTransportPasswordModel;
 import fi.vaylavirasto.sillari.repositories.RouteTransportPasswordRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +12,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 
+@Slf4j
 @Service
 public class RouteTransportPasswordService {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     RouteTransportPasswordRepository rtpRepository;
 
@@ -34,12 +32,12 @@ public class RouteTransportPasswordService {
     }
 
     private boolean doPasswordsMatch(String inputUsernameAndPasswordHashed, String username, String plainPasswordFromDb) {
-        logger.info("Trying to match:");
-        logger.info("inputUsernameAndPasswordHashed " + inputUsernameAndPasswordHashed);
-        logger.info("username " + username);
-        logger.info("plainPasswordFromDb " + plainPasswordFromDb);
+        log.info("Trying to match:");
+        log.info("inputUsernameAndPasswordHashed " + inputUsernameAndPasswordHashed);
+        log.info("username " + username);
+        log.info("plainPasswordFromDb " + plainPasswordFromDb);
         String hashOfUsernameAndPasswordFromDb = sha1(username + plainPasswordFromDb);
-        logger.info("hashOfUsernameAndPasswordFromDb: " + hashOfUsernameAndPasswordFromDb);
+        log.info("hashOfUsernameAndPasswordFromDb: " + hashOfUsernameAndPasswordFromDb);
 
         return inputUsernameAndPasswordHashed.equals(hashOfUsernameAndPasswordFromDb);
     }

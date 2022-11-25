@@ -16,8 +16,7 @@ import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.trex.TRexBridgeInfoService;
 import fi.vaylavirasto.sillari.service.trex.TRexPicService;
 import fi.vaylavirasto.sillari.util.LeluRouteUploadUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,9 +34,9 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class LeluService {
-    private static final Logger logger = LogManager.getLogger();
     private final LeluDTOMapper dtoMapper = Mappers.getMapper(LeluDTOMapper.class);
 
     private PermitRepository permitRepository;
@@ -77,9 +76,9 @@ public class LeluService {
     public LeluPermitResponseDTO createPermit(LeluPermitDTO permitDTO) throws LeluPermitSaveException {
         LeluPermitResponseDTO response = new LeluPermitResponseDTO(permitDTO.getNumber(), LocalDateTime.now(ZoneId.of("Europe/Helsinki")));
 
-        logger.debug("Map permit from: " + permitDTO);
+        log.debug("Map permit from: " + permitDTO);
         PermitModel permitModel = dtoMapper.fromDTOToModel(permitDTO);
-        logger.debug("Permit mapped from LeLu model: {}", permitModel);
+        log.debug("Permit mapped from LeLu model: {}", permitModel);
 
         // Check if permits already exist with the same permit number
         handlePreviousPermitVersions(permitModel, response);
@@ -111,15 +110,15 @@ public class LeluService {
         // If we have previous versions, create new permit version and mark old ones as not current.
         List<PermitModel> oldPermits = permitRepository.getPermitsByPermitNumber(permitModel.getPermitNumber());
         if (oldPermits != null && !oldPermits.isEmpty()) {
-            logger.debug("{} permits with same permitNumber {} found", oldPermits.size(), permitModel.getPermitNumber());
+            log.debug("{} permits with same permitNumber {} found", oldPermits.size(), permitModel.getPermitNumber());
             // Check if same leluVersion exists
             List<PermitModel> permitsWithSameVersion = oldPermits.stream().filter(oldPermit -> oldPermit.getLeluVersion().equals(permitModel.getLeluVersion())).collect(Collectors.toList());
             List<PermitModel> permitsWithGreaterVersion = oldPermits.stream().filter(oldPermit -> oldPermit.getLeluVersion() > permitModel.getLeluVersion()).collect(Collectors.toList());
             if (!permitsWithSameVersion.isEmpty()) {
-                logger.error("Permit with same permitNumber {} and lelu version {} already exists", permitModel.getPermitNumber(), permitModel.getLeluVersion());
+                log.error("Permit with same permitNumber {} and lelu version {} already exists", permitModel.getPermitNumber(), permitModel.getLeluVersion());
                 throw new LeluPermitSaveException(HttpStatus.CONFLICT, messageSource.getMessage("lelu.permit.exists.with.version", null, Locale.ROOT));
             } else if (!permitsWithGreaterVersion.isEmpty()) {
-                logger.error("Permits with same permitNumber {} and greater lelu version than {} exist", permitModel.getPermitNumber(), permitModel.getLeluVersion());
+                log.error("Permits with same permitNumber {} and greater lelu version than {} exist", permitModel.getPermitNumber(), permitModel.getLeluVersion());
                 throw new LeluPermitSaveException(HttpStatus.NOT_ACCEPTABLE, messageSource.getMessage("lelu.permits.exist.with.greater.version", null, Locale.ROOT));
             } else {
                 for (PermitModel oldPermit : oldPermits) {
@@ -137,11 +136,11 @@ public class LeluService {
     }
 
     public LeluRouteGeometryResponseDTO uploadRouteGeometry(Long routeId, MultipartFile file) throws LeluRouteNotFoundException, LeluRouteGeometryUploadException {
-        logger.debug("uploadRouteGeometry: " + routeId + " " + file.getName());
+        log.debug("uploadRouteGeometry: " + routeId + " " + file.getName());
         List<RouteModel> routes = routeRepository.getRoutesWithLeluId(routeId);
 
         if (routes == null || routes.isEmpty()) {
-            logger.warn("Route not found with lelu id " + routeId);
+            log.warn("Route not found with lelu id " + routeId);
             throw new LeluRouteNotFoundException(messageSource.getMessage("lelu.route.not.found", null, Locale.ROOT));
         }
 
@@ -160,7 +159,7 @@ public class LeluService {
     private Integer getOrCreateCompany(CompanyModel companyModel) {
         Integer companyId = companyRepository.getCompanyIdByBusinessId(companyModel.getBusinessId());
         if (companyId == null) {
-            logger.debug("Create new company with business ID {}", companyModel.getBusinessId());
+            log.debug("Create new company with business ID {}", companyModel.getBusinessId());
             companyId = companyRepository.createCompany(companyModel);
         }
         return companyId;
@@ -203,13 +202,13 @@ public class LeluService {
 
 
     private Integer addTrexBridgeToDB(RouteBridgeModel routeBridge, String oid) {
-        logger.debug("Bridge missing with oid {}, get from trex", routeBridge.getBridge().getOid());
+        log.debug("Bridge missing with oid {}, get from trex", routeBridge.getBridge().getOid());
         try {
             BridgeModel newBridge = trexBridgeInfoService.getBridge(oid);
             return bridgeRepository.createBridge(newBridge);
         } catch (TRexRestException e) {
             //TODO if its Lelu by hand added so create bridge with LeLu data..?
-            logger.warn("Bridge missing with oid {} not found in trex", routeBridge.getBridge().getOid());
+            log.warn("Bridge missing with oid {} not found in trex", routeBridge.getBridge().getOid());
             return null;
         }
     }
@@ -241,7 +240,7 @@ public class LeluService {
             try {
                 Files.write(outputFile.toPath(), file.getBytes());
             } catch (IOException e) {
-                logger.error("Error writing file." + e.getClass().getName() + " " + e.getMessage());
+                log.error("Error writing file." + e.getClass().getName() + " " + e.getMessage());
                 throw new PDFUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
@@ -252,7 +251,7 @@ public class LeluService {
                     throw new PDFUploadException("Error uploading file to aws.", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             } catch (IOException e) {
-                logger.error("Error uploading file to aws." + e.getClass().getName() + " " + e.getMessage());
+                log.error("Error uploading file to aws." + e.getClass().getName() + " " + e.getMessage());
                 throw new PDFUploadException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
@@ -265,7 +264,7 @@ public class LeluService {
     public LeluBridgeSupervisionResponseDTO getSupervision(Long leluRouteId, String bridgeIdentifier, Integer transportNumber) throws LeluRouteNotFoundException {
         RouteModel route = routeRepository.getRouteWithLeluID(leluRouteId);
         if (route != null) {
-            logger.debug("getting routebridge: " + route.getId() + " " + bridgeIdentifier + " " + transportNumber);
+            log.debug("getting routebridge: " + route.getId() + " " + bridgeIdentifier + " " + transportNumber);
             RouteBridgeModel routeBridge = routeBridgeRepository.getRouteBridge(route.getId(), bridgeIdentifier, transportNumber);
             if (routeBridge != null) {
                 List<SupervisionModel> supervisions = supervisionRepository.getSupervisionsByRouteBridgeId(routeBridge.getId());
@@ -276,7 +275,7 @@ public class LeluService {
                         routeBridge.getSupervisions().add(filledSupervision);
                     });
                 }
-                logger.debug("HELLO!: " + routeBridge);
+                log.debug("HELLO!: " + routeBridge);
                 try {
                     LeluBridgeSupervisionResponseDTO bridgeSupervisionResponseDTO = dtoMapper.fromModelToDTO2(routeBridge.getSupervisions().get(0));
                     bridgeSupervisionResponseDTO.setTransportNumber(routeBridge.getTransportNumber());

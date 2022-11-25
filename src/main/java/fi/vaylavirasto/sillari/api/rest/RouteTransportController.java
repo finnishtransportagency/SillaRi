@@ -7,8 +7,7 @@ import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.service.*;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @Timed
 @RequestMapping("/routetransport")
 public class RouteTransportController {
-    private static final Logger logger = LogManager.getLogger();
     @Autowired
     UIService uiService;
     @Autowired
@@ -62,7 +61,7 @@ public class RouteTransportController {
     @GetMapping(value = "/checkTransportCode", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@sillariRightsChecker.isSillariSillanvalvoja(authentication)")
     public ResponseEntity<?> checkTransportCode(@RequestParam Integer routeTransportId, @RequestParam String transportCode) {
-        logger.info("usernameAndPasswordHashed aka transportCode: " + transportCode);
+        log.info("usernameAndPasswordHashed aka transportCode: " + transportCode);
         ServiceMetric serviceMetric = new ServiceMetric("RouteTransportController", "unlockRouteTransport");
         try {
             if (!isRouteTransportOfSupervisor(routeTransportId)) {
@@ -154,7 +153,7 @@ public class RouteTransportController {
                 if (routeTransport.getTransportNumber() != null) {
                     routeTransportService.setTransportNumberUsed(routeTransport);
                 } else {
-                    logger.warn("No available transport numbers for routeTransport permitNumber {}, route {}. RouteTransport created without transportNumber.", permit.getPermitNumber(), routeTransport.getRoute().getName());
+                    log.warn("No available transport numbers for routeTransport permitNumber {}, route {}. RouteTransport created without transportNumber.", permit.getPermitNumber(), routeTransport.getRoute().getName());
                 }
 
                 if (routeTransport.getSupervisions() != null) {

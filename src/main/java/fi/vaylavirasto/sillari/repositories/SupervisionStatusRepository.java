@@ -4,8 +4,6 @@ import fi.vaylavirasto.sillari.mapper.SupervisionStatusMapper;
 import fi.vaylavirasto.sillari.model.SupervisionStatusModel;
 import fi.vaylavirasto.sillari.model.tables.records.SupervisionStatusRecord;
 import fi.vaylavirasto.sillari.util.TableAlias;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +14,6 @@ import java.util.Map;
 
 @Repository
 public class SupervisionStatusRepository {
-    private static final Logger logger = LogManager.getLogger();
-
     @Autowired
     private DSLContext dsl;
 

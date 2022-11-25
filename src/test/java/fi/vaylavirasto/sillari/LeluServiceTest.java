@@ -10,8 +10,7 @@ import fi.vaylavirasto.sillari.util.LeluRouteUploadUtil;
 import fi.vaylavirasto.sillari.service.LeluService;
 import fi.vaylavirasto.sillari.service.SupervisionService;
 import fi.vaylavirasto.sillari.service.trex.TRexBridgeInfoService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
@@ -26,11 +25,10 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
+@Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"test"})
 public class LeluServiceTest {
-    private static final Logger logger = LogManager.getLogger();
-
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -86,7 +84,7 @@ public class LeluServiceTest {
         // Verify that permitRepository.createPermit is called and capture parameters
         Mockito.verify(permitRepository).createPermit(permitModelCaptor.capture());
         PermitModel permitModel = permitModelCaptor.getValue();
-        logger.debug("Captured permitModel: {}", permitModel);
+        log.debug("Captured permitModel: {}", permitModel);
 
         // Check that all values are correctly mapped from Lelu DTOs to models
         assertPermitDTOMappedToModel(permitModel);
@@ -122,7 +120,7 @@ public class LeluServiceTest {
         // Verify that permitRepository.createPermit is called and capture parameters
         Mockito.verify(permitRepository).createPermit(permitModelCaptor.capture());
         PermitModel permitModel = permitModelCaptor.getValue();
-        logger.debug("Captured permitModel: {}", permitModel);
+        log.debug("Captured permitModel: {}", permitModel);
 
         // Check that all values are correctly mapped from Lelu DTOs to models
         assertPermitDTOMappedToModel(permitModel);
