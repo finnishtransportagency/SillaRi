@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { actions } from "../store/rootSlice";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
@@ -42,7 +43,7 @@ const Supervision = (): JSX.Element => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const [modifiedReport, setModifiedReport] = useState<ISupervisionReport | undefined>(undefined);
-  const [isForceOpenSendingList, setForceOpenSendingList] = useState<boolean>(false);
+
   const [present] = useIonAlert();
 
   const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
@@ -202,7 +203,10 @@ const Supervision = (): JSX.Element => {
     if (supervisionInProgress) {
       showConfirmCancelSupervision();
     } else if (supervisionOpenedFromSendingList) {
-      setForceOpenSendingList(true);
+      dispatch({
+        type: actions.SET_SUPERVISION_OPENED_FROM_SENDING_LIST,
+        payload: true,
+      });
     } else {
       history.goBack();
     }
@@ -254,7 +258,6 @@ const Supervision = (): JSX.Element => {
         title={t("supervision.title")}
         somethingFailed={isFailed.getSupervision}
         includeSendingList
-        forceOpenSendingList={isForceOpenSendingList}
         includeOfflineBanner
         confirmGoBack={confirmGoBack}
       />

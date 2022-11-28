@@ -10,6 +10,7 @@ interface IStateProps {
   selectedSupervisionListType?: string;
   ownListCount: number;
   supervisionOpenedFromSendingList: boolean;
+  forceOpenSendingList: boolean;
 }
 
 const initialState: IStateProps = {
@@ -21,6 +22,7 @@ const initialState: IStateProps = {
   selectedSupervisionListType: undefined,
   ownListCount: 0,
   supervisionOpenedFromSendingList: false,
+  forceOpenSendingList: false,
 };
 
 const rootSlice = createSlice({
@@ -57,6 +59,10 @@ const rootSlice = createSlice({
     SET_SUPERVISION_OPENED_FROM_SENDING_LIST: (state, action: PayloadAction<boolean>) => {
       console.log("SET_SUPERVISION_OPENED_FROM_SENDING_LIST", action.payload);
       return { ...state, supervisionOpenedFromSendingList: action.payload };
+    },
+    SET_FORCE_OPEN_SENDING_LIST: (state, action: PayloadAction<boolean>) => {
+      console.log("SET_FORCE_OPEN_SENDING_LIST", action.payload);
+      return { ...state, forceOpenSendingList: action.payload };
     },
   },
 });

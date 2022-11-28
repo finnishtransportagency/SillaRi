@@ -13,6 +13,7 @@ import OfflineBanner from "./OfflineBanner";
 import "./Header.css";
 import { isSupervisionSigned } from "../utils/supervisionUtil";
 import ISupervision from "../interfaces/ISupervision";
+import { RootState, useTypedSelector } from "../store/store";
 
 interface HeaderProps {
   title: string;
@@ -20,7 +21,6 @@ interface HeaderProps {
   titleStyle?: string;
   somethingFailed?: boolean;
   includeSendingList?: boolean;
-  forceOpenSendingList?: boolean;
   includeOfflineBanner?: boolean;
   // includeUnsentOfflineCheck?: boolean;
   confirmGoBack?: () => void;
@@ -32,7 +32,6 @@ const Header = ({
   titleStyle,
   somethingFailed,
   includeSendingList,
-  forceOpenSendingList,
   includeOfflineBanner,
   // includeUnsentOfflineCheck,
   confirmGoBack,
@@ -42,6 +41,8 @@ const Header = ({
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
   const dispatch = useDispatch();
+
+  const { forceOpenSendingList } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const { data: supervisionList = [] } = useQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
     retry: onRetry,
@@ -54,7 +55,6 @@ const Header = ({
   const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : history.goBack;
 
   const [isSendingListOpen, setSendingListOpen] = useState<boolean>(false);
-  const [isSupervisionOpenedFromSendingList, setSupervisionOpenedFromSendingList] = useState<boolean>(false);
   // const [isUnsentOfflineOpen, setUnsentOfflineOpen] = useState<boolean>(false);
 
   const [sentSupervisions, setSentSupervisions] = useState<ISupervision[]>([]);
@@ -81,11 +81,11 @@ const Header = ({
       // setUnsentOfflineOpen(supervisionList.some((supervision) => supervision.savedOffline));
 
       //
-      if (forceOpenSendingList && forceOpenSendingList == true) {
+      if (forceOpenSendingList && forceOpenSendingList === true) {
         setSendingListOpen(true);
       }
     }
-  }, [supervisionList]);
+  }, [supervisionList, forceOpenSendingList]);
 
   const isGettingData = isFetching > 0;
   const isSendingData = isMutating > 0;
