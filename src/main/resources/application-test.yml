@@ -22,12 +22,12 @@ sillari:
     oamIss: eu-west-1_yuYOlE8U5
     oamUrl: https://sillaritest.auth.eu-west-1.amazoncognito.com
     oamClientId: 152i189u2cu0cae9dpg6am44b6
-    oamLogoutUrl: https://sillaritest.testivaylapilvi.fi/
+    oamLogoutUrl: https://sillaritest.testivaylapilvi.fi
     #
     adfsIss: eu-west-1_oNzPsiXEJ
     adfsUrl: https://vaylatest.auth.eu-west-1.amazoncognito.com
     adfsClientId: 3ctc20d3i4ghv94ks0semt4e15
-    adfsLogoutUrl: https://sillaritest.testivaylapilvi.fi/
+    adfsLogoutUrl: https://sillaritest.testivaylapilvi.fi
 
 spring:
   application:
