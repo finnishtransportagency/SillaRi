@@ -160,11 +160,13 @@ const App: React.FC = () => {
           } else {
             /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
             setErrorCode(SillariErrorCode.NO_USER_ROLES);
+            logoutFromApp();
           }
         } else {
           // Note: status codes from the backend such as 401 or 403 are now contained in failedStatus.getUserData
           console.log("User data response", userDataResponse);
           setErrorCode(SillariErrorCode.NO_USER_DATA);
+          logoutFromApp();
         }
       } catch (e) {
         console.log("App error", e);
