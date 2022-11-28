@@ -37,12 +37,17 @@
             <AppenderRef ref="DebugAppender" level="debug"/>
         </Logger>
 
-        <Logger name="org.apache">
+        <Logger name="org.apache.http.impl.client">
             <AppenderRef ref="ConsoleAppender" level="warn"/>
             <AppenderRef ref="DebugAppender" level="warn"/>
         </Logger>
 
-        <Logger name="httpclient">
+        <Logger name="org.apache.http.wire">
+            <AppenderRef ref="ConsoleAppender" level="warn"/>
+            <AppenderRef ref="DebugAppender" level="warn"/>
+        </Logger>
+
+        <Logger name="org.apache.http.headers">
             <AppenderRef ref="ConsoleAppender" level="warn"/>
             <AppenderRef ref="DebugAppender" level="warn"/>
         </Logger>
