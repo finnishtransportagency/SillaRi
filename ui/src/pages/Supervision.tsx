@@ -200,7 +200,6 @@ const Supervision = (): JSX.Element => {
   };
 
   const goBackOrToSendingList = (): void => {
-    console.log("supervisionOpenedFromSendingList: " + supervisionOpenedFromSendingList);
     if (supervisionOpenedFromSendingList) {
       dispatch({
         type: actions.SET_FORCE_OPEN_SENDING_LIST,

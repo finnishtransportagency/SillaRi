@@ -10,7 +10,6 @@ import { getPasswordFromStorage } from "../utils/trasportCodeStorageUtil";
 import lock from "../theme/icons/lock_closed_white.svg";
 import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import IPopoverPlacement from "../interfaces/IPopoverPlacement";
-import { useHistory } from "react-router-dom";
 import { useIsMutating } from "react-query";
 import { useDispatch } from "react-redux";
 import { actions } from "../store/rootSlice";
@@ -48,8 +47,6 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
 
   // Check if images are being uploaded using the mutationKey defined in Photos.tsx
   const isImageUploadMutating = useIsMutating(["imageUpload" + supervisionId]);
-
-  console.log("mutatin " + supervisionId + " " + isImageUploadMutating);
 
   useEffect(() => {
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise

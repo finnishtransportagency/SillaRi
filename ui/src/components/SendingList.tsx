@@ -113,6 +113,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
       history.push(targetUrl);
     }
   };
+
   const handleClickClose = () => {
     dispatch({
       type: actions.SET_FORCE_OPEN_SENDING_LIST,
@@ -124,6 +125,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
     });
     setOpen(false);
   };
+
   return (
     <IonModal
       isOpen={isOpen}

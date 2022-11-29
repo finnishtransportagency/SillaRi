@@ -89,7 +89,6 @@ const Header = ({
 
       //
       if (forceOpenSendingList && forceOpenSendingList === true) {
-        console.log("force open sending list");
         setSendingListOpen(true);
       }
     }
