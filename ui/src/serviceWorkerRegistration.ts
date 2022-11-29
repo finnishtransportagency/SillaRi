@@ -53,11 +53,12 @@ export function register(config?: Config) {
         });
       } else {
         if (isMyLoginUrl()) {
-          console.info('unregistering service worker for login')
-          unregister(() => console.log("unreg"))
-          console.info('reloading')
-          window.location.reload()
-          return false
+          console.info("unregistering service worker for login");
+          unregister(() => {
+            console.info("reloading");
+            window.location.reload();
+          });
+          return false;
         } else {
           // Is not localhost. Just register service worker
           registerValidSW(swUrl, config);

@@ -94,12 +94,25 @@ const App: React.FC = () => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const clearDataAndRedirect = (url: string) => {
-    serviceWorkerRegistration.unregister(() => {});
-    const cookies = Cookies.get();
-    Object.keys(cookies).forEach((key) => {
-      Cookies.remove(key);
+    serviceWorkerRegistration.unregister(() => {
+      const cookies = Cookies.get();
+      Object.keys(cookies).forEach((key) => {
+        Cookies.remove(key);
+      });
+      window.location.href = url;
     });
-    window.location.href = url;
+  };
+
+  const logoutFromApp = () => {
+    logoutUser().then(
+      (data) => {
+        clearDataAndRedirect(data.redirectUrl);
+      },
+      (error) => {
+        console.log(error);
+        clearDataAndRedirect(process.env.PUBLIC_URL + "?ts=" + Date.now());
+      }
+    );
   };
 
   useEffect(() => {
@@ -147,25 +160,18 @@ const App: React.FC = () => {
           } else {
             /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
             setErrorCode(SillariErrorCode.NO_USER_ROLES);
+            logoutFromApp();
           }
         } else {
           // Note: status codes from the backend such as 401 or 403 are now contained in failedStatus.getUserData
           console.log("User data response", userDataResponse);
           setErrorCode(SillariErrorCode.NO_USER_DATA);
+          logoutFromApp();
         }
       } catch (e) {
         console.log("App error", e);
         setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
-        localStorage.setItem("token", "");
-        const cookies = Cookies.get();
-        console.log("cookies before");
-        console.log(cookies);
-        Object.keys(cookies).forEach((key) => {
-          Cookies.remove(key);
-        });
-        console.log("cookies after");
-        console.log(cookies);
-        alert("Authentication session expired. Please close the browser and come back to login.");
+        logoutFromApp();
       }
     };
 
@@ -180,12 +186,6 @@ const App: React.FC = () => {
     // Fetch the user data on first render only, using a workaround utilising useEffect with empty dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const logoutFromApp = () => {
-    logoutUser().then((data) => {
-      clearDataAndRedirect(data.redirectUrl);
-    });
-  };
 
   const userHasRole = useCallback(
     (role: string) => {
@@ -229,7 +229,7 @@ const App: React.FC = () => {
           />
         ) : (
           <IonReactRouter>
-            <SidebarMenu version={version} />
+            <SidebarMenu version={version} logoutFromApp={logoutFromApp} />
             <IonContent id="MainContent">
               <Switch>
                 <Route exact path="/supervisions">

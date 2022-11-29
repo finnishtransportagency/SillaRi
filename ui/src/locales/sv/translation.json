@@ -142,13 +142,13 @@
     "identifier": "Id",
     "location": "Läge",
     "crossingInstructions": {
-      "title": "Instructioner"
+      "title": "Instruktioner"
     },
     "permitNumber": "Tillståndsnummer",
     "conformsToPermit": "Transporten är lovenlig",
     "startSupervision": "Påbörja övervakningen",
     "continueSupervision": "Fortsätt övervakningen",
-    "denyCrossing": "Transporten kan inte köra över bron",
+    "denyCrossing": "Bron kan inte överskridas",
     "supervisionMissing": "Broövervakningen är inte planerad ännu",
     "supervisionStarted": "Övervakningen påbörjad",
     "crossingDenied": "Broöverfarten inställd",
@@ -271,7 +271,8 @@
     "nothingToSend": "Inga övervakningsrapporter att sända",
     "sentReports": "Sända övervakningsrapporter",
     "offlineSuffix": "Offline",
-    "passwordButton": "Öppna med lösenord"
+    "passwordButton": "Öppna med lösenord",
+    "loadingPhotos": "Laddar bilder..."
   },
   "permitPdf": {
     "title": "Transporttillstånd",

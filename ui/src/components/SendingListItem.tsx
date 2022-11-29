@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { IonButton, IonCheckbox, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonText } from "@ionic/react";
+import { IonButton, IonCheckbox, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonRow, IonSpinner, IonText } from "@ionic/react";
 import moment from "moment";
 import ISupervision from "../interfaces/ISupervision";
 import { DATE_TIME_FORMAT_MIN, SupervisionListType } from "../utils/constants";
@@ -11,6 +11,7 @@ import lock from "../theme/icons/lock_closed_white.svg";
 import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import IPopoverPlacement from "../interfaces/IPopoverPlacement";
 import { useHistory } from "react-router-dom";
+import { useIsMutating } from "react-query";
 
 interface SendingListItemProps {
   supervision: ISupervision;
@@ -43,6 +44,11 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
   const openSupervision = () => console.log("Password provided");
   const history = useHistory();
 
+  // Check if images are being uploaded using the mutationKey defined in Photos.tsx
+  const isImageUploadMutating = useIsMutating(["imageUpload" + supervisionId]);
+
+  console.log("mutatin " + supervisionId + " " + isImageUploadMutating);
+
   useEffect(() => {
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
     if (username) {
@@ -67,7 +73,7 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
           <IonCol size="1">
             <IonCheckbox
               value={String(supervisionId)}
-              disabled={!isOnline || !supervisionUnlocked}
+              disabled={!isOnline || !supervisionUnlocked || isImageUploadMutating > 0}
               onIonChange={(e) => selectSupervision(e.detail.value, e.detail.checked)}
             />
           </IonCol>
@@ -79,6 +85,7 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                     <IonText className="headingText">{name}</IonText>
                   </IonLabel>
                 </IonCol>
+
                 <IonCol size="3" className="ion-text-right">
                   <IonText>{identifier}</IonText>
                 </IonCol>
@@ -87,9 +94,17 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                 <IonCol>
                   <IonLabel>{`${t("sendingList.transportPermit")}: ${permitNumber}`}</IonLabel>
                 </IonCol>
+                <IonCol className="ion-text-right">
+                  {isImageUploadMutating > 0 && isOnline && <IonSpinner color="primary" className="imageSpinnerSmall" />}
+                </IonCol>
               </IonRow>
               <IonRow>
-                <IonLabel>{`${t("sendingList.tractorUnit")}: ${tractorUnit ? tractorUnit.toUpperCase() : ""}`}</IonLabel>
+                <IonCol>
+                  <IonLabel>{`${t("sendingList.tractorUnit")}: ${tractorUnit ? tractorUnit.toUpperCase() : ""}`}</IonLabel>
+                </IonCol>
+                <IonCol className="ion-text-right">
+                  {isImageUploadMutating > 0 && isOnline && <IonText className="headingText">{`${t("sendingList.loadingPhotos")}`}</IonText>}
+                </IonCol>
               </IonRow>
               <IonRow>
                 <IonLabel>{`${t("sendingList.supervisionStarted")}: ${moment(startedTime).format(DATE_TIME_FORMAT_MIN)}`}</IonLabel>

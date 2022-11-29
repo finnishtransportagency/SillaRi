@@ -56,7 +56,7 @@ const Photos = (): JSX.Element => {
   // This mutationKey is used in ImageThumbnailRow to check if images are being uploaded
   // Note: retry is needed here so the mutation is queued when offline and doesn't fail due to the error
   const imageUploadMutation = useMutation((fileUpload: ISupervisionImage) => sendImageUpload(fileUpload, dispatch), {
-    mutationKey: "imageUpload",
+    mutationKey: "imageUpload" + supervisionId,
     retry: onRetry,
     onMutate: async (newData: ISupervisionImage) => {
       // onMutate fires before the mutation function
