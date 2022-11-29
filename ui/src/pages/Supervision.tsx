@@ -204,10 +204,11 @@ const Supervision = (): JSX.Element => {
       showConfirmCancelSupervision();
     } else if (supervisionOpenedFromSendingList) {
       dispatch({
-        type: actions.SET_SUPERVISION_OPENED_FROM_SENDING_LIST,
+        type: actions.SET_FORCE_OPEN_SENDING_LIST,
         payload: true,
       });
     } else {
+      console.log("get back");
       history.goBack();
     }
   };

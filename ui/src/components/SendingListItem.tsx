@@ -129,6 +129,10 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                           type: actions.SET_SUPERVISION_OPENED_FROM_SENDING_LIST,
                           payload: true,
                         });
+                        dispatch({
+                          type: actions.SET_FORCE_OPEN_SENDING_LIST,
+                          payload: false,
+                        });
                         setTargetUrl(`/supervision/${supervisionId}`);
                         setOpen(false);
                       }}

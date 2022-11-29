@@ -81,7 +81,9 @@ const Header = ({
       // setUnsentOfflineOpen(supervisionList.some((supervision) => supervision.savedOffline));
 
       //
+      console.log("shall  I force open sending list?" + forceOpenSendingList);
       if (forceOpenSendingList && forceOpenSendingList === true) {
+        console.log("force open sending list");
         setSendingListOpen(true);
       }
     }

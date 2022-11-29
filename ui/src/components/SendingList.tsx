@@ -32,6 +32,7 @@ import SendingListOfflineNotice from "./SendingListOfflineNotice";
 import SentSupervisionReportModalContainer from "./SentSupervisionReportModalContainer";
 import "./SendingList.css";
 import ISupervisionInput from "../interfaces/ISupervisionInput";
+import { actions } from "../store/rootSlice";
 
 interface SendingListProps {
   isOpen: boolean;
@@ -113,7 +114,17 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
       history.push(targetUrl);
     }
   };
-
+  const handleClickClose = () => {
+    dispatch({
+      type: actions.SET_FORCE_OPEN_SENDING_LIST,
+      payload: false,
+    });
+    dispatch({
+      type: actions.SET_SUPERVISION_OPENED_FROM_SENDING_LIST,
+      payload: false,
+    });
+    setOpen(false);
+  };
   return (
     <IonModal
       isOpen={isOpen}
@@ -126,7 +137,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
         <IonToolbar color="primary">
           <IonTitle class="headingText">{`${t("sendingList.title")} (${unsentSupervisions.length})`}</IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={() => setOpen(false)}>
+            <IonButton onClick={() => handleClickClose()}>
               <IonIcon className="otherIconLarge" icon={close} />
             </IonButton>
           </IonButtons>
