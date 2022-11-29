@@ -16,6 +16,7 @@ import ISupervision from "../interfaces/ISupervision";
 import ISupervisionImage from "../interfaces/ISupervisionImage";
 import Header from "../components/Header";
 import PhotoItem from "../components/PhotoItem";
+import arrowLeft from "../theme/icons/arrow-left_white.svg";
 
 interface PhotosProps {
   supervisionId: string;
@@ -223,8 +224,16 @@ const Photos = (): JSX.Element => {
         <IonGrid>
           <IonRow>
             <IonCol className="ion-text-center">
+              <IonButton color="secondary" expand="block" size="large" onClick={() => saveImages()}>
+                <IonIcon className="otherIcon" icon={arrowLeft} slot="start" />
+                {t("camera.returnToSupervision")}
+              </IonButton>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol className="ion-text-center">
               <IonButton color="secondary" expand="block" size="large" onClick={() => takePicture()}>
-                <IonIcon className="otherIcon" icon={camera} slot="start" />
+                <IonIcon className="otherIcon" icon={camera} />
                 {t("camera.takePhotoButtonLabel")}
               </IonButton>
             </IonCol>
