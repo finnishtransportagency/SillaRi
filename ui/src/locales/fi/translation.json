@@ -82,7 +82,8 @@
     "listLabel": "Valokuvia",
     "item": {
       "deleteButtonLabel": "Poista kuva"
-    }
+    },
+    "returnToSupervision": "Palaa sillanvalvontaan"
   },
   "SidebarMenu": {
     "title": "SillaRi",
