@@ -3,7 +3,7 @@ import { actions } from "../store/rootSlice";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { IonContent, IonPage, useIonAlert } from "@ionic/react";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
@@ -34,7 +34,6 @@ const Supervision = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
-  const location = useLocation();
   const queryClient = useQueryClient();
 
   const { supervisionId = "0" } = useParams<SupervisionProps>();
@@ -200,10 +199,9 @@ const Supervision = (): JSX.Element => {
     });
   };
 
-  const cancelSupervisionClicked = (): void => {
-    if (supervisionInProgress) {
-      showConfirmCancelSupervision();
-    } else if (supervisionOpenedFromSendingList) {
+  const goBackOrToSendingList = (): void => {
+    console.log("supervisionOpenedFromSendingList: " + supervisionOpenedFromSendingList);
+    if (supervisionOpenedFromSendingList) {
       dispatch({
         type: actions.SET_FORCE_OPEN_SENDING_LIST,
         payload: true,
@@ -221,7 +219,7 @@ const Supervision = (): JSX.Element => {
         t("common.answer.no"),
         {
           text: t("common.answer.yes"),
-          handler: () => history.goBack(),
+          handler: () => goBackOrToSendingList(),
         },
       ],
     });
@@ -231,15 +229,15 @@ const Supervision = (): JSX.Element => {
     if (reportHasUnsavedChanges(modifiedReport, savedReport)) {
       showConfirmLeavePage();
     } else {
-      console.log("supervisionOpenedFromSendingList: " + supervisionOpenedFromSendingList);
-      if (supervisionOpenedFromSendingList) {
-        dispatch({
-          type: actions.SET_FORCE_OPEN_SENDING_LIST,
-          payload: true,
-        });
-      } else {
-        history.goBack();
-      }
+      goBackOrToSendingList();
+    }
+  };
+
+  const cancelSupervisionClicked = (): void => {
+    if (supervisionInProgress) {
+      showConfirmCancelSupervision();
+    } else {
+      confirmGoBack();
     }
   };
 

@@ -14,7 +14,6 @@ import "./Header.css";
 import { isSupervisionSigned } from "../utils/supervisionUtil";
 import ISupervision from "../interfaces/ISupervision";
 import { RootState, useTypedSelector } from "../store/store";
-import { actions } from "../store/rootSlice";
 
 interface HeaderProps {
   title: string;
@@ -64,8 +63,6 @@ const Header = ({
   };
 
   const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : goBackOrToSendingList;
-
-  console.log("goAbk: " + goBack);
 
   const [sentSupervisions, setSentSupervisions] = useState<ISupervision[]>([]);
   const [unsentSupervisions, setUnsentSupervisions] = useState<ISupervision[]>([]);
