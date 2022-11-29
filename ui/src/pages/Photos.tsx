@@ -141,10 +141,6 @@ const Photos = (): JSX.Element => {
     }
   };
 
-  const returnToSupervision = () => {
-    history.goBack();
-  };
-
   const removeImageItem = (id: number) => {
     const imagesToEdit = images.filter((image) => image.id !== id);
     setImages(imagesToEdit);
@@ -228,7 +224,7 @@ const Photos = (): JSX.Element => {
         <IonGrid>
           <IonRow>
             <IonCol className="ion-text-center">
-              <IonButton color="secondary" expand="block" size="large" onClick={() => returnToSupervision()}>
+              <IonButton color="secondary" expand="block" size="large" onClick={() => saveImages()}>
                 <IonIcon className="otherIcon" icon={arrowLeft} slot="start" />
                 {t("camera.returnToSupervision")}
               </IonButton>
