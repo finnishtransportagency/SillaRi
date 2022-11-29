@@ -3,7 +3,7 @@ import { actions } from "../store/rootSlice";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import { IonContent, IonPage, useIonAlert } from "@ionic/react";
 import Header from "../components/Header";
 import NoNetworkNoData from "../components/NoNetworkNoData";
@@ -34,6 +34,7 @@ const Supervision = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
   const queryClient = useQueryClient();
 
   const { supervisionId = "0" } = useParams<SupervisionProps>();
@@ -208,7 +209,6 @@ const Supervision = (): JSX.Element => {
         payload: true,
       });
     } else {
-      console.log("get back");
       history.goBack();
     }
   };
@@ -231,7 +231,15 @@ const Supervision = (): JSX.Element => {
     if (reportHasUnsavedChanges(modifiedReport, savedReport)) {
       showConfirmLeavePage();
     } else {
-      history.goBack();
+      console.log("supervisionOpenedFromSendingList: " + supervisionOpenedFromSendingList);
+      if (supervisionOpenedFromSendingList) {
+        dispatch({
+          type: actions.SET_FORCE_OPEN_SENDING_LIST,
+          payload: true,
+        });
+      } else {
+        history.goBack();
+      }
     }
   };
 

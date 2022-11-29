@@ -45,7 +45,6 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
     alignment: "start",
   };
   const openSupervision = () => console.log("Password provided");
-  const history = useHistory();
 
   // Check if images are being uploaded using the mutationKey defined in Photos.tsx
   const isImageUploadMutating = useIsMutating(["imageUpload" + supervisionId]);

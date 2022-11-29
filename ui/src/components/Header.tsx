@@ -14,6 +14,7 @@ import "./Header.css";
 import { isSupervisionSigned } from "../utils/supervisionUtil";
 import ISupervision from "../interfaces/ISupervision";
 import { RootState, useTypedSelector } from "../store/store";
+import { actions } from "../store/rootSlice";
 
 interface HeaderProps {
   title: string;
@@ -42,7 +43,7 @@ const Header = ({
   const isMutating = useIsMutating();
   const dispatch = useDispatch();
 
-  const { forceOpenSendingList } = useTypedSelector((state: RootState) => state.rootReducer);
+  const { forceOpenSendingList, supervisionOpenedFromSendingList } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const { data: supervisionList = [] } = useQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
     retry: onRetry,
@@ -51,11 +52,20 @@ const Header = ({
   });
 
   const canGoBack = !pathname.includes("/supervisions") && pathname !== "/transport" && pathname !== "/management";
-
-  const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : history.goBack;
-
   const [isSendingListOpen, setSendingListOpen] = useState<boolean>(false);
-  // const [isUnsentOfflineOpen, setUnsentOfflineOpen] = useState<boolean>(false);
+
+  const goBackOrToSendingList = (): void => {
+    console.log("supervisionOpenedFromSendingList: " + supervisionOpenedFromSendingList);
+    if (supervisionOpenedFromSendingList) {
+      setSendingListOpen(true);
+    } else {
+      history.goBack();
+    }
+  };
+
+  const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : goBackOrToSendingList;
+
+  console.log("goAbk: " + goBack);
 
   const [sentSupervisions, setSentSupervisions] = useState<ISupervision[]>([]);
   const [unsentSupervisions, setUnsentSupervisions] = useState<ISupervision[]>([]);
@@ -81,7 +91,6 @@ const Header = ({
       // setUnsentOfflineOpen(supervisionList.some((supervision) => supervision.savedOffline));
 
       //
-      console.log("shall  I force open sending list?" + forceOpenSendingList);
       if (forceOpenSendingList && forceOpenSendingList === true) {
         console.log("force open sending list");
         setSendingListOpen(true);
