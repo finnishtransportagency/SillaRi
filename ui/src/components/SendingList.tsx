@@ -107,6 +107,17 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
     setTargetUrl("");
   };
 
+  const handleWillPresent = () => {
+    dispatch({
+      type: actions.SET_FORCE_OPEN_SENDING_LIST,
+      payload: false,
+    });
+    dispatch({
+      type: actions.SET_SUPERVISION_OPENED_FROM_SENDING_LIST,
+      payload: false,
+    });
+  };
+
   const handleClose = () => {
     isOpen = false;
     if (targetUrl) {
@@ -130,6 +141,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
     <IonModal
       isOpen={isOpen}
       onDidPresent={() => handleOpen()}
+      onWillPresent={() => handleWillPresent()}
       onWillDismiss={() => setOpen(false)}
       onDidDismiss={() => handleClose()}
       className="sendingListModal"
