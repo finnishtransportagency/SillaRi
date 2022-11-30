@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import fi.vaylavirasto.sillari.aws.AWSCognitoClient;
+
 import fi.vaylavirasto.sillari.config.SillariConfig;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -47,8 +47,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private static String publicKey = null;
     private static PublicKey ecPublicKey = null;
 
-    @Autowired
-    private AWSCognitoClient awsCognitoClient;
+
     @Autowired
     private SillariConfig sillariConfig;
 
@@ -192,7 +191,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     userDetails.setPhoneNumber(phoneNumber);
                     userDetails.setBusinessId(businessId);
                     userDetails.setOrganization(organization);
-                    userDetails.setIss(iss);
+                   // userDetails.setIss(iss);
 
                     authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -200,7 +199,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-                filterChain.doFilter(request, response);
+               // filterChain.doFilter(request, response);
             } else {
                 logger.debug("No JWT header found");
 
@@ -227,10 +226,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     authenticationToken = new PreAuthenticatedAuthenticationToken(userDetails, null, authorityList);
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);                
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-                    filterChain.doFilter(request, response);
-                }              
+                   // filterChain.doFilter(request, response);
+                }
             }
         } catch (Exception ex) {
             logger.error(ex);
@@ -240,8 +239,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();*/
 
             //response.sendRedirect(url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
-        } finally {            
-            SecurityContextHolder.clearContext();
+        } finally {
+            filterChain.doFilter(request, response);
         }
     }
 
