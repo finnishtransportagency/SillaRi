@@ -12,5 +12,6 @@ export default interface IRouteBridge {
   crossingInstruction?: string;
   contractNumber: number;
   contractBusinessId: string;
+  contractBusinessName: string;
   supervisions: ISupervision[];
 }

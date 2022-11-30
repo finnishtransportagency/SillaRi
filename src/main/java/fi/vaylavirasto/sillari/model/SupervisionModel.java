@@ -18,6 +18,7 @@ public class SupervisionModel extends BaseModel {
     private OffsetDateTime plannedTime;
     private Boolean conformsToPermit;
     private String supervisorCompany;
+    private String supervisorCompanyName;
     private SupervisorType supervisorType;
     private SupervisionStatusModel currentStatus;
     private List<SupervisionStatusModel> statusHistory;
