@@ -113,10 +113,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
                 */
 
-                /*if (!awsCognitoClient.isLoggedIn(jwt)) {
-                    throw new RuntimeException("User not logged in Cognito");
-                }*/
-
                 String jwt_headers = jwt.split("\\.")[0];
                 String decoded_jwt_headers = new String(Base64.getDecoder().decode(jwt_headers));
                 JSONParser parser = new JSONParser();
@@ -244,7 +240,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             //response.sendRedirect(url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
         } finally {
-            SecurityContextHolder.clearContext();
+            filterChain.doFilter(request, response);
         }
     }
 
