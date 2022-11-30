@@ -245,7 +245,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             //response.sendRedirect(url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
         } finally {            
-           // SecurityContextHolder.clearContext();
+           SecurityContextHolder.clearContext();
         }
     }
 
