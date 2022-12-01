@@ -54,7 +54,6 @@ const Header = ({
   const [isSendingListOpen, setSendingListOpen] = useState<boolean>(false);
 
   const goBackOrToSendingList = (): void => {
-    console.log("supervisionOpenedFromSendingList: " + supervisionOpenedFromSendingList);
     if (supervisionOpenedFromSendingList) {
       setSendingListOpen(true);
     } else {
