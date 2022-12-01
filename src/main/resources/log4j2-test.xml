@@ -48,8 +48,8 @@
         </Logger>
 
         <Root level="all">
-            <AppenderRef ref="ConsoleAppender" level="info"/>
-            <AppenderRef ref="DebugAppender" level="debug"/>
+            <AppenderRef ref="ConsoleAppender" level="warn"/>
+            <AppenderRef ref="DebugAppender" level="warn"/>
         </Root>
     </Loggers>
 </Configuration>
