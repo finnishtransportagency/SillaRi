@@ -204,7 +204,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-                filterChain.doFilter(request, response);
             } else {
                 logger.debug("No JWT header found");
 
@@ -233,7 +232,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);                
 
-                    filterChain.doFilter(request, response);
+
                 }              
             }
         } catch (Exception ex) {
@@ -244,8 +243,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String redirectUrl = sillariConfig.getAmazonCognito().getRedirectUrl();*/
 
             //response.sendRedirect(url + "/logout?client_id=" + clientId + "&redirect_uri=" + URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8) + "&response_type=code&scope=openid");
-        } finally {            
-            SecurityContextHolder.clearContext();
+        } finally {
+            filterChain.doFilter(request, response);
         }
     }
 
