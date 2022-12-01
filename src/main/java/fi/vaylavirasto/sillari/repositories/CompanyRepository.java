@@ -2,6 +2,7 @@ package fi.vaylavirasto.sillari.repositories;
 
 import fi.vaylavirasto.sillari.mapper.CompanyMapper;
 import fi.vaylavirasto.sillari.model.CompanyModel;
+import fi.vaylavirasto.sillari.model.Sequences;
 import fi.vaylavirasto.sillari.util.TableAlias;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -106,6 +107,29 @@ public class CompanyRepository {
                     .fetchOne(); // Execute and return zero or one record
 
             Integer companyId = companyIdResult != null ? companyIdResult.value1() : null;
+            companyModel.setId(companyId);
+            return companyId;
+        });
+    }
+
+    public Integer createCompanyWithNoBusinessId(CompanyModel companyModel) throws DataAccessException {
+        return dsl.transactionResult(configuration -> {
+            DSLContext ctx = DSL.using(configuration);
+            Integer companyId = ctx.nextval(Sequences.COMPANY_ID_SEQ).intValue();
+            String businessId = "Missing_businessID" + companyId;
+
+            Record1<Integer> companyIdResult = ctx.insertInto(TableAlias.company,
+                    TableAlias.company.ID,
+                    TableAlias.company.BUSINESS_ID,
+                    TableAlias.company.NAME
+            ).values(
+                    companyId,
+                    businessId,
+                    companyModel.getName())
+                    .returningResult(TableAlias.company.ID)
+                    .fetchOne(); // Execute and return zero or one record
+
+
             companyModel.setId(companyId);
             return companyId;
         });

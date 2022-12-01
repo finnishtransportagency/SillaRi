@@ -158,12 +158,20 @@ public class LeluService {
 
 
     private Integer getOrCreateCompany(CompanyModel companyModel) {
-        Integer companyId = companyRepository.getCompanyIdByBusinessId(companyModel.getBusinessId());
-        if (companyId == null) {
-            logger.debug("Create new company with business ID {}", companyModel.getBusinessId());
-            companyId = companyRepository.createCompany(companyModel);
+        String businessId = companyModel.getBusinessId();
+        if(businessId != null) {
+            Integer companyId = companyRepository.getCompanyIdByBusinessId(companyModel.getBusinessId());
+            if (companyId == null) {
+                logger.debug("Create new company with business ID {}", companyModel.getBusinessId());
+                companyId = companyRepository.createCompany(companyModel);
+            }
+            return companyId;
         }
-        return companyId;
+        else{
+            logger.debug("No businessId aka y-tunnus in lelu permit post");
+            Integer companyId = companyRepository.createCompanyWithNoBusinessId(companyModel);
+            return companyId;
+        }
     }
 
 
