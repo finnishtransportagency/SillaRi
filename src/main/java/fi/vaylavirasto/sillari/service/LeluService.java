@@ -15,6 +15,7 @@ import fi.vaylavirasto.sillari.model.*;
 import fi.vaylavirasto.sillari.repositories.*;
 import fi.vaylavirasto.sillari.service.trex.TRexBridgeInfoService;
 import fi.vaylavirasto.sillari.service.trex.TRexPicService;
+import fi.vaylavirasto.sillari.util.Constants;
 import fi.vaylavirasto.sillari.util.LeluRouteUploadUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -169,7 +170,7 @@ public class LeluService {
         }
         else{
             logger.debug("No businessId aka y-tunnus in lelu permit post");
-            Integer companyId = companyRepository.createCompanyWithNoBusinessId(companyModel);
+            Integer companyId = companyRepository.createCompanyWithNoBusinessId(companyModel, Constants.MISSING_BUSINESS_ID_PREFIX);
             return companyId;
         }
     }

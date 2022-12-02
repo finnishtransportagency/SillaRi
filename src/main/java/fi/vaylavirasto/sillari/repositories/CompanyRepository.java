@@ -112,11 +112,11 @@ public class CompanyRepository {
         });
     }
 
-    public Integer createCompanyWithNoBusinessId(CompanyModel companyModel) throws DataAccessException {
+    public Integer createCompanyWithNoBusinessId(CompanyModel companyModel, String missingBusinessIdPrefix) throws DataAccessException {
         return dsl.transactionResult(configuration -> {
             DSLContext ctx = DSL.using(configuration);
             Integer companyId = ctx.nextval(Sequences.COMPANY_ID_SEQ).intValue();
-            String businessId = "Missing_businessID" + companyId;
+            String businessId = missingBusinessIdPrefix + companyId;
 
             Record1<Integer> companyIdResult = ctx.insertInto(TableAlias.company,
                     TableAlias.company.ID,
