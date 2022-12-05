@@ -21,6 +21,7 @@ public class RouteBridgeModel extends BaseModel {
     private Integer transportNumber;
     private List<SupervisionModel> supervisions = new ArrayList<>();
     private Boolean maxTransportsExceeded = false;
+    private String photoDataUrl;
 
     // Parents
     private BridgeModel bridge;
@@ -41,5 +42,6 @@ public class RouteBridgeModel extends BaseModel {
         this.supervisions = from.getSupervisions();
         this.bridge = from.getBridge();
         this.route = from.getRoute();
+        this.photoDataUrl = from.getPhotoDataUrl();
     }
 }

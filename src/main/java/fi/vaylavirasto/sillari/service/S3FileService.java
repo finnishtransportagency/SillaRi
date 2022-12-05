@@ -38,12 +38,22 @@ public class S3FileService {
     private String activeProfile;
 
     public void getFile(HttpServletResponse response, String bucketName, String objectKey, String filename, String contentType) throws IOException {
+        response.setContentType(contentType);
+        OutputStream out = response.getOutputStream();
+        getFile(out, bucketName, objectKey, filename);
+    }
+
+    public String getFile(String bucketName, String objectKey, String filename) throws IOException {
+        OutputStream out = new ByteArrayOutputStream();
+        getFile(out, bucketName, objectKey, filename);
+        return out.toString();
+    }
+
+    private void getFile(OutputStream out, String bucketName, String objectKey, String filename) throws IOException {
         if (activeProfile.equals("local")) {
             // Get from local file system
             File inputFile = new File("/", filename);
             if (inputFile.exists()) {
-                response.setContentType(contentType);
-                OutputStream out = response.getOutputStream();
                 FileInputStream in = new FileInputStream(inputFile);
                 IOUtils.copy(in, out);
                 out.close();
@@ -53,8 +63,6 @@ public class S3FileService {
             // Get from AWS
             byte[] file = awss3Client.download(objectKey, bucketName);
             if (file != null) {
-                response.setContentType(contentType);
-                OutputStream out = response.getOutputStream();
                 ByteArrayInputStream in = new ByteArrayInputStream(file);
                 IOUtils.copy(in, out);
                 out.close();

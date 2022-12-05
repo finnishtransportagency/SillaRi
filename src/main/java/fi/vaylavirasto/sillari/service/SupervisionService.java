@@ -59,7 +59,8 @@ public class SupervisionService {
     PermitRepository permitRepository;
     @Autowired
     CompanyRepository companyRepository;
-
+    @Autowired
+    BridgeImageService bridgeImageService;
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
@@ -95,10 +96,26 @@ public class SupervisionService {
     private void fillPermitDetails(SupervisionModel supervision) {
         RouteBridgeModel routeBridge = supervision.getRouteBridge();
         if (routeBridge != null) {
+            fillBridgeImageDataUrl(routeBridge);
             RouteModel route = routeRepository.getRoute(supervision.getRouteBridge().getRouteId());
             routeBridge.setRoute(route);
             if (route != null) {
                 route.setPermit(permitRepository.getPermit(route.getPermitId()));
+            }
+        }
+    }
+    
+    private void fillBridgeImageDataUrl(RouteBridgeModel routeBridge) {
+        BridgeImageModel bridgeImageModel = bridgeImageService.getBridgeImage(routeBridge.getBridgeId());                
+        if (bridgeImageModel != null) {
+            String filename = bridgeImageModel.getFilename();
+            String contentType = bridgeImageModel.getFiletype() == null ? "image/jpeg" : bridgeImageModel.getFiletype();
+            try {
+                String picData = s3FileService.getFile(awss3Client.getTrexPhotoBucketName(), bridgeImageModel.getObjectKey(), filename);
+                String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(picData.getBytes());
+                routeBridge.setPhotoDataUrl("data:" + contentType + ";base64," + encodedString);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
     }
