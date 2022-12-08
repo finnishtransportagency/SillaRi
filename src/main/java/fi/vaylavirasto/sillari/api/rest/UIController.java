@@ -206,6 +206,8 @@ public class UIController {
             .body(responseBody);
     }
 
+
+
     @Operation(summary = "Get user data")
     @GetMapping(value = "/userdata")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
@@ -224,6 +226,7 @@ public class UIController {
             responseBody.put("phoneNumber", user.getPhoneNumber());
             responseBody.put("businessId", user.getBusinessId());
             responseBody.put("organization", user.getOrganization());
+
 
             return ResponseEntity.status(HttpStatus.OK).body(responseBody);
         } finally {

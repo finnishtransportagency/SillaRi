@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { IonApp, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
@@ -186,6 +186,63 @@ const App: React.FC = () => {
     // Fetch the user data on first render only, using a workaround utilising useEffect with empty dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  type Delay = number | null;
+  type TimerHandler = (...args: any[]) => void;
+
+  const useInterval = (callback: TimerHandler, delay: Delay) => {
+    const savedCallbackRef = useRef<TimerHandler>();
+
+    useEffect(() => {
+      savedCallbackRef.current = callback;
+    }, [callback]);
+
+    useEffect(() => {
+      const handler = (...args: any[]) => savedCallbackRef.current!(...args);
+
+      if (delay !== null) {
+        const intervalId = setInterval(handler, delay);
+        return () => clearInterval(intervalId);
+      }
+    }, [delay]);
+  };
+
+  useInterval(() => {
+    console.log("hellox");
+    const fetchUserData2 = async () => {
+      try {
+        const [userDataResponse] = await Promise.all([getUserData(dispatch)]);
+
+        if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
+          if (userDataResponse.roles.length > 0) {
+            console.log("userdata ok");
+          } else {
+            /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
+            console.log("userdata not ok never happens");
+            setErrorCode(SillariErrorCode.NO_USER_ROLES);
+            logoutFromApp();
+          }
+        } else {
+          // Note: status codes from the backend such as 401 or 403 are now contained in failedStatus.getUserData
+          console.log("User data response", userDataResponse);
+          setErrorCode(SillariErrorCode.NO_USER_DATA);
+          logoutFromApp();
+        }
+      } catch (e) {
+        console.log("App error", e);
+        setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
+        logoutFromApp();
+      }
+    };
+
+    // Only fetch user data from the backend (and login if necessary) when online
+    // When offline, the user data will be set on this page later via AppCheck.tsx
+    if (onlineManager.isOnline()) {
+      fetchUserData2();
+    } else {
+      setInitialisedOffline(true);
+    }
+  }, 1000 * 10);
 
   const userHasRole = useCallback(
     (role: string) => {
