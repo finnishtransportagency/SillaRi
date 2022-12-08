@@ -46,6 +46,42 @@ export const logoutUser = async (): Promise<ILogoutData> => {
   });
 };
 
+export const getUserData2 = async (dispatch: Dispatch): Promise<IUserData> => {
+  try {
+    console.log("getUserData");
+    dispatch({
+      type: actions.SET_FAILED_QUERY_STATUS,
+      payload: { failedQuery: { getUserData: false }, failedQueryStatus: { getUserData: -1 } },
+    });
+
+    const userDataResponse = await fetch(`${getOrigin()}/api/ui/userdata2`);
+
+    if (userDataResponse.ok) {
+      const userData = (await userDataResponse.json()) as Promise<IUserData>;
+      return await userData;
+    } else {
+      // Use the status redux action so that the status code (401, 403, etc) is stored for later use
+      dispatch({
+        type: actions.SET_FAILED_QUERY_STATUS,
+        payload: { failedQuery: { getUserData: true }, failedQueryStatus: { getUserData: userDataResponse.status } },
+      });
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message === NETWORK_RESPONSE_NOT_OK) {
+      // This error came from the error thrown above, so preserve the status code for use in App.tsx
+    } else {
+      // Otherwise this is a different error, so store a general error code in redux
+      // This can happen when the application is offline and there is no cached data
+      dispatch({
+        type: actions.SET_FAILED_QUERY_STATUS,
+        payload: { failedQuery: { getUserData: true }, failedQueryStatus: { getUserData: SillariErrorCode.OTHER_USER_FETCH_ERROR } },
+      });
+    }
+    throw new Error(err as string);
+  }
+};
+
 export const getUserData = async (dispatch: Dispatch): Promise<IUserData> => {
   try {
     console.log("getUserData");
