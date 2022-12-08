@@ -30,7 +30,7 @@ import Photos from "./pages/Photos";
 import UserInfo from "./pages/UserInfo";
 import Cookies from "js-cookie";
 import { useTypedSelector, RootState } from "./store/store";
-import { getUserData, getUserData2, getVersionInfo, logoutUser } from "./utils/backendData";
+import { getUserData, getVersionInfo, logoutUser } from "./utils/backendData";
 import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/offlineUtil";
@@ -211,7 +211,7 @@ const App: React.FC = () => {
     console.log("hellox");
     const fetchUserData2 = async () => {
       try {
-        const [userDataResponse] = await Promise.all([getUserData2(dispatch)]);
+        const [userDataResponse] = await Promise.all([getUserData(dispatch)]);
 
         if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
           if (userDataResponse.roles.length > 0) {
