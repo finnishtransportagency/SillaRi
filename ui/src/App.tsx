@@ -235,7 +235,7 @@ const App: React.FC = () => {
       } catch (e) {
         console.log("App error", e);
         setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
-        logoutFromApp();
+        redirToLogin();
       }
     };
 
