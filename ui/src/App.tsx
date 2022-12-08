@@ -94,13 +94,15 @@ const App: React.FC = () => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const clearDataAndRedirect = (url: string) => {
+    console.log("clearDataAndRedirect: " + url);
     serviceWorkerRegistration.unregister(() => {
+      console.log("unregister callback");
       const cookies = Cookies.get();
       Object.keys(cookies).forEach((key) => {
         Cookies.remove(key);
       });
-      window.location.href = url;
     });
+    window.location.href = url;
   };
 
   const logoutFromApp = () => {
