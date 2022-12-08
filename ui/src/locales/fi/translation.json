@@ -490,6 +490,13 @@
     "info3": "Voit käyttää SillaRia offline-tilassa, jolloin sillanvalvonnan raportti on mahdollista tallentaa väliaikaisesti tälle laitteelle.",
     "info4": "Valvontaraportin voit lähettää myöhemmin, kun verkkoyhteys on jälleen käytössä ja kirjaudut SillaRiin."
   },
+  "loggedOutInfo": {
+    "title": "Olet kirjautunut ulos",
+    "info1": "SillaRin kuljetukset ja valvottavat sillat on päivitetty viimeksi",
+    "info2": "Kirjaudu sisään että voit käyttää SillaRia.",
+    "info3": "",
+    "info4": ""
+  },
   "sendingListOfflineNotice": {
     "title": "Offline-tilassa lähettäminen ei ole mahdollista",
     "notice": "Voit lähettää valvontaraportit verkkoyhteyden palattua."

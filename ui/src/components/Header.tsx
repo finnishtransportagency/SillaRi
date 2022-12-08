@@ -13,6 +13,7 @@ import OfflineBanner from "./OfflineBanner";
 import "./Header.css";
 import { isSupervisionSigned } from "../utils/supervisionUtil";
 import ISupervision from "../interfaces/ISupervision";
+import LoggedOutBanner from "./LoggedOutBanner";
 
 interface HeaderProps {
   title: string;
@@ -136,6 +137,7 @@ const Header = ({
       </IonToolbar>
 
       {includeOfflineBanner && <OfflineBanner />}
+      <LoggedOutBanner />
     </IonHeader>
   );
 };

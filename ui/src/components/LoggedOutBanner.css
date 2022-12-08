@@ -1,0 +1,5 @@
+.loggedOutBanner {
+  /* always use black background regardless of dark mode */
+  --background: #ff0000;
+  --color: #ffffff;
+}

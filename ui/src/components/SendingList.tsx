@@ -26,6 +26,7 @@ import { completeSupervisions } from "../utils/supervisionBackendData";
 import { useHistory } from "react-router";
 import CustomAccordion from "./common/CustomAccordion";
 import OfflineBanner from "./OfflineBanner";
+import LoggedOutBanner from "./LoggedOutBanner";
 import SentSupervisionReportsAccordion from "./SentSupervisionReportsAccordion";
 import SendingListItem from "./SendingListItem";
 import SendingListOfflineNotice from "./SendingListOfflineNotice";
@@ -132,6 +133,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
         </IonToolbar>
 
         <OfflineBanner />
+        <LoggedOutBanner />
       </IonHeader>
       <IonContent>
         {unsentSupervisions.length === 0 ? (
