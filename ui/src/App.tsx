@@ -115,6 +115,10 @@ const App: React.FC = () => {
     );
   };
 
+  const redirToLogin = () => {
+    clearDataAndRedirect(process.env.PUBLIC_URL + "?ts=" + Date.now());
+  };
+
   useEffect(() => {
     removeObsoletePasswords();
     // Add or remove the "dark" class based on if the media query matches
@@ -226,7 +230,7 @@ const App: React.FC = () => {
           // Note: status codes from the backend such as 401 or 403 are now contained in failedStatus.getUserData
           console.log("User data response", userDataResponse);
           setErrorCode(SillariErrorCode.NO_USER_DATA);
-          logoutFromApp();
+          redirToLogin();
         }
       } catch (e) {
         console.log("App error", e);
