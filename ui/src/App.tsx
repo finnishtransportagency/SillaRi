@@ -105,6 +105,18 @@ const App: React.FC = () => {
     window.location.href = url;
   };
 
+  const clearDataAndRedirectNewTab = (url: string) => {
+    console.log("clearDataAndRedirectNewTab: " + url);
+    serviceWorkerRegistration.unregister(() => {
+      console.log("unregister callback");
+      const cookies = Cookies.get();
+      Object.keys(cookies).forEach((key) => {
+        Cookies.remove(key);
+      });
+    });
+    window.open(url, "_blank")?.focus();
+  };
+
   const logoutFromApp = () => {
     logoutUser().then(
       (data) => {
@@ -118,7 +130,7 @@ const App: React.FC = () => {
   };
 
   const redirToLogin = () => {
-    clearDataAndRedirect(process.env.PUBLIC_URL + "?ts=" + Date.now());
+    clearDataAndRedirectNewTab(process.env.PUBLIC_URL + "?ts=" + Date.now());
   };
 
   useEffect(() => {
