@@ -94,13 +94,27 @@ const App: React.FC = () => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const clearDataAndRedirect = (url: string) => {
+    console.log("clearDataAndRedirect: " + url);
     serviceWorkerRegistration.unregister(() => {
+      console.log("unregister callback");
       const cookies = Cookies.get();
       Object.keys(cookies).forEach((key) => {
         Cookies.remove(key);
       });
-      window.location.href = url;
     });
+    window.location.href = url;
+  };
+
+  const clearDataAndRedirectNewTab = (url: string) => {
+    console.log("clearDataAndRedirectNewTab: " + url);
+    serviceWorkerRegistration.unregister(() => {
+      console.log("unregister callback");
+      const cookies = Cookies.get();
+      Object.keys(cookies).forEach((key) => {
+        Cookies.remove(key);
+      });
+    });
+    window.open(url, "_blank")?.focus();
   };
 
   const logoutFromApp = () => {
@@ -113,6 +127,10 @@ const App: React.FC = () => {
         clearDataAndRedirect(process.env.PUBLIC_URL + "?ts=" + Date.now());
       }
     );
+  };
+
+  const redirToLogin = () => {
+    clearDataAndRedirectNewTab(process.env.PUBLIC_URL + "?ts=" + Date.now());
   };
 
   useEffect(() => {
@@ -226,12 +244,12 @@ const App: React.FC = () => {
           // Note: status codes from the backend such as 401 or 403 are now contained in failedStatus.getUserData
           console.log("User data response", userDataResponse);
           setErrorCode(SillariErrorCode.NO_USER_DATA);
-          logoutFromApp();
+          redirToLogin();
         }
       } catch (e) {
         console.log("App error", e);
         setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
-        logoutFromApp();
+        redirToLogin();
       }
     };
 

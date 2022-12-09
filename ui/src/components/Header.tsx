@@ -14,6 +14,7 @@ import "./Header.css";
 import { isSupervisionSigned } from "../utils/supervisionUtil";
 import ISupervision from "../interfaces/ISupervision";
 import LoggedOutBanner from "./LoggedOutBanner";
+import { RootState, useTypedSelector } from "../store/store";
 
 interface HeaderProps {
   title: string;
@@ -42,6 +43,8 @@ const Header = ({
   const isMutating = useIsMutating();
   const dispatch = useDispatch();
 
+  const { forceOpenSendingList, supervisionOpenedFromSendingList } = useTypedSelector((state: RootState) => state.rootReducer);
+
   const { data: supervisionList = [] } = useQuery(["getSupervisionSendingList"], () => getSupervisionSendingList(dispatch), {
     retry: onRetry,
     staleTime: Infinity,
@@ -49,11 +52,17 @@ const Header = ({
   });
 
   const canGoBack = !pathname.includes("/supervisions") && pathname !== "/transport" && pathname !== "/management";
-
-  const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : history.goBack;
-
   const [isSendingListOpen, setSendingListOpen] = useState<boolean>(false);
-  // const [isUnsentOfflineOpen, setUnsentOfflineOpen] = useState<boolean>(false);
+
+  const goBackOrToSendingList = (): void => {
+    if (supervisionOpenedFromSendingList) {
+      setSendingListOpen(true);
+    } else {
+      history.goBack();
+    }
+  };
+
+  const goBack: () => void = confirmGoBack !== undefined ? confirmGoBack : goBackOrToSendingList;
 
   const [sentSupervisions, setSentSupervisions] = useState<ISupervision[]>([]);
   const [unsentSupervisions, setUnsentSupervisions] = useState<ISupervision[]>([]);
@@ -77,8 +86,13 @@ const Header = ({
       // Note: this only works if the user does not refresh the page after coming back online
       // NOTE: this has been removed until later as it's related to further development
       // setUnsentOfflineOpen(supervisionList.some((supervision) => supervision.savedOffline));
+
+      //
+      if (forceOpenSendingList && forceOpenSendingList === true) {
+        setSendingListOpen(true);
+      }
     }
-  }, [supervisionList]);
+  }, [supervisionList, forceOpenSendingList]);
 
   const isGettingData = isFetching > 0;
   const isSendingData = isMutating > 0;

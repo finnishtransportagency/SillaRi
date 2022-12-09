@@ -9,6 +9,8 @@ interface IStateProps {
   selectedManagementPermitId?: number;
   selectedSupervisionListType?: string;
   ownListCount: number;
+  supervisionOpenedFromSendingList: boolean;
+  forceOpenSendingList: boolean;
 }
 
 const initialState: IStateProps = {
@@ -19,6 +21,8 @@ const initialState: IStateProps = {
   selectedManagementPermitId: undefined,
   selectedSupervisionListType: undefined,
   ownListCount: 0,
+  supervisionOpenedFromSendingList: false,
+  forceOpenSendingList: false,
 };
 
 const rootSlice = createSlice({
@@ -51,6 +55,14 @@ const rootSlice = createSlice({
     SET_OWNLIST_COUNT: (state, action: PayloadAction<number>) => {
       // console.log("SET_OWNLIST_COUNT", action.payload);
       return { ...state, ownListCount: action.payload };
+    },
+    SET_SUPERVISION_OPENED_FROM_SENDING_LIST: (state, action: PayloadAction<boolean>) => {
+      console.log("SET_SUPERVISION_OPENED_FROM_SENDING_LIST", action.payload);
+      return { ...state, supervisionOpenedFromSendingList: action.payload };
+    },
+    SET_FORCE_OPEN_SENDING_LIST: (state, action: PayloadAction<boolean>) => {
+      console.log("SET_FORCE_OPEN_SENDING_LIST", action.payload);
+      return { ...state, forceOpenSendingList: action.payload };
     },
   },
 });
