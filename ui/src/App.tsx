@@ -93,8 +93,7 @@ const App: React.FC = () => {
     networkStatus: { isFailed = {}, failedStatus = {} },
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
-  const clearDataAndRedirect = (url: string) => {
-    console.log("clearDataAndRedirect: " + url);
+  const clearBrowserData = () => {
     serviceWorkerRegistration.unregister(() => {
       console.log("unregister callback");
       const cookies = Cookies.get();
@@ -102,18 +101,17 @@ const App: React.FC = () => {
         Cookies.remove(key);
       });
     });
+  };
+
+  const clearDataAndRedirect = (url: string) => {
+    console.log("clearDataAndRedirect: " + url);
+    clearBrowserData();
     window.location.href = url;
   };
 
   const clearDataAndRedirectNewTab = (url: string) => {
     console.log("clearDataAndRedirectNewTab: " + url);
-    serviceWorkerRegistration.unregister(() => {
-      console.log("unregister callback");
-      const cookies = Cookies.get();
-      Object.keys(cookies).forEach((key) => {
-        Cookies.remove(key);
-      });
-    });
+    clearBrowserData();
     window.open(url, "_blank")?.focus();
   };
 
