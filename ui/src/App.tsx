@@ -32,7 +32,7 @@ import Cookies from "js-cookie";
 import { useTypedSelector, RootState } from "./store/store";
 import { getUserData, getVersionInfo, logoutUser } from "./utils/backendData";
 import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
-import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
+import {REACT_QUERY_CACHE_TIME, SillariErrorCode, USER_DATA_POLL_INTERVAL} from "./utils/constants";
 import { prefetchOfflineData } from "./utils/offlineUtil";
 import IonicAsyncStorage from "./IonicAsyncStorage";
 
@@ -238,7 +238,7 @@ const App: React.FC = () => {
     } else {
       setInitialisedOffline(true);
     }
-  }, 1000 * 10);
+  }, USER_DATA_POLL_INTERVAL);
 
   const userHasRole = useCallback(
     (role: string) => {
