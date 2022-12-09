@@ -490,6 +490,13 @@
     "info3": "Du kan använda SillaRi i offline-läge. Då lagras övervakningsrapporten tillfälligt i den här apparaten.",
     "info4": "Du kan sända övervakningsrapporten när nätförbindelsen igen fungerar och du har loggat in i applikationen."
   },
+  "loggedOutInfo": {
+    "title": "(SV) Olet kirjautunut ulos",
+    "info1": "Transport- och brouppgifter har senast uppdaterats i SillaRi",
+    "info2": "(SV) Kirjaudu sisään että voit käyttää SillaRia.",
+    "info3": "",
+    "info4": ""
+  },
   "sendingListOfflineNotice": {
     "title": "Du kan inte sända övervakningsrapporten i offline-läge",
     "notice": "Du kan sända övervakningsrapporten när nätförbindelsen igen fungerar."
