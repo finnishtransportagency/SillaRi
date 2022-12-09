@@ -88,6 +88,7 @@ const App: React.FC = () => {
   const [version, setVersion] = useState<string>("-");
   const [isInitialisedOffline, setInitialisedOffline] = useState<boolean>(false);
   const [isOkToContinue, setOkToContinue] = useState<boolean>(false);
+  const [loginWindowOpened, setLoginWindowOpened] = useState<boolean>(false);
   const dispatch = useDispatch();
 
   const {
@@ -113,7 +114,12 @@ const App: React.FC = () => {
   const clearDataAndRedirectNewTab = (url: string) => {
     console.log("clearDataAndRedirectNewTab: " + url);
     clearBrowserData();
-    window.open(url, "_blank")?.focus();
+    const newWindow = window.open(url, "_blank");
+    console.log("newWindow: " + newWindow);
+    if (newWindow) {
+      newWindow.focus();
+      setLoginWindowOpened(true);
+    }
   };
 
   const logoutFromApp = () => {
@@ -129,7 +135,9 @@ const App: React.FC = () => {
   };
 
   const redirToLogin = () => {
-    clearDataAndRedirectNewTab(process.env.PUBLIC_URL + "?ts=" + Date.now());
+    if (!loginWindowOpened) {
+      clearDataAndRedirectNewTab(process.env.PUBLIC_URL + "?ts=" + Date.now());
+    }
   };
 
   useEffect(() => {
@@ -212,6 +220,7 @@ const App: React.FC = () => {
         if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
           if (userDataResponse.roles.length > 0) {
             console.log("userdata ok");
+            setLoginWindowOpened(false);
           } else {
             /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
             console.log("userdata not ok never happens");
