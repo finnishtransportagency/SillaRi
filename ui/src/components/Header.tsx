@@ -151,7 +151,7 @@ const Header = ({
       </IonToolbar>
 
       {includeOfflineBanner && <OfflineBanner />}
-      <LoggedOutBanner />
+      {includeOfflineBanner && <LoggedOutBanner />}
     </IonHeader>
   );
 };
