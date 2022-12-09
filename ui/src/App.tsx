@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { IonApp, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
@@ -38,6 +38,7 @@ import IonicAsyncStorage from "./IonicAsyncStorage";
 
 /* Sillari.css */
 import "./theme/sillari.css";
+import { useInterval } from "./utils/reactUtils";
 
 // Use the same style for all platforms
 setupIonicReact({
@@ -203,28 +204,7 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  type Delay = number | null;
-  type TimerHandler = (...args: any[]) => void;
-
-  const useInterval = (callback: TimerHandler, delay: Delay) => {
-    const savedCallbackRef = useRef<TimerHandler>();
-
-    useEffect(() => {
-      savedCallbackRef.current = callback;
-    }, [callback]);
-
-    useEffect(() => {
-      const handler = (...args: any[]) => savedCallbackRef.current!(...args);
-
-      if (delay !== null) {
-        const intervalId = setInterval(handler, delay);
-        return () => clearInterval(intervalId);
-      }
-    }, [delay]);
-  };
-
   useInterval(() => {
-    console.log("hellox");
     const fetchUserData2 = async () => {
       try {
         const [userDataResponse] = await Promise.all([getUserData(dispatch)]);
@@ -236,7 +216,7 @@ const App: React.FC = () => {
             /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
             console.log("userdata not ok never happens");
             setErrorCode(SillariErrorCode.NO_USER_ROLES);
-            logoutFromApp();
+            redirToLogin();
           }
         } else {
           // Note: status codes from the backend such as 401 or 403 are now contained in failedStatus.getUserData
