@@ -44,7 +44,8 @@
     "noNetworkNoData": "Unable to retrieve data, trying again...",
     "loading": "Loading...",
     "offline": "Offline mode",
-    "useOffline": "Use SillaRi in offline mode"
+    "useOffline": "Use SillaRi in offline mode",
+    "loggedOut": "You have been signed out. Please log in"
   },
   "map": {
     "attribution": "Material"

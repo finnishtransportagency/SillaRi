@@ -44,7 +44,8 @@
     "noNetworkNoData": "Tietoja ei voi noutaa, yritetään uudelleen...",
     "loading": "Ladataan...",
     "offline": "Offline-tila",
-    "useOffline": "Käytä SillaRia offline-tilassa"
+    "useOffline": "Käytä SillaRia offline-tilassa",
+    "loggedOut": "Olet kirjautunut ulos. Kirjaudu sisään"
   },
   "map": {
     "attribution": "Aineisto"

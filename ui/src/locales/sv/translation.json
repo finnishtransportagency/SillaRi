@@ -44,7 +44,8 @@
     "noNetworkNoData": "Data kan inte hämtas, försöker igen...",
     "loading": "Laddar...",
     "offline": "Offline-tillstånd",
-    "useOffline": "Använd SillaRi i offline-läge"
+    "useOffline": "Använd SillaRi i offline-läge",
+    "loggedOut": "(SV) Olet kirjautunut ulos. Kirjaudu sisään"
   },
   "map": {
     "attribution": "Material"
