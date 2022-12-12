@@ -11,10 +11,20 @@ const LoggedOutBanner = (): JSX.Element => {
   const { t } = useTranslation();
 
   const [isLoggedOutInfoOpen, setLoggedOutInfoOpen] = useState<boolean>(false);
+  const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
 
   const {
     networkStatus: { failedStatus = {} },
   } = useTypedSelector((state: RootState) => state.rootReducer);
+
+  useEffect(() => {
+    onlineManager.subscribe(() => {
+      setOnline(onlineManager.isOnline());
+    });
+    if (onlineManager.isOnline()) {
+      setLoggedOutInfoOpen(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
@@ -23,7 +33,7 @@ const LoggedOutBanner = (): JSX.Element => {
   }, [failedStatus.getUserData]);
 
   return (
-    <IonItem className={`loggedOutBanner ${!failedStatus.getUserData || failedStatus.getUserData < 400 ? "ion-hide" : ""}`} lines="none">
+    <IonItem className={`loggedOutBanner ${!failedStatus.getUserData || failedStatus.getUserData < 400 || isOnline ? "ion-hide" : ""}`} lines="none">
       <IonLabel className="headingBoldText ion-text-center">{t("main.loggedOut")}</IonLabel>
       <IonButton slot="end" className="ion-no-padding" size="default" fill="clear" onClick={() => setLoggedOutInfoOpen(true)}>
         <IonIcon slot="icon-only" icon={help} />
