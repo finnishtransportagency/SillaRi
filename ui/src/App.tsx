@@ -30,7 +30,7 @@ import Photos from "./pages/Photos";
 import UserInfo from "./pages/UserInfo";
 import Cookies from "js-cookie";
 import { useTypedSelector, RootState } from "./store/store";
-import {getUserData, getUserData2, getVersionInfo, logoutUser} from "./utils/backendData";
+import { getUserData, getUserData2, getVersionInfo, logoutUser } from "./utils/backendData";
 import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode, USER_DATA_POLL_INTERVAL } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/offlineUtil";
