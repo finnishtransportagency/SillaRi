@@ -221,7 +221,7 @@ const App: React.FC = () => {
   useInterval(() => {
     const fetchUserData2 = async () => {
       try {
-        const [userDataResponse] = await Promise.all([getUserData(dispatch)]);
+        const [userDataResponse] = await Promise.all([getUserData2(dispatch)]);
 
         if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
           if (userDataResponse.roles.length > 0) {
