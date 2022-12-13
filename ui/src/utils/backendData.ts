@@ -87,11 +87,11 @@ export const getUserData2 = async (dispatch: Dispatch): Promise<IUserData> => {
   try {
     console.log("getUserData2");
 
-    const failedStatus = store.getState().rootReducer.networkStatus.failedStatus;
-    console.log(failedStatus.getUserData);
+    const isFailed = store.getState().rootReducer.networkStatus.isFailed;
+    console.log(isFailed.getUserData);
 
     //only dispatch ok status if its not ok previously so no render
-    if (failedStatus.getUserData) {
+    if (isFailed.getUserData) {
       dispatch({
         type: actions.SET_FAILED_QUERY_STATUS,
         payload: { failedQuery: { getUserData: false }, failedQueryStatus: { getUserData: -1 } },
