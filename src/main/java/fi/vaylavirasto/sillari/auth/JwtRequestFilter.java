@@ -92,7 +92,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        boolean isLeluPath = request != null || request.getServletPath() != null || request.getServletPath().contains("lelu");
+        boolean isLeluPath = request != null && request.getServletPath() != null && request.getServletPath().contains("lelu");
         logger.debug("is lelu path: " + isLeluPath);
         try {
             logger.debug(String.format("Path %s", request.getServletPath()));

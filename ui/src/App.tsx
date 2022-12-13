@@ -30,14 +30,15 @@ import Photos from "./pages/Photos";
 import UserInfo from "./pages/UserInfo";
 import Cookies from "js-cookie";
 import { useTypedSelector, RootState } from "./store/store";
-import { getUserData, getVersionInfo, logoutUser } from "./utils/backendData";
+import { getUserData, checkUserIsLoggedIn, getVersionInfo, logoutUser } from "./utils/backendData";
 import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
-import { REACT_QUERY_CACHE_TIME, SillariErrorCode } from "./utils/constants";
+import { REACT_QUERY_CACHE_TIME, SillariErrorCode, USER_DATA_POLL_INTERVAL } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/offlineUtil";
 import IonicAsyncStorage from "./IonicAsyncStorage";
 
 /* Sillari.css */
 import "./theme/sillari.css";
+import { useInterval } from "./utils/reactUtils";
 
 // Use the same style for all platforms
 setupIonicReact({
@@ -87,6 +88,7 @@ const App: React.FC = () => {
   const [version, setVersion] = useState<string>("-");
   const [isInitialisedOffline, setInitialisedOffline] = useState<boolean>(false);
   const [isOkToContinue, setOkToContinue] = useState<boolean>(false);
+  const [loginWindowOpened, setLoginWindowOpened] = useState<boolean>(false);
   const dispatch = useDispatch();
 
   const {
@@ -94,13 +96,36 @@ const App: React.FC = () => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const clearDataAndRedirect = (url: string) => {
+    console.log("clearDataAndRedirect: " + url);
     serviceWorkerRegistration.unregister(() => {
+      console.log("unregister callback"); //never called in real life?
       const cookies = Cookies.get();
       Object.keys(cookies).forEach((key) => {
         Cookies.remove(key);
       });
       window.location.href = url;
     });
+  };
+
+  const clearBrowserData = () => {
+    serviceWorkerRegistration.unregister(() => {
+      console.log("unregister callback");
+      const cookies = Cookies.get();
+      Object.keys(cookies).forEach((key) => {
+        Cookies.remove(key);
+      });
+    });
+  };
+
+  const clearDataAndRedirectNewTab = (url: string) => {
+    console.log("clearDataAndRedirectNewTab: " + url);
+    clearBrowserData();
+    const newWindow = window.open(url, "_blank");
+    console.log("newWindow: " + newWindow);
+    if (newWindow) {
+      newWindow.focus();
+      setLoginWindowOpened(true);
+    }
   };
 
   const logoutFromApp = () => {
@@ -113,6 +138,12 @@ const App: React.FC = () => {
         clearDataAndRedirect(process.env.PUBLIC_URL + "?ts=" + Date.now());
       }
     );
+  };
+
+  const redirToLogin = () => {
+    if (!loginWindowOpened) {
+      clearDataAndRedirectNewTab(process.env.PUBLIC_URL + "?ts=" + Date.now());
+    }
   };
 
   useEffect(() => {
@@ -187,6 +218,41 @@ const App: React.FC = () => {
     // Fetch the user data on first render only, using a workaround utilising useEffect with empty dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useInterval(() => {
+    const fetchUserData2 = async () => {
+      try {
+        const [userDataResponse] = await Promise.all([checkUserIsLoggedIn(dispatch)]);
+
+        if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
+          if (userDataResponse.roles.length > 0) {
+            console.log("userdata ok");
+            setLoginWindowOpened(false);
+          } else {
+            /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
+            console.log("userdata not ok never happens");
+            setErrorCode(SillariErrorCode.NO_USER_ROLES);
+            redirToLogin();
+          }
+        } else {
+          // Note: status codes from the backend such as 401 or 403 are now contained in failedStatus.getUserData
+          console.log("User data response", userDataResponse);
+          setErrorCode(SillariErrorCode.NO_USER_DATA);
+          redirToLogin();
+        }
+      } catch (e) {
+        console.log("App error", e);
+        setErrorCode(SillariErrorCode.OTHER_USER_FETCH_ERROR);
+        redirToLogin();
+      }
+    };
+
+    // Only fetch user data from the backend (and login if necessary) when online
+
+    if (onlineManager.isOnline()) {
+      fetchUserData2();
+    }
+  }, USER_DATA_POLL_INTERVAL);
 
   const userHasRole = useCallback(
     (role: string) => {

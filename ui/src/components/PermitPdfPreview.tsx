@@ -16,7 +16,7 @@ interface PermitPdfPreviewProps {
 // This uses react-pdf (https://github.com/wojtekmaj/react-pdf) which uses PDF.js from Mozilla (https://github.com/mozilla/pdfjs-dist)
 // The version of pdfjs-dist must match the version used in react-pdf otherwise errors occur
 // If the react-pdf dependency is updated, do the following:
-//   1. Manually update the pdfjs-dist version in package.json to the version used in react-pdf (currently 2.12.313)
+//   1. Manually update the pdfjs-dist version in package.json to the version used in react-pdf (currently 2.16.105)
 //   2. Copy pdf.worker.js from ./node_modules/pdfjs-dist/build to ./public
 const PermitPdfPreview = ({ id, isOpen, setOpen }: PermitPdfPreviewProps): JSX.Element => {
   const contentRef = useRef<HTMLIonContentElement>(null);

@@ -1,0 +1,7 @@
+.loggedOutInfoModal ion-content {
+  --background: var(--ion-color-light);
+}
+
+.loggedOutInfoGrid {
+  background-color: var(--ion-background-color);
+}

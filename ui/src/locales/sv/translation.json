@@ -44,7 +44,8 @@
     "noNetworkNoData": "Data kan inte hämtas, försöker igen...",
     "loading": "Laddar...",
     "offline": "Offline-tillstånd",
-    "useOffline": "Använd SillaRi i offline-läge"
+    "useOffline": "Använd SillaRi i offline-läge",
+    "loggedOut": "(SV) Olet kirjautunut ulos. Kirjaudu sisään"
   },
   "map": {
     "attribution": "Material"
@@ -82,7 +83,8 @@
     "listLabel": "Bilder",
     "item": {
       "deleteButtonLabel": "Radera bild"
-    }
+    },
+    "returnToSupervision": "Palaa sillanvalvontaan [SV]"
   },
   "SidebarMenu": {
     "title": "SillaRi",
@@ -141,13 +143,13 @@
     "identifier": "Id",
     "location": "Läge",
     "crossingInstructions": {
-      "title": "Instructioner"
+      "title": "Instruktioner"
     },
     "permitNumber": "Tillståndsnummer",
     "conformsToPermit": "Transporten är lovenlig",
     "startSupervision": "Påbörja övervakningen",
     "continueSupervision": "Fortsätt övervakningen",
-    "denyCrossing": "Transporten kan inte köra över bron",
+    "denyCrossing": "Bron kan inte överskridas",
     "supervisionMissing": "Broövervakningen är inte planerad ännu",
     "supervisionStarted": "Övervakningen påbörjad",
     "crossingDenied": "Broöverfarten inställd",
@@ -488,6 +490,13 @@
     "info2": "Du måste först logga in med ett lösenord i online-läge för att kunna se transporter och broar i offline-läge",
     "info3": "Du kan använda SillaRi i offline-läge. Då lagras övervakningsrapporten tillfälligt i den här apparaten.",
     "info4": "Du kan sända övervakningsrapporten när nätförbindelsen igen fungerar och du har loggat in i applikationen."
+  },
+  "loggedOutInfo": {
+    "title": "(SV) Olet kirjautunut ulos",
+    "info1": "Transport- och brouppgifter har senast uppdaterats i SillaRi",
+    "info2": "(SV) Kirjaudu sisään että voit käyttää SillaRia.",
+    "info3": "",
+    "info4": ""
   },
   "sendingListOfflineNotice": {
     "title": "Du kan inte sända övervakningsrapporten i offline-läge",

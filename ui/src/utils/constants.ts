@@ -5,6 +5,7 @@ export const DATE_TIME_FORMAT_MIN = "DD.MM.YYYY HH:mm";
 
 export const REACT_QUERY_CACHE_TIME = 1000 * 60 * 60 * 24; // 24 hours
 // export const REACT_QUERY_CACHE_TIME = 1000 * 30; // 30 seconds, for testing
+export const USER_DATA_POLL_INTERVAL = 1000 * 15; // 15 seconds
 
 export const NETWORK_RESPONSE_NOT_OK = "Network response was not ok";
 export const FORBIDDEN_ERROR = "Forbidden";
