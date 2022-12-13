@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SupervisionService {
@@ -159,8 +160,8 @@ public class SupervisionService {
             fillPermitDetails(supervision);
         }
         //Filter out those sent to lelu more than a week ago
-        supervisions.stream().filter(s->!(s.getCurrentStatus().equals(SupervisionStatusType.REPORT_SIGNED) && s.getCurrentStatus().getTime().isBefore(OffsetDateTime.now().minusDays(7))));
-        return supervisions;
+        List<SupervisionModel> filtered = supervisions.stream().filter(s->!(s.getCurrentStatus().equals(SupervisionStatusType.REPORT_SIGNED) && s.getCurrentStatus().getTime().isBefore(OffsetDateTime.now().minusDays(7)))).collect(Collectors.toList());
+        return filtered;
     }
 
 
