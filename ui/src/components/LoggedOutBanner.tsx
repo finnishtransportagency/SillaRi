@@ -17,7 +17,6 @@ const LoggedOutBanner = (): JSX.Element => {
     networkStatus: { failedStatus = {} },
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
-
   useEffect(() => {
     onlineManager.subscribe(() => {
       setOnline(onlineManager.isOnline());
