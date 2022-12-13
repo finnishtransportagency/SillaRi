@@ -83,9 +83,9 @@ export const getUserData = async (dispatch: Dispatch): Promise<IUserData> => {
   }
 };
 
-export const getUserData2 = async (dispatch: Dispatch): Promise<IUserData> => {
+export const checkUserIsLoggedIn = async (dispatch: Dispatch): Promise<IUserData> => {
   try {
-    console.log("getUserData2");
+    console.log("checkUserIsLoggedIn");
 
     const isFailed = store.getState().rootReducer.networkStatus.isFailed;
     console.log(isFailed.getUserData);

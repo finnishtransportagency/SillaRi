@@ -30,7 +30,7 @@ import Photos from "./pages/Photos";
 import UserInfo from "./pages/UserInfo";
 import Cookies from "js-cookie";
 import { useTypedSelector, RootState } from "./store/store";
-import { getUserData, getUserData2, getVersionInfo, logoutUser } from "./utils/backendData";
+import { getUserData, checkUserIsLoggedIn, getVersionInfo, logoutUser } from "./utils/backendData";
 import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
 import { REACT_QUERY_CACHE_TIME, SillariErrorCode, USER_DATA_POLL_INTERVAL } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/offlineUtil";
@@ -221,7 +221,7 @@ const App: React.FC = () => {
   useInterval(() => {
     const fetchUserData2 = async () => {
       try {
-        const [userDataResponse] = await Promise.all([getUserData2(dispatch)]);
+        const [userDataResponse] = await Promise.all([checkUserIsLoggedIn(dispatch)]);
 
         if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
           if (userDataResponse.roles.length > 0) {
