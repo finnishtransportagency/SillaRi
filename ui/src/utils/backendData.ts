@@ -7,7 +7,7 @@ import IRouteBridge from "../interfaces/IRouteBridge";
 import IUserData from "../interfaces/IUserData";
 import IVersionInfo from "../interfaces/IVersionInfo";
 import ILogoutData from "../interfaces/ILogoutData";
-import { RootState, useTypedSelector } from "../store/store";
+import store from "../store/store";
 
 export const onRetry = (failureCount: number, err: Error | string): boolean => {
   // By default, retry forever by returning true - unless error is FORBIDDEN.
@@ -87,13 +87,10 @@ export const getUserData2 = async (dispatch: Dispatch): Promise<IUserData> => {
   try {
     console.log("getUserData2");
 
-    const {
-      networkStatus: { failedStatus = {} },
-    } = useTypedSelector((state: RootState) => state.rootReducer);
-
+    const failedStatus = store.getState().rootReducer.networkStatus.failedStatus;
     console.log(failedStatus.getUserData);
 
-    //only dispatch ok statusif its not ok previously so no ender
+    //only dispatch ok status if its not ok previously so no render
     if (failedStatus.getUserData) {
       dispatch({
         type: actions.SET_FAILED_QUERY_STATUS,
