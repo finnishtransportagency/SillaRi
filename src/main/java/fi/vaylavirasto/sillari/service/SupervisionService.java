@@ -160,6 +160,16 @@ public class SupervisionService {
             fillPermitDetails(supervision);
         }
         //Filter out those sent to lelu more than a week ago
+
+        for(var s:supervisions){
+            logger.debug("hello: " + s.getCurrentStatus());
+            logger.debug("hello: " + s.getCurrentStatus().getTime());
+
+            logger.debug("hello: " + !(s.getCurrentStatus().equals(SupervisionStatusType.REPORT_SIGNED) && s.getCurrentStatus().getTime().isBefore(OffsetDateTime.now().minusDays(7))));
+            logger.debug("hello: " + s.getCurrentStatus().getTime().isBefore(OffsetDateTime.now().minusDays(7)));
+            logger.debug("hello: " + OffsetDateTime.now().minusDays(7));
+        }
+
         List<SupervisionModel> filtered = supervisions.stream().filter(s->!(s.getCurrentStatus().equals(SupervisionStatusType.REPORT_SIGNED) && s.getCurrentStatus().getTime().isBefore(OffsetDateTime.now().minusDays(7)))).collect(Collectors.toList());
         return filtered;
     }
