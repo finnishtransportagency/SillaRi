@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
-import { IonApp, IonContent, IonModal, setupIonicReact } from "@ionic/react";
+import { IonApp, IonContent, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Drivers, Storage as IonicStorage } from "@ionic/storage";
 import { withTranslation } from "react-i18next";
@@ -89,8 +89,6 @@ const App: React.FC = () => {
   const [isInitialisedOffline, setInitialisedOffline] = useState<boolean>(false);
   const [isOkToContinue, setOkToContinue] = useState<boolean>(false);
   const [loginWindowOpened, setLoginWindowOpened] = useState<boolean>(false);
-  const [isLoginModalOpen, setLoginModalOpen] = useState<boolean>(false);
-  const [loginUrl, setLoginUrl] = useState<string>("");
   const dispatch = useDispatch();
 
   const {
@@ -121,9 +119,13 @@ const App: React.FC = () => {
 
   const clearDataAndRedirectNewTab = (url: string) => {
     console.log("clearDataAndRedirectNewTab: " + url);
-    setLoginUrl(url);
     clearBrowserData();
-    setLoginModalOpen(true);
+    const newWindow = window.open(url, "_blank");
+    console.log("newWindow: " + newWindow);
+    if (newWindow) {
+      newWindow.focus();
+      setLoginWindowOpened(true);
+    }
   };
 
   const logoutFromApp = () => {
@@ -139,7 +141,9 @@ const App: React.FC = () => {
   };
 
   const redirToLogin = () => {
-    clearDataAndRedirectNewTab(process.env.PUBLIC_URL + "?ts=" + Date.now());
+    if (!loginWindowOpened) {
+      clearDataAndRedirectNewTab(process.env.PUBLIC_URL + "?ts=" + Date.now());
+    }
   };
 
   useEffect(() => {
@@ -222,7 +226,7 @@ const App: React.FC = () => {
         if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
           if (userDataResponse.roles.length > 0) {
             console.log("userdata ok");
-            setLoginModalOpen(false);
+            setLoginWindowOpened(false);
           } else {
             /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
             console.log("userdata not ok never happens");
@@ -292,16 +296,6 @@ const App: React.FC = () => {
         ) : (
           <IonReactRouter>
             <SidebarMenu version={version} logoutFromApp={logoutFromApp} />
-            <IonModal
-              isOpen={isLoginModalOpen}
-              onDidPresent={() => console.log("did pres")}
-              onWillPresent={() => console.log("will pres")}
-              onWillDismiss={() => setLoginModalOpen(false)}
-              onDidDismiss={() => setLoginModalOpen(false)}
-              className="sendingListModal"
-            >
-              <iframe title="loginIFrame" src={loginUrl} />
-            </IonModal>
             <IonContent id="MainContent">
               <Switch>
                 <Route exact path="/supervisions">
