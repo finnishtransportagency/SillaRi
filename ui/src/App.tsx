@@ -300,7 +300,7 @@ const App: React.FC = () => {
               onDidDismiss={() => setLoginModalOpen(false)}
               className="sendingListModal"
             >
-              <iframe src={loginUrl} />
+              <iframe title="loginIFrame" src={loginUrl} />
             </IonModal>
             <IonContent id="MainContent">
               <Switch>
