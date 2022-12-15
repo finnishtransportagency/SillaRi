@@ -227,12 +227,12 @@ public class UIController {
             responseBody.put("businessId", user.getBusinessId());
             responseBody.put("organization", user.getOrganization());
 
-
             return ResponseEntity.status(HttpStatus.OK).body(responseBody);
         } finally {
             serviceMetric.end();
         }
     }
+
     private static String buildNumber = "";
     private static String versionNumber = null;
     private static String version = null;

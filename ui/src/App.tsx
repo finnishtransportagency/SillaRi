@@ -32,7 +32,7 @@ import Cookies from "js-cookie";
 import { useTypedSelector, RootState } from "./store/store";
 import { getUserData, checkUserIsLoggedIn, getVersionInfo, logoutUser } from "./utils/backendData";
 import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
-import { REACT_QUERY_CACHE_TIME, SillariErrorCode, USER_DATA_POLL_INTERVAL } from "./utils/constants";
+import { REACT_QUERY_CACHE_TIME, SillariErrorCode, USER_DATA_AMPLIFIED_POLL_INTERVAL, USER_DATA_POLL_INTERVAL } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/offlineUtil";
 import IonicAsyncStorage from "./IonicAsyncStorage";
 
@@ -81,6 +81,8 @@ persistQueryClient({
   maxAge: REACT_QUERY_CACHE_TIME,
 });
 
+let loginWindow: Window | null;
+
 const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
   const [homePage, setHomePage] = useState<string>("");
@@ -89,6 +91,7 @@ const App: React.FC = () => {
   const [isInitialisedOffline, setInitialisedOffline] = useState<boolean>(false);
   const [isOkToContinue, setOkToContinue] = useState<boolean>(false);
   const [loginWindowOpened, setLoginWindowOpened] = useState<boolean>(false);
+  const [pollingInterval, setPollingInterval] = useState<number>(USER_DATA_POLL_INTERVAL);
   const dispatch = useDispatch();
 
   const {
@@ -120,10 +123,10 @@ const App: React.FC = () => {
   const clearDataAndRedirectNewTab = (url: string) => {
     console.log("clearDataAndRedirectNewTab: " + url);
     clearBrowserData();
-    const newWindow = window.open(url, "_blank");
-    console.log("newWindow: " + newWindow);
-    if (newWindow) {
-      newWindow.focus();
+    loginWindow = window.open(url, "_blank");
+    console.log("loginWindow: " + loginWindow);
+    if (loginWindow) {
+      loginWindow.focus();
       setLoginWindowOpened(true);
     }
   };
@@ -141,6 +144,7 @@ const App: React.FC = () => {
   };
 
   const redirToLogin = () => {
+    setPollingInterval(USER_DATA_AMPLIFIED_POLL_INTERVAL);
     if (!loginWindowOpened) {
       clearDataAndRedirectNewTab(process.env.PUBLIC_URL + "?ts=" + Date.now());
     }
@@ -220,14 +224,18 @@ const App: React.FC = () => {
   }, []);
 
   useInterval(() => {
-    const fetchUserData2 = async () => {
+    const pollUserData = async () => {
       try {
         const [userDataResponse] = await Promise.all([checkUserIsLoggedIn(dispatch)]);
 
         if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
           if (userDataResponse.roles.length > 0) {
             console.log("userdata ok");
+            if (loginWindow) {
+              loginWindow.close();
+            }
             setLoginWindowOpened(false);
+            setPollingInterval(USER_DATA_POLL_INTERVAL);
           } else {
             /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
             console.log("userdata not ok never happens");
@@ -250,9 +258,9 @@ const App: React.FC = () => {
     // Only fetch user data from the backend (and login if necessary) when online
 
     if (onlineManager.isOnline()) {
-      fetchUserData2();
+      pollUserData();
     }
-  }, USER_DATA_POLL_INTERVAL);
+  }, pollingInterval);
 
   const userHasRole = useCallback(
     (role: string) => {
