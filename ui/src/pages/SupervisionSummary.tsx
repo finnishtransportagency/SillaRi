@@ -46,8 +46,6 @@ const SupervisionSummary = (): JSX.Element => {
   // Check if images are being uploaded using the mutationKey defined in Photos.tsx
   const isImageUploadMutating = useIsMutating(["imageUpload" + supervisionId]) > 0;
 
-  console.log("mutatin in summary" + supervisionId + " " + isImageUploadMutating);
-
   useEffect(() => {
     onlineManager.subscribe(() => {
       setOnline(onlineManager.isOnline());

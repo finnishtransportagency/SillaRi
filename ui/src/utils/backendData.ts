@@ -7,6 +7,7 @@ import IRouteBridge from "../interfaces/IRouteBridge";
 import IUserData from "../interfaces/IUserData";
 import IVersionInfo from "../interfaces/IVersionInfo";
 import ILogoutData from "../interfaces/ILogoutData";
+import store from "../store/store";
 
 export const onRetry = (failureCount: number, err: Error | string): boolean => {
   // By default, retry forever by returning true - unless error is FORBIDDEN.
@@ -53,6 +54,49 @@ export const getUserData = async (dispatch: Dispatch): Promise<IUserData> => {
       type: actions.SET_FAILED_QUERY_STATUS,
       payload: { failedQuery: { getUserData: false }, failedQueryStatus: { getUserData: -1 } },
     });
+
+    const userDataResponse = await fetch(`${getOrigin()}/api/ui/userdata`);
+
+    if (userDataResponse.ok) {
+      const userData = (await userDataResponse.json()) as Promise<IUserData>;
+      return await userData;
+    } else {
+      // Use the status redux action so that the status code (401, 403, etc) is stored for later use
+      dispatch({
+        type: actions.SET_FAILED_QUERY_STATUS,
+        payload: { failedQuery: { getUserData: true }, failedQueryStatus: { getUserData: userDataResponse.status } },
+      });
+      throw new Error(NETWORK_RESPONSE_NOT_OK);
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message === NETWORK_RESPONSE_NOT_OK) {
+      // This error came from the error thrown above, so preserve the status code for use in App.tsx
+    } else {
+      // Otherwise this is a different error, so store a general error code in redux
+      // This can happen when the application is offline and there is no cached data
+      dispatch({
+        type: actions.SET_FAILED_QUERY_STATUS,
+        payload: { failedQuery: { getUserData: true }, failedQueryStatus: { getUserData: SillariErrorCode.OTHER_USER_FETCH_ERROR } },
+      });
+    }
+    throw new Error(err as string);
+  }
+};
+
+export const checkUserIsLoggedIn = async (dispatch: Dispatch): Promise<IUserData> => {
+  try {
+    console.log("checkUserIsLoggedIn");
+
+    const isFailed = store.getState().rootReducer.networkStatus.isFailed;
+    console.log(isFailed.getUserData);
+
+    //only dispatch ok status if its not ok previously so no render
+    if (isFailed.getUserData) {
+      dispatch({
+        type: actions.SET_FAILED_QUERY_STATUS,
+        payload: { failedQuery: { getUserData: false }, failedQueryStatus: { getUserData: -1 } },
+      });
+    }
 
     const userDataResponse = await fetch(`${getOrigin()}/api/ui/userdata`);
 

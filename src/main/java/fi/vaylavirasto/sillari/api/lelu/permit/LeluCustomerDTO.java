@@ -16,8 +16,7 @@ public class LeluCustomerDTO {
     @Schema(description = "Name of the customer", required = true, example = "Yritys Y")
     private String name;
 
-    @NotBlank(message = "{customer.identifier.not.blank}")
-    @Schema(description = "Business ID", required = true, example = "0357502-9")
+    @Schema(description = "Business ID", example = "0357502-9")
     private String identifier;
 
     public LeluCustomerDTO() {
