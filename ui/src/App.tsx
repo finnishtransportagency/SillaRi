@@ -32,7 +32,7 @@ import Cookies from "js-cookie";
 import { useTypedSelector, RootState } from "./store/store";
 import { getUserData, checkUserIsLoggedIn, getVersionInfo, logoutUser } from "./utils/backendData";
 import { removeObsoletePasswords } from "./utils/trasportCodeStorageUtil";
-import { REACT_QUERY_CACHE_TIME, SillariErrorCode, USER_DATA_POLL_INTERVAL } from "./utils/constants";
+import { REACT_QUERY_CACHE_TIME, SillariErrorCode, USER_DATA_AMPLIFIED_POLL_INTERVAL, USER_DATA_POLL_INTERVAL } from "./utils/constants";
 import { prefetchOfflineData } from "./utils/offlineUtil";
 import IonicAsyncStorage from "./IonicAsyncStorage";
 
@@ -91,6 +91,7 @@ const App: React.FC = () => {
   const [isInitialisedOffline, setInitialisedOffline] = useState<boolean>(false);
   const [isOkToContinue, setOkToContinue] = useState<boolean>(false);
   const [loginWindowOpened, setLoginWindowOpened] = useState<boolean>(false);
+  const [pollingInterval, setPollingInterval] = useState<number>(USER_DATA_POLL_INTERVAL);
   const dispatch = useDispatch();
 
   const {
@@ -143,6 +144,7 @@ const App: React.FC = () => {
   };
 
   const redirToLogin = () => {
+    setPollingInterval(USER_DATA_AMPLIFIED_POLL_INTERVAL);
     if (!loginWindowOpened) {
       clearDataAndRedirectNewTab(process.env.PUBLIC_URL + "?ts=" + Date.now());
     }
@@ -232,6 +234,7 @@ const App: React.FC = () => {
               loginWindow.close();
             }
             setLoginWindowOpened(false);
+            setPollingInterval(USER_DATA_POLL_INTERVAL);
           } else {
             /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
             console.log("userdata not ok never happens");
@@ -256,7 +259,7 @@ const App: React.FC = () => {
     if (onlineManager.isOnline()) {
       pollUserData();
     }
-  }, USER_DATA_POLL_INTERVAL);
+  }, pollingInterval);
 
   const userHasRole = useCallback(
     (role: string) => {
