@@ -81,6 +81,8 @@ persistQueryClient({
   maxAge: REACT_QUERY_CACHE_TIME,
 });
 
+let loginWindow: Window | null;
+
 const App: React.FC = () => {
   const [userData, setUserData] = useState<IUserData>();
   const [homePage, setHomePage] = useState<string>("");
@@ -120,10 +122,10 @@ const App: React.FC = () => {
   const clearDataAndRedirectNewTab = (url: string) => {
     console.log("clearDataAndRedirectNewTab: " + url);
     clearBrowserData();
-    const newWindow = window.open(url, "_blank");
-    console.log("newWindow: " + newWindow);
-    if (newWindow) {
-      newWindow.focus();
+    loginWindow = window.open(url, "_blank");
+    console.log("loginWindow: " + loginWindow);
+    if (loginWindow) {
+      loginWindow.focus();
       setLoginWindowOpened(true);
     }
   };
@@ -219,13 +221,16 @@ const App: React.FC = () => {
   }, []);
 
   useInterval(() => {
-    const fetchUserData2 = async () => {
+    const pollUserData = async () => {
       try {
         const [userDataResponse] = await Promise.all([checkUserIsLoggedIn(dispatch)]);
 
         if (!failedStatus.getUserData || failedStatus.getUserData < 400) {
           if (userDataResponse.roles.length > 0) {
             console.log("userdata ok");
+            if (loginWindow) {
+              loginWindow.close();
+            }
             setLoginWindowOpened(false);
           } else {
             /* Should never happen, since backend returns 403, if user does not have SillaRi roles. */
@@ -249,7 +254,7 @@ const App: React.FC = () => {
     // Only fetch user data from the backend (and login if necessary) when online
 
     if (onlineManager.isOnline()) {
-      fetchUserData2();
+      pollUserData();
     }
   }, USER_DATA_POLL_INTERVAL);
 
