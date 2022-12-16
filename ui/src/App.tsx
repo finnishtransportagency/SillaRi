@@ -227,9 +227,7 @@ const App: React.FC = () => {
       try {
         const [userDataResponse] = await Promise.all([checkUserIsLoggedIn(dispatch)]);
 
-        console.log("HELLO: " + failedStatus.getUserData);
-        console.log("HELLO: " + !failedStatus.getUserData);
-        if (!failedStatus.getUserData) {
+        if (!failedStatus.getUserData || failedStatus.getUserData == -1) {
           if (userDataResponse.roles.length > 0) {
             console.log("userdata ok");
             if (loginWindow) {
@@ -246,6 +244,7 @@ const App: React.FC = () => {
         } else {
           // Note: status codes from the backend such as 401 or 403 are now contained in failedStatus.getUserData
           console.log("User data response", userDataResponse);
+          console.log("failedStatus.getUserDat", failedStatus.getUserData);
           setErrorCode(SillariErrorCode.NO_USER_DATA);
           redirToLogin();
         }
