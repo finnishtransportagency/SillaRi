@@ -252,6 +252,7 @@ const Supervision = (): JSX.Element => {
       // Page is loaded for the first time, modifiedReport is not set
       if (modifiedReport === undefined && savedReport) {
         console.log("setModifiedReport", savedReport);
+        console.log("modifiedReport", modifiedReport);
         // Update the modified report with data from backend
         setModifiedReport({ ...savedReport });
       }
