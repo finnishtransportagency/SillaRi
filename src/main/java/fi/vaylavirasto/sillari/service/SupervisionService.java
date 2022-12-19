@@ -136,6 +136,7 @@ public class SupervisionService {
             // Sets also current status and status timestamps
             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
             supervision.setRouteTransport(routeTransportRepository.getRouteTransportById(supervision.getRouteTransportId()));
+            fillBridgeImageDataUrl(supervision.getRouteBridge());
         }
         return supervisions;
     }
