@@ -43,6 +43,7 @@ const Supervision = (): JSX.Element => {
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const [modifiedReport, setModifiedReport] = useState<ISupervisionReport | undefined>(undefined);
+  const [modifiedReportResetted, setModifiedReportResetted] = useState<boolean>(false);
 
   const [present] = useIonAlert();
 
@@ -200,6 +201,7 @@ const Supervision = (): JSX.Element => {
   };
 
   const goBackOrToSendingList = (): void => {
+    setModifiedReportResetted(false);
     if (supervisionOpenedFromSendingList) {
       dispatch({
         type: actions.SET_FORCE_OPEN_SENDING_LIST,
@@ -247,15 +249,24 @@ const Supervision = (): JSX.Element => {
 
   useEffect(() => {
     if (!isLoading && supervision) {
-      console.log(supervision);
       // Page is loaded for the first time, modifiedReport is not set
-      if ((supervisionOpenedFromSendingList || modifiedReport === undefined) && savedReport) {
+      if (modifiedReport === undefined && savedReport) {
         console.log("setModifiedReport", savedReport);
         // Update the modified report with data from backend
         setModifiedReport({ ...savedReport });
       }
     }
   }, [isLoading, supervision, modifiedReport, savedReport]);
+
+  useEffect(() => {
+    if (!isLoading && supervision) {
+      if (supervisionOpenedFromSendingList && !modifiedReportResetted) {
+        console.log("setModifiedReport undefined cause from send list");
+        setModifiedReportResetted(true);
+        setModifiedReport(undefined);
+      }
+    }
+  }, [supervisionOpenedFromSendingList, modifiedReportResetted]);
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
