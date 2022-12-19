@@ -260,7 +260,7 @@ const Supervision = (): JSX.Element => {
   }, [isLoading, supervision, modifiedReport, savedReport]);
 
   useEffect(() => {
-    console.log("hello: " );
+    console.log("hello: ");
     if (!isLoading && supervision) {
       if (supervisionOpenedFromSendingList && !modifiedReportResetted) {
         console.log("setModifiedReport undefined cause from send list");
