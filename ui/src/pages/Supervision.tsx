@@ -260,6 +260,7 @@ const Supervision = (): JSX.Element => {
   }, [isLoading, supervision, modifiedReport, savedReport]);
 
   useEffect(() => {
+    console.log("hello: " );
     if (!isLoading && supervision) {
       if (supervisionOpenedFromSendingList && !modifiedReportResetted) {
         console.log("setModifiedReport undefined cause from send list");
@@ -267,7 +268,7 @@ const Supervision = (): JSX.Element => {
         setModifiedReport(undefined);
       }
     }
-  }, [supervisionOpenedFromSendingList, modifiedReportResetted]);
+  }, [isLoading, supervision, supervisionOpenedFromSendingList, modifiedReportResetted]);
 
   const noNetworkNoData = isFailed.getSupervision && supervision === undefined;
 
