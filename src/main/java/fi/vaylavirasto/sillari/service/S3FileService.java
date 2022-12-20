@@ -43,10 +43,10 @@ public class S3FileService {
         getFile(out, bucketName, objectKey, filename);
     }
 
-    public String getFile(String bucketName, String objectKey, String filename) throws IOException {
-        OutputStream out = new ByteArrayOutputStream();
+    public ByteArrayOutputStream getFile(String bucketName, String objectKey, String filename) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         getFile(out, bucketName, objectKey, filename);
-        return out.toString();
+        return out;
     }
 
     private void getFile(OutputStream out, String bucketName, String objectKey, String filename) throws IOException {

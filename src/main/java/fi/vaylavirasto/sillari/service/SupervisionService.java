@@ -17,9 +17,11 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
@@ -112,8 +114,8 @@ public class SupervisionService {
             String filename = bridgeImageModel.getFilename();
             String contentType = bridgeImageModel.getFiletype() == null ? "image/jpeg" : bridgeImageModel.getFiletype();
             try {
-                String picData = s3FileService.getFile(awss3Client.getTrexPhotoBucketName(), bridgeImageModel.getObjectKey(), filename);
-                String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(picData.getBytes());
+                ByteArrayOutputStream picDataStream = s3FileService.getFile(awss3Client.getTrexPhotoBucketName(), bridgeImageModel.getObjectKey(), filename);
+                String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(picDataStream.toByteArray());
                 routeBridge.setPhotoDataUrl("data:" + contentType + ";base64," + encodedString);
             } catch (Exception e) {
                 throw new RuntimeException(e);
