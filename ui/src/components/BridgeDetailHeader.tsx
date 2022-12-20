@@ -5,7 +5,6 @@ import { IonImg, IonItem, IonLabel } from "@ionic/react";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import mapPoint from "../theme/icons/map-point.svg";
 import "./BridgeDetailHeader.css";
-import { getOrigin } from "../utils/request";
 import { BRIDGE_IMAGE_NOT_FOUND_DATA_URL } from "../utils/constants";
 
 interface BridgeDetailHeaderProps {
