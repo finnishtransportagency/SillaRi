@@ -120,6 +120,7 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
   };
 
   const handleClose = () => {
+    setSelectedSupervisions([]);
     isOpen = false;
     if (targetUrl) {
       history.push(targetUrl);
