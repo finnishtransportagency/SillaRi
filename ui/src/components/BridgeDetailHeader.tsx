@@ -5,7 +5,7 @@ import { IonImg, IonItem, IonLabel } from "@ionic/react";
 import IRouteBridge from "../interfaces/IRouteBridge";
 import mapPoint from "../theme/icons/map-point.svg";
 import "./BridgeDetailHeader.css";
-import { getOrigin } from "../utils/request";
+import { BRIDGE_IMAGE_NOT_FOUND_DATA_URL } from "../utils/constants";
 
 interface BridgeDetailHeaderProps {
   routeBridge: IRouteBridge;
@@ -14,7 +14,7 @@ interface BridgeDetailHeaderProps {
 const BridgeDetailHeader = ({ routeBridge }: BridgeDetailHeaderProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { id: routeBridgeId, bridge } = routeBridge || {};
+  const { id: routeBridgeId, bridge, photoDataUrl } = routeBridge || {};
   const { identifier = "", municipality = "" } = bridge || {};
 
   const [isOnline, setOnline] = useState<boolean>(onlineManager.isOnline());
@@ -23,19 +23,16 @@ const BridgeDetailHeader = ({ routeBridge }: BridgeDetailHeaderProps): JSX.Eleme
     onlineManager.subscribe(() => setOnline(onlineManager.isOnline()));
   }, []);
 
-  const getBridgeImageUrl = () => {
-    const backendImageUrl = `${getOrigin()}/api/routebridge/getBridgeImage?routeBridgeId=${routeBridgeId}`;
-    const image = new Image();
-    image.src = backendImageUrl;
-    if (image.height === 0) {
-      return "/assets/silta_oletuskuva.png";
+  const getBridgeImageDataUrl = () => {
+    if (photoDataUrl == null) {
+      return BRIDGE_IMAGE_NOT_FOUND_DATA_URL;
     }
-    return backendImageUrl;
+    return photoDataUrl;
   };
 
   return (
     <>
-      {isOnline && <IonImg className="bridgeImage" src={getBridgeImageUrl()} />}
+      {isOnline && <IonImg className="bridgeImage" src={getBridgeImageDataUrl()} />}
       <IonItem className="header" lines="none">
         <IonLabel>{t("bridge.title").toUpperCase()}</IonLabel>
       </IonItem>

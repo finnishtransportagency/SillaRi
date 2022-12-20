@@ -206,6 +206,8 @@ public class UIController {
             .body(responseBody);
     }
 
+
+
     @Operation(summary = "Get user data")
     @GetMapping(value = "/userdata")
     @PreAuthorize("@sillariRightsChecker.isSillariUser(authentication)")
@@ -230,6 +232,7 @@ public class UIController {
             serviceMetric.end();
         }
     }
+
     private static String buildNumber = "";
     private static String versionNumber = null;
     private static String version = null;

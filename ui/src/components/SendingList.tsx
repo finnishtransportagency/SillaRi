@@ -26,12 +26,14 @@ import { completeSupervisions } from "../utils/supervisionBackendData";
 import { useHistory } from "react-router";
 import CustomAccordion from "./common/CustomAccordion";
 import OfflineBanner from "./OfflineBanner";
+import LoggedOutBanner from "./LoggedOutBanner";
 import SentSupervisionReportsAccordion from "./SentSupervisionReportsAccordion";
 import SendingListItem from "./SendingListItem";
 import SendingListOfflineNotice from "./SendingListOfflineNotice";
 import SentSupervisionReportModalContainer from "./SentSupervisionReportModalContainer";
 import "./SendingList.css";
 import ISupervisionInput from "../interfaces/ISupervisionInput";
+import { actions } from "../store/rootSlice";
 
 interface SendingListProps {
   isOpen: boolean;
@@ -106,6 +108,17 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
     setTargetUrl("");
   };
 
+  const handleWillPresent = () => {
+    dispatch({
+      type: actions.SET_FORCE_OPEN_SENDING_LIST,
+      payload: false,
+    });
+    dispatch({
+      type: actions.SET_SUPERVISION_OPENED_FROM_SENDING_LIST,
+      payload: false,
+    });
+  };
+
   const handleClose = () => {
     setSelectedSupervisions([]);
     isOpen = false;
@@ -114,10 +127,23 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
     }
   };
 
+  const handleClickClose = () => {
+    dispatch({
+      type: actions.SET_FORCE_OPEN_SENDING_LIST,
+      payload: false,
+    });
+    dispatch({
+      type: actions.SET_SUPERVISION_OPENED_FROM_SENDING_LIST,
+      payload: false,
+    });
+    setOpen(false);
+  };
+
   return (
     <IonModal
       isOpen={isOpen}
       onDidPresent={() => handleOpen()}
+      onWillPresent={() => handleWillPresent()}
       onWillDismiss={() => setOpen(false)}
       onDidDismiss={() => handleClose()}
       className="sendingListModal"
@@ -126,13 +152,14 @@ const SendingList = ({ isOpen, setOpen, sentSupervisions, unsentSupervisions }: 
         <IonToolbar color="primary">
           <IonTitle class="headingText">{`${t("sendingList.title")} (${unsentSupervisions.length})`}</IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={() => setOpen(false)}>
+            <IonButton onClick={() => handleClickClose()}>
               <IonIcon className="otherIconLarge" icon={close} />
             </IonButton>
           </IonButtons>
         </IonToolbar>
 
         <OfflineBanner />
+        <LoggedOutBanner />
       </IonHeader>
       <IonContent>
         {unsentSupervisions.length === 0 ? (

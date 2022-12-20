@@ -17,13 +17,16 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SupervisionService {
@@ -59,7 +62,8 @@ public class SupervisionService {
     PermitRepository permitRepository;
     @Autowired
     CompanyRepository companyRepository;
-
+    @Autowired
+    BridgeImageService bridgeImageService;
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
@@ -95,10 +99,26 @@ public class SupervisionService {
     private void fillPermitDetails(SupervisionModel supervision) {
         RouteBridgeModel routeBridge = supervision.getRouteBridge();
         if (routeBridge != null) {
+            fillBridgeImageDataUrl(routeBridge);
             RouteModel route = routeRepository.getRoute(supervision.getRouteBridge().getRouteId());
             routeBridge.setRoute(route);
             if (route != null) {
                 route.setPermit(permitRepository.getPermit(route.getPermitId()));
+            }
+        }
+    }
+    
+    private void fillBridgeImageDataUrl(RouteBridgeModel routeBridge) {
+        BridgeImageModel bridgeImageModel = bridgeImageService.getBridgeImage(routeBridge.getBridgeId());                
+        if (bridgeImageModel != null) {
+            String filename = bridgeImageModel.getFilename();
+            String contentType = bridgeImageModel.getFiletype() == null ? "image/jpeg" : bridgeImageModel.getFiletype();
+            try {
+                ByteArrayOutputStream picDataStream = s3FileService.getFile(awss3Client.getTrexPhotoBucketName(), bridgeImageModel.getObjectKey(), filename);
+                String encodedString = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(picDataStream.toByteArray());
+                routeBridge.setPhotoDataUrl("data:" + contentType + ";base64," + encodedString);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -118,6 +138,7 @@ public class SupervisionService {
             // Sets also current status and status timestamps
             supervision.setStatusHistory(supervisionStatusRepository.getSupervisionStatusHistory(supervision.getId()));
             supervision.setRouteTransport(routeTransportRepository.getRouteTransportById(supervision.getRouteTransportId()));
+            fillBridgeImageDataUrl(supervision.getRouteBridge());
         }
         return supervisions;
     }
@@ -158,7 +179,9 @@ public class SupervisionService {
             supervision.setRouteTransport(routeTransportRepository.getRouteTransportById(supervision.getRouteTransportId()));
             fillPermitDetails(supervision);
         }
-        return supervisions;
+        //Filter out those sent to lelu more than a week ago
+        List<SupervisionModel> filtered = supervisions.stream().filter(s->!(s.getCurrentStatus().getStatus().equals(SupervisionStatusType.REPORT_SIGNED) && s.getCurrentStatus().getTime().isBefore(OffsetDateTime.now().minusDays(7)))).collect(Collectors.toList());
+        return filtered;
     }
 
 

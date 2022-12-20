@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { actions } from "../store/rootSlice";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
@@ -38,9 +39,11 @@ const Supervision = (): JSX.Element => {
   const { supervisionId = "0" } = useParams<SupervisionProps>();
   const {
     networkStatus: { isFailed = {} },
+    supervisionOpenedFromSendingList,
   } = useTypedSelector((state: RootState) => state.rootReducer);
 
   const [modifiedReport, setModifiedReport] = useState<ISupervisionReport | undefined>(undefined);
+
   const [present] = useIonAlert();
 
   const supervisionQueryKey = ["getSupervision", Number(supervisionId)];
@@ -196,9 +199,12 @@ const Supervision = (): JSX.Element => {
     });
   };
 
-  const cancelSupervisionClicked = (): void => {
-    if (supervisionInProgress) {
-      showConfirmCancelSupervision();
+  const goBackOrToSendingList = (): void => {
+    if (supervisionOpenedFromSendingList) {
+      dispatch({
+        type: actions.SET_FORCE_OPEN_SENDING_LIST,
+        payload: true,
+      });
     } else {
       history.goBack();
     }
@@ -212,7 +218,7 @@ const Supervision = (): JSX.Element => {
         t("common.answer.no"),
         {
           text: t("common.answer.yes"),
-          handler: () => history.goBack(),
+          handler: () => goBackOrToSendingList(),
         },
       ],
     });
@@ -222,7 +228,15 @@ const Supervision = (): JSX.Element => {
     if (reportHasUnsavedChanges(modifiedReport, savedReport)) {
       showConfirmLeavePage();
     } else {
-      history.goBack();
+      goBackOrToSendingList();
+    }
+  };
+
+  const cancelSupervisionClicked = (): void => {
+    if (supervisionInProgress) {
+      showConfirmCancelSupervision();
+    } else {
+      confirmGoBack();
     }
   };
 
@@ -233,8 +247,8 @@ const Supervision = (): JSX.Element => {
 
   useEffect(() => {
     if (!isLoading && supervision) {
-      // Page is loaded for the first time, modifiedReport is not set
-      if (modifiedReport === undefined && savedReport) {
+      // Page is loaded for the first time or opened different report from sending list, modifiedReport is not set
+      if (savedReport && (modifiedReport === undefined || modifiedReport.id !== savedReport.id)) {
         console.log("setModifiedReport", savedReport);
         // Update the modified report with data from backend
         setModifiedReport({ ...savedReport });

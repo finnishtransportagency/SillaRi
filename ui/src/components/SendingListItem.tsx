@@ -10,8 +10,9 @@ import { getPasswordFromStorage } from "../utils/trasportCodeStorageUtil";
 import lock from "../theme/icons/lock_closed_white.svg";
 import SupervisionPasswordPopover from "./SupervisionPasswordPopover";
 import IPopoverPlacement from "../interfaces/IPopoverPlacement";
-import { useHistory } from "react-router-dom";
 import { useIsMutating } from "react-query";
+import { useDispatch } from "react-redux";
+import { actions } from "../store/rootSlice";
 
 interface SendingListItemProps {
   supervision: ISupervision;
@@ -24,6 +25,7 @@ interface SendingListItemProps {
 
 const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen, isOnline, username }: SendingListItemProps): JSX.Element => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const [supervisionUnlocked, setSupervisionUnlocked] = useState<boolean>(false);
   const [passwordPopoverOpen, setPasswordPopoverOpen] = useState<boolean>(false);
 
@@ -42,12 +44,9 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
     alignment: "start",
   };
   const openSupervision = () => console.log("Password provided");
-  const history = useHistory();
 
   // Check if images are being uploaded using the mutationKey defined in Photos.tsx
   const isImageUploadMutating = useIsMutating(["imageUpload" + supervisionId]);
-
-  console.log("mutatin " + supervisionId + " " + isImageUploadMutating);
 
   useEffect(() => {
     // Must set supervisionUnlocked inside useEffect, since Storage returns a promise
@@ -122,9 +121,16 @@ const SendingListItem = ({ supervision, selectSupervision, setTargetUrl, setOpen
                       size="default"
                       disabled={!supervisionUnlocked}
                       onClick={() => {
-                        history.push(`/supervision/${supervisionId}`);
+                        dispatch({
+                          type: actions.SET_SUPERVISION_OPENED_FROM_SENDING_LIST,
+                          payload: true,
+                        });
+                        dispatch({
+                          type: actions.SET_FORCE_OPEN_SENDING_LIST,
+                          payload: false,
+                        });
+                        setTargetUrl(`/supervision/${supervisionId}`);
                         setOpen(false);
-                        history.go(0);
                       }}
                     >
                       {t("common.buttons.edit")}

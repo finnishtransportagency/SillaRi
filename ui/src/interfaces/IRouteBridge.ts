@@ -13,4 +13,5 @@ export default interface IRouteBridge {
   contractNumber: number;
   contractBusinessId: string;
   supervisions: ISupervision[];
+  photoDataUrl?: string;
 }
