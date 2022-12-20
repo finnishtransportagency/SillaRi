@@ -248,7 +248,7 @@ const Supervision = (): JSX.Element => {
   useEffect(() => {
     if (!isLoading && supervision) {
       // Page is loaded for the first time, modifiedReport is not set
-      if (modifiedReport === undefined && savedReport) {
+      if (savedReport && (modifiedReport === undefined || modifiedReport.id !== savedReport.id)) {
         console.log("setModifiedReport", savedReport);
         // Update the modified report with data from backend
         setModifiedReport({ ...savedReport });
