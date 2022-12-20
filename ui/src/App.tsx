@@ -227,7 +227,7 @@ const App: React.FC = () => {
       try {
         const [userDataResponse] = await Promise.all([checkUserIsLoggedIn(dispatch)]);
 
-        if (!failedStatus.getUserData || failedStatus.getUserData == -1) {
+        if (!failedStatus.getUserData || failedStatus.getUserData === -1) {
           if (userDataResponse.roles.length > 0) {
             console.log("userdata ok");
             if (loginWindow) {
