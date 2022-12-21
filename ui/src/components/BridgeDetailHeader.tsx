@@ -32,7 +32,7 @@ const BridgeDetailHeader = ({ routeBridge }: BridgeDetailHeaderProps): JSX.Eleme
 
   return (
     <>
-      {isOnline && <IonImg className="bridgeImage" src={getBridgeImageDataUrl()} />}
+      <IonImg className="bridgeImage" src={getBridgeImageDataUrl()} />
       <IonItem className="header" lines="none">
         <IonLabel>{t("bridge.title").toUpperCase()}</IonLabel>
       </IonItem>
